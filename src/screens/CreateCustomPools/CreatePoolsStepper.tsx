@@ -34,12 +34,12 @@ const CreatePoolsStepper: React.FC<IProps> = () => {
         <DesktopStepper
           activeStep={vm.step}
           steps={steps}
-          onStepClick={(s) => vm.maxStep > s && vm.setStep(s, true)}
+          onStepClick={(s) => vm.maxStep >= s && vm.setStep(s, true)}
         />
         <MobileStepper
           activeStep={vm.step}
           steps={steps}
-          onStepClick={(s) => vm.maxStep > s && vm.setStep(s, true)}
+          onStepClick={(s) => vm.maxStep >= s && vm.setStep(s, true)}
         />
       </Card>
     </Root>

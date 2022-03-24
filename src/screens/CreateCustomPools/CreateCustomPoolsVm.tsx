@@ -23,13 +23,12 @@ interface IPoolToken {
 class CreateCustomPoolsVm {
   public rootStore: RootStore;
 
-  maxStep: number = 1;
-  step: number = 1;
-  setStep = (s: number, jump?: boolean) => {
-    // console.log("jumpmode", jump === true);
-    // if (jump === true) {
-    this.maxStep = s;
-    // }
+  maxStep: number = 0;
+  step: number = 0;
+  setStep = (s: number, jump = false) => {
+    if (!jump) {
+      this.maxStep = s;
+    }
     this.step = s;
   };
 
@@ -39,11 +38,41 @@ class CreateCustomPoolsVm {
     const balances = this.rootStore.accountStore.assetBalances;
     const asset = balances?.find((b) => b.assetId === assetId);
     if (asset == null) return;
-    this.poolsAssets.push({ asset, share: 10, locked: false });
+    const totalTakenShare = this.poolsAssets.reduce(
+      (acc, v) => acc + v.share,
+      0
+    );
+    let share = 10;
+    if (totalTakenShare < 100) {
+      share = 100 - this.poolsAssets.reduce((acc, v) => acc + v.share, 0);
+    } else {
+      const notFixedValues = this.poolsAssets.reduce<{
+        totalShare: number;
+        amount: number;
+      }>(
+        (acc, item) => {
+          if (!item.locked) {
+            return {
+              totalShare: acc.totalShare + item.share,
+              amount: acc.amount + 1,
+            };
+          }
+          return acc;
+        },
+        { totalShare: 0, amount: 0 }
+      );
+      share = notFixedValues.totalShare / (notFixedValues.amount + 1);
+      this.poolsAssets.forEach((item, index) => {
+        if (!item.locked) {
+          this.poolsAssets[index].share = share;
+        }
+      });
+    }
+    this.poolsAssets.push({ asset, share, locked: false });
   };
   removeAssetFromPool = (assetId: string) => {
-    const usdn = this.rootStore.accountStore.TOKENS.USDN;
-    if (assetId === usdn.assetId) return;
+    const puzzle = this.rootStore.accountStore.TOKENS.PUZZLE;
+    if (assetId === puzzle.assetId) return;
     const indexOfObject = this.poolsAssets.findIndex(
       ({ asset }) => asset.assetId === assetId
     );
@@ -80,6 +109,11 @@ class CreateCustomPoolsVm {
   swapFee: number = 0.5;
   setSwapFee = (v: number) => (this.swapFee = v);
 
+  //logo details
+  fileName: string | null = null;
+  setFileName = (v: string | null) => (this.fileName = v);
+  fileSize: string | null = null;
+  setFileSize = (v: string | null) => (this.fileSize = v);
   logo: string | null = null;
   setLogo = (v: any) => (this.logo = v);
 

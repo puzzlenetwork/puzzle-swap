@@ -18,8 +18,8 @@ const Root = styled.div`
 `;
 
 const COLORS = [
-  "#669900",
   "#99CC33",
+  "#669900",
   "#CCEE66",
   "#006699",
   "#3399CC",

@@ -30,7 +30,14 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
       </Text>
       <SizedBox height={8} />
       <Card>
-        <ImageUpload onChange={vm.setLogo} image={vm.logo} />
+        <ImageUpload
+          onChange={(v) => vm.setLogo(v)}
+          image={vm.logo}
+          fileName={vm.fileName}
+          onFileNameChange={vm.setFileName}
+          fileSize={vm.fileSize}
+          onFileSizeChange={vm.setFileSize}
+        />
         <SizedBox height={16} />
         <Text type="secondary" size="medium">
           Title of the pool

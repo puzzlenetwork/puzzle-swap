@@ -67,6 +67,7 @@ const TokenSelectModal: React.FC<IProps> = ({
 
   const handleTokenSelect = (assetId: string) => {
     onSelect(assetId);
+    setActiveFilter(0);
     onClose();
   };
   const filteredTokens = balances
@@ -89,7 +90,10 @@ const TokenSelectModal: React.FC<IProps> = ({
       visible={visible}
       style={{ maxWidth: 360 }}
       bodyStyle={{ minHeight: 440 }}
-      onClose={onClose}
+      onClose={() => {
+        setActiveFilter(0);
+        onClose();
+      }}
       title="Select a token"
     >
       <Input

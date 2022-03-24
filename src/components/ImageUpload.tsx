@@ -14,8 +14,14 @@ import SizedBox from "@components/SizedBox";
 import { ReactComponent as Cross } from "@src/assets/icons/darkClose.svg";
 
 interface IProps {
+  fileName: string | null;
+  onFileNameChange: (v: string | null) => void;
+
+  fileSize: string | null;
+  onFileSizeChange: (v: string | null) => void;
+
   image: string | null;
-  onChange: (image: File | null) => void;
+  onChange: (image: string | null) => void;
 }
 
 const Root = styled.div<{ image?: string }>`
@@ -63,11 +69,17 @@ const Container = styled.div<{ image: string | null }>`
   position: relative;
 `;
 
-const ImageUpload: React.FC<IProps> = ({ onChange, image, ...rest }) => {
+const ImageUpload: React.FC<IProps> = ({
+  onChange,
+  image,
+  fileName,
+  onFileNameChange,
+  fileSize,
+  onFileSizeChange,
+  ...rest
+}) => {
   const { notificationStore } = useStores();
-  const [base64Photo, setBase64Photo] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [fileSize, setFileSize] = useState<string | null>(null);
+  const [base64Photo, setBase64Photo] = useState<string | null>(image);
   const handleChange = async ({
     target: { files },
   }: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,11 +92,11 @@ const ImageUpload: React.FC<IProps> = ({ onChange, image, ...rest }) => {
     }
     try {
       const b64 = await toBase64(file);
-      setFileName(files[0].name);
+      onFileNameChange(files[0].name.toString());
       const compressed = await compressImage(b64);
       setBase64Photo(compressed);
-      onChange && (await onChange(toFile(compressed)));
-      setFileSize(getB64FileLength(compressed));
+      onChange && (await onChange(compressed));
+      onFileSizeChange(getB64FileLength(compressed));
     } catch (e: any) {}
   };
   return (
