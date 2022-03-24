@@ -31,8 +31,16 @@ const CreatePoolsStepper: React.FC<IProps> = () => {
       </Text>
       <SizedBox height={8} />
       <Card style={{ overflowX: "auto" }}>
-        <DesktopStepper activeStep={vm.step} steps={steps} />
-        <MobileStepper activeStep={vm.step} steps={steps} />
+        <DesktopStepper
+          activeStep={vm.step}
+          steps={steps}
+          onStepClick={(s) => vm.maxStep > s && vm.setStep(s, true)}
+        />
+        <MobileStepper
+          activeStep={vm.step}
+          steps={steps}
+          onStepClick={(s) => vm.maxStep > s && vm.setStep(s, true)}
+        />
       </Card>
     </Root>
   );

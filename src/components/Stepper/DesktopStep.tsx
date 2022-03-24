@@ -1,12 +1,12 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { HTMLAttributes } from "react";
 import Text from "@components/Text";
 import doneIcon from "@src/assets/icons/done.svg";
 import SizedBox from "../SizedBox";
 
 export type TStep = "previous" | "current" | "next";
 
-interface IProps {
+interface IProps extends HTMLAttributes<HTMLDivElement> {
   index: number;
   title: string;
   state: TStep;
@@ -17,6 +17,7 @@ const Root = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 `;
 
 const IconContainer = styled.div<{ state: TStep }>`
@@ -30,6 +31,7 @@ const IconContainer = styled.div<{ state: TStep }>`
   transition: 0.4s;
   position: relative;
   background: ${({ state }) => (state === "current" ? "#7075E9" : "#F1F2FE")};
+
   ${({ state }) => (state === "previous" ? "background: #c6c9f4;" : "")}
   & > div {
     color: ${({ state }) => (state === "current" ? "#ffffff" : "#7075E9")};
@@ -52,9 +54,9 @@ const TextContainer = styled(Text)<{ state: TStep }>`
   font-weight: ${({ state }) => (state === "current" ? 500 : 400)};
   color: ${({ state }) => (state === "next" ? "#8082C5" : "#363870")};
 `;
-const DesktopStep: React.FC<IProps> = ({ index, state, title }) => {
+const DesktopStep: React.FC<IProps> = ({ index, state, title, ...rest }) => {
   return (
-    <Root>
+    <Root {...rest}>
       <IconContainer state={state}>
         <Text fitContent size="small">
           {index + 1}

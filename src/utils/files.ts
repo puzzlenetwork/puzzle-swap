@@ -1,3 +1,5 @@
+import BN from "@src/utils/BN";
+
 export function toFile(b64: string) {
   var arr = b64.split(","),
     mime = arr[0].match(/:(.*?);/)![1],
@@ -58,3 +60,9 @@ export function compressImage(base64: string): Promise<string> {
     img.src = base64;
   });
 }
+
+export const getB64FileLength = (base64String: string): string => {
+  const stringLength = base64String.length - "data:image/png;base64,".length;
+  const sizeInBytes = 4 * Math.ceil(stringLength / 3) * 0.5624896334383812;
+  return new BN(sizeInBytes).div(1000).toFormat(2);
+};

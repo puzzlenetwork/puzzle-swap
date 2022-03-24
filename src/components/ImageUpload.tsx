@@ -1,17 +1,28 @@
 import styled from "@emotion/styled";
 import React, { useState } from "react";
-import { compressImage, toFile } from "@src/utils/files";
+import {
+  compressImage,
+  getB64FileLength,
+  toBase64,
+  toFile,
+} from "@src/utils/files";
 import { useStores } from "@stores";
 import plus from "@src/assets/icons/plus.svg";
+import Text from "@components/Text";
+import { Column, Row } from "@components/Flex";
+import SizedBox from "@components/SizedBox";
+import { ReactComponent as Cross } from "@src/assets/icons/darkClose.svg";
+import BN from "@src/utils/BN";
 
 interface IProps {
   image: string | null;
-  onChange: (image: File) => void;
-  loading: boolean;
-  setLoading: (loading: boolean) => void;
+  onChange: (image: File | null) => void;
 }
 
 const Root = styled.div<{ image?: string }>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   position: relative;
 
   .upload-btn-wrapper {
@@ -55,8 +66,9 @@ const Container = styled.div<{ image: string | null }>`
 
 const ImageUpload: React.FC<IProps> = ({ onChange, image, ...rest }) => {
   const { notificationStore } = useStores();
-  // eslint-disable-next-line
   const [base64Photo, setBase64Photo] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
+  const [fileSize, setFileSize] = useState<string | null>(null);
   const handleChange = async ({
     target: { files },
   }: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,21 +79,18 @@ const ImageUpload: React.FC<IProps> = ({ onChange, image, ...rest }) => {
         "Пожалуйста, выберите, файлы другого расширения"
       );
     }
-    rest.setLoading(true);
     try {
-      // @ts-ignore
       const b64 = await toBase64(file);
+      setFileName(files[0].name);
       const compressed = await compressImage(b64);
       setBase64Photo(compressed);
       onChange && (await onChange(toFile(compressed)));
-      rest.setLoading(false);
-    } catch (e: any) {
-      rest.setLoading(false);
-    }
+      setFileSize(getB64FileLength(compressed));
+    } catch (e: any) {}
   };
   return (
     <Root>
-      <Container className="upload-btn-wrapper" image={image}>
+      <Container className="upload-btn-wrapper" image={base64Photo}>
         {image == null && (
           <img
             src={plus}
@@ -89,17 +98,40 @@ const ImageUpload: React.FC<IProps> = ({ onChange, image, ...rest }) => {
             alt="plus"
           />
         )}
-        {rest.loading && <div>loading</div>}
         <div className="btn">
           <input
             accept="image/*"
-            disabled={rest.loading}
             type="file"
             name="file"
             onChange={handleChange}
           />
         </div>
       </Container>
+      <SizedBox width={8} />
+      {image == null ? (
+        <Column>
+          <Text weight={500}>Upload the image for the pool</Text>
+          <Text size="small" type="secondary">
+            JPG or PNG file, up to 1 MB
+          </Text>
+        </Column>
+      ) : (
+        <Column>
+          <Row alignItems="center">
+            <Text weight={500}>{fileName}</Text>
+            <Cross
+              style={{ cursor: "pointer", height: 20, width: 20 }}
+              onClick={() => {
+                onChange(null);
+                setBase64Photo(null);
+              }}
+            />
+          </Row>
+          <Text size="small" type="secondary">
+            {fileSize} KB
+          </Text>
+        </Column>
+      )}
     </Root>
   );
 };

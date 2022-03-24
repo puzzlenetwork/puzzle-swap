@@ -27,7 +27,7 @@ const SelectsAssets: React.FC<IProps> = () => {
   const [addAssetModal, openAssetModal] = useState(false);
   const vm = useCreateCustomPoolsVM();
   const assetNotification =
-    "Please note that the pool must include a USDN asset with at least 2% of pool weight and the maximum of 10 different assets.";
+    "Please note that the pool must include a PUZZLE asset with at least 2% of pool weight and the maximum of 10 different assets.";
   return (
     <Root>
       <Text type="secondary" weight={500}>
@@ -37,8 +37,9 @@ const SelectsAssets: React.FC<IProps> = () => {
       <Card style={{ width: "100%" }}>
         <Notification type="info" text={assetNotification} />
         <Grid>
-          {vm.poolsAssets.map(({ asset, share, locked }) => (
+          {vm.poolsAssets.map(({ asset, share, locked }, index) => (
             <TokenCompositionRow
+              key={index + "select-asset"}
               locked={locked}
               onLockClick={() => vm.updateLockedState(asset.assetId, !locked)}
               onUpdateAsset={vm.changeAssetInShareInPool}
@@ -71,10 +72,6 @@ const SelectsAssets: React.FC<IProps> = () => {
           onClose={() => openAssetModal(!addAssetModal)}
         />
       </Card>
-      <SizedBox height={24} />
-      <Button fixed disabled={!vm.canContinue} onClick={() => vm.setStep(1)}>
-        Continue
-      </Button>
     </Root>
   );
 };

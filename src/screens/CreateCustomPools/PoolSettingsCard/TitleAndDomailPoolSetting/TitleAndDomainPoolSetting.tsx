@@ -3,7 +3,6 @@ import React from "react";
 import Card from "@components/Card";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import PoolImage from "./PoolImage";
 import Input from "@components/Input";
 import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
 import { observer } from "mobx-react-lite";
@@ -11,6 +10,7 @@ import Button from "@components/Button";
 import { Row } from "@src/components/Flex";
 import ShareTokenInput from "@screens/CreateCustomPools/PoolSettingsCard/SelectAssets/ShareTokenInput";
 import Notification from "@src/components/Notification";
+import ImageUpload from "@components/ImageUpload";
 
 interface IProps {}
 
@@ -30,7 +30,7 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
       </Text>
       <SizedBox height={8} />
       <Card>
-        <PoolImage />
+        <ImageUpload onChange={vm.setLogo} image={vm.logo} />
         <SizedBox height={16} />
         <Text type="secondary" size="medium">
           Title of the pool
@@ -62,6 +62,7 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
         <Row>
           {Array.from({ length: 3 }).map((_, index) => (
             <Button
+              key={index + "percent"}
               kind="secondary"
               onClick={() => vm.setSwapFee(index + 1)}
               size="medium"
@@ -84,14 +85,6 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
           />
         )}
       </Card>
-      <SizedBox height={24} />
-      <Button
-        disabled={!vm.canContinue}
-        fixed
-        onClick={() => vm.setStep(vm.step + 1)}
-      >
-        Fill in all fields
-      </Button>
     </Root>
   );
 };

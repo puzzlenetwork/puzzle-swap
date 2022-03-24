@@ -23,11 +23,15 @@ interface IPoolToken {
 class CreateCustomPoolsVm {
   public rootStore: RootStore;
 
-  // loading: boolean = false;
-  // private _setLoading = (l: boolean) => (this.loading = l);
-
-  step: number = 2;
-  setStep = (s: number) => (this.step = s);
+  maxStep: number = 1;
+  step: number = 1;
+  setStep = (s: number, jump?: boolean) => {
+    // console.log("jumpmode", jump === true);
+    // if (jump === true) {
+    this.maxStep = s;
+    // }
+    this.step = s;
+  };
 
   poolsAssets: IPoolToken[] = [];
 
@@ -82,16 +86,7 @@ class CreateCustomPoolsVm {
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     this.poolsAssets = [
-      { asset: rootStore.accountStore.TOKENS.USDN, share: 50, locked: false },
-      { asset: rootStore.accountStore.TOKENS.PUZZLE, share: 30, locked: false },
-      { asset: rootStore.accountStore.TOKENS.USDT, share: 10, locked: false },
-      { asset: rootStore.accountStore.TOKENS.EURN, share: 10, locked: false },
-      { asset: rootStore.accountStore.TOKENS.EURN, share: 10, locked: false },
-      { asset: rootStore.accountStore.TOKENS.EURN, share: 10, locked: false },
-      { asset: rootStore.accountStore.TOKENS.EURN, share: 10, locked: false },
-      { asset: rootStore.accountStore.TOKENS.EURN, share: 10, locked: false },
-      { asset: rootStore.accountStore.TOKENS.EURN, share: 10, locked: false },
-      { asset: rootStore.accountStore.TOKENS.EURN, share: 10, locked: false },
+      { asset: rootStore.accountStore.TOKENS.PUZZLE, share: 50, locked: false },
     ];
     makeAutoObservable(this);
   }

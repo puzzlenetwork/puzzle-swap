@@ -52,8 +52,8 @@ const ShortCreationPoolInfo: React.FC<IProps> = () => {
         </Row>
         <SizedBox height={16} />
         <Tokens>
-          {vm.poolsAssets.map((token) => (
-            <Tag>
+          {vm.poolsAssets.map((token, index) => (
+            <Tag key={index + "custom-fee"}>
               <span>{token.asset.symbol}&nbsp;</span>
               <span style={{ color: "#8082C5" }}>{token.share}%</span>
             </Tag>

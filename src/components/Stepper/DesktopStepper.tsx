@@ -5,6 +5,7 @@ import DesktopStep from "./DesktopStep";
 interface IProps {
   steps: string[];
   activeStep: number;
+  onStepClick: (step: number) => void;
 }
 
 const Root = styled.div`
@@ -28,7 +29,7 @@ const Rope = styled.div<{ done: boolean }>`
   height: 12px;
   background: ${({ done }) => (done ? "#F1F2FE" : "#C6C9F4")};
 `;
-const Stepper: React.FC<IProps> = ({ steps, activeStep }) => {
+const Stepper: React.FC<IProps> = ({ steps, activeStep, onStepClick }) => {
   return (
     <Root>
       {steps.map((name, index, array) => {
@@ -39,8 +40,9 @@ const Stepper: React.FC<IProps> = ({ steps, activeStep }) => {
             ? "next"
             : "previous";
         return (
-          <>
+          <React.Fragment key={index + "step-step"}>
             <DesktopStep
+              onClick={() => onStepClick(index)}
               title={name}
               state={state}
               index={index}
@@ -51,7 +53,7 @@ const Stepper: React.FC<IProps> = ({ steps, activeStep }) => {
                 <Rope done={index >= activeStep} />
               </RopeContainer>
             )}
-          </>
+          </React.Fragment>
         );
       })}
     </Root>

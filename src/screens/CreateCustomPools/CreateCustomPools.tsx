@@ -9,6 +9,7 @@ import SizedBox from "@components/SizedBox";
 import PoolSettingsCard from "@screens/CreateCustomPools/PoolSettingsCard";
 import SummaryCard from "@screens/CreateCustomPools/SummaryCard";
 import CreatePoolsStepper from "@screens/CreateCustomPools/CreatePoolsStepper";
+import ContinueBtn from "@screens/CreateCustomPools/ContinueBtn";
 
 const Root = styled.div`
   display: flex;
@@ -32,6 +33,18 @@ const Grid = styled.div`
     column-gap: 40px;
   }
 `;
+const Subtitle = styled(Text)`
+  @media (min-width: 880px) {
+    max-width: 560px;
+  }
+`;
+const MobileContinueBtn = styled.div`
+  display: flex;
+  @media (min-width: 880px) {
+    background: pink;
+    display: none;
+  }
+`;
 const CreateCustomPoolsImpl: React.FC = () => {
   return (
     <Layout>
@@ -43,11 +56,21 @@ const CreateCustomPoolsImpl: React.FC = () => {
             <Text weight={500} size="large">
               Create pool
             </Text>
+            <SizedBox height={8} />
+            <Subtitle size="medium">
+              Create a custom megapool using one of the NFT Artefacts. You can
+              set any pool composition and maximise your liquidity providing
+              rewards. Moreover, being an owner, you will earn a part of all
+              fees collected by the pool.
+            </Subtitle>
             <SizedBox height={24} />
             <Grid>
               <CreatePoolsStepper />
               <PoolSettingsCard />
               <SummaryCard />
+              <MobileContinueBtn>
+                <ContinueBtn />
+              </MobileContinueBtn>
             </Grid>
           </Root>
         )}

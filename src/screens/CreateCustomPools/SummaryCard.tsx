@@ -79,6 +79,7 @@ const SummaryCard: React.FC<IProps> = () => {
         <Legend>
           {data.map(({ name }, index) => (
             <Row
+              key={index + "summary-card"}
               justifyContent="center"
               alignItems="center"
               mainAxisSize="fit-content"
