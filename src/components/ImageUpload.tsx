@@ -12,7 +12,6 @@ import Text from "@components/Text";
 import { Column, Row } from "@components/Flex";
 import SizedBox from "@components/SizedBox";
 import { ReactComponent as Cross } from "@src/assets/icons/darkClose.svg";
-import BN from "@src/utils/BN";
 
 interface IProps {
   image: string | null;
