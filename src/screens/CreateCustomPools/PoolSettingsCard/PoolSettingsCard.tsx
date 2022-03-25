@@ -16,7 +16,7 @@ const Root = styled.div`
 `;
 const DisplayContinueBtn = styled.div`
   display: none;
-  @media (min-width: 880px) {
+  @media (min-width: 1056px) {
     display: flex;
   }
 `;

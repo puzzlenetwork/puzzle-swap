@@ -43,7 +43,10 @@ const Legend = styled.div`
 const SummaryCard: React.FC<IProps> = () => {
   const vm = useCreateCustomPoolsVM();
   const data = vm.poolsAssets.reduce<{ name: string; value: number }[]>(
-    (acc, { asset, share }) => [...acc, { name: asset.symbol, value: share }],
+    (acc, { asset, share }) => [
+      ...acc,
+      { name: asset.symbol, value: share.toNumber() },
+    ],
     []
   );
 

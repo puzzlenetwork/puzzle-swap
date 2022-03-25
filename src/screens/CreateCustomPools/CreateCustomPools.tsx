@@ -40,7 +40,7 @@ const Subtitle = styled(Text)`
 `;
 const MobileContinueBtn = styled.div`
   display: flex;
-  @media (min-width: 880px) {
+  @media (min-width: 1056px) {
     background: pink;
     display: none;
   }

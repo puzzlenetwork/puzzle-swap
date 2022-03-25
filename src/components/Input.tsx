@@ -1,13 +1,21 @@
 import styled from "@emotion/styled";
-import React, { ChangeEvent, HTMLAttributes, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import Text from "@components/Text";
 import { ReactComponent as SearchIcon } from "@src/assets/icons/search.svg";
 
-interface IProps extends HTMLAttributes<HTMLDivElement> {
+interface IProps
+  extends Omit<
+    React.DetailedHTMLProps<
+      React.InputHTMLAttributes<HTMLInputElement>,
+      HTMLInputElement
+    >,
+    "onChange" | "prefix"
+  > {
   icon?: string;
   value?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   suffix?: JSX.Element;
+  prefix?: JSX.Element;
   suffixCondition?: boolean;
   error?: boolean;
   errorText?: string;
@@ -26,6 +34,7 @@ const Root = styled.div<{ focused?: boolean; error?: boolean }>`
       error ? "#ED827E" : !focused ? "#C6C9F4" : "#7075E9"};
   }
 
+  align-items: center;
   border-radius: 12px;
   justify-content: space-between;
   display: flex;
@@ -52,6 +61,7 @@ const Root = styled.div<{ focused?: boolean; error?: boolean }>`
 const Input: React.FC<IProps> = ({
   value,
   onChange,
+  prefix,
   suffix,
   suffixCondition,
   placeholder,
@@ -66,6 +76,7 @@ const Input: React.FC<IProps> = ({
     <>
       <Root focused={focused} error={error} {...rest}>
         {icon === "search" && <SearchIcon style={{ marginRight: 16 }} />}
+        {prefix && prefix}
         <input
           onChange={onChange}
           value={value}

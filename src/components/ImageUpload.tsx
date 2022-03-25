@@ -1,11 +1,6 @@
 import styled from "@emotion/styled";
 import React, { useState } from "react";
-import {
-  compressImage,
-  getB64FileLength,
-  toBase64,
-  toFile,
-} from "@src/utils/files";
+import { compressImage, getB64FileLength, toBase64 } from "@src/utils/files";
 import { useStores } from "@stores";
 import plus from "@src/assets/icons/plus.svg";
 import Text from "@components/Text";
@@ -68,7 +63,6 @@ const Container = styled.div<{ image: string | null }>`
   height: 56px;
   position: relative;
 `;
-
 const ImageUpload: React.FC<IProps> = ({
   onChange,
   image,
@@ -76,7 +70,6 @@ const ImageUpload: React.FC<IProps> = ({
   onFileNameChange,
   fileSize,
   onFileSizeChange,
-  ...rest
 }) => {
   const { notificationStore } = useStores();
   const [base64Photo, setBase64Photo] = useState<string | null>(image);

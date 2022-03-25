@@ -3,6 +3,7 @@ import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
 import { IToken } from "@src/constants";
+import BN from "@src/utils/BN";
 
 const ctx = React.createContext<CreateCustomPoolsVm | null>(null);
 
@@ -16,15 +17,15 @@ export const useCreateCustomPoolsVM = () => useVM(ctx);
 
 interface IPoolToken {
   asset: IToken;
-  share: number;
+  share: BN;
   locked: boolean;
 }
 
 class CreateCustomPoolsVm {
   public rootStore: RootStore;
 
-  maxStep: number = 0;
-  step: number = 0;
+  maxStep: number = 1;
+  step: number = 1;
   setStep = (s: number, jump = false) => {
     if (!jump) {
       this.maxStep = s;
@@ -39,36 +40,50 @@ class CreateCustomPoolsVm {
     const asset = balances?.find((b) => b.assetId === assetId);
     if (asset == null) return;
     const totalTakenShare = this.poolsAssets.reduce(
-      (acc, v) => acc + v.share,
-      0
+      (acc, v) => acc.plus(v.share),
+      BN.ZERO
     );
-    let share = 10;
-    if (totalTakenShare < 100) {
-      share = 100 - this.poolsAssets.reduce((acc, v) => acc + v.share, 0);
+    let share = new BN(10);
+    if (totalTakenShare.lt(1000)) {
+      share = new BN(1000).minus(
+        this.poolsAssets.reduce((acc, v) => acc.plus(v.share), BN.ZERO)
+      );
     } else {
       const notFixedValues = this.poolsAssets.reduce<{
-        totalShare: number;
-        amount: number;
+        totalShare: BN;
+        amount: BN;
       }>(
         (acc, item) => {
           if (!item.locked) {
             return {
-              totalShare: acc.totalShare + item.share,
-              amount: acc.amount + 1,
+              totalShare: acc.totalShare.plus(item.share),
+              amount: acc.amount.plus(1),
             };
           }
           return acc;
         },
-        { totalShare: 0, amount: 0 }
+        { totalShare: BN.ZERO, amount: BN.ZERO }
       );
-      share = notFixedValues.totalShare / (notFixedValues.amount + 1);
+      share = notFixedValues.totalShare.div(notFixedValues.amount.plus(1));
+      const decimal = share.toNumber() % 1;
+      console.log(decimal);
+      let attempt = true;
       this.poolsAssets.forEach((item, index) => {
         if (!item.locked) {
-          this.poolsAssets[index].share = share;
+          if (decimal < 0.5 && attempt) {
+            const floatShare = share.toSignificant(0);
+            share = notFixedValues.totalShare
+              .minus(floatShare)
+              .div(notFixedValues.amount);
+            this.poolsAssets[index].share = new BN(floatShare);
+            attempt = false;
+            return;
+          }
+          this.poolsAssets[index].share = new BN(share);
         }
       });
     }
-    this.poolsAssets.push({ asset, share, locked: false });
+    this.poolsAssets.push({ asset, share: new BN(share), locked: false });
   };
   removeAssetFromPool = (assetId: string) => {
     const puzzle = this.rootStore.accountStore.TOKENS.PUZZLE;
@@ -82,7 +97,7 @@ class CreateCustomPoolsVm {
     const indexOfObject = this.poolsAssets.findIndex(
       ({ asset }) => asset.assetId === assetId
     );
-    this.poolsAssets[indexOfObject].share = share;
+    this.poolsAssets[indexOfObject].share = new BN(share);
   };
   changeAssetInShareInPool = (oldAssetId: string, newAssetId: string) => {
     const indexOfObject = this.poolsAssets.findIndex(
@@ -106,8 +121,11 @@ class CreateCustomPoolsVm {
   domain: string = "";
   setDomain = (v: string) => (this.domain = v);
 
-  swapFee: number = 0.5;
-  setSwapFee = (v: number) => (this.swapFee = v);
+  poolSettingError: boolean = false;
+  setPoolSettingError = (v: boolean) => (this.poolSettingError = v);
+
+  swapFee: BN = new BN(50);
+  setSwapFee = (v: BN) => (this.swapFee = v);
 
   //logo details
   fileName: string | null = null;
@@ -120,7 +138,11 @@ class CreateCustomPoolsVm {
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     this.poolsAssets = [
-      { asset: rootStore.accountStore.TOKENS.PUZZLE, share: 50, locked: false },
+      {
+        asset: rootStore.accountStore.TOKENS.PUZZLE,
+        share: new BN(500),
+        locked: false,
+      },
     ];
     makeAutoObservable(this);
   }

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import { IToken } from "@src/constants";
 import Balance from "@src/entities/Balance";
 import RoundTokenIcon from "@components/RoundTokenIcon";
@@ -12,6 +12,7 @@ import { ReactComponent as Unlock } from "@src/assets/icons/unlock.svg";
 import { ReactComponent as Close } from "@src/assets/icons/smallClose.svg";
 import { Row } from "@src/components/Flex";
 import ShareTokenInput from "@screens/CreateCustomPools/PoolSettingsCard/SelectAssets/ShareTokenInput";
+import BN from "@src/utils/BN";
 
 interface IProps {
   balances: Balance[];
@@ -19,8 +20,8 @@ interface IProps {
   asset: IToken;
   onUpdateAsset: (assetId: string, newAssetId: string) => void;
 
-  share: number;
-  setShare: (e: ChangeEvent<HTMLInputElement>) => void;
+  share: BN;
+  setShare: (e: BN) => void;
 
   locked: boolean;
   onLockClick: () => void;
@@ -68,7 +69,7 @@ const TokenCompositionRow: React.FC<IProps> = ({
         />
       </AssetContainer>
       <Row mainAxisSize="fit-content" alignItems="center">
-        <ShareTokenInput value={share} onChange={setShare} />
+        <ShareTokenInput amount={share} onChange={setShare} disabled={locked} />
         <SizedBox width={10} />
         {locked ? (
           <Lock onClick={onLockClick} style={{ cursor: "pointer" }} />

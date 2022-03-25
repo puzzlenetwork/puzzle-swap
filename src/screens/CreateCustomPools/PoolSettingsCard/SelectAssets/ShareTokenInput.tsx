@@ -1,14 +1,28 @@
 import styled from "@emotion/styled";
-import React, { ChangeEvent, HTMLAttributes, useState } from "react";
+import React, { useState } from "react";
 import Text from "@components/Text";
+import AmountInput from "@components/AmountInput";
+import BigNumberInput from "@components/BigNumberInput";
+import BN from "@src/utils/BN";
 
-interface IProps extends HTMLAttributes<HTMLDivElement> {
-  value: number;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+interface IProps
+  extends Omit<
+    React.DetailedHTMLProps<
+      React.InputHTMLAttributes<HTMLInputElement>,
+      HTMLInputElement
+    >,
+    "onChange"
+  > {
+  amount: BN;
+  onChange: (e: BN) => void;
   error?: boolean;
 }
 
-const Root = styled.div<{ focused?: boolean; error?: boolean }>`
+const Root = styled.div<{
+  focused?: boolean;
+  error?: boolean;
+  disabled?: boolean;
+}>`
   position: relative;
   background: ${({ focused }) => (focused ? "#fffff" : "#f1f2fe")};
   border: 1px solid
@@ -40,31 +54,76 @@ const Root = styled.div<{ focused?: boolean; error?: boolean }>`
     border: none;
     background-color: transparent;
 
+    :disabled {
+      cursor: not-allowed;
+    }
+
     ::placeholder {
       color: #8082c5;
+    }
+
+    ::-webkit-outer-spin-button,
+    ::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+     {
+      -moz-appearance: textfield;
     }
   }
 `;
 
 const ShareTokenInput: React.FC<IProps> = ({
-  value,
+  amount,
   error,
   onChange,
-  ...rest
+  ...props
 }) => {
   const [focused, setFocused] = useState(false);
   return (
     <>
-      <Root focused={focused} error={error} {...rest}>
-        <input
-          type="number"
-          max="100"
-          min="0"
-          onChange={onChange}
-          value={value}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+      <Root focused={focused} error={error} {...props}>
+        <BigNumberInput
+          renderInput={(props, ref) => (
+            <AmountInput
+              {...props}
+              min={0.5}
+              max={100}
+              step={0.5}
+              style={{
+                fontSize: 16,
+                lineHeight: 24,
+              }}
+              onFocus={(e) => {
+                props.onFocus && props.onFocus(e);
+                !props.readOnly && setFocused(true);
+              }}
+              onBlur={(e) => {
+                props.onBlur && props.onBlur(e);
+                setFocused(false);
+              }}
+              ref={ref}
+            />
+          )}
+          autofocus={focused}
+          decimals={1}
+          value={amount}
+          onChange={(v) => onChange && onChange(v)}
+          placeholder="0.00"
         />
+        {/*<input*/}
+        {/*  disabled={rest.disabled}*/}
+        {/*  type="number"*/}
+        {/*  step={0.5}*/}
+        {/*  max={100}*/}
+        {/*  onChange={(e) => {*/}
+        {/*    // console.log(e.target.value);*/}
+        {/*    onChange(+e.target.value);*/}
+        {/*  }}*/}
+        {/*  value={value}*/}
+        {/*  onFocus={() => setFocused(true)}*/}
+        {/*  onBlur={() => setFocused(false)}*/}
+        {/*/>*/}
         <Text
           type="secondary"
           size="medium"

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useState } from "react";
 import Card from "@components/Card";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
@@ -11,6 +11,8 @@ import { Row } from "@src/components/Flex";
 import ShareTokenInput from "@screens/CreateCustomPools/PoolSettingsCard/SelectAssets/ShareTokenInput";
 import Notification from "@src/components/Notification";
 import ImageUpload from "@components/ImageUpload";
+import poolService from "@src/services/poolsService";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -22,7 +24,36 @@ const Root = styled.div`
 
 const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
   const vm = useCreateCustomPoolsVM();
-  const swapFeeError = vm.swapFee > 5;
+  const swapFeeError = vm.swapFee.gt(50);
+  const [customPercent, setCustomPercent] = useState<BN>(new BN(5));
+  const handleChangeCustomPercent = (v: BN) => {
+    setCustomPercent(v);
+    vm.setSwapFee(v);
+  };
+  const [validationProcessing, setValidationProcessing] = useState(false);
+  const [domainError, setDomainError] = useState<string | null>(null);
+  const checkDomain = (domain: string) => {
+    if (domain === "") return;
+    setValidationProcessing(true);
+    vm.setPoolSettingError(false);
+    if (
+      /[^a-zA-Z0-9_-]/.test(domain) ||
+      domain.length > 13 ||
+      domain.length < 2
+    ) {
+      setDomainError("2–13 lowercase latin and number characters");
+      setValidationProcessing(false);
+      return;
+    }
+    poolService
+      .checkDomain(domain)
+      .then(() => setDomainError(null))
+      .catch(() => {
+        vm.setPoolSettingError(true);
+        setDomainError("This domain is already taken");
+      })
+      .finally(() => setValidationProcessing(false));
+  };
   return (
     <Root>
       <Text type="secondary" weight={500}>
@@ -54,12 +85,16 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
         </Text>
         <SizedBox height={4} />
         <Input
+          prefix={<Text fitContent>puzzleswap.org/pools/</Text>}
           value={vm.domain}
+          onBlur={(e) => checkDomain(e.target.value)}
+          onFocus={() => setDomainError(null)}
           onChange={(e) => vm.setDomain(e.target.value)}
-          placeholder="puzzleswap.org/…"
+          placeholder="…"
           description="2–13 lowercase latin and number characters"
-          errorText="This domain is already taken"
-          error
+          errorText={domainError ?? ""}
+          disabled={validationProcessing}
+          error={domainError != null}
         />
         <SizedBox height={16} />
         <Text type="secondary" size="medium">
@@ -71,7 +106,10 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
             <Button
               key={index + "percent"}
               kind="secondary"
-              onClick={() => vm.setSwapFee(index + 1)}
+              onClick={() => {
+                setCustomPercent(new BN(5));
+                vm.setSwapFee(new BN(index + 10));
+              }}
               size="medium"
               style={{ marginRight: 4 }}
             >
@@ -79,9 +117,9 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
             </Button>
           ))}
           <ShareTokenInput
-            value={vm.swapFee}
+            amount={customPercent}
             error={swapFeeError}
-            onChange={(e) => vm.setSwapFee(Number(e.target.value))}
+            onChange={handleChangeCustomPercent}
           />
         </Row>
         {swapFeeError && (
