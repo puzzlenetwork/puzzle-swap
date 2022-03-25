@@ -145,7 +145,7 @@ export const MAINNET_POOL_CONFIG: Record<MAINNET_POOL_ID, IPoolConfig> = {
     tokens: [
       { ...mainnetTokens.SNSBT, shareAmount: 0.75, logo: tokenLogos.SNSBT },
       { ...mainnetTokens.NSBT, shareAmount: 0.20, logo: tokenLogos.NSBT },
-      { ...mainnetTokens.USDN, shareAmount: 0.5, logo: tokenLogos.USDN },
+      { ...mainnetTokens.USDN, shareAmount: 0.05, logo: tokenLogos.USDN },
     ],
   },
   [MAINNET_POOL_ID.www]: {
