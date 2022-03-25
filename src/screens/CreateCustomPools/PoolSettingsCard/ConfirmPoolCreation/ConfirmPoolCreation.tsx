@@ -2,8 +2,8 @@ import styled from "@emotion/styled";
 import React from "react";
 import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
-import ShortCreationPoolInfo from "@screens/CreateCustomPools/PoolSettingsCard/ConfirmPoolCreation/ShortCreationPoolInfo";
-import PoolCreationPayment from "@screens/CreateCustomPools/PoolSettingsCard/ConfirmPoolCreation/PoolCreationPayment";
+import ShortCreationPoolInfo from "./ShortCreationPoolInfo";
+import PoolCreationPayment from "./PoolCreationPayment";
 
 interface IProps {}
 

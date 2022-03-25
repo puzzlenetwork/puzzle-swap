@@ -12,7 +12,7 @@ import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 import dayjs from "dayjs";
 import Skeleton from "react-loading-skeleton";
-import { Loading } from "@components/Loading";
+import Loading from "@components/Loading";
 
 const Root = styled.div`
   display: grid;

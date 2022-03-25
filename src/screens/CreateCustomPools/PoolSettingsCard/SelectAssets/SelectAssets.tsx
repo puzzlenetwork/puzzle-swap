@@ -46,9 +46,7 @@ const SelectsAssets: React.FC<IProps> = () => {
               balances={vm.tokensToAdd}
               asset={asset}
               share={share}
-              setShare={(v) =>
-                vm.changeAssetShareInPool(asset.assetId, Number(v))
-              }
+              setShare={(v) => vm.changeAssetShareInPool(asset.assetId, v)}
               onDelete={() => vm.removeAssetFromPool(asset.assetId)}
             />
           ))}

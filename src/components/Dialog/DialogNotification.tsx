@@ -12,10 +12,13 @@ import { Link } from "react-router-dom";
 import Button from "@components/Button";
 import { AccountStore } from "@stores";
 import { Anchor } from "@components/Anchor";
+import SuccessNft from "@components/Dialog/SuccessNft";
+import surf from "@src/assets/nfts/surf.png";
 
 export interface IDialogNotificationProps extends IDialogPropTypes {
   title: string;
   description?: string;
+  icon?: JSX.Element;
   type?: "success" | "error" | "warning";
   buttons?: React.FC[];
   buttonsDirection?: "row" | "column";
@@ -45,19 +48,23 @@ const ButtonsContainer = styled.div<{ direction?: "row" | "column" }>`
 const DialogNotification: React.FC<IDialogNotificationProps> = ({
   title,
   description,
+  icon,
   type = "success",
   buttonsDirection = "column",
   buttons = [],
   ...rest
 }) => {
+  console.log(type);
   return (
     <Dialog {...rest}>
       <Root style={{}} alignItems="center" crossAxisSize="max">
         <SizedBox height={32} />
-        {type === "success" && <SuccessIcon />}
-        {type === "error" && <ErrorIcon />}
-        {type === "warning" && <WarningIcon />}
-
+        <SuccessNft image={surf} />,
+        <>
+          {type === "success" && <SuccessIcon />}
+          {type === "error" && <ErrorIcon />}
+          {type === "warning" && <WarningIcon />}
+        </>
         <SizedBox height={28} />
         <Text className="title">{title}</Text>
         {description && (
@@ -178,4 +185,31 @@ export const buildWarningLiquidityDialogParams = ({
     ],
   };
 };
+
+//NFTS
+
+type TBuildSuccessNFTSaleDialogParamsProps = {
+  picture: string;
+  name: string;
+};
+
+export const buildSuccessNFTSaleDialogParams = ({
+  name,
+  picture,
+}: TBuildSuccessNFTSaleDialogParamsProps): IDialogNotificationProps => {
+  return {
+    title: `You’ve got “${name}” NFT!`,
+    description: "You can use it to pay for the creation of the pool",
+    // icon: <SuccessNft image={picture} />,
+    icon: <div>{picture}</div>,
+    buttons: [
+      () => (
+        <Button size="medium" fixed>
+          Use it to create the pool
+        </Button>
+      ),
+    ],
+  };
+};
+
 export default DialogNotification;

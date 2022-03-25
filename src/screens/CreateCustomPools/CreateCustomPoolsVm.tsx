@@ -4,6 +4,12 @@ import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
 import { IToken } from "@src/constants";
 import BN from "@src/utils/BN";
+import { sleep } from "@src/utils/sleep";
+import {
+  buildSuccessNFTSaleDialogParams,
+  IDialogNotificationProps,
+} from "@components/Dialog/DialogNotification";
+import surf from "@src/assets/nfts/surf.png";
 
 const ctx = React.createContext<CreateCustomPoolsVm | null>(null);
 
@@ -24,8 +30,23 @@ interface IPoolToken {
 class CreateCustomPoolsVm {
   public rootStore: RootStore;
 
-  maxStep: number = 1;
-  step: number = 1;
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore;
+    this.poolsAssets = [
+      {
+        asset: rootStore.accountStore.TOKENS.PUZZLE,
+        share: new BN(500),
+        locked: false,
+      },
+    ];
+    makeAutoObservable(this);
+  }
+
+  loading: boolean = false;
+  private _setLoading = (l: boolean) => (this.loading = l);
+
+  maxStep: number = 2;
+  step: number = 2;
   setStep = (s: number, jump = false) => {
     if (!jump) {
       this.maxStep = s;
@@ -66,7 +87,6 @@ class CreateCustomPoolsVm {
       );
       share = notFixedValues.totalShare.div(notFixedValues.amount.plus(1));
       const decimal = share.toNumber() % 1;
-      console.log(decimal);
       let attempt = true;
       this.poolsAssets.forEach((item, index) => {
         if (!item.locked) {
@@ -93,11 +113,11 @@ class CreateCustomPoolsVm {
     );
     this.poolsAssets.splice(indexOfObject, 1);
   };
-  changeAssetShareInPool = (assetId: string, share: number) => {
+  changeAssetShareInPool = (assetId: string, share: BN) => {
     const indexOfObject = this.poolsAssets.findIndex(
       ({ asset }) => asset.assetId === assetId
     );
-    this.poolsAssets[indexOfObject].share = new BN(share);
+    this.poolsAssets[indexOfObject].share = share;
   };
   changeAssetInShareInPool = (oldAssetId: string, newAssetId: string) => {
     const indexOfObject = this.poolsAssets.findIndex(
@@ -135,30 +155,9 @@ class CreateCustomPoolsVm {
   logo: string | null = null;
   setLogo = (v: any) => (this.logo = v);
 
-  constructor(rootStore: RootStore) {
-    this.rootStore = rootStore;
-    this.poolsAssets = [
-      {
-        asset: rootStore.accountStore.TOKENS.PUZZLE,
-        share: new BN(500),
-        locked: false,
-      },
-    ];
-    makeAutoObservable(this);
-  }
-
-  get canContinue() {
-    switch (this.step) {
-      case 0:
-        return true;
-      case 1:
-        return true;
-      case 2:
-        return true;
-      default:
-        return false;
-    }
-  }
+  public notificationParams: IDialogNotificationProps | null = null;
+  public setNotificationParams = (params: IDialogNotificationProps | null) =>
+    (this.notificationParams = params);
 
   get tokensToAdd() {
     const balances = this.rootStore.accountStore.assetBalances;
@@ -169,4 +168,18 @@ class CreateCustomPoolsVm {
     );
     return balances.filter((b) => !currentTokens.includes(b.assetId));
   }
+
+  artefactToSpend: string | null = null;
+  setArtefactToSpend = (v: string | null) => (this.fileName = v);
+
+  doesUserHasArtifact = false;
+
+  buyRandomArtefact = async () => {
+    this._setLoading(true);
+    await sleep(1000);
+    this.setNotificationParams(
+      buildSuccessNFTSaleDialogParams({ name: "Surf", picture: surf })
+    );
+    this._setLoading(false);
+  };
 }

@@ -12,7 +12,7 @@ import { useStakingVM } from "@screens/Staking/StakingVM";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 import dayjs from "dayjs";
-import { Loading } from "@components/Loading";
+import Loading from "@components/Loading";
 import Skeleton from "react-loading-skeleton";
 
 const Root = styled.div`

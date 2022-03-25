@@ -12,7 +12,7 @@ import SizedBox from "@src/components/SizedBox";
 import { ReactComponent as LinkIcon } from "@src/assets/icons/link.svg";
 import Text from "@components/Text";
 import { Anchor } from "@components/Anchor";
-import { Loading } from "@components/Loading";
+import Loading from "@components/Loading";
 
 interface IProps {}
 

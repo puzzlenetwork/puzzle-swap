@@ -10,7 +10,7 @@ import { Row } from "@components/Flex";
 import WithdrawTokenRow from "./WithdrawTokenRow";
 import { useWithdrawLiquidityVM } from "@screens/WithdrawLiquidity/WithdrawLiquidityVM";
 import { observer } from "mobx-react-lite";
-import { Loading } from "@components/Loading";
+import Loading from "@components/Loading";
 
 interface IProps {}
 

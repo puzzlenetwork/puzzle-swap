@@ -3,7 +3,7 @@ import { useStores } from "@stores";
 import Button from "@components/Button";
 import { observer } from "mobx-react-lite";
 import { useTradeVM } from "@screens/TradeInterface/TradeVM";
-import { Loading } from "@components/Loading";
+import Loading from "@components/Loading";
 
 interface IProps {}
 
