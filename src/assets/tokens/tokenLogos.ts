@@ -36,6 +36,7 @@ import wctLogo from "@src/assets/tokens/WCT.svg";
 import munaLogo from "@src/assets/tokens/MUNA.svg";
 import bnbLogo from "@src/assets/tokens/BNB.svg";
 import shegLogo from "@src/assets/tokens/SHEG.png";
+import snsbtLogo from "@src/assets/tokens/SNSBT.png";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -75,6 +76,7 @@ const tokenLogos: Record<string, string> = {
   MUNA: munaLogo,
   BNB: bnbLogo,
   SHEG: shegLogo,
+  SNSBT: snsbtLogo,
   UNKNOWN: unknownLogo,
 };
 
