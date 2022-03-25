@@ -16,6 +16,7 @@ export enum MAINNET_POOL_ID {
   muna = "muna",
   sheg = "sheg",
   pool10 = "pool10",
+  nsbt = "nsbt",
   //   btc = "btc",
 }
 
@@ -38,6 +39,7 @@ export const MAINNET_ROUTES = {
     muna: `${MAINNET_POOL_ID.muna}/withdraw`,
     sheg: `${MAINNET_POOL_ID.sheg}/withdraw`,
     pool10: `${MAINNET_POOL_ID.pool10}/withdraw`,
+    nsbt: `${MAINNET_POOL_ID.nsbt}/withdraw`,
     //     btc: `${MAINNET_POOL_ID.btc}/withdraw`,
   },
   pools: {
@@ -52,6 +54,7 @@ export const MAINNET_ROUTES = {
     muna: MAINNET_POOL_ID.muna,
     sheg: MAINNET_POOL_ID.sheg,
     pool10: MAINNET_POOL_ID.pool10,
+    nsbt: MAINNET_POOL_ID.nsbt,
     //     btc: MAINNET_POOL_ID.btc,
   },
   addLiquidity: {
@@ -65,6 +68,7 @@ export const MAINNET_ROUTES = {
     muna: `${MAINNET_POOL_ID.muna}/addLiquidity`,
     sheg: `${MAINNET_POOL_ID.sheg}/addLiquidity`,
     pool10: `${MAINNET_POOL_ID.pool10}/addLiquidity`,
+    nsbt: `${MAINNET_POOL_ID.nsbt}/addLiquidity`,
     //     btc: `${MAINNET_POOL_ID.btc}/addLiquidity`,
   },
   addOneToken: {
@@ -78,6 +82,7 @@ export const MAINNET_ROUTES = {
     muna: `${MAINNET_POOL_ID.muna}/addOneToken`,
     sheg: `${MAINNET_POOL_ID.sheg}/addOneToken`,
     pool10: `${MAINNET_POOL_ID.pool10}/addOneToken`,
+    nsbt: `${MAINNET_POOL_ID.nsbt}/addOneToken`,
     //     btc: `${MAINNET_POOL_ID.btc}/addOneToken`,
   },
   invest: {
@@ -91,6 +96,7 @@ export const MAINNET_ROUTES = {
     muna: `${MAINNET_POOL_ID.muna}/invest`,
     sheg: `${MAINNET_POOL_ID.sheg}/invest`,
     pool10: `${MAINNET_POOL_ID.pool10}/invest`,
+    nsbt: `${MAINNET_POOL_ID.nsbt}/invest`,
     //     btc: `${MAINNET_POOL_ID.btc}/invest`,
   },
 };
@@ -126,6 +132,20 @@ export const MAINNET_POOL_CONFIG: Record<MAINNET_POOL_ID, IPoolConfig> = {
       { ...mainnetTokens.BTC, shareAmount: 0.25, logo: tokenLogos.BTC },
       { ...mainnetTokens.ETH, shareAmount: 0.25, logo: tokenLogos.ETH },
       { ...mainnetTokens.USDN, shareAmount: 0.25, logo: tokenLogos.USDN },
+    ],
+  },
+  [MAINNET_POOL_ID.nsbt]: {
+    contractAddress: "3PEStCRPQuW3phthTtQ5upGeb4WZ47kssyM",
+    layer2Address: "3PD7yAzyCEMNBnXzE8AuSsqogHUpSLjwAYA",
+    baseTokenId: mainnetTokens.NSBT.assetId,
+    name: "sNSBT/NSBT pool",
+    logo: tokenLogos.SNSBT,
+    defaultAssetId0: mainnetTokens.SNSBT.assetId,
+    defaultAssetId1: mainnetTokens.NSBT.assetId,
+    tokens: [
+      { ...mainnetTokens.SNSBT, shareAmount: 0.75, logo: tokenLogos.SNSBT },
+      { ...mainnetTokens.NSBT, shareAmount: 0.20, logo: tokenLogos.NSBT },
+      { ...mainnetTokens.USDN, shareAmount: 0.5, logo: tokenLogos.USDN },
     ],
   },
   [MAINNET_POOL_ID.www]: {
