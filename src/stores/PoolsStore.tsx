@@ -68,7 +68,7 @@ export default class PoolsStore {
     );
   }
 
-  usdnRate = (assetId: string, coefficient = 0.98): BN | null => {
+  usdnRate = (assetId: string, coefficient = 1): BN | null => {
     const pool = this.pools.find(({ tokens }) =>
       tokens.some((t) => t.assetId === assetId)
     );

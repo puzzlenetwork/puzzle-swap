@@ -8,7 +8,16 @@
       "defi"
     ]
   },
-    "PUZZLE": {
+  "SNSBT": {
+    "assetId": "8wUmN9Y15f3JR4KZfE81XLXpkdgwnqoBNG6NmocZpKQx",
+    "name": "Staked NSBT",
+    "symbol": "SNSBT",
+    "decimals": 6,
+    "category": [
+      "defi"
+    ]
+  },
+  "PUZZLE": {
     "assetId": "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS",
     "name": "PUZZLE",
     "symbol": "PUZZLE",
