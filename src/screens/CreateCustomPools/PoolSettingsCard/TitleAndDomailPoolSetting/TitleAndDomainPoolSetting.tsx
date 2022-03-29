@@ -22,6 +22,18 @@ const Root = styled.div`
   width: 100%;
 `;
 
+const Tag = styled.div<{ active?: boolean }>`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 20px;
+  color: ${({ active }) => (active ? "#ffffff" : "")};
+  background: ${({ active }) => (active ? "#7075E9" : "#fffff")};
+  border: 1px solid ${({ active }) => (active ? "#7075E9" : "#f1f2fe")};
+  box-sizing: border-box;
+  border-radius: 10px;
+`;
 const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
   const vm = useCreateCustomPoolsVM();
   const swapFeeError = vm.swapFee.gt(50);
@@ -103,18 +115,17 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
         <SizedBox height={8} />
         <Row>
           {Array.from({ length: 3 }).map((_, index) => (
-            <Button
+            <Tag
               key={index + "percent"}
-              kind="secondary"
               onClick={() => {
                 setCustomPercent(new BN(5));
-                vm.setSwapFee(new BN(index * 10));
+                vm.setSwapFee(new BN((index + 1) * 10));
               }}
-              size="medium"
+              active={vm.swapFee.eq(new BN((index + 1) * 10))}
               style={{ marginRight: 4 }}
             >
               {index + 1} %
-            </Button>
+            </Tag>
           ))}
           <ShareTokenInput
             amount={customPercent}

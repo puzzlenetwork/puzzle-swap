@@ -45,8 +45,8 @@ class CreateCustomPoolsVm {
   loading: boolean = false;
   private _setLoading = (l: boolean) => (this.loading = l);
 
-  maxStep: number = 3;
-  step: number = 3;
+  maxStep: number = 2;
+  step: number = 2;
   setStep = (s: number, jump = false) => {
     if (!jump) {
       this.maxStep = s;
@@ -172,7 +172,7 @@ class CreateCustomPoolsVm {
   artefactToSpend: string | null = null;
   setArtefactToSpend = (v: string | null) => (this.fileName = v);
 
-  doesUserHasArtifact = false;
+  doesUserHasArtifact = true;
 
   buyRandomArtefact = async () => {
     this._setLoading(true);

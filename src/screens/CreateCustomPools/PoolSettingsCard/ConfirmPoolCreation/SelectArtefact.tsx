@@ -1,22 +1,25 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useState } from "react";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import Text from "@components/Text";
 import { Column, Row } from "@src/components/Flex";
 import SizedBox from "@components/SizedBox";
 import { ReactComponent as Arrow } from "@src/assets/icons/arrowDown.svg";
+import SelectNftDialog from "@screens/CreateCustomPools/PoolSettingsCard/ConfirmPoolCreation/SelectNftDialog";
 
 interface IProps {}
 
 const Root = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 const SelectArtefact: React.FC<IProps> = () => {
+  const [openNftDialog, setOpenNftDialog] = useState(false);
   return (
     <Root>
-      <Row>
+      <Row onClick={() => setOpenNftDialog(true)}>
         <SquareTokenIcon />
         <SizedBox width={8} />
         <Column>
@@ -25,6 +28,11 @@ const SelectArtefact: React.FC<IProps> = () => {
         </Column>
       </Row>
       <Arrow style={{ cursor: "pointer" }} />
+      <SelectNftDialog
+        visible={openNftDialog}
+        onClose={() => setOpenNftDialog(false)}
+        title="Select NTF"
+      />
     </Root>
   );
 };
