@@ -38,9 +38,10 @@ const ContinueBtn: React.FC = () => {
         </Button>
       );
     case 3:
+      const correct3 = !vm.providedPercentOfPool.eq(0);
       return (
-        <Button onClick={() => console.log("hurray")} fixed>
-          Continue
+        <Button onClick={vm.provideLiquidityToPool} fixed disabled={!correct3}>
+          {correct3 ? "Continue" : "Enter amount to provide"}
         </Button>
       );
     default:

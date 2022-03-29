@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import React from "react";
-import malibu from "@src/assets/icons/nftFrame.svg";
+import malibu from "@src/assets/icons/malibu.svg";
 import frame from "@src/assets/icons/greenFrame.svg";
 
 interface IProps {
@@ -17,33 +17,37 @@ const Frame = styled.div`
   width: 120px;
   height: 120px;
   position: relative;
-`;
-const Nft = styled.img`
-  position: absolute;
-  top: 12%;
-  left: 5%;
-  width: 72px;
-  height: 72px;
-  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 const Green = styled.div`
   background-image: url(${frame});
   background-size: cover;
   background-position: center;
   position: absolute;
-  top: 12%;
-  left: 5%;
   width: 120px;
   height: 120px;
   z-index: 3;
 `;
+const Nft = styled.div<{ image: string }>`
+  ${({ image }) =>
+    image != null
+      ? `background-image: url(${image});`
+      : `background: #C6C9F4;`};
+  background-size: cover;
+  background-position: center;
+  position: absolute;
+  border-radius: 12px;
+  width: 72px;
+  height: 72px;
+  z-index: 2;
+`;
 const SuccessNft: React.FC<IProps> = ({ image }) => {
-  console.log(image);
   return (
     <Frame>
-      <Green>
-        <Nft src={image} alt="nft" />
-      </Green>
+      <Nft image={image} />
+      <Green />
     </Frame>
   );
 };

@@ -34,6 +34,7 @@ const PoolCreationPayment: React.FC<IProps> = () => {
         buttons={vm.notificationParams?.buttons}
         style={{ maxWidth: 360 }}
         visible={vm.notificationParams != null}
+        icon={vm.notificationParams?.icon}
       />
     </Root>
   );

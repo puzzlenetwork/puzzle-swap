@@ -13,7 +13,6 @@ import Button from "@components/Button";
 import { AccountStore } from "@stores";
 import { Anchor } from "@components/Anchor";
 import SuccessNft from "@components/Dialog/SuccessNft";
-import surf from "@src/assets/nfts/surf.png";
 
 export interface IDialogNotificationProps extends IDialogPropTypes {
   title: string;
@@ -54,16 +53,22 @@ const DialogNotification: React.FC<IDialogNotificationProps> = ({
   buttons = [],
   ...rest
 }) => {
-  console.log(type);
   return (
     <Dialog {...rest}>
       <Root style={{}} alignItems="center" crossAxisSize="max">
-        <SizedBox height={32} />
-        <SuccessNft image={surf} />,
         <>
-          {type === "success" && <SuccessIcon />}
-          {type === "error" && <ErrorIcon />}
-          {type === "warning" && <WarningIcon />}
+          {icon != null ? (
+            <React.Fragment>
+              <SizedBox height={16} />
+              {icon}
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              {type === "success" && <SuccessIcon />}
+              {type === "error" && <ErrorIcon />}
+              {type === "warning" && <WarningIcon />}
+            </React.Fragment>
+          )}
         </>
         <SizedBox height={28} />
         <Text className="title">{title}</Text>
@@ -191,20 +196,21 @@ export const buildWarningLiquidityDialogParams = ({
 type TBuildSuccessNFTSaleDialogParamsProps = {
   picture: string;
   name: string;
+  onContinue?: () => void;
 };
 
 export const buildSuccessNFTSaleDialogParams = ({
   name,
   picture,
+  onContinue,
 }: TBuildSuccessNFTSaleDialogParamsProps): IDialogNotificationProps => {
   return {
     title: `You’ve got “${name}” NFT!`,
     description: "You can use it to pay for the creation of the pool",
-    // icon: <SuccessNft image={picture} />,
-    icon: <div>{picture}</div>,
+    icon: <SuccessNft image={picture} />,
     buttons: [
       () => (
-        <Button size="medium" fixed>
+        <Button size="medium" fixed onClick={onContinue}>
           Use it to create the pool
         </Button>
       ),

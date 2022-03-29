@@ -108,7 +108,7 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
               kind="secondary"
               onClick={() => {
                 setCustomPercent(new BN(5));
-                vm.setSwapFee(new BN(index + 10));
+                vm.setSwapFee(new BN(index * 10));
               }}
               size="medium"
               style={{ marginRight: 4 }}

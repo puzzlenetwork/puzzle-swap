@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { makeAutoObservable } from "mobx";
+import { action, makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
 import { IToken } from "@src/constants";
 import BN from "@src/utils/BN";
@@ -45,8 +45,8 @@ class CreateCustomPoolsVm {
   loading: boolean = false;
   private _setLoading = (l: boolean) => (this.loading = l);
 
-  maxStep: number = 2;
-  step: number = 2;
+  maxStep: number = 3;
+  step: number = 3;
   setStep = (s: number, jump = false) => {
     if (!jump) {
       this.maxStep = s;
@@ -181,5 +181,33 @@ class CreateCustomPoolsVm {
       buildSuccessNFTSaleDialogParams({ name: "Surf", picture: surf })
     );
     this._setLoading(false);
+  };
+
+  providedPercentOfPool: BN = new BN(100);
+  @action.bound setProvidedPercentOfPool = (value: number) =>
+    (this.providedPercentOfPool = new BN(value));
+
+  maxToProvide: BN = new BN(0);
+  _setMaxToProvide = (value: number) => (this.maxToProvide = new BN(value));
+
+  get totalAmountToAddLiquidity(): string | null {
+    // const tokensToDepositAmounts = this.tokensToDepositAmounts;
+    // if (tokensToDepositAmounts == null || this.pool == null) return null;
+    // const total = this.pool.tokens.reduce<BN>((acc, token) => {
+    //   const rate =
+    //       this.rootStore.poolsStore.usdnRate(token.assetId, 1) ?? BN.ZERO;
+    //   const balance = tokensToDepositAmounts[token.assetId];
+    //   const usdnEquivalent = BN.formatUnits(
+    //       balance.times(rate),
+    //       token.decimals
+    //   );
+    //   return acc.plus(usdnEquivalent);
+    // }, BN.ZERO);
+    // return !total.isNaN() ? "$ " + total.toFormat(2) : null;
+    return BN.ZERO.toFormat();
+  }
+
+  provideLiquidityToPool = async () => {
+    console.log("provideLiquidityToPool");
   };
 }

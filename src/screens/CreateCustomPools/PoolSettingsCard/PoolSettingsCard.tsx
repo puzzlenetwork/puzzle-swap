@@ -7,6 +7,7 @@ import TitleAndDomainPoolSetting from "./TitleAndDomailPoolSetting";
 import styled from "@emotion/styled";
 import ContinueBtn from "@screens/CreateCustomPools/ContinueBtn";
 import SizedBox from "@components/SizedBox";
+import AddLiquidityToCustomPool from "@screens/CreateCustomPools/PoolSettingsCard/AddLiquidityToCustomPool";
 
 interface IProps {}
 
@@ -30,6 +31,8 @@ const PoolSettingsCard: React.FC<IProps> = () => {
         return <TitleAndDomainPoolSetting />;
       case 2:
         return <ConfirmPoolCreation />;
+      case 3:
+        return <AddLiquidityToCustomPool />;
       default:
         return null;
     }

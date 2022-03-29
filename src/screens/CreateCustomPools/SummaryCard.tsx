@@ -102,7 +102,7 @@ const SummaryCard: React.FC<IProps> = () => {
           Max to provide
         </Text>
         <Text weight={500} fitContent>
-          $0.00
+          ${vm.maxToProvide.toFormat(2)}
         </Text>
         <SizedBox height={14} />
       </Card>
