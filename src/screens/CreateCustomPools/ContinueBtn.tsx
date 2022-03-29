@@ -20,7 +20,9 @@ const ContinueBtn: React.FC = () => {
             ? "Select assets"
             : totalShare.eq(1000)
             ? "Continue"
-            : "Total share should be 100%"}
+            : `Total share should be 100%, now ${vm.totalTakenShare
+                .div(10)
+                .toFormat(1)}%`}
         </Button>
       );
     case 1:

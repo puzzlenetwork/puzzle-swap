@@ -45,8 +45,8 @@ class CreateCustomPoolsVm {
   loading: boolean = false;
   private _setLoading = (l: boolean) => (this.loading = l);
 
-  maxStep: number = 2;
-  step: number = 2;
+  maxStep: number = 0;
+  step: number = 0;
   setStep = (s: number, jump = false) => {
     if (!jump) {
       this.maxStep = s;
@@ -56,7 +56,32 @@ class CreateCustomPoolsVm {
 
   poolsAssets: IPoolToken[] = [];
 
+  get totalTakenShare(): BN {
+    return this.poolsAssets.reduce((acc, v) => acc.plus(v.share), BN.ZERO);
+  }
+
   addAssetToPool = (assetId: string) => {
+    const balances = this.rootStore.accountStore.assetBalances;
+    const asset = balances?.find((b) => b.assetId === assetId);
+    if (asset == null) return;
+    this.poolsAssets.push({ asset: asset, share: BN.ZERO, locked: false });
+    const unlockedPercent = this.poolsAssets.reduce(
+      (acc, v) => (v.locked ? acc.minus(v.share) : acc),
+      new BN(1000)
+    );
+    const unlockedCount = this.poolsAssets.reduce(
+      (acc, v) => (!v.locked ? acc + 1 : acc),
+      0
+    );
+    const averageUnlockedPercent = unlockedPercent.div(unlockedCount).div(10);
+    this.poolsAssets.forEach((v, i) => {
+      if (v.locked) return;
+      const percent = Math.round(averageUnlockedPercent.toNumber() * 2) / 2;
+      this.poolsAssets[i].share = new BN(percent).times(10);
+    });
+  };
+
+  _addAssetToPool = (assetId: string) => {
     const balances = this.rootStore.accountStore.assetBalances;
     const asset = balances?.find((b) => b.assetId === assetId);
     if (asset == null) return;
@@ -70,19 +95,14 @@ class CreateCustomPoolsVm {
         this.poolsAssets.reduce((acc, v) => acc.plus(v.share), BN.ZERO)
       );
     } else {
-      const notFixedValues = this.poolsAssets.reduce<{
-        totalShare: BN;
-        amount: BN;
-      }>(
-        (acc, item) => {
-          if (!item.locked) {
-            return {
-              totalShare: acc.totalShare.plus(item.share),
-              amount: acc.amount.plus(1),
-            };
-          }
-          return acc;
-        },
+      const notFixedValues = this.poolsAssets.reduce(
+        (acc, item) =>
+          item.locked
+            ? acc
+            : {
+                totalShare: acc.totalShare.plus(item.share),
+                amount: acc.amount.plus(1),
+              },
         { totalShare: BN.ZERO, amount: BN.ZERO }
       );
       share = notFixedValues.totalShare.div(notFixedValues.amount.plus(1));
