@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { ReactNode } from "react";
+import React from "react";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import Card from "@components/Card";

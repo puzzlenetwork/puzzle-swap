@@ -6,7 +6,6 @@ import SizedBox from "@components/SizedBox";
 import Input from "@components/Input";
 import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
 import { observer } from "mobx-react-lite";
-import Button from "@components/Button";
 import { Row } from "@src/components/Flex";
 import ShareTokenInput from "@screens/CreateCustomPools/PoolSettingsCard/SelectAssets/ShareTokenInput";
 import Notification from "@src/components/Notification";
@@ -33,6 +32,7 @@ const Tag = styled.div<{ active?: boolean }>`
   border: 1px solid ${({ active }) => (active ? "#7075E9" : "#f1f2fe")};
   box-sizing: border-box;
   border-radius: 10px;
+  cursor: pointer;
 `;
 const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
   const vm = useCreateCustomPoolsVM();

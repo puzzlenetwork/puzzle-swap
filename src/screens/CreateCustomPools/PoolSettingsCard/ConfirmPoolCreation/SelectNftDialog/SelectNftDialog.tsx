@@ -1,9 +1,6 @@
 import React from "react";
 import Dialog from "@components/Dialog";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
-import surf from "@src/assets/nfts/surf.png";
-import burj from "@src/assets/nfts/burj.png";
-import desert from "@src/assets/nfts/desert.png";
 import styled from "@emotion/styled";
 import Scrollbar from "@src/components/Scrollbar";
 import SizedBox from "@components/SizedBox";
@@ -13,13 +10,36 @@ export interface IProps extends IDialogPropTypes {
 }
 
 const nfts = [
-  { image: surf, name: "Puzzle Surf" },
-  { image: surf, name: "Puzzle Surf" },
-  { image: burj, name: "Burj Khalifa" },
-  { image: burj, name: "Burj Khalifa" },
-  { image: desert, name: "Dubai desert" },
-  { image: desert, name: "Dubai desert" },
-  { image: desert, name: "Dubai desert" },
+  {
+    image: "http://ipfs.io/ipfs/QmUawQhPVhPitBSRtgd6ZKurseYJ3QWYUhYmV23PS2qL4Y",
+    name: "Puzzle Surf",
+  },
+  {
+    image: "http://ipfs.io/ipfs/QmUawQhPVhPitBSRtgd6ZKurseYJ3QWYUhYmV23PS2qL4Y",
+    name: "Puzzle Surf",
+  },
+  {
+    image: "http://ipfs.io/ipfs/QmUawQhPVhPitBSRtgd6ZKurseYJ3QWYUhYmV23PS2qL4Y",
+    name: "Puzzle Surf",
+  },
+  {
+    image: "http://ipfs.io/ipfs/QmUawQhPVhPitBSRtgd6ZKurseYJ3QWYUhYmV23PS2qL4Y",
+    name: "Puzzle Surf",
+  },
+  {
+    image: "http://ipfs.io/ipfs/QmUawQhPVhPitBSRtgd6ZKurseYJ3QWYUhYmV23PS2qL4Y",
+    name: "Puzzle Surf",
+  },
+  {
+    image:
+      "https://ipfs.io/ipfs/QmckDMscnuYp8shr3NxqbeDJ82V6c1UvWP1ecPAfMkSv2D",
+    name: "Burj Khalifa",
+  },
+  {
+    image:
+      "https://ipfs.io/ipfs/Qma7Beh9pPkRhgK6WNMQKLHahQDKeKRp5myjv2mx1zv1zm",
+    name: "Dubai desert",
+  },
 ];
 const Grid = styled.div`
   display: grid;
@@ -27,7 +47,11 @@ const Grid = styled.div`
   column-gap: 8px;
   row-gap: 8px;
 `;
-
+const Wrap = styled.div`
+  display: flex;
+  background: #f1f2fe;
+  border-radius: 12px;
+`;
 const NFTPic = styled.div<{ image: string }>`
   ${({ image }) =>
     image != null
@@ -55,9 +79,11 @@ const SelectNftDialog: React.FC<IProps> = ({ children, ...rest }) => {
       <Scrollbar>
         <Grid>
           {nfts.map(({ image, name }, index) => (
-            <NFTPic image={image} key={index + "nft"}>
-              <Tag>{name}</Tag>
-            </NFTPic>
+            <Wrap key={index + "nft"}>
+              <NFTPic image={image}>
+                <Tag>{name}</Tag>
+              </NFTPic>
+            </Wrap>
           ))}
         </Grid>
       </Scrollbar>

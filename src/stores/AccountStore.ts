@@ -385,6 +385,18 @@ class AccountStore {
       );
   }
 
+  get TOKENS_ARRAY() {
+    return Object.values(TOKENS[this.chainId])
+      .map((t) => ({
+        ...t,
+        logo: tokenLogos[t.symbol] ?? tokenLogos.UNKNOWN,
+      }))
+      .reduce(
+        (acc, token) => ({ ...acc, [token.assetId]: token }),
+        {} as Record<string, IToken>
+      );
+  }
+
   get POOL_ID() {
     return POOL_ID[this.chainId];
   }

@@ -6,7 +6,10 @@ import BN from "@src/utils/BN";
 
 const ContinueBtn: React.FC = () => {
   const vm = useCreateCustomPoolsVM();
-
+  const handleContinue = (step: number) => {
+    vm.setStep(step);
+    vm.saveSettings();
+  };
   switch (vm.step) {
     case 0:
       const totalShare = vm.poolsAssets.reduce(
@@ -15,7 +18,7 @@ const ContinueBtn: React.FC = () => {
       );
       const correct0 = vm.poolsAssets.length > 1 && totalShare.eq(1000);
       return (
-        <Button onClick={() => vm.setStep(1)} fixed disabled={!correct0}>
+        <Button onClick={() => handleContinue(1)} fixed disabled={!correct0}>
           {vm.poolsAssets.length === 1
             ? "Select assets"
             : totalShare.eq(1000)
@@ -29,13 +32,13 @@ const ContinueBtn: React.FC = () => {
       const correct1 =
         vm.domain.length > 1 && vm.logo != null && !vm.poolSettingError;
       return (
-        <Button onClick={() => vm.setStep(2)} fixed disabled={!correct1}>
+        <Button onClick={() => handleContinue(2)} fixed disabled={!correct1}>
           {correct1 ? "Continue" : "Fill in all fields"}
         </Button>
       );
     case 2:
       return (
-        <Button onClick={() => vm.setStep(3)} fixed>
+        <Button onClick={() => handleContinue(3)} fixed>
           Continue
         </Button>
       );
