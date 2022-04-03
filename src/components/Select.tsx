@@ -19,7 +19,6 @@ interface IProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
 
 const Root = styled.div<{ focused?: boolean }>`
   display: flex;
-  //width: 100%;
   padding: 8px 8px 8px 12px;
   border-radius: 10px;
   background: ${({ focused }) => (focused ? "#ffffff" : "#F1F2FE")};
@@ -31,6 +30,7 @@ const Root = styled.div<{ focused?: boolean }>`
   color: #363870;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
 
   .menu-arrow {
     transition: 0.4s;

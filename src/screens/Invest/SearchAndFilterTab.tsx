@@ -7,11 +7,10 @@ import { useInvestVM } from "@screens/Invest/InvestVm";
 import Divider from "@src/components/Divider";
 import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
-import { Link } from "react-router-dom";
 import { useStores } from "@stores";
 import { ReactComponent as Add } from "@src/assets/icons/whiteAdd.svg";
 import Select from "@components/Select";
-import { Row } from "@src/components/Flex";
+import useWindowSize from "@src/hooks/useWindowSize";
 
 interface IProps {}
 
@@ -23,28 +22,35 @@ const Root = styled.div`
   border: 1px solid #f1f2fe;
   border-radius: 16px;
   box-sizing: border-box;
+  @media (min-width: 1000px) {
+    flex-direction: row;
+    justify-content: revert;
+  }
 `;
 const Filters = styled.div`
   display: flex;
   flex-direction: column;
   padding: 16px;
-  @media (min-width: 880px) {
+  @media (min-width: 1000px) {
     padding: 24px;
   }
 `;
-const Btn = styled(Link)`
+const Btn = styled.div`
+  display: flex;
   padding: 16px;
-  @media (min-width: 880px) {
+  width: calc(100% - 32px);
+  @media (min-width: 1000px) {
     padding: 24px;
+    width: calc(100% - 48px);
+    justify-content: end;
   }
 `;
-const Selects = styled(Row)`
+const Selects = styled.div`
   display: flex;
   padding: 0 16px;
   align-items: center;
   box-sizing: border-box;
-  //justify-content: space-between;
-  @media (min-width: 880px) {
+  @media (min-width: 1000px) {
     padding: 0 24px;
   }
 `;
@@ -70,12 +76,12 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
   const [activeCreatedOption, setActiveCreatedOption] = useState(
     createdByOptions[0]
   );
-
+  const { width } = useWindowSize();
   return (
     <Root>
       <Filters>
         <Input
-          style={{ height: 40 }}
+          style={{ height: 40, minWidth: 340 }}
           icon="search"
           placeholder="Search by title or asset…"
           value={vm.searchValue}
@@ -107,9 +113,9 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
         />
       </Selects>
       <SizedBox height={16} />
-      <Divider />
-      <Btn to={`/${accountStore.ROUTES.POOLS_CREATE}`}>
-        <Button size="medium" fixed>
+      {width && width <= 1000 && <Divider />}
+      <Btn>
+        <Button size="medium" fixed={width != null && width <= 1000}>
           <Add />
           <SizedBox width={12} />
           Create a pool
