@@ -11,6 +11,7 @@ import { useStores } from "@stores";
 import { ReactComponent as Add } from "@src/assets/icons/whiteAdd.svg";
 import Select from "@components/Select";
 import useWindowSize from "@src/hooks/useWindowSize";
+import { Link } from "react-router-dom";
 
 interface IProps {}
 
@@ -35,7 +36,7 @@ const Filters = styled.div`
     padding: 24px;
   }
 `;
-const Btn = styled.div`
+const Btn = styled(Link)`
   display: flex;
   padding: 16px;
   width: calc(100% - 32px);
@@ -114,7 +115,7 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
       </Selects>
       <SizedBox height={16} />
       {width && width <= 1000 && <Divider />}
-      <Btn>
+      <Btn to={`/${accountStore.ROUTES.POOLS_CREATE}`}>
         <Button size="medium" fixed={width != null && width <= 1000}>
           <Add />
           <SizedBox width={12} />
