@@ -30,6 +30,7 @@ const Button = styled.button`
   border-radius: 10px;
   box-sizing: border-box;
   padding: 0 20px;
+  cursor: pointer;
 `;
 
 const PoolNotFound: React.FC<IProps> = ({ onClear, searchValue }) => {
