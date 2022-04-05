@@ -202,9 +202,9 @@ class CreateCustomPoolsVm {
     (this.artefactToSpend = v);
 
   get isThereArtefacts() {
-    const { artworks } = this.rootStore.nftStore;
-    if (artworks == null) return false;
-    return artworks.filter(({ old }) => !old).length > 0;
+    const { accountNFTs } = this.rootStore.nftStore;
+    if (accountNFTs == null) return false;
+    return accountNFTs.filter(({ old }) => !old).length > 0;
   }
 
   buyRandomArtefact = async () => {

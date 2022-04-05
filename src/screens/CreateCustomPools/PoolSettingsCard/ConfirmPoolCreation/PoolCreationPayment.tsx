@@ -8,6 +8,9 @@ import NoPayment from "./NoPayment";
 import SelectArtefact from "@screens/CreateCustomPools/PoolSettingsCard/ConfirmPoolCreation/SelectArtefact";
 import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
 import DialogNotification from "@components/Dialog/DialogNotification";
+import Notification from "@components/Notification";
+import { useStores } from "@stores";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -17,6 +20,9 @@ const Root = styled.div`
 `;
 
 const PoolCreationPayment: React.FC<IProps> = () => {
+  const { accountStore } = useStores();
+  const { findBalanceByAssetId, TOKENS } = accountStore;
+  const puzzleBalance = findBalanceByAssetId(TOKENS.PUZZLE.assetId);
   const vm = useCreateCustomPoolsVM();
   return (
     <Root>
@@ -24,7 +30,21 @@ const PoolCreationPayment: React.FC<IProps> = () => {
         Payment for creation
       </Text>
       <SizedBox height={8} />
-      <Card>{vm.isThereArtefacts ? <SelectArtefact /> : <NoPayment />}</Card>
+      <Card>
+        {vm.isThereArtefacts ? <SelectArtefact /> : <NoPayment />}
+        {puzzleBalance &&
+          puzzleBalance?.balance?.lt(
+            BN.parseUnits(vm.puzzleNFTPrice, puzzleBalance.decimals)
+          ) && (
+            <>
+              <SizedBox height={8} />
+              <Notification
+                type="warning"
+                text="Your Puzzle balance is too low to buy NFT."
+              />
+            </>
+          )}
+      </Card>
       <DialogNotification
         onClose={() => vm.setNotificationParams(null)}
         title={vm.notificationParams?.title ?? ""}
