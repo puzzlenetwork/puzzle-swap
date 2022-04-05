@@ -6,7 +6,7 @@ import { useTradeVM } from "@screens/TradeInterface/TradeVM";
 import RoutingSchema from "@screens/TradeInterface/RoutingModal/RoutingSchema";
 import SizedBox from "@components/SizedBox";
 import BN from "@src/utils/BN";
-import { Loading } from "@components/Loading";
+import Loading from "@components/Loading";
 
 interface IProps {
   onClose: () => void;

@@ -12,7 +12,13 @@ interface IProps {}
 const Root = styled.div`
   display: flex;
   align-items: center;
-  overflow: scroll;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 const RoutesContainer = styled.div`
   display: flex;

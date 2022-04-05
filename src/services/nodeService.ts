@@ -48,6 +48,32 @@ interface IBalance {
   balance: number;
 }
 
+interface ITransactionInfo {
+  stateChanges: {
+    transfers: Array<{
+      address: string;
+      amount: number;
+      asset: string;
+    }>;
+  };
+}
+
+interface IAssetDetails {
+  assetId: string;
+  issueHeight: number;
+  issueTimestamp: number;
+  issuer: string;
+  issuerPublicKey: string;
+  name: string;
+  description: string;
+  decimals: number;
+  reissuable: boolean;
+  quantity: number;
+  scripted: boolean;
+  minSponsoredAssetFee: null | any;
+  originTransactionId: string;
+}
+
 const nodeService = {
   getAddressNfts: async (node: string, address: string): Promise<INFT[]> => {
     const url = `${node}/assets/nft/${address}/limit/1000`;
@@ -100,6 +126,30 @@ const nodeService = {
       return response.data;
     } else {
       return [];
+    }
+  },
+  transactionInfo: async (
+    node: string,
+    txId: string
+  ): Promise<ITransactionInfo | null> => {
+    const url = `${node}/transactions/info/${txId}`;
+    const response: { data: ITransactionInfo } = await axios.get(url);
+    if (response.data) {
+      return response.data;
+    } else {
+      return null;
+    }
+  },
+  assetDetails: async (
+    node: string,
+    assetId: string
+  ): Promise<IAssetDetails | null> => {
+    const url = `${node}/assets/details/${assetId}`;
+    const response: { data: IAssetDetails } = await axios.get(url);
+    if (response.data) {
+      return response.data;
+    } else {
+      return null;
     }
   },
 };

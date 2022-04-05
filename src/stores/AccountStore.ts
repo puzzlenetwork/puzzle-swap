@@ -11,6 +11,7 @@ import {
   NODE_URL_MAP,
   POOL_CONFIG,
   POOL_ID,
+  PUZZLE_NTFS,
   ROUTES,
   TOKENS,
 } from "@src/constants";
@@ -385,6 +386,18 @@ class AccountStore {
       );
   }
 
+  get TOKENS_ARRAY() {
+    return Object.values(TOKENS[this.chainId])
+      .map((t) => ({
+        ...t,
+        logo: tokenLogos[t.symbol] ?? tokenLogos.UNKNOWN,
+      }))
+      .reduce(
+        (acc, token) => ({ ...acc, [token.assetId]: token }),
+        {} as Record<string, IToken>
+      );
+  }
+
   get POOL_ID() {
     return POOL_ID[this.chainId];
   }
@@ -403,6 +416,10 @@ class AccountStore {
 
   get CONTRACT_ADDRESSES() {
     return CONTRACT_ADDRESSES_MAP[this.chainId];
+  }
+
+  get PUZZLE_NTFS() {
+    return PUZZLE_NTFS[this.chainId];
   }
 }
 

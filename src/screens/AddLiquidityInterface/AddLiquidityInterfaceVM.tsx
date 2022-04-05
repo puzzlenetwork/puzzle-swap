@@ -6,7 +6,7 @@ import BN from "@src/utils/BN";
 import Balance from "@src/entities/Balance";
 import { IPoolStats30Days } from "@stores/PoolsStore";
 import {
-  buildErrorLiquidityDialogParams,
+  buildErrorDialogParams,
   buildSuccessLiquidityDialogParams,
   buildWarningLiquidityDialogParams,
   IDialogNotificationProps,
@@ -231,7 +231,7 @@ class AddLiquidityInterfaceVM {
       })
       .catch((e) =>
         this.setNotificationParams(
-          buildErrorLiquidityDialogParams({
+          buildErrorDialogParams({
             title: "Transaction is not completed",
             description: e.message ?? JSON.stringify(e),
             onTryAgain: this.depositMultiply,
@@ -304,7 +304,7 @@ class AddLiquidityInterfaceVM {
       })
       .catch((e) => {
         this.setNotificationParams(
-          buildErrorLiquidityDialogParams({
+          buildErrorDialogParams({
             title: "Transaction is not completed",
             description: e.message + ` ${e.data}` ?? JSON.stringify(e),
             onTryAgain: this.depositBaseToken,

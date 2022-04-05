@@ -13,7 +13,7 @@ import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/Inves
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import RoundTokenIcon from "@components/RoundTokenIcon";
 import useWindowSize from "@src/hooks/useWindowSize";
-import { Loading } from "@components/Loading";
+import Loading from "@src/components/Loading";
 
 interface IProps {}
 

@@ -5,7 +5,7 @@ import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import { useTradeVM } from "@screens/TradeInterface/TradeVM";
 import { useNavigate } from "react-router-dom";
-import { Loading } from "@components/Loading";
+import Loading from "@components/Loading";
 import { TOKENS } from "@src/constants";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
