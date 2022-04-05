@@ -8,6 +8,7 @@ const Button = styled.button<{
   size?: TButtonSize;
   fixed?: boolean;
 }>`
+  white-space: nowrap;
   display: flex;
   justify-content: center;
   align-items: center;

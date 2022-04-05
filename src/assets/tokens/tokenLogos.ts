@@ -37,6 +37,7 @@ import munaLogo from "@src/assets/tokens/MUNA.svg";
 import bnbLogo from "@src/assets/tokens/BNB.svg";
 import shegLogo from "@src/assets/tokens/SHEG.png";
 import snsbtLogo from "@src/assets/tokens/SNSBT.png";
+import tpuzzleLogo from "@src/assets/tokens/staked-puzzle.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -78,6 +79,7 @@ const tokenLogos: Record<string, string> = {
   SHEG: shegLogo,
   SNSBT: snsbtLogo,
   UNKNOWN: unknownLogo,
+  TPUZZLE: tpuzzleLogo,
 };
 
 export default tokenLogos;

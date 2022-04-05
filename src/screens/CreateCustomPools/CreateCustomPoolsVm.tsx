@@ -2,14 +2,14 @@ import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { action, makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
-import { IToken } from "@src/constants";
+import { IToken, NODE_URL_MAP } from "@src/constants";
 import BN from "@src/utils/BN";
-import { sleep } from "@src/utils/sleep";
 import {
+  buildErrorDialogParams,
   buildSuccessNFTSaleDialogParams,
   IDialogNotificationProps,
 } from "@components/Dialog/DialogNotification";
-import surf from "@src/assets/nfts/surf.png";
+import nodeService from "@src/services/nodeService";
 
 const ctx = React.createContext<CreateCustomPoolsVm | null>(null);
 
@@ -20,6 +20,12 @@ export const CreateCustomPoolsVMProvider: React.FC = ({ children }) => {
 };
 
 export const useCreateCustomPoolsVM = () => useVM(ctx);
+
+export interface IPaymentsArtefact {
+  assetId: string;
+  name?: string;
+  picture?: string;
+}
 
 interface IPoolToken {
   asset: IToken;
@@ -191,22 +197,105 @@ class CreateCustomPoolsVm {
     return balances.filter((b) => !currentTokens.includes(b.assetId));
   }
 
-  artefactToSpend: string | null = null;
-  setArtefactToSpend = (v: string | null) => (this.fileName = v);
+  artefactToSpend: IPaymentsArtefact | null = null;
+  setArtefactToSpend = (v: IPaymentsArtefact | null) =>
+    (this.artefactToSpend = v);
 
-  doesUserHasArtifact = true;
+  get isThereArtefacts() {
+    const { artworks } = this.rootStore.nftStore;
+    if (artworks == null) return false;
+    return artworks.filter(({ old }) => !old).length > 0;
+  }
 
   buyRandomArtefact = async () => {
+    const { accountStore } = this.rootStore;
+    const { TOKENS, CONTRACT_ADDRESSES, chainId, PUZZLE_NTFS } = accountStore;
+    if (!this.canBuyNft) return;
+    if (this.puzzleNFTPrice === 0) return;
+    const amount = BN.parseUnits(this.puzzleNFTPrice, TOKENS.TPUZZLE.decimals);
     this._setLoading(true);
-    await sleep(1000);
-    this.setNotificationParams(
-      buildSuccessNFTSaleDialogParams({ name: "Surf", picture: surf })
-    );
+    // todo правильно посчитать приблизительную стоимость 400 дол в пазлах, на usdn не работает
+    await accountStore
+      .invoke({
+        dApp: CONTRACT_ADDRESSES.createArtefacts,
+        payment: [
+          {
+            assetId: TOKENS.TPUZZLE.assetId,
+            amount: amount.toString(),
+          },
+        ],
+        call: { function: "generateArtefact", args: [] },
+      })
+      .then(async (txId) => {
+        console.log(txId);
+        if (txId === null) return;
+        const transDetails = await nodeService.transactionInfo(
+          NODE_URL_MAP[chainId],
+          txId
+        );
+        if (transDetails == null) return;
+        console.log(transDetails);
+        const nftId = transDetails.stateChanges.transfers[0].asset;
+        const details = await nodeService.assetDetails(
+          NODE_URL_MAP[chainId],
+          nftId
+        );
+        if (details == null) return;
+        const picture = PUZZLE_NTFS.find(
+          ({ name }) => name === details.name
+        )?.image;
+        this.setNotificationParams(
+          buildSuccessNFTSaleDialogParams({
+            name: details.name,
+            picture: picture ?? "",
+            onContinue: () => {
+              this.setArtefactToSpend({
+                name: details.name,
+                assetId: nftId,
+                picture: picture ?? "",
+              });
+              this.setNotificationParams(null);
+            },
+          })
+        );
+      })
+      .catch((e) => {
+        console.log(e);
+        this.setNotificationParams(
+          buildErrorDialogParams({
+            title: "Woops! Couldn't buy NFT",
+            description: `Something went wrong while buying a NFT. Check if you have ${this.puzzleNFTPrice} PUZZLE and 0.005 WAVES (transaction fee) in your wallet to buy one.`,
+            onTryAgain: () => this.buyRandomArtefact,
+          })
+        );
+      })
+      .finally(() => this._setLoading(false));
     this._setLoading(false);
   };
 
+  get puzzleNFTPrice() {
+    const { accountStore, poolsStore, nftStore } = this.rootStore;
+    const rate = poolsStore.usdnRate(accountStore.TOKENS.PUZZLE.assetId, 1);
+    if (nftStore.totalPuzzleNftsAmount == null) return 0;
+    const amount = new BN(400)
+      .div(rate ?? 0)
+      .plus(nftStore.totalPuzzleNftsAmount);
+    return Math.ceil(amount.toNumber());
+  }
+
+  get canBuyNft() {
+    const { accountStore, nftStore } = this.rootStore;
+    if (nftStore.totalPuzzleNftsAmount == null) return false;
+    const balance = accountStore.findBalanceByAssetId(
+      accountStore.TOKENS.TPUZZLE.assetId
+    );
+    if (balance == null) return false;
+    return balance.balance?.gte(this.puzzleNFTPrice);
+  }
+
   providedPercentOfPool: BN = new BN(100);
-  @action.bound setProvidedPercentOfPool = (value: number) =>
+  @action.bound
+  setProvidedPercentOfPool = (value: number) =>
     (this.providedPercentOfPool = new BN(value));
 
   maxToProvide: BN = new BN(0);

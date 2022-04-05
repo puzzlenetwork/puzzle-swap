@@ -10,6 +10,10 @@ export default class NftStore {
   public artworks: IArtWork[] | null = null;
   private _setArtworks = (v: IArtWork[]) => (this.artworks = v);
 
+  public totalPuzzleNftsAmount: number | null = null;
+  private _setTotalPuzzleNftsAmount = (v: number) =>
+    (this.totalPuzzleNftsAmount = v);
+
   public stakedAccountNFTs: Array<IArtWork & Partial<INFT>> | null = null;
   public setStakedAccountNFTs = (v: Array<IArtWork & Partial<INFT>> | null) =>
     (this.stakedAccountNFTs = v);
@@ -25,22 +29,45 @@ export default class NftStore {
       .getArtworks()
       .then((d) => this._setArtworks(d))
       .then(() =>
-        Promise.all([this.getAccountNFTs(), this.getAccountNFTsOnStaking()])
+        Promise.all([
+          this.getAccountNFTs(),
+          this.getAccountNFTsOnStaking(),
+          this.getTotalPuzzlesNftsAmount(),
+        ])
       );
 
     reaction(
       () => this.rootStore.accountStore.address,
-      () => Promise.all([this.getAccountNFTs(), this.getAccountNFTsOnStaking()])
+      () =>
+        Promise.all([
+          this.getAccountNFTs(),
+          this.getAccountNFTsOnStaking(),
+          this.getTotalPuzzlesNftsAmount(),
+        ])
     );
     setInterval(
       () =>
-        Promise.all([this.getAccountNFTs(), this.getAccountNFTsOnStaking()]),
+        Promise.all([
+          this.getAccountNFTs(),
+          this.getAccountNFTsOnStaking(),
+          this.getTotalPuzzlesNftsAmount(),
+        ]),
       40 * 1000
     );
   }
 
+  private getTotalPuzzlesNftsAmount = async () => {
+    const { chainId, CONTRACT_ADDRESSES } = this.rootStore.accountStore;
+    const res = await nodeService.nodeMatchRequest(
+      NODE_URL_MAP[chainId],
+      CONTRACT_ADDRESSES.nfts,
+      `nft_(.*)_image`
+    );
+    this._setTotalPuzzleNftsAmount(res.length ?? 0);
+  };
+
   getAccountNFTs = async () => {
-    const { address, chainId } = this.rootStore.accountStore;
+    const { address, chainId, PUZZLE_NTFS } = this.rootStore.accountStore;
     const { artworks } = this;
     if (address == null || artworks == null) return;
     const nfts = await nodeService.getAddressNfts(
@@ -48,8 +75,11 @@ export default class NftStore {
       address
     );
     const supportedPuzzleNft = nfts
-      .filter(({ description }) =>
-        artworks.some(({ typeId }) => typeId && description.includes(typeId))
+      .filter(
+        ({ description, name }) =>
+          artworks.some(
+            ({ typeId }) => typeId && description.includes(typeId)
+          ) || PUZZLE_NTFS.some(({ name }) => name && name.includes(name))
       )
       .map((nft) => ({
         ...nft,
@@ -60,9 +90,17 @@ export default class NftStore {
       .map((nft) => {
         const searchTerm = "Issue: ";
         const searchIndex = nft.description?.indexOf(searchTerm) ?? 0;
-        const strOut = nft.description?.substr(searchIndex + searchTerm.length);
-        const numberName = `${nft.name} #${strOut}`;
-        return { ...nft, name: numberName };
+        if (searchIndex !== -1) {
+          const strOut = nft.description?.substr(
+            searchIndex + searchTerm.length
+          );
+          const numberName = `${nft.name} #${strOut}`;
+          return { ...nft, name: numberName, old: true };
+        }
+        const imageLink = PUZZLE_NTFS.find(
+          ({ name }) => name === nft.name
+        )?.image;
+        return { ...nft, imageLink };
       });
     this.setAccountNFTs(supportedPuzzleNft);
   };

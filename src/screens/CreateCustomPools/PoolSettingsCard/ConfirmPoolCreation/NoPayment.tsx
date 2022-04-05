@@ -6,6 +6,7 @@ import { Column } from "@components/Flex";
 import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
 import { observer } from "mobx-react-lite";
 import Loading from "@src/components/Loading";
+import { useStores } from "@stores";
 
 interface IProps {}
 
@@ -18,6 +19,7 @@ const Root = styled.div`
   }
 `;
 const NoPayment: React.FC<IProps> = () => {
+  const { nftStore } = useStores();
   const vm = useCreateCustomPoolsVM();
   return (
     <Root>
@@ -25,8 +27,17 @@ const NoPayment: React.FC<IProps> = () => {
         <Text weight={500}>You don’t have any NFT</Text>
         <Text type="secondary">Buy a random NFT to create the pool</Text>
       </Column>
-      <Button fixed size="medium" onClick={vm.buyRandomArtefact}>
-        {vm.loading ? <Loading /> : "Buy"}
+      <Button
+        fixed
+        size="medium"
+        onClick={vm.buyRandomArtefact}
+        disabled={!vm.canBuyNft}
+      >
+        {nftStore.totalPuzzleNftsAmount == null || vm.loading ? (
+          <Loading />
+        ) : (
+          `Buy for ${vm.puzzleNFTPrice} TPUZZLE`
+        )}
       </Button>
     </Root>
   );

@@ -122,7 +122,7 @@ export const MAINNET_POOL_CONFIG: Record<MAINNET_POOL_ID, IPoolConfig> = {
   //       { ...mainnetTokens.USDT, shareAmount: 0.2, logo: tokenLogos.USDT },
   //       { ...mainnetTokens.USDN, shareAmount: 0.2, logo: tokenLogos.USDN },
   //     ],
-  //   },  
+  //   },
   [MAINNET_POOL_ID.pool10]: {
     contractAddress: "3PLiXyywNThdvf3vVEUxwc7TJTucjZvuegh",
     layer2Address: "3P4oa7KAvocZhPXQ1B6ncAopzLEZUtMwbHF",
@@ -148,7 +148,7 @@ export const MAINNET_POOL_CONFIG: Record<MAINNET_POOL_ID, IPoolConfig> = {
     defaultAssetId1: mainnetTokens.NSBT.assetId,
     tokens: [
       { ...mainnetTokens.SNSBT, shareAmount: 0.75, logo: tokenLogos.SNSBT },
-      { ...mainnetTokens.NSBT, shareAmount: 0.20, logo: tokenLogos.NSBT },
+      { ...mainnetTokens.NSBT, shareAmount: 0.2, logo: tokenLogos.NSBT },
       { ...mainnetTokens.USDN, shareAmount: 0.05, logo: tokenLogos.USDN },
     ],
   },
@@ -358,4 +358,34 @@ export const MAINNET_CONTRACTS_ADDRESSES = {
   staking: "3PFTbywqxtFfukX3HyT881g4iW5K4QL3FAS",
   ultraStaking: "3PKUxbZaSYfsR7wu2HaAgiirHYwAMupDrYW",
   aggregator: "3PGFHzVGT4NTigwCKP1NcwoXkodVZwvBuuU",
+  nfts: "3PFQjjDMiZKQZdu5JqTHD7HwgSXyp9Rw9By",
+  createArtefacts: "3P2wMCDjtxeLdfQrpR8WUe5zNeScM4UaL3o",
 };
+
+export const MAINNET_PUZLLE_NFTS = [
+  {
+    name: "Puzzle Surf",
+    desc: "Puzzle Surf artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
+    image: "http://ipfs.io/ipfs/QmUawQhPVhPitBSRtgd6ZKurseYJ3QWYUhYmV23PS2qL4Y",
+  },
+  {
+    name: "Puzzle Desert",
+    desc: "Puzzle Desert artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
+    image: "http://ipfs.io/ipfs/Qma7Beh9pPkRhgK6WNMQKLHahQDKeKRp5myjv2mx1zv1zm",
+  },
+  {
+    name: "Puzzle Airplane",
+    desc: "Puzzle Airplane artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
+    image: "http://ipfs.io/ipfs/QmNTzzdvBx658hiCVvHNGS4FsRk8ZhAgYwezH6Q9QEKy7K",
+  },
+  {
+    name: "Puzzle Wheel",
+    desc: "Puzzle Wheel artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
+    image: "http://ipfs.io/ipfs/QmTvN5sAC2ka4qtLjSd2vWQ4NqYJD8Qo8cJiChd8QjYNC5",
+  },
+  {
+    name: "Puzzle Khalifa",
+    desc: "Puzzle Khalifa artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
+    image: "http://ipfs.io/ipfs/QmckDMscnuYp8shr3NxqbeDJ82V6c1UvWP1ecPAfMkSv2D",
+  },
+];

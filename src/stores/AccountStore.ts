@@ -11,6 +11,7 @@ import {
   NODE_URL_MAP,
   POOL_CONFIG,
   POOL_ID,
+  PUZZLE_NTFS,
   ROUTES,
   TOKENS,
 } from "@src/constants";
@@ -415,6 +416,10 @@ class AccountStore {
 
   get CONTRACT_ADDRESSES() {
     return CONTRACT_ADDRESSES_MAP[this.chainId];
+  }
+
+  get PUZZLE_NTFS() {
+    return PUZZLE_NTFS[this.chainId];
   }
 }
 

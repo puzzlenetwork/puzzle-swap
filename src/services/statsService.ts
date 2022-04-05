@@ -24,6 +24,7 @@ export interface IArtWork {
   marketLink?: string;
   typeId?: string;
   apy?: number;
+  old?: boolean;
 }
 
 export interface IStakingStatsResponse {

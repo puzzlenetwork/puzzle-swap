@@ -132,17 +132,17 @@ export const buildSuccessLiquidityDialogParams = ({
   };
 };
 
-type TBuildErrorLiquidityDialogParamsProps = {
+type TbuildErrorDialogParamsProps = {
   title: string;
   description: string;
   onTryAgain: () => void;
 };
 
-export const buildErrorLiquidityDialogParams = ({
+export const buildErrorDialogParams = ({
   title,
   description,
   onTryAgain,
-}: TBuildErrorLiquidityDialogParamsProps): IDialogNotificationProps => {
+}: TbuildErrorDialogParamsProps): IDialogNotificationProps => {
   return {
     title,
     description,

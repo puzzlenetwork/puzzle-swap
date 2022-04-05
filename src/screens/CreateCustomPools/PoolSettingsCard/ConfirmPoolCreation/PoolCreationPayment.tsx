@@ -24,7 +24,7 @@ const PoolCreationPayment: React.FC<IProps> = () => {
         Payment for creation
       </Text>
       <SizedBox height={8} />
-      <Card>{vm.doesUserHasArtifact ? <SelectArtefact /> : <NoPayment />}</Card>
+      <Card>{vm.isThereArtefacts ? <SelectArtefact /> : <NoPayment />}</Card>
       <DialogNotification
         onClose={() => vm.setNotificationParams(null)}
         title={vm.notificationParams?.title ?? ""}

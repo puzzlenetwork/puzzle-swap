@@ -19,8 +19,10 @@ const Root = styled.div`
 const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
+  padding-top: 8px;
   column-gap: 8px;
   row-gap: 8px;
+  height: fit-content;
 `;
 const Card = styled.div<{ img?: string }>`
   display: flex;
@@ -28,6 +30,7 @@ const Card = styled.div<{ img?: string }>`
   height: 156px;
   border-radius: 8px;
   background: ${({ img }) => `url(${img}) no-repeat center`};
+  background-color: #f1f2fe;
   background-size: 156px;
   position: relative;
 `;

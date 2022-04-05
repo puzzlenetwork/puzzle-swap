@@ -4,53 +4,28 @@ import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 import styled from "@emotion/styled";
 import Scrollbar from "@src/components/Scrollbar";
 import SizedBox from "@components/SizedBox";
+import { observer } from "mobx-react-lite";
+import { useStores } from "@stores";
+import { Column } from "@src/components/Flex";
+import Skeleton from "react-loading-skeleton";
+import { IPaymentsArtefact } from "@src/screens/CreateCustomPools/CreateCustomPoolsVm";
 
 export interface IProps extends IDialogPropTypes {
-  onNftClick?: () => void;
+  onNftClick: (artefact: IPaymentsArtefact) => void;
 }
 
-const nfts = [
-  {
-    image: "http://ipfs.io/ipfs/QmUawQhPVhPitBSRtgd6ZKurseYJ3QWYUhYmV23PS2qL4Y",
-    name: "Puzzle Surf",
-  },
-  {
-    image: "http://ipfs.io/ipfs/QmUawQhPVhPitBSRtgd6ZKurseYJ3QWYUhYmV23PS2qL4Y",
-    name: "Puzzle Surf",
-  },
-  {
-    image: "http://ipfs.io/ipfs/QmUawQhPVhPitBSRtgd6ZKurseYJ3QWYUhYmV23PS2qL4Y",
-    name: "Puzzle Surf",
-  },
-  {
-    image: "http://ipfs.io/ipfs/QmUawQhPVhPitBSRtgd6ZKurseYJ3QWYUhYmV23PS2qL4Y",
-    name: "Puzzle Surf",
-  },
-  {
-    image: "http://ipfs.io/ipfs/QmUawQhPVhPitBSRtgd6ZKurseYJ3QWYUhYmV23PS2qL4Y",
-    name: "Puzzle Surf",
-  },
-  {
-    image:
-      "https://ipfs.io/ipfs/QmckDMscnuYp8shr3NxqbeDJ82V6c1UvWP1ecPAfMkSv2D",
-    name: "Burj Khalifa",
-  },
-  {
-    image:
-      "https://ipfs.io/ipfs/Qma7Beh9pPkRhgK6WNMQKLHahQDKeKRp5myjv2mx1zv1zm",
-    name: "Dubai desert",
-  },
-];
 const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 8px;
   row-gap: 8px;
+  max-width: 496px;
 `;
 const Wrap = styled.div`
   display: flex;
   background: #f1f2fe;
   border-radius: 12px;
+  cursor: pointer;
 `;
 const NFTPic = styled.div<{ image: string }>`
   ${({ image }) =>
@@ -73,22 +48,52 @@ const Tag = styled.div`
   bottom: 4px;
   left: 8px;
 `;
-const SelectNftDialog: React.FC<IProps> = ({ children, ...rest }) => {
+const SelectNftDialog: React.FC<IProps> = ({
+  onNftClick,
+  children,
+  ...rest
+}) => {
+  const { nftStore } = useStores();
+  const { accountNFTs } = nftStore;
   return (
-    <Dialog style={{ maxWidth: 362 }} bodyStyle={{ maxHeight: 496 }} {...rest}>
+    <Dialog {...rest} style={{ maxWidth: 362 }}>
       <Scrollbar>
-        <Grid>
-          {nfts.map(({ image, name }, index) => (
-            <Wrap key={index + "nft"}>
-              <NFTPic image={image}>
-                <Tag>{name}</Tag>
-              </NFTPic>
-            </Wrap>
-          ))}
-        </Grid>
+        <Column crossAxisSize="max" style={{ maxHeight: 360 }}>
+          <Grid>
+            {accountNFTs == null &&
+              Array.from({ length: 2 }).map((_, index) => (
+                <Skeleton
+                  style={{ borderRadius: 8 }}
+                  height={152}
+                  width={152}
+                  key={index + "skeleton-row"}
+                />
+              ))}
+            {accountNFTs &&
+              accountNFTs
+                ?.filter(({ old }) => !old)
+                .map(({ imageLink, name, assetId }, index) => (
+                  <Wrap
+                    key={index + "nft"}
+                    onClick={() => {
+                      onNftClick({
+                        name: name ?? "",
+                        assetId: assetId ?? "",
+                        picture: imageLink,
+                      });
+                      rest.onClose && rest.onClose({} as any);
+                    }}
+                  >
+                    <NFTPic image={imageLink ?? ""}>
+                      <Tag>{name}</Tag>
+                    </NFTPic>
+                  </Wrap>
+                ))}
+          </Grid>
+        </Column>
       </Scrollbar>
       <SizedBox height={24} />
     </Dialog>
   );
 };
-export default SelectNftDialog;
+export default observer(SelectNftDialog);

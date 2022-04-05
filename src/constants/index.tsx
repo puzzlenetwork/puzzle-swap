@@ -4,11 +4,13 @@ import {
   MAINNET_POOL_CONFIG,
   mainnetTokens,
   MAINNET_CONTRACTS_ADDRESSES,
+  MAINNET_PUZLLE_NFTS,
 } from "@src/constants/mainnetConfig";
 import {
   TESTNET_CONTRACTS_ADDRESSES,
   TESTNET_POOL_CONFIG,
   TESTNET_POOL_ID,
+  TESTNET_PUZLLE_NFTS,
   TESTNET_ROUTES,
   testnetTokens,
 } from "@src/constants/testnetConfig";
@@ -37,6 +39,10 @@ export const POOL_CONFIG = {
 export const CONTRACT_ADDRESSES_MAP = {
   W: MAINNET_CONTRACTS_ADDRESSES,
   T: TESTNET_CONTRACTS_ADDRESSES,
+};
+export const PUZZLE_NTFS = {
+  W: MAINNET_PUZLLE_NFTS,
+  T: TESTNET_PUZLLE_NFTS,
 };
 
 export type TChainId = "W" | "T";

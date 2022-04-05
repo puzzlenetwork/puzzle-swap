@@ -85,10 +85,6 @@ class BN extends BigNumber {
       : new BN(super.precision(significantDigits, roundingMode));
   }
 
-  toEtherBigNumber(): EthersBigNumber {
-    return EthersBigNumber.from(this.toFixed(0));
-  }
-
   clamp(min: TValue, max: TValue): BN {
     return BN.min(BN.max(this, min), max);
   }
