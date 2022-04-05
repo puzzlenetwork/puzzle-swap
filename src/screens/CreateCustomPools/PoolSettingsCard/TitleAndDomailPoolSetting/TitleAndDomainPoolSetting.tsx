@@ -10,7 +10,6 @@ import { Row } from "@src/components/Flex";
 import ShareTokenInput from "@screens/CreateCustomPools/PoolSettingsCard/SelectAssets/ShareTokenInput";
 import Notification from "@src/components/Notification";
 import ImageUpload from "@components/ImageUpload";
-import poolService from "@src/services/poolsService";
 import BN from "@src/utils/BN";
 
 interface IProps {}
@@ -42,29 +41,29 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
     setCustomPercent(v);
     vm.setSwapFee(v);
   };
-  const [validationProcessing, setValidationProcessing] = useState(false);
+  // const [validationProcessing, setValidationProcessing] = useState(false);
   const [domainError, setDomainError] = useState<string | null>(null);
   const checkDomain = (domain: string) => {
     if (domain === "") return;
-    setValidationProcessing(true);
-    vm.setPoolSettingError(false);
-    if (
-      /[^a-zA-Z0-9_-]/.test(domain) ||
-      domain.length > 13 ||
-      domain.length < 2
-    ) {
-      setDomainError("2–13 lowercase latin and number characters");
-      setValidationProcessing(false);
-      return;
-    }
-    poolService
-      .checkDomain(domain)
-      .then(() => setDomainError(null))
-      .catch(() => {
-        vm.setPoolSettingError(true);
-        setDomainError("This domain is already taken");
-      })
-      .finally(() => setValidationProcessing(false));
+    // setValidationProcessing(true);
+    // vm.setPoolSettingError(false);
+    // if (
+    //   /[^a-zA-Z0-9_-]/.test(domain) ||
+    //   domain.length > 13 ||
+    //   domain.length < 2
+    // ) {
+    //   setDomainError("2–13 lowercase latin and number characters");
+    //   setValidationProcessing(false);
+    //   return;
+    // }
+    // poolService
+    //   .checkDomain(domain)
+    //   .then(() => setDomainError(null))
+    //   .catch(() => {
+    //     vm.setPoolSettingError(true);
+    //     setDomainError("This domain is already taken");
+    //   })
+    //   .finally(() => setValidationProcessing(false));
   };
   return (
     <Root>
@@ -105,7 +104,7 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
           placeholder="…"
           description="2–13 lowercase latin and number characters"
           errorText={domainError ?? ""}
-          disabled={validationProcessing}
+          // disabled={validationProcessing}
           error={domainError != null}
         />
         <SizedBox height={16} />

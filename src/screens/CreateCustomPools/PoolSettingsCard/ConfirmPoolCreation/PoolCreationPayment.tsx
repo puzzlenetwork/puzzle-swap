@@ -22,7 +22,7 @@ const Root = styled.div`
 const PoolCreationPayment: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const { findBalanceByAssetId, TOKENS } = accountStore;
-  const puzzleBalance = findBalanceByAssetId(TOKENS.PUZZLE.assetId);
+  const puzzleBalance = findBalanceByAssetId(TOKENS.TPUZZLE.assetId);
   const vm = useCreateCustomPoolsVM();
   return (
     <Root>

@@ -41,14 +41,7 @@ const AddTokenRow: React.FC<IProps> = ({
           </Text>
           <Text fitContent type="secondary" size="small" className="text">
             <span>Share: </span>
-            <span
-              style={{
-                color: isLowMoney ? "#ed827e" : "#363870",
-                paddingLeft: 1,
-              }}
-            >
-              {percent} %
-            </span>
+            <span style={{ paddingLeft: 1 }}>{percent} %</span>
           </Text>
         </Column>
       </Row>

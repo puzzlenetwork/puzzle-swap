@@ -29,7 +29,6 @@ const Root = styled.div<{ focused?: boolean }>`
   line-height: 24px;
   color: #363870;
   align-items: center;
-  justify-content: center;
   white-space: nowrap;
 
   .menu-arrow {
