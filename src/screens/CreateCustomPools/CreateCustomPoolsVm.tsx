@@ -10,6 +10,7 @@ import {
   IDialogNotificationProps,
 } from "@components/Dialog/DialogNotification";
 import nodeService from "@src/services/nodeService";
+import poolsService from "@src/services/poolsService";
 
 const ctx = React.createContext<CreateCustomPoolsVm | null>(null);
 
@@ -327,5 +328,47 @@ class CreateCustomPoolsVm {
 
   provideLiquidityToPool = async () => {
     console.log("provideLiquidityToPool");
+  };
+
+  spendArtefact = async () => {
+    const { artefactToSpend } = this;
+    const { accountStore } = this.rootStore;
+    const { CONTRACT_ADDRESSES } = accountStore;
+    if (artefactToSpend == null) return;
+    await accountStore
+      .invoke({
+        dApp: CONTRACT_ADDRESSES.createArtefacts,
+        payment: [{ assetId: artefactToSpend.assetId, amount: "1" }],
+        call: {
+          function: "spendArtefact",
+          args: [{ type: "string", value: this.domain }],
+        },
+      })
+      .then(async (txId) => {
+        console.log(txId);
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+      .finally(() => this._setLoading(false));
+    this._setLoading(false);
+  };
+
+  handleCreatePool = async () => {
+    const { address } = this.rootStore.accountStore;
+    if (address === null || this.logo == null) return;
+    // await this.spendArtefact();
+    const assets = this.poolsAssets.map(({ asset, share }) => ({
+      assetId: asset.assetId,
+      share: share.div(10).toNumber(),
+    }));
+    await poolsService.createPool({
+      domain: this.domain,
+      swapFee: this.swapFee.div(10).toNumber(),
+      image: this.logo,
+      owner: address,
+      assets,
+    });
+    //todo make back request
   };
 }

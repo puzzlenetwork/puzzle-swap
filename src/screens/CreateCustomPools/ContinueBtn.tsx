@@ -38,8 +38,12 @@ const ContinueBtn: React.FC = () => {
       );
     case 2:
       return (
-        <Button onClick={() => handleContinue(3)} fixed>
-          Continue
+        <Button
+          onClick={vm.handleCreatePool}
+          fixed
+          disabled={vm.artefactToSpend == null}
+        >
+          {vm.artefactToSpend == null ? "Select an artefact" : "Continue"}
         </Button>
       );
     case 3:

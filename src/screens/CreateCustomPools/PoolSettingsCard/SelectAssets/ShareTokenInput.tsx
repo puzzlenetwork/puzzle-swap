@@ -14,6 +14,8 @@ interface IProps
     "onChange"
   > {
   amount: BN;
+  maxValue?: BN;
+  minValue?: BN;
   onChange: (e: BN) => void;
   error?: boolean;
 }
@@ -76,6 +78,8 @@ const Root = styled.div<{
 const ShareTokenInput: React.FC<IProps> = ({
   amount,
   error,
+  maxValue,
+  minValue,
   onChange,
   ...props
 }) => {
@@ -87,9 +91,6 @@ const ShareTokenInput: React.FC<IProps> = ({
           renderInput={(props, ref) => (
             <AmountInput
               {...props}
-              min={0.5}
-              max={100}
-              step={0.5}
               style={{
                 fontSize: 16,
                 lineHeight: 24,
@@ -111,19 +112,6 @@ const ShareTokenInput: React.FC<IProps> = ({
           onChange={(v) => onChange && onChange(v)}
           placeholder="0.00"
         />
-        {/*<input*/}
-        {/*  disabled={rest.disabled}*/}
-        {/*  type="number"*/}
-        {/*  step={0.5}*/}
-        {/*  max={100}*/}
-        {/*  onChange={(e) => {*/}
-        {/*    // console.log(e.target.value);*/}
-        {/*    onChange(+e.target.value);*/}
-        {/*  }}*/}
-        {/*  value={value}*/}
-        {/*  onFocus={() => setFocused(true)}*/}
-        {/*  onBlur={() => setFocused(false)}*/}
-        {/*/>*/}
         <Text
           type="secondary"
           size="medium"

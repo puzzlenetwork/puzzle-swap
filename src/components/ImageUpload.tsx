@@ -78,7 +78,7 @@ const ImageUpload: React.FC<IProps> = ({
   }: React.ChangeEvent<HTMLInputElement>) => {
     if (!files || !files[0]) return;
     const file: File = files[0];
-    if (!/(gif|jpe?g|tiff?|png|bmp)$/i.test(file.type)) {
+    if (!/(gif|jpe?g|tiff?|png|bmp|svg\+xml)$/i.test(file.type)) {
       notificationStore.notify(
         "Пожалуйста, выберите, файлы другого расширения"
       );

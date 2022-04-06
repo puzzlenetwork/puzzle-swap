@@ -35,6 +35,7 @@ const Root = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  cursor: pointer;
 `;
 const AssetContainer = styled.div`
   display: flex;
@@ -59,17 +60,19 @@ const TokenCompositionRow: React.FC<IProps> = ({
   const [openModal, setOpenModal] = useState(false);
   return (
     <Root>
-      <AssetContainer>
+      <AssetContainer onClick={() => setOpenModal(true)}>
         <RoundTokenIcon src={asset.logo} />
         <SizedBox width={8} />
         <Text>{asset.symbol}</Text>
-        <ArrowDownIcon
-          onClick={() => setOpenModal(true)}
-          style={{ cursor: "pointer" }}
-        />
+        <ArrowDownIcon style={{ cursor: "pointer" }} />
       </AssetContainer>
       <Row mainAxisSize="fit-content" alignItems="center">
-        <ShareTokenInput amount={share} onChange={setShare} disabled={locked} />
+        <ShareTokenInput
+          amount={share}
+          onChange={setShare}
+          disabled={locked}
+          maxValue={new BN(1001)}
+        />
         <SizedBox width={10} />
         {locked ? (
           <Lock onClick={onLockClick} style={{ cursor: "pointer" }} />

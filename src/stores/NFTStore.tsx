@@ -58,12 +58,12 @@ export default class NftStore {
 
   private getTotalPuzzlesNftsAmount = async () => {
     const { chainId, CONTRACT_ADDRESSES } = this.rootStore.accountStore;
-    const res = await nodeService.nodeMatchRequest(
+    const res = await nodeService.nodeKeysRequest(
       NODE_URL_MAP[chainId],
-      CONTRACT_ADDRESSES.nfts,
-      `nft_(.*)_image`
+      CONTRACT_ADDRESSES.createArtefacts,
+      `total_sold_nft`
     );
-    this._setTotalPuzzleNftsAmount(res.length ?? 0);
+    this._setTotalPuzzleNftsAmount(Number(res[0].value) ?? 0);
   };
 
   getAccountNFTs = async () => {
@@ -79,7 +79,7 @@ export default class NftStore {
         ({ description, name }) =>
           artworks.some(
             ({ typeId }) => typeId && description.includes(typeId)
-          ) || PUZZLE_NTFS.some(({ name }) => name && name.includes(name))
+          ) || PUZZLE_NTFS.some((nft) => name && name.includes(nft.name))
       )
       .map((nft) => ({
         ...nft,
