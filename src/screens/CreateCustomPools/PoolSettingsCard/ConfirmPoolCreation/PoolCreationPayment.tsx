@@ -11,6 +11,7 @@ import DialogNotification from "@components/Dialog/DialogNotification";
 import Notification from "@components/Notification";
 import { useStores } from "@stores";
 import BN from "@src/utils/BN";
+import Skeleton from "react-loading-skeleton";
 
 interface IProps {}
 
@@ -20,7 +21,8 @@ const Root = styled.div`
 `;
 
 const PoolCreationPayment: React.FC<IProps> = () => {
-  const { accountStore } = useStores();
+  const { accountStore, nftStore } = useStores();
+
   const { findBalanceByAssetId, TOKENS } = accountStore;
   const puzzleBalance = findBalanceByAssetId(TOKENS.TPUZZLE.assetId);
   const vm = useCreateCustomPoolsVM();
@@ -31,7 +33,13 @@ const PoolCreationPayment: React.FC<IProps> = () => {
       </Text>
       <SizedBox height={8} />
       <Card>
-        {vm.isThereArtefacts ? <SelectArtefact /> : <NoPayment />}
+        {nftStore.accountNFTs == null ? (
+          <Skeleton height={56} />
+        ) : vm.isThereArtefacts && nftStore.accountNFTs != null ? (
+          <SelectArtefact />
+        ) : (
+          <NoPayment />
+        )}
         {puzzleBalance &&
           puzzleBalance?.balance?.lt(
             BN.parseUnits(vm.puzzleNFTPrice, puzzleBalance.decimals)

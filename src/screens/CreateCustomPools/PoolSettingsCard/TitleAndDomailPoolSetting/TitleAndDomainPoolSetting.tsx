@@ -33,13 +33,15 @@ const Tag = styled.div<{ active?: boolean }>`
   box-sizing: border-box;
   border-radius: 10px;
   cursor: pointer;
+  white-space: nowrap;
 `;
 const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
   const vm = useCreateCustomPoolsVM();
   const swapFeeError = vm.swapFee.gt(30) || vm.swapFee.lt(5);
   const [customPercent, setCustomPercent] = useState<BN>(
-    vm.swapFee ?? new BN(5)
+    vm.swapFee ?? new BN(10)
   );
+  console.log(customPercent.toString());
   const handleChangeCustomPercent = (v: BN) => {
     setCustomPercent(v);
     vm.setSwapFee(v);

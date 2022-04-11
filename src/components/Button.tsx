@@ -21,7 +21,7 @@ const Button = styled.button<{
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
-  color: ${({ kind }) => (kind === "secondary" ? "#363870" : "#ffffff")};
+  color: ${({ kind }) => (kind === "secondary" ? "#7075E9" : "#ffffff")};
   width: ${({ fixed }) => (fixed ? "100%" : "fit-content")};
 
   ${({ size }) =>
@@ -40,6 +40,7 @@ const Button = styled.button<{
     background: ${({ kind }) => (kind === "secondary" ? "#F1F2FE" : "#6563dd")};
     border: 1px solid
       ${({ kind }) => (kind === "secondary" ? "#F1F2FE" : "#6563dd")};
+    color: ${({ kind }) => kind === "secondary" && "#6563DD"};
   }
 
   :disabled {

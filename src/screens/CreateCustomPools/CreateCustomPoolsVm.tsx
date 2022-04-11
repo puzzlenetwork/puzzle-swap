@@ -84,13 +84,7 @@ class CreateCustomPoolsVm {
       this.domain = initData.domain;
       makeAutoObservable(this);
     } else {
-      this.poolsAssets = [
-        {
-          asset: rootStore.accountStore.TOKENS.PUZZLE,
-          share: new BN(500),
-          locked: false,
-        },
-      ];
+      this.setDefaultPoolsAssets();
     }
     setInterval(this.saveSettings, 1000);
   }
@@ -108,6 +102,16 @@ class CreateCustomPoolsVm {
   };
 
   poolsAssets: IPoolToken[] = [];
+  setDefaultPoolsAssets = () => {
+    const { accountStore } = this.rootStore;
+    this.poolsAssets = [
+      {
+        asset: accountStore.TOKENS.PUZZLE,
+        share: new BN(500),
+        locked: false,
+      },
+    ];
+  };
 
   get totalTakenShare(): BN {
     return this.poolsAssets.reduce((acc, v) => acc.plus(v.share), BN.ZERO);
@@ -132,6 +136,17 @@ class CreateCustomPoolsVm {
       const percent = Math.round(averageUnlockedPercent.toNumber() * 2) / 2;
       this.poolsAssets[i].share = new BN(percent).times(10);
     });
+    if (this.maxToProvide.eq(0)) {
+      this.rootStore.notificationStore.notify(
+        "Change the assets you don’t have enough in wallet, or reset the whole composition.",
+        {
+          title: "Your max to provide is too low for this pool composition",
+          type: "error",
+          onClickText: "Reset the composition",
+          onClick: () => this.setDefaultPoolsAssets(),
+        }
+      );
+    }
   };
 
   removeAssetFromPool = (assetId: string) => {
@@ -299,9 +314,6 @@ class CreateCustomPoolsVm {
   setProvidedPercentOfPool = (value: number) =>
     (this.providedPercentOfPool = new BN(value));
 
-  maxToProvide: BN = new BN(0);
-  _setMaxToProvide = (value: number) => (this.maxToProvide = new BN(value));
-
   get totalAmountToAddLiquidity(): string | null {
     return BN.ZERO.toFormat();
   }
@@ -371,4 +383,41 @@ class CreateCustomPoolsVm {
     });
     //todo make back request
   };
+
+  get tokensToProvideInUsdnMap(): Record<string, BN> | null {
+    const { poolsStore, accountStore } = this.rootStore;
+    const { assetBalances, findBalanceByAssetId, address } = accountStore;
+    if (assetBalances == null || address == null) return null;
+    return this.poolsAssets.reduce<Record<string, BN>>(
+      (acc, { asset, share }) => {
+        const { assetId, decimals } = asset;
+        const tokenBalance = findBalanceByAssetId(assetId);
+        const rate = poolsStore.usdnRate(assetId, 1) ?? BN.ZERO;
+        if (tokenBalance?.balance == null) return acc;
+        const balance = BN.formatUnits(tokenBalance.balance, decimals);
+        const maxDollarValue = balance.times(rate).div(share.div(1000));
+        return { ...acc, [assetId]: maxDollarValue };
+      },
+      {}
+    );
+  }
+
+  get maxToProvide(): BN {
+    if (this.tokensToProvideInUsdnMap == null) return BN.ZERO;
+    if (!this.totalTakenShare.eq(1000)) return BN.ZERO;
+    const arr = Object.entries(this.tokensToProvideInUsdnMap).map(
+      ([a, maxDollarValue]) => ({
+        assetId: a,
+        dollarValue: maxDollarValue,
+      })
+    );
+    const min = arr.sort((a, b) =>
+      a.dollarValue!.gt(b.dollarValue!) ? 1 : -1
+    )[0];
+    const minAsset = this.poolsAssets.find(
+      ({ asset }) => asset.assetId === min.assetId
+    );
+    if (minAsset == null) return BN.ZERO;
+    return min.dollarValue.div(minAsset.share.div(1000));
+  }
 }

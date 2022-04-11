@@ -23,7 +23,6 @@ const Root = styled.div`
 const SelectArtefact: React.FC<IProps> = () => {
   const [openNftDialog, setOpenNftDialog] = useState(false);
   const vm = useCreateCustomPoolsVM();
-  console.log(vm.artefactToSpend?.picture);
   return (
     <Root>
       <Row justifyContent="center" alignItems="center">

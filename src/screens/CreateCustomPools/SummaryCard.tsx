@@ -111,6 +111,17 @@ const SummaryCard: React.FC<IProps> = () => {
 };
 export default observer(SummaryCard);
 
+// 1. для каждого токена посчитать maxDollarValue = amount * tokenPrice / weight
+// где amount - число токенов на кошельке пользователя
+// weight - доля этого токена в создаваемом пуле (от 0 до 1)
+//
+// 2. найти минимальное значение из всех maxDollarValue
+// тот токен у которого минимальное значение - это ограничивающий токен, назовем его limitToken
+//
+// 3. поделить минимальный maxDollarValue на weight limitToken
+//
+// это алгоритм нахождения max to provide
+
 const Dot: React.FC<{ color: string }> = ({ color }) => (
   <svg
     width="9"

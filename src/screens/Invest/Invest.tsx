@@ -13,7 +13,6 @@ interface IProps {}
 const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
   box-sizing: border-box;
   padding: 0 16px;
@@ -40,7 +39,11 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
       liquiditySort ? "scale(1)" : "scale(1, -1)"};
   }
 `;
-
+const Subtitle = styled(Text)`
+  @media (min-width: 880px) {
+    max-width: 560px;
+  }
+`;
 const InvestImpl: React.FC<IProps> = () => {
   const vm = useInvestVM();
   return (
@@ -52,9 +55,11 @@ const InvestImpl: React.FC<IProps> = () => {
               Invest in Puzzle Mega Pools
             </Text>
             <SizedBox height={4} />
-            <Text size="medium" type="secondary">
-              Select a pool to invest
-            </Text>
+            <Subtitle size="medium" fitContent>
+              A liquidity pool is a collection of funds locked in a smart
+              contract. Liquidity pools are used to facilitate decentralized
+              trading, lending, and many more functions.
+            </Subtitle>
             <SizedBox height={24} />
             <SearchAndFilterTab />
             <SizedBox height={16} />
