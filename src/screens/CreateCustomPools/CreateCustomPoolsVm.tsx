@@ -11,6 +11,7 @@ import {
 } from "@components/Dialog/DialogNotification";
 import nodeService from "@src/services/nodeService";
 import poolsService from "@src/services/poolsService";
+import Balance from "@src/entities/Balance";
 
 const ctx = React.createContext<CreateCustomPoolsVm | null>(null);
 
@@ -118,7 +119,7 @@ class CreateCustomPoolsVm {
   }
 
   addAssetToPool = (assetId: string) => {
-    const balances = this.rootStore.accountStore.assetBalances;
+    const balances = this.tokensToAdd;
     const asset = balances?.find((b) => b.assetId === assetId);
     if (asset == null) return;
     this.poolsAssets.push({ asset: asset, share: BN.ZERO, locked: false });
@@ -204,8 +205,18 @@ class CreateCustomPoolsVm {
     (this.notificationParams = params);
 
   get tokensToAdd() {
-    const balances = this.rootStore.accountStore.assetBalances;
-    if (balances == null) return [];
+    const { accountStore } = this.rootStore;
+    const balances = Object.values(accountStore.TOKENS)
+      .map((t) => {
+        const balance = accountStore.findBalanceByAssetId(t.assetId);
+        return balance ?? new Balance(t);
+      })
+      .sort((a, b) => {
+        if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
+        if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
+        if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
+        return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
+      });
     const currentTokens = this.poolsAssets.reduce<string[]>(
       (acc, v) => [...acc, v.asset.assetId],
       []
