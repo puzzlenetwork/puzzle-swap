@@ -6,7 +6,7 @@ import RoundTokenIcon from "@components/RoundTokenIcon";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import TokenSelectModal from "@components/TokensSelectModal/TokenSelectModal";
-import { ReactComponent as ArrowDownIcon } from "@src/assets/icons/thingArrowDown.svg";
+import arrowDownIcon from "@src/assets/icons/thingArrowDown.svg";
 import { ReactComponent as Lock } from "@src/assets/icons/lock.svg";
 import { ReactComponent as Unlock } from "@src/assets/icons/unlock.svg";
 import { ReactComponent as Close } from "@src/assets/icons/smallClose.svg";
@@ -27,6 +27,8 @@ interface IProps {
   onLockClick: () => void;
 
   onDelete: () => void;
+
+  disabled?: boolean;
 }
 
 const Root = styled.div`
@@ -35,16 +37,32 @@ const Root = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  cursor: pointer;
 `;
-const AssetContainer = styled.div`
+const AssetContainer = styled.div<{
+  disabled?: boolean;
+  modalOpened?: boolean;
+}>`
   display: flex;
   flex-direction: row;
   border: 1px solid #f1f2fe;
   border-radius: 10px;
   width: fit-content;
-  padding: 8px;
+  padding: 8px 32px 8px 8px;
   align-items: center;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  position: relative;
+  :after {
+    position: absolute;
+    inset: 12px 8px 12px auto;
+    content: url(${arrowDownIcon});
+    transition: 0.4s;
+    transform: rotate(${({ modalOpened }) => (modalOpened ? 0 : -90)}deg);
+  }
+  :hover {
+    :after {
+      transform: rotate(${({ disabled }) => (!disabled ? 0 : -90)}deg);
+    }
+  }
 `;
 
 const TokenCompositionRow: React.FC<IProps> = ({
@@ -56,15 +74,19 @@ const TokenCompositionRow: React.FC<IProps> = ({
   locked,
   onLockClick,
   onDelete,
+  disabled,
 }) => {
   const [openModal, setOpenModal] = useState(false);
   return (
     <Root>
-      <AssetContainer onClick={() => setOpenModal(true)}>
+      <AssetContainer
+        disabled={disabled}
+        modalOpened={openModal}
+        onClick={() => !disabled && setOpenModal(true)}
+      >
         <RoundTokenIcon src={asset.logo} />
         <SizedBox width={8} />
         <Text>{asset.symbol}</Text>
-        <ArrowDownIcon style={{ cursor: "pointer" }} />
       </AssetContainer>
       <Row mainAxisSize="fit-content" alignItems="center">
         <ShareTokenInput
@@ -79,11 +101,12 @@ const TokenCompositionRow: React.FC<IProps> = ({
         ) : (
           <Unlock onClick={onLockClick} style={{ cursor: "pointer" }} />
         )}
-        <SizedBox width={10} />
-        <Close
-          style={{ width: 16, height: 16, cursor: "pointer" }}
-          onClick={onDelete}
-        />
+        {!disabled && (
+          <Close
+            style={{ marginLeft: 10, width: 16, height: 16, cursor: "pointer" }}
+            onClick={onDelete}
+          />
+        )}
       </Row>
       <TokenSelectModal
         selectedTokenId={asset.assetId}

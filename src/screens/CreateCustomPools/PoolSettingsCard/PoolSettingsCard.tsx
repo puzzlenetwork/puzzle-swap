@@ -15,7 +15,8 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
 `;
-const DisplayContinueBtn = styled.div`
+
+const DesktopContinueBtn = styled.div`
   display: none;
   @media (min-width: 1056px) {
     display: flex;
@@ -41,9 +42,9 @@ const PoolSettingsCard: React.FC<IProps> = () => {
     <Root>
       {currentStep()}
       <SizedBox height={24} />
-      <DisplayContinueBtn>
+      <DesktopContinueBtn>
         <ContinueBtn />
-      </DisplayContinueBtn>
+      </DesktopContinueBtn>
     </Root>
   );
 };
