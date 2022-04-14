@@ -10,6 +10,9 @@ import { observer } from "mobx-react-lite";
 import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
 import TokenCompositionRow from "./TokenCompositionRow";
 import TokenSelectModal from "@components/TokensSelectModal/TokenSelectModal";
+import { useStores } from "@stores";
+import { TOKENS } from "@src/constants";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -25,6 +28,7 @@ const Grid = styled.div`
 `;
 const SelectsAssets: React.FC<IProps> = () => {
   const [addAssetModal, openAssetModal] = useState(false);
+  const { accountStore } = useStores();
   const vm = useCreateCustomPoolsVM();
   const assetNotification =
     "Please note that the pool must include a PUZZLE asset with at least 2% of pool weight and the maximum of 10 different assets.";
@@ -37,19 +41,30 @@ const SelectsAssets: React.FC<IProps> = () => {
       <Card style={{ width: "100%" }}>
         <Notification type="info" text={assetNotification} />
         <Grid>
-          {vm.poolsAssets.map(({ asset, share, locked }, index) => (
-            <TokenCompositionRow
-              key={index + "select-asset"}
-              locked={locked}
-              onLockClick={() => vm.updateLockedState(asset.assetId, !locked)}
-              onUpdateAsset={vm.changeAssetInShareInPool}
-              balances={vm.tokensToAdd}
-              asset={asset}
-              share={share}
-              setShare={(v) => vm.changeAssetShareInPool(asset.assetId, v)}
-              onDelete={() => vm.removeAssetFromPool(asset.assetId)}
-            />
-          ))}
+          {vm.poolsAssets.map(({ asset, share, locked }, index) => {
+            const isPuzzle =
+              asset.assetId === TOKENS[accountStore.chainId].PUZZLE.assetId;
+            const minShare = new BN(isPuzzle ? 20 : 5);
+            return (
+              <TokenCompositionRow
+                key={index + "select-asset"}
+                locked={locked}
+                onLockClick={() => vm.updateLockedState(asset.assetId, !locked)}
+                onUpdateAsset={vm.changeAssetInShareInPool}
+                balances={vm.tokensToAdd}
+                asset={asset}
+                share={share}
+                setShare={(v) =>
+                  vm.changeAssetShareInPool(
+                    asset.assetId,
+                    v.lte(minShare) ? minShare : v
+                  )
+                }
+                onDelete={() => vm.removeAssetFromPool(asset.assetId)}
+                disabled={isPuzzle}
+              />
+            );
+          })}
         </Grid>
         {vm.poolsAssets.length < 10 && (
           <Button

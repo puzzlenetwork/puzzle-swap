@@ -64,7 +64,7 @@ class CreateCustomPoolsVm {
     }
     if (initData != null) {
       if (initData.assets != null) {
-        const assetsData = initData.assets?.map(
+        this.poolsAssets = initData.assets?.map(
           ({ assetId, share, locked }) => {
             const asset = rootStore.accountStore.TOKENS_ARRAY[assetId];
             return {
@@ -74,7 +74,6 @@ class CreateCustomPoolsVm {
             };
           }
         );
-        this.poolsAssets = assetsData;
       }
       this.logo = initData.logo;
       this.swapFee = new BN(initData.swapFee).times(10);
@@ -87,6 +86,7 @@ class CreateCustomPoolsVm {
     } else {
       this.setDefaultPoolsAssets();
     }
+    this.saveSettings();
     setInterval(this.saveSettings, 1000);
   }
 
@@ -159,6 +159,7 @@ class CreateCustomPoolsVm {
     this.poolsAssets.splice(indexOfObject, 1);
   };
   changeAssetShareInPool = (assetId: string, share: BN) => {
+    if (share.gt(1000)) share = new BN(1000);
     const indexOfObject = this.poolsAssets.findIndex(
       ({ asset }) => asset.assetId === assetId
     );
@@ -168,8 +169,7 @@ class CreateCustomPoolsVm {
     const indexOfObject = this.poolsAssets.findIndex(
       ({ asset }) => asset.assetId === oldAssetId
     );
-    const balances = this.rootStore.accountStore.assetBalances;
-    const asset = balances?.find((b) => b.assetId === newAssetId);
+    const asset = this.tokensToAdd?.find((b) => b.assetId === newAssetId);
     if (asset == null) return;
     this.poolsAssets[indexOfObject].asset = asset;
   };
