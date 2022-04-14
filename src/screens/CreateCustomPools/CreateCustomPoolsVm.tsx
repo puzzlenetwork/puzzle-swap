@@ -189,7 +189,7 @@ class CreateCustomPoolsVm {
   poolSettingError: boolean = false;
   setPoolSettingError = (v: boolean) => (this.poolSettingError = v);
 
-  swapFee: BN = new BN(50);
+  swapFee: BN = new BN(5);
   setSwapFee = (v: BN) => (this.swapFee = v);
 
   //logo details
