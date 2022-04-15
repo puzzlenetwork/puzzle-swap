@@ -102,6 +102,30 @@ class CreateCustomPoolsVm {
     this.step = s;
   };
 
+  get correct0() {
+    return this.poolsAssets.length > 1 && this.totalTakenShare.eq(1000);
+  }
+  get correct1() {
+    return this.domain.length > 1 && this.logo && !this.poolSettingError;
+  }
+  get correct2() {
+    return this.artefactToSpend != null;
+  }
+  get correct3() {
+    return !this.providedPercentOfPool.eq(0);
+  }
+
+  get minStep() {
+    if (this.rootStore.accountStore.address == null) return 0;
+    const step = [
+      this.correct0,
+      this.correct1,
+      this.correct2,
+      this.correct3,
+    ].indexOf(false);
+    return step === -1 ? this.step : step;
+  }
+
   poolsAssets: IPoolToken[] = [];
   setDefaultPoolsAssets = () => {
     const { accountStore } = this.rootStore;

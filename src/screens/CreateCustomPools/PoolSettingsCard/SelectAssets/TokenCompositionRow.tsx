@@ -65,6 +65,14 @@ const AssetContainer = styled.div<{
   }
 `;
 
+const StyledClose = styled(Close)<{ disabled?: boolean }>`
+  margin-left: 10px;
+  width: 16px;
+  height: 16px;
+  cursor: ${({ disabled }) => (disabled ? "auto" : "pointer")};
+  opacity: ${({ disabled }) => (disabled ? 0 : 1)};
+`;
+
 const TokenCompositionRow: React.FC<IProps> = ({
   onUpdateAsset,
   asset,
@@ -101,12 +109,10 @@ const TokenCompositionRow: React.FC<IProps> = ({
         ) : (
           <Unlock onClick={onLockClick} style={{ cursor: "pointer" }} />
         )}
-        {!disabled && (
-          <Close
-            style={{ marginLeft: 10, width: 16, height: 16, cursor: "pointer" }}
-            onClick={onDelete}
-          />
-        )}
+        <StyledClose
+          disabled={disabled}
+          onClick={!disabled ? onDelete : undefined}
+        />
       </Row>
       <TokenSelectModal
         selectedTokenId={asset.assetId}

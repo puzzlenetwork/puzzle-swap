@@ -6,6 +6,7 @@ interface IProps {
   steps: string[];
   activeStep: number;
   onStepClick: (step: number) => void;
+  minStep?: number;
 }
 
 const Root = styled.div`
@@ -29,28 +30,34 @@ const Rope = styled.div<{ done: boolean }>`
   height: 12px;
   background: ${({ done }) => (done ? "#F1F2FE" : "#C6C9F4")};
 `;
-const Stepper: React.FC<IProps> = ({ steps, activeStep, onStepClick }) => {
+const Stepper: React.FC<IProps> = ({
+  steps,
+  activeStep,
+  onStepClick,
+  minStep,
+}) => {
   return (
     <Root>
-      {steps.map((name, index, array) => {
+      {steps.map((name, step, array) => {
         const state =
-          index === activeStep
+          step === activeStep
             ? "current"
-            : index > activeStep
+            : step > activeStep
             ? "next"
             : "previous";
         return (
-          <React.Fragment key={index + "step-step"}>
+          <React.Fragment key={step + "step-step"}>
             <DesktopStep
-              onClick={() => onStepClick(index)}
+              onClick={() => onStepClick(step)}
               title={name}
               state={state}
-              index={index}
-              key={index + name + "_step"}
+              index={step}
+              key={step + name + "_step"}
+              disabled={minStep != null ? minStep < step : false}
             />
-            {index !== array.length - 1 && (
+            {step !== array.length - 1 && (
               <RopeContainer>
-                <Rope done={index >= activeStep} />
+                <Rope done={step >= activeStep} />
               </RopeContainer>
             )}
           </React.Fragment>
