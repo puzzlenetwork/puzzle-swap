@@ -61,6 +61,10 @@ const SelectNftDialog: React.FC<IProps> = ({
   const { nftStore } = useStores();
   const { accountNFTs } = nftStore;
   const vm = useCreateCustomPoolsVM();
+  const handleBuyMore = async () => {
+    rest.onClose && rest.onClose({} as any);
+    await vm.buyRandomArtefact();
+  };
   return (
     <Dialog {...rest} style={{ maxWidth: 362 }}>
       <Scrollbar>
@@ -98,7 +102,12 @@ const SelectNftDialog: React.FC<IProps> = ({
           </Grid>
           <SizedBox height={16} />
           {accountNFTs?.length === 1 && (
-            <Button fixed kind="secondary" onClick={vm.buyRandomArtefact}>
+            <Button
+              fixed
+              kind="secondary"
+              size="medium"
+              onClick={handleBuyMore}
+            >
               Buy more
               <SizedBox width={12} />
               <Add />

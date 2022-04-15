@@ -372,27 +372,36 @@ class CreateCustomPoolsVm {
       })
       .catch((e) => {
         console.log(e);
-      })
-      .finally(() => this._setLoading(false));
-    this._setLoading(false);
+      });
   };
 
   handleCreatePool = async () => {
     const { address } = this.rootStore.accountStore;
     if (address === null || this.logo == null) return;
-    // await this.spendArtefact();
-    const assets = this.poolsAssets.map(({ asset, share }) => ({
-      assetId: asset.assetId,
-      share: share.div(10).toNumber(),
-    }));
-    await poolsService.createPool({
-      domain: this.domain,
-      swapFee: this.swapFee.div(10).toNumber(),
-      image: this.logo,
-      owner: address,
-      assets,
-    });
-    //todo make back request
+    try {
+      this._setLoading(true);
+      await this.spendArtefact();
+      const assets = this.poolsAssets.map(({ asset, share }) => ({
+        assetId: asset.assetId,
+        share: share.div(10).toNumber(),
+      }));
+      await poolsService.createPool({
+        domain: this.domain,
+        swapFee: this.swapFee.div(10).toNumber(),
+        image: this.logo,
+        owner: address,
+        assets,
+        title: this.title,
+      });
+      this.setStep(this.step + 1);
+      this._setLoading(false);
+    } catch (e: any) {
+      this._setLoading(false);
+      this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
+        type: "error",
+        title: "Couldn't create pool",
+      });
+    }
   };
 
   get tokensToProvideInUsdnMap(): Record<string, BN> | null {

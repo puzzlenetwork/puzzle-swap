@@ -10,6 +10,7 @@ import { observer } from "mobx-react-lite";
 import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
 import Notification from "@components/Notification";
 import unknown from "@src/assets/tokens/unknown-logo.svg";
+import Skeleton from "react-loading-skeleton";
 
 interface IProps {}
 
@@ -19,6 +20,22 @@ const Root = styled.div`
   align-items: center;
   cursor: pointer;
 `;
+
+export const SelectArtefactSkeleton = () => (
+  <Root>
+    <Row justifyContent="center" alignItems="center">
+      <Row alignItems="center">
+        <Skeleton width={56} height={56} style={{ borderRadius: 12 }} />
+        <SizedBox width={8} />
+        <Column>
+          <Skeleton width={150} height={16} style={{ marginBottom: 8 }} />
+          <Skeleton width={150} height={16} />
+        </Column>
+      </Row>
+      <Arrow style={{ cursor: "pointer" }} />
+    </Row>
+  </Root>
+);
 
 const SelectArtefact: React.FC<IProps> = () => {
   const [openNftDialog, setOpenNftDialog] = useState(false);
@@ -30,7 +47,7 @@ const SelectArtefact: React.FC<IProps> = () => {
         alignItems="center"
         onClick={() => setOpenNftDialog(true)}
       >
-        <Row>
+        <Row alignItems="center">
           <SquareTokenIcon src={vm.artefactToSpend?.picture ?? unknown} />
           <SizedBox width={8} />
           {vm.artefactToSpend == null ? (

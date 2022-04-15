@@ -63,7 +63,9 @@ const DesktopStep: React.FC<IProps> = ({ index, state, title, ...rest }) => {
         </Text>
       </IconContainer>
       <SizedBox width={8} />
-      <TextContainer {...{ state, size: "medium" }}>{title}</TextContainer>
+      <TextContainer {...{ state, size: "medium" }} nowrap>
+        {title}
+      </TextContainer>
     </Root>
   );
 };

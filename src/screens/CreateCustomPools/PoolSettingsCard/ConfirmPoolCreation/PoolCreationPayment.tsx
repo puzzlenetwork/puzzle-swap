@@ -5,13 +5,14 @@ import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import Card from "@components/Card";
 import NoPayment from "./NoPayment";
-import SelectArtefact from "@screens/CreateCustomPools/PoolSettingsCard/ConfirmPoolCreation/SelectArtefact";
+import SelectArtefact, {
+  SelectArtefactSkeleton,
+} from "@screens/CreateCustomPools/PoolSettingsCard/ConfirmPoolCreation/SelectArtefact";
 import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
 import DialogNotification from "@components/Dialog/DialogNotification";
 import Notification from "@components/Notification";
 import { useStores } from "@stores";
 import BN from "@src/utils/BN";
-import Skeleton from "react-loading-skeleton";
 
 interface IProps {}
 
@@ -33,13 +34,9 @@ const PoolCreationPayment: React.FC<IProps> = () => {
       </Text>
       <SizedBox height={8} />
       <Card>
-        {nftStore.accountNFTs == null ? (
-          <Skeleton height={56} />
-        ) : vm.isThereArtefacts && nftStore.accountNFTs != null ? (
-          <SelectArtefact />
-        ) : (
-          <NoPayment />
-        )}
+        {nftStore.accountNFTs == null && <SelectArtefactSkeleton />}
+        {nftStore.accountNFTs != null &&
+          (vm.isThereArtefacts ? <SelectArtefact /> : <NoPayment />)}
         {puzzleBalance &&
           puzzleBalance?.balance?.lt(
             BN.parseUnits(vm.puzzleNFTPrice, puzzleBalance.decimals)

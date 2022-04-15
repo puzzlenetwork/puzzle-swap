@@ -3,13 +3,28 @@ import Button from "@components/Button";
 import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
 import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
+import { useStores } from "@stores";
+import Loading from "@components/Loading";
 
 const ContinueBtn: React.FC = () => {
   const vm = useCreateCustomPoolsVM();
+  const { accountStore } = useStores();
   const handleContinue = (step: number) => {
     vm.setStep(step);
     vm.saveSettings();
   };
+  if (accountStore.address == null)
+    return (
+      <Button onClick={() => accountStore.setLoginModalOpened(true)} fixed>
+        Connect wallet
+      </Button>
+    );
+  if (vm.loading)
+    return (
+      <Button disabled fixed>
+        <Loading big />
+      </Button>
+    );
   switch (vm.step) {
     case 0:
       const totalShare = vm.poolsAssets.reduce(

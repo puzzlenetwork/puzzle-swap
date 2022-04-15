@@ -11,6 +11,7 @@ interface IPoolSettings {
   swapFee: number;
   owner: string;
   assets: IAssetConfig[];
+  title: string;
 }
 
 const poolService = {
@@ -26,13 +27,13 @@ const poolService = {
     });
     return true;
   },
-  createPool: async (settings: IPoolSettings): Promise<boolean> => {
+  createPool: async (data: IPoolSettings): Promise<boolean> => {
     await axios(
-      `${process.env.REACT_APP_API_BASE}/api/v1/pools/pool/${settings.domain}`,
+      `${process.env.REACT_APP_API_BASE}/api/v1/pools/pool/${data.domain}`,
       {
         method: "POST",
         headers: { "Content-type": "application/json" },
-        data: { settings },
+        data,
       }
     );
     return true;
