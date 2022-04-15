@@ -25,8 +25,12 @@ const SelectArtefact: React.FC<IProps> = () => {
   const vm = useCreateCustomPoolsVM();
   return (
     <Root>
-      <Row justifyContent="center" alignItems="center">
-        <Row onClick={() => setOpenNftDialog(true)}>
+      <Row
+        justifyContent="center"
+        alignItems="center"
+        onClick={() => setOpenNftDialog(true)}
+      >
+        <Row>
           <SquareTokenIcon src={vm.artefactToSpend?.picture ?? unknown} />
           <SizedBox width={8} />
           {vm.artefactToSpend == null ? (

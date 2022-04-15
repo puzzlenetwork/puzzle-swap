@@ -128,10 +128,7 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
           {Array.from({ length: 3 }).map((_, index) => (
             <Tag
               key={index + "percent"}
-              onClick={() => {
-                setCustomPercent(new BN(5));
-                vm.setSwapFee(new BN((index + 1) * 10));
-              }}
+              onClick={() => vm.setSwapFee(new BN((index + 1) * 10))}
               active={vm.swapFee.eq(new BN((index + 1) * 10))}
               style={{ marginRight: 4 }}
             >
@@ -139,6 +136,7 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
             </Tag>
           ))}
           <ShareTokenInput
+            onClick={() => handleChangeCustomPercent(customPercent)}
             amount={customPercent}
             error={swapFeeError}
             onChange={handleChangeCustomPercent}
