@@ -38,6 +38,7 @@ const Root = styled.div<{ focused?: boolean }>`
   }
 `;
 const Option = styled.div<{ active?: boolean }>`
+  width: 100%;
   display: flex;
   cursor: pointer;
   position: relative;
@@ -46,26 +47,24 @@ const Option = styled.div<{ active?: boolean }>`
   font-size: 14px;
   line-height: 20px;
   color: ${({ active }) => (active ? "#3638708F" : "#363870")};
-  padding: 10px 12px;
+  padding: 10px 12px 10px 22px;
   background: #ffffff;
-  min-width: 136px;
+  margin: 0 -16px;
+  white-space: nowrap;
 
   :hover {
-    color: #3638708f;
+    background: #f1f2fe;
   }
 
   ::after {
     transition: 0.4s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     position: absolute;
-    right: -8px;
+    right: 12px;
     ${({ active }) => active && `content: url(${check})`};
   }
 `;
 
-const Select: React.FC<IProps> = ({ options, selected, onSelect }) => {
+const Select: React.FC<IProps> = ({ options, selected, onSelect, ...rest }) => {
   const [focused, setFocused] = useState(false);
   return (
     <Tooltip
@@ -75,14 +74,16 @@ const Select: React.FC<IProps> = ({ options, selected, onSelect }) => {
         onVisibleChange: setFocused,
       }}
       content={
-        <Column>
+        <Column crossAxisSize="max">
           {options.map((v) => {
             const active = selected?.key === v.key;
             return (
               <Option
                 active={active}
                 key={v.key + "_option"}
-                onClick={() => onSelect(v)}
+                onClick={() => {
+                  onSelect(v);
+                }}
               >
                 {v.title}
               </Option>
@@ -95,6 +96,7 @@ const Select: React.FC<IProps> = ({ options, selected, onSelect }) => {
         focused={focused}
         onClick={() => setFocused(true)}
         onBlur={() => setFocused(false)}
+        {...rest}
       >
         {selected?.title ?? options[0].title}
         <SizedBox width={10} />
