@@ -13,7 +13,7 @@ import TransparentDetailsBtn from "@screens/InvestToPoolInterface/TransparentDet
 import NakedBtn from "@src/components/NakedBtn";
 import { useStores } from "@stores";
 import Tooltip from "@src/components/Tooltip";
-import MorePoolInformation from "@screens/InvestToPoolInterface/YourLiquidity/MorePoolInformation";
+import MorePoolInformation from "./MorePoolInformation";
 
 interface IProps {}
 
@@ -45,6 +45,7 @@ const Links = styled.div`
     padding-top: 44px;
   }
 `;
+//todo add diff picture for custom pools
 const MainPoolInfo: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const vm = useInvestToPoolInterfaceVM();

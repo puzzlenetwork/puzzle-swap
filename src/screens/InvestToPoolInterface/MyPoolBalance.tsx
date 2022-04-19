@@ -7,13 +7,13 @@ import Button from "@components/Button";
 import { AdaptiveColumn, AdaptiveRow, Column, Row } from "@src/components/Flex";
 import Divider from "@src/components/Divider";
 import { observer } from "mobx-react-lite";
-import { useStores } from "@stores";
 import GridTable from "@components/GridTable";
 import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import RoundTokenIcon from "@components/RoundTokenIcon";
 import useWindowSize from "@src/hooks/useWindowSize";
-import Loading from "@src/components/Loading";
+import { Link } from "react-router-dom";
+import { useStores } from "@stores";
 
 interface IProps {}
 
@@ -22,58 +22,51 @@ const Root = styled.div`
   flex-direction: column;
   width: 100%;
   padding-top: 24px;
+
+  a {
+    width: 100%;
+  }
 `;
 const Header = styled.div`
   display: flex;
   align-items: center;
   padding: 0 24px;
 `;
-const Title = styled(Text)`
-  padding: 0 16px;
+const Buttons = styled(Row)`
+  box-sizing: border-box;
+  padding: 16px;
   @media (min-width: 880px) {
-    display: none;
+    padding: 24px;
   }
 `;
 
-const RewardToClaim: React.FC<IProps> = () => {
+const MyPoolBalance: React.FC<IProps> = () => {
   const { accountStore } = useStores();
+  const { address, setLoginModalOpened } = accountStore;
   const vm = useInvestToPoolInterfaceVM();
   const { width: screenWidth } = useWindowSize();
 
-  if (accountStore.address == null || !vm.isThereRewardToClaim) return null;
   return (
     <Root>
       <Text weight={500} type="secondary">
-        Rewards to claim
+        My pool balance
       </Text>
       <SizedBox height={8} />
       <Card paddingDesktop="24px 0 0" paddingMobile="16px 0 0">
         <Header>
           <Column crossAxisSize="max" style={{ flex: 1 }}>
-            <Text type="secondary">Total value</Text>
-            <Text weight={500}>$ {vm.totalRewardToClaim.toFixed(2)}</Text>
+            <Text weight={500}>Total value</Text>
           </Column>
-          {!vm.loading ? (
-            <Button
-              style={{ flex: 1 }}
-              size="medium"
-              disabled={vm.isThereSomethingToClaim}
-              onClick={vm.claimRewards}
-              fixed
-            >
-              Claim
-            </Button>
-          ) : (
-            <Button style={{ flex: 1 }} size="medium" disabled fixed>
-              Claiming
-              <Loading />
-            </Button>
-          )}
+          <Column>
+            <Text textAlign="right" size="medium">
+              {address != null ? `$${vm.totalRewardToClaim.toFixed(2)}` : "--"}
+            </Text>
+            <Text textAlign="right" type="secondary" size="small">
+              Share of pool {vm.accountShareOfPool?.toFormat(2)}%
+            </Text>
+          </Column>
         </Header>
-        <Divider style={{ margin: "24px 0" }} />
-        <Title weight={500} className="mobile">
-          Reward composition
-        </Title>
+        <Divider style={{ margin: "16px 0" }} />
         <GridTable desktopTemplate="1fr 1fr" mobileTemplate="1fr 1fr">
           {vm.rewardToClaimTable.map((token, i) => {
             const reward = token.reward.gte(0.01)
@@ -110,8 +103,10 @@ const RewardToClaim: React.FC<IProps> = () => {
                     className="mobile"
                   >
                     <Text size="medium">
-                      <span>{reward}</span>
-                      <span style={{ color: "#8082C5" }}>(${usd})</span>
+                      <span>{address !== null ? reward : "-"}</span>
+                      <span style={{ color: "#8082C5" }}>
+                        {address !== null ? `(${usd})` : "-"}
+                      </span>
                     </Text>
                   </Row>
                   <Column
@@ -119,9 +114,10 @@ const RewardToClaim: React.FC<IProps> = () => {
                     className="desktop"
                     style={{ textAlign: "end" }}
                   >
-                    <Text size="medium">{reward}</Text>
+                    <Text size="medium">{address !== null ? reward : "-"}</Text>
                     <Text size="small" type="secondary">
-                      ${usd}
+                      {/*${usd}*/}
+                      {address !== null ? usd : "-"}
                     </Text>
                   </Column>
                 </AdaptiveRow>
@@ -129,9 +125,41 @@ const RewardToClaim: React.FC<IProps> = () => {
             );
           })}
         </GridTable>
-        <SizedBox height={24} />
+        <SizedBox height={16} />
+        <Divider />
+        <Buttons>
+          {address != null ? (
+            <>
+              <Link to={`/${vm.pool.id}/withdraw`}>
+                <Button fixed size="medium" kind="secondary">
+                  Withdraw
+                </Button>
+              </Link>
+              <SizedBox width={8} />
+              <Link to={`/${vm.pool.id}/addLiquidity`}>
+                <Button fixed size="medium">
+                  Deposit
+                </Button>
+              </Link>
+            </>
+          ) : (
+            <Column crossAxisSize="max">
+              <Text textAlign="center" type="secondary">
+                Connect your wallet to invest
+              </Text>
+              <SizedBox height={16} />
+              <Button
+                fixed
+                size="medium"
+                onClick={() => setLoginModalOpened(true)}
+              >
+                Connect wallet
+              </Button>
+            </Column>
+          )}
+        </Buttons>
       </Card>
     </Root>
   );
 };
-export default observer(RewardToClaim);
+export default observer(MyPoolBalance);

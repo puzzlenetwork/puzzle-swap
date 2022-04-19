@@ -5,13 +5,15 @@ import Layout from "@components/Layout";
 import { InvestToPoolInterfaceVMProvider } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
 import SizedBox from "@components/SizedBox";
 import PoolInformation from "@screens/InvestToPoolInterface/PoolInformation";
-import YourLiquidity from "@screens/InvestToPoolInterface/YourLiquidity/YourLiquidity";
 import { Column } from "@src/components/Flex";
 import TradesVolume from "@screens/InvestToPoolInterface/TradesVolume";
 import PoolComposition from "@screens/InvestToPoolInterface/PoolComposition";
-import RewardToClaim from "@screens/InvestToPoolInterface/RewardToClaim";
 import GoBack from "@components/GoBack";
 import MainPoolInfo from "./MainPoolInfo";
+import LPStaking from "./LPStaking";
+import MyPoolBalance from "@screens/InvestToPoolInterface/MyPoolBalance";
+import Reward from "./Reward";
+import PoolHistory from "./PoolHistory";
 
 interface IProps {
   poolId: string;
@@ -67,19 +69,21 @@ const InvestToPoolInterfaceImpl: React.FC = () => {
             <GoBack link="/invest" text="Back to Pools list" />
             <SizedBox height={24} />
             <MainPoolInfo />
+            <PoolInformation />
             <Body>
               <MainBlock>
                 <RightBlockMobile>
-                  <YourLiquidity />
-                  <RewardToClaim />
+                  <Reward />
+                  <MyPoolBalance />
                 </RightBlockMobile>
-                <PoolInformation />
                 <TradesVolume />
                 <PoolComposition />
+                <PoolHistory />
               </MainBlock>
               <RightBlock>
-                <YourLiquidity />
-                <RewardToClaim />
+                <Reward />
+                <MyPoolBalance />
+                <LPStaking />
               </RightBlock>
             </Body>
           </Root>
