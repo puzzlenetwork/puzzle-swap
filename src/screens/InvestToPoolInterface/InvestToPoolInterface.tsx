@@ -32,7 +32,7 @@ const Root = styled.div`
   margin-top: 56px;
   text-align: left;
 
-  @media (min-width: 880px) {
+  @media (min-width: 1120px) {
     margin-top: 56px;
   }
 `;
@@ -41,21 +41,21 @@ const MainBlock = styled.div`
 `;
 const RightBlockMobile = styled(Column)`
   width: 100%;
-  @media (min-width: 880px) {
+  @media (min-width: 1120px) {
     display: none;
   }
 `;
 const RightBlock = styled(Column)`
   width: 100%;
   display: none;
-  @media (min-width: 880px) {
+  @media (min-width: 1120px) {
     display: flex;
   }
 `;
 const Body = styled.div`
   width: 100%;
   display: grid;
-  @media (min-width: 880px) {
+  @media (min-width: 1120px) {
     grid-template-columns: 2fr 1fr;
     column-gap: 40px;
   }

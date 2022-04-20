@@ -6,6 +6,8 @@ import BN from "@src/utils/BN";
 import { IToken, NODE_URL_MAP } from "@src/constants";
 import { IPoolStats30Days } from "@stores/PoolsStore";
 import axios from "axios";
+import nodeService from "@src/services/nodeService";
+import { ITransaction } from "@src/utils/types";
 
 const ctx = React.createContext<InvestToPoolInterfaceVM | null>(null);
 
@@ -35,6 +37,9 @@ class InvestToPoolInterfaceVM {
   loading: boolean = false;
   private _setLoading = (l: boolean) => (this.loading = l);
 
+  loadingHistory: boolean = false;
+  private _setLoadingHistory = (l: boolean) => (this.loadingHistory = l);
+
   public stats: IPoolStats30Days | null = null;
   private setStats = (stats: IPoolStats30Days | null) => (this.stats = stats);
 
@@ -57,12 +62,17 @@ class InvestToPoolInterfaceVM {
   private setPoolAssetBalances = (value: { assetId: string; balance: BN }[]) =>
     (this.poolAssetBalances = value);
 
+  public transactionsHistory: ITransaction[] | null = null;
+  private setTransactionsHistory = (value: any[]) =>
+    (this.transactionsHistory = value);
+
   constructor(rootStore: RootStore, poolId: string) {
     this.poolId = poolId;
     this.rootStore = rootStore;
     makeAutoObservable(this);
     this.updateStats();
     this.updatePoolTokenBalances();
+    this.loadTransactionsHistory();
     reaction(
       () => this.rootStore.accountStore?.address,
       () => {
@@ -287,6 +297,36 @@ class InvestToPoolInterfaceVM {
       return { assetId: token.assetId, balance: new BN(token.balance) };
     });
     this.setPoolAssetBalances(value);
+  };
+
+  loadTransactionsHistory = async () => {
+    const { rootStore, pool } = this;
+    const { accountStore } = rootStore;
+    const { chainId } = accountStore;
+    const v = await nodeService.transactions(
+      NODE_URL_MAP[chainId],
+      pool.contractAddress
+    );
+    v && this.setTransactionsHistory(v);
+    console.log(v);
+  };
+
+  loadMoreHistory = async () => {
+    this._setLoadingHistory(true);
+    const { rootStore, pool, transactionsHistory } = this;
+    const { accountStore } = rootStore;
+    const { chainId } = accountStore;
+    if (transactionsHistory == null) return;
+    const after = transactionsHistory.slice(-1).pop();
+    if (after == null) return;
+    const v = await nodeService.transactions(
+      NODE_URL_MAP[chainId],
+      pool.contractAddress,
+      10,
+      after.id
+    );
+    this._setLoadingHistory(false);
+    v && this.setTransactionsHistory([...transactionsHistory, ...v]);
   };
 }
 

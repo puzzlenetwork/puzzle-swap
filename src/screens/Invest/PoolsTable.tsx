@@ -70,12 +70,7 @@ const PoolsTable: React.FC = () => {
         )}
       </Row>
       <SizedBox height={8} />
-      <Scrollbar
-        onScrollX={(container) => {
-          console.log("heeey");
-          console.log(`scrolled to: ${container.scrollTop}.`);
-        }}
-      >
+      <Scrollbar>
         <Card
           style={{
             padding: 0,
