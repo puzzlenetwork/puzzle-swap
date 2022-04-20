@@ -11,16 +11,19 @@ import Remove from "./Remove";
 import Claim from "./Claim";
 import Add from "./Add";
 import { useStores } from "@stores";
+import dayjs from "dayjs";
 
 interface IProps extends ITransaction {
   tokens: Record<string, IToken>;
 }
 
-const Root = styled(Row)``;
-const StyledRow = styled(Row)`
-  margin: 0 16px;
+const Root = styled(Row)`
+  box-sizing: border-box;
+  padding: 16px !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
   @media (min-width: 880px) {
-    margin: 0 24px;
+    padding: 16px 24px !important;
   }
 `;
 const Transaction: React.FC<IProps> = ({
@@ -32,7 +35,22 @@ const Transaction: React.FC<IProps> = ({
   payment,
 }) => {
   const { accountStore } = useStores();
-  const date = new Date(timestamp);
+  // const date = new Date(timestamp);
+  const getDate = () => {
+    const date1 = dayjs(timestamp);
+    const diff = Math.abs(date1.diff(dayjs(), "minute"));
+
+    if (diff === 0) {
+      return "just now";
+    }
+    if (diff > 0 && diff < 60) {
+      return `${diff} min ago`;
+    }
+    if (diff >= 60 && diff < 600) {
+      const v = Math.floor(diff / 60);
+      return `about ${v} hours ago`;
+    }
+  };
   const draw = () => {
     switch (call.function) {
       case "swap":
@@ -69,11 +87,14 @@ const Transaction: React.FC<IProps> = ({
       className="gridRow"
       onClick={() => window.open(`${accountStore.EXPLORER_LINK}/tx/${id}`)}
     >
-      <StyledRow>{draw()}</StyledRow>
-      <Text style={{ whiteSpace: "nowrap" }}>
-        {/*$ {pool.globalLiquidity.toFormat(2)}*/}
+      <Row>{draw()}</Row>
+      <Text fitContent nowrap>
+        $ 83,344.55
       </Text>
-      <Text style={{ whiteSpace: "nowrap" }}>{date.toDateString()}</Text>
+      {/*<Text style={{ whiteSpace: "nowrap" }}>{date.toDateString()}</Text>*/}
+      <Text fitContent nowrap>
+        {getDate()}
+      </Text>
     </Root>
   );
 };

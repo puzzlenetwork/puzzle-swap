@@ -70,72 +70,73 @@ const PoolsTable: React.FC = () => {
         )}
       </Row>
       <SizedBox height={8} />
-      <Scrollbar>
-        <Card
-          style={{
-            padding: 0,
-            minWidth: 1160,
-            justifyContent: "center",
-          }}
-        >
-          {filteredPools.length > 0 ? (
-            <GridTable
-              desktopTemplate="3fr 1fr 1fr 1fr 1fr"
-              mobileTemplate="3fr 1fr 1fr 1fr 1fr"
-            >
-              <div className="gridTitle">
-                <div>Pool name</div>
-                <div>My balance</div>
-                <Row>
-                  <Text size="medium" fitContent>
-                    Liquidity
-                  </Text>
-                  <img
-                    src={group}
-                    alt="group"
-                    className="liquidity-group"
-                    onClick={() => {
-                      setActiveSort(0);
-                      vm.setSortLiquidity(!vm.sortLiquidity);
-                    }}
-                  />
-                </Row>
-                <div>Volume (24h)</div>
-                <Row style={{ cursor: "pointer" }}>
-                  <Text size="medium" fitContent>
-                    APY
-                  </Text>
-                  <img
-                    src={group}
-                    alt="group"
-                    className="apy-group"
-                    onClick={() => {
-                      setActiveSort(1);
-                      vm.setSortApy(!vm.sortApy);
-                    }}
-                  />
-                </Row>
-              </div>
-              {filteredPools.map((pool, i) => (
-                <InvestPoolRow
-                  key={i}
-                  pool={pool as any}
-                  stats={
-                    poolsStore.poolsStats
-                      ? poolsStore.poolsStats[pool.id]
-                      : undefined
-                  }
+      <Card
+        style={{
+          padding: 0,
+          // minWidth: 1160,
+          justifyContent: "center",
+          maxWidth: "calc(100vw - 32px)",
+          overflow: "auto",
+        }}
+      >
+        {filteredPools.length > 0 ? (
+          <GridTable
+            style={{ width: "fit-content", minWidth: "100%" }}
+            desktopTemplate="3fr 1fr 1fr 1fr 1fr"
+            mobileTemplate="3fr 1fr 1fr 1fr 1fr"
+          >
+            <div className="gridTitle">
+              <div>Pool name</div>
+              <div>My balance</div>
+              <Row>
+                <Text size="medium" fitContent>
+                  Liquidity
+                </Text>
+                <img
+                  src={group}
+                  alt="group"
+                  className="liquidity-group"
+                  onClick={() => {
+                    setActiveSort(0);
+                    vm.setSortLiquidity(!vm.sortLiquidity);
+                  }}
                 />
-              ))}
-            </GridTable>
-          ) : (
-            <PoolNotFound
-              onClear={() => vm.setSearchValue("")}
-              searchValue={vm.searchValue}
-            />
-          )}
-        </Card>
-      </Scrollbar>
+              </Row>
+              <div>Volume (24h)</div>
+              <Row style={{ cursor: "pointer" }}>
+                <Text size="medium" fitContent>
+                  APY
+                </Text>
+                <img
+                  src={group}
+                  alt="group"
+                  className="apy-group"
+                  onClick={() => {
+                    setActiveSort(1);
+                    vm.setSortApy(!vm.sortApy);
+                  }}
+                />
+              </Row>
+            </div>
+            {filteredPools.map((pool, i) => (
+              <InvestPoolRow
+                key={i}
+                pool={pool as any}
+                stats={
+                  poolsStore.poolsStats
+                    ? poolsStore.poolsStats[pool.id]
+                    : undefined
+                }
+              />
+            ))}
+          </GridTable>
+        ) : (
+          <PoolNotFound
+            onClear={() => vm.setSearchValue("")}
+            searchValue={vm.searchValue}
+          />
+        )}
+      </Card>
     </>
   );
 };

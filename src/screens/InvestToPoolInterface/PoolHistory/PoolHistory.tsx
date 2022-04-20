@@ -10,7 +10,6 @@ import Skeleton from "react-loading-skeleton";
 import Transaction from "./Transaction";
 import { useStores } from "@stores";
 import Loading from "@components/Loading";
-import Scrollbar from "@src/components/Scrollbar";
 
 interface IProps {}
 
@@ -28,57 +27,53 @@ const PoolHistory: React.FC<IProps> = () => {
         Pool history
       </Text>
       <SizedBox height={8} />
-      <Scrollbar>
-        <Card
-          style={{
-            padding: 0,
-            minWidth: 760,
-          }}
+      <Card
+        style={{ padding: 0, overflow: "auto", maxWidth: "calc(100vw - 32px)" }}
+      >
+        <GridTable
+          style={{ width: "fit-content", minWidth: "100%" }}
+          desktopTemplate={"2fr 1fr 1fr"}
+          mobileTemplate={"2fr 1fr 1fr"}
         >
-          <GridTable
-            desktopTemplate={"2fr 1fr 1fr"}
-            mobileTemplate={"2fr 1fr 1fr"}
-          >
-            <div className="gridTitle">
-              <div>Details</div>
-              <div>Value</div>
-              <div>Time</div>
-            </div>
-            {vm.transactionsHistory == null ? (
-              <Skeleton
-                height={45}
-                count={3}
-                style={{ margin: "16px 24px", width: "calc(100% - 48px)" }}
-              />
-            ) : (
-              <>
-                {vm.transactionsHistory.map((tr) => (
-                  <Transaction
-                    key={tr.id}
-                    {...tr}
-                    tokens={accountStore.TOKENS_ARRAY}
-                  />
-                ))}
-                <SizedBox height={16} />
-                <Text
-                  type="secondary"
-                  weight={500}
-                  textAlign="center"
-                  style={{ cursor: "pointer" }}
-                  onClick={async () => {
-                    if (!vm.loadingHistory) {
-                      await vm.loadMoreHistory();
-                    }
-                  }}
-                >
-                  {vm.loadingHistory ? <Loading big /> : "Load more"}
-                </Text>
-                <SizedBox height={16} />
-              </>
-            )}
-          </GridTable>
-        </Card>
-      </Scrollbar>
+          <div className="gridTitle">
+            <div>Details</div>
+            <div>Value</div>
+            <div>Time</div>
+          </div>
+          {vm.transactionsHistory == null ? (
+            <Skeleton
+              height={45}
+              count={3}
+              style={{ margin: "16px 24px", width: "calc(100% - 48px)" }}
+            />
+          ) : (
+            <>
+              {vm.transactionsHistory.map((tr) => (
+                <Transaction
+                  key={tr.id}
+                  {...tr}
+                  tokens={accountStore.TOKENS_ARRAY}
+                />
+              ))}
+              <SizedBox height={16} />
+              <Text
+                type="secondary"
+                weight={500}
+                textAlign="center"
+                style={{ cursor: "pointer" }}
+                onClick={async () => {
+                  if (!vm.loadingHistory) {
+                    await vm.loadMoreHistory();
+                  }
+                }}
+              >
+                {vm.loadingHistory ? <Loading big /> : "Load more"}
+              </Text>
+              <SizedBox height={16} />
+            </>
+          )}
+        </GridTable>
+      </Card>
     </Root>
   );
 };

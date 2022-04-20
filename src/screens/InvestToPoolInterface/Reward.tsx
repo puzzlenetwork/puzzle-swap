@@ -108,26 +108,15 @@ const Reward: React.FC<IProps> = () => {
               <Loading />
             </Button>
           ) : (
-            <Row>
-              <Button
-                kind="secondary"
-                fixed
-                size="medium"
-                // disabled={!vm.canClaim}
-                // onClick={vm.claim}
-              >
-                Claim as USDN
-              </Button>
-              <SizedBox width={8} />
-              <Button
-                fixed
-                size="medium"
-                // disabled={!vm.canClaim}
-                // onClick={vm.claim}
-              >
+            <Column crossAxisSize="max">
+              <Button fixed size="medium">
                 Claim reward
               </Button>
-            </Row>
+              <SizedBox height={8} />
+              <Button kind="secondary" fixed size="medium">
+                Claim as USDN
+              </Button>
+            </Column>
           )}
         </Inner>
       </Card>
