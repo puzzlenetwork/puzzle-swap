@@ -7,6 +7,9 @@ import SearchAndFilterTab from "@screens/Invest/SearchAndFilterTab";
 import { InvestVMProvider, useInvestVM } from "./InvestVm";
 import PoolsTable from "@screens/Invest/PoolsTable";
 import { Observer } from "mobx-react-lite";
+import { useStores } from "@stores";
+import AccountInvestBalance from "@screens/Invest/AccountInvestBalance";
+import AccountPools from "@screens/Invest/AccountPools";
 
 interface IProps {}
 
@@ -46,6 +49,7 @@ const Subtitle = styled(Text)`
 `;
 const InvestImpl: React.FC<IProps> = () => {
   const vm = useInvestVM();
+  const { accountStore } = useStores();
   return (
     <Layout>
       <Observer>
@@ -61,7 +65,11 @@ const InvestImpl: React.FC<IProps> = () => {
               trading, lending, and many more functions.
             </Subtitle>
             <SizedBox height={24} />
+            {accountStore.address != null && <AccountInvestBalance />}
+            <SizedBox height={24} />
             <SearchAndFilterTab />
+            <SizedBox height={16} />
+            <AccountPools />
             <SizedBox height={16} />
             <PoolsTable />
           </Root>

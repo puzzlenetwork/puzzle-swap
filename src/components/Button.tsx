@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 
-type TButtonType = "primary" | "secondary";
+type TButtonType = "primary" | "secondary" | "naked";
 type TButtonSize = "medium" | "large";
 
 const Button = styled.button<{
@@ -35,6 +35,7 @@ const Button = styled.button<{
           return "padding: 0 24px; height: 56px;";
       }
     })()}
+
   :hover {
     cursor: pointer;
     background: ${({ kind }) => (kind === "secondary" ? "#F1F2FE" : "#6563dd")};

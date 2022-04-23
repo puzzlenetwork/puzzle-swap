@@ -1,4 +1,6 @@
 import axios from "axios";
+import {} from "@waves/waves-transactions";
+import { ITransaction } from "@src/utils/types";
 
 export interface IStatsPoolItemResponse {
   apy: number;
@@ -136,6 +138,26 @@ const nodeService = {
     const response: { data: ITransactionInfo } = await axios.get(url);
     if (response.data) {
       return response.data;
+    } else {
+      return null;
+    }
+  },
+  transactions: async (
+    node: string,
+    address: string,
+    limit = 10,
+    after?: string
+  ): Promise<ITransaction[] | null> => {
+    const urlSearchParams = new URLSearchParams();
+    if (after != null) {
+      urlSearchParams.set("after", after);
+    }
+    const url = `${node}/transactions/address/${address}/limit/${limit}?${
+      after != null ? urlSearchParams.toString() : ""
+    }`;
+    const response: { data: [ITransaction[]] } = await axios.get(url);
+    if (response.data[0]) {
+      return response.data[0];
     } else {
       return null;
     }

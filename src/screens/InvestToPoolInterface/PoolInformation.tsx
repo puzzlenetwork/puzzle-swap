@@ -1,71 +1,67 @@
 import styled from "@emotion/styled";
 import React from "react";
-import Text from "@components/Text";
-import { Column } from "@src/components/Flex";
-import SizedBox from "@components/SizedBox";
-import _Card from "@components/Card";
 import { observer } from "mobx-react-lite";
 import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
+import Card from "@src/components/Card";
+import Text from "@src/components/Text";
+import SizedBox from "@components/SizedBox";
+import Skeleton from "react-loading-skeleton";
 
 interface IProps {}
 
 const Root = styled.div`
-  display: flex;
+  display: grid;
   flex-direction: column;
   padding-top: 24px;
-`;
-const Card = styled(_Card)`
-  & > * {
-    text-overflow: ellipsis;
-    padding-bottom: 16px;
-  }
-
+  column-gap: 8px;
+  row-gap: 8px;
+  grid-template-columns: repeat(2, 1fr);
   @media (min-width: 880px) {
-    flex-direction: row;
-    & > * {
-      padding-bottom: unset;
-    }
+    grid-template-columns: repeat(4, 1fr);
   }
 `;
-
-const Info: React.FC<{ text: string; value?: string }> = ({ text, value }) => {
-  return (
-    <Column>
-      <Text type="secondary" size="medium" style={{ paddingBottom: 4 }}>
-        {text}
-      </Text>
-      <Text style={{ fontSize: 20 }}>{value ? value : "-"}</Text>
-    </Column>
-  );
-};
 
 const CCard = styled(Card)`
-  display: grid;
-  grid-template-columns: 1fr;
+  padding: 12px 16px;
   @media (min-width: 880px) {
-    grid-template-columns: 1fr 1fr 1fr;
+    padding: 16px 24px;
   }
 `;
 const PoolInformation: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
   const data = vm.stats;
+  const valuesArray = [
+    {
+      title: "Pool value",
+      value: data?.liquidity ? "$ " + data?.liquidity.toFormat(2) : null,
+    },
+    { title: "Volume (7d)", value: "--" },
+    {
+      title: "Fees (30D)",
+      value: data?.fees ? "$ " + data?.fees.toFormat(2) : null,
+    },
+    {
+      title: "APY",
+      value: data?.apy ? data?.apy.toFormat(2) + " %" : null,
+    },
+  ];
   return (
     <Root>
-      <Text weight={500} type="secondary">
-        Pool Information
-      </Text>
-      <SizedBox height={8} />
-      <CCard>
-        <Info
-          text="Pool liquidity"
-          value={data?.liquidity && "$ " + data?.liquidity.toFormat(2)}
-        />
-        <Info
-          text="Fees (30D)"
-          value={data?.fees && "$ " + data?.fees.toFormat(2)}
-        />
-        <Info text="APY" value={data?.apy && data?.apy.toFormat(2) + " %"} />
-      </CCard>
+      {valuesArray.map(({ title, value }, index) => (
+        <CCard key={index}>
+          <Text type="secondary" size="medium">
+            {title}
+          </Text>
+          <SizedBox height={4} />
+          {value != null ? (
+            <Text style={{ fontSize: "20px", lineHeight: "24px" }}>
+              {value}
+            </Text>
+          ) : (
+            <Skeleton height={24} />
+          )}
+        </CCard>
+      ))}
     </Root>
   );
 };

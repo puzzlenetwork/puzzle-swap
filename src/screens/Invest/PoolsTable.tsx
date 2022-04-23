@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 import GridTable from "@components/GridTable";
-import { AdaptiveRow } from "@components/Flex";
+import { Row } from "@components/Flex";
 import Text from "@components/Text";
 import group from "@src/assets/icons/group.svg";
 import InvestPoolRow from "@screens/Invest/InvestPoolRow";
@@ -9,10 +9,14 @@ import PoolNotFound from "@screens/Invest/PoolNotFound";
 import Card from "@components/Card";
 import { useStores } from "@src/stores";
 import { useInvestVM } from "@screens/Invest/InvestVm";
+import SizedBox from "@components/SizedBox";
+import Checkbox from "@components/Checkbox";
 
+//todo change to pool and users pool display component
 const PoolsTable: React.FC = () => {
   const { poolsStore, accountStore } = useStores();
   const [activeSort, setActiveSort] = useState<0 | 1>(1);
+  const [v, setV] = useState(false);
   const vm = useInvestVM();
   const data = poolsStore.poolDataWithApy;
   const filteredPools = data
@@ -48,14 +52,45 @@ const PoolsTable: React.FC = () => {
     );
 
   return (
-    <Card style={{ padding: 0, minHeight: 280, justifyContent: "center" }}>
-      {filteredPools.length > 0 ? (
-        <GridTable mobileTemplate="3fr 1fr">
-          <div className="gridTitle">
-            <div>Pool name</div>
-            <AdaptiveRow>
-              <div className="desktop">
-                <Text size="medium">Liquidity</Text>
+    <>
+      <Row alignItems="center">
+        <Text weight={500} type="secondary" fitContent>
+          All pools ({data.length})
+        </Text>
+        {accountStore.address != null && (
+          <>
+            <SizedBox width={28} />
+            <Checkbox
+              label="Show my empty balances"
+              checked={v}
+              onChange={(v) => setV(v)}
+            />
+          </>
+        )}
+      </Row>
+      <SizedBox height={8} />
+      <Card
+        style={{
+          padding: 0,
+          // minWidth: 1160,
+          justifyContent: "center",
+          maxWidth: "calc(100vw - 32px)",
+          overflow: "auto",
+        }}
+      >
+        {filteredPools.length > 0 ? (
+          <GridTable
+            style={{ width: "fit-content", minWidth: "100%" }}
+            desktopTemplate="3fr 1fr 1fr 1fr 1fr"
+            mobileTemplate="3fr 1fr 1fr 1fr 1fr"
+          >
+            <div className="gridTitle">
+              <div>Pool name</div>
+              <div>My balance</div>
+              <Row>
+                <Text size="medium" fitContent>
+                  Liquidity
+                </Text>
                 <img
                   src={group}
                   alt="group"
@@ -65,9 +100,12 @@ const PoolsTable: React.FC = () => {
                     vm.setSortLiquidity(!vm.sortLiquidity);
                   }}
                 />
-              </div>
-              <div className="mobile" style={{ cursor: "pointer" }}>
-                <Text size="medium">APY</Text>
+              </Row>
+              <div>Volume (24h)</div>
+              <Row style={{ cursor: "pointer" }}>
+                <Text size="medium" fitContent>
+                  APY
+                </Text>
                 <img
                   src={group}
                   alt="group"
@@ -77,42 +115,28 @@ const PoolsTable: React.FC = () => {
                     vm.setSortApy(!vm.sortApy);
                   }}
                 />
-              </div>
-            </AdaptiveRow>
-            <AdaptiveRow>
-              <div className="desktop" style={{ cursor: "pointer" }}>
-                <Text size="medium">APY</Text>
-                <img
-                  src={group}
-                  alt="group"
-                  className="apy-group"
-                  onClick={() => {
-                    setActiveSort(1);
-                    vm.setSortApy(!vm.sortApy);
-                  }}
-                />
-              </div>
-            </AdaptiveRow>
-          </div>
-          {filteredPools.map((pool, i) => (
-            <InvestPoolRow
-              key={i}
-              pool={pool as any}
-              stats={
-                poolsStore.poolsStats
-                  ? poolsStore.poolsStats[pool.id]
-                  : undefined
-              }
-            />
-          ))}
-        </GridTable>
-      ) : (
-        <PoolNotFound
-          onClear={() => vm.setSearchValue("")}
-          searchValue={vm.searchValue}
-        />
-      )}
-    </Card>
+              </Row>
+            </div>
+            {filteredPools.map((pool, i) => (
+              <InvestPoolRow
+                key={i}
+                pool={pool as any}
+                stats={
+                  poolsStore.poolsStats
+                    ? poolsStore.poolsStats[pool.id]
+                    : undefined
+                }
+              />
+            ))}
+          </GridTable>
+        ) : (
+          <PoolNotFound
+            onClear={() => vm.setSearchValue("")}
+            searchValue={vm.searchValue}
+          />
+        )}
+      </Card>
+    </>
   );
 };
 export default observer(PoolsTable);

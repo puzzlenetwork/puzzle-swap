@@ -12,19 +12,26 @@ interface IProps {
 const Root = styled.div<{ fixed?: boolean }>`
   display: flex;
   background: #ffffff;
-  border-radius: 8px;
   max-width: 320px;
+  min-width: 160px;
+  z-index: 1;
   width: max-content;
   box-sizing: border-box;
   padding: 8px 16px 12px;
   border: 1px solid #f1f2fe;
+  border-radius: 10px;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06), 0 16px 28px rgba(0, 0, 0, 0.07);
+`;
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
 `;
 const Tooltip: React.FC<IProps> = ({ children, content, fixed, config }) => {
   const { getTooltipProps, setTooltipRef, setTriggerRef, visible } =
     usePopperTooltip({ ...config });
   return (
-    <div style={{ width: fixed ? "100%" : "default" }}>
+    <Container>
       <div ref={setTriggerRef} style={{ cursor: "pointer" }}>
         {children}
       </div>
@@ -33,7 +40,7 @@ const Tooltip: React.FC<IProps> = ({ children, content, fixed, config }) => {
           {content}
         </Root>
       )}
-    </div>
+    </Container>
   );
 };
 export default Tooltip;
