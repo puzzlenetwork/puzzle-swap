@@ -90,16 +90,7 @@ const Reward: React.FC<IProps> = () => {
               <Text type="secondary" size="medium">
                 Available to claim
               </Text>
-              <Text weight={500}>
-                999
-                {/*{vm.availableToClaim != null ? (*/}
-                {/*  BN.formatUnits(vm.availableToClaim, 18)*/}
-                {/*    .toFormat(2)*/}
-                {/*    .concat(" USDN")*/}
-                {/*) : (*/}
-                {/*  <Skeleton height={16} width={90} />*/}
-                {/*)}*/}
-              </Text>
+              <Text weight={500}>${vm.totalRewardToClaim.toFixed(2)}</Text>
             </Column>
           </AvailableToClaim>
           {vm.loading ? (
@@ -109,13 +100,25 @@ const Reward: React.FC<IProps> = () => {
             </Button>
           ) : (
             <Column crossAxisSize="max">
-              <Button fixed size="medium">
-                Claim reward
-              </Button>
-              <SizedBox height={8} />
-              <Button kind="secondary" fixed size="medium">
-                Claim as USDN
-              </Button>
+              {!vm.loading ? (
+                <Button
+                  fixed
+                  size="medium"
+                  onClick={vm.claimRewards}
+                  disabled={!vm.canClaimRewards}
+                >
+                  Claim reward
+                </Button>
+              ) : (
+                <Button size="medium" disabled fixed>
+                  Claiming
+                  <Loading />
+                </Button>
+              )}
+              {/*<SizedBox height={8} />*/}
+              {/*<Button kind="secondary" fixed size="medium">*/}
+              {/*  Claim as USDN*/}
+              {/*</Button>*/}
             </Column>
           )}
         </Inner>

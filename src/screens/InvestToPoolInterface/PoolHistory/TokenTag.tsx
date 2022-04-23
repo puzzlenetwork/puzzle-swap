@@ -1,12 +1,12 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { HTMLAttributes } from "react";
 import Img from "@components/Img";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { IToken } from "@src/constants";
 import BN from "@src/utils/BN";
 
-interface IProps {
+interface IProps extends HTMLAttributes<HTMLDivElement> {
   token: IToken;
   amount: BN;
 }

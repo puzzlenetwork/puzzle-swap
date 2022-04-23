@@ -11,7 +11,6 @@ import { useStores } from "@src/stores";
 import { useInvestVM } from "@screens/Invest/InvestVm";
 import SizedBox from "@components/SizedBox";
 import Checkbox from "@components/Checkbox";
-import Scrollbar from "@components/Scrollbar";
 
 //todo change to pool and users pool display component
 const PoolsTable: React.FC = () => {

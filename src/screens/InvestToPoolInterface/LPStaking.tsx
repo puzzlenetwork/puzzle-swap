@@ -25,7 +25,7 @@ const LPStaking: React.FC<IProps> = () => {
   if (accountStore.address == null) return null;
   return (
     <Root>
-      <SizedBox height={8} />
+      <SizedBox height={24} />
       <Text style={{ width: "100%" }} weight={500} type="secondary">
         LP Staking
       </Text>

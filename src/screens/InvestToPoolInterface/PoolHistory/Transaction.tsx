@@ -7,11 +7,8 @@ import { ITransaction } from "@src/utils/types";
 import { IToken } from "@src/constants";
 import Swap from "./Swap";
 import BN from "@src/utils/BN";
-import Remove from "./Remove";
-import Claim from "./Claim";
-import Add from "./Add";
-import { useStores } from "@stores";
 import dayjs from "dayjs";
+import PoolAction from "./PoolAction";
 
 interface IProps extends ITransaction {
   tokens: Record<string, IToken>;
@@ -31,37 +28,40 @@ const Transaction: React.FC<IProps> = ({
   tokens,
   call,
   stateChanges,
-  id,
   payment,
 }) => {
-  const { accountStore } = useStores();
-  // const date = new Date(timestamp);
-  const getDate = () => {
+  let amount = BN.ZERO;
+  const getTime = () => {
     const date1 = dayjs(timestamp);
     const diff = Math.abs(date1.diff(dayjs(), "minute"));
-
     if (diff === 0) {
       return "just now";
     }
     if (diff > 0 && diff < 60) {
       return `${diff} min ago`;
     }
-    if (diff >= 60 && diff < 600) {
+    if (diff >= 60 && diff < 60 * 24) {
       const v = Math.floor(diff / 60);
       return `about ${v} hours ago`;
+    }
+    if (diff >= 1500 && diff < 60 * 24 * 7) {
+      const v = Math.floor(diff / (60 * 60));
+      return `about ${v} days ago`;
     }
   };
   const draw = () => {
     switch (call.function) {
       case "swap":
+      case "swapWithReferral":
         const token0 = tokens[payment[0].assetId ?? "WAVES"];
         const amount0 = new BN(payment[0].amount);
-        const token1 = tokens[stateChanges.transfers[0].asset ?? ""];
+        const token1 = tokens[stateChanges.transfers[0]?.asset ?? ""];
         const am1 =
           call.args[1].type === "list"
             ? stateChanges.transfers[0].amount
             : call.args[1].value;
         const amount1 = new BN(am1);
+        amount = BN.formatUnits(am1, token1?.decimals);
         return (
           <Swap
             token0={token0}
@@ -71,29 +71,79 @@ const Transaction: React.FC<IProps> = ({
           />
         );
       case "generateIndexAndStake":
-        return <Add />;
-      case "unstakeAndRedeemIndex":
-        const total = new BN(call.args[0].value);
-        // const unstakedTokens = stateChanges.invokes[0].stateChanges.data.map(
-        //   () => {}
+        const addedTokens = payment.map(({ assetId, amount }) => ({
+          amount: new BN(amount),
+          ...tokens[assetId ?? "WAVES"],
+        }));
+        // const totalAddedUsdn = addedTokens.reduce(
+        //   (acc, { assetId, amount }) =>
+        //     acc.plus((poolsStore.usdnRate(assetId) ?? BN.ZERO).times(amount)),
+        //   BN.ZERO
         // );
-        return <Remove totalValue={total} />;
+        // amount = BN.formatUnits(totalAddedUsdn, 6);
+        return <PoolAction tokens={addedTokens} action="add" />;
+      case "generateIndexWithOneTokenAndStake":
+        const oneToken = stateChanges.invokes[1].payment.map(
+          ({ assetId, amount }) => ({
+            amount: new BN(amount),
+            ...tokens[assetId ?? "WAVES"],
+          })
+        );
+        // const totalAddedOneTokenUsdn = oneToken.reduce(
+        //   (acc, { assetId, amount }) =>
+        //     acc.plus((poolsStore.usdnRate(assetId) ?? BN.ZERO).times(amount)),
+        //   BN.ZERO
+        // );
+        // amount = BN.formatUnits(totalAddedOneTokenUsdn, 6);
+        return <PoolAction tokens={oneToken} action="add" />;
+      case "unstakeAndRedeemIndex":
+        const removedTokens =
+          stateChanges.invokes[1].stateChanges.transfers.map(
+            ({ asset, amount }) => ({
+              amount: new BN(amount),
+              ...tokens[asset ?? "WAVES"],
+            })
+          );
+        // const totalRemovedTokenUsdn = removedTokens.reduce(
+        //   (acc, { assetId, amount, decimals }) => {
+        //     const tokenAmount = BN.formatUnits(amount, decimals);
+        //     const usdnAmount = (poolsStore.usdnRate(assetId) ?? BN.ZERO).times(
+        //       tokenAmount
+        //     );
+        //     console.log(usdnAmount.toString());
+        //     return acc.plus(usdnAmount);
+        //   },
+        //   BN.ZERO
+        // );
+        // console.log(totalRemovedTokenUsdn.toString());
+        // amount = BN.formatUnits(totalRemovedTokenUsdn);
+        return <PoolAction tokens={removedTokens} action="remove" />;
       case "claimIndexRewards":
-        return <Claim />;
+        const claimedTokens = stateChanges.transfers.map(
+          ({ asset, amount }) => ({
+            amount: new BN(amount),
+            ...tokens[asset ?? "WAVES"],
+          })
+        );
+        // const totalClaimedUsdn = claimedTokens.reduce(
+        //   (acc, { assetId, amount }) =>
+        //     acc.plus((poolsStore.usdnRate(assetId) ?? BN.ZERO).times(amount)),
+        //   BN.ZERO
+        // );
+        // amount = BN.formatUnits(totalClaimedUsdn);
+        return <PoolAction tokens={claimedTokens} action="claim" />;
+      default:
+        return null;
     }
   };
   return (
-    <Root
-      className="gridRow"
-      onClick={() => window.open(`${accountStore.EXPLORER_LINK}/tx/${id}`)}
-    >
+    <Root className="gridRow" alignItems="center">
       <Row>{draw()}</Row>
       <Text fitContent nowrap>
-        $ 83,344.55
+        {amount.toFormat(2)}
       </Text>
-      {/*<Text style={{ whiteSpace: "nowrap" }}>{date.toDateString()}</Text>*/}
       <Text fitContent nowrap>
-        {getDate()}
+        {getTime()}
       </Text>
     </Root>
   );

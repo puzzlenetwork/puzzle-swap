@@ -14,6 +14,7 @@ import RoundTokenIcon from "@components/RoundTokenIcon";
 import useWindowSize from "@src/hooks/useWindowSize";
 import { Link } from "react-router-dom";
 import { useStores } from "@stores";
+import Skeleton from "react-loading-skeleton";
 
 interface IProps {}
 
@@ -45,7 +46,6 @@ const MyPoolBalance: React.FC<IProps> = () => {
   const { address, setLoginModalOpened } = accountStore;
   const vm = useInvestToPoolInterfaceVM();
   const { width: screenWidth } = useWindowSize();
-
   return (
     <Root>
       <Text weight={500} type="secondary">
@@ -59,7 +59,7 @@ const MyPoolBalance: React.FC<IProps> = () => {
           </Column>
           <Column>
             <Text textAlign="right" size="medium">
-              {address != null ? `$${vm.totalRewardToClaim.toFixed(2)}` : "--"}
+              ${vm.accountLiquidity?.toFormat(2)}
             </Text>
             <Text textAlign="right" type="secondary" size="small">
               Share of pool {vm.accountShareOfPool?.toFormat(2)}%
@@ -68,62 +68,75 @@ const MyPoolBalance: React.FC<IProps> = () => {
         </Header>
         <Divider style={{ margin: "16px 0" }} />
         <GridTable desktopTemplate="1fr 1fr" mobileTemplate="1fr 1fr">
-          {vm.rewardToClaimTable.map((token, i) => {
-            const reward = token.reward.gte(0.01)
-              ? token.reward.toFormat(2)
-              : token.reward.toFormat(6);
-            const usd = token.usd.gte(0.01)
-              ? token.usd.toFormat(2)
-              : token.usd.toFormat(6);
-            return (
-              <div
-                className="gridRow"
-                key={i}
-                style={{ padding: "8px 0", alignItems: "center" }}
-              >
-                <Row alignItems="center">
-                  {screenWidth && screenWidth >= 880 ? (
-                    <SquareTokenIcon size="small" src={token.logo} alt="logo" />
-                  ) : (
-                    <RoundTokenIcon src={token.logo} alt="logo" />
-                  )}
-                  <SizedBox width={8} />
-                  <AdaptiveColumn>
-                    <Text className="desktop" size="medium" nowrap>
-                      {token.name}
-                    </Text>
-                    <Text type="secondary" size="small">
-                      {token.symbol}
-                    </Text>
-                  </AdaptiveColumn>
-                </Row>
-                <AdaptiveRow>
-                  <Row
-                    style={{ width: "100%", textAlign: "end" }}
-                    className="mobile"
-                  >
-                    <Text size="medium">
-                      <span>{address !== null ? reward : "-"}</span>
-                      <span style={{ color: "#8082C5" }}>
-                        {address !== null ? `(${usd})` : "-"}
-                      </span>
-                    </Text>
+          {vm.poolBalancesTable == null ? (
+            <Skeleton
+              height={48}
+              count={3}
+              style={{ margin: "4px 24px", width: "calc(100% - 48px)" }}
+            />
+          ) : (
+            vm.poolBalancesTable.map((token, i) => {
+              const value = token.value.gte(0.01)
+                ? token.value.toFormat(2)
+                : token.value.toFormat(6);
+              const usdn = token.usdnEquivalent.gte(0.01)
+                ? token.usdnEquivalent.toFormat(2)
+                : token.usdnEquivalent.toFormat(6);
+              return (
+                <div
+                  className="gridRow"
+                  key={i}
+                  style={{ padding: "8px 0", alignItems: "center" }}
+                >
+                  <Row alignItems="center">
+                    {screenWidth && screenWidth >= 880 ? (
+                      <SquareTokenIcon
+                        size="small"
+                        src={token.logo}
+                        alt="logo"
+                      />
+                    ) : (
+                      <RoundTokenIcon src={token.logo} alt="logo" />
+                    )}
+                    <SizedBox width={8} />
+                    <AdaptiveColumn>
+                      <Text className="desktop" size="medium" nowrap>
+                        {token.name}
+                      </Text>
+                      <Text type="secondary" size="small">
+                        {token.symbol}
+                      </Text>
+                    </AdaptiveColumn>
                   </Row>
-                  <Column
-                    crossAxisSize="max"
-                    className="desktop"
-                    style={{ textAlign: "end" }}
-                  >
-                    <Text size="medium">{address !== null ? reward : "-"}</Text>
-                    <Text size="small" type="secondary">
-                      {/*${usd}*/}
-                      {address !== null ? usd : "-"}
-                    </Text>
-                  </Column>
-                </AdaptiveRow>
-              </div>
-            );
-          })}
+                  <AdaptiveRow>
+                    <Row
+                      style={{ width: "100%", textAlign: "end" }}
+                      className="mobile"
+                    >
+                      <Text size="medium">
+                        <span>{address !== null ? value : "-"}</span>
+                        <span style={{ color: "#8082C5" }}>
+                          {address !== null ? `(${usdn})` : "-"}
+                        </span>
+                      </Text>
+                    </Row>
+                    <Column
+                      crossAxisSize="max"
+                      className="desktop"
+                      style={{ textAlign: "end" }}
+                    >
+                      <Text size="medium">
+                        {address !== null ? value : "-"}
+                      </Text>
+                      <Text size="small" type="secondary">
+                        {address !== null ? usdn : "-"}
+                      </Text>
+                    </Column>
+                  </AdaptiveRow>
+                </div>
+              );
+            })
+          )}
         </GridTable>
         <SizedBox height={16} />
         <Divider />
