@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useState } from "react";
+import React from "react";
 import { compressImage, getB64FileLength, toBase64 } from "@src/utils/files";
 import { useStores } from "@stores";
 import plus from "@src/assets/icons/plus.svg";
@@ -16,10 +16,10 @@ interface IProps {
   onFileSizeChange: (v: string | null) => void;
 
   image: string | null;
-  onChange: (image: string | null) => void;
+  onChange: (image?: string) => void;
 }
 
-const Root = styled.div<{ image?: string }>`
+const Root = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -82,10 +82,8 @@ const ImageUpload: React.FC<IProps> = ({
   onFileSizeChange,
 }) => {
   const { notificationStore } = useStores();
-  const [base64Photo, setBase64Photo] = useState<string | null>(image);
-  const handleChange = async ({
-    target: { files },
-  }: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async (v: React.ChangeEvent<HTMLInputElement>) => {
+    const files = v.target.files;
     if (!files || !files[0]) return;
     const file: File = files[0];
     if (!/(gif|jpe?g|png|bmp|svg\+xml)$/i.test(file.type)) {
@@ -95,14 +93,14 @@ const ImageUpload: React.FC<IProps> = ({
       const b64 = await toBase64(file);
       onFileNameChange(files[0].name.toString());
       const compressed = await compressImage(b64);
-      setBase64Photo(compressed);
-      onChange && (await onChange(compressed));
+      onChange(compressed);
       onFileSizeChange(getB64FileLength(compressed));
     } catch (e: any) {}
   };
+
   return (
     <Root>
-      <Container className="upload-btn-wrapper" image={base64Photo}>
+      <Container className="upload-btn-wrapper" image={image}>
         {image == null && (
           <img
             src={plus}
@@ -134,10 +132,7 @@ const ImageUpload: React.FC<IProps> = ({
               {fileName}
             </Text>
             <CloseButton
-              onClick={() => {
-                onChange(null);
-                setBase64Photo(null);
-              }}
+              onClick={() => onChange(undefined)}
             />
           </Row>
           <Text size="small" type="secondary">

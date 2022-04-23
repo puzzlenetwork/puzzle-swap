@@ -12,6 +12,10 @@ import {
 import nodeService from "@src/services/nodeService";
 import poolsService from "@src/services/poolsService";
 import Balance from "@src/entities/Balance";
+import { toFile } from "@src/utils/files";
+import bucketService from "@src/services/bucketService";
+import loadCreatePoolStateFromStorage from "@screens/CreateCustomPools/utils/loadCreatePoolStateFromStorage";
+import checkDomainPaid from "@screens/CreateCustomPools/utils/checkDomainPaid";
 
 const ctx = React.createContext<CreateCustomPoolsVm | null>(null);
 
@@ -54,44 +58,49 @@ class CreateCustomPoolsVm {
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
-    let initData: IInitData | null = null;
-    try {
-      initData = JSON.parse(
-        localStorage.getItem("puzzle-custom-pool") as string
-      );
-    } catch (error) {
-      console.dir(error);
-    }
+    makeAutoObservable(this);
+    setInterval(this.saveSettings, 1000);
+    const initData = loadCreatePoolStateFromStorage();
+    this.initialize(initData);
+  }
+
+  initialize = (initData: IInitData | null) => {
+    const { accountStore } = this.rootStore;
     if (initData != null) {
       if (initData.assets != null) {
         this.poolsAssets = initData.assets?.map(
-          ({ assetId, share, locked }) => {
-            const asset = rootStore.accountStore.TOKENS_ARRAY[assetId];
-            return {
-              share: new BN(share).times(10),
-              locked,
-              asset: asset,
-            };
-          }
+          ({ assetId, share, locked }) => ({
+            share: new BN(share).times(10),
+            locked,
+            asset: accountStore.TOKENS_ARRAY[assetId],
+          })
         );
       }
-      this.logo = initData.logo;
-      this.swapFee = new BN(initData.swapFee).times(10);
-      this.fileName = initData.fileName;
-      this.title = initData.title;
-      this.step = initData.step ?? 0;
-      this.maxStep = initData.maxStep ?? 0;
-      this.domain = initData.domain;
-      makeAutoObservable(this);
     } else {
       this.setDefaultPoolsAssets();
     }
+    this.logo = initData?.logo ?? null;
+    this.swapFee =
+      initData?.swapFee != null && !isNaN(initData?.swapFee)
+        ? new BN(initData?.swapFee).times(10)
+        : new BN(5);
+    this.fileName = initData?.fileName ?? null;
+    this.title = initData?.title ?? "";
+    this.step = initData?.step ?? 0;
+    this.maxStep = initData?.maxStep ?? 0;
+    this.domain = initData?.domain ?? "";
+    this.fileSize = initData?.fileSize ?? null;
     this.saveSettings();
-    setInterval(this.saveSettings, 1000);
-  }
+  };
 
   loading: boolean = false;
   private _setLoading = (l: boolean) => (this.loading = l);
+
+  reset = () => {
+    this.initialize(null);
+    this.saveSettings();
+    window.location.reload();
+  };
 
   maxStep: number = 0;
   step: number = 0;
@@ -270,7 +279,6 @@ class CreateCustomPoolsVm {
     if (this.puzzleNFTPrice === 0) return;
     const amount = BN.parseUnits(this.puzzleNFTPrice, TOKENS.TPUZZLE.decimals);
     this._setLoading(true);
-    // todo правильно посчитать приблизительную стоимость 400 дол в пазлах, на usdn не работает
     await accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.createArtefacts,
@@ -283,14 +291,12 @@ class CreateCustomPoolsVm {
         call: { function: "generateArtefact", args: [] },
       })
       .then(async (txId) => {
-        console.log(txId);
         if (txId === null) return;
         const transDetails = await nodeService.transactionInfo(
           NODE_URL_MAP[chainId],
           txId
         );
         if (transDetails == null) return;
-        console.log(transDetails);
         const nftId = transDetails.stateChanges.transfers[0].asset;
         const details = await nodeService.assetDetails(
           NODE_URL_MAP[chainId],
@@ -314,9 +320,10 @@ class CreateCustomPoolsVm {
             },
           })
         );
+        await this.rootStore.nftStore.syncAccountNFTs();
       })
       .catch((e) => {
-        console.log(e);
+        console.error(e);
         this.setNotificationParams(
           buildErrorDialogParams({
             title: "Woops! Couldn't buy NFT",
@@ -379,29 +386,44 @@ class CreateCustomPoolsVm {
   };
 
   provideLiquidityToPool = async () => {
-    console.log("provideLiquidityToPool");
+    this._setLoading(true);
+    const pool = await poolsService.getPoolByDomain(this.domain);
+    if (pool == null) {
+      this.rootStore.notificationStore.notify(
+        `Cannot find pool with domain ${this.domain}`,
+        { type: "error" }
+      );
+      this._setLoading(false);
+      return;
+    }
+    const accountStore = this.rootStore.accountStore;
+    return accountStore
+      .invoke({
+        dApp: (pool as any).contractAddress, //fixme
+        payment: [],
+        call: { function: "init", args: [] },
+      })
+      .then((txId) => console.log(txId))
+      .catch((e) => console.log(e))
+      .finally(() => this._setLoading(false));
   };
 
   spendArtefact = async () => {
     const { artefactToSpend } = this;
     const { accountStore } = this.rootStore;
     const { CONTRACT_ADDRESSES } = accountStore;
-    if (artefactToSpend == null) return;
-    await accountStore
-      .invoke({
+    if (artefactToSpend == null || accountStore.address == null) return;
+    const domainPaid = await checkDomainPaid(this.domain, accountStore.address);
+    if (!domainPaid) {
+      await accountStore.invoke({
         dApp: CONTRACT_ADDRESSES.createArtefacts,
         payment: [{ assetId: artefactToSpend.assetId, amount: "1" }],
         call: {
           function: "spendArtefact",
           args: [{ type: "string", value: this.domain }],
         },
-      })
-      .then(async (txId) => {
-        console.log(txId);
-      })
-      .catch((e) => {
-        console.log(e);
       });
+    }
   };
 
   handleCreatePool = async () => {
@@ -409,18 +431,36 @@ class CreateCustomPoolsVm {
     if (address === null || this.logo == null) return;
     try {
       this._setLoading(true);
+      const image = await bucketService.upload(toFile(this.logo));
+
+      const artefactDetails = this.rootStore.nftStore.accountNFTs?.find(
+        ({ assetId }) => assetId === this.artefactToSpend?.assetId
+      );
+      const artefactOriginTransactionId = artefactDetails?.originTransactionId;
+      if (artefactOriginTransactionId == null) {
+        this.rootStore.notificationStore.notify(
+          "Cannot find artefact origin txId. Try to reload the page",
+          { type: "error" }
+        );
+        this._setLoading(false);
+        return;
+      }
+
       await this.spendArtefact();
+
       const assets = this.poolsAssets.map(({ asset, share }) => ({
         assetId: asset.assetId,
         share: share.div(10).toNumber(),
       }));
+
       await poolsService.createPool({
         domain: this.domain,
-        swapFee: this.swapFee.div(10).toNumber(),
-        image: this.logo,
+        swapFee: this.swapFee.times(10).toNumber(),
+        image,
         owner: address,
         assets,
         title: this.title,
+        artefactOriginTransactionId,
       });
       this.setStep(this.step + 1);
       this._setLoading(false);

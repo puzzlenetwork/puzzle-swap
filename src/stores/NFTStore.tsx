@@ -30,8 +30,8 @@ export default class NftStore {
       .then((d) => this._setArtworks(d))
       .then(() =>
         Promise.all([
-          this.getAccountNFTs(),
-          this.getAccountNFTsOnStaking(),
+          this.syncAccountNFTs(),
+          this.syncAccountNFTsOnStaking(),
           this.getTotalPuzzlesNftsAmount(),
         ])
       );
@@ -40,16 +40,16 @@ export default class NftStore {
       () => this.rootStore.accountStore.address,
       () =>
         Promise.all([
-          this.getAccountNFTs(),
-          this.getAccountNFTsOnStaking(),
+          this.syncAccountNFTs(),
+          this.syncAccountNFTsOnStaking(),
           this.getTotalPuzzlesNftsAmount(),
         ])
     );
     setInterval(
       () =>
         Promise.all([
-          this.getAccountNFTs(),
-          this.getAccountNFTsOnStaking(),
+          this.syncAccountNFTs(),
+          this.syncAccountNFTsOnStaking(),
           this.getTotalPuzzlesNftsAmount(),
         ]),
       40 * 1000
@@ -63,10 +63,12 @@ export default class NftStore {
       CONTRACT_ADDRESSES.createArtefacts,
       `total_sold_nft`
     );
-    this._setTotalPuzzleNftsAmount(Number(res[0].value) ?? 0);
+    this._setTotalPuzzleNftsAmount(
+      res && res[0] && res[0].value ? Number(res[0].value) : 0
+    );
   };
 
-  getAccountNFTs = async () => {
+  syncAccountNFTs = async () => {
     const { address, chainId, PUZZLE_NTFS } = this.rootStore.accountStore;
     const { artworks } = this;
     if (address == null || artworks == null) return;
@@ -105,7 +107,7 @@ export default class NftStore {
     this.setAccountNFTs(supportedPuzzleNft);
   };
 
-  getAccountNFTsOnStaking = async () => {
+  syncAccountNFTsOnStaking = async () => {
     const { artworks, rootStore } = this;
     const { address, chainId } = this.rootStore.accountStore;
     if (address == null || artworks == null) return;

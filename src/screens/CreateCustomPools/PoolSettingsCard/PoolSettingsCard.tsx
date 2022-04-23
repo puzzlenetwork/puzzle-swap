@@ -18,7 +18,7 @@ const Root = styled.div`
 
 const DesktopContinueBtn = styled.div`
   display: none;
-  @media (min-width: 1056px) {
+  @media (min-width: 880px) {
     display: flex;
   }
 `;

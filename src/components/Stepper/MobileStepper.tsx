@@ -103,7 +103,8 @@ const MobileStepper: React.FC<IProps> = ({
               : step > activeStep
               ? "next"
               : "previous";
-          const disabled = minStep != null ? minStep < step : false;
+          const disabled =
+            activeStep === 3 ? true : minStep != null ? minStep < step : false;
           return (
             <React.Fragment key={step + "mobile-step"}>
               <IconContainer

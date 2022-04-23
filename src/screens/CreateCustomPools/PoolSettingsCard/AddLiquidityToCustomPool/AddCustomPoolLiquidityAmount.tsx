@@ -30,9 +30,10 @@ const AddCustomPoolLiquidityAmount: React.FC<IProps> = () => {
         <Text type="primary" size="large" style={{ textAlign: "center" }}>
           {`${vm.providedPercentOfPool}% `}
           {vm.totalAmountToAddLiquidity && (
-            <span
-              style={{ color: "#8082C5" }}
-            >{`(${vm.totalAmountToAddLiquidity})`}</span>
+            <span style={{ color: "#8082C5" }}>{`($${vm.maxToProvide
+              .times(vm.providedPercentOfPool)
+              .div(100)
+              .toFormat(2)})`}</span>
           )}
         </Text>
         <SizedBox height={16} />

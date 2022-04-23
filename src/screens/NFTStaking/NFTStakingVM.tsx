@@ -166,8 +166,8 @@ class NFTStakingVM {
         this.rootStore.nftStore.setAccountNFTs(null);
         this.rootStore.nftStore.setStakedAccountNFTs(null);
         await Promise.all([
-          this.rootStore.nftStore.getAccountNFTs(),
-          this.rootStore.nftStore.getAccountNFTsOnStaking(),
+          this.rootStore.nftStore.syncAccountNFTs(),
+          this.rootStore.nftStore.syncAccountNFTsOnStaking(),
           this.updateAddressStakingInfo(),
         ]);
       })
@@ -208,8 +208,8 @@ class NFTStakingVM {
         this.rootStore.nftStore.setAccountNFTs(null);
         this.rootStore.nftStore.setStakedAccountNFTs(null);
         await Promise.all([
-          this.rootStore.nftStore.getAccountNFTs(),
-          this.rootStore.nftStore.getAccountNFTsOnStaking(),
+          this.rootStore.nftStore.syncAccountNFTs(),
+          this.rootStore.nftStore.syncAccountNFTsOnStaking(),
           this.updateAddressStakingInfo(),
         ]);
       })

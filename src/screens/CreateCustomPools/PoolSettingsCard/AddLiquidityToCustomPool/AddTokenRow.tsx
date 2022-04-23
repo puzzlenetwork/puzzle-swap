@@ -9,6 +9,7 @@ import styled from "@emotion/styled";
 
 interface IProps {
   availableAmount?: BN | null;
+  depositPrefix?: string;
   depositAmount: BN | null;
   percent: number;
   symbol: string;
@@ -22,6 +23,7 @@ const AddTokenRow: React.FC<IProps> = ({
   percent,
   symbol,
   logo,
+  depositPrefix,
 }) => {
   const available = availableAmount ? availableAmount.toFormat(4) : "-";
   const deposit = depositAmount
@@ -47,6 +49,7 @@ const AddTokenRow: React.FC<IProps> = ({
       </Row>
       <Column style={{ width: "100%", textAlign: "end" }}>
         <Text nowrap className="text">
+          {depositPrefix}
           {deposit}
         </Text>
         <Text type="secondary" size="small" className="text">

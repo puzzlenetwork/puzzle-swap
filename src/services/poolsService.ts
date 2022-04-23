@@ -12,12 +12,23 @@ interface IPoolSettings {
   owner: string;
   assets: IAssetConfig[];
   title: string;
+  artefactOriginTransactionId: string;
+  // contractAddress: string;
+  // layer2Address?: string;
+  // baseTokenId: string;
+  // logoUrl: string;
+  // isCustom?: boolean;
 }
 
 const poolService = {
   getPuzzlePools: async (): Promise<IPoolSettings[]> => {
     await axios.get(`${process.env.REACT_APP_API_BASE}/api/v1/pools`);
     return [];
+  },
+  getPoolByDomain: async (domain: string): Promise<IPoolSettings> => {
+    const req = `${process.env.REACT_APP_API_BASE}/api/v1/pools/${domain}`;
+    const { data } = await axios.get(req);
+    return data;
   },
   checkDomain: async (domain: string): Promise<boolean> => {
     await axios(`${process.env.REACT_APP_API_BASE}/api/v1/pools/check-domain`, {

@@ -1,12 +1,15 @@
 import styled from "@emotion/styled";
 import React from "react";
 import DesktopStep from "./DesktopStep";
+import ResetAllButton from "@components/Stepper/ResetAllButton";
+import SizedBox from "@components/SizedBox";
 
 interface IProps {
   steps: string[];
   activeStep: number;
   onStepClick: (step: number) => void;
   minStep?: number;
+  onReset?: () => void;
 }
 
 const Root = styled.div`
@@ -25,16 +28,19 @@ const RopeContainer = styled.div`
   width: 25px;
   height: 12px;
 `;
+
 const Rope = styled.div<{ done: boolean }>`
   width: 1px;
   height: 12px;
   background: ${({ done }) => (done ? "#F1F2FE" : "#C6C9F4")};
 `;
+
 const Stepper: React.FC<IProps> = ({
   steps,
   activeStep,
   onStepClick,
   minStep,
+  onReset,
 }) => {
   return (
     <Root>
@@ -53,7 +59,13 @@ const Stepper: React.FC<IProps> = ({
               state={state}
               index={step}
               key={step + name + "_step"}
-              disabled={minStep != null ? minStep < step : false}
+              disabled={
+                activeStep === 3
+                  ? true
+                  : minStep != null
+                  ? minStep < step
+                  : false
+              }
             />
             {step !== array.length - 1 && (
               <RopeContainer>
@@ -63,6 +75,8 @@ const Stepper: React.FC<IProps> = ({
           </React.Fragment>
         );
       })}
+      <SizedBox height={24} />
+      <ResetAllButton onClick={onReset} />
     </Root>
   );
 };
