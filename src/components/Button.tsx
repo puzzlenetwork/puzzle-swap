@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 
-type TButtonType = "primary" | "secondary" | "naked";
+type TButtonType = "primary" | "secondary";
 type TButtonSize = "medium" | "large";
 
 const Button = styled.button<{

@@ -165,7 +165,7 @@ class InvestToPoolInterfaceVM {
     const claimedReward = parsedNodeResponse["claimedReward"];
     const lastClaimDate = parsedNodeResponse["lastClaimDate"];
 
-    this.setTotalClaimedReward(claimedReward);
+    this.setTotalClaimedReward(claimedReward ?? BN.ZERO);
     this.setUserIndexStaked(userIndexStaked);
     lastClaimDate && this._setLastClaimDate(lastClaimDate);
 

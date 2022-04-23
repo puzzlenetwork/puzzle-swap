@@ -38,6 +38,7 @@ class Pool implements IPoolConfig {
   public readonly layer2Address?: string;
   public readonly baseTokenId: string;
   public readonly name: string;
+  public readonly isCustom?: boolean;
   public readonly defaultAssetId0: string;
   public readonly defaultAssetId1: string;
   public readonly tokens: Array<IToken & { shareAmount: number }> = [];
@@ -81,6 +82,7 @@ class Pool implements IPoolConfig {
     this.defaultAssetId0 = params.config.defaultAssetId0;
     this.defaultAssetId1 = params.config.defaultAssetId1;
     this.chainId = params.chainId;
+    this.isCustom = false;
 
     this.syncLiquidity().then();
     setInterval(this.syncLiquidity, 15000);

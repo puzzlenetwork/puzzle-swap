@@ -81,7 +81,7 @@ const AccountInvestBalance: React.FC<IProps> = () => {
             size="medium"
             style={{ position: "absolute" }}
           >
-            Last claim 1 Jan 2022
+            {/*Last claim 1 Jan 2022*/}
             {/*{!vm.lastClaimDate.eq(0) && "Last claim " + format}*/}
           </LastClaimDate>
           <Row>

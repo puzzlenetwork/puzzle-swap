@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 import bg from "@src/assets/puzzleBackground2.png";
+import customBg from "@src/assets/customPuzzleBg.png";
 import puzzleIcon from "@src/assets/icons/smallWhitePuzzle.svg";
 import link from "@src/assets/icons/whiteLink.svg";
 import Text from "@components/Text";
@@ -15,6 +16,7 @@ import { useStores } from "@stores";
 import Tooltip from "@src/components/Tooltip";
 import MorePoolInformation from "./MorePoolInformation";
 import { useNavigate } from "react-router-dom";
+import centerEllipsis from "@src/utils/centerEllipsis";
 
 interface IProps {}
 
@@ -35,13 +37,14 @@ const ShortInfo = styled.div<{ pic: string }>`
   }
   row-gap: 16px;
 `;
-const Links = styled.div`
+const Links = styled.div<{ isCustom?: boolean }>`
   width: 100%;
   padding-top: 32px;
   display: grid;
   column-gap: 8px;
   @media (min-width: 880px) {
-    grid-template-columns: 1fr 1fr 4fr 1fr;
+    grid-template-columns: ${({ isCustom }) =>
+      isCustom ? "1fr 1fr 1fr 3fr 1fr" : "1fr 1fr 4fr 1fr"};
     grid-template-rows: 1fr;
     padding-top: 44px;
   }
@@ -55,10 +58,9 @@ const MainPoolInfo: React.FC<IProps> = () => {
     window.open(
       `${accountStore.EXPLORER_LINK}/address/${vm.pool.contractAddress}`
     );
-  const isCustom = false;
   return (
     <Root>
-      <ShortInfo pic={bg}>
+      <ShortInfo pic={vm.pool.isCustom ? customBg : bg}>
         <Column crossAxisSize="max">
           <Text type="light" size="large" weight={500}>
             {vm.pool.name}
@@ -67,20 +69,33 @@ const MainPoolInfo: React.FC<IProps> = () => {
           <Text type="purple300" size="medium">
             Trade fees: 2.0%
           </Text>
-          <Links>
+          <Links isCustom={vm.pool.isCustom}>
             <Column>
-              <Text type="purple300" size="medium">
-                Creater of the pool
+              <Text type="purple300" size="medium" nowrap>
+                Creator of the pool
               </Text>
               <Text type="light" size="medium">
-                {isCustom ? (
-                  ""
+                {vm.pool.isCustom ? (
+                  <NakedBtn prefix={link}>
+                    {centerEllipsis("3P6Ksahs71SiKQgQ4qaZuFAVhqncdi2nvJQ", 6)}
+                  </NakedBtn>
                 ) : (
                   <NakedBtn prefix={puzzleIcon}>Puzzle Swap</NakedBtn>
                 )}
               </Text>
               <SizedBox height={16} />
             </Column>
+            {vm.pool.isCustom && (
+              <Column>
+                <Text type="purple300" size="medium" nowrap>
+                  Created via
+                </Text>
+                <Text type="light" size="medium">
+                  <NakedBtn prefix={link}>Puzzle Surf</NakedBtn>
+                </Text>
+                <SizedBox height={16} />
+              </Column>
+            )}
             <Column>
               <Text type="purple300" size="medium">
                 Smart-contract
