@@ -62,7 +62,17 @@ const Container = styled.div<{ image: string | null }>`
   width: 56px;
   height: 56px;
   position: relative;
+  flex-shrink: 0;
 `;
+
+const CloseButton = styled(Cross)`
+  position: absolute;
+  inset: 0 0 auto auto;
+  cursor: pointer;
+  height: 20px;
+  width: 20px;
+`;
+
 const ImageUpload: React.FC<IProps> = ({
   onChange,
   image,
@@ -120,9 +130,10 @@ const ImageUpload: React.FC<IProps> = ({
       ) : (
         <Column>
           <Row alignItems="center">
-            <Text weight={500}>{fileName}</Text>
-            <Cross
-              style={{ cursor: "pointer", height: 20, width: 20 }}
+            <Text fitContent weight={500}>
+              {fileName}
+            </Text>
+            <CloseButton
               onClick={() => {
                 onChange(null);
                 setBase64Photo(null);

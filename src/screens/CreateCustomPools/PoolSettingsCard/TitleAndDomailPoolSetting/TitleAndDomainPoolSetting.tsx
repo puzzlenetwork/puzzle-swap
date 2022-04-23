@@ -12,7 +12,8 @@ import Notification from "@src/components/Notification";
 import ImageUpload from "@components/ImageUpload";
 import BN from "@src/utils/BN";
 import poolService from "@src/services/poolsService";
-
+import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
+import Tooltip from "@components/Tooltip";
 interface IProps {}
 
 const Root = styled.div`
@@ -103,9 +104,17 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
           placeholder="Enter the title…"
         />
         <SizedBox height={16} />
-        <Text type="secondary" size="medium">
-          Domain of the pool
-        </Text>
+        <Row mainAxisSize="fit-content" alignItems="center">
+          <Text type="secondary" size="medium">
+            Domain of the pool&nbsp;
+          </Text>
+          <Tooltip
+            containerStyles={{ display: "flex", alignItems: "center" }}
+            content="Will be used for generating a direct link to the pool and giving a name to Pool Index token."
+          >
+            <InfoIcon style={{ width: 14, height: 14 }} />
+          </Tooltip>
+        </Row>
         <SizedBox height={4} />
         <Input
           prefix={<Text fitContent>puzzleswap.org/pools/</Text>}
@@ -120,9 +129,17 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
           error={domainError != null}
         />
         <SizedBox height={16} />
-        <Text type="secondary" size="medium">
-          Swap fees
-        </Text>
+        <Row mainAxisSize="fit-content" alignItems="center">
+          <Text type="secondary" size="medium">
+            Swap fees&nbsp;
+          </Text>
+          <Tooltip
+            containerStyles={{ display: "flex", alignItems: "center" }}
+            content="You will get 10% of these fees as a pool owner"
+          >
+            <InfoIcon style={{ width: 14, height: 14 }} />
+          </Tooltip>
+        </Row>
         <SizedBox height={8} />
         <Row>
           {Array.from({ length: 3 }).map((_, index) => (

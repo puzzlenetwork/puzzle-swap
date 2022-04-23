@@ -142,11 +142,7 @@ class CreateCustomPoolsVm {
     return this.poolsAssets.reduce((acc, v) => acc.plus(v.share), BN.ZERO);
   }
 
-  addAssetToPool = (assetId: string) => {
-    const balances = this.tokensToAdd;
-    const asset = balances?.find((b) => b.assetId === assetId);
-    if (asset == null) return;
-    this.poolsAssets.push({ asset: asset, share: BN.ZERO, locked: false });
+  syncShares = () => {
     const unlockedPercent = this.poolsAssets.reduce(
       (acc, v) => (v.locked ? acc.minus(v.share) : acc),
       new BN(1000)
@@ -161,6 +157,14 @@ class CreateCustomPoolsVm {
       const percent = Math.round(averageUnlockedPercent.toNumber() * 2) / 2;
       this.poolsAssets[i].share = new BN(percent).times(10);
     });
+  };
+
+  addAssetToPool = (assetId: string) => {
+    const balances = this.tokensToAdd;
+    const asset = balances?.find((b) => b.assetId === assetId);
+    if (asset == null) return;
+    this.poolsAssets.push({ asset: asset, share: BN.ZERO, locked: false });
+    this.syncShares();
     if (this.maxToProvide.eq(0)) {
       this.rootStore.notificationStore.notify(
         "Change the assets you don’t have enough in wallet, or reset the whole composition.",
@@ -181,6 +185,7 @@ class CreateCustomPoolsVm {
       ({ asset }) => asset.assetId === assetId
     );
     this.poolsAssets.splice(indexOfObject, 1);
+    this.syncShares();
   };
   changeAssetShareInPool = (assetId: string, share: BN) => {
     if (share.gt(1000)) share = new BN(1000);
@@ -459,7 +464,7 @@ class CreateCustomPoolsVm {
       a.dollarValue!.gt(b.dollarValue!) ? 1 : -1
     )[0];
     const minAsset = this.poolsAssets.find(
-      ({ asset }) => asset.assetId === min.assetId
+      ({ asset }) => asset.assetId === min?.assetId
     );
     if (minAsset == null) return BN.ZERO;
     return min.dollarValue.div(minAsset.share.div(1000));

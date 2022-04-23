@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { CSSProperties } from "react";
 import { usePopperTooltip } from "react-popper-tooltip";
 import { Config } from "react-popper-tooltip/dist/types";
 
@@ -7,6 +7,7 @@ interface IProps {
   content: string | JSX.Element;
   config?: Config;
   fixed?: boolean;
+  containerStyles?: CSSProperties;
 }
 
 const Root = styled.div<{ fixed?: boolean }>`
@@ -27,12 +28,20 @@ const Container = styled.div`
   flex-direction: column;
   width: fit-content;
 `;
-const Tooltip: React.FC<IProps> = ({ children, content, fixed, config }) => {
+const Tooltip: React.FC<IProps> = ({
+  containerStyles,
+  children,
+  content,
+  config,
+}) => {
   const { getTooltipProps, setTooltipRef, setTriggerRef, visible } =
     usePopperTooltip({ ...config });
   return (
     <Container>
-      <div ref={setTriggerRef} style={{ cursor: "pointer" }}>
+      <div
+        ref={setTriggerRef}
+        style={{ cursor: "pointer", ...containerStyles }}
+      >
         {children}
       </div>
       {visible && (
