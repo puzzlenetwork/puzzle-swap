@@ -59,10 +59,14 @@ const MyPoolBalance: React.FC<IProps> = () => {
           </Column>
           <Column>
             <Text textAlign="right" size="medium">
-              ${vm.accountLiquidity?.toFormat(2)}
+              $
+              {vm.accountLiquidity == null
+                ? "0.00"
+                : vm.accountLiquidity?.toFormat(2)}
             </Text>
             <Text textAlign="right" type="secondary" size="small">
-              Share of pool {vm.accountShareOfPool?.toFormat(2)}%
+              {vm.accountShareOfPool != null &&
+                `Share of pool ${vm.accountShareOfPool?.toFormat(2)}%`}
             </Text>
           </Column>
         </Header>

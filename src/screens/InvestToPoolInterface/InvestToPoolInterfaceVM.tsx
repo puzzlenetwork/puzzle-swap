@@ -54,6 +54,13 @@ class InvestToPoolInterfaceVM {
   private setTotalRewardToClaim = (value: BN) =>
     (this.totalRewardToClaim = value);
 
+  public totalClaimedReward: BN = BN.ZERO;
+  private setTotalClaimedReward = (value: BN) =>
+    (this.totalClaimedReward = value);
+
+  public lastClaimDate: BN = BN.ZERO;
+  private _setLastClaimDate = (v: BN) => (this.lastClaimDate = v);
+
   public poolAssetBalances: { assetId: string; balance: BN }[] = [];
   private setPoolAssetBalances = (value: { assetId: string; balance: BN }[]) =>
     (this.poolAssetBalances = value);
@@ -126,6 +133,8 @@ class InvestToPoolInterfaceVM {
       globalLastCheckTokenInterest: `global_lastCheck_${token.assetId}_interest`,
       userLastCheckTokenInterest: `${address}_lastCheck_${token.assetId}_interest`,
       userIndexStaked: `${address}_indexStaked`,
+      claimedReward: `${address}_claimedRewardValue`,
+      lastClaimDate: `${address}_lastClaim`,
     };
     const response = await this.pool.contractKeysRequest(
       Object.values(keysArray)
@@ -153,7 +162,12 @@ class InvestToPoolInterfaceVM {
     const userLastCheckTokenInterest =
       parsedNodeResponse["userLastCheckTokenInterest"];
     const userIndexStaked = parsedNodeResponse["userIndexStaked"];
+    const claimedReward = parsedNodeResponse["claimedReward"];
+    const lastClaimDate = parsedNodeResponse["lastClaimDate"];
+
+    this.setTotalClaimedReward(claimedReward);
     this.setUserIndexStaked(userIndexStaked);
+    lastClaimDate && this._setLastClaimDate(lastClaimDate);
 
     const newEarnings = BN.max(
       realBalance.minus(globalTokenBalance),
@@ -194,9 +208,11 @@ class InvestToPoolInterfaceVM {
     const rawData = await Promise.all(
       this.pool.tokens.map(this.getTokenRewardInfo)
     );
-    const totalRewardAmount = rawData.reduce((acc, value) => {
-      return acc.plus(value.usdEquivalent);
-    }, BN.ZERO);
+    const totalRewardAmount = rawData.reduce(
+      (acc, value) =>
+        acc.plus(value.usdEquivalent.isNaN() ? BN.ZERO : value.usdEquivalent),
+      BN.ZERO
+    );
     this.setTotalRewardToClaim(totalRewardAmount);
   };
 
@@ -229,9 +245,11 @@ class InvestToPoolInterfaceVM {
   }
 
   get poolBalancesTable() {
-    // return null;
-    if (this.pool.tokens == null || this.userIndexStaked == null) return null;
+    if (this.pool.tokens == null) return null;
     return this.pool?.tokens.map((token) => {
+      if (this.userIndexStaked == null || this.userIndexStaked?.eq(0)) {
+        return { ...token, usdnEquivalent: BN.ZERO, value: BN.ZERO };
+      }
       const top = this.pool.liquidity[token.assetId].times(
         this.userIndexStaked ?? BN.ZERO
       );

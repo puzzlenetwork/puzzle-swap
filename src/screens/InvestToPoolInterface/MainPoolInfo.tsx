@@ -14,6 +14,7 @@ import NakedBtn from "@src/components/NakedBtn";
 import { useStores } from "@stores";
 import Tooltip from "@src/components/Tooltip";
 import MorePoolInformation from "./MorePoolInformation";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {}
 
@@ -49,6 +50,7 @@ const Links = styled.div`
 const MainPoolInfo: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const vm = useInvestToPoolInterfaceVM();
+  const navigate = useNavigate();
   const handleSmartContractClick = () =>
     window.open(
       `${accountStore.EXPLORER_LINK}/address/${vm.pool.contractAddress}`
@@ -89,7 +91,12 @@ const MainPoolInfo: React.FC<IProps> = () => {
             </Column>
             <SizedBox height={16} />
             <Row>
-              <Button fixed size="medium" style={{ marginRight: 8 }}>
+              <Button
+                fixed
+                size="medium"
+                style={{ marginRight: 8 }}
+                onClick={() => navigate(`/${vm.pool.id}`)}
+              >
                 Trade
               </Button>
               <Tooltip

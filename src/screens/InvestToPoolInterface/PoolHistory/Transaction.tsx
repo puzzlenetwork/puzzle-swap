@@ -138,7 +138,7 @@ const Transaction: React.FC<IProps> = ({
   };
   return (
     <Root className="gridRow" alignItems="center">
-      <Row>{draw()}</Row>
+      <Row alignItems="center">{draw()}</Row>
       <Text fitContent nowrap>
         {amount.toFormat(2)}
       </Text>

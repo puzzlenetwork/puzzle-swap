@@ -11,6 +11,9 @@ import wallet from "@src/assets/icons/wallet.svg";
 import Button from "@components/Button";
 import Loading from "@components/Loading";
 import { useInvestToPoolInterfaceVM } from "./InvestToPoolInterfaceVM";
+import BN from "@src/utils/BN";
+import Skeleton from "react-loading-skeleton";
+import dayjs from "dayjs";
 
 interface IProps {}
 
@@ -44,8 +47,11 @@ const LastClaimDate = styled(Text)`
 const Reward: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
   const { accountStore } = useStores();
-  const { address } = accountStore;
+  const { address, TOKENS } = accountStore;
   if (address == null) return null;
+  console.log(vm.lastClaimDate.toString());
+  const date = dayjs(vm.lastClaimDate?.toNumber() ?? 0);
+  const format = date.format("D MMM YYYY");
   return (
     <Root>
       <Text weight={500} type="secondary">
@@ -61,7 +67,7 @@ const Reward: React.FC<IProps> = () => {
               size="medium"
               style={{ position: "absolute" }}
             >
-              Last claim
+              {!vm.lastClaimDate.eq(0) && "Last claim " + format}
             </LastClaimDate>
             <Row>
               <Icon src={income} alt="income" />
@@ -71,14 +77,15 @@ const Reward: React.FC<IProps> = () => {
                   Claimed reward
                 </Text>
                 <Text weight={500}>
-                  999
-                  {/*{vm.claimedReward != null ? (*/}
-                  {/*  BN.formatUnits(vm.claimedReward, TOKENS.USDN.decimals)*/}
-                  {/*    .toFormat(2)*/}
-                  {/*    .concat(" USDN")*/}
-                  {/*) : (*/}
-                  {/*  <Skeleton height={16} width={90} />*/}
-                  {/*)}*/}
+                  $
+                  {vm.totalClaimedReward != null ? (
+                    BN.formatUnits(
+                      vm.totalClaimedReward,
+                      TOKENS.USDN.decimals
+                    ).toFormat(2)
+                  ) : (
+                    <Skeleton height={16} />
+                  )}
                 </Text>
               </Column>
             </Row>
