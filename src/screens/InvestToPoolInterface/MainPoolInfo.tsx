@@ -11,12 +11,12 @@ import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/Inves
 import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
 import TransparentDetailsBtn from "@screens/InvestToPoolInterface/TransparentDetailsBtn";
-import NakedBtn from "@src/components/NakedBtn";
 import { useStores } from "@stores";
 import Tooltip from "@src/components/Tooltip";
 import MorePoolInformation from "./MorePoolInformation";
 import { useNavigate } from "react-router-dom";
 import centerEllipsis from "@src/utils/centerEllipsis";
+import TextButton from "@components/TextButton";
 
 interface IProps {}
 
@@ -76,11 +76,11 @@ const MainPoolInfo: React.FC<IProps> = () => {
               </Text>
               <Text type="light" size="medium">
                 {vm.pool.isCustom ? (
-                  <NakedBtn prefix={link}>
+                  <TextButton prefix={link}>
                     {centerEllipsis("3P6Ksahs71SiKQgQ4qaZuFAVhqncdi2nvJQ", 6)}
-                  </NakedBtn>
+                  </TextButton>
                 ) : (
-                  <NakedBtn prefix={puzzleIcon}>Puzzle Swap</NakedBtn>
+                  <TextButton prefix={puzzleIcon}>Puzzle Swap</TextButton>
                 )}
               </Text>
               <SizedBox height={16} />
@@ -90,9 +90,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
                 <Text type="purple300" size="medium" nowrap>
                   Created via
                 </Text>
-                <Text type="light" size="medium">
-                  <NakedBtn prefix={link}>Puzzle Surf</NakedBtn>
-                </Text>
+                <TextButton prefix={link}>Puzzle Surf</TextButton>
                 <SizedBox height={16} />
               </Column>
             )}
@@ -100,9 +98,9 @@ const MainPoolInfo: React.FC<IProps> = () => {
               <Text type="purple300" size="medium">
                 Smart-contract
               </Text>
-              <NakedBtn prefix={link} onClick={handleSmartContractClick}>
+              <TextButton prefix={link} onClick={handleSmartContractClick}>
                 View on Explorer
-              </NakedBtn>
+              </TextButton>
             </Column>
             <SizedBox height={16} />
             <Row>

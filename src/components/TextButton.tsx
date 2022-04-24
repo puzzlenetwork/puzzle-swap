@@ -1,26 +1,62 @@
 import styled from "@emotion/styled";
-import Button from "@components/Button";
+import React, { HTMLAttributes } from "react";
 
-const TextButton = styled(Button)`
-  font-weight: 500;
+type TButtonType = "primary" | "secondary";
+type TButtonSize = "medium" | "large";
+
+interface IProps extends HTMLAttributes<HTMLDivElement> {
+  kind?: TButtonType;
+  size?: TButtonSize;
+  prefix?: string;
+  suffix?: string;
+  weight?: number;
+}
+
+const Root = styled.div<{
+  pointer?: boolean;
+  kind?: TButtonType;
+  size?: TButtonSize;
+  weight?: number;
+}>`
+  ${({ pointer }) => pointer && "cursor: pointer;"};
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   font-size: 16px;
   line-height: 24px;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
+  color: ${({ kind }) => (kind === "secondary" ? "#7075E9" : "#ffffff")};
+  font-weight: ${({ weight }) => (weight != null ? weight : "400")};
   cursor: pointer;
-  justify-content: center;
-  color: #7075e9;
-  background: transparent;
-  width: 100%;
-  height: auto;
-  border: none;
-  padding: 0;
-  :hover {
-    color: #7075e9;
-    background: transparent;
-    border: none;
-  }
+  white-space: nowrap;
+  ${({ size }) =>
+    (() => {
+      switch (size) {
+        case "medium":
+          return "font-size: 14px; line-height: 20px;";
+        default:
+          return "font-size: 16px;  line-height: 24px;";
+      }
+    })()}
 `;
-
+const Icon = styled.img`
+  height: 16px;
+  width: 16px;
+`;
+const TextButton: React.FC<IProps> = ({
+  suffix,
+  prefix,
+  children,
+  onClick,
+  kind,
+  weight,
+  ...rest
+}) => {
+  return (
+    <Root {...rest} pointer={onClick != null} kind={kind} weight={weight}>
+      {suffix && <Icon src={suffix} alt="suffix" style={{ marginRight: 4 }} />}
+      <span>{children}</span>
+      {prefix && <Icon src={prefix} alt="prefix" style={{ marginLeft: 4 }} />}
+    </Root>
+  );
+};
 export default TextButton;

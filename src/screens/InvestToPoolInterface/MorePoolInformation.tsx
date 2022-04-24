@@ -8,13 +8,13 @@ import SizedBox from "@components/SizedBox";
 import Dialog from "@components/Dialog";
 import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
 import Divider from "@src/components/Divider";
-import NakedBtn from "@components/NakedBtn";
 import link from "@src/assets/icons/link.svg";
 import { ReactComponent as Copy } from "@src/assets/icons/darkCopy.svg";
 import { ReactComponent as Placeholder } from "@src/assets/icons/placeholder.svg";
 import { useStores } from "@stores";
 import Button from "@components/Button";
 import copy from "copy-to-clipboard";
+import TextButton from "@components/TextButton";
 
 interface IProps {}
 
@@ -46,14 +46,14 @@ const MorePoolInformation: React.FC<IProps> = () => {
     {
       title: "Smart-contract",
       value: (
-        <NakedBtn
+        <TextButton
           size="medium"
           prefix={link}
           kind="secondary"
           onClick={() => window.open(`${EXPLORER_LINK}/123`)}
         >
           View on Explorer
-        </NakedBtn>
+        </TextButton>
       ),
     },
     { title: "Date of creation", value: "1 Jan 2022, 20:12:12" },

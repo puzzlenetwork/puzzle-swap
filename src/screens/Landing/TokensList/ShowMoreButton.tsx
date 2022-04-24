@@ -14,7 +14,9 @@ const ShowMoreButton: React.FC<IProps> = ({ onClick, children }) => {
   return (
     <Root onClick={onClick}>
       <td colSpan={3} style={{ width: "unset" }}>
-        <TextButton>{children}</TextButton>
+        <TextButton kind="secondary" weight={500}>
+          {children}
+        </TextButton>
       </td>
     </Root>
   );
