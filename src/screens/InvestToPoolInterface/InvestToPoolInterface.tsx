@@ -75,6 +75,7 @@ const InvestToPoolInterfaceImpl: React.FC = () => {
                 <RightBlockMobile>
                   <Reward />
                   <MyPoolBalance />
+                  <LPStaking />
                 </RightBlockMobile>
                 <TradesVolume />
                 <PoolComposition />

@@ -82,7 +82,7 @@ class InvestToPoolInterfaceVM {
     this.updateStats();
     this.updatePoolTokenBalances();
     this.loadTransactionsHistory();
-    this.syncIndexTokenId();
+    this.syncIndexTokenInfo();
     reaction(
       () => this.rootStore.accountStore?.address,
       () => {
@@ -120,13 +120,13 @@ class InvestToPoolInterfaceVM {
     }
   };
 
-  syncIndexTokenId = async () => {
+  syncIndexTokenInfo = async () => {
     const indexTokenIdResponse = await this.pool.contractKeysRequest(
       "static_poolToken_idStr"
     );
     if (indexTokenIdResponse != null && indexTokenIdResponse.length === 1) {
-      console.log(indexTokenIdResponse[0].value.toString());
-      this.setIndexTokenId(indexTokenIdResponse[0].value.toString());
+      const setIndexTokenId = indexTokenIdResponse[0].value.toString();
+      this.setIndexTokenId(setIndexTokenId);
     }
   };
   getTokenRewardInfo = async (
