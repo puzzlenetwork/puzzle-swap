@@ -13,8 +13,8 @@ import tokenLogos from "@src/assets/tokens/tokenLogos";
 
 interface IData {
   key: string;
-  type: "integer";
-  value: number;
+  type: "integer" | "string";
+  value: number | string;
 }
 
 interface IPoolCreationParams {

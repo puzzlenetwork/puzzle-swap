@@ -43,6 +43,9 @@ class InvestToPoolInterfaceVM {
   public stats: IPoolStats30Days | null = null;
   private setStats = (stats: IPoolStats30Days | null) => (this.stats = stats);
 
+  public indexTokenId: string | null = null;
+  private setIndexTokenId = (value: string) => (this.indexTokenId = value);
+
   public accountLiquidity: BN | null = null;
   private setAccountLiquidity = (value: BN) => (this.accountLiquidity = value);
 
@@ -79,6 +82,7 @@ class InvestToPoolInterfaceVM {
     this.updateStats();
     this.updatePoolTokenBalances();
     this.loadTransactionsHistory();
+    this.syncIndexTokenId();
     reaction(
       () => this.rootStore.accountStore?.address,
       () => {
@@ -116,6 +120,15 @@ class InvestToPoolInterfaceVM {
     }
   };
 
+  syncIndexTokenId = async () => {
+    const indexTokenIdResponse = await this.pool.contractKeysRequest(
+      "static_poolToken_idStr"
+    );
+    if (indexTokenIdResponse != null && indexTokenIdResponse.length === 1) {
+      console.log(indexTokenIdResponse[0].value.toString());
+      this.setIndexTokenId(indexTokenIdResponse[0].value.toString());
+    }
+  };
   getTokenRewardInfo = async (
     token: IToken
   ): Promise<IReward & { assetId: string }> => {
@@ -344,6 +357,79 @@ class InvestToPoolInterfaceVM {
     console.log("load more", v);
     this._setLoadingHistory(false);
     v && this.setTransactionsHistory([...transactionsHistory, ...v]);
+  };
+
+  unstakeIndex = async () => {
+    if (this.userIndexStaked == null || this.userIndexStaked?.eq(0)) return;
+    if (this.pool.layer2Address == null) return;
+    this._setLoading(true);
+    const { accountStore, notificationStore } = this.rootStore;
+    accountStore
+      .invoke({
+        dApp: this.pool.contractAddress,
+        payment: [],
+        call: {
+          function: "unstakeIndex",
+          args: [
+            {
+              type: "integer",
+              value: this.userIndexStaked?.toString(),
+            },
+          ],
+        },
+      })
+      .then((txId) => {
+        notificationStore.notify(`Your have unstaked index tokem`, {
+          type: "success",
+          title: `Success`,
+          link: `${accountStore.EXPLORER_LINK}/tx/${txId}`,
+          linkTitle: "View on Explorer",
+        });
+      })
+      .catch((e) => {
+        notificationStore.notify(e.message ?? JSON.stringify(e), {
+          type: "error",
+          title: "Transaction is not completed",
+        });
+      })
+      .then(this.updateRewardInfo)
+      .finally(() => this._setLoading(false));
+  };
+
+  get canStakeIndex() {
+    return false;
+  }
+
+  stakeIndex = async () => {
+    if (this.canStakeIndex) return;
+    if (this.pool.layer2Address == null) return;
+    this._setLoading(true);
+    const { accountStore, notificationStore } = this.rootStore;
+    accountStore
+      .invoke({
+        dApp: this.pool.contractAddress,
+        payment: [],
+        call: {
+          function: "stakeIndex",
+          args: [],
+        },
+      })
+      .then((txId) => {
+        notificationStore.notify(`Your have staked index token`, {
+          type: "success",
+          title: `Success`,
+          link: `${accountStore.EXPLORER_LINK}/tx/${txId}`,
+          linkTitle: "View on Explorer",
+        });
+      })
+      .catch((e) => {
+        notificationStore.notify(e.message ?? JSON.stringify(e), {
+          type: "error",
+          title: "Transaction is not completed",
+        });
+      })
+      .then(this.updateRewardInfo)
+      .finally(() => this._setLoading(false));
   };
 }
 

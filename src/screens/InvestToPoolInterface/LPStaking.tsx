@@ -6,23 +6,24 @@ import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
 import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
-import { Link } from "react-router-dom";
 import Card from "@src/components/Card";
 import { useStores } from "@stores";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
 const Root = styled(Column)`
   width: 100%;
-
-  a {
-    width: 100%;
-  }
 `;
 const LPStaking: React.FC<IProps> = () => {
   const { accountStore } = useStores();
+  const { TOKENS } = accountStore;
   const vm = useInvestToPoolInterfaceVM();
   if (accountStore.address == null) return null;
+  const staked = BN.formatUnits(
+    vm.userIndexStaked ?? BN.ZERO,
+    TOKENS.USDN.decimals
+  );
   return (
     <Root>
       <SizedBox height={24} />
@@ -36,13 +37,16 @@ const LPStaking: React.FC<IProps> = () => {
             Staked balance
           </Text>
           <SizedBox height={4} />
-          <Text nowrap>$ 99,999.99</Text>
+          <Text nowrap>$ {staked.eq(0) ? "0.00" : staked.toFormat(6)}</Text>
           <SizedBox height={16} />
-          <Link to={`/${vm.pool.id}/withdraw`}>
-            <Button fixed size="medium" kind="secondary">
-              Unstake
-            </Button>
-          </Link>
+          <Button
+            fixed
+            size="medium"
+            disabled={vm.userIndexStaked == null || vm.userIndexStaked?.eq(0)}
+            onClick={vm.unstakeIndex}
+          >
+            Unstake
+          </Button>
         </Column>
         <SizedBox width={8} />
         <Column crossAxisSize="max">
@@ -50,13 +54,16 @@ const LPStaking: React.FC<IProps> = () => {
             Available to stake
           </Text>
           <SizedBox height={4} />
-          <Text>$ 99,999.99</Text>
+          <Text>$ 0.00</Text>
           <SizedBox height={16} />
-          <Link to={`/${vm.pool.id}/addLiquidity`}>
-            <Button fixed size="medium">
-              Stake
-            </Button>
-          </Link>
+          <Button
+            fixed
+            size="medium"
+            disabled={!vm.canStakeIndex}
+            onClick={vm.stakeIndex}
+          >
+            Stake
+          </Button>
         </Column>
       </Card>
     </Root>

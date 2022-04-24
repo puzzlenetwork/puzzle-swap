@@ -14,6 +14,7 @@ import BN from "@src/utils/BN";
 import poolService from "@src/services/poolsService";
 import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import Tooltip from "@components/Tooltip";
+
 interface IProps {}
 
 const Root = styled.div`
@@ -110,7 +111,12 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
           </Text>
           <Tooltip
             containerStyles={{ display: "flex", alignItems: "center" }}
-            content="Will be used for generating a direct link to the pool and giving a name to Pool Index token."
+            content={
+              <Text size="small">
+                Will be used for generating a direct link to the pool and giving
+                a name to Pool Index token.
+              </Text>
+            }
           >
             <InfoIcon style={{ width: 14, height: 14 }} />
           </Tooltip>
@@ -135,7 +141,11 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
           </Text>
           <Tooltip
             containerStyles={{ display: "flex", alignItems: "center" }}
-            content="You will get 10% of these fees as a pool owner"
+            content={
+              <Text size="small" style={{ whiteSpace: "pre-line" }}>
+                {`You will get 10% of these\n fees as a pool owner`}
+              </Text>
+            }
           >
             <InfoIcon style={{ width: 14, height: 14 }} />
           </Tooltip>
