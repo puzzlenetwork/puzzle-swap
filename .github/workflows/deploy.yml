@@ -12,6 +12,9 @@ on:
 
 jobs:
   deploy_to_Heroku:
+    env:
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      HEROKU_EMAIL: izhur27@gmail.com
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to DEVELOP
