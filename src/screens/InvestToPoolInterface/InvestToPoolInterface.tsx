@@ -2,19 +2,18 @@ import styled from "@emotion/styled";
 import React from "react";
 import { Observer } from "mobx-react-lite";
 import Layout from "@components/Layout";
-import {
-  InvestToPoolInterfaceVMProvider,
-  useInvestToPoolInterfaceVM,
-} from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
-import Text from "@components/Text";
+import { InvestToPoolInterfaceVMProvider } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
 import SizedBox from "@components/SizedBox";
 import PoolInformation from "@screens/InvestToPoolInterface/PoolInformation";
-import YourLiquidity from "@screens/InvestToPoolInterface/YourLiquidity/YourLiquidity";
 import { Column } from "@src/components/Flex";
 import TradesVolume from "@screens/InvestToPoolInterface/TradesVolume";
 import PoolComposition from "@screens/InvestToPoolInterface/PoolComposition";
-import RewardToClaim from "@screens/InvestToPoolInterface/RewardToClaim";
 import GoBack from "@components/GoBack";
+import MainPoolInfo from "./MainPoolInfo";
+import LPStaking from "./LPStaking";
+import MyPoolBalance from "@screens/InvestToPoolInterface/MyPoolBalance";
+import Reward from "./Reward";
+import PoolHistory from "./PoolHistory";
 
 interface IProps {
   poolId: string;
@@ -62,7 +61,6 @@ const Body = styled.div`
   }
 `;
 const InvestToPoolInterfaceImpl: React.FC = () => {
-  const vm = useInvestToPoolInterfaceVM();
   return (
     <Layout>
       <Observer>
@@ -70,26 +68,23 @@ const InvestToPoolInterfaceImpl: React.FC = () => {
           <Root>
             <GoBack link="/invest" text="Back to Pools list" />
             <SizedBox height={24} />
-            <Text weight={500} size="large">
-              {vm.pool?.name}
-            </Text>
-            <SizedBox height={4} />
-            <Text size="medium" type="secondary">
-              Fixed swap fees: <span style={{ color: "#363870" }}>2.0 %</span>
-            </Text>
+            <MainPoolInfo />
+            <PoolInformation />
             <Body>
               <MainBlock>
                 <RightBlockMobile>
-                  <YourLiquidity />
-                  <RewardToClaim />
+                  <Reward />
+                  <MyPoolBalance />
+                  <LPStaking />
                 </RightBlockMobile>
-                <PoolInformation />
                 <TradesVolume />
                 <PoolComposition />
+                <PoolHistory />
               </MainBlock>
               <RightBlock>
-                <YourLiquidity />
-                <RewardToClaim />
+                <Reward />
+                <MyPoolBalance />
+                <LPStaking />
               </RightBlock>
             </Body>
           </Root>

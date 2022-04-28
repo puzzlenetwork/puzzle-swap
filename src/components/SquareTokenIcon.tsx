@@ -9,6 +9,7 @@ const SquareTokenIcon = styled.img<{ size?: TokenIconSize }>`
   box-sizing: border-box;
   box-shadow: none;
   color: transparent;
+  object-fit: cover;
   ${({ size }) =>
     (() => {
       switch (size) {

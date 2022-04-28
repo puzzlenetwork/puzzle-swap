@@ -10,14 +10,15 @@ interface IProps extends HTMLAttributes<HTMLDivElement> {
   index: number;
   title: string;
   state: TStep;
+  disabled?: boolean;
 }
 
-const Root = styled.div`
+const Root = styled.div<{ disabled?: boolean }>`
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
 `;
 
 const IconContainer = styled.div<{ state: TStep }>`
@@ -54,16 +55,29 @@ const TextContainer = styled(Text)<{ state: TStep }>`
   font-weight: ${({ state }) => (state === "current" ? 500 : 400)};
   color: ${({ state }) => (state === "next" ? "#8082C5" : "#363870")};
 `;
-const DesktopStep: React.FC<IProps> = ({ index, state, title, ...rest }) => {
+const DesktopStep: React.FC<IProps> = ({
+  index,
+  state,
+  title,
+  onClick,
+  disabled,
+  ...rest
+}) => {
   return (
-    <Root {...rest}>
+    <Root
+      onClick={!disabled ? onClick : undefined}
+      {...rest}
+      disabled={disabled}
+    >
       <IconContainer state={state}>
         <Text fitContent size="small">
           {index + 1}
         </Text>
       </IconContainer>
       <SizedBox width={8} />
-      <TextContainer {...{ state, size: "medium" }}>{title}</TextContainer>
+      <TextContainer {...{ state, size: "medium" }} nowrap>
+        {title}
+      </TextContainer>
     </Root>
   );
 };

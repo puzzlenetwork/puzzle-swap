@@ -12,6 +12,8 @@ export type TNotifyOptions = Partial<{
   link?: string;
   linkTitle?: string;
   title: string;
+  onClick?: () => void;
+  onClickText?: string;
   style: { [key: string]: string | number };
 }>;
 

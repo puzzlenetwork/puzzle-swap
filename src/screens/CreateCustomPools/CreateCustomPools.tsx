@@ -27,7 +27,7 @@ const Root = styled.div`
 const Grid = styled.div`
   display: grid;
   row-gap: 24px;
-  @media (min-width: 1056px) {
+  @media (min-width: 880px) {
     grid-template-columns: 1fr 2fr 1fr;
     row-gap: 0;
     column-gap: 40px;
@@ -40,7 +40,7 @@ const Subtitle = styled(Text)`
 `;
 const MobileContinueBtn = styled.div`
   display: flex;
-  @media (min-width: 1056px) {
+  @media (min-width: 880px) {
     background: rgba(255, 192, 203, 0.81);
     display: none;
   }

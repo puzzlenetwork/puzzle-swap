@@ -10,6 +10,7 @@ import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomP
 import { useStores } from "@stores";
 import AddTokenRow from "./AddTokenRow";
 import { Row } from "@components/Flex";
+import { observer } from "mobx-react-lite";
 
 interface IProps {}
 
@@ -46,13 +47,19 @@ const DepositComposition: React.FC<IProps> = () => {
               balance &&
               balance.balance &&
               BN.formatUnits(balance?.balance, token.asset.decimals);
+            const depositAmount = vm.maxToProvide
+              .times(vm.providedPercentOfPool)
+              .div(100)
 
+              .times(token.share.div(100).div(10));
             return (
               <AddTokenRow
                 symbol={token.asset.symbol}
                 key={i}
                 availableAmount={available}
-                depositAmount={BN.ZERO}
+                //todo change to tokens amount
+                depositPrefix="$"
+                depositAmount={depositAmount}
                 percent={token.share.div(10).toNumber()}
                 logo={token.asset.logo}
               />
@@ -63,11 +70,15 @@ const DepositComposition: React.FC<IProps> = () => {
         <AdaptiveRowWithPadding justifyContent="space-between">
           <Text fitContent>Total value</Text>
           <Text weight={500} fitContent nowrap>
-            100 $
+            $
+            {vm.maxToProvide
+              .times(vm.providedPercentOfPool)
+              .div(100)
+              .toFormat(2)}
           </Text>
         </AdaptiveRowWithPadding>
       </Card>
     </Root>
   );
 };
-export default DepositComposition;
+export default observer(DepositComposition);

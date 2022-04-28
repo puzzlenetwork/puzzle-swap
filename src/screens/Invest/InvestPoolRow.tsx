@@ -1,14 +1,14 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { Link } from "react-router-dom";
-import { AdaptiveRow, Column, Row } from "@components/Flex";
+import { Column, Row } from "@components/Flex";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
-import Tag from "@components/Tag";
 import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";
 import Pool from "@src/entities/Pool";
 import { IStatsPoolItem } from "@stores/PoolsStore";
+import TokenTags from "@screens/Invest/TokenTags";
 
 interface IProps {
   stats?: IStatsPoolItem;
@@ -22,23 +22,6 @@ const Icon = styled.img`
   border: 1px solid #f1f2fe;
 `;
 
-const SharesContainer = styled(Row)`
-  padding-top: 8px;
-  flex-wrap: wrap;
-  margin: -2px;
-
-  & > * {
-    margin: 2px;
-  }
-
-  min-width: 125px;
-  @media (min-width: 430px) {
-    min-width: 210px;
-  }
-  @media (min-width: 580px) {
-    min-width: 325px;
-  }
-`;
 const Root = styled(Link)`
   margin: 0 !important;
 
@@ -69,38 +52,18 @@ const InvestPoolRow: React.FC<IProps> = ({ pool, stats }) => {
               {pool.name}
             </Text>
           </Row>
-          <SharesContainer>
-            {pool.tokens.map(({ symbol, shareAmount, assetId }) => {
-              const assetBalance = accountStore.findBalanceByAssetId(assetId);
-              const isActive =
-                assetBalance &&
-                assetBalance.balance &&
-                assetBalance.balance.gt(0);
-              return (
-                <Tag
-                  key={assetId}
-                  background={isActive ? "#C6C9F4" : undefined}
-                >
-                  {symbol} {shareAmount * 100} %
-                </Tag>
-              );
-            })}
-          </SharesContainer>
+          <TokenTags
+            tokens={pool.tokens}
+            findBalanceByAssetId={accountStore.findBalanceByAssetId}
+          />
         </Column>
       </StyledRow>
-      <AdaptiveRow>
-        <Text style={{ whiteSpace: "nowrap" }} className="desktop">
-          $ {pool.globalLiquidity.toFormat(2)}
-        </Text>
-        <Text className="mobile" style={{ whiteSpace: "nowrap" }}>
-          {apy} %
-        </Text>
-      </AdaptiveRow>
-      <AdaptiveRow>
-        <Text className="desktop" style={{ whiteSpace: "nowrap" }}>
-          {apy} %
-        </Text>
-      </AdaptiveRow>
+      <Text style={{ whiteSpace: "nowrap" }}>-</Text>
+      <Text style={{ whiteSpace: "nowrap" }}>
+        $ {pool.globalLiquidity.toFormat(2)}
+      </Text>
+      <Text style={{ whiteSpace: "nowrap" }}>-</Text>
+      <Text style={{ whiteSpace: "nowrap" }}>{apy} %</Text>
     </Root>
   );
 };

@@ -8,7 +8,12 @@ import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
 import { Column } from "@src/components/Flex";
 import Skeleton from "react-loading-skeleton";
-import { IPaymentsArtefact } from "@src/screens/CreateCustomPools/CreateCustomPoolsVm";
+import {
+  IPaymentsArtefact,
+  useCreateCustomPoolsVM,
+} from "@src/screens/CreateCustomPools/CreateCustomPoolsVm";
+import Button from "@components/Button";
+import { ReactComponent as Add } from "@src/assets/icons/add.svg";
 
 export interface IProps extends IDialogPropTypes {
   onNftClick: (artefact: IPaymentsArtefact) => void;
@@ -55,6 +60,11 @@ const SelectNftDialog: React.FC<IProps> = ({
 }) => {
   const { nftStore } = useStores();
   const { accountNFTs } = nftStore;
+  const vm = useCreateCustomPoolsVM();
+  const handleBuyMore = async () => {
+    rest.onClose && rest.onClose({} as any);
+    await vm.buyRandomArtefact();
+  };
   return (
     <Dialog {...rest} style={{ maxWidth: 362 }}>
       <Scrollbar>
@@ -90,6 +100,19 @@ const SelectNftDialog: React.FC<IProps> = ({
                   </Wrap>
                 ))}
           </Grid>
+          <SizedBox height={16} />
+          {accountNFTs?.length === 1 && (
+            <Button
+              fixed
+              kind="secondary"
+              size="medium"
+              onClick={handleBuyMore}
+            >
+              Buy more
+              <SizedBox width={12} />
+              <Add />
+            </Button>
+          )}
         </Column>
       </Scrollbar>
       <SizedBox height={24} />

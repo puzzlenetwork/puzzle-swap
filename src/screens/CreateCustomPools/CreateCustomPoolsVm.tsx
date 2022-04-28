@@ -10,6 +10,12 @@ import {
   IDialogNotificationProps,
 } from "@components/Dialog/DialogNotification";
 import nodeService from "@src/services/nodeService";
+import poolsService from "@src/services/poolsService";
+import Balance from "@src/entities/Balance";
+import { toFile } from "@src/utils/files";
+import bucketService from "@src/services/bucketService";
+import loadCreatePoolStateFromStorage from "@screens/CreateCustomPools/utils/loadCreatePoolStateFromStorage";
+import checkDomainPaid from "@screens/CreateCustomPools/utils/checkDomainPaid";
 
 const ctx = React.createContext<CreateCustomPoolsVm | null>(null);
 
@@ -52,50 +58,49 @@ class CreateCustomPoolsVm {
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
-    let initData: IInitData | null = null;
-    try {
-      initData = JSON.parse(
-        localStorage.getItem("puzzle-custom-pool") as string
-      );
-    } catch (error) {
-      console.dir(error);
-    }
+    makeAutoObservable(this);
+    setInterval(this.saveSettings, 1000);
+    const initData = loadCreatePoolStateFromStorage();
+    this.initialize(initData);
+  }
+
+  initialize = (initData: IInitData | null) => {
+    const { accountStore } = this.rootStore;
     if (initData != null) {
       if (initData.assets != null) {
-        const assetsData = initData.assets?.map(
-          ({ assetId, share, locked }) => {
-            const asset = rootStore.accountStore.TOKENS_ARRAY[assetId];
-            return {
-              share: new BN(share).times(10),
-              locked,
-              asset: asset,
-            };
-          }
+        this.poolsAssets = initData.assets?.map(
+          ({ assetId, share, locked }) => ({
+            share: new BN(share).times(10),
+            locked,
+            asset: accountStore.TOKENS_ARRAY[assetId],
+          })
         );
-        this.poolsAssets = assetsData;
       }
-      this.logo = initData.logo;
-      this.swapFee = new BN(initData.swapFee).times(10);
-      this.fileName = initData.fileName;
-      this.title = initData.title;
-      this.step = initData.step ?? 0;
-      this.maxStep = initData.maxStep ?? 0;
-      this.domain = initData.domain;
-      makeAutoObservable(this);
     } else {
-      this.poolsAssets = [
-        {
-          asset: rootStore.accountStore.TOKENS.PUZZLE,
-          share: new BN(500),
-          locked: false,
-        },
-      ];
+      this.setDefaultPoolsAssets();
     }
-    setInterval(this.saveSettings, 1000);
-  }
+    this.logo = initData?.logo ?? null;
+    this.swapFee =
+      initData?.swapFee != null && !isNaN(initData?.swapFee)
+        ? new BN(initData?.swapFee).times(10)
+        : new BN(5);
+    this.fileName = initData?.fileName ?? null;
+    this.title = initData?.title ?? "";
+    this.step = initData?.step ?? 0;
+    this.maxStep = initData?.maxStep ?? 0;
+    this.domain = initData?.domain ?? "";
+    this.fileSize = initData?.fileSize ?? null;
+    this.saveSettings();
+  };
 
   loading: boolean = false;
   private _setLoading = (l: boolean) => (this.loading = l);
+
+  reset = () => {
+    this.initialize(null);
+    this.saveSettings();
+    window.location.reload();
+  };
 
   maxStep: number = 0;
   step: number = 0;
@@ -106,17 +111,47 @@ class CreateCustomPoolsVm {
     this.step = s;
   };
 
+  get correct0() {
+    return this.poolsAssets.length > 1 && this.totalTakenShare.eq(1000);
+  }
+  get correct1() {
+    return this.domain.length > 1 && this.logo && !this.poolSettingError;
+  }
+  get correct2() {
+    return this.artefactToSpend != null;
+  }
+  get correct3() {
+    return !this.providedPercentOfPool.eq(0);
+  }
+
+  get minStep() {
+    if (this.rootStore.accountStore.address == null) return 0;
+    const step = [
+      this.correct0,
+      this.correct1,
+      this.correct2,
+      this.correct3,
+    ].indexOf(false);
+    return step === -1 ? this.step : step;
+  }
+
   poolsAssets: IPoolToken[] = [];
+  setDefaultPoolsAssets = () => {
+    const { accountStore } = this.rootStore;
+    this.poolsAssets = [
+      {
+        asset: accountStore.TOKENS.PUZZLE,
+        share: new BN(500),
+        locked: false,
+      },
+    ];
+  };
 
   get totalTakenShare(): BN {
     return this.poolsAssets.reduce((acc, v) => acc.plus(v.share), BN.ZERO);
   }
 
-  addAssetToPool = (assetId: string) => {
-    const balances = this.rootStore.accountStore.assetBalances;
-    const asset = balances?.find((b) => b.assetId === assetId);
-    if (asset == null) return;
-    this.poolsAssets.push({ asset: asset, share: BN.ZERO, locked: false });
+  syncShares = () => {
     const unlockedPercent = this.poolsAssets.reduce(
       (acc, v) => (v.locked ? acc.minus(v.share) : acc),
       new BN(1000)
@@ -133,6 +168,25 @@ class CreateCustomPoolsVm {
     });
   };
 
+  addAssetToPool = (assetId: string) => {
+    const balances = this.tokensToAdd;
+    const asset = balances?.find((b) => b.assetId === assetId);
+    if (asset == null) return;
+    this.poolsAssets.push({ asset: asset, share: BN.ZERO, locked: false });
+    this.syncShares();
+    if (this.maxToProvide.eq(0)) {
+      this.rootStore.notificationStore.notify(
+        "Change the assets you don’t have enough in wallet, or reset the whole composition.",
+        {
+          title: "Your max to provide is too low for this pool composition",
+          type: "error",
+          onClickText: "Reset the composition",
+          onClick: () => this.setDefaultPoolsAssets(),
+        }
+      );
+    }
+  };
+
   removeAssetFromPool = (assetId: string) => {
     const puzzle = this.rootStore.accountStore.TOKENS.PUZZLE;
     if (assetId === puzzle.assetId) return;
@@ -140,8 +194,10 @@ class CreateCustomPoolsVm {
       ({ asset }) => asset.assetId === assetId
     );
     this.poolsAssets.splice(indexOfObject, 1);
+    this.syncShares();
   };
   changeAssetShareInPool = (assetId: string, share: BN) => {
+    if (share.gt(1000)) share = new BN(1000);
     const indexOfObject = this.poolsAssets.findIndex(
       ({ asset }) => asset.assetId === assetId
     );
@@ -151,8 +207,7 @@ class CreateCustomPoolsVm {
     const indexOfObject = this.poolsAssets.findIndex(
       ({ asset }) => asset.assetId === oldAssetId
     );
-    const balances = this.rootStore.accountStore.assetBalances;
-    const asset = balances?.find((b) => b.assetId === newAssetId);
+    const asset = this.tokensToAdd?.find((b) => b.assetId === newAssetId);
     if (asset == null) return;
     this.poolsAssets[indexOfObject].asset = asset;
   };
@@ -172,7 +227,7 @@ class CreateCustomPoolsVm {
   poolSettingError: boolean = false;
   setPoolSettingError = (v: boolean) => (this.poolSettingError = v);
 
-  swapFee: BN = new BN(50);
+  swapFee: BN = new BN(5);
   setSwapFee = (v: BN) => (this.swapFee = v);
 
   //logo details
@@ -188,8 +243,18 @@ class CreateCustomPoolsVm {
     (this.notificationParams = params);
 
   get tokensToAdd() {
-    const balances = this.rootStore.accountStore.assetBalances;
-    if (balances == null) return [];
+    const { accountStore } = this.rootStore;
+    const balances = Object.values(accountStore.TOKENS)
+      .map((t) => {
+        const balance = accountStore.findBalanceByAssetId(t.assetId);
+        return balance ?? new Balance(t);
+      })
+      .sort((a, b) => {
+        if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
+        if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
+        if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
+        return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
+      });
     const currentTokens = this.poolsAssets.reduce<string[]>(
       (acc, v) => [...acc, v.asset.assetId],
       []
@@ -214,7 +279,6 @@ class CreateCustomPoolsVm {
     if (this.puzzleNFTPrice === 0) return;
     const amount = BN.parseUnits(this.puzzleNFTPrice, TOKENS.TPUZZLE.decimals);
     this._setLoading(true);
-    // todo правильно посчитать приблизительную стоимость 400 дол в пазлах, на usdn не работает
     await accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.createArtefacts,
@@ -227,14 +291,12 @@ class CreateCustomPoolsVm {
         call: { function: "generateArtefact", args: [] },
       })
       .then(async (txId) => {
-        console.log(txId);
         if (txId === null) return;
         const transDetails = await nodeService.transactionInfo(
           NODE_URL_MAP[chainId],
           txId
         );
         if (transDetails == null) return;
-        console.log(transDetails);
         const nftId = transDetails.stateChanges.transfers[0].asset;
         const details = await nodeService.assetDetails(
           NODE_URL_MAP[chainId],
@@ -258,9 +320,10 @@ class CreateCustomPoolsVm {
             },
           })
         );
+        await this.rootStore.nftStore.syncAccountNFTs();
       })
       .catch((e) => {
-        console.log(e);
+        console.error(e);
         this.setNotificationParams(
           buildErrorDialogParams({
             title: "Woops! Couldn't buy NFT",
@@ -298,9 +361,6 @@ class CreateCustomPoolsVm {
   setProvidedPercentOfPool = (value: number) =>
     (this.providedPercentOfPool = new BN(value));
 
-  maxToProvide: BN = new BN(0);
-  _setMaxToProvide = (value: number) => (this.maxToProvide = new BN(value));
-
   get totalAmountToAddLiquidity(): string | null {
     return BN.ZERO.toFormat();
   }
@@ -326,6 +386,127 @@ class CreateCustomPoolsVm {
   };
 
   provideLiquidityToPool = async () => {
-    console.log("provideLiquidityToPool");
+    this._setLoading(true);
+    const pool = await poolsService.getPoolByDomain(this.domain);
+    if (pool == null) {
+      this.rootStore.notificationStore.notify(
+        `Cannot find pool with domain ${this.domain}`,
+        { type: "error" }
+      );
+      this._setLoading(false);
+      return;
+    }
+    const accountStore = this.rootStore.accountStore;
+    return accountStore
+      .invoke({
+        dApp: (pool as any).contractAddress, //fixme
+        payment: [],
+        call: { function: "init", args: [] },
+      })
+      .then((txId) => console.log(txId))
+      .catch((e) => console.log(e))
+      .finally(() => this._setLoading(false));
   };
+
+  spendArtefact = async () => {
+    const { artefactToSpend } = this;
+    const { accountStore } = this.rootStore;
+    const { CONTRACT_ADDRESSES } = accountStore;
+    if (artefactToSpend == null || accountStore.address == null) return;
+    const domainPaid = await checkDomainPaid(this.domain, accountStore.address);
+    if (!domainPaid) {
+      await accountStore.invoke({
+        dApp: CONTRACT_ADDRESSES.createArtefacts,
+        payment: [{ assetId: artefactToSpend.assetId, amount: "1" }],
+        call: {
+          function: "spendArtefact",
+          args: [{ type: "string", value: this.domain }],
+        },
+      });
+    }
+  };
+
+  handleCreatePool = async () => {
+    const { address } = this.rootStore.accountStore;
+    if (address === null || this.logo == null) return;
+    try {
+      this._setLoading(true);
+      const image = await bucketService.upload(toFile(this.logo));
+
+      const artefactDetails = this.rootStore.nftStore.accountNFTs?.find(
+        ({ assetId }) => assetId === this.artefactToSpend?.assetId
+      );
+      const artefactOriginTransactionId = artefactDetails?.originTransactionId;
+      if (artefactOriginTransactionId == null) {
+        this.rootStore.notificationStore.notify(
+          "Cannot find artefact origin txId. Try to reload the page",
+          { type: "error" }
+        );
+        this._setLoading(false);
+        return;
+      }
+
+      await this.spendArtefact();
+
+      const assets = this.poolsAssets.map(({ asset, share }) => ({
+        assetId: asset.assetId,
+        share: share.div(10).toNumber(),
+      }));
+
+      await poolsService.createPool({
+        domain: this.domain,
+        swapFee: this.swapFee.times(10).toNumber(),
+        image,
+        owner: address,
+        assets,
+        title: this.title,
+        artefactOriginTransactionId,
+      });
+      this.setStep(this.step + 1);
+      this._setLoading(false);
+    } catch (e: any) {
+      this._setLoading(false);
+      this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
+        type: "error",
+        title: "Couldn't create pool",
+      });
+    }
+  };
+
+  get tokensToProvideInUsdnMap(): Record<string, BN> | null {
+    const { poolsStore, accountStore } = this.rootStore;
+    const { assetBalances, findBalanceByAssetId, address } = accountStore;
+    if (assetBalances == null || address == null) return null;
+    return this.poolsAssets.reduce<Record<string, BN>>(
+      (acc, { asset, share }) => {
+        const { assetId, decimals } = asset;
+        const tokenBalance = findBalanceByAssetId(assetId);
+        const rate = poolsStore.usdnRate(assetId, 1) ?? BN.ZERO;
+        if (tokenBalance?.balance == null) return acc;
+        const balance = BN.formatUnits(tokenBalance.balance, decimals);
+        const maxDollarValue = balance.times(rate).div(share.div(1000));
+        return { ...acc, [assetId]: maxDollarValue };
+      },
+      {}
+    );
+  }
+
+  get maxToProvide(): BN {
+    if (this.tokensToProvideInUsdnMap == null) return BN.ZERO;
+    if (!this.totalTakenShare.eq(1000)) return BN.ZERO;
+    const arr = Object.entries(this.tokensToProvideInUsdnMap).map(
+      ([a, maxDollarValue]) => ({
+        assetId: a,
+        dollarValue: maxDollarValue,
+      })
+    );
+    const min = arr.sort((a, b) =>
+      a.dollarValue!.gt(b.dollarValue!) ? 1 : -1
+    )[0];
+    const minAsset = this.poolsAssets.find(
+      ({ asset }) => asset.assetId === min?.assetId
+    );
+    if (minAsset == null) return BN.ZERO;
+    return min.dollarValue.div(minAsset.share.div(1000));
+  }
 }

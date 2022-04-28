@@ -31,10 +31,10 @@ const NoPayment: React.FC<IProps> = () => {
         fixed
         size="medium"
         onClick={vm.buyRandomArtefact}
-        disabled={!vm.canBuyNft}
+        disabled={!vm.canBuyNft || vm.loading}
       >
         {nftStore.totalPuzzleNftsAmount == null || vm.loading ? (
-          <Loading />
+          <Loading big />
         ) : (
           `Buy for ${vm.puzzleNFTPrice} TPUZZLE`
         )}

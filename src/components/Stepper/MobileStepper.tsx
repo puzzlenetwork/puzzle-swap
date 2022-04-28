@@ -11,6 +11,7 @@ interface IProps {
   steps: string[];
   activeStep: number;
   onStepClick: (step: number) => void;
+  minStep?: number;
 }
 
 const Root = styled.div`
@@ -85,6 +86,7 @@ const MobileStepper: React.FC<IProps> = ({
   steps,
   activeStep,
   onStepClick,
+  minStep,
 }) => {
   return (
     <Root>
@@ -94,23 +96,29 @@ const MobileStepper: React.FC<IProps> = ({
         mainAxisSize="fit-content"
         style={{ paddingLeft: 28 }}
       >
-        {steps.map((name, index, array) => {
+        {steps.map((name, step, array) => {
           const state =
-            index === activeStep
+            step === activeStep
               ? "current"
-              : index > activeStep
+              : step > activeStep
               ? "next"
               : "previous";
+          const disabled =
+            activeStep === 3 ? true : minStep != null ? minStep < step : false;
           return (
-            <React.Fragment key={index + "mobile-step"}>
-              <IconContainer state={state} onClick={() => onStepClick(index)}>
+            <React.Fragment key={step + "mobile-step"}>
+              <IconContainer
+                style={{ cursor: disabled ? "not-allowed" : "pointer" }}
+                state={state}
+                onClick={() => !disabled && onStepClick(step)}
+              >
                 <Text fitContent size="small" weight={500}>
-                  {index + 1}
+                  {step + 1}
                 </Text>
               </IconContainer>
-              {index !== array.length - 1 && (
+              {step !== array.length - 1 && (
                 <RopeContainer>
-                  <Rope done={index >= activeStep} />
+                  <Rope done={step >= activeStep} />
                 </RopeContainer>
               )}
             </React.Fragment>

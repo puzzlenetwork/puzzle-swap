@@ -11,6 +11,9 @@ import { ReactComponent as Add } from "@src/assets/icons/whiteAdd.svg";
 import Select from "@components/Select";
 import useWindowSize from "@src/hooks/useWindowSize";
 import { useNavigate } from "react-router-dom";
+import Text from "@components/Text";
+import close from "@src/assets/icons/primaryBlue16CloseIcon.svg";
+import { Row } from "@src/components/Flex";
 
 interface IProps {}
 
@@ -22,7 +25,7 @@ const Root = styled.div`
   border: 1px solid #f1f2fe;
   border-radius: 16px;
   box-sizing: border-box;
-  @media (min-width: 1000px) {
+  @media (min-width: 1080px) {
     flex-direction: row;
     justify-content: revert;
   }
@@ -31,7 +34,7 @@ const Filters = styled.div`
   display: flex;
   flex-direction: column;
   padding: 16px;
-  @media (min-width: 1000px) {
+  @media (min-width: 1080px) {
     padding: 24px;
   }
 `;
@@ -39,19 +42,22 @@ const Btn = styled.div`
   display: flex;
   padding: 16px;
   width: calc(100% - 32px);
-  @media (min-width: 1000px) {
+  @media (min-width: 1080px) {
     padding: 24px;
     width: calc(100% - 48px);
-    justify-content: end;
+    -webkit-justify-content: flex-end;
   }
 `;
-const Selects = styled.div`
+const Selects = styled.div<{ withThirdElement?: boolean }>`
   display: flex;
+  flex-wrap: wrap;
   padding: 0 16px;
   align-items: center;
   box-sizing: border-box;
-  @media (min-width: 1000px) {
+  @media (min-width: 1080px) {
     padding: 0 24px;
+    flex-wrap: nowrap;
+    width: 100%;
   }
 `;
 const categoriesOptions = [
@@ -69,6 +75,30 @@ const createdByOptions = [
   { title: "By community", key: "custom" },
   { title: "By Puzzle Swap", key: "puzzle" },
 ];
+const ClearBtn = styled(Text)`
+  margin: 12px 12px 0 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+
+  @media (min-width: 455px) {
+    margin: 0 12px;
+  }
+
+  ::after {
+    position: absolute;
+    right: -20px;
+    top: 2px;
+    content: url(${close});
+  }
+`;
+
+const InputWrapper = styled.div`
+  display: flex;
+  @media (min-width: 1080px) {
+    min-width: 340px;
+  }
+`;
 const SearchAndFilterTab: React.FC<IProps> = () => {
   const vm = useInvestVM();
   const { accountStore } = useStores();
@@ -76,39 +106,61 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
   const [activeCreatedOption, setActiveCreatedOption] = useState(
     createdByOptions[0]
   );
+  const isFiltersChosen =
+    activeCategory !== categoriesOptions[0] ||
+    activeCreatedOption !== createdByOptions[0];
+  const handleClearFilters = () => {
+    setActiveCategory(categoriesOptions[0]);
+    setActiveCreatedOption(createdByOptions[0]);
+  };
   const navigate = useNavigate();
   const { width } = useWindowSize();
   return (
     <Root>
       <Filters>
-        <Input
-          style={{ height: 40, minWidth: 340 }}
-          icon="search"
-          placeholder="Search by title or asset…"
-          value={vm.searchValue}
-          onChange={(e) => vm.setSearchValue(e.target.value)}
-          suffixCondition={vm.searchValue.length > 1}
-        />
+        <InputWrapper>
+          <Input
+            style={{ height: 40 }}
+            icon="search"
+            placeholder="Search by title or asset…"
+            value={vm.searchValue}
+            onChange={(e) => vm.setSearchValue(e.target.value)}
+            suffixCondition={vm.searchValue.length > 1}
+          />
+        </InputWrapper>
       </Filters>
-      <Selects>
-        <Select
-          options={categoriesOptions}
-          selected={activeCategory}
-          onSelect={setActiveCategory}
-        />
-        <SizedBox width={12} />
-        <Select
-          options={createdByOptions}
-          selected={activeCreatedOption}
-          onSelect={setActiveCreatedOption}
-        />
+      <Selects withThirdElement={isFiltersChosen}>
+        <Row mainAxisSize="fit-content">
+          <Select
+            options={categoriesOptions}
+            selected={activeCategory}
+            onSelect={setActiveCategory}
+          />
+          <SizedBox width={12} />
+          <Select
+            options={createdByOptions}
+            selected={activeCreatedOption}
+            onSelect={setActiveCreatedOption}
+          />
+          <SizedBox width={12} />
+        </Row>
+        {isFiltersChosen && (
+          <ClearBtn
+            fitContent
+            weight={500}
+            type="blue500"
+            onClick={handleClearFilters}
+          >
+            Clear all
+          </ClearBtn>
+        )}
       </Selects>
       <SizedBox height={16} />
-      {width && width <= 1000 && <Divider />}
+      {width && width <= 1080 && <Divider />}
       <Btn>
         <Button
           size="medium"
-          fixed={width != null && width <= 1000}
+          fixed={width != null && width <= 1080}
           onClick={() => navigate(`/${accountStore.ROUTES.POOLS_CREATE}`)}
         >
           <Add />
