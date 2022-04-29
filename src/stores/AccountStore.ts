@@ -30,6 +30,7 @@ export enum LOGIN_TYPE {
 }
 
 export interface IInvokeTxParams {
+  fee?: number;
   dApp: string;
   payment: Array<{ assetId: string; amount: string }>;
   call: {
@@ -341,7 +342,12 @@ class AccountStore {
     }
     const ttx = this.signer.invoke({
       dApp: txParams.dApp,
-      fee: this.isAccScripted ? 900000 : 500000,
+      fee:
+        txParams.fee != null
+          ? txParams.fee
+          : this.isAccScripted
+          ? 900000
+          : 500000,
       payment: txParams.payment,
       call: txParams.call,
     });
@@ -357,7 +363,15 @@ class AccountStore {
     txParams: IInvokeTxParams
   ): Promise<string | null> => {
     const data = {
-      fee: { assetId: "WAVES", amount: this.isAccScripted ? 900000 : 500000 },
+      fee: {
+        assetId: "WAVES",
+        amount:
+          txParams.fee != null
+            ? txParams.fee
+            : this.isAccScripted
+            ? 900000
+            : 500000,
+      },
       dApp: txParams.dApp,
       call: txParams.call,
       payment: txParams.payment,
