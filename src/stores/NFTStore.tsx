@@ -22,6 +22,14 @@ export default class NftStore {
   public setAccountNFTs = (v: Array<IArtWork & Partial<INFT>> | null) =>
     (this.accountNFTs = v);
 
+  get accountNFTsToStake() {
+    return (
+      this.accountNFTs?.filter(({ description }) =>
+        description?.toLowerCase().includes("eagle")
+      ) ?? []
+    );
+  }
+
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
@@ -104,6 +112,7 @@ export default class NftStore {
         )?.image;
         return { ...nft, imageLink };
       });
+    console.log(supportedPuzzleNft);
     this.setAccountNFTs(supportedPuzzleNft);
   };
 
