@@ -5,6 +5,7 @@ import { RootStore, useStores } from "@stores";
 import { IToken, NODE_URL_MAP } from "@src/constants";
 import BN from "@src/utils/BN";
 import {
+  buildDialogParams,
   buildErrorDialogParams,
   buildSuccessNFTSaleDialogParams,
   IDialogNotificationProps,
@@ -114,14 +115,17 @@ class CreateCustomPoolsVm {
   get correct0() {
     return this.poolsAssets.length > 1 && this.totalTakenShare.eq(1000);
   }
+
   get correct1() {
     return this.domain.length > 1 && this.logo && !this.poolSettingError;
   }
+
   get correct2() {
     return this.artefactToSpend != null;
   }
+
   get correct3() {
-    return !this.providedPercentOfPool.eq(0);
+    return !this.providedPercentOfPool.eq(0) && !this.maxToProvide.eq(0);
   }
 
   get minStep() {
@@ -400,12 +404,34 @@ class CreateCustomPoolsVm {
     return accountStore
       .invoke({
         dApp: (pool as any).contractAddress, //fixme
-        payment: [],
+        payment: this.assetsForInitFunction,
+        fee: 100500000,
         call: { function: "init", args: [] },
       })
       .then((txId) => console.log(txId))
+      .then(() =>
+        this.setNotificationParams(
+          buildDialogParams({
+            type: "success",
+            title: "Congratulations!",
+            description: `You have created pool ${this.title} `,
+            onContinue: () => {
+              this.initialize(null);
+              localStorage.removeItem("puzzle-custom-pool");
+              window.open(`/pool/${this.domain}`);
+            },
+            onCancel: () => {
+              this.initialize(null);
+              localStorage.removeItem("puzzle-custom-pool");
+              window.open(`/pool/${this.domain}`);
+            },
+            continueText: "Go to pool page",
+          })
+        )
+      )
       .catch((e) => console.log(e))
       .finally(() => this._setLoading(false));
+    //todo add cleaning local storage after pool has been initialized
   };
 
   spendArtefact = async () => {
@@ -507,6 +533,24 @@ class CreateCustomPoolsVm {
       ({ asset }) => asset.assetId === min?.assetId
     );
     if (minAsset == null) return BN.ZERO;
-    return min.dollarValue.div(minAsset.share.div(1000));
+    return min.dollarValue;
+  }
+
+  get assetsForInitFunction(): { assetId: string; amount: string }[] {
+    if (this.tokensToProvideInUsdnMap == null) return [];
+    const { poolsStore } = this.rootStore;
+
+    return this.poolsAssets.map(({ asset, share }) => {
+      const { assetId, decimals } = asset;
+      const rate = poolsStore.usdnRate(assetId, 1) ?? BN.ZERO;
+      const amountToProvide = this.maxToProvide
+        .div(rate)
+        .times(share.div(1000))
+        .times(this.providedPercentOfPool.div(100));
+      return {
+        assetId,
+        amount: BN.parseUnits(amountToProvide, decimals).toString(),
+      };
+    });
   }
 }

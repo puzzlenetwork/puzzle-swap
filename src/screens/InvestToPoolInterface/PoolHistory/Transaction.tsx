@@ -50,7 +50,7 @@ const Transaction: React.FC<IProps> = ({
     }
   };
   const draw = () => {
-    switch (call.function) {
+    switch (call?.function) {
       case "swap":
       case "swapWithReferral":
         const token0 = tokens[payment[0].assetId ?? "WAVES"];

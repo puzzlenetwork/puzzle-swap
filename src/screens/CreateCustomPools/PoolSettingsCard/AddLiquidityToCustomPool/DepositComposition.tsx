@@ -50,14 +50,12 @@ const DepositComposition: React.FC<IProps> = () => {
             const depositAmount = vm.maxToProvide
               .times(vm.providedPercentOfPool)
               .div(100)
-
               .times(token.share.div(100).div(10));
             return (
               <AddTokenRow
                 symbol={token.asset.symbol}
                 key={i}
                 availableAmount={available}
-                //todo change to tokens amount
                 depositPrefix="$"
                 depositAmount={depositAmount}
                 percent={token.share.div(10).toNumber()}
