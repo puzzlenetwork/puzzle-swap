@@ -9,7 +9,6 @@ import SelectArtefact, {
   SelectArtefactSkeleton,
 } from "@screens/CreateCustomPools/PoolSettingsCard/ConfirmPoolCreation/SelectArtefact";
 import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
-import DialogNotification from "@components/Dialog/DialogNotification";
 import Notification from "@components/Notification";
 import { useStores } from "@stores";
 import BN from "@src/utils/BN";

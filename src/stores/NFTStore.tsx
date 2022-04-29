@@ -112,7 +112,6 @@ export default class NftStore {
         )?.image;
         return { ...nft, imageLink };
       });
-    console.log(supportedPuzzleNft);
     this.setAccountNFTs(supportedPuzzleNft);
   };
 
