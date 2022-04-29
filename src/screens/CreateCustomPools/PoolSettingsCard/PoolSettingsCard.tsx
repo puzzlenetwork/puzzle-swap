@@ -8,6 +8,7 @@ import styled from "@emotion/styled";
 import ContinueBtn from "@screens/CreateCustomPools/ContinueBtn";
 import SizedBox from "@components/SizedBox";
 import AddLiquidityToCustomPool from "@screens/CreateCustomPools/PoolSettingsCard/AddLiquidityToCustomPool";
+import DialogNotification from "@components/Dialog/DialogNotification";
 
 interface IProps {}
 
@@ -45,6 +46,17 @@ const PoolSettingsCard: React.FC<IProps> = () => {
       <DesktopContinueBtn>
         <ContinueBtn />
       </DesktopContinueBtn>
+      <DialogNotification
+        onClose={() => vm.setNotificationParams(null)}
+        title={vm.notificationParams?.title ?? ""}
+        description={vm.notificationParams?.description}
+        buttonsDirection={vm.notificationParams?.buttonsDirection}
+        type={vm.notificationParams?.type}
+        buttons={vm.notificationParams?.buttons}
+        style={{ maxWidth: 360 }}
+        visible={vm.notificationParams != null}
+        icon={vm.notificationParams?.icon}
+      />
     </Root>
   );
 };

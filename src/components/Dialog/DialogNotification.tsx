@@ -191,6 +191,36 @@ export const buildWarningLiquidityDialogParams = ({
   };
 };
 
+type TBuildParamsProps = {
+  title: string;
+  description: string;
+  onContinue?: () => void;
+  continueText: string;
+  onCancel: () => void;
+  type: "success" | "error" | "warning";
+};
+export const buildDialogParams = ({
+  title,
+  description,
+  onContinue,
+  continueText,
+  type,
+}: TBuildParamsProps): IDialogNotificationProps => {
+  return {
+    title,
+    description,
+    type,
+    buttonsDirection: "row",
+    buttons: [
+      () => (
+        <Button size="medium" fixed onClick={onContinue}>
+          {continueText}
+        </Button>
+      ),
+    ],
+  };
+};
+
 //NFTS
 
 type TBuildSuccessNFTSaleDialogParamsProps = {
