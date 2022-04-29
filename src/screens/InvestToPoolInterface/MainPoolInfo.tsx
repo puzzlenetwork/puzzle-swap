@@ -12,8 +12,6 @@ import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
 import TransparentDetailsBtn from "@screens/InvestToPoolInterface/TransparentDetailsBtn";
 import { useStores } from "@stores";
-import Tooltip from "@src/components/Tooltip";
-import MorePoolInformation from "./MorePoolInformation";
 import { useNavigate } from "react-router-dom";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import TextButton from "@components/TextButton";
@@ -112,12 +110,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
               >
                 Trade
               </Button>
-              <Tooltip
-                config={{ placement: "bottom-end", trigger: "click" }}
-                content={<MorePoolInformation />}
-              >
-                <TransparentDetailsBtn />
-              </Tooltip>
+              <TransparentDetailsBtn />
             </Row>
           </Links>
         </Column>
