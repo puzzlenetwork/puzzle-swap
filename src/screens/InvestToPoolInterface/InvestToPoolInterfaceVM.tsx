@@ -8,6 +8,7 @@ import { IPoolStats30Days } from "@stores/PoolsStore";
 import axios from "axios";
 import nodeService from "@src/services/nodeService";
 import { ITransaction } from "@src/utils/types";
+import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
 
 const ctx = React.createContext<InvestToPoolInterfaceVM | null>(null);
 
@@ -45,6 +46,9 @@ class InvestToPoolInterfaceVM {
 
   public indexTokenId: string | null = null;
   private setIndexTokenId = (value: string) => (this.indexTokenId = value);
+
+  public indexTokenBalance: BN = BN.ZERO;
+  private setIndexBalance = (value: BN) => (this.indexTokenBalance = value);
 
   public accountLiquidity: BN | null = null;
   private setAccountLiquidity = (value: BN) => (this.accountLiquidity = value);
@@ -121,12 +125,20 @@ class InvestToPoolInterfaceVM {
   };
 
   syncIndexTokenInfo = async () => {
+    const { address, chainId } = this.rootStore.accountStore;
     const indexTokenIdResponse = await this.pool.contractKeysRequest(
       "static_poolToken_idStr"
     );
+    if (address == null) return;
     if (indexTokenIdResponse != null && indexTokenIdResponse.length === 1) {
-      const setIndexTokenId = indexTokenIdResponse[0].value.toString();
-      this.setIndexTokenId(setIndexTokenId);
+      const indexTokenId = indexTokenIdResponse[0].value.toString();
+      this.setIndexTokenId(indexTokenId);
+      const balance = await assetBalance(
+        indexTokenId,
+        address,
+        NODE_URL_MAP[chainId]
+      );
+      this.setIndexBalance(new BN(balance ?? 0));
     }
   };
   getTokenRewardInfo = async (
@@ -337,7 +349,6 @@ class InvestToPoolInterfaceVM {
       pool.contractAddress
     );
     v && this.setTransactionsHistory(v);
-    console.log(v);
   };
 
   loadMoreHistory = async () => {
@@ -397,18 +408,23 @@ class InvestToPoolInterfaceVM {
   };
 
   get canStakeIndex() {
-    return false;
+    return !this.indexTokenBalance.eq(0);
   }
 
   stakeIndex = async () => {
-    if (this.canStakeIndex) return;
-    if (this.pool.layer2Address == null) return;
+    if (!this.canStakeIndex) return;
     this._setLoading(true);
     const { accountStore, notificationStore } = this.rootStore;
+    if (this.indexTokenId == null) return;
     accountStore
       .invoke({
         dApp: this.pool.contractAddress,
-        payment: [],
+        payment: [
+          {
+            assetId: this.indexTokenId,
+            amount: this.indexTokenBalance.toString(),
+          },
+        ],
         call: {
           function: "stakeIndex",
           args: [],
@@ -428,6 +444,7 @@ class InvestToPoolInterfaceVM {
           title: "Transaction is not completed",
         });
       })
+      .then(this.syncIndexTokenInfo)
       .then(this.updateRewardInfo)
       .finally(() => this._setLoading(false));
   };

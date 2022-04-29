@@ -8,6 +8,7 @@ import Button from "@components/Button";
 import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
 import Card from "@src/components/Card";
 import { useStores } from "@stores";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -18,6 +19,8 @@ const LPStaking: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const vm = useInvestToPoolInterfaceVM();
   if (accountStore.address == null) return null;
+  //todo replace with dollar equivalent
+  const availableToStake = BN.formatUnits(vm.indexTokenBalance, 2);
   return (
     <Root>
       <SizedBox height={24} />
@@ -32,6 +35,7 @@ const LPStaking: React.FC<IProps> = () => {
           </Text>
           <SizedBox height={4} />
           <Text nowrap>
+            $
             {vm.accountLiquidity == null
               ? "0.00"
               : vm.accountLiquidity?.toFormat(2)}
@@ -52,7 +56,7 @@ const LPStaking: React.FC<IProps> = () => {
             Available to stake
           </Text>
           <SizedBox height={4} />
-          <Text>$ 0.00</Text>
+          <Text>{availableToStake.toFormat(2)}</Text>
           <SizedBox height={16} />
           <Button
             fixed

@@ -49,7 +49,6 @@ const Reward: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const { address, TOKENS } = accountStore;
   if (address == null) return null;
-  console.log(vm.lastClaimDate.toString());
   const date = dayjs(vm.lastClaimDate?.toNumber() ?? 0);
   const format = date.format("D MMM YYYY");
   return (
