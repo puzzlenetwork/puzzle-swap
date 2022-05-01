@@ -13,11 +13,19 @@ interface IPoolSettings {
   assets: IAssetConfig[];
   title: string;
   artefactOriginTransactionId: string;
-  // contractAddress: string;
-  // layer2Address?: string;
-  // baseTokenId: string;
-  // logoUrl: string;
-  // isCustom?: boolean;
+}
+
+export interface IPool {
+  domain: string;
+  title: string;
+  contractAddress: string;
+  layer2Address?: string;
+  baseTokenId: string;
+  assets: IAssetConfig[];
+  logo: string;
+  artefactOriginTransactionId?: string;
+  isCustom?: boolean;
+  owner?: string;
 }
 
 const poolService = {
@@ -48,6 +56,12 @@ const poolService = {
       }
     );
     return true;
+  },
+  getPools: async (): Promise<IPool[]> => {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_API_BASE}/api/v1/pools`
+    );
+    return data;
   },
 };
 export default poolService;

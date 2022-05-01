@@ -1,6 +1,6 @@
 import { IToken } from "@src/constants";
-import tokenLogos from "@src/assets/tokens/tokenLogos";
 import BN from "@src/utils/BN";
+import tokenLogos from "@src/constants/tokenLogos";
 
 export interface IAssetBalance extends Omit<IToken, "logo"> {
   balance?: BN;

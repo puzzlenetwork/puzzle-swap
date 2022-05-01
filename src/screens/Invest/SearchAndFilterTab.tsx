@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useState } from "react";
+import React from "react";
 import Input from "@components/Input";
 import { observer } from "mobx-react-lite";
 import { useInvestVM } from "@screens/Invest/InvestVm";
@@ -9,11 +9,9 @@ import Button from "@components/Button";
 import { ReactComponent as Add } from "@src/assets/icons/whiteAdd.svg";
 import Select from "@components/Select";
 import useWindowSize from "@src/hooks/useWindowSize";
-import { useNavigate } from "react-router-dom";
 import Text from "@components/Text";
 import close from "@src/assets/icons/primaryBlue16CloseIcon.svg";
 import { Row } from "@src/components/Flex";
-import { ROUTES } from "@src/constants";
 
 interface IProps {}
 
@@ -48,7 +46,7 @@ const Btn = styled.div`
     -webkit-justify-content: flex-end;
   }
 `;
-const Selects = styled.div<{ withThirdElement?: boolean }>`
+const Selects = styled.div`
   display: flex;
   flex-wrap: wrap;
   padding: 0 16px;
@@ -58,6 +56,22 @@ const Selects = styled.div<{ withThirdElement?: boolean }>`
     padding: 0 24px;
     flex-wrap: nowrap;
     width: 100%;
+  }
+`;
+const StyledRow = styled(Row)`
+  flex-wrap: wrap;
+
+  & > :first-of-type {
+    margin-bottom: 8px;
+  }
+
+  @media (min-width: 380px) {
+    & > :first-of-type {
+      margin-bottom: 0;
+    }
+  }
+  @media (min-width: 1080px) {
+    flex-wrap: nowrap;
   }
 `;
 const categoriesOptions = [
@@ -70,11 +84,11 @@ const categoriesOptions = [
   { title: "Waves DeFi", key: "defi" },
   { title: "Waves Ducks", key: "duck" },
 ];
-const createdByOptions = [
-  { title: "Created by all", key: "all" },
-  { title: "By community", key: "custom" },
-  { title: "By Puzzle Swap", key: "puzzle" },
-];
+// const createdByOptions = [
+//   { title: "Created by all", key: "all" },
+//   { title: "By community", key: "custom" },
+//   { title: "By Puzzle Swap", key: "puzzle" },
+// ];
 const ClearBtn = styled(Text)`
   margin: 12px 12px 0 12px;
   cursor: pointer;
@@ -101,18 +115,13 @@ const InputWrapper = styled.div`
 `;
 const SearchAndFilterTab: React.FC<IProps> = () => {
   const vm = useInvestVM();
-  const [activeCategory, setActiveCategory] = useState(categoriesOptions[0]);
-  const [activeCreatedOption, setActiveCreatedOption] = useState(
-    createdByOptions[0]
-  );
-  const isFiltersChosen =
-    activeCategory !== categoriesOptions[0] ||
-    activeCreatedOption !== createdByOptions[0];
+  // const [activeCategory, setActiveCategory] = useState(categoriesOptions[0]);
+  const isFiltersChosen = vm.poolCategoryFilter !== 0;
   const handleClearFilters = () => {
-    setActiveCategory(categoriesOptions[0]);
-    setActiveCreatedOption(createdByOptions[0]);
+    vm.setPoolCategoryFilter(0);
+    // setActiveCategory(categoriesOptions[0]);
+    // setActiveCreatedOption(createdByOptions[0]);
   };
-  const navigate = useNavigate();
   const { width } = useWindowSize();
   return (
     <Root>
@@ -128,21 +137,24 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
           />
         </InputWrapper>
       </Filters>
-      <Selects withThirdElement={isFiltersChosen}>
-        <Row mainAxisSize="fit-content">
+      <Selects>
+        <StyledRow mainAxisSize="fit-content">
           <Select
             options={categoriesOptions}
-            selected={activeCategory}
-            onSelect={setActiveCategory}
+            selected={categoriesOptions[vm.poolCategoryFilter]}
+            onSelect={({ key }) => {
+              const index = categoriesOptions.findIndex((o) => o.key === key);
+              vm.setPoolCategoryFilter(index);
+            }}
           />
-          <SizedBox width={12} />
-          <Select
-            options={createdByOptions}
-            selected={activeCreatedOption}
-            onSelect={setActiveCreatedOption}
-          />
-          <SizedBox width={12} />
-        </Row>
+          {/*<SizedBox width={12} />*/}
+          {/*<Select*/}
+          {/*  options={createdByOptions}*/}
+          {/*  selected={activeCreatedOption}*/}
+          {/*  onSelect={setActiveCreatedOption}*/}
+          {/*/>*/}
+          {/*<SizedBox width={12} />*/}
+        </StyledRow>
         {isFiltersChosen && (
           <ClearBtn
             fitContent
@@ -160,7 +172,8 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
         <Button
           size="medium"
           fixed={width != null && width <= 1080}
-          onClick={() => navigate(`${ROUTES.POOLS_CREATE}`)}
+          disabled
+          // onClick={() => navigate(`${ROUTES.POOLS_CREATE}`)}
         >
           <Add />
           <SizedBox width={12} />

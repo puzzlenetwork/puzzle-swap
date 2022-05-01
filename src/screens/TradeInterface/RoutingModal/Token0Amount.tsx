@@ -5,7 +5,7 @@ import SizedBox from "@components/SizedBox";
 import { Column } from "@src/components/Flex";
 import { ReactComponent as Arrow } from "@src/assets/icons/blackRightArrow.svg";
 import FilledText from "@screens/TradeInterface/RoutingModal/FilledText";
-import tokenLogos from "@src/assets/tokens/tokenLogos";
+import tokenLogos from "@src/constants/tokenLogos";
 
 interface IProps {
   imgSrc?: string;

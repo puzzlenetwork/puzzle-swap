@@ -55,7 +55,7 @@ const WithdrawLiquidityInterfaceImpl = () => {
             <ShortPoolInfoCard
               title="From"
               poolLogo={vm.pool.logo}
-              poolName={vm.pool.name}
+              poolName={vm.pool.title}
               apy={vm.stats?.apy && vm.stats.apy.toFormat(2) + " %"}
               onChangePool={() => vm.setChangePoolModalOpen(true)}
             />

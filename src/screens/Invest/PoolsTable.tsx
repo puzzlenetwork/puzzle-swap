@@ -10,15 +10,15 @@ import Card from "@components/Card";
 import { useStores } from "@src/stores";
 import { useInvestVM } from "@screens/Invest/InvestVm";
 import SizedBox from "@components/SizedBox";
-import Checkbox from "@components/Checkbox";
+import { tokenCategoriesEnum } from "@components/TokensSelectModal/TokenSelectModal";
 
 const PoolsTable: React.FC = () => {
-  const { poolsStore, accountStore } = useStores();
-  const [activeSort, setActiveSort] = useState<0 | 1>(1);
-  const [v, setV] = useState(false);
+  const { poolsStore } = useStores();
   const vm = useInvestVM();
-  const data = poolsStore.poolDataWithApy;
+  const [activeSort, setActiveSort] = useState<0 | 1>(1);
+  const data = vm.pools;
   const filteredPools = data
+    .filter(({ domain }) => domain !== "puzzle")
     .sort((a, b) => {
       if (activeSort === 0) {
         if (a.globalLiquidity != null && b.globalLiquidity != null) {
@@ -39,14 +39,23 @@ const PoolsTable: React.FC = () => {
       }
       return 1;
     })
-    .filter(({ domain }) => domain !== "puzzle")
-    .filter(({ name, tokens }) =>
+    .filter(({ title, tokens }) =>
       vm.searchValue
-        ? [name, ...tokens.map(({ symbol }) => symbol)]
+        ? [title, ...tokens.map(({ symbol }) => symbol)]
             .map((v) => v.toLowerCase())
             .some((v) => v.includes(vm.searchValue.toLowerCase()))
         : true
-    );
+    )
+    .filter((pool) => {
+      if (vm.poolCategoryFilter === 0) return true;
+      return pool.tokens
+        .reduce(
+          (acc, { category }) =>
+            category != null ? [...acc, ...category] : [...acc],
+          [] as string[]
+        )
+        .includes(tokenCategoriesEnum[vm.poolCategoryFilter]);
+    });
 
   return (
     <>
@@ -54,16 +63,16 @@ const PoolsTable: React.FC = () => {
         <Text weight={500} type="secondary" fitContent>
           All pools ({data.length})
         </Text>
-        {accountStore.address != null && (
-          <>
-            <SizedBox width={28} />
-            <Checkbox
-              label="Show my empty balances"
-              checked={v}
-              onChange={(v) => setV(v)}
-            />
-          </>
-        )}
+        {/*{accountStore.address != null && (*/}
+        {/*  <>*/}
+        {/*    <SizedBox width={28} />*/}
+        {/*    <Checkbox*/}
+        {/*      label="Show my empty balances"*/}
+        {/*      checked={v}*/}
+        {/*      onChange={(v) => setV(v)}*/}
+        {/*    />*/}
+        {/*  </>*/}
+        {/*)}*/}
       </Row>
       <SizedBox height={8} />
       <Card

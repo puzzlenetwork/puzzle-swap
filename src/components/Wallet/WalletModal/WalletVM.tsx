@@ -41,7 +41,7 @@ class WalletVM {
     //   this.getAssetsStats
     // );
     // reaction(() => this.rootStore.accountStore?.address, this.getAssetsStats);
-    // setInterval(this.getAssetsStats, 15 * 1000);
+    setInterval(this.getAssetsStats, 15 * 1000);
   }
 
   handleCopyAddress = () => {
@@ -112,12 +112,10 @@ class WalletVM {
             indexTokenName,
           }) => {
             const amount = BN.formatUnits(addressStaked, 8);
-            // @ts-ignore
-            const path = ROUTES.invest[pool.id];
             return {
-              onClickPath: path,
+              onClickPath: `/pools/${pool.domain}/invest`,
               logo: pool?.logo,
-              name: pool?.name,
+              name: pool?.title,
               amount:
                 (amount.gte(0.0001) ? amount.toFormat(4) : amount.toFormat(8)) +
                 indexTokenName,

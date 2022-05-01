@@ -28,7 +28,7 @@ const tokenCategories = [
   "Waves Ducks",
 ];
 
-enum tokenCategoriesEnum {
+export enum tokenCategoriesEnum {
   all = 0,
   global = 1,
   stable = 2,

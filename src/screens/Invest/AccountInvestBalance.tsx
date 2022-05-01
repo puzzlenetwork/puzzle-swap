@@ -6,6 +6,8 @@ import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import darkIncome from "@src/assets/icons/darkIncome.svg";
 import darkWallet from "@src/assets/icons/darkWallet.svg";
+import { useInvestVM } from "@screens/Invest/InvestVm";
+import Skeleton from "react-loading-skeleton";
 
 interface IProps {}
 
@@ -58,19 +60,24 @@ const Details = styled.div`
   }
 `;
 const AccountInvestBalance: React.FC<IProps> = () => {
+  const vm = useInvestVM();
   return (
     <Root pic={bg}>
       <Column>
         <Text type="purple300" size="medium">
           My invested balance
         </Text>
-        <Text
-          weight={500}
-          style={{ fontSize: 24, lineHeight: "32px" }}
-          type="light"
-        >
-          $ 12,560.12
-        </Text>
+        {vm.totalInvestmentBalance == null ? (
+          <Skeleton height={32} />
+        ) : (
+          <Text
+            weight={500}
+            style={{ fontSize: 24, lineHeight: "32px" }}
+            type="light"
+          >
+            {vm.totalInvestmentBalance}
+          </Text>
+        )}
       </Column>
       <SizedBox height={8} />
       <Details>
