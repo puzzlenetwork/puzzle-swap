@@ -57,7 +57,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
       <ShortInfo pic={vm.pool.isCustom ? customBg : bg}>
         <Column crossAxisSize="max">
           <Text type="light" size="large" weight={500}>
-            {vm.pool.name}
+            {vm.pool.title}
           </Text>
           <SizedBox height={4} />
           <Text type="purple300" size="medium">

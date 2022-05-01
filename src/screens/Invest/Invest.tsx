@@ -9,7 +9,6 @@ import PoolsTable from "@screens/Invest/PoolsTable";
 import { Observer } from "mobx-react-lite";
 import { useStores } from "@stores";
 import AccountInvestBalance from "@screens/Invest/AccountInvestBalance";
-import AccountPools from "@screens/Invest/AccountPools";
 
 interface IProps {}
 
@@ -68,8 +67,8 @@ const InvestImpl: React.FC<IProps> = () => {
             {accountStore.address != null && <AccountInvestBalance />}
             <SizedBox height={24} />
             <SearchAndFilterTab />
-            <SizedBox height={16} />
-            <AccountPools />
+            {/*<SizedBox height={16} />*/}
+            {/*<AccountPools />*/}
             <SizedBox height={16} />
             <PoolsTable />
           </Root>

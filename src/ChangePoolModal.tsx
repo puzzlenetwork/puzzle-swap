@@ -53,9 +53,9 @@ const ChangePoolModal: React.FC<IProps> = ({
     // .filter(({ id }) =>
     //   Object.keys(ROUTES.invest).some((key) => key === id)
     // )
-    .filter(({ name, tokens }) =>
+    .filter(({ title, tokens }) =>
       searchValue
-        ? [name, ...tokens.map(({ symbol }) => symbol)]
+        ? [title, ...tokens.map(({ symbol }) => symbol)]
             .map((v) => v.toLowerCase())
             .some((v) => v.includes(searchValue.toLowerCase()))
         : true
@@ -88,7 +88,7 @@ const ChangePoolModal: React.FC<IProps> = ({
                   <SquareTokenIcon src={pool.logo} size="small" />
                   <SizedBox width={8} />
                   <Column>
-                    <Text size="medium">{pool.name}</Text>
+                    <Text size="medium">{pool.title}</Text>
                     <Text
                       size="small"
                       type="secondary"

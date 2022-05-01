@@ -30,6 +30,18 @@ const Transaction: React.FC<IProps> = ({
   stateChanges,
   payment,
 }) => {
+  if (
+    ![
+      "swap",
+      "swapWithReferral",
+      "generateIndexAndStake",
+      "generateIndexWithOneTokenAndStake",
+      "unstakeAndRedeemIndex",
+      "claimIndexRewards",
+    ].some((v) => v === call?.function)
+  ) {
+    return null;
+  }
   let amount = BN.ZERO;
   const getTime = () => {
     const date1 = dayjs(timestamp);
@@ -49,6 +61,7 @@ const Transaction: React.FC<IProps> = ({
       return `about ${v} days ago`;
     }
   };
+
   const draw = () => {
     switch (call?.function) {
       case "swap":

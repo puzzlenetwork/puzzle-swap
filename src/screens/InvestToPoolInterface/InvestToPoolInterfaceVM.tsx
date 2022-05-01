@@ -352,7 +352,6 @@ class InvestToPoolInterfaceVM {
       10,
       after.id
     );
-    console.log("load more", v);
     this._setLoadingHistory(false);
     v && this.setTransactionsHistory([...transactionsHistory, ...v]);
   };

@@ -9,8 +9,8 @@ import Balance from "@src/entities/Balance";
 import { getCurrentBrowser } from "@src/utils/getCurrentBrowser";
 import BN from "@src/utils/BN";
 import { nodeInteraction, waitForTx } from "@waves/waves-transactions";
-import tokenLogos from "@src/assets/tokens/tokenLogos";
 import nodeService from "@src/services/nodeService";
+import tokenLogos from "@src/constants/tokenLogos";
 
 export enum LOGIN_TYPE {
   SIGNER_SEED = "SIGNER_SEED",

@@ -179,7 +179,7 @@ class WithdrawLiquidityVM {
       .then((txId) => {
         txId &&
           notificationStore.notify(
-            `Liquidity is successfully withdrawn from the ${this.pool?.name}.`,
+            `Liquidity is successfully withdrawn from the ${this.pool?.title}.`,
             {
               type: "success",
               title: "Successfully withdrawn",

@@ -93,6 +93,12 @@ const InvestToPoolInterfaceImpl: React.FC = () => {
 
 const InvestToPoolInterface: React.FC = () => {
   const { poolDomain } = useParams<{ poolDomain: string }>();
+  // if (poolDomain == null) return null;
+  // const valid = POOL_CONFIG.map(({ domain }) => domain).includes(poolDomain);
+  // if (valid) {
+  //   return null;
+  // }
+
   return (
     <InvestToPoolInterfaceVMProvider poolDomain={poolDomain ?? ""}>
       <InvestToPoolInterfaceImpl />

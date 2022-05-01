@@ -6,6 +6,8 @@ import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import darkIncome from "@src/assets/icons/darkIncome.svg";
 import darkWallet from "@src/assets/icons/darkWallet.svg";
+import { useInvestVM } from "@screens/Invest/InvestVm";
+import Skeleton from "react-loading-skeleton";
 
 interface IProps {}
 
@@ -58,19 +60,31 @@ const Details = styled.div`
   }
 `;
 const AccountInvestBalance: React.FC<IProps> = () => {
+  const vm = useInvestVM();
   return (
     <Root pic={bg}>
       <Column>
         <Text type="purple300" size="medium">
           My invested balance
         </Text>
-        <Text
-          weight={500}
-          style={{ fontSize: 24, lineHeight: "32px" }}
-          type="light"
-        >
-          $ 12,560.12
-        </Text>
+        {vm.totalInvestmentBalance != null ? (
+          <Text
+            weight={500}
+            style={{ fontSize: 24, lineHeight: "32px" }}
+            type="light"
+          >
+            {vm.totalInvestmentBalance != null
+              ? vm.totalInvestmentBalance
+              : "-"}
+          </Text>
+        ) : (
+          <Skeleton
+            height={32}
+            width={150}
+            baseColor="#8082C5"
+            highlightColor="#F1F2FE"
+          />
+        )}
       </Column>
       <SizedBox height={8} />
       <Details>
@@ -92,7 +106,7 @@ const AccountInvestBalance: React.FC<IProps> = () => {
                 Claimed reward
               </Text>
               <Text weight={500} type="light">
-                100
+                0.00
               </Text>
             </Column>
           </Row>
@@ -105,7 +119,7 @@ const AccountInvestBalance: React.FC<IProps> = () => {
               Available to claim
             </Text>
             <Text weight={500} type="light">
-              100
+              0.00
             </Text>
           </Column>
         </AvailableToClaim>

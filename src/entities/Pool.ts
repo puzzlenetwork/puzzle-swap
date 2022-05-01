@@ -2,7 +2,7 @@ import { IPoolConfig, IToken, NODE_URL, TRADE_FEE } from "@src/constants";
 import axios from "axios";
 import { action, makeAutoObservable } from "mobx";
 import BN from "@src/utils/BN";
-import tokenLogos from "@src/assets/tokens/tokenLogos";
+import tokenLogos from "@src/constants/tokenLogos";
 
 interface IData {
   key: string;
@@ -24,7 +24,7 @@ class Pool implements IPoolConfig {
   public readonly contractAddress: string;
   public readonly layer2Address?: string;
   public readonly baseTokenId: string;
-  public readonly name: string;
+  public readonly title: string;
   public readonly isCustom?: boolean;
   public readonly defaultAssetId0: string;
   public readonly defaultAssetId1: string;
@@ -61,7 +61,7 @@ class Pool implements IPoolConfig {
     this.contractAddress = params.contractAddress;
     this.layer2Address = params.layer2Address;
     this.baseTokenId = params.baseTokenId;
-    this.name = params.name;
+    this.title = params.title;
     this._logo = params.logo;
     this.tokens = params.tokens;
     this.defaultAssetId0 = params.defaultAssetId0;
@@ -101,6 +101,7 @@ class Pool implements IPoolConfig {
     if (usdnLiquidity != null && usdnAsset.share != null) {
       const globalLiquidity = new BN(usdnLiquidity)
         .div(usdnAsset.share)
+        .times(100)
         .div(1e6);
       this.setGlobalLiquidity(globalLiquidity);
     }

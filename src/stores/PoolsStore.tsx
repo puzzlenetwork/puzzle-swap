@@ -9,7 +9,6 @@ import statsService, {
 import { POOL_CONFIG } from "@src/constants";
 
 export interface IStatsPoolItem {
-  // 7d_volume: BN;
   weekly_volume: BN;
   apy: BN;
   liquidity: BN;
@@ -100,14 +99,6 @@ export default class PoolsStore {
     }, {} as Record<string, IStatsPoolItem>);
     this.setPoolStats(formattedData);
   };
-
-  get poolDataWithApy() {
-    return this.pools.map((p) => {
-      const apy =
-        this.poolsStats != null ? this.poolsStats[p.domain]?.apy : BN.ZERO;
-      return { ...p, logo: p.logo, baseToken: p.baseToken, apy };
-    });
-  }
 
   get30DaysPoolStats = async (poolId: string): Promise<IPoolStats30Days> => {
     const data = await statsService.getStatsByPoolAndPeriod(poolId);

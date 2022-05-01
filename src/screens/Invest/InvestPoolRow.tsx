@@ -48,7 +48,7 @@ const InvestPoolRow: React.FC<IProps> = ({ pool, stats }) => {
         <Column crossAxisSize="max">
           <Row alignItems="center">
             <Text fitContent style={{ whiteSpace: "nowrap" }} weight={500}>
-              {pool.name}
+              {pool.title}
             </Text>
           </Row>
           <TokenTags

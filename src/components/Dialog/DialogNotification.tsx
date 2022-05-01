@@ -110,7 +110,7 @@ export const buildSuccessLiquidityDialogParams = ({
   );
   return {
     title: "Successfully provided",
-    description: `Liquidity successfully provided to the ${pool?.name}. You can track your reward on the pool page.`,
+    description: `Liquidity successfully provided to the ${pool?.title}. You can track your reward on the pool page.`,
     type: "success",
     buttons: [
       () => (
