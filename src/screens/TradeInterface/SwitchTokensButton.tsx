@@ -37,7 +37,7 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
     });
     setSwitched((v) => !v);
   };
-  const stablesIds = [TOKENS.W.USDN.assetId, TOKENS.W.USDT!.assetId];
+  const stablesIds = [TOKENS.USDN.assetId, TOKENS.USDT!.assetId];
   const rate = stablesIds.some((assetId) => assetId === token0?.assetId)
     ? `1 ${token1?.symbol} = ~ ${price.pow(-1)?.toFormat(4) ?? "—"} ${
         token0?.symbol

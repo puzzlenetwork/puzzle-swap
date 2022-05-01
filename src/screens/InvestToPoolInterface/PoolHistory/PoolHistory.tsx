@@ -52,7 +52,7 @@ const PoolHistory: React.FC<IProps> = () => {
                 <Transaction
                   key={tr.id}
                   {...tr}
-                  tokens={accountStore.TOKENS_ARRAY}
+                  tokens={accountStore.TOKENS_ASSET_ID_MAP}
                 />
               ))}
               <SizedBox height={16} />

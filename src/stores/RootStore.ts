@@ -14,6 +14,7 @@ export type TPoolStats = {
   fees: number;
   liquidity: number;
   monthly_volume: number;
+  weekly_volume: number;
   volume: { date: number; volume: number }[];
 };
 

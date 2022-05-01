@@ -4,6 +4,7 @@ export interface IStatsPoolItemResponse {
   apy: number;
   liquidity: number;
   monthly_volume: number;
+  weekly_volume: number;
 }
 
 export interface IPoolVolume {

@@ -10,18 +10,13 @@ import {
 } from "./AddLiquidityInterfaceVM";
 import MultipleTokensAddLiquidity from "./MultipleTokensAddLiquidity";
 import BaseTokenAddLiquidityAmount from "./BaseTokenAddLiquidityAmount";
-import { useStores } from "@stores";
 import ShortPoolInfoCard from "@components/ShortPoolInfoCard";
 import DialogNotification from "@components/Dialog/DialogNotification";
 import GoBack from "@components/GoBack";
 import Card from "@components/Card";
 import SwitchButtons from "@components/SwitchButtons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ChangePoolModal from "@src/ChangePoolModal";
-
-interface IProps {
-  poolId: string;
-}
 
 const Root = styled.div`
   display: flex;
@@ -41,12 +36,10 @@ const Root = styled.div`
 `;
 
 const AddLiquidityInterfaceImpl = () => {
-  const { accountStore } = useStores();
-  const routes: any = accountStore.ROUTES;
   const vm = useAddLiquidityInterfaceVM();
   const pool = vm.pool;
-  const addLiquidityRoute = `/${routes.addLiquidity[vm.poolId]}`;
-  const addOneTokenRoute = `/${routes.addOneToken[vm.poolId]}`;
+  const addLiquidityRoute = `/pools/${vm.poolDomain}/addLiquidity`;
+  const addOneTokenRoute = `/pools/${vm.poolDomain}/addOneToken`;
   const navigate = useNavigate();
   const activeTab = addOneTokenRoute.includes(window.location.pathname) ? 1 : 0;
   return (
@@ -55,8 +48,7 @@ const AddLiquidityInterfaceImpl = () => {
         {() => (
           <Root>
             <GoBack
-              //@ts-ignore
-              link={`/${accountStore.ROUTES.invest[vm.pool.id]}`}
+              link={`/pools/${vm.poolDomain}/invest`}
               text="Back to Pool Info"
             />
             <SizedBox height={24} />
@@ -109,14 +101,14 @@ const AddLiquidityInterfaceImpl = () => {
               visible={vm.notificationParams != null}
             />
             <ChangePoolModal
-              activePoolId={vm.poolId}
+              activePoolId={vm.poolDomain}
               onClose={() => vm.setChangePoolModalOpen(false)}
               visible={vm.changePoolModalOpen}
               onChange={(id) =>
                 navigate(
                   activeTab === 1
-                    ? `/${routes.addOneToken[id]}`
-                    : `/${routes.addLiquidity[id]}`
+                    ? `/pools/${id}/addOneToken`
+                    : `/pools/${id}/addLiquidity`
                 )
               }
             />
@@ -127,9 +119,10 @@ const AddLiquidityInterfaceImpl = () => {
   );
 };
 
-const AddLiquidityInterface: React.FC<IProps> = ({ poolId }) => {
+const AddLiquidityInterface: React.FC = () => {
+  const { poolDomain } = useParams<{ poolDomain: string }>();
   return (
-    <AddLiquidityInterfaceVMProvider poolId={poolId}>
+    <AddLiquidityInterfaceVMProvider poolDomain={poolDomain ?? ""}>
       <AddLiquidityInterfaceImpl />
     </AddLiquidityInterfaceVMProvider>
   );

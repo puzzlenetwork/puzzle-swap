@@ -3,19 +3,19 @@ import { useVM } from "@src/hooks/useVM";
 import { action, makeAutoObservable, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
-import { IToken } from "@src/constants";
+import { EXPLORER_URL, IToken } from "@src/constants";
 import { IPoolStats30Days } from "@stores/PoolsStore";
 
 const ctx = React.createContext<WithdrawLiquidityVM | null>(null);
 
-export const WithdrawLiquidityVMProvider: React.FC<{ poolId: string }> = ({
-  poolId,
+export const WithdrawLiquidityVMProvider: React.FC<{ poolDomain: string }> = ({
+  poolDomain,
   children,
 }) => {
   const rootStore = useStores();
   const store = useMemo(
-    () => new WithdrawLiquidityVM(rootStore, poolId),
-    [rootStore, poolId]
+    () => new WithdrawLiquidityVM(rootStore, poolDomain),
+    [rootStore, poolDomain]
   );
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
@@ -28,7 +28,7 @@ type WithdrawToken = {
 };
 
 class WithdrawLiquidityVM {
-  public poolId: string;
+  public poolDomain: string;
   public rootStore: RootStore;
 
   public stats: IPoolStats30Days | null = null;
@@ -48,8 +48,8 @@ class WithdrawLiquidityVM {
   @action.bound setPercentToWithdraw = (value: number) =>
     (this.percentToWithdraw = new BN(value));
 
-  constructor(rootStore: RootStore, poolId: string) {
-    this.poolId = poolId;
+  constructor(rootStore: RootStore, poolDomain: string) {
+    this.poolDomain = poolDomain;
     this.rootStore = rootStore;
     makeAutoObservable(this);
     this.updateStats();
@@ -61,9 +61,9 @@ class WithdrawLiquidityVM {
 
   updateStats = () => {
     this.rootStore.poolsStore
-      .get30DaysPoolStats(this.poolId)
+      .get30DaysPoolStats(this.poolDomain)
       .then((data) => this.setStats(data))
-      .catch(() => console.error(`Cannot update stats of ${this.poolId}`));
+      .catch(() => console.error(`Cannot update stats of ${this.poolDomain}`));
   };
 
   updateUserIndexStaked = async () => {
@@ -78,7 +78,7 @@ class WithdrawLiquidityVM {
 
   public get pool() {
     return this.rootStore.poolsStore.pools.find(
-      ({ id }) => id === this.poolId
+      ({ domain }) => domain === this.poolDomain
     )!;
   }
 
@@ -151,7 +151,7 @@ class WithdrawLiquidityVM {
   }
 
   withdraw = () => {
-    const { accountStore, notificationStore } = this.rootStore;
+    const { notificationStore } = this.rootStore;
     if (this.percentToWithdraw.eq(0) || this.pool.layer2Address == null) return;
     if (this.userIndexStaked == null) return;
 
@@ -183,7 +183,7 @@ class WithdrawLiquidityVM {
             {
               type: "success",
               title: "Successfully withdrawn",
-              link: `${accountStore.EXPLORER_LINK}/tx/${txId}`,
+              link: `${EXPLORER_URL}/tx/${txId}`,
               linkTitle: "View on Explorer",
             }
           );

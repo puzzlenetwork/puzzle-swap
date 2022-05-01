@@ -11,10 +11,10 @@ import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/Inves
 import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
 import TransparentDetailsBtn from "@screens/InvestToPoolInterface/TransparentDetailsBtn";
-import { useStores } from "@stores";
 import { useNavigate } from "react-router-dom";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import TextButton from "@components/TextButton";
+import { EXPLORER_URL } from "@src/constants";
 
 interface IProps {}
 
@@ -47,15 +47,11 @@ const Links = styled.div<{ isCustom?: boolean }>`
     padding-top: 44px;
   }
 `;
-//todo add diff picture for custom pools
 const MainPoolInfo: React.FC<IProps> = () => {
-  const { accountStore } = useStores();
   const vm = useInvestToPoolInterfaceVM();
   const navigate = useNavigate();
   const handleSmartContractClick = () =>
-    window.open(
-      `${accountStore.EXPLORER_LINK}/address/${vm.pool.contractAddress}`
-    );
+    window.open(`${EXPLORER_URL}/address/${vm.pool.contractAddress}`);
   return (
     <Root>
       <ShortInfo pic={vm.pool.isCustom ? customBg : bg}>
@@ -106,7 +102,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
                 fixed
                 size="medium"
                 style={{ marginRight: 8 }}
-                onClick={() => navigate(`/${vm.pool.id}`)}
+                onClick={() => navigate(`/pools/${vm.pool.domain}`)}
               >
                 Trade
               </Button>

@@ -3,18 +3,7 @@ import { Signer } from "@waves/signer";
 import { ProviderWeb } from "@waves.exchange/provider-web";
 import { ProviderCloud } from "@waves.exchange/provider-cloud";
 import { ProviderKeeper } from "@waves/provider-keeper";
-import {
-  CONTRACT_ADDRESSES_MAP,
-  EXPLORER_URL_MAP,
-  IPoolConfig,
-  IToken,
-  NODE_URL_MAP,
-  POOL_CONFIG,
-  POOL_ID,
-  PUZZLE_NTFS,
-  ROUTES,
-  TOKENS,
-} from "@src/constants";
+import { IToken, NODE_URL, TOKENS } from "@src/constants";
 import { action, autorun, makeAutoObservable, reaction } from "mobx";
 import Balance from "@src/entities/Balance";
 import { getCurrentBrowser } from "@src/utils/getCurrentBrowser";
@@ -54,8 +43,6 @@ export interface ISerializedAccountStore {
 
 class AccountStore {
   public readonly rootStore: RootStore;
-
-  chainId: "W" | "T" = "W";
 
   constructor(rootStore: RootStore, initState?: ISerializedAccountStore) {
     this.rootStore = rootStore;
@@ -157,12 +144,9 @@ class AccountStore {
     });
 
   checkScriptedAccount = async () => {
-    const { address, chainId } = this;
+    const { address } = this;
     if (address == null) return;
-    const res = await nodeInteraction.scriptInfo(
-      address,
-      NODE_URL_MAP[chainId]
-    );
+    const res = await nodeInteraction.scriptInfo(address, NODE_URL);
     this.setIsAccScripted(res.script != null);
   };
 
@@ -180,7 +164,7 @@ class AccountStore {
         await this.signer?.setProvider(new ProviderCloud());
         break;
       case LOGIN_TYPE.SIGNER_SEED:
-        this.setSigner(new Signer({ NODE_URL: NODE_URL_MAP[this.chainId] }));
+        this.setSigner(new Signer({ NODE_URL: NODE_URL }));
         const provider = new ProviderWeb("https://waves.exchange/signer/");
         await this.signer?.setProvider(provider);
         break;
@@ -234,10 +218,7 @@ class AccountStore {
 
     const tokens = this.TOKENS;
     const address = this.address;
-    const data = await nodeService.getAddressBalances(
-      NODE_URL_MAP[this.chainId],
-      address
-    );
+    const data = await nodeService.getAddressBalances(NODE_URL, address);
     const assetBalances = Object.entries(tokens).map(([_, asset]) => {
       const t = data.find(({ assetId }) => assetId === asset.assetId);
       const balance = new BN(t != null ? t.balance : 0);
@@ -281,7 +262,7 @@ class AccountStore {
       });
       const txId = await ttx.broadcast().then((tx: any) => tx.id);
       await waitForTx(txId, {
-        apiBase: NODE_URL_MAP[this.chainId],
+        apiBase: NODE_URL,
       });
       return txId;
     } catch (e: any) {
@@ -315,7 +296,7 @@ class AccountStore {
 
     const txId = JSON.parse(tx).id;
     await waitForTx(txId, {
-      apiBase: NODE_URL_MAP[this.chainId],
+      apiBase: NODE_URL,
     });
     return txId;
   };
@@ -354,7 +335,7 @@ class AccountStore {
 
     const txId = await ttx.broadcast().then((tx: any) => tx.id);
     await waitForTx(txId, {
-      apiBase: NODE_URL_MAP[this.chainId],
+      apiBase: NODE_URL,
     });
     return txId;
   };
@@ -383,13 +364,13 @@ class AccountStore {
 
     const txId = JSON.parse(tx).id;
     await waitForTx(txId, {
-      apiBase: NODE_URL_MAP[this.chainId],
+      apiBase: NODE_URL,
     });
     return txId;
   };
 
   get TOKENS() {
-    return Object.values(TOKENS[this.chainId])
+    return Object.values(TOKENS)
       .map((t) => ({
         ...t,
         logo: tokenLogos[t.symbol] ?? tokenLogos.UNKNOWN,
@@ -400,8 +381,8 @@ class AccountStore {
       );
   }
 
-  get TOKENS_ARRAY() {
-    return Object.values(TOKENS[this.chainId])
+  get TOKENS_ASSET_ID_MAP() {
+    return Object.values(TOKENS)
       .map((t) => ({
         ...t,
         logo: tokenLogos[t.symbol] ?? tokenLogos.UNKNOWN,
@@ -410,30 +391,6 @@ class AccountStore {
         (acc, token) => ({ ...acc, [token.assetId]: token }),
         {} as Record<string, IToken>
       );
-  }
-
-  get POOL_ID() {
-    return POOL_ID[this.chainId];
-  }
-
-  get ROUTES() {
-    return ROUTES[this.chainId];
-  }
-
-  get POOL_CONFIG(): Record<string, IPoolConfig> {
-    return POOL_CONFIG[this.chainId];
-  }
-
-  get EXPLORER_LINK() {
-    return EXPLORER_URL_MAP[this.chainId];
-  }
-
-  get CONTRACT_ADDRESSES() {
-    return CONTRACT_ADDRESSES_MAP[this.chainId];
-  }
-
-  get PUZZLE_NTFS() {
-    return PUZZLE_NTFS[this.chainId];
   }
 }
 

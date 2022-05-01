@@ -52,7 +52,15 @@ const TextButton: React.FC<IProps> = ({
   ...rest
 }) => {
   return (
-    <Root {...rest} pointer={onClick != null} kind={kind} weight={weight}>
+    <Root
+      {...rest}
+      onClick={() => {
+        onClick != null && onClick({} as any);
+      }}
+      pointer={onClick != null}
+      kind={kind}
+      weight={weight}
+    >
       {suffix && <Icon src={suffix} alt="suffix" style={{ marginRight: 4 }} />}
       <span>{children}</span>
       {prefix && <Icon src={prefix} alt="prefix" style={{ marginLeft: 4 }} />}

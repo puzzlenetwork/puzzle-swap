@@ -18,6 +18,8 @@ import { ReactComponent as CopyIcon } from "@src/assets/icons/darkCopy.svg";
 import { ReactComponent as TwitterIcon } from "@src/assets/icons/twitter.svg";
 import { ReactComponent as TelegramIcon } from "@src/assets/icons/telegram.svg";
 import { ReactComponent as FacebookIcon } from "@src/assets/icons/facebook.svg";
+import { EXPLORER_URL } from "@src/constants";
+
 interface IProps {}
 
 const Root = styled.div`
@@ -42,8 +44,7 @@ const StyledMoreIcon = styled(MoreIcon)`
 `;
 
 const TransparentDetailsBtn: React.FC<IProps> = () => {
-  const { accountStore, notificationStore } = useStores();
-  const { EXPLORER_LINK } = accountStore;
+  const { notificationStore } = useStores();
   const vm = useInvestToPoolInterfaceVM();
   const [isOpenedDetails, setOpenedDetails] = useState(false);
   const [isOpenedShare, setOpenedShare] = useState(false);
@@ -64,16 +65,22 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
           size="medium"
           prefix={linkIcon}
           kind="secondary"
-          //todo
-          onClick={() => window.open(`${EXPLORER_LINK}/123`)}
+          onClick={() =>
+            window.open(`${EXPLORER_URL}/address/${vm.pool.contractAddress}`)
+          }
         >
           View on Explorer
         </TextButton>
       ),
     },
-    { title: "Date of creation", value: "1 Jan 2022, 20:12:12" },
-    { title: "Total fees earned", value: "$ 123,456.99" },
-    { title: "Total creator reward", value: "$ 12,456.99" },
+    {
+      title: "Total fees earned",
+      value: `$ ${vm.pool.globalVolume?.times(0.02).toFormat(2)}`,
+    },
+    {
+      title: "Fees earned (30 days)",
+      value: `$ ${vm.stats?.fees.toFormat(2)}`,
+    },
   ];
   const customPoolInformation = [
     { title: "Pool creator", value: "" },
@@ -86,7 +93,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
   const information = Array.from(
     vm.pool.isCustom ? customPoolInformation : puzzlePoolInformation
   );
-  const link = `https://puzzleswap.org/${vm.pool.id}/invest`;
+  const link = `https://puzzleswap.org/${vm.pool.domain}/invest`;
   const text = `Invest to ${vm.pool.name} Puzzle Swap megapool`;
   const shareInfo = [
     {

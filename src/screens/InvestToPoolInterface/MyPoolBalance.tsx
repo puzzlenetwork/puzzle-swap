@@ -147,13 +147,13 @@ const MyPoolBalance: React.FC<IProps> = () => {
         <Buttons>
           {address != null ? (
             <>
-              <Link to={`/${vm.pool.id}/withdraw`}>
+              <Link to={`/pools/${vm.pool.domain}/withdraw`}>
                 <Button fixed size="medium" kind="secondary">
                   Withdraw
                 </Button>
               </Link>
               <SizedBox width={8} />
-              <Link to={`/${vm.pool.id}/addLiquidity`}>
+              <Link to={`/pools/${vm.pool.domain}/addLiquidity`}>
                 <Button fixed size="medium">
                   Deposit
                 </Button>

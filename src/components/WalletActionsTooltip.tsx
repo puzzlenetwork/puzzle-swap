@@ -7,6 +7,7 @@ import copy from "copy-to-clipboard";
 import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
 import { Anchor } from "@components/Anchor";
+import { EXPLORER_URL } from "@src/constants";
 
 interface IProps {
   address: string;
@@ -51,7 +52,7 @@ const WalletActionsTooltip: React.FC<IProps> = ({ address }) => {
       </Text>
       <Anchor
         style={{ padding: "10px 0" }}
-        href={`${accountStore.EXPLORER_LINK}/address/${address}`}
+        href={`${EXPLORER_URL}/address/${address}`}
       >
         <Text>View in Waves Explorer</Text>
       </Anchor>

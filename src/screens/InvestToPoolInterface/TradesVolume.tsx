@@ -19,17 +19,21 @@ const Root = styled.div<{ disabled?: boolean }>`
   transition: 0.4s;
   height: ${({ disabled }) => (disabled ? 0 : 320)}px;
   overflow: hidden;
+
   .recharts-tooltip-item-name,
   .recharts-tooltip-item-separator {
     display: none;
   }
+
   .recharts-cartesian-axis-tick {
     font-size: 12px;
     line-height: 16px;
   }
+
   .xAxis > line {
     stroke: #f1f2fe;
   }
+
   .recharts-tooltip-cursor {
     stroke: #7075e9;
   }
@@ -51,7 +55,7 @@ const TradesVolume: React.FC<IProps> = () => {
   const { width: screenWidth } = useWindowSize();
   const chartWidth = screenWidth ? calcChartWidth(screenWidth) : 0;
   const data = vm.stats?.volume
-    .slice()
+    ?.slice()
     .sort((a, b) => (a.date < b.date ? -1 : 1));
   return (
     <Root disabled={data == null || data.length < 2}>

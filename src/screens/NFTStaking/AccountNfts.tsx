@@ -13,6 +13,7 @@ import { ReactComponent as LinkIcon } from "@src/assets/icons/link.svg";
 import Text from "@components/Text";
 import { Anchor } from "@components/Anchor";
 import Loading from "@components/Loading";
+import { EXPLORER_URL } from "@src/constants";
 
 interface IProps {}
 
@@ -127,9 +128,7 @@ const AccountNfts: React.FC<IProps> = () => {
                     </Row>
                   </Anchor>
                   <SizedBox height={20} />
-                  <Anchor
-                    href={`${accountStore.EXPLORER_LINK}/asset/${nft.assetId}`}
-                  >
+                  <Anchor href={`${EXPLORER_URL}/asset/${nft.assetId}`}>
                     <Row alignItems="center">
                       <LinkIcon />
                       <SizedBox width={8} />

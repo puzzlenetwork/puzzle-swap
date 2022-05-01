@@ -35,7 +35,12 @@ const PoolInformation: React.FC<IProps> = () => {
       title: "Pool value",
       value: data?.liquidity ? "$ " + data?.liquidity.toFormat(2) : null,
     },
-    { title: "Volume (7d)", value: "--" },
+    {
+      title: "Volume (7d)",
+      value: data?.weekly_volume
+        ? "$ " + data?.weekly_volume.toFormat(2)
+        : null,
+    },
     {
       title: "Fees (30D)",
       value: data?.fees ? "$ " + data?.fees.toFormat(2) : null,

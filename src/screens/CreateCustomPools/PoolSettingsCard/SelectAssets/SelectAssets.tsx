@@ -10,7 +10,6 @@ import { observer } from "mobx-react-lite";
 import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
 import TokenCompositionRow from "./TokenCompositionRow";
 import TokenSelectModal from "@components/TokensSelectModal/TokenSelectModal";
-import { useStores } from "@stores";
 import { TOKENS } from "@src/constants";
 import BN from "@src/utils/BN";
 
@@ -28,7 +27,6 @@ const Grid = styled.div`
 `;
 const SelectsAssets: React.FC<IProps> = () => {
   const [addAssetModal, openAssetModal] = useState(false);
-  const { accountStore } = useStores();
   const vm = useCreateCustomPoolsVM();
   const assetNotification =
     "Please note that the pool must include a PUZZLE asset with at least 2% of pool weight and the maximum of 10 different assets.";
@@ -42,8 +40,7 @@ const SelectsAssets: React.FC<IProps> = () => {
         <Notification type="info" text={assetNotification} />
         <Grid>
           {vm.poolsAssets.map(({ asset, share, locked }, index) => {
-            const isPuzzle =
-              asset.assetId === TOKENS[accountStore.chainId].PUZZLE.assetId;
+            const isPuzzle = asset.assetId === TOKENS.PUZZLE.assetId;
             const minShare = new BN(isPuzzle ? 20 : 5);
             return (
               <TokenCompositionRow

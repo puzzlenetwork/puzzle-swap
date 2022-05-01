@@ -13,6 +13,7 @@ import Button from "@components/Button";
 import { AccountStore } from "@stores";
 import { Anchor } from "@components/Anchor";
 import SuccessNft from "@components/Dialog/SuccessNft";
+import { EXPLORER_URL } from "@src/constants";
 
 export interface IDialogNotificationProps extends IDialogPropTypes {
   title: string;
@@ -94,20 +95,18 @@ const DialogNotification: React.FC<IDialogNotificationProps> = ({
 type TBuildSuccessLiquidityDialogParamsProps = {
   accountStore: AccountStore;
   txId: string;
-  poolId: string;
+  poolDomain: string;
 };
 
 export const buildSuccessLiquidityDialogParams = ({
   accountStore,
   txId,
-  poolId,
+  poolDomain,
 }: TBuildSuccessLiquidityDialogParamsProps): IDialogNotificationProps => {
-  const txLink = `${accountStore.EXPLORER_LINK}/tx/${txId}`;
-  const poolLink = `/${
-    (accountStore.ROUTES.invest as Record<string, string>)[poolId]
-  }`;
+  const txLink = `${EXPLORER_URL}/tx/${txId}`;
+  const poolLink = `/pools/${poolDomain}/invest`;
   const pool = accountStore.rootStore.poolsStore.pools.find(
-    ({ id }) => id === poolId
+    ({ domain }) => domain === poolDomain
   );
   return {
     title: "Successfully provided",

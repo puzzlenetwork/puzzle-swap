@@ -7,7 +7,7 @@ import Wallet from "@components/Wallet/Wallet";
 import Scrollbar from "@components/Scrollbar";
 import { Column } from "../Flex";
 import { observer } from "mobx-react-lite";
-import { useStores } from "@stores";
+import { ROUTES } from "@src/constants";
 
 interface IProps {
   onClose: () => void;
@@ -51,11 +51,10 @@ const communityMenu = [
 ];
 
 const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
-  const { accountStore } = useStores();
   const mainFunctional = [
-    { name: "Trade", link: accountStore.ROUTES.TRADE, outer: false },
-    { name: "Invest", link: accountStore.ROUTES.INVEST, outer: false },
-    { name: "Stake", link: accountStore.ROUTES.STAKE, outer: false },
+    { name: "Trade", link: ROUTES.TRADE, outer: false },
+    { name: "Invest", link: ROUTES.INVEST, outer: false },
+    { name: "Stake", link: ROUTES.STAKE, outer: false },
   ];
   return (
     <Root {...{ bannerClosed, opened }}>

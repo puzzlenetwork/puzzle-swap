@@ -1,11 +1,11 @@
 import axios from "axios";
-import {} from "@waves/waves-transactions";
 import { ITransaction } from "@src/utils/types";
 
 export interface IStatsPoolItemResponse {
   apy: number;
   liquidity: number;
   monthly_volume: number;
+  weekly_volume: number;
 }
 
 export interface IPoolVolume {

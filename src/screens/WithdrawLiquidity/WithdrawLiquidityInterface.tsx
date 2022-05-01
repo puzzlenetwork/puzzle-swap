@@ -14,12 +14,8 @@ import WithdrawLiquidityAmount from "./WithdrawLiquidityAmount";
 import WithdrawLiquidityTable from "./WithdrawLiquidityTable";
 import Button from "@components/Button";
 import ChangePoolModal from "@src/ChangePoolModal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import GoBack from "@components/GoBack";
-
-interface IProps {
-  poolId: string;
-}
 
 const Root = styled.div`
   display: flex;
@@ -40,7 +36,6 @@ const Root = styled.div`
 const WithdrawLiquidityInterfaceImpl = () => {
   const vm = useWithdrawLiquidityVM();
   const { accountStore } = useStores();
-  const routes: any = accountStore.ROUTES;
   const navigate = useNavigate();
   return (
     <Layout>
@@ -80,10 +75,10 @@ const WithdrawLiquidityInterfaceImpl = () => {
               </Button>
             )}
             <ChangePoolModal
-              activePoolId={vm.poolId}
+              activePoolId={vm.poolDomain}
               onClose={() => vm.setChangePoolModalOpen(false)}
               visible={vm.changePoolModalOpen}
-              onChange={(id) => navigate(`/${routes.withdraw[id]}`)}
+              onChange={(id) => navigate(`/pools/${id}/withdraw`)}
             />
           </Root>
         )}
@@ -92,9 +87,10 @@ const WithdrawLiquidityInterfaceImpl = () => {
   );
 };
 
-const WithdrawLiquidityInterface: React.FC<IProps> = ({ poolId }) => {
+const WithdrawLiquidityInterface: React.FC = () => {
+  const { poolDomain } = useParams<{ poolDomain: string }>();
   return (
-    <WithdrawLiquidityVMProvider poolId={poolId}>
+    <WithdrawLiquidityVMProvider poolDomain={poolDomain ?? ""}>
       <WithdrawLiquidityInterfaceImpl />
     </WithdrawLiquidityVMProvider>
   );
