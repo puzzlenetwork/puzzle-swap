@@ -38,7 +38,7 @@ const Transaction: React.FC<IProps> = ({
       "generateIndexWithOneTokenAndStake",
       "unstakeAndRedeemIndex",
       "claimIndexRewards",
-    ].some((v) => v == call.function)
+    ].some((v) => v === call?.function)
   ) {
     return null;
   }
