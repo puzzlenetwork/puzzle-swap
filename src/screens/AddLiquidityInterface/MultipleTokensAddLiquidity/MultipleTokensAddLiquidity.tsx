@@ -94,7 +94,7 @@ const MultipleTokensAddLiquidity: React.FC<IProps> = () => {
                 key={i}
                 availableAmount={available}
                 depositAmount={depositAmount}
-                percent={token.shareAmount * 100}
+                percent={token.share}
                 logo={token.logo}
               />
             );

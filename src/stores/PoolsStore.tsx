@@ -1,14 +1,16 @@
 import { RootStore } from "./index";
 import { action, makeAutoObservable, reaction } from "mobx";
 import Pool, { IShortPoolInfo } from "@src/entities/Pool";
-import { TPoolId } from "@src/constants";
 import BN from "@src/utils/BN";
 import statsService, {
   IPoolVolume,
   IStatsPoolItemResponse,
 } from "@src/services/statsService";
+import { POOL_CONFIG } from "@src/constants";
 
 export interface IStatsPoolItem {
+  // 7d_volume: BN;
+  weekly_volume: BN;
   apy: BN;
   liquidity: BN;
   monthly_volume: BN;
@@ -31,13 +33,13 @@ export default class PoolsStore {
       () => this.rootStore.accountStore.address,
       () => this.updateAccountPoolsLiquidityInfo(true)
     );
-    reaction(() => this.rootStore.accountStore.chainId, this.syncPools);
   }
 
   public rootStore: RootStore;
   pools: Pool[] = [];
   @action.bound setPools = (pools: Pool[]) => (this.pools = pools);
-  getPoolById = (id: TPoolId) => this.pools.find((pool) => pool.id === id);
+  getPuzzlePoolByDomain = (domain: string) =>
+    this.pools.find((pool) => pool.domain === domain);
 
   public poolsStats: Record<string, IStatsPoolItem> | null = null;
   private setPoolStats = (value: Record<string, IStatsPoolItem>) =>
@@ -78,10 +80,8 @@ export default class PoolsStore {
   };
 
   syncPools = () => {
-    const accountStore = this.rootStore.accountStore;
-    const chainId = accountStore.chainId;
-    const pools = Object.values(accountStore.POOL_ID).map(
-      (id) => new Pool({ id, chainId, config: accountStore.POOL_CONFIG[id] })
+    const pools = Object.values(POOL_CONFIG).map(
+      (pool) => new Pool({ ...pool, isCustom: false })
     );
     this.setPools(pools);
   };
@@ -104,7 +104,7 @@ export default class PoolsStore {
   get poolDataWithApy() {
     return this.pools.map((p) => {
       const apy =
-        this.poolsStats != null ? this.poolsStats[p.id]?.apy : BN.ZERO;
+        this.poolsStats != null ? this.poolsStats[p.domain]?.apy : BN.ZERO;
       return { ...p, logo: p.logo, baseToken: p.baseToken, apy };
     });
   }

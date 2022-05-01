@@ -3,7 +3,7 @@ import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable, reaction, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
-import { IToken, NODE_URL_MAP } from "@src/constants";
+import { EXPLORER_URL, IToken, NODE_URL } from "@src/constants";
 import { IPoolStats30Days } from "@stores/PoolsStore";
 import axios from "axios";
 import nodeService from "@src/services/nodeService";
@@ -12,14 +12,13 @@ import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
 
 const ctx = React.createContext<InvestToPoolInterfaceVM | null>(null);
 
-export const InvestToPoolInterfaceVMProvider: React.FC<{ poolId: string }> = ({
-  poolId,
-  children,
-}) => {
+export const InvestToPoolInterfaceVMProvider: React.FC<{
+  poolDomain: string;
+}> = ({ poolDomain, children }) => {
   const rootStore = useStores();
   const store = useMemo(
-    () => new InvestToPoolInterfaceVM(rootStore, poolId),
-    [rootStore, poolId]
+    () => new InvestToPoolInterfaceVM(rootStore, poolDomain),
+    [rootStore, poolDomain]
   );
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
@@ -32,7 +31,7 @@ type IReward = {
 };
 
 class InvestToPoolInterfaceVM {
-  public poolId: string;
+  public poolDomain: string;
   public rootStore: RootStore;
 
   loading: boolean = false;
@@ -79,8 +78,8 @@ class InvestToPoolInterfaceVM {
   public userIndexStaked: BN | null = null;
   private setUserIndexStaked = (value: BN) => (this.userIndexStaked = value);
 
-  constructor(rootStore: RootStore, poolId: string) {
-    this.poolId = poolId;
+  constructor(rootStore: RootStore, poolDomain: string) {
+    this.poolDomain = poolDomain;
     this.rootStore = rootStore;
     makeAutoObservable(this);
     this.updateStats();
@@ -103,15 +102,15 @@ class InvestToPoolInterfaceVM {
 
   public get pool() {
     return this.rootStore.poolsStore.pools.find(
-      ({ id }) => id === this.poolId
+      ({ domain }) => domain === this.poolDomain
     )!;
   }
 
   updateStats = () => {
     this.rootStore.poolsStore
-      .get30DaysPoolStats(this.poolId)
+      .get30DaysPoolStats(this.poolDomain)
       .then((data) => this.setStats(data))
-      .catch(() => console.error(`Cannot update stats of ${this.poolId}`));
+      .catch(() => console.error(`Cannot update stats of ${this.poolDomain}`));
   };
 
   updateAccountLiquidityInfo = async () => {
@@ -125,7 +124,7 @@ class InvestToPoolInterfaceVM {
   };
 
   syncIndexTokenInfo = async () => {
-    const { address, chainId } = this.rootStore.accountStore;
+    const { address } = this.rootStore.accountStore;
     const indexTokenIdResponse = await this.pool.contractKeysRequest(
       "static_poolToken_idStr"
     );
@@ -133,11 +132,7 @@ class InvestToPoolInterfaceVM {
     if (indexTokenIdResponse != null && indexTokenIdResponse.length === 1) {
       const indexTokenId = indexTokenIdResponse[0].value.toString();
       this.setIndexTokenId(indexTokenId);
-      const balance = await assetBalance(
-        indexTokenId,
-        address,
-        NODE_URL_MAP[chainId]
-      );
+      const balance = await assetBalance(indexTokenId, address, NODE_URL);
       this.setIndexBalance(new BN(balance ?? 0));
     }
   };
@@ -290,7 +285,6 @@ class InvestToPoolInterfaceVM {
     });
   }
 
-  //todo add history update after claimint
   claimRewards = async () => {
     if (this.totalRewardToClaim.eq(0)) return;
     if (this.pool.layer2Address == null) return;
@@ -309,7 +303,7 @@ class InvestToPoolInterfaceVM {
         notificationStore.notify(`Your rewards was claimed`, {
           type: "success",
           title: `Success`,
-          link: `${accountStore.EXPLORER_LINK}/tx/${txId}`,
+          link: `${EXPLORER_URL}/tx/${txId}`,
           linkTitle: "View on Explorer",
         });
       })
@@ -328,11 +322,9 @@ class InvestToPoolInterfaceVM {
   }
 
   updatePoolTokenBalances = async () => {
-    const { rootStore, pool } = this;
-    const { accountStore } = rootStore;
-    const { chainId } = accountStore;
+    const { pool } = this;
     const { data }: { data: TContractAssetBalancesResponse } = await axios.get(
-      `${NODE_URL_MAP[chainId]}/assets/balance/${pool.contractAddress}`
+      `${NODE_URL}/assets/balance/${pool.contractAddress}`
     );
     const value = data.balances.map((token) => {
       return { assetId: token.assetId, balance: new BN(token.balance) };
@@ -341,26 +333,21 @@ class InvestToPoolInterfaceVM {
   };
 
   loadTransactionsHistory = async () => {
-    const { rootStore, pool } = this;
-    const { accountStore } = rootStore;
-    const { chainId } = accountStore;
     const v = await nodeService.transactions(
-      NODE_URL_MAP[chainId],
-      pool.contractAddress
+      NODE_URL,
+      this.pool.contractAddress
     );
     v && this.setTransactionsHistory(v);
   };
 
   loadMoreHistory = async () => {
     this._setLoadingHistory(true);
-    const { rootStore, pool, transactionsHistory } = this;
-    const { accountStore } = rootStore;
-    const { chainId } = accountStore;
+    const { pool, transactionsHistory } = this;
     if (transactionsHistory == null) return;
     const after = transactionsHistory.slice(-1).pop();
     if (after == null) return;
     const v = await nodeService.transactions(
-      NODE_URL_MAP[chainId],
+      NODE_URL,
       pool.contractAddress,
       10,
       after.id
@@ -393,7 +380,7 @@ class InvestToPoolInterfaceVM {
         notificationStore.notify(`Your have unstaked index tokem`, {
           type: "success",
           title: `Success`,
-          link: `${accountStore.EXPLORER_LINK}/tx/${txId}`,
+          link: `${EXPLORER_URL}/tx/${txId}`,
           linkTitle: "View on Explorer",
         });
       })
@@ -434,7 +421,7 @@ class InvestToPoolInterfaceVM {
         notificationStore.notify(`Your have staked index token`, {
           type: "success",
           title: `Success`,
-          link: `${accountStore.EXPLORER_LINK}/tx/${txId}`,
+          link: `${EXPLORER_URL}/tx/${txId}`,
           linkTitle: "View on Explorer",
         });
       })

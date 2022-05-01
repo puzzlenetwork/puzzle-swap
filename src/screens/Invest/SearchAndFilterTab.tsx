@@ -6,7 +6,6 @@ import { useInvestVM } from "@screens/Invest/InvestVm";
 import Divider from "@src/components/Divider";
 import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
-import { useStores } from "@stores";
 import { ReactComponent as Add } from "@src/assets/icons/whiteAdd.svg";
 import Select from "@components/Select";
 import useWindowSize from "@src/hooks/useWindowSize";
@@ -14,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import Text from "@components/Text";
 import close from "@src/assets/icons/primaryBlue16CloseIcon.svg";
 import { Row } from "@src/components/Flex";
+import { ROUTES } from "@src/constants";
 
 interface IProps {}
 
@@ -101,7 +101,6 @@ const InputWrapper = styled.div`
 `;
 const SearchAndFilterTab: React.FC<IProps> = () => {
   const vm = useInvestVM();
-  const { accountStore } = useStores();
   const [activeCategory, setActiveCategory] = useState(categoriesOptions[0]);
   const [activeCreatedOption, setActiveCreatedOption] = useState(
     createdByOptions[0]
@@ -161,7 +160,7 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
         <Button
           size="medium"
           fixed={width != null && width <= 1080}
-          onClick={() => navigate(`/${accountStore.ROUTES.POOLS_CREATE}`)}
+          onClick={() => navigate(`${ROUTES.POOLS_CREATE}`)}
         >
           <Add />
           <SizedBox width={12} />

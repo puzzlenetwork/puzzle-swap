@@ -3,13 +3,10 @@ import React from "react";
 import Card from "@components/Card";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
-import Button from "@components/Button";
-import { Link } from "react-router-dom";
 import { useMultiSwapVM } from "@screens/MultiSwapInterface/MultiScreenVM";
-
 import { observer } from "mobx-react-lite";
-import { useStores } from "@stores";
-import { MAINNET_POOL_ID } from "@src/constants/mainnetConfig";
+import { Link } from "react-router-dom";
+import Button from "@src/components/Button";
 
 const Root = styled(Card)`
   display: flex;
@@ -33,13 +30,8 @@ const Root = styled(Card)`
 
 const Details: React.FC = () => {
   const vm = useMultiSwapVM();
-  const { accountStore } = useStores();
-
   if (vm.pool == null) return null;
-  const { globalLiquidity, globalVolume, id } = vm.pool;
-
-  const { ROUTES } = accountStore;
-
+  const { globalLiquidity, globalVolume, domain } = vm.pool;
   return (
     <Root>
       <Row alignItems="center">
@@ -49,7 +41,7 @@ const Details: React.FC = () => {
           </Text>
           <Text>$ {globalLiquidity.toFormat(0)}</Text>
         </Column>
-        {id !== MAINNET_POOL_ID.puzzle && (
+        {domain !== "puzzle" && (
           <Column crossAxisSize="max">
             <Text type="secondary" size="small">
               Total volume
@@ -58,7 +50,7 @@ const Details: React.FC = () => {
           </Column>
         )}
       </Row>
-      {Object.keys(ROUTES.addLiquidity).find((v) => v === vm.pool?.id) && (
+      {vm.pool.domain !== "puzzle" && (
         <Link to="invest">
           <Button className="button" kind="secondary">
             Invest

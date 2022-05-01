@@ -121,10 +121,6 @@ const Reward: React.FC<IProps> = () => {
                   <Loading />
                 </Button>
               )}
-              {/*<SizedBox height={8} />*/}
-              {/*<Button kind="secondary" fixed size="medium">*/}
-              {/*  Claim as USDN*/}
-              {/*</Button>*/}
             </Column>
           )}
         </Inner>

@@ -10,7 +10,7 @@ import MobileMenu from "@components/Header/MobileMenu";
 import SizedBox from "@components/SizedBox";
 import Wallet from "@components/Wallet/Wallet";
 import { observer } from "mobx-react-lite";
-import { useStores } from "@stores";
+import { ROUTES } from "@src/constants";
 
 interface IProps {}
 
@@ -94,7 +94,6 @@ const isRoutesEquals = (a: string, b: string) =>
   a.replaceAll("/", "") === b.replaceAll("/", "");
 
 const Header: React.FC<IProps> = () => {
-  const { accountStore } = useStores();
   const [mobileMenuOpened, setMobileMenuOpened] = useState(false);
   const [bannerClosed, setBannerClosed] = useState(false);
   const location = useLocation();
@@ -105,9 +104,9 @@ const Header: React.FC<IProps> = () => {
   };
 
   const menuItems = [
-    { name: "Trade", link: accountStore.ROUTES.TRADE },
-    { name: "Invest", link: accountStore.ROUTES.INVEST },
-    { name: "Stake", link: accountStore.ROUTES.STAKE },
+    { name: "Trade", link: ROUTES.TRADE },
+    { name: "Invest", link: ROUTES.INVEST },
+    { name: "Stake", link: ROUTES.STAKE },
   ];
   return (
     <Root>

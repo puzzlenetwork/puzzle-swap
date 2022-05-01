@@ -7,7 +7,7 @@ import Balance from "@src/entities/Balance";
 import stakedPuzzleLogo from "@src/assets/tokens/staked-puzzle.svg";
 import statsService from "@src/services/statsService";
 import nodeService from "@src/services/nodeService";
-import { NODE_URL_MAP } from "@src/constants";
+import { CONTRACT_ADDRESSES, EXPLORER_URL, NODE_URL } from "@src/constants";
 
 const ctx = React.createContext<StakingVM | null>(null);
 
@@ -50,9 +50,8 @@ class StakingVM {
   private _setLastClaimDate = (v: BN) => (this.lastClaimDate = v);
 
   constructor(private rootStore: RootStore) {
-    const { accountStore } = this.rootStore;
     this.syncStats().then();
-    this._setStakingAddress(accountStore.CONTRACT_ADDRESSES.staking);
+    this._setStakingAddress(CONTRACT_ADDRESSES.staking);
     makeAutoObservable(this);
     this.updateAddressStakingInfo();
     // when(() => accountStore.address !== null, this.updateAddressStakingInfo);
@@ -90,7 +89,7 @@ class StakingVM {
   }
 
   private updateAddressStakingInfo = async () => {
-    const { chainId, address, TOKENS } = this.rootStore.accountStore;
+    const { address, TOKENS } = this.rootStore.accountStore;
     const { stakingContractAddress } = this;
     if (address == null) {
       this._setGlobalStaked(BN.ZERO);
@@ -110,7 +109,7 @@ class StakingVM {
       lastClaimDate: `${address}_${TOKENS.USDN.assetId}_lastClaim`,
     };
     const response = await nodeService.nodeKeysRequest(
-      NODE_URL_MAP[chainId],
+      NODE_URL,
       stakingContractAddress,
       Object.values(keysArray)
     );
@@ -162,7 +161,7 @@ class StakingVM {
     const { accountStore, notificationStore } = this.rootStore;
     await accountStore
       .invoke({
-        dApp: accountStore.CONTRACT_ADDRESSES.staking!,
+        dApp: CONTRACT_ADDRESSES.staking!,
         payment: [],
         call: {
           function: "claimReward",
@@ -174,7 +173,7 @@ class StakingVM {
         notificationStore.notify(`Your rewards was claimed`, {
           type: "success",
           title: `Success`,
-          link: `${accountStore.EXPLORER_LINK}/tx/${txId}`,
+          link: `${EXPLORER_URL}/tx/${txId}`,
           linkTitle: "View on Explorer",
         });
       })
@@ -198,7 +197,7 @@ class StakingVM {
     ).toFormat(2);
     await accountStore
       .invoke({
-        dApp: this.rootStore.accountStore.CONTRACT_ADDRESSES.staking ?? "",
+        dApp: CONTRACT_ADDRESSES.staking ?? "",
         payment: [
           {
             assetId: puzzleToken.assetId,
@@ -219,7 +218,7 @@ class StakingVM {
           {
             type: "success",
             title: `${puzzleAmount} PUZZLE successfully staked`,
-            link: `${accountStore.EXPLORER_LINK}/tx/${txId}`,
+            link: `${EXPLORER_URL}/tx/${txId}`,
             linkTitle: "View on Explorer",
           }
         );
@@ -244,7 +243,7 @@ class StakingVM {
     ).toFormat(2);
     await accountStore
       .invoke({
-        dApp: this.rootStore.accountStore.CONTRACT_ADDRESSES.staking ?? "",
+        dApp: CONTRACT_ADDRESSES.staking ?? "",
         payment: [],
         call: {
           function: "unStake",
@@ -268,7 +267,7 @@ class StakingVM {
             {
               type: "success",
               title: `${puzzleAmount} PUZZLE successfully unstaked`,
-              link: `${accountStore.EXPLORER_LINK}/tx/${txId}`,
+              link: `${EXPLORER_URL}/tx/${txId}`,
               linkTitle: "View on Explorer",
             }
           );

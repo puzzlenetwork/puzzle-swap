@@ -11,7 +11,6 @@ import {
   MultiSwapVMProvider,
   useMultiSwapVM,
 } from "@screens/MultiSwapInterface/MultiScreenVM";
-import { TPoolId } from "@src/constants";
 import { Observer } from "mobx-react-lite";
 import SwitchTokensButton from "@screens/MultiSwapInterface/SwitchTokensButton";
 import Text from "@components/Text";
@@ -19,12 +18,8 @@ import SwapButton from "@screens/MultiSwapInterface/SwapButton";
 import TooltipFeeInfo from "@screens/MultiSwapInterface/TooltipFeeInfo";
 import BN from "@src/utils/BN";
 import Layout from "@components/Layout";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import TokenInput from "@src/components/TokenInput";
-
-interface IProps {
-  poolId: TPoolId;
-}
 
 const Root = styled.div`
   display: flex;
@@ -139,9 +134,13 @@ const MultiSwapInterfaceImpl: React.FC = () => {
   );
 };
 
-const MultiSwapInterface: React.FC<IProps> = ({ poolId }) => (
-  <MultiSwapVMProvider poolId={poolId}>
-    <MultiSwapInterfaceImpl />
-  </MultiSwapVMProvider>
-);
+const MultiSwapInterface: React.FC = () => {
+  const { poolDomain } = useParams<{ poolDomain: string }>();
+  return (
+    <MultiSwapVMProvider poolDomain={poolDomain ?? ""}>
+      <MultiSwapInterfaceImpl />
+    </MultiSwapVMProvider>
+  );
+};
+
 export default MultiSwapInterface;

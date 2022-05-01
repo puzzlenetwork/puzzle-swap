@@ -2,7 +2,12 @@ import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { action, makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
-import { IToken, NODE_URL_MAP } from "@src/constants";
+import {
+  CONTRACT_ADDRESSES,
+  IToken,
+  NODE_URL,
+  PUZZLE_NTFS,
+} from "@src/constants";
 import BN from "@src/utils/BN";
 import {
   buildDialogParams,
@@ -73,7 +78,7 @@ class CreateCustomPoolsVm {
           ({ assetId, share, locked }) => ({
             share: new BN(share).times(10),
             locked,
-            asset: accountStore.TOKENS_ARRAY[assetId],
+            asset: accountStore.TOKENS_ASSET_ID_MAP[assetId],
           })
         );
       }
@@ -278,7 +283,7 @@ class CreateCustomPoolsVm {
 
   buyRandomArtefact = async () => {
     const { accountStore } = this.rootStore;
-    const { TOKENS, CONTRACT_ADDRESSES, chainId, PUZZLE_NTFS } = accountStore;
+    const { TOKENS } = accountStore;
     if (!this.canBuyNft) return;
     if (this.puzzleNFTPrice === 0) return;
     const amount = BN.parseUnits(this.puzzleNFTPrice, TOKENS.TPUZZLE.decimals);
@@ -296,16 +301,10 @@ class CreateCustomPoolsVm {
       })
       .then(async (txId) => {
         if (txId === null) return;
-        const transDetails = await nodeService.transactionInfo(
-          NODE_URL_MAP[chainId],
-          txId
-        );
+        const transDetails = await nodeService.transactionInfo(NODE_URL, txId);
         if (transDetails == null) return;
         const nftId = transDetails.stateChanges.transfers[0].asset;
-        const details = await nodeService.assetDetails(
-          NODE_URL_MAP[chainId],
-          nftId
-        );
+        const details = await nodeService.assetDetails(NODE_URL, nftId);
         if (details == null) return;
         const picture = PUZZLE_NTFS.find(
           ({ name }) => name === details.name
@@ -431,13 +430,11 @@ class CreateCustomPoolsVm {
       )
       .catch((e) => console.log(e))
       .finally(() => this._setLoading(false));
-    //todo add cleaning local storage after pool has been initialized
   };
 
   spendArtefact = async () => {
     const { artefactToSpend } = this;
     const { accountStore } = this.rootStore;
-    const { CONTRACT_ADDRESSES } = accountStore;
     if (artefactToSpend == null || accountStore.address == null) return;
     const domainPaid = await checkDomainPaid(this.domain, accountStore.address);
     if (!domainPaid) {

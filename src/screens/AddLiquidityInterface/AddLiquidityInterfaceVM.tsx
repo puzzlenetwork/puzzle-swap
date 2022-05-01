@@ -14,14 +14,13 @@ import {
 
 const ctx = React.createContext<AddLiquidityInterfaceVM | null>(null);
 
-export const AddLiquidityInterfaceVMProvider: React.FC<{ poolId: string }> = ({
-  poolId,
-  children,
-}) => {
+export const AddLiquidityInterfaceVMProvider: React.FC<{
+  poolDomain: string;
+}> = ({ poolDomain, children }) => {
   const rootStore = useStores();
   const store = useMemo(
-    () => new AddLiquidityInterfaceVM(rootStore, poolId),
-    [rootStore, poolId]
+    () => new AddLiquidityInterfaceVM(rootStore, poolDomain),
+    [rootStore, poolDomain]
   );
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
@@ -29,7 +28,7 @@ export const AddLiquidityInterfaceVMProvider: React.FC<{ poolId: string }> = ({
 export const useAddLiquidityInterfaceVM = () => useVM(ctx);
 
 class AddLiquidityInterfaceVM {
-  public poolId: string;
+  public poolDomain: string;
   public rootStore: RootStore;
   public baseTokenAmount: BN = BN.ZERO;
   @action.bound public setBaseTokenAmount = (value: BN) =>
@@ -53,8 +52,8 @@ class AddLiquidityInterfaceVM {
   @action.bound setProvidedPercentOfPool = (value: number) =>
     (this.providedPercentOfPool = new BN(value));
 
-  constructor(rootStore: RootStore, poolId: string) {
-    this.poolId = poolId;
+  constructor(rootStore: RootStore, poolDomain: string) {
+    this.poolDomain = poolDomain;
     this.rootStore = rootStore;
     this.updateStats();
     makeAutoObservable(this);
@@ -77,13 +76,15 @@ class AddLiquidityInterfaceVM {
 
   updateStats = () => {
     this.rootStore.poolsStore
-      .get30DaysPoolStats(this.poolId)
+      .get30DaysPoolStats(this.poolDomain)
       .then((data) => this.setStats(data))
-      .catch(() => console.error(`Cannot update stats of ${this.poolId}`));
+      .catch(() => console.error(`Cannot update stats of ${this.poolDomain}`));
   };
 
   public get pool() {
-    return this.rootStore.poolsStore.pools.find(({ id }) => id === this.poolId);
+    return this.rootStore.poolsStore.pools.find(
+      ({ domain }) => domain === this.poolDomain
+    );
   }
 
   public get baseToken() {
@@ -224,7 +225,7 @@ class AddLiquidityInterfaceVM {
           this.setNotificationParams(
             buildSuccessLiquidityDialogParams({
               accountStore,
-              poolId: this.poolId,
+              poolDomain: this.poolDomain,
               txId: txId,
             })
           );
@@ -297,7 +298,7 @@ class AddLiquidityInterfaceVM {
           this.setNotificationParams(
             buildSuccessLiquidityDialogParams({
               accountStore,
-              poolId: this.poolId,
+              poolDomain: this.poolDomain,
               txId: txId ?? "",
             })
           );

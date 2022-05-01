@@ -12,7 +12,6 @@ import { useInvestVM } from "@screens/Invest/InvestVm";
 import SizedBox from "@components/SizedBox";
 import Checkbox from "@components/Checkbox";
 
-//todo change to pool and users pool display component
 const PoolsTable: React.FC = () => {
   const { poolsStore, accountStore } = useStores();
   const [activeSort, setActiveSort] = useState<0 | 1>(1);
@@ -40,9 +39,7 @@ const PoolsTable: React.FC = () => {
       }
       return 1;
     })
-    .filter(({ id }) =>
-      Object.keys(accountStore.ROUTES.invest).some((key) => key === id)
-    )
+    .filter(({ domain }) => domain !== "puzzle")
     .filter(({ name, tokens }) =>
       vm.searchValue
         ? [name, ...tokens.map(({ symbol }) => symbol)]
@@ -72,7 +69,6 @@ const PoolsTable: React.FC = () => {
       <Card
         style={{
           padding: 0,
-          // minWidth: 1160,
           justifyContent: "center",
           maxWidth: "calc(100vw - 32px)",
           overflow: "auto",
@@ -101,7 +97,7 @@ const PoolsTable: React.FC = () => {
                   }}
                 />
               </Row>
-              <div>Volume (24h)</div>
+              <div>Volume (30d)</div>
               <Row style={{ cursor: "pointer" }}>
                 <Text size="medium" fitContent>
                   APY
@@ -123,7 +119,7 @@ const PoolsTable: React.FC = () => {
                 pool={pool as any}
                 stats={
                   poolsStore.poolsStats
-                    ? poolsStore.poolsStats[pool.id]
+                    ? poolsStore.poolsStats[pool.domain]
                     : undefined
                 }
               />

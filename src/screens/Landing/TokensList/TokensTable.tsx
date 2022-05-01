@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import React, { useEffect, useState } from "react";
-import { MAINNET_POOL_CONFIG } from "@src/constants/mainnetConfig";
-import { IToken } from "@src/constants";
+import { IToken, POOL_CONFIG } from "@src/constants";
 import Text from "@components/Text";
 import TableRow from "@screens/Landing/TokensList/TableRow";
 import { observer } from "mobx-react-lite";
@@ -72,7 +71,7 @@ const Table = styled.table`
   }
 `;
 
-const tokens = Object.entries(MAINNET_POOL_CONFIG).reduce(
+const tokens = Object.entries(POOL_CONFIG).reduce(
   (acc, [id, { tokens }]) => [
     ...acc,
     ...tokens

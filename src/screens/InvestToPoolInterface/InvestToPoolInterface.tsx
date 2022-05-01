@@ -14,10 +14,7 @@ import LPStaking from "./LPStaking";
 import MyPoolBalance from "@screens/InvestToPoolInterface/MyPoolBalance";
 import Reward from "./Reward";
 import PoolHistory from "./PoolHistory";
-
-interface IProps {
-  poolId: string;
-}
+import { useParams } from "react-router-dom";
 
 const Root = styled.div`
   display: flex;
@@ -94,9 +91,13 @@ const InvestToPoolInterfaceImpl: React.FC = () => {
   );
 };
 
-const InvestToPoolInterface: React.FC<IProps> = ({ poolId }) => (
-  <InvestToPoolInterfaceVMProvider poolId={poolId}>
-    <InvestToPoolInterfaceImpl />
-  </InvestToPoolInterfaceVMProvider>
-);
+const InvestToPoolInterface: React.FC = () => {
+  const { poolDomain } = useParams<{ poolDomain: string }>();
+  return (
+    <InvestToPoolInterfaceVMProvider poolDomain={poolDomain ?? ""}>
+      <InvestToPoolInterfaceImpl />
+    </InvestToPoolInterfaceVMProvider>
+  );
+};
+
 export default InvestToPoolInterface;

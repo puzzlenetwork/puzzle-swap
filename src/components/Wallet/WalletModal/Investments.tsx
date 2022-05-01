@@ -11,6 +11,7 @@ import { Column } from "@components/Flex";
 import { useStores } from "@stores";
 import { Link } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
+import { ROUTES } from "@src/constants";
 
 const Root = styled.div`
   display: flex;
@@ -65,7 +66,7 @@ const Investments: React.FC = () => {
             size="medium"
             kind="secondary"
             onClick={() => {
-              window.open(accountStore.ROUTES.INVEST);
+              window.open(ROUTES.INVEST);
               accountStore.setWalletModalOpened(false);
             }}
           >

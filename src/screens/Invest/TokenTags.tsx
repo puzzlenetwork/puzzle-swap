@@ -7,7 +7,7 @@ import { IToken } from "@src/constants";
 import { Row } from "@components/Flex";
 
 interface IProps {
-  tokens: ({ shareAmount: number } & IToken)[];
+  tokens: ({ share: number } & IToken)[];
   findBalanceByAssetId: (assetId: string) => IAssetBalance | null | undefined;
 }
 
@@ -26,13 +26,13 @@ const TokenTags: React.FC<IProps> = ({ tokens, findBalanceByAssetId }) => {
   const moreHiddenAmount = tokens.length - 3;
   return (
     <Root>
-      {tokensToDisplay.map(({ symbol, assetId, shareAmount }) => {
+      {tokensToDisplay.map(({ symbol, assetId, share }) => {
         const assetBalance = findBalanceByAssetId(assetId);
         const isActive =
           assetBalance && assetBalance.balance && assetBalance.balance.gt(0);
         return (
           <Tag key={assetId} background={isActive ? "#C6C9F4" : undefined}>
-            {symbol} {shareAmount * 100} %
+            {symbol} {share} %
           </Tag>
         );
       })}

@@ -5,6 +5,7 @@ import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import { isValidAddress } from "@waves/waves-transactions/dist/validators";
+import { EXPLORER_URL } from "@src/constants";
 
 const ctx = React.createContext<SendAssetVM | null>(null);
 
@@ -114,7 +115,7 @@ class SendAssetVM {
             {
               type: "success",
               title: `Success`,
-              link: `${accountStore.EXPLORER_LINK}/tx/${txId}`,
+              link: `${EXPLORER_URL}/tx/${txId}`,
               linkTitle: "View on Explorer",
             }
           );

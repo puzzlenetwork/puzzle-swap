@@ -3,7 +3,6 @@ import Notification from "@components/Notification";
 import { Link } from "react-router-dom";
 import buildBuyTokenRoute from "@src/utils/buildBuyTokenRoute";
 import { observer } from "mobx-react-lite";
-import { useStores } from "@stores";
 import { useAddLiquidityInterfaceVM } from "@screens/AddLiquidityInterface/AddLiquidityInterfaceVM";
 import BN from "@src/utils/BN";
 import Text from "@components/Text";
@@ -11,13 +10,10 @@ import Text from "@components/Text";
 interface IProps {}
 
 const MultipleTokensNotifications: React.FC<IProps> = () => {
-  const { accountStore } = useStores();
   const vm = useAddLiquidityInterfaceVM();
   const minBalanceAsset = vm.minBalanceAsset;
   const minBalance = minBalanceAsset?.balance ?? new BN(1);
-  const addOneTokenRoute = `/${
-    (accountStore.ROUTES.addOneToken as any)[vm.poolId]
-  }`;
+  const addOneTokenRoute = `/pools/${vm.poolDomain}/addOneToken`;
   return (
     <>
       {vm.providedPercentOfPool.eq(100)! && !minBalance.eq(0) && (
@@ -52,7 +48,7 @@ const MultipleTokensNotifications: React.FC<IProps> = () => {
                 .&nbsp;
                 <Link
                   to={buildBuyTokenRoute(
-                    (accountStore.ROUTES.pools as any)[vm.poolId],
+                    `pools/${vm.poolDomain}`,
                     vm.minBalanceAsset!.assetId
                   )}
                 >

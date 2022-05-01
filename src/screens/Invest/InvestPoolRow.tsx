@@ -37,12 +37,11 @@ const StyledRow = styled(Row)`
 `;
 const InvestPoolRow: React.FC<IProps> = ({ pool, stats }) => {
   const { accountStore } = useStores();
-  const apy = stats?.apy != null ? stats.apy.toFormat(2) : "—";
+  const apy = stats?.apy != null ? stats.apy.toFormat(2) : null;
+  const volume =
+    stats?.monthly_volume != null ? stats.monthly_volume.toFormat(2) : null;
   return (
-    <Root
-      to={`/${(accountStore.ROUTES.invest as any)[pool.id]}`}
-      className="gridRow"
-    >
+    <Root to={`/pools/${pool.domain}/invest`} className="gridRow">
       <StyledRow>
         <Icon src={pool.logo} alt="logo" />
         <SizedBox width={8} />
@@ -62,8 +61,12 @@ const InvestPoolRow: React.FC<IProps> = ({ pool, stats }) => {
       <Text style={{ whiteSpace: "nowrap" }}>
         $ {pool.globalLiquidity.toFormat(2)}
       </Text>
-      <Text style={{ whiteSpace: "nowrap" }}>-</Text>
-      <Text style={{ whiteSpace: "nowrap" }}>{apy} %</Text>
+      <Text style={{ whiteSpace: "nowrap" }}>
+        {volume != null ? `$ ${volume}` : "—"}
+      </Text>
+      <Text style={{ whiteSpace: "nowrap" }}>
+        {apy != null ? `$ ${apy}` : "—"}
+      </Text>
     </Root>
   );
 };

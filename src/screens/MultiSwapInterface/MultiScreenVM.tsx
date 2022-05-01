@@ -1,21 +1,21 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { action, makeAutoObservable } from "mobx";
-import { SLIPPAGE, TPoolId, TRADE_FEE } from "@src/constants";
+import { EXPLORER_URL, SLIPPAGE, TRADE_FEE } from "@src/constants";
 import { RootStore, useStores } from "@stores";
 import Balance from "@src/entities/Balance";
 import BN from "@src/utils/BN";
 
 const ctx = React.createContext<MultiSwapVM | null>(null);
 
-export const MultiSwapVMProvider: React.FC<{ poolId: TPoolId }> = ({
-  poolId,
+export const MultiSwapVMProvider: React.FC<{ poolDomain: string }> = ({
+  poolDomain,
   children,
 }) => {
   const rootStore = useStores();
   const store = useMemo(
-    () => new MultiSwapVM(rootStore, poolId),
-    [rootStore, poolId]
+    () => new MultiSwapVM(rootStore, poolDomain),
+    [rootStore, poolDomain]
   );
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
@@ -23,7 +23,10 @@ export const MultiSwapVMProvider: React.FC<{ poolId: TPoolId }> = ({
 export const useMultiSwapVM = () => useVM(ctx);
 
 class MultiSwapVM {
-  constructor(private rootStore: RootStore, public readonly poolId: TPoolId) {
+  constructor(
+    private rootStore: RootStore,
+    public readonly poolDomain: string
+  ) {
     makeAutoObservable(this);
   }
 
@@ -122,8 +125,8 @@ class MultiSwapVM {
     if (l0 == null || l1 == null || token1 == null || token0 == null) {
       return BN.ZERO;
     }
-    const share0 = new BN(token0.shareAmount);
-    const share1 = new BN(token1.shareAmount);
+    const share0 = new BN(token0.share);
+    const share1 = new BN(token1.share);
 
     try {
       const leftPart = BN.formatUnits(l1, token1.decimals);
@@ -159,7 +162,7 @@ class MultiSwapVM {
   }
 
   swap = async () => {
-    const { notificationStore, accountStore } = this.rootStore;
+    const { notificationStore } = this.rootStore;
     if (this.pool?.contractAddress == null) return;
     if (this.token0 == null || this.amount0.eq(0)) return;
     if (!this.token1 || !this.amount1.gt(0) || !this.minimumToReceive) return;
@@ -190,7 +193,7 @@ class MultiSwapVM {
           {
             type: "success",
             title: "Transaction is completed",
-            link: `${accountStore.EXPLORER_LINK}/tx/${txId}`,
+            link: `${EXPLORER_URL}/tx/${txId}`,
             linkTitle: "View on Explorer",
           }
         );
@@ -204,6 +207,6 @@ class MultiSwapVM {
   };
 
   get pool() {
-    return this.rootStore.poolsStore.getPoolById(this.poolId);
+    return this.rootStore.poolsStore.getPuzzlePoolByDomain(this.poolDomain);
   }
 }
