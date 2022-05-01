@@ -89,8 +89,6 @@ class InvestVM {
       (acc, v) => acc.plus(v.liquidityInUsdn),
       BN.ZERO
     );
-    console.log(value?.toFormat(2));
-
-    return "";
+    return "$ " + value?.toFormat(2);
   }
 }

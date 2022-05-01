@@ -67,16 +67,23 @@ const AccountInvestBalance: React.FC<IProps> = () => {
         <Text type="purple300" size="medium">
           My invested balance
         </Text>
-        {vm.totalInvestmentBalance == null ? (
-          <Skeleton height={32} />
-        ) : (
+        {vm.totalInvestmentBalance != null ? (
           <Text
             weight={500}
             style={{ fontSize: 24, lineHeight: "32px" }}
             type="light"
           >
-            {vm.totalInvestmentBalance}
+            {vm.totalInvestmentBalance != null
+              ? vm.totalInvestmentBalance
+              : "-"}
           </Text>
+        ) : (
+          <Skeleton
+            height={32}
+            width={150}
+            baseColor="#8082C5"
+            highlightColor="#F1F2FE"
+          />
         )}
       </Column>
       <SizedBox height={8} />
@@ -99,7 +106,7 @@ const AccountInvestBalance: React.FC<IProps> = () => {
                 Claimed reward
               </Text>
               <Text weight={500} type="light">
-                100
+                0.00
               </Text>
             </Column>
           </Row>
@@ -112,7 +119,7 @@ const AccountInvestBalance: React.FC<IProps> = () => {
               Available to claim
             </Text>
             <Text weight={500} type="light">
-              100
+              0.00
             </Text>
           </Column>
         </AvailableToClaim>
