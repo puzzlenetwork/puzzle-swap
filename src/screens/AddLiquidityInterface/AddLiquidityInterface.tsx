@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 import Layout from "@components/Layout";
-import { observer, Observer } from "mobx-react-lite";
+import { observer } from "mobx-react-lite";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import {
@@ -15,8 +15,10 @@ import DialogNotification from "@components/Dialog/DialogNotification";
 import GoBack from "@components/GoBack";
 import Card from "@components/Card";
 import SwitchButtons from "@components/SwitchButtons";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import ChangePoolModal from "@src/ChangePoolModal";
+import Loading from "@components/Loading";
+import { ROUTES } from "@src/constants";
 
 const Root = styled.div`
   display: flex;
@@ -35,89 +37,89 @@ const Root = styled.div`
   }
 `;
 
-const AddLiquidityInterfaceImpl = () => {
+const AddLiquidityInterfaceImpl = observer(() => {
   const vm = useAddLiquidityInterfaceVM();
   const pool = vm.pool;
   const addLiquidityRoute = `/pools/${vm.poolDomain}/addLiquidity`;
   const addOneTokenRoute = `/pools/${vm.poolDomain}/addOneToken`;
   const navigate = useNavigate();
   const activeTab = addOneTokenRoute.includes(window.location.pathname) ? 1 : 0;
+  if (!vm.initialized && vm.pool == null) return <Loading />;
+  if (vm.initialized && vm.pool == null) {
+    return <Navigate to={ROUTES.NOT_FOUND} />;
+  }
   return (
     <Layout>
-      <Observer>
-        {() => (
-          <Root>
-            <GoBack
-              link={`/pools/${vm.poolDomain}/invest`}
-              text="Back to Pool Info"
-            />
-            <SizedBox height={24} />
-            <Text weight={500} size="large">
-              Deposit liquidity
-            </Text>
-            <SizedBox height={4} />
-            <Text size="medium">
-              Select the method of adding liquidity and enter the value
-            </Text>
-            <SizedBox height={24} />
-            <ShortPoolInfoCard
-              title="To"
-              poolLogo={pool && pool.logo}
-              poolName={pool && pool.title}
-              apy={vm.stats?.apy && vm.stats.apy.toFormat(2) + " %"}
-              onChangePool={() => vm.setChangePoolModalOpen(true)}
-            />
-            <SizedBox height={24} />
-            <Text weight={500} type="secondary">
-              Method
-            </Text>
-            <SizedBox height={8} />
-            <Card>
-              <SwitchButtons
-                values={["Multiple tokens", `${vm.baseToken.symbol} Token`]}
-                active={activeTab}
-                onActivate={(i) => {
-                  i === 1
-                    ? navigate(addOneTokenRoute)
-                    : navigate(addLiquidityRoute);
-                }}
-              />
-            </Card>
-            <SizedBox height={24} />
-            {window.location.pathname.includes(addLiquidityRoute) && (
-              <MultipleTokensAddLiquidity />
-            )}
-            {window.location.pathname.includes(addOneTokenRoute) && (
-              <BaseTokenAddLiquidityAmount />
-            )}
-            <DialogNotification
-              onClose={() => vm.setNotificationParams(null)}
-              title={vm.notificationParams?.title ?? ""}
-              description={vm.notificationParams?.description}
-              buttonsDirection={vm.notificationParams?.buttonsDirection}
-              type={vm.notificationParams?.type}
-              buttons={vm.notificationParams?.buttons}
-              style={{ maxWidth: 360 }}
-              visible={vm.notificationParams != null}
-            />
-            <ChangePoolModal
-              activePoolId={vm.poolDomain}
-              onClose={() => vm.setChangePoolModalOpen(false)}
-              visible={vm.changePoolModalOpen}
-              onChange={(id) =>
-                navigate(
-                  activeTab === 1
-                    ? `/pools/${id}/addOneToken`
-                    : `/pools/${id}/addLiquidity`
-                )
-              }
-            />
-          </Root>
+      <Root>
+        <GoBack
+          link={`/pools/${vm.poolDomain}/invest`}
+          text="Back to Pool Info"
+        />
+        <SizedBox height={24} />
+        <Text weight={500} size="large">
+          Deposit liquidity
+        </Text>
+        <SizedBox height={4} />
+        <Text size="medium">
+          Select the method of adding liquidity and enter the value
+        </Text>
+        <SizedBox height={24} />
+        <ShortPoolInfoCard
+          title="To"
+          poolLogo={pool && pool.logo}
+          poolName={pool && pool.title}
+          apy={vm.stats?.apy && vm.stats.apy.toFormat(2) + " %"}
+          onChangePool={() => vm.setChangePoolModalOpen(true)}
+        />
+        <SizedBox height={24} />
+        <Text weight={500} type="secondary">
+          Method
+        </Text>
+        <SizedBox height={8} />
+        <Card>
+          <SwitchButtons
+            values={["Multiple tokens", `${vm.baseToken.symbol} Token`]}
+            active={activeTab}
+            onActivate={(i) => {
+              i === 1
+                ? navigate(addOneTokenRoute)
+                : navigate(addLiquidityRoute);
+            }}
+          />
+        </Card>
+        <SizedBox height={24} />
+        {window.location.pathname.includes(addLiquidityRoute) && (
+          <MultipleTokensAddLiquidity />
         )}
-      </Observer>
+        {window.location.pathname.includes(addOneTokenRoute) && (
+          <BaseTokenAddLiquidityAmount />
+        )}
+        <DialogNotification
+          onClose={() => vm.setNotificationParams(null)}
+          title={vm.notificationParams?.title ?? ""}
+          description={vm.notificationParams?.description}
+          buttonsDirection={vm.notificationParams?.buttonsDirection}
+          type={vm.notificationParams?.type}
+          buttons={vm.notificationParams?.buttons}
+          style={{ maxWidth: 360 }}
+          visible={vm.notificationParams != null}
+        />
+        <ChangePoolModal
+          activePoolId={vm.poolDomain}
+          onClose={() => vm.setChangePoolModalOpen(false)}
+          visible={vm.changePoolModalOpen}
+          onChange={(id) =>
+            navigate(
+              activeTab === 1
+                ? `/pools/${id}/addOneToken`
+                : `/pools/${id}/addLiquidity`
+            )
+          }
+        />
+      </Root>
     </Layout>
   );
-};
+});
 
 const AddLiquidityInterface: React.FC = () => {
   const { poolDomain } = useParams<{ poolDomain: string }>();

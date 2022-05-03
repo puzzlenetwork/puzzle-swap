@@ -96,6 +96,9 @@ class Pool implements IPoolConfig {
       const globalVolume = new BN(globalVolumeValue.value).div(1e6);
       this.setGlobalVolume(globalVolume);
     }
+    if (this.domain === "pooool") {
+      console.log(this.liquidity);
+    }
     const usdnAsset = this.tokens.find(({ symbol }) => symbol === "USDN")!;
     const usdnLiquidity = this.liquidity[usdnAsset.assetId];
     if (usdnLiquidity != null && usdnAsset.share != null) {

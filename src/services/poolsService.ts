@@ -5,7 +5,7 @@ interface IAssetConfig {
   share: number;
 }
 
-interface IPoolSettings {
+interface ICreatePoolData {
   domain: string;
   image: string;
   swapFee: number;
@@ -15,17 +15,20 @@ interface IPoolSettings {
   artefactOriginTransactionId: string;
 }
 
-export interface IPool {
+interface IPoolSettings {
   domain: string;
-  title: string;
+  isCustom?: boolean;
   contractAddress: string;
   layer2Address?: string;
   baseTokenId: string;
-  assets: IAssetConfig[];
+  title: string;
+  defaultAssetId0: string;
+  defaultAssetId1: string;
+  assets: Array<IAssetConfig>;
+  poolTokenName?: string;
   logo: string;
   artefactOriginTransactionId?: string;
-  isCustom?: boolean;
-  owner?: string;
+  owner: string;
 }
 
 const poolService = {
@@ -46,7 +49,7 @@ const poolService = {
     });
     return true;
   },
-  createPool: async (data: IPoolSettings): Promise<boolean> => {
+  createPool: async (data: ICreatePoolData): Promise<boolean> => {
     await axios(
       `${process.env.REACT_APP_API_BASE}/api/v1/pools/pool/${data.domain}`,
       {
@@ -57,7 +60,7 @@ const poolService = {
     );
     return true;
   },
-  getPools: async (): Promise<IPool[]> => {
+  getPools: async (): Promise<IPoolSettings[]> => {
     const { data } = await axios.get(
       `${process.env.REACT_APP_API_BASE}/api/v1/pools`
     );

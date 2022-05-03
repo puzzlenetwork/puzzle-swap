@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { action, makeAutoObservable } from "mobx";
+import { action, makeAutoObservable, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import Balance from "@src/entities/Balance";
@@ -11,6 +11,10 @@ import {
   buildWarningLiquidityDialogParams,
   IDialogNotificationProps,
 } from "@components/Dialog/DialogNotification";
+import Pool from "@src/entities/Pool";
+import poolService from "@src/services/poolsService";
+import { IToken, TOKENS } from "@src/constants";
+import TokenLogos from "@src/constants/tokenLogos";
 
 const ctx = React.createContext<AddLiquidityInterfaceVM | null>(null);
 
@@ -52,9 +56,46 @@ class AddLiquidityInterfaceVM {
   @action.bound setProvidedPercentOfPool = (value: number) =>
     (this.providedPercentOfPool = new BN(value));
 
+  private _pool: Pool | null = null;
+  private _setPool = (pool: Pool) => (this._pool = pool);
+
+  initialized: boolean = false;
+  private setInitialized = (v: boolean) => (this.initialized = v);
+
+  public get pool() {
+    const pools = this.rootStore.poolsStore.pools;
+    const configPool = pools.find(({ domain }) => domain === this.poolDomain);
+    return configPool ?? this._pool!;
+  }
+
+  private syncPool = (poolDomain: string) =>
+    poolService
+      .getPoolByDomain(poolDomain)
+      .then((poolSettings) => {
+        if (!poolSettings) return;
+        const pool = new Pool({
+          ...poolSettings,
+          tokens: poolSettings.assets.reduce((acc, { assetId, share }) => {
+            const token = Object.values(TOKENS).find(
+              (asset) => assetId === asset.assetId
+            );
+            return token
+              ? [...acc, { ...token, share, logo: TokenLogos[token.symbol] }]
+              : acc;
+          }, [] as Array<IToken & { share: number }>),
+        });
+        this._setPool(pool);
+      })
+      .catch(console.error);
+
   constructor(rootStore: RootStore, poolDomain: string) {
     this.poolDomain = poolDomain;
     this.rootStore = rootStore;
+    this.syncPool(poolDomain).finally(() => this.setInitialized(true));
+    when(
+      () => this.pool != null,
+      () => this.syncPool(this.poolDomain)
+    );
     this.updateStats();
     makeAutoObservable(this);
   }
@@ -80,12 +121,6 @@ class AddLiquidityInterfaceVM {
       .then((data) => this.setStats(data))
       .catch(() => console.error(`Cannot update stats of ${this.poolDomain}`));
   };
-
-  public get pool() {
-    return this.rootStore.poolsStore.pools.find(
-      ({ domain }) => domain === this.poolDomain
-    );
-  }
 
   public get baseToken() {
     return this.pool!.getAssetById(this.pool!.baseTokenId)!;
