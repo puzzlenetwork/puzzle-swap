@@ -4,8 +4,6 @@ import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomP
 import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
 import Loading from "@components/Loading";
-import bucketService from "@src/services/bucketService";
-import { toFile } from "@src/utils/files";
 
 const ContinueBtn: React.FC = () => {
   const vm = useCreateCustomPoolsVM();
@@ -41,20 +39,9 @@ const ContinueBtn: React.FC = () => {
       );
     case 1:
       return (
-        <Button
-          onClick={async () => {
-            if (vm.logo == null) return;
-            console.log("upload");
-            const image = await bucketService.upload(toFile(vm.logo));
-            console.log(image);
-          }}
-          fixed
-        >
-          Upload
+        <Button onClick={() => handleContinue(2)} fixed disabled={!vm.correct1}>
+          {vm.correct1 ? "Continue" : "Fill in all fields"}
         </Button>
-        // <Button onClick={() => handleContinue(2)} fixed disabled={!vm.correct1}>
-        //   {vm.correct1 ? "Continue" : "Fill in all fields"}
-        // </Button>
       );
     case 2:
       return (
