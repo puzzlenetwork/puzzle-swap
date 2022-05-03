@@ -65,7 +65,7 @@ const InvestPoolRow: React.FC<IProps> = ({ pool, stats }) => {
         {volume != null ? `$ ${volume}` : "—"}
       </Text>
       <Text style={{ whiteSpace: "nowrap" }}>
-        {apy != null ? `$ ${apy}` : "—"}
+        {apy != null ? `${apy} %` : "—"}
       </Text>
     </Root>
   );

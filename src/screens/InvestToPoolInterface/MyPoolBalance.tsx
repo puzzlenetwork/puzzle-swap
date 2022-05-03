@@ -120,7 +120,7 @@ const MyPoolBalance: React.FC<IProps> = () => {
                       <Text size="medium">
                         <span>{address !== null ? value : "-"}</span>
                         <span style={{ color: "#8082C5" }}>
-                          {address !== null ? `(${usdn})` : "-"}
+                          {address !== null ? `($ ${usdn})` : "-"}
                         </span>
                       </Text>
                     </Row>
@@ -133,7 +133,7 @@ const MyPoolBalance: React.FC<IProps> = () => {
                         {address !== null ? value : "-"}
                       </Text>
                       <Text size="small" type="secondary">
-                        {address !== null ? usdn : "-"}
+                        {address !== null ? `$ ${usdn}` : "-"}
                       </Text>
                     </Column>
                   </AdaptiveRow>

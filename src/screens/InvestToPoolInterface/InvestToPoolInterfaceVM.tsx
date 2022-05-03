@@ -251,7 +251,8 @@ class InvestToPoolInterfaceVM {
       );
       const rate = this.pool.currentPrice(
         token.assetId,
-        this.rootStore.accountStore.TOKENS.USDN.assetId
+        this.rootStore.accountStore.TOKENS.USDN.assetId,
+        1
       );
       return [
         ...acc,

@@ -4,11 +4,12 @@ import { Row } from "@components/Flex";
 import Text from "@components/Text";
 import { observer } from "mobx-react-lite";
 import { ITransaction } from "@src/utils/types";
-import { IToken } from "@src/constants";
+import { EXPLORER_URL, IToken } from "@src/constants";
 import Swap from "./Swap";
 import BN from "@src/utils/BN";
 import dayjs from "dayjs";
 import PoolAction from "./PoolAction";
+import loadCreatePoolStateFromStorage from "@screens/CreateCustomPools/utils/loadCreatePoolStateFromStorage";
 
 interface IProps extends ITransaction {
   tokens: Record<string, IToken>;
@@ -24,6 +25,7 @@ const Root = styled(Row)`
   }
 `;
 const Transaction: React.FC<IProps> = ({
+  id,
   timestamp,
   tokens,
   call,
@@ -150,7 +152,11 @@ const Transaction: React.FC<IProps> = ({
     }
   };
   return (
-    <Root className="gridRow" alignItems="center">
+    <Root
+      className="gridRow"
+      alignItems="center"
+      onClick={() => window.open(`${EXPLORER_URL}/transactions/${id}`)}
+    >
       <Row alignItems="center">{draw()}</Row>
       <Text fitContent nowrap>
         {amount.toFormat(2)}
