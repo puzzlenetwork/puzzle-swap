@@ -17,7 +17,6 @@ import NFTStaking from "@screens/NFTStaking";
 import MultiSwapInterface from "@screens/MultiSwapInterface";
 import WalletModal from "@components/Wallet/WalletModal";
 import SendAssetModal from "@components/Wallet/SendAssetModal";
-import CreateCustomPools from "./screens/CreateCustomPools";
 import { ROUTES } from "./constants";
 
 const Root = styled(Column)`
@@ -70,7 +69,7 @@ const App: React.FC = () => {
 
         <Route path={ROUTES.ULTRASTAKE} element={<NFTStaking />} />
 
-        <Route path={ROUTES.POOLS_CREATE} element={<CreateCustomPools />} />
+        {/*<Route path={ROUTES.POOLS_CREATE} element={<CreateCustomPools />} />*/}
 
         <Route path="*" element={<NotFound />} />
       </Routes>
