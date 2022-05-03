@@ -11,7 +11,6 @@ interface IProps {}
 const Root = styled.div`
   display: flex;
   flex-direction: column;
-  display: flex;
   align-items: center;
   justify-content: center;
   height: 70vh;

@@ -35,6 +35,8 @@ const App: React.FC = () => {
       <Routes>
         {/* Landing */}
         <Route path={ROUTES.ROOT} element={<Landing />} />
+        {/* 404 */}
+        <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
         {/* Stake */}
         <Route path={ROUTES.STAKE} element={<Staking />} />
 

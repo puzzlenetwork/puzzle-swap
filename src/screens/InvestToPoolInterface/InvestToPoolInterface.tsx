@@ -1,8 +1,11 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { Observer } from "mobx-react-lite";
+import { observer } from "mobx-react-lite";
 import Layout from "@components/Layout";
-import { InvestToPoolInterfaceVMProvider } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
+import {
+  InvestToPoolInterfaceVMProvider,
+  useInvestToPoolInterfaceVM,
+} from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
 import SizedBox from "@components/SizedBox";
 import PoolInformation from "@screens/InvestToPoolInterface/PoolInformation";
 import { Column } from "@src/components/Flex";
@@ -14,7 +17,9 @@ import LPStaking from "./LPStaking";
 import MyPoolBalance from "@screens/InvestToPoolInterface/MyPoolBalance";
 import Reward from "./Reward";
 import PoolHistory from "./PoolHistory";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
+import Loading from "@components/Loading";
+import { ROUTES } from "@src/constants";
 
 const Root = styled.div`
   display: flex;
@@ -57,39 +62,40 @@ const Body = styled.div`
     column-gap: 40px;
   }
 `;
-const InvestToPoolInterfaceImpl: React.FC = () => {
+const InvestToPoolInterfaceImpl: React.FC = observer(() => {
+  const vm = useInvestToPoolInterfaceVM();
+  if (!vm.initialized && vm.pool == null) return <Loading />;
+  if (vm.initialized && vm.pool == null) {
+    return <Navigate to={ROUTES.NOT_FOUND} />;
+  }
   return (
     <Layout>
-      <Observer>
-        {() => (
-          <Root>
-            <GoBack link="/invest" text="Back to Pools list" />
-            <SizedBox height={24} />
-            <MainPoolInfo />
-            <PoolInformation />
-            <Body>
-              <MainBlock>
-                <RightBlockMobile>
-                  <Reward />
-                  <MyPoolBalance />
-                  <LPStaking />
-                </RightBlockMobile>
-                <TradesVolume />
-                <PoolComposition />
-                <PoolHistory />
-              </MainBlock>
-              <RightBlock>
-                <Reward />
-                <MyPoolBalance />
-                <LPStaking />
-              </RightBlock>
-            </Body>
-          </Root>
-        )}
-      </Observer>
+      <Root>
+        <GoBack link="/invest" text="Back to Pools list" />
+        <SizedBox height={24} />
+        <MainPoolInfo />
+        <PoolInformation />
+        <Body>
+          <MainBlock>
+            <RightBlockMobile>
+              <Reward />
+              <MyPoolBalance />
+              <LPStaking />
+            </RightBlockMobile>
+            <TradesVolume />
+            <PoolComposition />
+            <PoolHistory />
+          </MainBlock>
+          <RightBlock>
+            <Reward />
+            <MyPoolBalance />
+            <LPStaking />
+          </RightBlock>
+        </Body>
+      </Root>
     </Layout>
   );
-};
+});
 
 const InvestToPoolInterface: React.FC = () => {
   const { poolDomain } = useParams<{ poolDomain: string }>();
@@ -98,7 +104,6 @@ const InvestToPoolInterface: React.FC = () => {
   // if (valid) {
   //   return null;
   // }
-
   return (
     <InvestToPoolInterfaceVMProvider poolDomain={poolDomain ?? ""}>
       <InvestToPoolInterfaceImpl />

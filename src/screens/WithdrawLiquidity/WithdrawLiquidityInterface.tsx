@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 import Layout from "@components/Layout";
-import { observer, Observer } from "mobx-react-lite";
+import { observer } from "mobx-react-lite";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { useStores } from "@stores";
@@ -14,8 +14,10 @@ import WithdrawLiquidityAmount from "./WithdrawLiquidityAmount";
 import WithdrawLiquidityTable from "./WithdrawLiquidityTable";
 import Button from "@components/Button";
 import ChangePoolModal from "@src/ChangePoolModal";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import GoBack from "@components/GoBack";
+import Loading from "@components/Loading";
+import { ROUTES } from "@src/constants";
 
 const Root = styled.div`
   display: flex;
@@ -33,59 +35,56 @@ const Root = styled.div`
     margin-top: 56px;
   }
 `;
-const WithdrawLiquidityInterfaceImpl = () => {
+const WithdrawLiquidityInterfaceImpl = observer(() => {
   const vm = useWithdrawLiquidityVM();
   const { accountStore } = useStores();
   const navigate = useNavigate();
+  if (!vm.initialized && vm.pool == null) return <Loading />;
+  if (vm.initialized && vm.pool == null) {
+    return <Navigate to={ROUTES.NOT_FOUND} />;
+  }
   return (
     <Layout>
-      <Observer>
-        {() => (
-          <Root>
-            <GoBack link="/invest" text="Back to Pools list" />
+      <Root>
+        <GoBack link="/invest" text="Back to Pools list" />
+        <SizedBox height={24} />
+        <Text weight={500} size="large">
+          Withdraw liquidity
+        </Text>
+        <SizedBox height={4} />
+        <Text size="medium">
+          Select the percentage of assets you want to withdraw from the pool
+        </Text>
+        <SizedBox height={24} />
+        <ShortPoolInfoCard
+          title="From"
+          poolLogo={vm.pool.logo}
+          poolName={vm.pool.title}
+          apy={vm.stats?.apy && vm.stats.apy.toFormat(2) + " %"}
+          onChangePool={() => vm.setChangePoolModalOpen(true)}
+        />
+        <SizedBox height={24} />
+        {accountStore.address != null ? (
+          <>
+            <WithdrawLiquidityAmount />
             <SizedBox height={24} />
-            <Text weight={500} size="large">
-              Withdraw liquidity
-            </Text>
-            <SizedBox height={4} />
-            <Text size="medium">
-              Select the percentage of assets you want to withdraw from the pool
-            </Text>
-            <SizedBox height={24} />
-            <ShortPoolInfoCard
-              title="From"
-              poolLogo={vm.pool.logo}
-              poolName={vm.pool.title}
-              apy={vm.stats?.apy && vm.stats.apy.toFormat(2) + " %"}
-              onChangePool={() => vm.setChangePoolModalOpen(true)}
-            />
-            <SizedBox height={24} />
-            {accountStore.address != null ? (
-              <>
-                <WithdrawLiquidityAmount />
-                <SizedBox height={24} />
-                <WithdrawLiquidityTable />
-              </>
-            ) : (
-              <Button
-                fixed
-                onClick={() => accountStore.setLoginModalOpened(true)}
-              >
-                Connect wallet to withdraw
-              </Button>
-            )}
-            <ChangePoolModal
-              activePoolId={vm.poolDomain}
-              onClose={() => vm.setChangePoolModalOpen(false)}
-              visible={vm.changePoolModalOpen}
-              onChange={(id) => navigate(`/pools/${id}/withdraw`)}
-            />
-          </Root>
+            <WithdrawLiquidityTable />
+          </>
+        ) : (
+          <Button fixed onClick={() => accountStore.setLoginModalOpened(true)}>
+            Connect wallet to withdraw
+          </Button>
         )}
-      </Observer>
+        <ChangePoolModal
+          activePoolId={vm.poolDomain}
+          onClose={() => vm.setChangePoolModalOpen(false)}
+          visible={vm.changePoolModalOpen}
+          onChange={(id) => navigate(`/pools/${id}/withdraw`)}
+        />
+      </Root>
     </Layout>
   );
-};
+});
 
 const WithdrawLiquidityInterface: React.FC = () => {
   const { poolDomain } = useParams<{ poolDomain: string }>();

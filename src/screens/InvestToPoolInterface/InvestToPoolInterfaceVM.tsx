@@ -3,12 +3,15 @@ import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable, reaction, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
-import { EXPLORER_URL, IToken, NODE_URL } from "@src/constants";
+import { EXPLORER_URL, IToken, NODE_URL, TOKENS } from "@src/constants";
 import { IPoolStats30Days } from "@stores/PoolsStore";
 import axios from "axios";
 import nodeService from "@src/services/nodeService";
 import { ITransaction } from "@src/utils/types";
 import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
+import poolService from "@src/services/poolsService";
+import Pool from "@src/entities/Pool";
+import TokenLogos from "@src/constants/tokenLogos";
 
 const ctx = React.createContext<InvestToPoolInterfaceVM | null>(null);
 
@@ -78,32 +81,67 @@ class InvestToPoolInterfaceVM {
   public userIndexStaked: BN | null = null;
   private setUserIndexStaked = (value: BN) => (this.userIndexStaked = value);
 
+  private _pool: Pool | null = null;
+  private _setPool = (pool: Pool) => (this._pool = pool);
+
+  initialized: boolean = false;
+  private setInitialized = (v: boolean) => (this.initialized = v);
+
+  public get pool() {
+    const pools = this.rootStore.poolsStore.pools;
+    const configPool = pools.find(({ domain }) => domain === this.poolDomain);
+    return configPool ?? this._pool!;
+  }
+
+  private syncPool = (poolDomain: string) =>
+    poolService
+      .getPoolByDomain(poolDomain)
+      .then((poolSettings) => {
+        if (!poolSettings) return;
+        const pool = new Pool({
+          ...poolSettings,
+          tokens: poolSettings.assets.reduce((acc, { assetId, share }) => {
+            const token = Object.values(TOKENS).find(
+              (asset) => assetId === asset.assetId
+            );
+            return token
+              ? [...acc, { ...token, share, logo: TokenLogos[token.symbol] }]
+              : acc;
+          }, [] as Array<IToken & { share: number }>),
+        });
+        this._setPool(pool);
+      })
+      .catch(console.error);
+
   constructor(rootStore: RootStore, poolDomain: string) {
     this.poolDomain = poolDomain;
     this.rootStore = rootStore;
+    this.syncPool(poolDomain).finally(() => this.setInitialized(true));
     makeAutoObservable(this);
-    this.updateStats();
-    this.updatePoolTokenBalances();
-    this.loadTransactionsHistory();
-    this.syncIndexTokenInfo();
+    when(
+      () => this.pool != null,
+      () => {
+        this.updateStats();
+        this.updatePoolTokenBalances();
+        this.loadTransactionsHistory();
+        this.syncIndexTokenInfo();
+      }
+    );
     reaction(
       () => this.rootStore.accountStore?.address,
       () => {
-        this.updateRewardInfo();
-        this.updateAccountLiquidityInfo();
+        this.pool != null && this.updateRewardInfo();
+        this.pool != null && this.updateAccountLiquidityInfo();
       }
     );
     when(
-      () => rootStore.accountStore.address != null,
+      () => rootStore.accountStore.address != null && this.pool != null,
       this.updateAccountLiquidityInfo
     );
-    when(() => rootStore.accountStore.address != null, this.updateRewardInfo);
-  }
-
-  public get pool() {
-    return this.rootStore.poolsStore.pools.find(
-      ({ domain }) => domain === this.poolDomain
-    )!;
+    when(
+      () => rootStore.accountStore.address != null && this.pool != null,
+      this.updateRewardInfo
+    );
   }
 
   updateStats = () => {
@@ -176,7 +214,8 @@ class InvestToPoolInterfaceVM {
     const globalTokenBalance = parsedNodeResponse["globalTokenBalance"];
     const globalLastCheckTokenEarnings =
       parsedNodeResponse["globalLastCheckTokenEarnings"];
-    const globalIndexStaked = parsedNodeResponse["globalIndexStaked"];
+    const globalIndexStaked =
+      parsedNodeResponse["globalIndexStaked"] ?? BN.ZERO;
     const globalLastCheckTokenInterest =
       parsedNodeResponse["globalLastCheckTokenInterest"];
     const userLastCheckTokenInterest =

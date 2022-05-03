@@ -4,6 +4,7 @@ import tokenLogos from "@src/constants/tokenLogos";
 
 export const ROUTES = {
   ROOT: "/",
+  NOT_FOUND: "/404",
   STAKE: "/stake",
   TRADE: "/trade",
   INVEST: "/invest",

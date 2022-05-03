@@ -11,15 +11,17 @@ import {
   MultiSwapVMProvider,
   useMultiSwapVM,
 } from "@screens/MultiSwapInterface/MultiScreenVM";
-import { Observer } from "mobx-react-lite";
+import { observer } from "mobx-react-lite";
 import SwitchTokensButton from "@screens/MultiSwapInterface/SwitchTokensButton";
 import Text from "@components/Text";
 import SwapButton from "@screens/MultiSwapInterface/SwapButton";
 import TooltipFeeInfo from "@screens/MultiSwapInterface/TooltipFeeInfo";
 import BN from "@src/utils/BN";
 import Layout from "@components/Layout";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import TokenInput from "@src/components/TokenInput";
+import Loading from "@components/Loading";
+import { ROUTES } from "@src/constants";
 
 const Root = styled.div`
   display: flex;
@@ -37,7 +39,7 @@ const Root = styled.div`
   }
 `;
 
-const MultiSwapInterfaceImpl: React.FC = () => {
+const MultiSwapInterfaceImpl: React.FC = observer(() => {
   const vm = useMultiSwapVM();
   const navigate = useNavigate();
 
@@ -75,64 +77,64 @@ const MultiSwapInterfaceImpl: React.FC = () => {
     vm.setAssetId0(assetId);
   };
 
+  if (!vm.initialized && vm.pool == null) return <Loading />;
+  if (vm.initialized && vm.pool == null) {
+    return <Navigate to={ROUTES.NOT_FOUND} />;
+  }
   return (
     <Layout>
-      <Observer>
-        {() => (
-          <Root>
-            <Card paddingDesktop="32px" maxWidth={560}>
-              <TokenInput
-                selectable={true}
-                decimals={vm.token0!.decimals}
-                amount={vm.amount0}
-                setAmount={vm.setAmount0}
-                assetId={vm.assetId0}
-                setAssetId={handleSetAssetId0}
-                balances={vm.balances ?? []}
-                onMaxClick={vm.amount0MaxClickFunc}
-                usdnEquivalent={vm.amount0UsdnEquivalent}
-              />
-              <SwitchTokensButton />
-              <TokenInput
-                selectable={true}
-                decimals={vm.token1!.decimals}
-                amount={new BN(vm.amount1)}
-                assetId={vm.assetId1}
-                setAssetId={handleSetAssetId1}
-                balances={vm.balances ?? []}
-                usdnEquivalent={vm.amount1UsdnEquivalent}
-              />
-              <SizedBox height={24} />
-              <SwapButton />
-              <SizedBox height={16} />
-              <SwapDetailRow title="Price impact">
-                <Row
-                  alignItems="center"
-                  mainAxisSize="fit-content"
-                  justifyContent="flex-end"
+      <Root>
+        <Card paddingDesktop="32px" maxWidth={560}>
+          <TokenInput
+            selectable={true}
+            decimals={vm.token0!.decimals}
+            amount={vm.amount0}
+            setAmount={vm.setAmount0}
+            assetId={vm.assetId0}
+            setAssetId={handleSetAssetId0}
+            balances={vm.balances ?? []}
+            onMaxClick={vm.amount0MaxClickFunc}
+            usdnEquivalent={vm.amount0UsdnEquivalent}
+          />
+          <SwitchTokensButton />
+          <TokenInput
+            selectable={true}
+            decimals={vm.token1!.decimals}
+            amount={new BN(vm.amount1)}
+            assetId={vm.assetId1}
+            setAssetId={handleSetAssetId1}
+            balances={vm.balances ?? []}
+            usdnEquivalent={vm.amount1UsdnEquivalent}
+          />
+          <SizedBox height={24} />
+          <SwapButton />
+          <SizedBox height={16} />
+          <SwapDetailRow title="Price impact">
+            <Row
+              alignItems="center"
+              mainAxisSize="fit-content"
+              justifyContent="flex-end"
+            >
+              {vm.priceImpact && (
+                <Text>~{vm.priceImpact.toFormat(4)}%&nbsp;</Text>
+              )}
+              {vm.token0 && !vm.amount0.isNaN() && (
+                <Tooltip
+                  content={<TooltipFeeInfo />}
+                  config={{ placement: "top", trigger: "click" }}
                 >
-                  {vm.priceImpact && (
-                    <Text>~{vm.priceImpact.toFormat(4)}%&nbsp;</Text>
-                  )}
-                  {vm.token0 && !vm.amount0.isNaN() && (
-                    <Tooltip
-                      content={<TooltipFeeInfo />}
-                      config={{ placement: "top", trigger: "click" }}
-                    >
-                      <InfoIcon />
-                    </Tooltip>
-                  )}
-                </Row>
-              </SwapDetailRow>
-            </Card>
-            <SizedBox height={16} />
-            <Details />
-          </Root>
-        )}
-      </Observer>
+                  <InfoIcon />
+                </Tooltip>
+              )}
+            </Row>
+          </SwapDetailRow>
+        </Card>
+        <SizedBox height={16} />
+        <Details />
+      </Root>
     </Layout>
   );
-};
+});
 
 const MultiSwapInterface: React.FC = () => {
   const { poolDomain } = useParams<{ poolDomain: string }>();
