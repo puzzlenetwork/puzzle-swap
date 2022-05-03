@@ -126,6 +126,15 @@ class Pool implements IPoolConfig {
     return topValue.div(bottomValue).times(coefficient);
   };
 
+  get indexTokenRate() {
+    if (this.globalPoolTokenAmount == null || this.globalPoolTokenAmount.eq(0))
+      return BN.ZERO;
+    const indexTokenRate = this.globalLiquidity.div(
+      BN.formatUnits(this.globalPoolTokenAmount, 8)
+    );
+    return indexTokenRate;
+  }
+
   @action.bound public getAccountLiquidityInfo = async (
     address: string
   ): Promise<IShortPoolInfo> => {

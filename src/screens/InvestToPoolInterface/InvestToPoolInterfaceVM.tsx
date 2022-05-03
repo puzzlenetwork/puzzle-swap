@@ -131,6 +131,7 @@ class InvestToPoolInterfaceVM {
       () => this.rootStore.accountStore?.address,
       () => {
         this.pool != null && this.updateRewardInfo();
+        this.pool != null && this.updatePoolTokenBalances();
         this.pool != null && this.updateAccountLiquidityInfo();
       }
     );
@@ -456,6 +457,9 @@ class InvestToPoolInterfaceVM {
           args: [],
         },
       })
+      .then(this.syncIndexTokenInfo)
+      .then(this.updateRewardInfo)
+      .then(this.updatePoolTokenBalances)
       .then((txId) => {
         notificationStore.notify(`Your have staked index token`, {
           type: "success",
@@ -470,8 +474,6 @@ class InvestToPoolInterfaceVM {
           title: "Transaction is not completed",
         });
       })
-      .then(this.syncIndexTokenInfo)
-      .then(this.updateRewardInfo)
       .finally(() => this._setLoading(false));
   };
 }

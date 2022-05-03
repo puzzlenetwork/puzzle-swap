@@ -9,7 +9,6 @@ import Swap from "./Swap";
 import BN from "@src/utils/BN";
 import dayjs from "dayjs";
 import PoolAction from "./PoolAction";
-import loadCreatePoolStateFromStorage from "@screens/CreateCustomPools/utils/loadCreatePoolStateFromStorage";
 
 interface IProps extends ITransaction {
   tokens: Record<string, IToken>;
@@ -44,7 +43,7 @@ const Transaction: React.FC<IProps> = ({
   ) {
     return null;
   }
-  let amount = BN.ZERO;
+  let amount: BN | null = BN.ZERO;
   const getTime = () => {
     const date1 = dayjs(timestamp);
     const diff = Math.abs(date1.diff(dayjs(), "minute"));

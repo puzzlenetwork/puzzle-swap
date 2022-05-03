@@ -19,8 +19,10 @@ const LPStaking: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const vm = useInvestToPoolInterfaceVM();
   if (accountStore.address == null) return null;
-  //todo replace with dollar equivalent
-  const availableToStake = BN.formatUnits(vm.indexTokenBalance, 2);
+  const availableToStake = BN.formatUnits(
+    vm.indexTokenBalance.times(vm.pool.indexTokenRate),
+    8
+  );
   return (
     <Root>
       <SizedBox height={24} />
@@ -56,7 +58,7 @@ const LPStaking: React.FC<IProps> = () => {
             Available to stake
           </Text>
           <SizedBox height={4} />
-          <Text>{availableToStake.toFormat(2)}</Text>
+          <Text>${availableToStake.toFormat(2)}</Text>
           <SizedBox height={16} />
           <Button
             fixed
