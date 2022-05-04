@@ -75,15 +75,15 @@ const Transaction: React.FC<IProps> = ({
             ? stateChanges.transfers[0].amount
             : call.args[1].value;
         const amount1 = new BN(am1);
-        amount = BN.formatUnits(am1, token1?.decimals);
-        return (
+        amount = token1 != null ? BN.formatUnits(am1, token1?.decimals) : null;
+        return amount ? (
           <Swap
             token0={token0}
             amount0={amount0}
             token1={token1}
             amount1={amount1}
           />
-        );
+        ) : null;
       case "generateIndexAndStake":
         const addedTokens = payment.map(({ assetId, amount }) => ({
           amount: new BN(amount),
@@ -150,20 +150,21 @@ const Transaction: React.FC<IProps> = ({
         return null;
     }
   };
-  return (
+  const details = draw();
+  return details != null ? (
     <Root
       className="gridRow"
       alignItems="center"
       onClick={() => window.open(`${EXPLORER_URL}/transactions/${id}`)}
     >
-      <Row alignItems="center">{draw()}</Row>
+      <Row alignItems="center">{details}</Row>
       <Text fitContent nowrap>
-        {amount.toFormat(2)}
+        {amount?.toFormat(2)}
       </Text>
       <Text fitContent nowrap>
         {getTime()}
       </Text>
     </Root>
-  );
+  ) : null;
 };
 export default observer(Transaction);
