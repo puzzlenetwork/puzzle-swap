@@ -5,10 +5,10 @@ import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import SearchAndFilterTab from "@screens/Invest/SearchAndFilterTab";
 import { InvestVMProvider, useInvestVM } from "./InvestVm";
-import PoolsTable from "@screens/Invest/PoolsTable";
 import { Observer } from "mobx-react-lite";
 import { useStores } from "@stores";
 import AccountInvestBalance from "@screens/Invest/AccountInvestBalance";
+import PoolsTable from "./PoolsTable";
 
 interface IProps {}
 
@@ -63,7 +63,6 @@ const InvestImpl: React.FC<IProps> = () => {
               contract. Liquidity pools are used to facilitate decentralized
               trading, lending, and many more functions.
             </Subtitle>
-            <SizedBox height={24} />
             {accountStore.address != null && <AccountInvestBalance />}
             <SizedBox height={24} />
             <SearchAndFilterTab />

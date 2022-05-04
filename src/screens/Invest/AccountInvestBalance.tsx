@@ -18,6 +18,7 @@ const Root = styled.div<{ pic: string }>`
   ${({ pic }) => pic && `background: url(${pic});`};
   background-position: center;
   border-radius: 16px;
+  margin-top: 24px;
   padding: 16px;
   @media (min-width: 560px) {
     padding: 24px;
