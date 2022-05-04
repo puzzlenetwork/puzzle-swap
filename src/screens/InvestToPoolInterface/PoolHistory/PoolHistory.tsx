@@ -19,7 +19,7 @@ const Root = styled.div`
   padding-top: 24px;
 `;
 const PoolHistory: React.FC<IProps> = () => {
-  const { accountStore } = useStores();
+  const { accountStore, poolsStore } = useStores();
   const vm = useInvestToPoolInterfaceVM();
   return (
     <Root>
@@ -50,8 +50,9 @@ const PoolHistory: React.FC<IProps> = () => {
             <>
               {vm.transactionsHistory.map((tr) => (
                 <Transaction
-                  key={tr.id}
                   {...tr}
+                  key={tr.id}
+                  usdnRate={poolsStore.usdnRate}
                   tokens={accountStore.TOKENS_ASSET_ID_MAP}
                 />
               ))}

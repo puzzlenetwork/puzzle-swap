@@ -12,6 +12,7 @@ import PoolAction from "./PoolAction";
 
 interface IProps extends ITransaction {
   tokens: Record<string, IToken>;
+  usdnRate: (assetId: string, coefficient: number) => BN | null;
 }
 
 const Root = styled(Row)`
@@ -29,6 +30,7 @@ const Transaction: React.FC<IProps> = ({
   tokens,
   call,
   stateChanges,
+  usdnRate,
   payment,
 }) => {
   if (
@@ -59,7 +61,9 @@ const Transaction: React.FC<IProps> = ({
     }
     if (diff >= 1500 && diff < 60 * 24 * 7) {
       const v = Math.floor(diff / (60 * 60));
-      return `about ${v} days ago`;
+      return `about ${v + 1} days ago`;
+    } else {
+      return "some time ago";
     }
   };
 
@@ -76,6 +80,12 @@ const Transaction: React.FC<IProps> = ({
             : call.args[1].value;
         const amount1 = new BN(am1);
         amount = token1 != null ? BN.formatUnits(am1, token1?.decimals) : null;
+        if (token1 != null) {
+          const rate = usdnRate(token1.assetId, 1) ?? BN.ZERO;
+          amount = BN.formatUnits(amount1.times(rate), token1.decimals);
+        } else {
+          amount = null;
+        }
         return amount ? (
           <Swap
             token0={token0}
@@ -89,12 +99,15 @@ const Transaction: React.FC<IProps> = ({
           amount: new BN(amount),
           ...tokens[assetId ?? "WAVES"],
         }));
-        // const totalAddedUsdn = addedTokens.reduce(
-        //   (acc, { assetId, amount }) =>
-        //     acc.plus((poolsStore.usdnRate(assetId) ?? BN.ZERO).times(amount)),
-        //   BN.ZERO
-        // );
-        // amount = BN.formatUnits(totalAddedUsdn, 6);
+        const totalAddedUsdn = addedTokens.reduce(
+          (acc, { assetId, amount, decimals }) => {
+            const rate = usdnRate(assetId, 1) ?? BN.ZERO;
+            const am = BN.formatUnits(amount, decimals);
+            return acc.plus(am.times(rate));
+          },
+          BN.ZERO
+        );
+        amount = totalAddedUsdn;
         return <PoolAction tokens={addedTokens} action="add" />;
       case "generateIndexWithOneTokenAndStake":
         const oneToken = stateChanges.invokes[1].payment.map(
@@ -103,12 +116,15 @@ const Transaction: React.FC<IProps> = ({
             ...tokens[assetId ?? "WAVES"],
           })
         );
-        // const totalAddedOneTokenUsdn = oneToken.reduce(
-        //   (acc, { assetId, amount }) =>
-        //     acc.plus((poolsStore.usdnRate(assetId) ?? BN.ZERO).times(amount)),
-        //   BN.ZERO
-        // );
-        // amount = BN.formatUnits(totalAddedOneTokenUsdn, 6);
+        const totalAddedOneTokenUsdn = oneToken.reduce(
+          (acc, { assetId, amount, decimals }) => {
+            const am = BN.formatUnits(amount, decimals);
+            const rate = usdnRate(assetId, 1) ?? BN.ZERO;
+            return acc.plus(rate.times(am));
+          },
+          BN.ZERO
+        );
+        amount = totalAddedOneTokenUsdn;
         return <PoolAction tokens={oneToken} action="add" />;
       case "unstakeAndRedeemIndex":
         const removedTokens =
@@ -118,19 +134,15 @@ const Transaction: React.FC<IProps> = ({
               ...tokens[asset ?? "WAVES"],
             })
           );
-        // const totalRemovedTokenUsdn = removedTokens.reduce(
-        //   (acc, { assetId, amount, decimals }) => {
-        //     const tokenAmount = BN.formatUnits(amount, decimals);
-        //     const usdnAmount = (poolsStore.usdnRate(assetId) ?? BN.ZERO).times(
-        //       tokenAmount
-        //     );
-        //     console.log(usdnAmount.toString());
-        //     return acc.plus(usdnAmount);
-        //   },
-        //   BN.ZERO
-        // );
-        // console.log(totalRemovedTokenUsdn.toString());
-        // amount = BN.formatUnits(totalRemovedTokenUsdn);
+        const totalRemovedTokenUsdn = removedTokens.reduce(
+          (acc, { assetId, amount, decimals }) => {
+            const tokenAmount = BN.formatUnits(amount, decimals);
+            const rate = usdnRate(assetId, 1) ?? BN.ZERO;
+            return acc.plus(rate.times(tokenAmount));
+          },
+          BN.ZERO
+        );
+        amount = totalRemovedTokenUsdn;
         return <PoolAction tokens={removedTokens} action="remove" />;
       case "claimIndexRewards":
         const claimedTokens = stateChanges.transfers.map(
@@ -139,12 +151,15 @@ const Transaction: React.FC<IProps> = ({
             ...tokens[asset ?? "WAVES"],
           })
         );
-        // const totalClaimedUsdn = claimedTokens.reduce(
-        //   (acc, { assetId, amount }) =>
-        //     acc.plus((poolsStore.usdnRate(assetId) ?? BN.ZERO).times(amount)),
-        //   BN.ZERO
-        // );
-        // amount = BN.formatUnits(totalClaimedUsdn);
+        const totalClaimedUsdn = claimedTokens.reduce(
+          (acc, { assetId, amount, decimals }) => {
+            const rate = usdnRate(assetId, 1) ?? BN.ZERO;
+            const am = BN.formatUnits(amount, decimals);
+            return acc.plus(rate.times(am));
+          },
+          BN.ZERO
+        );
+        amount = totalClaimedUsdn;
         return <PoolAction tokens={claimedTokens} action="claim" />;
       default:
         return null;
@@ -159,7 +174,7 @@ const Transaction: React.FC<IProps> = ({
     >
       <Row alignItems="center">{details}</Row>
       <Text fitContent nowrap>
-        {amount?.toFormat(2)}
+        ${amount?.toFormat(2)}
       </Text>
       <Text fitContent nowrap>
         {getTime()}
