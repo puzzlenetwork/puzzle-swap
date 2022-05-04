@@ -8,6 +8,7 @@ import SizedBox from "@components/SizedBox";
 // import darkWallet from "@src/assets/icons/darkWallet.svg";
 import { useInvestVM } from "@screens/Invest/InvestVm";
 import Skeleton from "react-loading-skeleton";
+import { observer } from "mobx-react-lite";
 
 interface IProps {}
 
@@ -73,9 +74,7 @@ const AccountInvestBalance: React.FC<IProps> = () => {
             style={{ fontSize: 24, lineHeight: "32px" }}
             type="light"
           >
-            {vm.totalInvestmentBalance != null
-              ? vm.totalInvestmentBalance
-              : "-"}
+            {vm.totalInvestmentBalance}
           </Text>
         ) : (
           <Skeleton
@@ -128,4 +127,4 @@ const AccountInvestBalance: React.FC<IProps> = () => {
     </Root>
   );
 };
-export default AccountInvestBalance;
+export default observer(AccountInvestBalance);
