@@ -5,7 +5,7 @@ import {
   EXPLORER_URL,
   IToken,
   SLIPPAGE,
-  TOKENS,
+  TOKENS_BY_ASSET_ID,
   TRADE_FEE,
 } from "@src/constants";
 import { RootStore, useStores } from "@stores";
@@ -54,9 +54,7 @@ class MultiSwapVM {
           defaultAssetId0: poolSettings.assets[0].assetId,
           defaultAssetId1: poolSettings.assets[1].assetId,
           tokens: poolSettings.assets.reduce((acc, { assetId, share }) => {
-            const token = Object.values(TOKENS).find(
-              (asset) => assetId === asset.assetId
-            );
+            const token = TOKENS_BY_ASSET_ID[assetId];
             return token
               ? [...acc, { ...token, share, logo: TokenLogos[token.symbol] }]
               : acc;

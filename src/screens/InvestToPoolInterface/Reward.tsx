@@ -14,6 +14,7 @@ import { useInvestToPoolInterfaceVM } from "./InvestToPoolInterfaceVM";
 import BN from "@src/utils/BN";
 import Skeleton from "react-loading-skeleton";
 import dayjs from "dayjs";
+import { TOKENS_BY_SYMBOL } from "@src/constants";
 
 interface IProps {}
 
@@ -47,7 +48,7 @@ const LastClaimDate = styled(Text)`
 const Reward: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
   const { accountStore } = useStores();
-  const { address, TOKENS } = accountStore;
+  const { address } = accountStore;
   if (address == null) return null;
   const date = dayjs(vm.lastClaimDate?.toNumber() ?? 0);
   const format = date.format("D MMM YYYY");
@@ -80,7 +81,7 @@ const Reward: React.FC<IProps> = () => {
                   {vm.totalClaimedReward != null ? (
                     BN.formatUnits(
                       vm.totalClaimedReward,
-                      TOKENS.USDN.decimals
+                      TOKENS_BY_SYMBOL.USDN.decimals
                     ).toFormat(2)
                   ) : (
                     <Skeleton height={16} />

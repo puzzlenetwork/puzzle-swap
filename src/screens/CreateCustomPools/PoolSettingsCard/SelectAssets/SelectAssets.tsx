@@ -10,8 +10,8 @@ import { observer } from "mobx-react-lite";
 import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
 import TokenCompositionRow from "./TokenCompositionRow";
 import TokenSelectModal from "@components/TokensSelectModal/TokenSelectModal";
-import { TOKENS } from "@src/constants";
 import BN from "@src/utils/BN";
+import { TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL } from "@src/constants";
 
 interface IProps {}
 
@@ -40,7 +40,7 @@ const SelectsAssets: React.FC<IProps> = () => {
         <Notification type="info" text={assetNotification} />
         <Grid>
           {vm.poolsAssets.map(({ asset, share, locked }, index) => {
-            const isPuzzle = asset.assetId === TOKENS.PUZZLE.assetId;
+            const isPuzzle = asset.assetId === TOKENS_BY_SYMBOL.PUZZLE.assetId;
             const minShare = new BN(isPuzzle ? 20 : 5);
             return (
               <TokenCompositionRow

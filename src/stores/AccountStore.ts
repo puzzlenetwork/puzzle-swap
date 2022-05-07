@@ -3,14 +3,13 @@ import { Signer } from "@waves/signer";
 import { ProviderWeb } from "@waves.exchange/provider-web";
 import { ProviderCloud } from "@waves.exchange/provider-cloud";
 import { ProviderKeeper } from "@waves/provider-keeper";
-import { IToken, NODE_URL, TOKENS } from "@src/constants";
+import { NODE_URL, TOKENS_LIST } from "@src/constants";
 import { action, autorun, makeAutoObservable, reaction } from "mobx";
 import Balance from "@src/entities/Balance";
 import { getCurrentBrowser } from "@src/utils/getCurrentBrowser";
 import BN from "@src/utils/BN";
 import { nodeInteraction, waitForTx } from "@waves/waves-transactions";
 import nodeService from "@src/services/nodeService";
-import tokenLogos from "@src/constants/tokenLogos";
 
 export enum LOGIN_TYPE {
   SIGNER_SEED = "SIGNER_SEED",
@@ -216,11 +215,10 @@ class AccountStore {
     if (!force && this.assetsBalancesLoading) return;
     this.setAssetsBalancesLoading(true);
 
-    const tokens = this.TOKENS;
     const address = this.address;
     const data = await nodeService.getAddressBalances(NODE_URL, address);
-    const assetBalances = Object.entries(tokens).map(([_, asset]) => {
-      const t = data.find(({ assetId }) => assetId === asset.assetId);
+    const assetBalances = TOKENS_LIST.map((asset) => {
+      const t = data.find(({ assetId }) => asset.assetId === assetId);
       const balance = new BN(t != null ? t.balance : 0);
       const rate =
         this.rootStore.poolsStore.usdnRate(asset.assetId, 1) ?? BN.ZERO;
@@ -369,29 +367,19 @@ class AccountStore {
     return txId;
   };
 
-  get TOKENS() {
-    return Object.values(TOKENS)
-      .map((t) => ({
-        ...t,
-        logo: tokenLogos[t.symbol] ?? tokenLogos.UNKNOWN,
-      }))
-      .reduce(
-        (acc, token) => ({ ...acc, [token.symbol]: token }),
-        {} as Record<string, IToken>
-      );
-  }
+  // get TOKENS() {
+  //   return TOKENS_LIST.reduce(
+  //     (acc, token) => ({ ...acc, [token.symbol]: token }),
+  //     {} as Record<string, IToken>
+  //   );
+  // }
 
-  get TOKENS_ASSET_ID_MAP() {
-    return Object.values(TOKENS)
-      .map((t) => ({
-        ...t,
-        logo: tokenLogos[t.symbol] ?? tokenLogos.UNKNOWN,
-      }))
-      .reduce(
-        (acc, token) => ({ ...acc, [token.assetId]: token }),
-        {} as Record<string, IToken>
-      );
-  }
+  // get TOKENS_ASSET_ID_MAP() {
+  //   return TOKENS_LIST.reduce(
+  //     (acc, token) => ({ ...acc, [token.assetId]: token }),
+  //     {} as Record<string, IToken>
+  //   );
+  // }
 }
 
 export default AccountStore;

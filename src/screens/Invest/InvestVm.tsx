@@ -4,6 +4,8 @@ import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
 import Pool from "@src/entities/Pool";
 import BN from "@src/utils/BN";
+import poolService from "@src/services/poolsService";
+import { TOKENS_BY_ASSET_ID } from "@src/constants";
 
 const ctx = React.createContext<InvestVM | null>(null);
 
@@ -34,49 +36,25 @@ class InvestVM {
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
-    // this.syncCustomPools();
+    this.syncCustomPools();
     makeAutoObservable(this);
   }
 
-  // syncCustomPools = async () => {
-  //   const vpools = await poolService.getPools();
-  //   const pools = vpools.filter(({ domain }) => domain === "pooool");
-  //   const customPools = pools.map((pool) => {
-  //     const tokens = pool.assets.reduce((acc, v) => {
-  //       const token = Object.entries(TOKENS)
-  //         .map(([_, value]) => value)
-  //         .find(({ assetId }) => assetId === v.assetId);
-  //       return token != null
-  //         ? [
-  //             ...acc,
-  //             {
-  //               ...token,
-  //               logo: tokenLogosByAssetId[v.assetId],
-  //               share: v.share,
-  //             },
-  //           ]
-  //         : [...acc];
-  //     }, [] as Array<IToken & { share: number }>);
-  //
-  //     return new Pool({
-  //       contractAddress: pool.contractAddress,
-  //       layer2Address: pool.layer2Address,
-  //       baseTokenId: pool.baseTokenId,
-  //       title: pool.title,
-  //       domain: pool.domain,
-  //       isCustom: pool.isCustom,
-  //       logo: pool.logo,
-  //       defaultAssetId0: pool.assets[0].assetId,
-  //       defaultAssetId1: pool.assets[1].assetId,
-  //       tokens,
-  //     });
-  //   });
-  //   this.setCustomPools(customPools);
-  // };
+  syncCustomPools = async () => {
+    const rawPools = await poolService.getPools();
+    const pools = rawPools.map((p) => {
+      const tokens = p.assets.map(({ assetId, share }) => ({
+        ...TOKENS_BY_ASSET_ID[assetId],
+        share,
+      }));
+      return new Pool({ ...p, tokens });
+    });
+    this.setCustomPools(pools);
+  };
 
   get pools() {
     const { poolsStats, pools } = this.rootStore.poolsStore;
-    return pools.map((p) => {
+    return [...pools, ...this.customPools].map((p) => {
       const apy = poolsStats != null ? poolsStats[p.domain]?.apy : BN.ZERO;
       return { ...p, logo: p.logo, baseToken: p.baseToken, apy };
     });

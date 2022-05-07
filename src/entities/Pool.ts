@@ -20,6 +20,7 @@ export interface IShortPoolInfo {
 }
 
 class Pool implements IPoolConfig {
+  public readonly owner?: string;
   public readonly domain: string;
   public readonly contractAddress: string;
   public readonly layer2Address?: string;
@@ -64,10 +65,11 @@ class Pool implements IPoolConfig {
     this.title = params.title;
     this._logo = params.logo;
     this.tokens = params.tokens;
-    this.defaultAssetId0 = params.defaultAssetId0;
-    this.defaultAssetId1 = params.defaultAssetId1;
+    this.defaultAssetId0 = params.defaultAssetId0 ?? params.tokens[0].assetId;
+    this.defaultAssetId1 = params.defaultAssetId1 ?? params.tokens[1].assetId;
     this.domain = params.domain;
     this.isCustom = params.isCustom;
+    this.owner = params.owner;
 
     this.syncLiquidity().then();
     setInterval(this.syncLiquidity, 15000);
@@ -97,7 +99,7 @@ class Pool implements IPoolConfig {
       this.setGlobalVolume(globalVolume);
     }
     const usdnAsset = this.tokens.find(({ symbol }) => symbol === "USDN")!;
-    const usdnLiquidity = this.liquidity[usdnAsset.assetId];
+    const usdnLiquidity = this.liquidity[usdnAsset?.assetId];
     if (usdnLiquidity != null && usdnAsset.share != null) {
       const globalLiquidity = new BN(usdnLiquidity)
         .div(usdnAsset.share)
@@ -129,10 +131,9 @@ class Pool implements IPoolConfig {
   get indexTokenRate() {
     if (this.globalPoolTokenAmount == null || this.globalPoolTokenAmount.eq(0))
       return BN.ZERO;
-    const indexTokenRate = this.globalLiquidity.div(
+    return this.globalLiquidity.div(
       BN.formatUnits(this.globalPoolTokenAmount, 8)
     );
-    return indexTokenRate;
   }
 
   @action.bound public getAccountLiquidityInfo = async (
@@ -195,15 +196,15 @@ class Pool implements IPoolConfig {
     };
   };
 
-  public contractMatchRequest = async (match: string) => {
-    const url = `${NODE_URL}/addresses/data/${this.contractAddress}?matches=${match}`;
-    const response: { data: IData[] } = await axios.get(url);
-    if (response.data) {
-      return response.data;
-    } else {
-      return null;
-    }
-  };
+  // public contractMatchRequest = async (match: string) => {
+  //   const url = `${NODE_URL}/addresses/data/${this.contractAddress}?matches=${match}`;
+  //   const response: { data: IData[] } = await axios.get(url);
+  //   if (response.data) {
+  //     return response.data;
+  //   } else {
+  //     return null;
+  //   }
+  // };
   public contractKeysRequest = async (keysArray: string[] | string) => {
     const searchKeys = typeof keysArray === "string" ? [keysArray] : keysArray;
     const search = new URLSearchParams(searchKeys?.map((s) => ["key", s]));

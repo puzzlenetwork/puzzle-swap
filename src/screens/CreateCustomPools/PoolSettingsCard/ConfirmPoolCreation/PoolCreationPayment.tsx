@@ -12,6 +12,7 @@ import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomP
 import Notification from "@components/Notification";
 import { useStores } from "@stores";
 import BN from "@src/utils/BN";
+import { TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL } from "@src/constants";
 
 interface IProps {}
 
@@ -23,8 +24,8 @@ const Root = styled.div`
 const PoolCreationPayment: React.FC<IProps> = () => {
   const { accountStore, nftStore } = useStores();
 
-  const { findBalanceByAssetId, TOKENS } = accountStore;
-  const puzzleBalance = findBalanceByAssetId(TOKENS.TPUZZLE.assetId);
+  const { findBalanceByAssetId } = accountStore;
+  const puzzleBalance = findBalanceByAssetId(TOKENS_BY_SYMBOL.TPUZZLE.assetId);
   const vm = useCreateCustomPoolsVM();
   return (
     <Root>

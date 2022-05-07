@@ -7,6 +7,9 @@ import {
   IToken,
   NODE_URL,
   PUZZLE_NTFS,
+  TOKENS_BY_ASSET_ID,
+  TOKENS_BY_SYMBOL,
+  TOKENS_LIST,
 } from "@src/constants";
 import BN from "@src/utils/BN";
 import {
@@ -71,14 +74,13 @@ class CreateCustomPoolsVm {
   }
 
   initialize = (initData: IInitData | null) => {
-    const { accountStore } = this.rootStore;
     if (initData != null) {
       if (initData.assets != null) {
         this.poolsAssets = initData.assets?.map(
           ({ assetId, share, locked }) => ({
             share: new BN(share).times(10),
             locked,
-            asset: accountStore.TOKENS_ASSET_ID_MAP[assetId],
+            asset: TOKENS_BY_ASSET_ID[assetId],
           })
         );
       }
@@ -146,10 +148,9 @@ class CreateCustomPoolsVm {
 
   poolsAssets: IPoolToken[] = [];
   setDefaultPoolsAssets = () => {
-    const { accountStore } = this.rootStore;
     this.poolsAssets = [
       {
-        asset: accountStore.TOKENS.PUZZLE,
+        asset: TOKENS_BY_SYMBOL.PUZZLE,
         share: new BN(500),
         locked: false,
       },
@@ -197,7 +198,7 @@ class CreateCustomPoolsVm {
   };
 
   removeAssetFromPool = (assetId: string) => {
-    const puzzle = this.rootStore.accountStore.TOKENS.PUZZLE;
+    const puzzle = TOKENS_BY_SYMBOL.PUZZLE;
     if (assetId === puzzle.assetId) return;
     const indexOfObject = this.poolsAssets.findIndex(
       ({ asset }) => asset.assetId === assetId
@@ -253,17 +254,15 @@ class CreateCustomPoolsVm {
 
   get tokensToAdd() {
     const { accountStore } = this.rootStore;
-    const balances = Object.values(accountStore.TOKENS)
-      .map((t) => {
-        const balance = accountStore.findBalanceByAssetId(t.assetId);
-        return balance ?? new Balance(t);
-      })
-      .sort((a, b) => {
-        if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
-        if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
-        if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
-        return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
-      });
+    const balances = TOKENS_LIST.map((t) => {
+      const balance = accountStore.findBalanceByAssetId(t.assetId);
+      return balance ?? new Balance(t);
+    }).sort((a, b) => {
+      if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
+      if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
+      if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
+      return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
+    });
     const currentTokens = this.poolsAssets.reduce<string[]>(
       (acc, v) => [...acc, v.asset.assetId],
       []
@@ -283,17 +282,19 @@ class CreateCustomPoolsVm {
 
   buyRandomArtefact = async () => {
     const { accountStore } = this.rootStore;
-    const { TOKENS } = accountStore;
     if (!this.canBuyNft) return;
     if (this.puzzleNFTPrice === 0) return;
-    const amount = BN.parseUnits(this.puzzleNFTPrice, TOKENS.TPUZZLE.decimals);
+    const amount = BN.parseUnits(
+      this.puzzleNFTPrice,
+      TOKENS_BY_SYMBOL.TPUZZLE.decimals
+    );
     this._setLoading(true);
     await accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.createArtefacts,
         payment: [
           {
-            assetId: TOKENS.TPUZZLE.assetId,
+            assetId: TOKENS_BY_SYMBOL.TPUZZLE.assetId,
             amount: amount.toString(),
           },
         ],
@@ -340,8 +341,8 @@ class CreateCustomPoolsVm {
   };
 
   get puzzleNFTPrice() {
-    const { accountStore, poolsStore, nftStore } = this.rootStore;
-    const rate = poolsStore.usdnRate(accountStore.TOKENS.PUZZLE.assetId, 1);
+    const { poolsStore, nftStore } = this.rootStore;
+    const rate = poolsStore.usdnRate(TOKENS_BY_SYMBOL.PUZZLE.assetId, 1);
     if (nftStore.totalPuzzleNftsAmount == null) return 0;
     const amount = new BN(400)
       .div(rate ?? 0)
@@ -353,7 +354,7 @@ class CreateCustomPoolsVm {
     const { accountStore, nftStore } = this.rootStore;
     if (nftStore.totalPuzzleNftsAmount == null) return false;
     const balance = accountStore.findBalanceByAssetId(
-      accountStore.TOKENS.TPUZZLE.assetId
+      TOKENS_BY_SYMBOL.TPUZZLE.assetId
     );
     if (balance == null) return false;
     return balance.balance?.gte(this.puzzleNFTPrice);
