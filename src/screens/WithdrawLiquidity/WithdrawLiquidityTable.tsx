@@ -10,7 +10,7 @@ import { Row } from "@components/Flex";
 import WithdrawTokenRow from "./WithdrawTokenRow";
 import { useWithdrawLiquidityVM } from "@screens/WithdrawLiquidity/WithdrawLiquidityVM";
 import { observer } from "mobx-react-lite";
-import { Loading } from "@components/Loading";
+import Loading from "@components/Loading";
 
 interface IProps {}
 
@@ -60,13 +60,13 @@ const WithdrawLiquidityTable: React.FC<IProps> = () => {
         <GridTable desktopTemplate="1fr 1fr" mobileTemplate="1fr 1fr">
           {vm.withdrawCompositionTokens
             .sort((a, b) => (a.inUsdn!.gt(b.inUsdn!) ? -1 : 1))
-            .map(({ symbol, inUsdn, withdraw, shareAmount, logo }) => (
+            .map(({ symbol, inUsdn, withdraw, share, logo }) => (
               <WithdrawTokenRow
                 symbol={symbol}
                 key={symbol}
                 withdrawUsdnEquivalent={inUsdn}
                 withdrawAmount={withdraw}
-                percent={shareAmount * 100}
+                percent={share}
                 logo={logo}
               />
             ))}

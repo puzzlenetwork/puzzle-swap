@@ -6,10 +6,10 @@ import { Column } from "@src/components/Flex";
 import eagle from "@src/assets/eagle.png";
 import Button from "@components/Button";
 import SizedBox from "@components/SizedBox";
-import { useStores } from "@stores";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { useStakingVM } from "@screens/Staking/StakingVM";
+import { ROUTES } from "@src/constants";
 
 const Root = styled.div`
   display: flex;
@@ -33,7 +33,6 @@ const Title = styled(Text)`
   line-height: 32px;
 `;
 const NFTStakingBanner: React.FC = () => {
-  const { accountStore } = useStores();
   const vm = useStakingVM();
   return (
     <Root>
@@ -50,7 +49,7 @@ const NFTStakingBanner: React.FC = () => {
             {vm.stats != null ? vm.stats?.ultra.toFormat(2).concat(" %") : "—"}
           </Text>
           <SizedBox height={16} />
-          <Link to={accountStore.ROUTES.ULTRASTAKE}>
+          <Link to={ROUTES.ULTRASTAKE}>
             <Button kind="secondary" style={{ color: "#7075E9" }} size="medium">
               Go to NFT Staking
             </Button>

@@ -10,7 +10,7 @@ import { useStores } from "@stores";
 import Notification from "@components/Notification";
 import { Link } from "react-router-dom";
 import buildBuyTokenRoute from "@src/utils/buildBuyTokenRoute";
-import { Loading } from "@components/Loading";
+import Loading from "@components/Loading";
 
 interface IProps {}
 

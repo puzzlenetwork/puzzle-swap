@@ -5,7 +5,12 @@ import { RootStore, useStores } from "@stores";
 import Balance from "@src/entities/Balance";
 import BN from "@src/utils/BN";
 import aggregatorService, { TCalcRoute } from "@src/services/aggregatorService";
-import { IToken, TRADE_FEE } from "@src/constants";
+import {
+  CONTRACT_ADDRESSES,
+  EXPLORER_URL,
+  IToken,
+  TRADE_FEE,
+} from "@src/constants";
 
 const ctx = React.createContext<TradeVM | null>(null);
 
@@ -201,7 +206,6 @@ class TradeVM {
 
   swap = async () => {
     const { accountStore, notificationStore } = this.rootStore;
-    const { CONTRACT_ADDRESSES } = accountStore;
     const { token0, amount0, minimumToReceive, parameters } = this;
     if (this.synchronizing || parameters == null) return;
     if (token0 == null || amount0.eq(0)) return;
@@ -234,7 +238,7 @@ class TradeVM {
             {
               type: "success",
               title: "Transaction is completed",
-              link: `${accountStore.EXPLORER_LINK}/tx/${txId}`,
+              link: `${EXPLORER_URL}/tx/${txId}`,
               linkTitle: "View on Explorer",
             }
           );

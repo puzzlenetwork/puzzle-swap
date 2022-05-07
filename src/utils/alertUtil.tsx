@@ -26,11 +26,12 @@ const Link = styled.a`
   font-size: 14px;
   line-height: 20px;
   color: #7075e9;
+  cursor: pointer;
 `;
 
 const getAlert = (
   content: string,
-  { type, title, link, linkTitle }: TNotifyOptions
+  { type, title, link, linkTitle, onClick, onClickText }: TNotifyOptions
 ) => {
   if (!type) return null;
   return (
@@ -53,6 +54,11 @@ const getAlert = (
           {link && (
             <Link target="_blank" href={link}>
               {linkTitle || link}
+            </Link>
+          )}
+          {onClick && (
+            <Link target="_blank" onClick={onClick}>
+              {onClickText}
             </Link>
           )}
         </Column>

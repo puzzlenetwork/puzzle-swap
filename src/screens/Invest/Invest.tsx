@@ -1,24 +1,20 @@
 import styled from "@emotion/styled";
-import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import React from "react";
 import Layout from "@components/Layout";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import Card from "@components/Card";
-import { AdaptiveRow } from "@components/Flex";
+import SearchAndFilterTab from "@screens/Invest/SearchAndFilterTab";
+import { InvestVMProvider, useInvestVM } from "./InvestVm";
+import { Observer } from "mobx-react-lite";
 import { useStores } from "@stores";
-import PoolNotFound from "@screens/Invest/PoolNotFound";
-import GridTable from "@components/GridTable";
-import InvestPoolRow from "@screens/Invest/InvestPoolRow";
-import group from "@src/assets/icons/group.svg";
-import Input from "@components/Input";
+import AccountInvestBalance from "@screens/Invest/AccountInvestBalance";
+import PoolsTable from "./PoolsTable";
 
 interface IProps {}
 
 const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
   box-sizing: border-box;
   padding: 0 16px;
@@ -45,145 +41,45 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
       liquiditySort ? "scale(1)" : "scale(1, -1)"};
   }
 `;
-
-const Invest: React.FC<IProps> = () => {
-  const { poolsStore, accountStore } = useStores();
-  const [searchValue, setSearchValue] = useState<string>("");
-  const [activeSort, setActiveSort] = useState<0 | 1>(1);
-  const [sortApy, setSortApy] = useState<boolean>(true);
-  const [sortLiquidity, setSortLiquidity] = useState<boolean>(true);
-  const data = poolsStore.poolDataWithApy;
-  const filteredPools = data
-    .sort((a, b) => {
-      if (activeSort === 0) {
-        if (a.globalLiquidity != null && b.globalLiquidity != null) {
-          if (a.globalLiquidity.lt(b.globalLiquidity)) {
-            return sortLiquidity ? 1 : -1;
-          } else {
-            return sortLiquidity ? -1 : 1;
-          }
-        }
-      } else if (activeSort === 1) {
-        if (a.apy != null && b.apy != null) {
-          if (a.apy.lt(b.apy)) {
-            return sortApy ? 1 : -1;
-          } else {
-            return sortApy ? -1 : 1;
-          }
-        }
-      }
-      return 1;
-    })
-    .filter(({ id }) =>
-      Object.keys(accountStore.ROUTES.invest).some((key) => key === id)
-    )
-    .filter(({ name, tokens }) =>
-      searchValue
-        ? [name, ...tokens.map(({ symbol }) => symbol)]
-            .map((v) => v.toLowerCase())
-            .some((v) => v.includes(searchValue.toLowerCase()))
-        : true
-    );
-
+const Subtitle = styled(Text)`
+  @media (min-width: 880px) {
+    max-width: 560px;
+  }
+`;
+const InvestImpl: React.FC<IProps> = () => {
+  const vm = useInvestVM();
+  const { accountStore } = useStores();
   return (
     <Layout>
-      <Root apySort={sortApy} liquiditySort={sortLiquidity}>
-        <Text weight={500} size="large">
-          Invest in Puzzle Mega Pools
-        </Text>
-        <SizedBox height={4} />
-        <Text size="medium" type="secondary">
-          Select a pool to invest
-        </Text>
-        <SizedBox height={24} />
-        <Input
-          icon="search"
-          placeholder="Asset or pool name"
-          style={{ background: "#fff", width: "100%" }}
-          className="mobile"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          suffix={
-            <Text
-              fitContent
-              type="secondary"
-              style={{ cursor: "pointer" }}
-              onClick={() => setSearchValue("")}
-            >
-              CANCEL
+      <Observer>
+        {() => (
+          <Root apySort={vm.sortApy} liquiditySort={vm.sortLiquidity}>
+            <Text weight={500} size="large">
+              Invest in Puzzle Mega Pools
             </Text>
-          }
-          suffixCondition={searchValue.length > 1}
-        />
-        <SizedBox height={16} />
-        <Card style={{ padding: 0, minHeight: 280, justifyContent: "center" }}>
-          {filteredPools.length > 0 ? (
-            <GridTable mobileTemplate="3fr 1fr">
-              <div className="gridTitle">
-                <div>Pool name</div>
-                <AdaptiveRow>
-                  <div className="desktop">
-                    <Text size="medium">Liquidity</Text>
-                    <img
-                      src={group}
-                      alt="group"
-                      className="liquidity-group"
-                      onClick={() => {
-                        setActiveSort(0);
-                        setSortLiquidity(!sortLiquidity);
-                      }}
-                    />
-                  </div>
-                  <div className="mobile" style={{ cursor: "pointer" }}>
-                    <Text size="medium">APY</Text>
-                    <img
-                      src={group}
-                      alt="group"
-                      className="apy-group"
-                      onClick={() => {
-                        setActiveSort(1);
-                        setSortApy(!sortApy);
-                      }}
-                    />
-                  </div>
-                </AdaptiveRow>
-                <AdaptiveRow>
-                  <div className="desktop" style={{ cursor: "pointer" }}>
-                    <Text size="medium">APY</Text>
-                    <img
-                      src={group}
-                      alt="group"
-                      className="apy-group"
-                      onClick={() => {
-                        setActiveSort(1);
-                        setSortApy(!sortApy);
-                      }}
-                    />
-                  </div>
-                </AdaptiveRow>
-              </div>
-              {filteredPools.map((pool, i) => (
-                <InvestPoolRow
-                  key={i}
-                  pool={pool as any}
-                  stats={
-                    poolsStore.poolsStats
-                      ? poolsStore.poolsStats[pool.id]
-                      : undefined
-                  }
-                />
-              ))}
-            </GridTable>
-          ) : (
-            <PoolNotFound
-              onClear={() => setSearchValue("")}
-              searchValue={searchValue}
-            />
-          )}
-        </Card>
-      </Root>
+            <SizedBox height={4} />
+            <Subtitle size="medium" fitContent>
+              A liquidity pool is a collection of funds locked in a smart
+              contract. Liquidity pools are used to facilitate decentralized
+              trading, lending, and many more functions.
+            </Subtitle>
+            {accountStore.address != null && <AccountInvestBalance />}
+            <SizedBox height={24} />
+            <SearchAndFilterTab />
+            {/*<SizedBox height={16} />*/}
+            {/*<AccountPools />*/}
+            <SizedBox height={16} />
+            <PoolsTable />
+          </Root>
+        )}
+      </Observer>
     </Layout>
   );
 };
 
-export default observer(Invest);
+const Invest: React.FC<IProps> = () => (
+  <InvestVMProvider>
+    <InvestImpl />
+  </InvestVMProvider>
+);
+export default Invest;

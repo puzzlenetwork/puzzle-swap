@@ -2,13 +2,17 @@ import statsService, { IArtWork } from "@src/services/statsService";
 import RootStore from "@stores/RootStore";
 import nodeService, { INFT } from "@src/services/nodeService";
 import { makeAutoObservable, reaction } from "mobx";
-import { NODE_URL_MAP } from "@src/constants";
+import { CONTRACT_ADDRESSES, NODE_URL, PUZZLE_NTFS } from "@src/constants";
 
 export default class NftStore {
   public rootStore: RootStore;
 
   public artworks: IArtWork[] | null = null;
   private _setArtworks = (v: IArtWork[]) => (this.artworks = v);
+
+  public totalPuzzleNftsAmount: number | null = null;
+  private _setTotalPuzzleNftsAmount = (v: number) =>
+    (this.totalPuzzleNftsAmount = v);
 
   public stakedAccountNFTs: Array<IArtWork & Partial<INFT>> | null = null;
   public setStakedAccountNFTs = (v: Array<IArtWork & Partial<INFT>> | null) =>
@@ -18,6 +22,14 @@ export default class NftStore {
   public setAccountNFTs = (v: Array<IArtWork & Partial<INFT>> | null) =>
     (this.accountNFTs = v);
 
+  get accountNFTsToStake() {
+    return (
+      this.accountNFTs?.filter(({ description }) =>
+        description?.toLowerCase().includes("eagle")
+      ) ?? []
+    );
+  }
+
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
@@ -25,31 +37,55 @@ export default class NftStore {
       .getArtworks()
       .then((d) => this._setArtworks(d))
       .then(() =>
-        Promise.all([this.getAccountNFTs(), this.getAccountNFTsOnStaking()])
+        Promise.all([
+          this.syncAccountNFTs(),
+          this.syncAccountNFTsOnStaking(),
+          this.getTotalPuzzlesNftsAmount(),
+        ])
       );
 
     reaction(
       () => this.rootStore.accountStore.address,
-      () => Promise.all([this.getAccountNFTs(), this.getAccountNFTsOnStaking()])
+      () =>
+        Promise.all([
+          this.syncAccountNFTs(),
+          this.syncAccountNFTsOnStaking(),
+          this.getTotalPuzzlesNftsAmount(),
+        ])
     );
     setInterval(
       () =>
-        Promise.all([this.getAccountNFTs(), this.getAccountNFTsOnStaking()]),
+        Promise.all([
+          this.syncAccountNFTs(),
+          this.syncAccountNFTsOnStaking(),
+          this.getTotalPuzzlesNftsAmount(),
+        ]),
       40 * 1000
     );
   }
 
-  getAccountNFTs = async () => {
-    const { address, chainId } = this.rootStore.accountStore;
+  private getTotalPuzzlesNftsAmount = async () => {
+    const res = await nodeService.nodeKeysRequest(
+      NODE_URL,
+      CONTRACT_ADDRESSES.createArtefacts,
+      `total_sold_nft`
+    );
+    this._setTotalPuzzleNftsAmount(
+      res && res[0] && res[0].value ? Number(res[0].value) : 0
+    );
+  };
+
+  syncAccountNFTs = async () => {
+    const { address } = this.rootStore.accountStore;
     const { artworks } = this;
     if (address == null || artworks == null) return;
-    const nfts = await nodeService.getAddressNfts(
-      NODE_URL_MAP[chainId],
-      address
-    );
+    const nfts = await nodeService.getAddressNfts(NODE_URL, address);
     const supportedPuzzleNft = nfts
-      .filter(({ description }) =>
-        artworks.some(({ typeId }) => typeId && description.includes(typeId))
+      .filter(
+        ({ description, name }) =>
+          artworks.some(
+            ({ typeId }) => typeId && description.includes(typeId)
+          ) || PUZZLE_NTFS.some((nft) => name && name.includes(nft.name))
       )
       .map((nft) => ({
         ...nft,
@@ -60,25 +96,30 @@ export default class NftStore {
       .map((nft) => {
         const searchTerm = "Issue: ";
         const searchIndex = nft.description?.indexOf(searchTerm) ?? 0;
-        const strOut = nft.description?.substr(searchIndex + searchTerm.length);
-        const numberName = `${nft.name} #${strOut}`;
-        return { ...nft, name: numberName };
+        if (searchIndex !== -1) {
+          const strOut = nft.description?.substr(
+            searchIndex + searchTerm.length
+          );
+          const numberName = `${nft.name} #${strOut}`;
+          return { ...nft, name: numberName, old: true };
+        }
+        const imageLink = PUZZLE_NTFS.find(
+          ({ name }) => name === nft.name
+        )?.image;
+        return { ...nft, imageLink };
       });
     this.setAccountNFTs(supportedPuzzleNft);
   };
 
-  getAccountNFTsOnStaking = async () => {
-    const { artworks, rootStore } = this;
-    const { address, chainId } = this.rootStore.accountStore;
+  syncAccountNFTsOnStaking = async () => {
+    const { artworks } = this;
+    const { address } = this.rootStore.accountStore;
     if (address == null || artworks == null) return;
-    const ultra = rootStore.accountStore.CONTRACT_ADDRESSES.ultraStaking;
+    const ultra = CONTRACT_ADDRESSES.ultraStaking;
 
-    const allNftOnStaking = await nodeService.getAddressNfts(
-      NODE_URL_MAP[chainId],
-      ultra
-    );
+    const allNftOnStaking = await nodeService.getAddressNfts(NODE_URL, ultra);
     const addressStakingNft = await nodeService.nodeMatchRequest(
-      NODE_URL_MAP[chainId],
+      NODE_URL,
       ultra,
       `address_${address}_nft_(.*)`
     );

@@ -12,7 +12,8 @@ import SizedBox from "@src/components/SizedBox";
 import { ReactComponent as LinkIcon } from "@src/assets/icons/link.svg";
 import Text from "@components/Text";
 import { Anchor } from "@components/Anchor";
-import { Loading } from "@components/Loading";
+import Loading from "@components/Loading";
+import { EXPLORER_URL } from "@src/constants";
 
 interface IProps {}
 
@@ -28,7 +29,7 @@ const Root = styled.div`
 
 const AccountNfts: React.FC<IProps> = () => {
   const { accountStore, nftStore } = useStores();
-  const { accountNFTs, stakedAccountNFTs } = nftStore;
+  const { accountNFTsToStake, stakedAccountNFTs } = nftStore;
   const vm = useNFTStakingVM();
   if (accountStore.address == null)
     return (
@@ -40,8 +41,8 @@ const AccountNfts: React.FC<IProps> = () => {
     );
 
   if (
-    accountNFTs &&
-    accountNFTs.length === 0 &&
+    accountNFTsToStake &&
+    accountNFTsToStake.length === 0 &&
     stakedAccountNFTs &&
     stakedAccountNFTs.length === 0
   )
@@ -52,12 +53,14 @@ const AccountNfts: React.FC<IProps> = () => {
         onBtnClick={() => vm.setNftDisplayState(0)}
       />
     );
-
+  console.log(accountNFTsToStake);
   return (
     <Root>
-      {accountNFTs == null && stakedAccountNFTs == null && <ArtefactSkeleton />}
-      {accountNFTs &&
-        accountNFTs.map((nft, index) => (
+      {accountNFTsToStake == null && stakedAccountNFTs == null && (
+        <ArtefactSkeleton />
+      )}
+      {accountNFTsToStake &&
+        accountNFTsToStake.map((nft, index) => (
           <Artefact
             {...nft}
             key={index + "accountNFT"}
@@ -125,9 +128,7 @@ const AccountNfts: React.FC<IProps> = () => {
                     </Row>
                   </Anchor>
                   <SizedBox height={20} />
-                  <Anchor
-                    href={`${accountStore.EXPLORER_LINK}/asset/${nft.assetId}`}
-                  >
+                  <Anchor href={`${EXPLORER_URL}/asset/${nft.assetId}`}>
                     <Row alignItems="center">
                       <LinkIcon />
                       <SizedBox width={8} />

@@ -5,7 +5,7 @@ import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import statsService from "@src/services/statsService";
 import nodeService from "@src/services/nodeService";
-import { NODE_URL_MAP } from "@src/constants";
+import { CONTRACT_ADDRESSES, EXPLORER_URL, NODE_URL } from "@src/constants";
 
 const ctx = React.createContext<NFTStakingVM | null>(null);
 
@@ -18,8 +18,7 @@ export const NFTStakingVMProvider: React.FC = ({ children }) => {
 export const useNFTStakingVM = () => useVM(ctx);
 
 class NFTStakingVM {
-  private contractAddress =
-    this.rootStore.accountStore.CONTRACT_ADDRESSES.ultraStaking;
+  private contractAddress = CONTRACT_ADDRESSES.ultraStaking;
 
   loading: boolean = false;
   private _setLoading = (l: boolean) => (this.loading = l);
@@ -52,7 +51,7 @@ class NFTStakingVM {
   private _setLastClaimDate = (v: BN) => (this.lastClaimDate = v);
 
   private updateAddressStakingInfo = async () => {
-    const { chainId, address, TOKENS } = this.rootStore.accountStore;
+    const { address, TOKENS } = this.rootStore.accountStore;
     const { contractAddress } = this;
     const keysArray = {
       globalStaked: "global_staked",
@@ -63,7 +62,7 @@ class NFTStakingVM {
       lastClaimDate: `${address}_${TOKENS.USDN.assetId}_lastClaim`,
     };
     const response = await nodeService.nodeKeysRequest(
-      NODE_URL_MAP[chainId],
+      NODE_URL,
       contractAddress,
       Object.values(keysArray)
     );
@@ -122,7 +121,7 @@ class NFTStakingVM {
           notificationStore.notify(`Your rewards was claimed`, {
             type: "success",
             title: `Success`,
-            link: `${accountStore.EXPLORER_LINK}/tx/${txId}`,
+            link: `${EXPLORER_URL}/tx/${txId}`,
             linkTitle: "View on Explorer",
           })
       )
@@ -152,7 +151,7 @@ class NFTStakingVM {
           notificationStore.notify(`Your have staked your nft`, {
             type: "success",
             title: `Success`,
-            link: `${accountStore.EXPLORER_LINK}/tx/${txId}`,
+            link: `${EXPLORER_URL}/tx/${txId}`,
             linkTitle: "View on Explorer",
           })
       )
@@ -166,8 +165,8 @@ class NFTStakingVM {
         this.rootStore.nftStore.setAccountNFTs(null);
         this.rootStore.nftStore.setStakedAccountNFTs(null);
         await Promise.all([
-          this.rootStore.nftStore.getAccountNFTs(),
-          this.rootStore.nftStore.getAccountNFTsOnStaking(),
+          this.rootStore.nftStore.syncAccountNFTs(),
+          this.rootStore.nftStore.syncAccountNFTsOnStaking(),
           this.updateAddressStakingInfo(),
         ]);
       })
@@ -194,7 +193,7 @@ class NFTStakingVM {
           notificationStore.notify(`Your have unstaked your nft`, {
             type: "success",
             title: `Success`,
-            link: `${accountStore.EXPLORER_LINK}/tx/${txId}`,
+            link: `${EXPLORER_URL}/tx/${txId}`,
             linkTitle: "View on Explorer",
           })
       )
@@ -208,8 +207,8 @@ class NFTStakingVM {
         this.rootStore.nftStore.setAccountNFTs(null);
         this.rootStore.nftStore.setStakedAccountNFTs(null);
         await Promise.all([
-          this.rootStore.nftStore.getAccountNFTs(),
-          this.rootStore.nftStore.getAccountNFTsOnStaking(),
+          this.rootStore.nftStore.syncAccountNFTs(),
+          this.rootStore.nftStore.syncAccountNFTsOnStaking(),
           this.updateAddressStakingInfo(),
         ]);
       })

@@ -14,7 +14,7 @@ import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 import LiquidityTokenRow from "@screens/AddLiquidityInterface/MultipleTokensAddLiquidity/LiquidityTokenRow";
 import MultipleTokensNotifications from "@screens/AddLiquidityInterface/MultipleTokensAddLiquidity/MultipleTokensNotifications";
-import { Loading } from "@components/Loading";
+import Loading from "@components/Loading";
 
 interface IProps {}
 
@@ -94,7 +94,7 @@ const MultipleTokensAddLiquidity: React.FC<IProps> = () => {
                 key={i}
                 availableAmount={available}
                 depositAmount={depositAmount}
-                percent={token.shareAmount * 100}
+                percent={token.share}
                 logo={token.logo}
               />
             );

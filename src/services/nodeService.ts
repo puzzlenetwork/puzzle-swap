@@ -1,9 +1,11 @@
 import axios from "axios";
+import { ITransaction } from "@src/utils/types";
 
 export interface IStatsPoolItemResponse {
   apy: number;
   liquidity: number;
   monthly_volume: number;
+  weekly_volume: number;
 }
 
 export interface IPoolVolume {
@@ -46,6 +48,32 @@ export interface INFT {
 interface IBalance {
   assetId: string;
   balance: number;
+}
+
+interface ITransactionInfo {
+  stateChanges: {
+    transfers: Array<{
+      address: string;
+      amount: number;
+      asset: string;
+    }>;
+  };
+}
+
+interface IAssetDetails {
+  assetId: string;
+  issueHeight: number;
+  issueTimestamp: number;
+  issuer: string;
+  issuerPublicKey: string;
+  name: string;
+  description: string;
+  decimals: number;
+  reissuable: boolean;
+  quantity: number;
+  scripted: boolean;
+  minSponsoredAssetFee: null | any;
+  originTransactionId: string;
 }
 
 const nodeService = {
@@ -100,6 +128,50 @@ const nodeService = {
       return response.data;
     } else {
       return [];
+    }
+  },
+  transactionInfo: async (
+    node: string,
+    txId: string
+  ): Promise<ITransactionInfo | null> => {
+    const url = `${node}/transactions/info/${txId}`;
+    const response: { data: ITransactionInfo } = await axios.get(url);
+    if (response.data) {
+      return response.data;
+    } else {
+      return null;
+    }
+  },
+  transactions: async (
+    node: string,
+    address: string,
+    limit = 10,
+    after?: string
+  ): Promise<ITransaction[] | null> => {
+    const urlSearchParams = new URLSearchParams();
+    if (after != null) {
+      urlSearchParams.set("after", after);
+    }
+    const url = `${node}/transactions/address/${address}/limit/${limit}?${
+      after != null ? urlSearchParams.toString() : ""
+    }`;
+    const response: { data: [ITransaction[]] } = await axios.get(url);
+    if (response.data[0]) {
+      return response.data[0];
+    } else {
+      return null;
+    }
+  },
+  assetDetails: async (
+    node: string,
+    assetId: string
+  ): Promise<IAssetDetails | null> => {
+    const url = `${node}/assets/details/${assetId}`;
+    const response: { data: IAssetDetails } = await axios.get(url);
+    if (response.data) {
+      return response.data;
+    } else {
+      return null;
     }
   },
 };

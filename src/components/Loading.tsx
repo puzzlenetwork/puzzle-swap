@@ -1,8 +1,11 @@
 import React, { HTMLAttributes } from "react";
 import { useEffect, useState } from "react";
-interface IProps extends HTMLAttributes<HTMLSpanElement> {}
 
-export const Loading: React.FC<IProps> = ({ ...rest }) => {
+interface IProps extends HTMLAttributes<HTMLSpanElement> {
+  big?: boolean;
+}
+
+const Loading: React.FC<IProps> = ({ big, ...rest }) => {
   const [length, setLength] = useState(3);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -11,8 +14,11 @@ export const Loading: React.FC<IProps> = ({ ...rest }) => {
     return () => clearInterval(interval);
   });
   return (
-    <span {...rest} style={{ width: 1, ...rest.style }}>
-      {Array.from({ length }, () => ".").join("")}
+    <span {...rest} style={{ width: 10, ...rest.style }}>
+      {big
+        ? Array.from({ length }, () => "●").join("")
+        : Array.from({ length }, () => ".").join("")}
     </span>
   );
 };
+export default Loading;

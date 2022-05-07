@@ -1,24 +1,25 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { Observer } from "mobx-react-lite";
+import { observer } from "mobx-react-lite";
 import Layout from "@components/Layout";
 import {
   InvestToPoolInterfaceVMProvider,
   useInvestToPoolInterfaceVM,
 } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
-import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import PoolInformation from "@screens/InvestToPoolInterface/PoolInformation";
-import YourLiquidity from "@screens/InvestToPoolInterface/YourLiquidity/YourLiquidity";
 import { Column } from "@src/components/Flex";
 import TradesVolume from "@screens/InvestToPoolInterface/TradesVolume";
 import PoolComposition from "@screens/InvestToPoolInterface/PoolComposition";
-import RewardToClaim from "@screens/InvestToPoolInterface/RewardToClaim";
 import GoBack from "@components/GoBack";
-
-interface IProps {
-  poolId: string;
-}
+import MainPoolInfo from "./MainPoolInfo";
+import LPStaking from "./LPStaking";
+import MyPoolBalance from "@screens/InvestToPoolInterface/MyPoolBalance";
+import Reward from "./Reward";
+import PoolHistory from "./PoolHistory";
+import { Navigate, useParams } from "react-router-dom";
+import Loading from "@components/Loading";
+import { ROUTES } from "@src/constants";
 
 const Root = styled.div`
   display: flex;
@@ -61,47 +62,53 @@ const Body = styled.div`
     column-gap: 40px;
   }
 `;
-const InvestToPoolInterfaceImpl: React.FC = () => {
+const InvestToPoolInterfaceImpl: React.FC = observer(() => {
   const vm = useInvestToPoolInterfaceVM();
+  if (!vm.initialized && vm.pool == null) return <Loading />;
+  if (vm.initialized && vm.pool == null) {
+    return <Navigate to={ROUTES.NOT_FOUND} />;
+  }
   return (
     <Layout>
-      <Observer>
-        {() => (
-          <Root>
-            <GoBack link="/invest" text="Back to Pools list" />
-            <SizedBox height={24} />
-            <Text weight={500} size="large">
-              {vm.pool?.name}
-            </Text>
-            <SizedBox height={4} />
-            <Text size="medium" type="secondary">
-              Fixed swap fees: <span style={{ color: "#363870" }}>2.0 %</span>
-            </Text>
-            <Body>
-              <MainBlock>
-                <RightBlockMobile>
-                  <YourLiquidity />
-                  <RewardToClaim />
-                </RightBlockMobile>
-                <PoolInformation />
-                <TradesVolume />
-                <PoolComposition />
-              </MainBlock>
-              <RightBlock>
-                <YourLiquidity />
-                <RewardToClaim />
-              </RightBlock>
-            </Body>
-          </Root>
-        )}
-      </Observer>
+      <Root>
+        <GoBack link="/invest" text="Back to Pools list" />
+        <SizedBox height={24} />
+        <MainPoolInfo />
+        <PoolInformation />
+        <Body>
+          <MainBlock>
+            <RightBlockMobile>
+              <Reward />
+              <MyPoolBalance />
+              <LPStaking />
+            </RightBlockMobile>
+            <TradesVolume />
+            <PoolComposition />
+            <PoolHistory />
+          </MainBlock>
+          <RightBlock>
+            <Reward />
+            <MyPoolBalance />
+            <LPStaking />
+          </RightBlock>
+        </Body>
+      </Root>
     </Layout>
+  );
+});
+
+const InvestToPoolInterface: React.FC = () => {
+  const { poolDomain } = useParams<{ poolDomain: string }>();
+  // if (poolDomain == null) return null;
+  // const valid = POOL_CONFIG.map(({ domain }) => domain).includes(poolDomain);
+  // if (valid) {
+  //   return null;
+  // }
+  return (
+    <InvestToPoolInterfaceVMProvider poolDomain={poolDomain ?? ""}>
+      <InvestToPoolInterfaceImpl />
+    </InvestToPoolInterfaceVMProvider>
   );
 };
 
-const InvestToPoolInterface: React.FC<IProps> = ({ poolId }) => (
-  <InvestToPoolInterfaceVMProvider poolId={poolId}>
-    <InvestToPoolInterfaceImpl />
-  </InvestToPoolInterfaceVMProvider>
-);
 export default InvestToPoolInterface;

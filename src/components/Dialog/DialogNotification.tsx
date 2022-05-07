@@ -12,10 +12,13 @@ import { Link } from "react-router-dom";
 import Button from "@components/Button";
 import { AccountStore } from "@stores";
 import { Anchor } from "@components/Anchor";
+import SuccessNft from "@components/Dialog/SuccessNft";
+import { EXPLORER_URL } from "@src/constants";
 
 export interface IDialogNotificationProps extends IDialogPropTypes {
   title: string;
   description?: string;
+  icon?: JSX.Element;
   type?: "success" | "error" | "warning";
   buttons?: React.FC[];
   buttonsDirection?: "row" | "column";
@@ -45,6 +48,7 @@ const ButtonsContainer = styled.div<{ direction?: "row" | "column" }>`
 const DialogNotification: React.FC<IDialogNotificationProps> = ({
   title,
   description,
+  icon,
   type = "success",
   buttonsDirection = "column",
   buttons = [],
@@ -53,11 +57,20 @@ const DialogNotification: React.FC<IDialogNotificationProps> = ({
   return (
     <Dialog {...rest}>
       <Root style={{}} alignItems="center" crossAxisSize="max">
-        <SizedBox height={32} />
-        {type === "success" && <SuccessIcon />}
-        {type === "error" && <ErrorIcon />}
-        {type === "warning" && <WarningIcon />}
-
+        <>
+          {icon != null ? (
+            <React.Fragment>
+              <SizedBox height={16} />
+              {icon}
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              {type === "success" && <SuccessIcon />}
+              {type === "error" && <ErrorIcon />}
+              {type === "warning" && <WarningIcon />}
+            </React.Fragment>
+          )}
+        </>
         <SizedBox height={28} />
         <Text className="title">{title}</Text>
         {description && (
@@ -82,24 +95,22 @@ const DialogNotification: React.FC<IDialogNotificationProps> = ({
 type TBuildSuccessLiquidityDialogParamsProps = {
   accountStore: AccountStore;
   txId: string;
-  poolId: string;
+  poolDomain: string;
 };
 
 export const buildSuccessLiquidityDialogParams = ({
   accountStore,
   txId,
-  poolId,
+  poolDomain,
 }: TBuildSuccessLiquidityDialogParamsProps): IDialogNotificationProps => {
-  const txLink = `${accountStore.EXPLORER_LINK}/tx/${txId}`;
-  const poolLink = `/${
-    (accountStore.ROUTES.invest as Record<string, string>)[poolId]
-  }`;
+  const txLink = `${EXPLORER_URL}/tx/${txId}`;
+  const poolLink = `/pools/${poolDomain}/invest`;
   const pool = accountStore.rootStore.poolsStore.pools.find(
-    ({ id }) => id === poolId
+    ({ domain }) => domain === poolDomain
   );
   return {
     title: "Successfully provided",
-    description: `Liquidity successfully provided to the ${pool?.name}. You can track your reward on the pool page.`,
+    description: `Liquidity successfully provided to the ${pool?.title}. You can track your reward on the pool page.`,
     type: "success",
     buttons: [
       () => (
@@ -120,17 +131,17 @@ export const buildSuccessLiquidityDialogParams = ({
   };
 };
 
-type TBuildErrorLiquidityDialogParamsProps = {
+type TbuildErrorDialogParamsProps = {
   title: string;
   description: string;
   onTryAgain: () => void;
 };
 
-export const buildErrorLiquidityDialogParams = ({
+export const buildErrorDialogParams = ({
   title,
   description,
   onTryAgain,
-}: TBuildErrorLiquidityDialogParamsProps): IDialogNotificationProps => {
+}: TbuildErrorDialogParamsProps): IDialogNotificationProps => {
   return {
     title,
     description,
@@ -178,4 +189,62 @@ export const buildWarningLiquidityDialogParams = ({
     ],
   };
 };
+
+type TBuildParamsProps = {
+  title: string;
+  description: string;
+  onContinue?: () => void;
+  continueText: string;
+  onCancel: () => void;
+  type: "success" | "error" | "warning";
+};
+export const buildDialogParams = ({
+  title,
+  description,
+  onContinue,
+  continueText,
+  type,
+}: TBuildParamsProps): IDialogNotificationProps => {
+  return {
+    title,
+    description,
+    type,
+    buttonsDirection: "row",
+    buttons: [
+      () => (
+        <Button size="medium" fixed onClick={onContinue}>
+          {continueText}
+        </Button>
+      ),
+    ],
+  };
+};
+
+//NFTS
+
+type TBuildSuccessNFTSaleDialogParamsProps = {
+  picture: string;
+  name: string;
+  onContinue?: () => void;
+};
+
+export const buildSuccessNFTSaleDialogParams = ({
+  name,
+  picture,
+  onContinue,
+}: TBuildSuccessNFTSaleDialogParamsProps): IDialogNotificationProps => {
+  return {
+    title: `You’ve got “${name}” NFT!`,
+    description: "You can use it to pay for the creation of the pool",
+    icon: <SuccessNft image={picture} />,
+    buttons: [
+      () => (
+        <Button size="medium" fixed onClick={onContinue}>
+          Use it to create the pool
+        </Button>
+      ),
+    ],
+  };
+};
+
 export default DialogNotification;

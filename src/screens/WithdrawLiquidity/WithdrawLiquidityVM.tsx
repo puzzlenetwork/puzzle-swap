@@ -3,19 +3,22 @@ import { useVM } from "@src/hooks/useVM";
 import { action, makeAutoObservable, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
-import { IToken } from "@src/constants";
+import { EXPLORER_URL, IToken, TOKENS } from "@src/constants";
 import { IPoolStats30Days } from "@stores/PoolsStore";
+import Pool from "@src/entities/Pool";
+import poolService from "@src/services/poolsService";
+import TokenLogos from "@src/constants/tokenLogos";
 
 const ctx = React.createContext<WithdrawLiquidityVM | null>(null);
 
-export const WithdrawLiquidityVMProvider: React.FC<{ poolId: string }> = ({
-  poolId,
+export const WithdrawLiquidityVMProvider: React.FC<{ poolDomain: string }> = ({
+  poolDomain,
   children,
 }) => {
   const rootStore = useStores();
   const store = useMemo(
-    () => new WithdrawLiquidityVM(rootStore, poolId),
-    [rootStore, poolId]
+    () => new WithdrawLiquidityVM(rootStore, poolDomain),
+    [rootStore, poolDomain]
   );
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
@@ -28,7 +31,7 @@ type WithdrawToken = {
 };
 
 class WithdrawLiquidityVM {
-  public poolId: string;
+  public poolDomain: string;
   public rootStore: RootStore;
 
   public stats: IPoolStats30Days | null = null;
@@ -48,22 +51,56 @@ class WithdrawLiquidityVM {
   @action.bound setPercentToWithdraw = (value: number) =>
     (this.percentToWithdraw = new BN(value));
 
-  constructor(rootStore: RootStore, poolId: string) {
-    this.poolId = poolId;
+  private _pool: Pool | null = null;
+  private _setPool = (pool: Pool) => (this._pool = pool);
+
+  initialized: boolean = false;
+  private setInitialized = (v: boolean) => (this.initialized = v);
+
+  public get pool() {
+    const pools = this.rootStore.poolsStore.pools;
+    const configPool = pools.find(({ domain }) => domain === this.poolDomain);
+    return configPool ?? this._pool!;
+  }
+
+  private syncPool = (poolDomain: string) =>
+    poolService
+      .getPoolByDomain(poolDomain)
+      .then((poolSettings) => {
+        if (!poolSettings) return;
+        const pool = new Pool({
+          ...poolSettings,
+          tokens: poolSettings.assets.reduce((acc, { assetId, share }) => {
+            const token = Object.values(TOKENS).find(
+              (asset) => assetId === asset.assetId
+            );
+            return token
+              ? [...acc, { ...token, share, logo: TokenLogos[token.symbol] }]
+              : acc;
+          }, [] as Array<IToken & { share: number }>),
+        });
+        this._setPool(pool);
+      })
+      .catch(console.error);
+
+  constructor(rootStore: RootStore, poolDomain: string) {
+    this.poolDomain = poolDomain;
     this.rootStore = rootStore;
     makeAutoObservable(this);
-    this.updateStats();
+    this.syncPool(poolDomain).finally(() => this.setInitialized(true));
+
+    when(() => this.pool != null, this.updateStats);
     when(
-      () => this.rootStore.accountStore.address != null,
+      () => this.rootStore.accountStore.address != null && this.pool != null,
       () => this.updateUserIndexStaked()
     );
   }
 
   updateStats = () => {
     this.rootStore.poolsStore
-      .get30DaysPoolStats(this.poolId)
+      .get30DaysPoolStats(this.poolDomain)
       .then((data) => this.setStats(data))
-      .catch(() => console.error(`Cannot update stats of ${this.poolId}`));
+      .catch(() => console.error(`Cannot update stats of ${this.poolDomain}`));
   };
 
   updateUserIndexStaked = async () => {
@@ -75,12 +112,6 @@ class WithdrawLiquidityVM {
       this.setUserIndexStaked(new BN(response[0].value));
     }
   };
-
-  public get pool() {
-    return this.rootStore.poolsStore.pools.find(
-      ({ id }) => id === this.poolId
-    )!;
-  }
 
   get withdrawCompositionTokens(): any[] {
     if (this.pool.tokens == null) return [];
@@ -151,7 +182,7 @@ class WithdrawLiquidityVM {
   }
 
   withdraw = () => {
-    const { accountStore, notificationStore } = this.rootStore;
+    const { notificationStore } = this.rootStore;
     if (this.percentToWithdraw.eq(0) || this.pool.layer2Address == null) return;
     if (this.userIndexStaked == null) return;
 
@@ -179,11 +210,11 @@ class WithdrawLiquidityVM {
       .then((txId) => {
         txId &&
           notificationStore.notify(
-            `Liquidity is successfully withdrawn from the ${this.pool?.name}.`,
+            `Liquidity is successfully withdrawn from the ${this.pool?.title}.`,
             {
               type: "success",
               title: "Successfully withdrawn",
-              link: `${accountStore.EXPLORER_LINK}/tx/${txId}`,
+              link: `${EXPLORER_URL}/tx/${txId}`,
               linkTitle: "View on Explorer",
             }
           );

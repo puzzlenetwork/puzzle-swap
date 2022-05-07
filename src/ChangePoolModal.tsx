@@ -45,16 +45,17 @@ const ChangePoolModal: React.FC<IProps> = ({
   activePoolId,
   ...rest
 }) => {
-  const { poolsStore, accountStore } = useStores();
+  const { poolsStore } = useStores();
   const [searchValue, setSearchValue] = useState<string>("");
   const filteredPools = poolsStore.pools
     .slice()
-    .filter(({ id }) =>
-      Object.keys(accountStore.ROUTES.invest).some((key) => key === id)
-    )
-    .filter(({ name, tokens }) =>
+    //TODO
+    // .filter(({ id }) =>
+    //   Object.keys(ROUTES.invest).some((key) => key === id)
+    // )
+    .filter(({ title, tokens }) =>
       searchValue
-        ? [name, ...tokens.map(({ symbol }) => symbol)]
+        ? [title, ...tokens.map(({ symbol }) => symbol)]
             .map((v) => v.toLowerCase())
             .some((v) => v.includes(searchValue.toLowerCase()))
         : true
@@ -76,17 +77,18 @@ const ChangePoolModal: React.FC<IProps> = ({
       <Scrollbar style={{ margin: "0 -24px" }}>
         <Column crossAxisSize="max" style={{ maxHeight: 352 }}>
           {filteredPools && filteredPools.length > 0 ? (
-            filteredPools.map((pool) => (
+            filteredPools.map((pool, index) => (
               <Pool
-                onClick={() => onChange(pool.id)}
-                active={pool.id === activePoolId}
+                key={pool.domain + index}
+                onClick={() => onChange(pool.domain)}
+                active={pool.domain === activePoolId}
               >
-                {pool.id === activePoolId && <Gradient />}
+                {pool.domain === activePoolId && <Gradient />}
                 <Row>
                   <SquareTokenIcon src={pool.logo} size="small" />
                   <SizedBox width={8} />
                   <Column>
-                    <Text size="medium">{pool.name}</Text>
+                    <Text size="medium">{pool.title}</Text>
                     <Text
                       size="small"
                       type="secondary"
@@ -100,7 +102,7 @@ const ChangePoolModal: React.FC<IProps> = ({
                   <Text>
                     {(poolsStore &&
                       poolsStore.poolsStats &&
-                      poolsStore.poolsStats[pool.id].apy.toFormat(2)) ??
+                      poolsStore.poolsStats[pool.domain]?.apy.toFormat(2)) ??
                       "--"}
                     %
                   </Text>

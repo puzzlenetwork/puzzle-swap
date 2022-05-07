@@ -5,7 +5,7 @@ import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import { useTradeVM } from "@screens/TradeInterface/TradeVM";
 import { useNavigate } from "react-router-dom";
-import { Loading } from "@components/Loading";
+import Loading from "@components/Loading";
 import { TOKENS } from "@src/constants";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
@@ -37,7 +37,7 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
     });
     setSwitched((v) => !v);
   };
-  const stablesIds = [TOKENS.W.USDN.assetId, TOKENS.W.USDT!.assetId];
+  const stablesIds = [TOKENS.USDN.assetId, TOKENS.USDT!.assetId];
   const rate = stablesIds.some((assetId) => assetId === token0?.assetId)
     ? `1 ${token1?.symbol} = ~ ${price.pow(-1)?.toFormat(4) ?? "—"} ${
         token0?.symbol

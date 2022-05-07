@@ -30,7 +30,6 @@ const TableRow: React.FC<IProps> = ({ v }) => {
         </Text>
       </td>
       <td>
-        {/*todo add link with query params to trade page*/}
         <Link to="/trade">
           <Button
             className="tableText"

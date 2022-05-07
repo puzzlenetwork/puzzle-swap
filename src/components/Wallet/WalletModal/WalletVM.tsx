@@ -8,6 +8,7 @@ import { LOGIN_TYPE } from "@src/stores/AccountStore";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import BN from "@src/utils/BN";
 import wavesCapService from "@src/services/wavesCapService";
+import { ROUTES } from "@src/constants";
 
 const ctx = React.createContext<WalletVM | null>(null);
 
@@ -40,7 +41,7 @@ class WalletVM {
     //   this.getAssetsStats
     // );
     // reaction(() => this.rootStore.accountStore?.address, this.getAssetsStats);
-    // setInterval(this.getAssetsStats, 15 * 1000);
+    setInterval(this.getAssetsStats, 15 * 1000);
   }
 
   handleCopyAddress = () => {
@@ -98,7 +99,7 @@ class WalletVM {
   }
 
   get investments() {
-    const { poolsStore, stakeStore, accountStore } = this.rootStore;
+    const { poolsStore, stakeStore } = this.rootStore;
     const poolsData =
       poolsStore.accountPoolsLiquidity
         ?.filter(({ liquidityInUsdn }) => !liquidityInUsdn.eq(0))
@@ -111,12 +112,10 @@ class WalletVM {
             indexTokenName,
           }) => {
             const amount = BN.formatUnits(addressStaked, 8);
-            // @ts-ignore
-            const path = accountStore.ROUTES.invest[pool.id];
             return {
-              onClickPath: path,
+              onClickPath: `/pools/${pool.domain}/invest`,
               logo: pool?.logo,
-              name: pool?.name,
+              name: pool?.title,
               amount:
                 (amount.gte(0.0001) ? amount.toFormat(4) : amount.toFormat(8)) +
                 indexTokenName,
@@ -137,7 +136,7 @@ class WalletVM {
             : "$ " + new BN(marketPrice ?? 0).toFormat();
 
         return {
-          onClickPath: accountStore.ROUTES.ULTRASTAKE,
+          onClickPath: ROUTES.ULTRASTAKE,
           logo: imageLink,
           amount: "1 NFT",
           name,

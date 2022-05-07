@@ -3,7 +3,7 @@ import { makeAutoObservable, reaction } from "mobx";
 import BN from "@src/utils/BN";
 import stakedPuzzleLogo from "@src/assets/tokens/staked-puzzle.svg";
 import nodeService from "@src/services/nodeService";
-import { NODE_URL_MAP } from "@src/constants";
+import { CONTRACT_ADDRESSES, NODE_URL, ROUTES } from "@src/constants";
 
 export default class StakeStore {
   public rootStore: RootStore;
@@ -34,12 +34,11 @@ export default class StakeStore {
     }
     if (!force && this.loading) return;
     this.setLoading(true);
-    const { chainId, CONTRACT_ADDRESSES } = this.rootStore.accountStore;
     if (this.stakedAccountPuzzle != null) {
       this.setLoading(true);
     }
     const addressStakedValue = await nodeService.nodeKeysRequest(
-      NODE_URL_MAP[chainId],
+      NODE_URL,
       CONTRACT_ADDRESSES.staking,
       `${address}_staked`
     );
@@ -69,7 +68,7 @@ export default class StakeStore {
     const puzzleRate = poolsStore.usdnRate(puzzle.assetId) ?? BN.ZERO;
     const usdnEquivalent = puzzleStakedAmount.times(puzzleRate);
     const item = {
-      onClickPath: accountStore.ROUTES.STAKE,
+      onClickPath: ROUTES.STAKE,
       logo: stakedPuzzleLogo,
       name: "Puzzle Staking",
       amount,

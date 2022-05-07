@@ -1,21 +1,30 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { action, makeAutoObservable } from "mobx";
-import { SLIPPAGE, TPoolId, TRADE_FEE } from "@src/constants";
+import {
+  EXPLORER_URL,
+  IToken,
+  SLIPPAGE,
+  TOKENS,
+  TRADE_FEE,
+} from "@src/constants";
 import { RootStore, useStores } from "@stores";
 import Balance from "@src/entities/Balance";
 import BN from "@src/utils/BN";
+import Pool from "@src/entities/Pool";
+import poolService from "@src/services/poolsService";
+import TokenLogos from "@src/constants/tokenLogos";
 
 const ctx = React.createContext<MultiSwapVM | null>(null);
 
-export const MultiSwapVMProvider: React.FC<{ poolId: TPoolId }> = ({
-  poolId,
+export const MultiSwapVMProvider: React.FC<{ poolDomain: string }> = ({
+  poolDomain,
   children,
 }) => {
   const rootStore = useStores();
   const store = useMemo(
-    () => new MultiSwapVM(rootStore, poolId),
-    [rootStore, poolId]
+    () => new MultiSwapVM(rootStore, poolDomain),
+    [rootStore, poolDomain]
   );
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
@@ -23,12 +32,52 @@ export const MultiSwapVMProvider: React.FC<{ poolId: TPoolId }> = ({
 export const useMultiSwapVM = () => useVM(ctx);
 
 class MultiSwapVM {
-  constructor(private rootStore: RootStore, public readonly poolId: TPoolId) {
+  private _pool: Pool | null = null;
+  private _setPool = (pool: Pool) => (this._pool = pool);
+
+  initialized: boolean = false;
+  private setInitialized = (v: boolean) => (this.initialized = v);
+
+  public get pool() {
+    const poolsStore = this.rootStore.poolsStore;
+    const configPool = poolsStore.getPuzzlePoolByDomain(this.poolDomain);
+    return configPool ?? this._pool!;
+  }
+
+  private syncPool = (poolDomain: string) =>
+    poolService
+      .getPoolByDomain(poolDomain)
+      .then((poolSettings) => {
+        if (!poolSettings) return;
+        const pool = new Pool({
+          ...poolSettings,
+          defaultAssetId0: poolSettings.assets[0].assetId,
+          defaultAssetId1: poolSettings.assets[1].assetId,
+          tokens: poolSettings.assets.reduce((acc, { assetId, share }) => {
+            const token = Object.values(TOKENS).find(
+              (asset) => assetId === asset.assetId
+            );
+            return token
+              ? [...acc, { ...token, share, logo: TokenLogos[token.symbol] }]
+              : acc;
+          }, [] as Array<IToken & { share: number }>),
+        });
+        this.setAssetId0(poolSettings.assets[0].assetId);
+        this.setAssetId1(poolSettings.assets[1].assetId);
+        this._setPool(pool);
+      })
+      .catch(console.error);
+
+  constructor(
+    private rootStore: RootStore,
+    public readonly poolDomain: string
+  ) {
+    this.syncPool(poolDomain).finally(() => this.setInitialized(true));
     makeAutoObservable(this);
   }
 
   assetId0: string = this.pool?.defaultAssetId0!;
-  @action.bound setAssetId0 = (assetId: string) => (this.assetId0 = assetId);
+  setAssetId0 = (assetId: string) => (this.assetId0 = assetId);
 
   get token0() {
     return this.pool?.tokens.find(({ assetId }) => assetId === this.assetId0);
@@ -122,8 +171,8 @@ class MultiSwapVM {
     if (l0 == null || l1 == null || token1 == null || token0 == null) {
       return BN.ZERO;
     }
-    const share0 = new BN(token0.shareAmount);
-    const share1 = new BN(token1.shareAmount);
+    const share0 = new BN(token0.share);
+    const share1 = new BN(token1.share);
 
     try {
       const leftPart = BN.formatUnits(l1, token1.decimals);
@@ -159,7 +208,7 @@ class MultiSwapVM {
   }
 
   swap = async () => {
-    const { notificationStore, accountStore } = this.rootStore;
+    const { notificationStore } = this.rootStore;
     if (this.pool?.contractAddress == null) return;
     if (this.token0 == null || this.amount0.eq(0)) return;
     if (!this.token1 || !this.amount1.gt(0) || !this.minimumToReceive) return;
@@ -190,7 +239,7 @@ class MultiSwapVM {
           {
             type: "success",
             title: "Transaction is completed",
-            link: `${accountStore.EXPLORER_LINK}/tx/${txId}`,
+            link: `${EXPLORER_URL}/tx/${txId}`,
             linkTitle: "View on Explorer",
           }
         );
@@ -202,8 +251,4 @@ class MultiSwapVM {
         });
       });
   };
-
-  get pool() {
-    return this.rootStore.poolsStore.getPoolById(this.poolId);
-  }
 }

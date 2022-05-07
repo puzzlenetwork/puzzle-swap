@@ -5,8 +5,8 @@ import { Column, Row } from "@components/Flex";
 import Button from "@components/Button";
 import Text from "@components/Text";
 import { Link } from "react-router-dom";
-import { useStores } from "@stores";
 import { Anchor } from "@components/Anchor";
+import { ROUTES } from "@src/constants";
 
 interface IProps {}
 
@@ -92,7 +92,6 @@ const BtnContainer = styled(Row)`
 `;
 
 const Invest: React.FC<IProps> = () => {
-  const { accountStore } = useStores();
   return (
     <Wrapper>
       <Root>
@@ -118,7 +117,7 @@ const Invest: React.FC<IProps> = () => {
             </Subtitle>
           </Row>
           <BtnContainer>
-            <Link to={accountStore.ROUTES.INVEST}>
+            <Link to={ROUTES.INVEST}>
               <Button style={{ marginRight: 8, width: 167 }}>Invest</Button>
             </Link>
           </BtnContainer>

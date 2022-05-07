@@ -1,26 +1,13 @@
-import {
-  IPoolConfig,
-  IToken,
-  NODE_URL_MAP,
-  TChainId,
-  TPoolId,
-  TRADE_FEE,
-} from "@src/constants";
+import { IPoolConfig, IToken, NODE_URL, TRADE_FEE } from "@src/constants";
 import axios from "axios";
 import { action, makeAutoObservable } from "mobx";
 import BN from "@src/utils/BN";
-import tokenLogos from "@src/assets/tokens/tokenLogos";
+import tokenLogos from "@src/constants/tokenLogos";
 
 interface IData {
   key: string;
-  type: "integer";
-  value: number;
-}
-
-interface IPoolCreationParams {
-  id: TPoolId;
-  chainId: TChainId;
-  config: IPoolConfig;
+  type: "integer" | "string";
+  value: number | string;
 }
 
 export interface IShortPoolInfo {
@@ -33,15 +20,15 @@ export interface IShortPoolInfo {
 }
 
 class Pool implements IPoolConfig {
-  public readonly chainId: TChainId;
+  public readonly domain: string;
   public readonly contractAddress: string;
   public readonly layer2Address?: string;
   public readonly baseTokenId: string;
-  public readonly name: string;
+  public readonly title: string;
+  public readonly isCustom?: boolean;
   public readonly defaultAssetId0: string;
   public readonly defaultAssetId1: string;
-  public readonly tokens: Array<IToken & { shareAmount: number }> = [];
-  public readonly id: TPoolId;
+  public readonly tokens: Array<IToken & { share: number }> = [];
   private readonly _logo?: string;
 
   public get logo() {
@@ -70,17 +57,17 @@ class Pool implements IPoolConfig {
   private setLiquidity = (value: Record<string, BN>) =>
     (this.liquidity = value);
 
-  constructor(params: IPoolCreationParams) {
-    this.id = params.id;
-    this.contractAddress = params.config.contractAddress;
-    this.layer2Address = params.config.layer2Address;
-    this.baseTokenId = params.config.baseTokenId;
-    this.name = params.config.name;
-    this._logo = params.config.logo;
-    this.tokens = params.config.tokens;
-    this.defaultAssetId0 = params.config.defaultAssetId0;
-    this.defaultAssetId1 = params.config.defaultAssetId1;
-    this.chainId = params.chainId;
+  constructor(params: IPoolConfig) {
+    this.contractAddress = params.contractAddress;
+    this.layer2Address = params.layer2Address;
+    this.baseTokenId = params.baseTokenId;
+    this.title = params.title;
+    this._logo = params.logo;
+    this.tokens = params.tokens;
+    this.defaultAssetId0 = params.defaultAssetId0;
+    this.defaultAssetId1 = params.defaultAssetId1;
+    this.domain = params.domain;
+    this.isCustom = params.isCustom;
 
     this.syncLiquidity().then();
     setInterval(this.syncLiquidity, 15000);
@@ -88,9 +75,7 @@ class Pool implements IPoolConfig {
   }
 
   private syncLiquidity = async () => {
-    const globalAttributesUrl = `${NODE_URL_MAP[this.chainId]}/addresses/data/${
-      this.contractAddress
-    }?matches=global_(.*)`;
+    const globalAttributesUrl = `${NODE_URL}/addresses/data/${this.contractAddress}?matches=global_(.*)`;
     const { data }: { data: IData[] } = await axios.get(globalAttributesUrl);
     const balances = data.reduce<Record<string, BN>>((acc, { key, value }) => {
       const regexp = new RegExp("global_(.*)_balance");
@@ -113,9 +98,10 @@ class Pool implements IPoolConfig {
     }
     const usdnAsset = this.tokens.find(({ symbol }) => symbol === "USDN")!;
     const usdnLiquidity = this.liquidity[usdnAsset.assetId];
-    if (usdnLiquidity != null && usdnAsset.shareAmount != null) {
+    if (usdnLiquidity != null && usdnAsset.share != null) {
       const globalLiquidity = new BN(usdnLiquidity)
-        .div(usdnAsset.shareAmount)
+        .div(usdnAsset.share)
+        .times(100)
         .div(1e6);
       this.setGlobalLiquidity(globalLiquidity);
     }
@@ -129,9 +115,9 @@ class Pool implements IPoolConfig {
     if (this.tokens == null) return null;
     const asset0 = this.getAssetById(assetId0);
     const asset1 = this.getAssetById(assetId1);
-    if (asset0?.shareAmount == null || asset1?.shareAmount == null) return null;
-    const { decimals: decimals0, shareAmount: shareAmount0 } = asset0;
-    const { decimals: decimals1, shareAmount: shareAmount1 } = asset1;
+    if (asset0?.share == null || asset1?.share == null) return null;
+    const { decimals: decimals0, share: shareAmount0 } = asset0;
+    const { decimals: decimals1, share: shareAmount1 } = asset1;
     const liquidity0 = this.liquidity[assetId0];
     const liquidity1 = this.liquidity[assetId1];
     if (liquidity0 == null || liquidity1 == null) return null;
@@ -139,6 +125,15 @@ class Pool implements IPoolConfig {
     const bottomValue = BN.formatUnits(liquidity0, decimals0).div(shareAmount0);
     return topValue.div(bottomValue).times(coefficient);
   };
+
+  get indexTokenRate() {
+    if (this.globalPoolTokenAmount == null || this.globalPoolTokenAmount.eq(0))
+      return BN.ZERO;
+    const indexTokenRate = this.globalLiquidity.div(
+      BN.formatUnits(this.globalPoolTokenAmount, 8)
+    );
+    return indexTokenRate;
+  }
 
   @action.bound public getAccountLiquidityInfo = async (
     address: string
@@ -201,9 +196,7 @@ class Pool implements IPoolConfig {
   };
 
   public contractMatchRequest = async (match: string) => {
-    const url = `${NODE_URL_MAP[this.chainId]}/addresses/data/${
-      this.contractAddress
-    }?matches=${match}`;
+    const url = `${NODE_URL}/addresses/data/${this.contractAddress}?matches=${match}`;
     const response: { data: IData[] } = await axios.get(url);
     if (response.data) {
       return response.data;
@@ -215,9 +208,7 @@ class Pool implements IPoolConfig {
     const searchKeys = typeof keysArray === "string" ? [keysArray] : keysArray;
     const search = new URLSearchParams(searchKeys?.map((s) => ["key", s]));
     const keys = search.toString();
-    const url = `${NODE_URL_MAP[this.chainId]}/addresses/data/${
-      this.contractAddress
-    }?${keys}`;
+    const url = `${NODE_URL}/addresses/data/${this.contractAddress}?${keys}`;
     const response: { data: IData[] } = await axios.get(url);
     if (response.data) {
       return response.data;
