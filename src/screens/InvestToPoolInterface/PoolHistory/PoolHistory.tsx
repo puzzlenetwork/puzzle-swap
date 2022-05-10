@@ -8,8 +8,8 @@ import { observer } from "mobx-react-lite";
 import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
 import Skeleton from "react-loading-skeleton";
 import Transaction from "./Transaction";
-import { useStores } from "@stores";
 import Loading from "@components/Loading";
+import { useStores } from "@stores";
 
 interface IProps {}
 
@@ -19,7 +19,7 @@ const Root = styled.div`
   padding-top: 24px;
 `;
 const PoolHistory: React.FC<IProps> = () => {
-  const { accountStore, poolsStore } = useStores();
+  const { poolsStore } = useStores();
   const vm = useInvestToPoolInterfaceVM();
   return (
     <Root>
@@ -53,7 +53,6 @@ const PoolHistory: React.FC<IProps> = () => {
                   {...tr}
                   key={tr.id}
                   usdnRate={poolsStore.usdnRate}
-                  tokens={accountStore.TOKENS_ASSET_ID_MAP}
                 />
               ))}
               <SizedBox height={16} />

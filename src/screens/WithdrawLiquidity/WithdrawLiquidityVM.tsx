@@ -3,7 +3,7 @@ import { useVM } from "@src/hooks/useVM";
 import { action, makeAutoObservable, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
-import { EXPLORER_URL, IToken, TOKENS } from "@src/constants";
+import { EXPLORER_URL, IToken, TOKENS_BY_ASSET_ID } from "@src/constants";
 import { IPoolStats30Days } from "@stores/PoolsStore";
 import Pool from "@src/entities/Pool";
 import poolService from "@src/services/poolsService";
@@ -71,9 +71,7 @@ class WithdrawLiquidityVM {
         const pool = new Pool({
           ...poolSettings,
           tokens: poolSettings.assets.reduce((acc, { assetId, share }) => {
-            const token = Object.values(TOKENS).find(
-              (asset) => assetId === asset.assetId
-            );
+            const token = TOKENS_BY_ASSET_ID[assetId];
             return token
               ? [...acc, { ...token, share, logo: TokenLogos[token.symbol] }]
               : acc;

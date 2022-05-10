@@ -61,7 +61,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
           </Text>
           <SizedBox height={4} />
           <Text type="purple300" size="medium">
-            Trade fees: 2.0%
+            Trade fees: {vm.pool.swapFee}%
           </Text>
           <Links isCustom={vm.pool.isCustom}>
             <Column>
@@ -70,8 +70,13 @@ const MainPoolInfo: React.FC<IProps> = () => {
               </Text>
               <Text type="light" size="medium">
                 {vm.pool.isCustom ? (
-                  <TextButton prefix={link}>
-                    {centerEllipsis("3P6Ksahs71SiKQgQ4qaZuFAVhqncdi2nvJQ", 6)}
+                  <TextButton
+                    prefix={link}
+                    onClick={() =>
+                      window.open(`${EXPLORER_URL}/address/${vm.pool?.owner}`)
+                    }
+                  >
+                    {centerEllipsis(vm.pool?.owner ?? "", 6)}
                   </TextButton>
                 ) : (
                   <TextButton prefix={puzzleIcon}>Puzzle Swap</TextButton>
@@ -80,11 +85,17 @@ const MainPoolInfo: React.FC<IProps> = () => {
               <SizedBox height={16} />
             </Column>
             {vm.pool.isCustom && (
-              <Column>
+              <Column
+                onClick={() =>
+                  window.open(
+                    `${EXPLORER_URL}/tx/${vm.pool?.artefactOriginTransactionId}`
+                  )
+                }
+              >
                 <Text type="purple300" size="medium" nowrap>
                   Created via
                 </Text>
-                <TextButton prefix={link}>Puzzle Surf</TextButton>
+                <TextButton prefix={link}>{vm.nftPaymentName}</TextButton>
                 <SizedBox height={16} />
               </Column>
             )}

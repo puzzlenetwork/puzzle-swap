@@ -9,6 +9,9 @@ import {
   CONTRACT_ADDRESSES,
   EXPLORER_URL,
   IToken,
+  TOKENS_BY_ASSET_ID,
+  TOKENS_BY_SYMBOL,
+  TOKENS_LIST,
   TRADE_FEE,
 } from "@src/constants";
 
@@ -25,12 +28,11 @@ export const useTradeVM = () => useVM(ctx);
 class TradeVM {
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
-    const { TOKENS } = rootStore.accountStore;
     const params = new URLSearchParams(window.location.search);
     const asset0 = params.get("asset0")?.toString();
     const asset1 = params.get("asset1")?.toString();
-    this.assetId0 = asset0 ?? TOKENS.USDN.assetId;
-    this.assetId1 = asset1 ?? TOKENS.PUZZLE.assetId;
+    this.assetId0 = asset0 ?? TOKENS_BY_SYMBOL.USDN.assetId;
+    this.assetId1 = asset1 ?? TOKENS_BY_SYMBOL.PUZZLE.assetId;
     this._syncAmount1();
     reaction(
       () => [this.assetId0, this.assetId1, this.amount0],
@@ -181,17 +183,15 @@ class TradeVM {
 
   get balances() {
     const { accountStore } = this.rootStore;
-    return Object.values(this.rootStore.accountStore.TOKENS)
-      .map((t) => {
-        const balance = accountStore.findBalanceByAssetId(t.assetId);
-        return balance ?? new Balance(t);
-      })
-      .sort((a, b) => {
-        if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
-        if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
-        if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
-        return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
-      });
+    return TOKENS_LIST.map((t) => {
+      const balance = accountStore.findBalanceByAssetId(t.assetId);
+      return balance ?? new Balance(t);
+    }).sort((a, b) => {
+      if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
+      if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
+      if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
+      return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
+    });
   }
 
   get minimumToReceive(): BN {
@@ -270,12 +270,10 @@ class TradeVM {
     ) {
       return null;
     }
-    const tokens = Object.values(this.rootStore.accountStore.TOKENS);
     return this.route.reduce<Array<ISchemaRoute>>((acc, v) => {
       const exchanges = v.exchanges.reduce<Array<ISchemaExchange>>((ac, v) => {
-        const token0 = tokens.find(({ assetId }) => assetId === v.from);
-        const token1 = tokens.find(({ assetId }) => assetId === v.to);
-
+        const token0 = TOKENS_BY_ASSET_ID[v.from];
+        const token1 = TOKENS_BY_ASSET_ID[v.to];
         const top = BN.formatUnits(v.amountOut, token1?.decimals);
         const bottom = BN.formatUnits(v.amountIn, token0?.decimals);
         const rate = top.div(bottom);

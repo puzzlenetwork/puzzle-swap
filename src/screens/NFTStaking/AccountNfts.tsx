@@ -53,7 +53,6 @@ const AccountNfts: React.FC<IProps> = () => {
         onBtnClick={() => vm.setNftDisplayState(0)}
       />
     );
-  console.log(accountNFTsToStake);
   return (
     <Root>
       {accountNFTsToStake == null && stakedAccountNFTs == null && (

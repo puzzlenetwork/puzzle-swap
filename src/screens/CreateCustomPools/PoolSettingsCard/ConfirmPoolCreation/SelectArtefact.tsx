@@ -71,13 +71,13 @@ const SelectArtefact: React.FC<IProps> = () => {
         onNftClick={(artefact) => vm.setArtefactToSpend(artefact)}
       />
       {vm.artefactToSpend != null && (
-        <>
+        <div style={{ width: "100%" }}>
           <SizedBox height={16} />
           <Notification
             type="warning"
             text="Pay attention that this NFT will be burned after the creation of the pool."
           />
-        </>
+        </div>
       )}
     </Root>
   );

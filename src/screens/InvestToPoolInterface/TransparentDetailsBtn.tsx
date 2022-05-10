@@ -19,6 +19,8 @@ import { ReactComponent as TwitterIcon } from "@src/assets/icons/twitter.svg";
 import { ReactComponent as TelegramIcon } from "@src/assets/icons/telegram.svg";
 import { ReactComponent as FacebookIcon } from "@src/assets/icons/facebook.svg";
 import { EXPLORER_URL } from "@src/constants";
+import centerEllipsis from "@src/utils/centerEllipsis";
+import dayjs from "dayjs";
 
 interface IProps {}
 
@@ -75,25 +77,75 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
     },
     {
       title: "Total fees earned",
-      value: `$ ${vm.pool.globalVolume?.times(0.02).toFormat(2)}`,
+      value: `$ ${vm.pool.globalVolume?.times(0.02)?.toFormat(2)}`,
     },
     {
       title: "Fees earned (30 days)",
-      value: `$ ${vm.stats?.fees.toFormat(2)}`,
+      value: `$ ${vm.stats?.fees?.toFormat(2)}`,
     },
   ];
   const customPoolInformation = [
-    { title: "Pool creator", value: "" },
-    { title: "Created via", value: "" },
-    { title: "Smart-contract", value: "" },
-    { title: "Date of creation", value: "1 Jan 2022, 20:12:12" },
-    { title: "Total fees earned", value: "$ 123,456.99" },
-    { title: "Total creator reward", value: "$ 12,456.99" },
+    {
+      title: "Pool creator",
+      value: (
+        <TextButton
+          size="medium"
+          prefix={linkIcon}
+          kind="secondary"
+          onClick={() =>
+            window.open(`${EXPLORER_URL}/address/${vm.pool?.owner}`)
+          }
+        >
+          {centerEllipsis(vm.pool?.owner ?? "", 6)}
+        </TextButton>
+      ),
+    },
+    {
+      title: "Created via",
+      value: (
+        <TextButton
+          size="medium"
+          prefix={linkIcon}
+          kind="secondary"
+          onClick={() =>
+            window.open(
+              `${EXPLORER_URL}/tx/${vm.pool?.artefactOriginTransactionId}`
+            )
+          }
+        >
+          {vm.nftPaymentName}
+        </TextButton>
+      ),
+    },
+    {
+      title: "Smart-contract",
+      value: (
+        <TextButton
+          size="medium"
+          prefix={linkIcon}
+          kind="secondary"
+          onClick={() =>
+            window.open(`${EXPLORER_URL}/address/${vm.pool.contractAddress}`)
+          }
+        >
+          View on Explorer
+        </TextButton>
+      ),
+    },
+    {
+      title: "Date of creation",
+      value: dayjs(vm.pool.createdAt).format("MMM D, YYYY h:mm A"),
+    },
+    {
+      title: "Total fees earned",
+      value: `$ ${vm.pool.globalVolume?.times(0.02)?.toFormat(2) ?? "0.00"}`,
+    },
+    // { title: "Total creator reward", value: "$ 12,456.99" },
   ];
   const information = Array.from(
     vm.pool.isCustom ? customPoolInformation : puzzlePoolInformation
   );
-  const link = `https://puzzleswap.org/${vm.pool.domain}/invest`;
+  const link = `https://puzzleswap.org/pools/${vm.pool.domain}/invest`;
   const text = `Invest to ${vm.pool.title} Puzzle Swap megapool`;
   const shareInfo = [
     {

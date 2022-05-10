@@ -5,7 +5,12 @@ import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import statsService from "@src/services/statsService";
 import nodeService from "@src/services/nodeService";
-import { CONTRACT_ADDRESSES, EXPLORER_URL, NODE_URL } from "@src/constants";
+import {
+  CONTRACT_ADDRESSES,
+  EXPLORER_URL,
+  NODE_URL,
+  TOKENS_BY_SYMBOL,
+} from "@src/constants";
 
 const ctx = React.createContext<NFTStakingVM | null>(null);
 
@@ -51,15 +56,16 @@ class NFTStakingVM {
   private _setLastClaimDate = (v: BN) => (this.lastClaimDate = v);
 
   private updateAddressStakingInfo = async () => {
-    const { address, TOKENS } = this.rootStore.accountStore;
+    const { address } = this.rootStore.accountStore;
     const { contractAddress } = this;
+    const usdn = TOKENS_BY_SYMBOL.USDN.assetId;
     const keysArray = {
       globalStaked: "global_staked",
       addressStaked: `${address}_staked`,
-      claimedReward: `${address}_${TOKENS.USDN.assetId}_claimed`,
-      globalLastCheckInterest: `global_lastCheck_${TOKENS.USDN.assetId}_interest`,
-      addressLastCheckInterest: `${address}_lastCheck_${TOKENS.USDN.assetId}_interest`,
-      lastClaimDate: `${address}_${TOKENS.USDN.assetId}_lastClaim`,
+      claimedReward: `${address}_${usdn}_claimed`,
+      globalLastCheckInterest: `global_lastCheck_${usdn}_interest`,
+      addressLastCheckInterest: `${address}_lastCheck_${usdn}_interest`,
+      lastClaimDate: `${address}_${usdn}_lastClaim`,
     };
     const response = await nodeService.nodeKeysRequest(
       NODE_URL,
