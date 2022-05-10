@@ -27,6 +27,9 @@ class Pool implements IPoolConfig {
   public readonly baseTokenId: string;
   public readonly title: string;
   public readonly isCustom?: boolean;
+  public readonly artefactOriginTransactionId?: string;
+  public readonly swapFee: number;
+  public readonly createdAt: string;
   public readonly defaultAssetId0: string;
   public readonly defaultAssetId1: string;
   public readonly tokens: Array<IToken & { share: number }> = [];
@@ -69,7 +72,10 @@ class Pool implements IPoolConfig {
     this.defaultAssetId1 = params.defaultAssetId1 ?? params.tokens[1].assetId;
     this.domain = params.domain;
     this.isCustom = params.isCustom;
+    this.artefactOriginTransactionId = params.artefactOriginTransactionId;
     this.owner = params.owner;
+    this.swapFee = params.swapFee ?? 0.2;
+    this.createdAt = params.createdAt ?? "";
 
     this.syncLiquidity().then();
     setInterval(this.syncLiquidity, 15000);
@@ -100,6 +106,7 @@ class Pool implements IPoolConfig {
     }
     const usdnAsset = this.tokens.find(({ symbol }) => symbol === "USDN")!;
     const usdnLiquidity = this.liquidity[usdnAsset?.assetId];
+    // если нет USDN  то искать пазл
     if (usdnLiquidity != null && usdnAsset.share != null) {
       const globalLiquidity = new BN(usdnLiquidity)
         .div(usdnAsset.share)

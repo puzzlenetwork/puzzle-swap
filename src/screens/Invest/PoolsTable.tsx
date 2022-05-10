@@ -106,6 +106,10 @@ const PoolsTable: React.FC = () => {
         )
         .includes(tokenCategoriesEnum[vm.poolCategoryFilter]);
     })
+    .filter(({ isCustom }) => {
+      if (vm.customPoolFilter === 0) return true;
+      return isCustom != null || isCustom !== false;
+    })
     .map((pool) => ({
       onClick: () => navigate(`/pools/${pool.domain}/invest`),
       poolName: (
@@ -133,7 +137,7 @@ const PoolsTable: React.FC = () => {
           ? `$${accountBalance.toFormat(2)}`
           : "—";
       })(),
-      liquidity: pool.globalLiquidity.toFormat(2),
+      liquidity: "$ " + pool.globalLiquidity.toFormat(2),
       volume: (() => {
         const volume =
           poolsStore.poolsStats &&

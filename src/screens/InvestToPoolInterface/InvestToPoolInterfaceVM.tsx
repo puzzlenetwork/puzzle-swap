@@ -90,6 +90,9 @@ class InvestToPoolInterfaceVM {
   private _pool: Pool | null = null;
   private _setPool = (pool: Pool) => (this._pool = pool);
 
+  nftPaymentName: string = "";
+  setNFTPaymentName = (v: string) => (this.nftPaymentName = v);
+
   initialized: boolean = false;
   private setInitialized = (v: boolean) => (this.initialized = v);
 
@@ -124,6 +127,7 @@ class InvestToPoolInterfaceVM {
     this.rootStore = rootStore;
     this.syncPool(poolDomain).finally(() => this.setInitialized(true));
     makeAutoObservable(this);
+    when(() => this.pool.isCustom === true, this.loadNFTPaymentInfo);
     when(
       () => this.pool != null,
       () => {
@@ -378,6 +382,19 @@ class InvestToPoolInterfaceVM {
       return { assetId: token.assetId, balance: new BN(token.balance) };
     });
     this.setPoolAssetBalances(value);
+  };
+
+  loadNFTPaymentInfo = async () => {
+    const { isCustom, artefactOriginTransactionId } = this.pool;
+    if (isCustom == null || !isCustom || artefactOriginTransactionId == null)
+      return;
+    const data = await nodeService.transactionInfo(
+      NODE_URL,
+      artefactOriginTransactionId
+    );
+    this.setNFTPaymentName(
+      data?.stateChanges.invokes[0].call.args[0].value.toString() ?? ""
+    );
   };
 
   loadTransactionsHistory = async () => {

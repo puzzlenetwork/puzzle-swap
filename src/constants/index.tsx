@@ -316,5 +316,8 @@ export interface IPoolConfig {
   tokens: Array<IToken & { share: number }>;
   poolTokenName?: string;
   owner?: string;
+  artefactOriginTransactionId?: string;
+  swapFee?: number;
+  createdAt?: string;
   logo?: string;
 }
