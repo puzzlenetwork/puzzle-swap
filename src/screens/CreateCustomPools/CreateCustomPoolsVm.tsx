@@ -345,8 +345,8 @@ class CreateCustomPoolsVm {
     const rate = poolsStore.usdnRate(TOKENS_BY_SYMBOL.PUZZLE.assetId, 1);
     if (nftStore.totalPuzzleNftsAmount == null) return 0;
     const amount = new BN(400)
-      .div(rate ?? 0)
-      .plus(nftStore.totalPuzzleNftsAmount);
+      .plus(nftStore.totalPuzzleNftsAmount)
+      .div(rate ?? 0);
     return Math.ceil(amount.toNumber());
   }
 

@@ -143,7 +143,9 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
             containerStyles={{ display: "flex", alignItems: "center" }}
             content={
               <Text size="small" style={{ whiteSpace: "pre-line" }}>
-                {`You will get 10% of these\n fees as a pool owner`}
+                {`You will get ${vm.swapFee
+                  .div(10)
+                  .toString()}% of these\n fees as a pool owner`}
               </Text>
             }
           >
