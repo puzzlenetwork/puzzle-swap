@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { action, makeAutoObservable } from "mobx";
+import { action, makeAutoObservable, when } from "mobx";
 import {
   EXPLORER_URL,
   IToken,
@@ -40,7 +40,7 @@ class MultiSwapVM {
 
   public get pool() {
     const poolsStore = this.rootStore.poolsStore;
-    const configPool = poolsStore.getPuzzlePoolByDomain(this.poolDomain);
+    const configPool = poolsStore.getPoolByDomain(this.poolDomain);
     return configPool ?? this._pool!;
   }
 
@@ -72,7 +72,11 @@ class MultiSwapVM {
     private rootStore: RootStore,
     public readonly poolDomain: string
   ) {
-    this.syncPool(poolDomain).finally(() => this.setInitialized(true));
+    when(
+      () => this.rootStore.poolsStore.pools.length > 0,
+      () => {}
+    );
+    // this.syncPool(poolDomain).finally(() => this.setInitialized(true));
     makeAutoObservable(this);
   }
 

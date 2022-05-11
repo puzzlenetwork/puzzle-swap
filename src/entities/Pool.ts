@@ -4,7 +4,7 @@ import { action, makeAutoObservable } from "mobx";
 import BN from "@src/utils/BN";
 import tokenLogos from "@src/constants/tokenLogos";
 
-interface IData {
+export interface IData {
   key: string;
   type: "integer" | "string";
   value: number | string;
@@ -68,15 +68,18 @@ class Pool implements IPoolConfig {
     this.defaultAssetId1 = params.defaultAssetId1;
     this.domain = params.domain;
     this.isCustom = params.isCustom;
-
     this.syncLiquidity().then();
     setInterval(this.syncLiquidity, 15000);
     makeAutoObservable(this);
   }
 
-  private syncLiquidity = async () => {
-    const globalAttributesUrl = `${NODE_URL}/addresses/data/${this.contractAddress}?matches=global_(.*)`;
-    const { data }: { data: IData[] } = await axios.get(globalAttributesUrl);
+  syncLiquidity = async (data?: IData[]) => {
+    console.log(data);
+    if (data == null) {
+      const globalAttributesUrl = `${NODE_URL}/addresses/data/${this.contractAddress}?matches=global_(.*)`;
+      const res: { data: IData[] } = await axios.get(globalAttributesUrl);
+      data = res.data;
+    }
     const balances = data.reduce<Record<string, BN>>((acc, { key, value }) => {
       const regexp = new RegExp("global_(.*)_balance");
       regexp.test(key) && (acc[key.match(regexp)![1]] = new BN(value));

@@ -1,12 +1,13 @@
 import { RootStore } from "./index";
 import { action, makeAutoObservable, reaction } from "mobx";
-import Pool, { IShortPoolInfo } from "@src/entities/Pool";
+import Pool, { IData, IShortPoolInfo } from "@src/entities/Pool";
 import BN from "@src/utils/BN";
 import statsService, {
   IPoolVolume,
   IStatsPoolItemResponse,
 } from "@src/services/statsService";
 import { POOL_CONFIG } from "@src/constants";
+import poolsService from "@src/services/poolsService";
 
 export interface IStatsPoolItem {
   weekly_volume: BN;
@@ -20,6 +21,11 @@ export interface IPoolStats30Days extends IStatsPoolItem {
   volume: IPoolVolume[];
 }
 
+export type TPoolState = {
+  state: IData[];
+  contractAddress: string;
+};
+
 export default class PoolsStore {
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
@@ -27,7 +33,14 @@ export default class PoolsStore {
     this.syncPoolsStats().then();
     this.syncPools();
     this.updateAccountPoolsLiquidityInfo().then();
-    setInterval(this.updateAccountPoolsLiquidityInfo, 60 * 1000);
+    setInterval(
+      () =>
+        Promise.all([
+          this.updateAccountPoolsLiquidityInfo(),
+          this.updatePoolsState(),
+        ]),
+      60 * 1000
+    );
     reaction(
       () => this.rootStore.accountStore.address,
       () => this.updateAccountPoolsLiquidityInfo(true)
@@ -37,12 +50,15 @@ export default class PoolsStore {
   public rootStore: RootStore;
   pools: Pool[] = [];
   @action.bound setPools = (pools: Pool[]) => (this.pools = pools);
-  getPuzzlePoolByDomain = (domain: string) =>
+  getPoolByDomain = (domain: string) =>
     this.pools.find((pool) => pool.domain === domain);
 
   public poolsStats: Record<string, IStatsPoolItem> | null = null;
   private setPoolStats = (value: Record<string, IStatsPoolItem>) =>
     (this.poolsStats = value);
+
+  public poolsState: TPoolState[] | null = null;
+  private setPoolState = (value: TPoolState[]) => (this.poolsState = value);
 
   accountPoolsLiquidity: IShortPoolInfo[] | null = null;
   setAccountPoolsLiquidity = (v: IShortPoolInfo[] | null) =>
@@ -79,6 +95,13 @@ export default class PoolsStore {
   };
 
   syncPools = () => {
+    const pools = Object.values(POOL_CONFIG).map(
+      (pool) => new Pool({ ...pool, isCustom: false })
+    );
+    this.setPools(pools);
+  };
+
+  syncCustomPools = () => {
     const pools = Object.values(POOL_CONFIG).map(
       (pool) => new Pool({ ...pool, isCustom: false })
     );
@@ -125,5 +148,22 @@ export default class PoolsStore {
     if (address !== newAddress) return;
     this.setAccountPoolsLiquidity(poolsInfo);
     this.setAccountPoolsLiquidityLoading(false);
+  };
+
+  updatePoolsState = async () => {
+    if (this.rootStore.accountStore.address == null) return;
+    const state = await poolsService.getPoolsStateByUserAddress(
+      this.rootStore.accountStore.address
+    );
+    this.setPoolState(state);
+    console.log(this.pools);
+    this.pools.forEach((pool) => {
+      const poolState = state.find(
+        (v) => v.contractAddress === pool.contractAddress
+      );
+      if (poolState != null) {
+        pool.syncLiquidity(poolState.state);
+      }
+    });
   };
 }
