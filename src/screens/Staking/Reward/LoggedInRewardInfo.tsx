@@ -10,10 +10,10 @@ import wallet from "@src/assets/icons/wallet.svg";
 import Text from "@components/Text";
 import { useStakingVM } from "@screens/Staking/StakingVM";
 import BN from "@src/utils/BN";
-import { useStores } from "@stores";
 import dayjs from "dayjs";
 import Loading from "@components/Loading";
 import Skeleton from "react-loading-skeleton";
+import { TOKENS_BY_SYMBOL } from "@src/constants";
 
 const Root = styled.div`
   display: flex;
@@ -25,8 +25,6 @@ const Icon = styled.img`
   width: 40px;
 `;
 const LoggedInRewardInfo: React.FC = () => {
-  const { accountStore } = useStores();
-  const { TOKENS } = accountStore;
   const vm = useStakingVM();
   const availableToClaim =
     vm.availableToClaim != null
@@ -34,7 +32,7 @@ const LoggedInRewardInfo: React.FC = () => {
       : null;
   const claimedReward =
     vm.claimedReward != null
-      ? BN.formatUnits(vm.claimedReward, TOKENS.USDN.decimals)
+      ? BN.formatUnits(vm.claimedReward, TOKENS_BY_SYMBOL.USDN.decimals)
       : null;
   const date = dayjs(vm.lastClaimDate?.toNumber() ?? 0);
   const format = date.format("D MMM YYYY");

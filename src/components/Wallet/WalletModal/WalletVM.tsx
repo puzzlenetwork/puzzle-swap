@@ -8,7 +8,7 @@ import { LOGIN_TYPE } from "@src/stores/AccountStore";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import BN from "@src/utils/BN";
 import wavesCapService from "@src/services/wavesCapService";
-import { ROUTES } from "@src/constants";
+import { ROUTES, TOKENS_LIST } from "@src/constants";
 
 const ctx = React.createContext<WalletVM | null>(null);
 
@@ -76,11 +76,10 @@ class WalletVM {
 
   get balances() {
     const { accountStore } = this.rootStore;
-    return Object.values(this.rootStore.accountStore.TOKENS)
-      .map((t) => {
-        const balance = accountStore.findBalanceByAssetId(t.assetId);
-        return balance ?? new Balance(t);
-      })
+    return TOKENS_LIST.map((t) => {
+      const balance = accountStore.findBalanceByAssetId(t.assetId);
+      return balance ?? new Balance(t);
+    })
       .filter(({ balance }) => balance && !balance.eq(0))
       .sort((a, b) => {
         if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;

@@ -36,7 +36,7 @@ export interface ITransaction {
     transfers: [
       {
         address: string;
-        asset: null;
+        asset: string;
         amount: number;
       }
     ];

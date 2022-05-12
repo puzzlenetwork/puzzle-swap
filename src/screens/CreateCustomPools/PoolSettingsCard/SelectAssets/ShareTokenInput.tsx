@@ -86,15 +86,12 @@ const ShareTokenInput: React.FC<IProps> = ({
   const [focused, setFocused] = useState(false);
   return (
     <>
-      <Root focused={focused} error={error} {...props}>
+      <Root {...props} focused={focused} error={error}>
         <BigNumberInput
           renderInput={(props, ref) => (
             <AmountInput
               {...props}
-              style={{
-                fontSize: 16,
-                lineHeight: 24,
-              }}
+              style={{ fontSize: 16 }}
               onFocus={(e) => {
                 props.onFocus && props.onFocus(e);
                 !props.readOnly && setFocused(true);

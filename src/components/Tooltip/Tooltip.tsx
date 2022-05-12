@@ -15,7 +15,7 @@ const Root = styled.div<{ fixed?: boolean }>`
   background: #ffffff;
   max-width: 320px;
   min-width: 160px;
-  z-index: 1;
+  z-index: 2;
   width: max-content;
   box-sizing: border-box;
   padding: 8px 16px 12px;

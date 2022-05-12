@@ -23,10 +23,7 @@ interface IPoolSettings {
   layer2Address?: string;
   baseTokenId: string;
   title: string;
-  defaultAssetId0: string;
-  defaultAssetId1: string;
   assets: Array<IAssetConfig>;
-  poolTokenName?: string;
   logo: string;
   artefactOriginTransactionId?: string;
   owner: string;

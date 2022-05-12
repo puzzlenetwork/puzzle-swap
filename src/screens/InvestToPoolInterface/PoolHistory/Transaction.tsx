@@ -4,14 +4,13 @@ import { Row } from "@components/Flex";
 import Text from "@components/Text";
 import { observer } from "mobx-react-lite";
 import { ITransaction } from "@src/utils/types";
-import { EXPLORER_URL, IToken } from "@src/constants";
+import { EXPLORER_URL, TOKENS_BY_ASSET_ID } from "@src/constants";
 import Swap from "./Swap";
 import BN from "@src/utils/BN";
 import dayjs from "dayjs";
 import PoolAction from "./PoolAction";
 
 interface IProps extends ITransaction {
-  tokens: Record<string, IToken>;
   usdnRate: (assetId: string, coefficient: number) => BN | null;
 }
 
@@ -27,7 +26,6 @@ const Root = styled(Row)`
 const Transaction: React.FC<IProps> = ({
   id,
   timestamp,
-  tokens,
   call,
   stateChanges,
   usdnRate,
@@ -71,9 +69,10 @@ const Transaction: React.FC<IProps> = ({
     switch (call?.function) {
       case "swap":
       case "swapWithReferral":
-        const token0 = tokens[payment[0].assetId ?? "WAVES"];
+        const token0 = TOKENS_BY_ASSET_ID[payment[0].assetId ?? "WAVES"];
         const amount0 = new BN(payment[0].amount);
-        const token1 = tokens[stateChanges.transfers[0]?.asset ?? ""];
+        const token1 =
+          TOKENS_BY_ASSET_ID[stateChanges.transfers[0]?.asset ?? ""];
         const am1 =
           call.args[1].type === "list"
             ? stateChanges.transfers[0].amount
@@ -97,7 +96,7 @@ const Transaction: React.FC<IProps> = ({
       case "generateIndexAndStake":
         const addedTokens = payment.map(({ assetId, amount }) => ({
           amount: new BN(amount),
-          ...tokens[assetId ?? "WAVES"],
+          ...TOKENS_BY_ASSET_ID[assetId ?? "WAVES"],
         }));
         const totalAddedUsdn = addedTokens.reduce(
           (acc, { assetId, amount, decimals }) => {
@@ -113,7 +112,7 @@ const Transaction: React.FC<IProps> = ({
         const oneToken = stateChanges.invokes[1].payment.map(
           ({ assetId, amount }) => ({
             amount: new BN(amount),
-            ...tokens[assetId ?? "WAVES"],
+            ...TOKENS_BY_ASSET_ID[assetId ?? "WAVES"],
           })
         );
         const totalAddedOneTokenUsdn = oneToken.reduce(
@@ -131,7 +130,7 @@ const Transaction: React.FC<IProps> = ({
           stateChanges.invokes[1].stateChanges.transfers.map(
             ({ asset, amount }) => ({
               amount: new BN(amount),
-              ...tokens[asset ?? "WAVES"],
+              ...TOKENS_BY_ASSET_ID[asset ?? "WAVES"],
             })
           );
         const totalRemovedTokenUsdn = removedTokens.reduce(
@@ -148,7 +147,7 @@ const Transaction: React.FC<IProps> = ({
         const claimedTokens = stateChanges.transfers.map(
           ({ asset, amount }) => ({
             amount: new BN(amount),
-            ...tokens[asset ?? "WAVES"],
+            ...TOKENS_BY_ASSET_ID[asset ?? "WAVES"],
           })
         );
         const totalClaimedUsdn = claimedTokens.reduce(

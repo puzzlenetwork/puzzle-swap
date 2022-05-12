@@ -18,7 +18,6 @@ const PoolsTable: React.FC = () => {
   const { poolsStore, accountStore } = useStores();
   const [activeSort, setActiveSort] = useState<0 | 1>(1);
   const vm = useInvestVM();
-  const data = vm.pools;
   const navigate = useNavigate();
 
   const columns = React.useMemo(
@@ -68,7 +67,7 @@ const PoolsTable: React.FC = () => {
     [vm]
   );
 
-  const filteredPools = data
+  const filteredPools = vm.pools
     .filter(({ domain }) => domain !== "puzzle")
     .sort((a, b) => {
       if (activeSort === 0) {
@@ -107,6 +106,10 @@ const PoolsTable: React.FC = () => {
         )
         .includes(tokenCategoriesEnum[vm.poolCategoryFilter]);
     })
+    .filter(({ isCustom }) => {
+      if (vm.customPoolFilter === 0) return true;
+      return isCustom != null || isCustom !== false;
+    })
     .map((pool) => ({
       onClick: () => navigate(`/pools/${pool.domain}/invest`),
       poolName: (
@@ -134,25 +137,57 @@ const PoolsTable: React.FC = () => {
           ? `$${accountBalance.toFormat(2)}`
           : "—";
       })(),
-      liquidity: pool.globalLiquidity.toFormat(2),
+      liquidity: "$ " + pool.globalLiquidity.toFormat(2),
       volume: (() => {
         const volume =
           poolsStore.poolsStats &&
-          poolsStore.poolsStats[pool.domain].monthly_volume != null
-            ? poolsStore.poolsStats[pool.domain].monthly_volume.toFormat(2)
+          poolsStore.poolsStats[pool.domain]?.monthly_volume != null
+            ? poolsStore.poolsStats[pool.domain]?.monthly_volume.toFormat(2)
             : null;
         return volume != null ? `$ ${volume}` : "—";
       })(),
       apy: poolsStore.poolsStats
         ? poolsStore.poolsStats[pool.domain]?.apy.toFormat(2).concat(" %")
         : undefined,
+      owner: pool.owner,
     }));
+
+  const myPools = filteredPools.filter(
+    ({ owner }) => owner != null && accountStore.address === owner
+  );
 
   return (
     <>
+      {myPools.length > 0 && (
+        <>
+          <Row alignItems="center">
+            <Text weight={500} type="secondary" fitContent>
+              My pools ({myPools.length})
+            </Text>
+          </Row>
+          <SizedBox height={8} />
+          {myPools.length > 0 ? (
+            <Scrollbar
+              style={{ maxWidth: "calc(100vw - 32px)", borderRadius: 16 }}
+            >
+              <Table
+                style={{ minWidth: 900 }}
+                columns={columns}
+                data={myPools}
+              />
+            </Scrollbar>
+          ) : (
+            <PoolNotFound
+              onClear={() => vm.setSearchValue("")}
+              searchValue={vm.searchValue}
+            />
+          )}
+          <SizedBox height={24} />
+        </>
+      )}
       <Row alignItems="center">
         <Text weight={500} type="secondary" fitContent>
-          All pools ({data.length})
+          All pools ({vm.pools.length})
         </Text>
       </Row>
       <SizedBox height={8} />

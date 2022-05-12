@@ -6,7 +6,7 @@ import statsService, {
   IPoolVolume,
   IStatsPoolItemResponse,
 } from "@src/services/statsService";
-import { POOL_CONFIG } from "@src/constants";
+import { POOL_CONFIG, TOKENS_BY_SYMBOL } from "@src/constants";
 import poolsService from "@src/services/poolsService";
 
 export interface IStatsPoolItem {
@@ -90,8 +90,11 @@ export default class PoolsStore {
       tokens.some((t) => t.assetId === assetId)
     );
     if (pool == null) return null;
-    const tokens = this.rootStore.accountStore.TOKENS;
-    return pool.currentPrice(assetId, tokens.USDN.assetId, coefficient);
+    return pool.currentPrice(
+      assetId,
+      TOKENS_BY_SYMBOL.USDN.assetId,
+      coefficient
+    );
   };
 
   syncPools = () => {

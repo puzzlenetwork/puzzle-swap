@@ -3,7 +3,13 @@ import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable, reaction, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
-import { EXPLORER_URL, IToken, NODE_URL, TOKENS } from "@src/constants";
+import {
+  EXPLORER_URL,
+  IToken,
+  NODE_URL,
+  TOKENS_BY_SYMBOL,
+  TOKENS_LIST,
+} from "@src/constants";
 import { IPoolStats30Days } from "@stores/PoolsStore";
 import axios from "axios";
 import nodeService from "@src/services/nodeService";
@@ -84,6 +90,9 @@ class InvestToPoolInterfaceVM {
   private _pool: Pool | null = null;
   private _setPool = (pool: Pool) => (this._pool = pool);
 
+  nftPaymentName: string = "";
+  setNFTPaymentName = (v: string) => (this.nftPaymentName = v);
+
   initialized: boolean = false;
   private setInitialized = (v: boolean) => (this.initialized = v);
 
@@ -101,7 +110,7 @@ class InvestToPoolInterfaceVM {
         const pool = new Pool({
           ...poolSettings,
           tokens: poolSettings.assets.reduce((acc, { assetId, share }) => {
-            const token = Object.values(TOKENS).find(
+            const token = TOKENS_LIST.find(
               (asset) => assetId === asset.assetId
             );
             return token
@@ -118,6 +127,7 @@ class InvestToPoolInterfaceVM {
     this.rootStore = rootStore;
     this.syncPool(poolDomain).finally(() => this.setInitialized(true));
     makeAutoObservable(this);
+    when(() => this.pool.isCustom === true, this.loadNFTPaymentInfo);
     when(
       () => this.pool != null,
       () => {
@@ -291,7 +301,7 @@ class InvestToPoolInterfaceVM {
       );
       const rate = this.pool.currentPrice(
         token.assetId,
-        this.rootStore.accountStore.TOKENS.USDN.assetId,
+        TOKENS_BY_SYMBOL.USDN.assetId,
         1
       );
       return [
@@ -364,6 +374,7 @@ class InvestToPoolInterfaceVM {
 
   updatePoolTokenBalances = async () => {
     const { pool } = this;
+    //todo ✅
     const { data }: { data: TContractAssetBalancesResponse } = await axios.get(
       `${NODE_URL}/assets/balance/${pool.contractAddress}`
     );
@@ -373,7 +384,21 @@ class InvestToPoolInterfaceVM {
     this.setPoolAssetBalances(value);
   };
 
+  loadNFTPaymentInfo = async () => {
+    const { isCustom, artefactOriginTransactionId } = this.pool;
+    if (isCustom == null || !isCustom || artefactOriginTransactionId == null)
+      return;
+    const data = await nodeService.transactionInfo(
+      NODE_URL,
+      artefactOriginTransactionId
+    );
+    this.setNFTPaymentName(
+      data?.stateChanges.invokes[0].call.args[0].value.toString() ?? ""
+    );
+  };
+
   loadTransactionsHistory = async () => {
+    //todo ✅
     const v = await nodeService.transactions(
       NODE_URL,
       this.pool.contractAddress
@@ -387,6 +412,7 @@ class InvestToPoolInterfaceVM {
     if (transactionsHistory == null) return;
     const after = transactionsHistory.slice(-1).pop();
     if (after == null) return;
+    //todo ✅
     const v = await nodeService.transactions(
       NODE_URL,
       pool.contractAddress,

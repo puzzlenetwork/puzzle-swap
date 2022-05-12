@@ -7,7 +7,12 @@ import Balance from "@src/entities/Balance";
 import stakedPuzzleLogo from "@src/assets/tokens/staked-puzzle.svg";
 import statsService from "@src/services/statsService";
 import nodeService from "@src/services/nodeService";
-import { CONTRACT_ADDRESSES, EXPLORER_URL, NODE_URL } from "@src/constants";
+import {
+  CONTRACT_ADDRESSES,
+  EXPLORER_URL,
+  NODE_URL,
+  TOKENS_BY_SYMBOL,
+} from "@src/constants";
 
 const ctx = React.createContext<StakingVM | null>(null);
 
@@ -70,7 +75,7 @@ class StakingVM {
     (this.puzzleAmountToUnstake = value);
 
   public get puzzleToken() {
-    return this.rootStore.accountStore.TOKENS.PUZZLE;
+    return TOKENS_BY_SYMBOL.PUZZLE;
   }
 
   get puzzleBalance() {
@@ -89,7 +94,7 @@ class StakingVM {
   }
 
   private updateAddressStakingInfo = async () => {
-    const { address, TOKENS } = this.rootStore.accountStore;
+    const { address } = this.rootStore.accountStore;
     const { stakingContractAddress } = this;
     if (address == null) {
       this._setGlobalStaked(BN.ZERO);
@@ -100,13 +105,14 @@ class StakingVM {
       this._setLastClaimDate(BN.ZERO);
       return;
     }
+    const usdn = TOKENS_BY_SYMBOL.USDN.assetId;
     const keysArray = {
       globalStaked: "global_staked",
       addressStaked: `${address}_staked`,
-      claimedReward: `${address}_${TOKENS.USDN.assetId}_claimed`,
-      globalLastCheckInterest: `global_lastCheck_${TOKENS.USDN.assetId}_interest`,
-      addressLastCheckInterest: `${address}_lastCheck_${TOKENS.USDN.assetId}_interest`,
-      lastClaimDate: `${address}_${TOKENS.USDN.assetId}_lastClaim`,
+      claimedReward: `${address}_${usdn}_claimed`,
+      globalLastCheckInterest: `global_lastCheck_${usdn}_interest`,
+      addressLastCheckInterest: `${address}_lastCheck_${usdn}_interest`,
+      lastClaimDate: `${address}_${usdn}_lastClaim`,
     };
     const response = await nodeService.nodeKeysRequest(
       NODE_URL,

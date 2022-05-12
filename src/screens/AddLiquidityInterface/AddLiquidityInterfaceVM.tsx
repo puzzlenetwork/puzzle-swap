@@ -13,7 +13,7 @@ import {
 } from "@components/Dialog/DialogNotification";
 import Pool from "@src/entities/Pool";
 import poolService from "@src/services/poolsService";
-import { IToken, TOKENS } from "@src/constants";
+import { IToken, TOKENS_LIST } from "@src/constants";
 import TokenLogos from "@src/constants/tokenLogos";
 
 const ctx = React.createContext<AddLiquidityInterfaceVM | null>(null);
@@ -76,7 +76,7 @@ class AddLiquidityInterfaceVM {
         const pool = new Pool({
           ...poolSettings,
           tokens: poolSettings.assets.reduce((acc, { assetId, share }) => {
-            const token = Object.values(TOKENS).find(
+            const token = TOKENS_LIST.find(
               (asset) => assetId === asset.assetId
             );
             return token
