@@ -58,7 +58,7 @@ const SelectsAssets: React.FC<IProps> = () => {
                   )
                 }
                 onDelete={() => vm.removeAssetFromPool(asset.assetId)}
-                disabled={isPuzzle}
+                permanent={index === 0}
               />
             );
           })}

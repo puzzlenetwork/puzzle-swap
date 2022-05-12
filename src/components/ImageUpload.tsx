@@ -67,7 +67,8 @@ const Container = styled.div<{ image: string | null }>`
 
 const CloseButton = styled(Cross)`
   position: absolute;
-  inset: 0 0 auto auto;
+  top: 0;
+  right: 0;
   cursor: pointer;
   height: 20px;
   width: 20px;
@@ -131,9 +132,7 @@ const ImageUpload: React.FC<IProps> = ({
             <Text fitContent weight={500}>
               {fileName}
             </Text>
-            <CloseButton
-              onClick={() => onChange(undefined)}
-            />
+            <CloseButton onClick={() => onChange(undefined)} />
           </Row>
           <Text size="small" type="secondary">
             {fileSize} KB

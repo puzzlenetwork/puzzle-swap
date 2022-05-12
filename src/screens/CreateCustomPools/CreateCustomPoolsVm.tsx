@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { action, makeAutoObservable } from "mobx";
+import { action, makeAutoObservable, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import {
   CONTRACT_ADDRESSES,
@@ -71,6 +71,7 @@ class CreateCustomPoolsVm {
     setInterval(this.saveSettings, 1000);
     const initData = loadCreatePoolStateFromStorage();
     this.initialize(initData);
+    when(() => initData?.maxStep === 2, this.checkIfAlreadyCreated);
   }
 
   initialize = (initData: IInitData | null) => {
@@ -160,6 +161,11 @@ class CreateCustomPoolsVm {
   get totalTakenShare(): BN {
     return this.poolsAssets.reduce((acc, v) => acc.plus(v.share), BN.ZERO);
   }
+
+  checkIfAlreadyCreated = async () => {
+    const res = await poolsService.getPoolByDomain(this.domain);
+    if (res.domain === this.domain) this.setStep(3);
+  };
 
   syncShares = () => {
     const unlockedPercent = this.poolsAssets.reduce(
