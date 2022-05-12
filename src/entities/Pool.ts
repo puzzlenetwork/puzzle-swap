@@ -184,9 +184,10 @@ class Pool implements IPoolConfig {
         shareOfPool: BN.ZERO,
         pool: this,
         indexTokenRate,
-        indexTokenName: "PZ" + staticPoolDomain,
+        indexTokenName: " PZ" + staticPoolDomain,
       };
     }
+
     const liquidityInUsdn = this.globalLiquidity
       .times(addressIndexStaked)
       .div(globalIndexStaked);
@@ -229,9 +230,10 @@ class Pool implements IPoolConfig {
         shareOfPool: BN.ZERO,
         pool: this,
         indexTokenRate,
-        indexTokenName: "PZ " + this.domain,
+        indexTokenName: " PZ " + this.domain,
       };
     }
+
     const liquidityInUsdn = this.globalLiquidity
       .times(addressIndexStaked)
       .div(globalIndexStaked);
@@ -245,7 +247,7 @@ class Pool implements IPoolConfig {
       shareOfPool: percent,
       pool: this,
       indexTokenRate,
-      indexTokenName: "PZ " + this.domain,
+      indexTokenName: " PZ " + this.domain,
     };
   };
 

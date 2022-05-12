@@ -220,15 +220,15 @@ export default class PoolsStore {
       this.rootStore.accountStore.address
     );
     this.setPoolState(state);
-    this.updateAccountCustomPoolsLiquidityInfo(
-      this.rootStore.accountStore.address
-    );
     this.customPools.forEach((pool) => {
       const poolState = this.getStateByAddress(pool.contractAddress);
       if (poolState != null) {
         pool.syncLiquidity(poolState.state);
       }
     });
+    this.updateAccountCustomPoolsLiquidityInfo(
+      this.rootStore.accountStore.address
+    );
   };
 
   syncPoolsLiquidity = () =>
