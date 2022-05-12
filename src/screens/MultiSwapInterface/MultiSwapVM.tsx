@@ -1,19 +1,10 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { action, makeAutoObservable, when } from "mobx";
-import {
-  EXPLORER_URL,
-  IToken,
-  SLIPPAGE,
-  TOKENS_BY_ASSET_ID,
-  TRADE_FEE,
-} from "@src/constants";
+import { action, makeAutoObservable } from "mobx";
+import { EXPLORER_URL, SLIPPAGE, TRADE_FEE } from "@src/constants";
 import { RootStore, useStores } from "@stores";
 import Balance from "@src/entities/Balance";
 import BN from "@src/utils/BN";
-import Pool from "@src/entities/Pool";
-import poolService from "@src/services/poolsService";
-import TokenLogos from "@src/constants/tokenLogos";
 
 const ctx = React.createContext<MultiSwapVM | null>(null);
 
@@ -32,50 +23,15 @@ export const MultiSwapVMProvider: React.FC<{ poolDomain: string }> = ({
 export const useMultiSwapVM = () => useVM(ctx);
 
 class MultiSwapVM {
-  private _pool: Pool | null = null;
-  private _setPool = (pool: Pool) => (this._pool = pool);
-
-  initialized: boolean = false;
-  private setInitialized = (v: boolean) => (this.initialized = v);
-
-  public get pool() {
-    const poolsStore = this.rootStore.poolsStore;
-    const configPool = poolsStore.getPoolByDomain(this.poolDomain);
-    return configPool ?? this._pool!;
-  }
-
-  private syncPool = (poolDomain: string) =>
-    poolService
-      .getPoolByDomain(poolDomain)
-      .then((poolSettings) => {
-        if (!poolSettings) return;
-        const pool = new Pool({
-          ...poolSettings,
-          defaultAssetId0: poolSettings.assets[0].assetId,
-          defaultAssetId1: poolSettings.assets[1].assetId,
-          tokens: poolSettings.assets.reduce((acc, { assetId, share }) => {
-            const token = TOKENS_BY_ASSET_ID[assetId];
-            return token
-              ? [...acc, { ...token, share, logo: TokenLogos[token.symbol] }]
-              : acc;
-          }, [] as Array<IToken & { share: number }>),
-        });
-        this.setAssetId0(poolSettings.assets[0].assetId);
-        this.setAssetId1(poolSettings.assets[1].assetId);
-        this._setPool(pool);
-      })
-      .catch(console.error);
-
   constructor(
     private rootStore: RootStore,
     public readonly poolDomain: string
   ) {
-    when(
-      () => this.rootStore.poolsStore.pools.length > 0,
-      () => {}
-    );
-    // this.syncPool(poolDomain).finally(() => this.setInitialized(true));
     makeAutoObservable(this);
+  }
+
+  public get pool() {
+    return this.rootStore.poolsStore.getPoolByDomain(this.poolDomain)!;
   }
 
   assetId0: string = this.pool?.defaultAssetId0!;

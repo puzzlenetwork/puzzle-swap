@@ -3,7 +3,7 @@ import { Column } from "@components/Flex";
 import Text from "@components/Text";
 import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
-import { useMultiSwapVM } from "@screens/MultiSwapInterface/MultiScreenVM";
+import { useMultiSwapVM } from "@screens/MultiSwapInterface/MultiSwapVM";
 
 const TooltipFeeInfo: React.FC = () => {
   const vm = useMultiSwapVM();

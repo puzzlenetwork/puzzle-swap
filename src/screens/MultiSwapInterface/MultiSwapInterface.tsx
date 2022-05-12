@@ -10,7 +10,7 @@ import Tooltip from "@components/Tooltip";
 import {
   MultiSwapVMProvider,
   useMultiSwapVM,
-} from "@screens/MultiSwapInterface/MultiScreenVM";
+} from "@screens/MultiSwapInterface/MultiSwapVM";
 import { observer } from "mobx-react-lite";
 import SwitchTokensButton from "@screens/MultiSwapInterface/SwitchTokensButton";
 import Text from "@components/Text";
@@ -22,6 +22,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import TokenInput from "@src/components/TokenInput";
 import Loading from "@components/Loading";
 import { ROUTES } from "@src/constants";
+import { useStores } from "@stores";
 
 const Root = styled.div`
   display: flex;
@@ -77,8 +78,11 @@ const MultiSwapInterfaceImpl: React.FC = observer(() => {
     vm.setAssetId0(assetId);
   };
 
-  if (!vm.initialized && vm.pool == null) return <Loading />;
-  if (vm.initialized && vm.pool == null) {
+  const { poolsStore } = useStores();
+  if (poolsStore.customPools.length === 0 && vm.pool == null) {
+    return <Loading />;
+  }
+  if (poolsStore.customPools.length > 0 && vm.pool == null) {
     return <Navigate to={ROUTES.NOT_FOUND} />;
   }
   return (

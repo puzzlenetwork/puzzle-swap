@@ -2,7 +2,7 @@ import React from "react";
 import { useStores } from "@stores";
 import Button from "@components/Button";
 import { observer } from "mobx-react-lite";
-import { useMultiSwapVM } from "@screens/MultiSwapInterface/MultiScreenVM";
+import { useMultiSwapVM } from "@screens/MultiSwapInterface/MultiSwapVM";
 
 interface IProps {}
 

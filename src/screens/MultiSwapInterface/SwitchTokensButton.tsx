@@ -3,7 +3,7 @@ import React, { HTMLAttributes, useState } from "react";
 import { ReactComponent as SwapIcon } from "@src/assets/icons/swap.svg";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
-import { useMultiSwapVM } from "@screens/MultiSwapInterface/MultiScreenVM";
+import { useMultiSwapVM } from "@screens/MultiSwapInterface/MultiSwapVM";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
 
