@@ -1,4 +1,5 @@
 import axios from "axios";
+import { TPoolState } from "@stores/PoolsStore";
 
 interface IAssetConfig {
   assetId: string;
@@ -61,6 +62,13 @@ const poolService = {
     const { data } = await axios.get(
       `${process.env.REACT_APP_API_BASE}/api/v1/pools`
     );
+    return data;
+  },
+  getPoolsStateByUserAddress: async (
+    address: string
+  ): Promise<TPoolState[]> => {
+    const req = `${process.env.REACT_APP_API_BASE}/api/v1/state/${address}`;
+    const { data } = await axios.get(req);
     return data;
   },
 };
