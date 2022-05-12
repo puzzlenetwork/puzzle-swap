@@ -6,8 +6,13 @@ import statsService, {
   IPoolVolume,
   IStatsPoolItemResponse,
 } from "@src/services/statsService";
-import { POOL_CONFIG, TOKENS_BY_SYMBOL } from "@src/constants";
+import {
+  POOL_CONFIG,
+  TOKENS_BY_ASSET_ID,
+  TOKENS_BY_SYMBOL,
+} from "@src/constants";
 import poolsService from "@src/services/poolsService";
+import poolService from "@src/services/poolsService";
 
 export interface IStatsPoolItem {
   weekly_volume: BN;
@@ -31,13 +36,15 @@ export default class PoolsStore {
     this.rootStore = rootStore;
     makeAutoObservable(this);
     this.syncPoolsStats().then();
-    this.syncPools();
+    this.syncPools().then();
+    this.syncCustomPools().then(this.updateCustomPoolsState);
     this.updateAccountPoolsLiquidityInfo().then();
     setInterval(
       () =>
         Promise.all([
+          this.syncPoolsLiquidity(),
           this.updateAccountPoolsLiquidityInfo(),
-          this.updatePoolsState(),
+          this.updateCustomPoolsState(),
         ]),
       60 * 1000
     );
@@ -48,6 +55,15 @@ export default class PoolsStore {
   }
 
   public rootStore: RootStore;
+
+  get customPools() {
+    return this.pools.filter(({ isCustom }) => isCustom);
+  }
+
+  get mainPools() {
+    return this.pools.filter(({ isCustom }) => !isCustom);
+  }
+
   pools: Pool[] = [];
   @action.bound setPools = (pools: Pool[]) => (this.pools = pools);
   getPoolByDomain = (domain: string) =>
@@ -59,10 +75,32 @@ export default class PoolsStore {
 
   public poolsState: TPoolState[] | null = null;
   private setPoolState = (value: TPoolState[]) => (this.poolsState = value);
+  private getStateByAddress = (contractAddress: string) =>
+    this.poolsState?.find((v) => v.contractAddress === contractAddress);
 
   accountPoolsLiquidity: IShortPoolInfo[] | null = null;
-  setAccountPoolsLiquidity = (v: IShortPoolInfo[] | null) =>
-    (this.accountPoolsLiquidity = v);
+  setAccountPoolsLiquidity = (
+    v: IShortPoolInfo[] | null,
+    options?: { onlyMain?: boolean; onlyCustom?: boolean }
+  ) => {
+    if (v == null) {
+      this.accountPoolsLiquidity = null;
+    } else if (options?.onlyCustom) {
+      const mainPoolsInfo = this.accountPoolsLiquidity?.filter(
+        ({ pool }) => !pool.isCustom
+      );
+      this.accountPoolsLiquidity =
+        mainPoolsInfo != null ? [...mainPoolsInfo, ...v] : v;
+    } else if (options?.onlyMain) {
+      const customPoolsInfo = this.accountPoolsLiquidity?.filter(
+        ({ pool }) => pool.isCustom
+      );
+      this.accountPoolsLiquidity =
+        customPoolsInfo != null ? [...customPoolsInfo, ...v] : v;
+    } else {
+      this.accountPoolsLiquidity = v;
+    }
+  };
 
   accountPoolsLiquidityLoading = false;
   @action.bound setAccountPoolsLiquidityLoading = (state: boolean) =>
@@ -97,18 +135,24 @@ export default class PoolsStore {
     );
   };
 
-  syncPools = () => {
+  syncPools = async () => {
     const pools = Object.values(POOL_CONFIG).map(
       (pool) => new Pool({ ...pool, isCustom: false })
     );
     this.setPools(pools);
+    await Promise.all(this.pools.map((pool) => pool.syncLiquidity()));
   };
 
-  syncCustomPools = () => {
-    const pools = Object.values(POOL_CONFIG).map(
-      (pool) => new Pool({ ...pool, isCustom: false })
-    );
-    this.setPools(pools);
+  syncCustomPools = async () => {
+    const configs = await poolService.getPools();
+    const customPools = configs.map((p) => {
+      const tokens = p.assets.map(({ assetId, share }) => ({
+        ...TOKENS_BY_ASSET_ID[assetId],
+        share,
+      }));
+      return new Pool({ ...p, tokens });
+    });
+    this.setPools([...this.pools, ...customPools]);
   };
 
   syncPoolsStats = async () => {
@@ -144,29 +188,58 @@ export default class PoolsStore {
     }
     if (!force && this.accountPoolsLiquidityLoading) return;
     this.setAccountPoolsLiquidityLoading(true);
-    const poolsInfo = await Promise.all(
-      this.pools.map((p) => p.getAccountLiquidityInfo(address))
-    );
-    const newAddress = this.rootStore.accountStore.address;
-    if (address !== newAddress) return;
-    this.setAccountPoolsLiquidity(poolsInfo);
+    this.updateAccountCustomPoolsLiquidityInfo(address);
+    await this.updateAccountMainPoolsLiquidityInfo(address);
     this.setAccountPoolsLiquidityLoading(false);
   };
 
-  updatePoolsState = async () => {
+  private updateAccountCustomPoolsLiquidityInfo = (address: string) => {
+    const customPoolsInfo = this.customPools.reduce((acc, pool) => {
+      const state = this.getStateByAddress(pool.contractAddress)?.state;
+      return state
+        ? [...acc, pool.getAccountLiquidityInfoByState(address, state)]
+        : acc;
+    }, [] as Array<IShortPoolInfo>);
+    this.setAccountPoolsLiquidity(customPoolsInfo, { onlyCustom: true });
+  };
+
+  private updateAccountMainPoolsLiquidityInfo = async (address: string) => {
+    const mainPoolsAccountLiquidity = await Promise.all(
+      this.mainPools.map((p) => p.getAccountLiquidityInfo(address))
+    );
+    const newAddress = this.rootStore.accountStore.address;
+    if (address !== newAddress) return;
+    this.setAccountPoolsLiquidity(mainPoolsAccountLiquidity, {
+      onlyMain: true,
+    });
+  };
+
+  updateCustomPoolsState = async () => {
     if (this.rootStore.accountStore.address == null) return;
     const state = await poolsService.getPoolsStateByUserAddress(
       this.rootStore.accountStore.address
     );
     this.setPoolState(state);
-    console.log(this.pools);
-    this.pools.forEach((pool) => {
-      const poolState = state.find(
-        (v) => v.contractAddress === pool.contractAddress
-      );
+    this.customPools.forEach((pool) => {
+      const poolState = this.getStateByAddress(pool.contractAddress);
       if (poolState != null) {
         pool.syncLiquidity(poolState.state);
       }
     });
+    this.updateAccountCustomPoolsLiquidityInfo(
+      this.rootStore.accountStore.address
+    );
   };
+
+  syncPoolsLiquidity = () =>
+    Promise.all(
+      this.pools.map((pool) => {
+        if (pool.isCustom) {
+          const state = this.getStateByAddress(pool.contractAddress)?.state;
+          return state ? pool.syncLiquidity(state) : Promise.resolve();
+        } else {
+          return pool.syncLiquidity();
+        }
+      })
+    );
 }

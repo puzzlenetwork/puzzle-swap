@@ -20,6 +20,7 @@ import PoolHistory from "./PoolHistory";
 import { Navigate, useParams } from "react-router-dom";
 import Loading from "@components/Loading";
 import { ROUTES } from "@src/constants";
+import { useStores } from "@stores";
 
 const Root = styled.div`
   display: flex;
@@ -64,8 +65,11 @@ const Body = styled.div`
 `;
 const InvestToPoolInterfaceImpl: React.FC = observer(() => {
   const vm = useInvestToPoolInterfaceVM();
-  if (!vm.initialized && vm.pool == null) return <Loading />;
-  if (vm.initialized && vm.pool == null) {
+  const { poolsStore } = useStores();
+  if (poolsStore.customPools.length === 0 && vm.pool == null) {
+    return <Loading />;
+  }
+  if (poolsStore.customPools.length > 0 && vm.pool == null) {
     return <Navigate to={ROUTES.NOT_FOUND} />;
   }
   return (

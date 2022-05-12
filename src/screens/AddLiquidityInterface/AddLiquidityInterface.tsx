@@ -19,6 +19,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import ChangePoolModal from "@src/ChangePoolModal";
 import Loading from "@components/Loading";
 import { ROUTES } from "@src/constants";
+import { useStores } from "@stores";
 
 const Root = styled.div`
   display: flex;
@@ -44,8 +45,12 @@ const AddLiquidityInterfaceImpl = observer(() => {
   const addOneTokenRoute = `/pools/${vm.poolDomain}/addOneToken`;
   const navigate = useNavigate();
   const activeTab = addOneTokenRoute.includes(window.location.pathname) ? 1 : 0;
-  if (!vm.initialized && vm.pool == null) return <Loading />;
-  if (vm.initialized && vm.pool == null) {
+
+  const { poolsStore } = useStores();
+  if (poolsStore.customPools.length === 0 && vm.pool == null) {
+    return <Loading />;
+  }
+  if (poolsStore.customPools.length > 0 && vm.pool == null) {
     return <Navigate to={ROUTES.NOT_FOUND} />;
   }
   return (

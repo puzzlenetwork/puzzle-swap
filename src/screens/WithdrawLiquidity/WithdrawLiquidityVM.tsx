@@ -3,11 +3,8 @@ import { useVM } from "@src/hooks/useVM";
 import { action, makeAutoObservable, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
-import { EXPLORER_URL, IToken, TOKENS_BY_ASSET_ID } from "@src/constants";
+import { EXPLORER_URL, IToken } from "@src/constants";
 import { IPoolStats30Days } from "@stores/PoolsStore";
-import Pool from "@src/entities/Pool";
-import poolService from "@src/services/poolsService";
-import TokenLogos from "@src/constants/tokenLogos";
 
 const ctx = React.createContext<WithdrawLiquidityVM | null>(null);
 
@@ -51,41 +48,14 @@ class WithdrawLiquidityVM {
   @action.bound setPercentToWithdraw = (value: number) =>
     (this.percentToWithdraw = new BN(value));
 
-  private _pool: Pool | null = null;
-  private _setPool = (pool: Pool) => (this._pool = pool);
-
-  initialized: boolean = false;
-  private setInitialized = (v: boolean) => (this.initialized = v);
-
   public get pool() {
-    const pools = this.rootStore.poolsStore.pools;
-    const configPool = pools.find(({ domain }) => domain === this.poolDomain);
-    return configPool ?? this._pool!;
+    return this.rootStore.poolsStore.getPoolByDomain(this.poolDomain)!;
   }
-
-  private syncPool = (poolDomain: string) =>
-    poolService
-      .getPoolByDomain(poolDomain)
-      .then((poolSettings) => {
-        if (!poolSettings) return;
-        const pool = new Pool({
-          ...poolSettings,
-          tokens: poolSettings.assets.reduce((acc, { assetId, share }) => {
-            const token = TOKENS_BY_ASSET_ID[assetId];
-            return token
-              ? [...acc, { ...token, share, logo: TokenLogos[token.symbol] }]
-              : acc;
-          }, [] as Array<IToken & { share: number }>),
-        });
-        this._setPool(pool);
-      })
-      .catch(console.error);
 
   constructor(rootStore: RootStore, poolDomain: string) {
     this.poolDomain = poolDomain;
     this.rootStore = rootStore;
     makeAutoObservable(this);
-    this.syncPool(poolDomain).finally(() => this.setInitialized(true));
 
     when(() => this.pool != null, this.updateStats);
     when(
