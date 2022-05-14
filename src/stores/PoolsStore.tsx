@@ -13,6 +13,7 @@ import {
 } from "@src/constants";
 import poolsService from "@src/services/poolsService";
 import poolService from "@src/services/poolsService";
+import wavesCapService from "@src/services/wavesCapService";
 
 export interface IStatsPoolItem {
   weekly_volume: BN;
@@ -39,12 +40,14 @@ export default class PoolsStore {
     this.syncPools().then();
     this.syncCustomPools().then(this.updateCustomPoolsState);
     this.updateAccountPoolsLiquidityInfo().then();
+    this.syncPuzzleRate().then();
     setInterval(
       () =>
         Promise.all([
           this.syncPoolsLiquidity(),
           this.updateAccountPoolsLiquidityInfo(),
           this.updateCustomPoolsState(),
+          this.syncPuzzleRate(),
         ]),
       60 * 1000
     );
@@ -72,6 +75,9 @@ export default class PoolsStore {
   public poolsStats: Record<string, IStatsPoolItem> | null = null;
   private setPoolStats = (value: Record<string, IStatsPoolItem>) =>
     (this.poolsStats = value);
+
+  private puzzleRate: BN | null = null;
+  private setPuzzleRate = (rate: BN | null) => (this.puzzleRate = rate);
 
   public poolsState: TPoolState[] | null = null;
   private setPoolState = (value: TPoolState[]) => (this.poolsState = value);
@@ -128,11 +134,18 @@ export default class PoolsStore {
       tokens.some((t) => t.assetId === assetId)
     );
     if (pool == null) return null;
-    return pool.currentPrice(
-      assetId,
-      TOKENS_BY_SYMBOL.USDN.assetId,
-      coefficient
-    );
+    const usdn = TOKENS_BY_SYMBOL.USDN.assetId;
+    const puzzle = TOKENS_BY_SYMBOL.PUZZLE.assetId;
+    if (pool.tokens.some(({ assetId }) => assetId === usdn)) {
+      return pool.currentPrice(assetId, usdn, coefficient);
+    } else if (pool.tokens.some(({ assetId }) => assetId === puzzle)) {
+      const priceInPuzzle = pool.currentPrice(assetId, puzzle, coefficient);
+      return priceInPuzzle != null && this.puzzleRate != null
+        ? priceInPuzzle.times(this.puzzleRate)
+        : null;
+    } else {
+      return null;
+    }
   };
 
   syncPools = async () => {
@@ -242,4 +255,9 @@ export default class PoolsStore {
         }
       })
     );
+
+  private syncPuzzleRate = () =>
+    wavesCapService
+      .getAssetRate(TOKENS_BY_SYMBOL.PUZZLE.assetId)
+      .then(this.setPuzzleRate);
 }

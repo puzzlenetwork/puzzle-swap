@@ -136,14 +136,25 @@ class Pool implements IPoolConfig {
     }
     const usdnAsset = this.tokens.find(({ symbol }) => symbol === "USDN")!;
     const usdnLiquidity = this.liquidity[usdnAsset?.assetId];
-    // если нет USDN  то искать пазл
-    if (usdnLiquidity != null && usdnAsset.share != null) {
-      const globalLiquidity = new BN(usdnLiquidity)
+    //todo!
+    // const puzzleAsset = this.tokens.find(({ symbol }) => symbol === "PUZZLE")!;
+    // const puzzleLiquidity = this.liquidity[puzzleAsset?.assetId];
+
+    let globalLiquidity = null;
+    // // оно чет не правильно считает
+    // if (puzzleAsset && puzzleLiquidity) {
+    //   globalLiquidity = new BN(puzzleLiquidity)
+    //     .div(puzzleAsset.share)
+    //     .times(100)
+    //     .div(1e6);
+    // } else
+    if (usdnAsset && usdnLiquidity) {
+      globalLiquidity = new BN(usdnLiquidity)
         .div(usdnAsset.share)
         .times(100)
         .div(1e6);
-      this.setGlobalLiquidity(globalLiquidity);
     }
+    globalLiquidity && this.setGlobalLiquidity(globalLiquidity);
   };
 
   getAccountLiquidityInfo = async (user: string): Promise<IShortPoolInfo> => {
@@ -223,6 +234,7 @@ class Pool implements IPoolConfig {
         ? this.globalLiquidity.div(BN.formatUnits(globalPoolTokenAmount, 8))
         : BN.ZERO;
 
+    console.log(this.domain, addressIndexStaked.toString());
     if (addressIndexStaked == null || addressIndexStaked.eq(0)) {
       return {
         addressStaked: BN.ZERO,
@@ -240,7 +252,7 @@ class Pool implements IPoolConfig {
     const percent = liquidityInUsdn
       .times(new BN(100))
       .div(this.globalLiquidity);
-
+    console.log(this.domain, liquidityInUsdn.toString());
     return {
       liquidityInUsdn,
       addressStaked: addressIndexStaked,

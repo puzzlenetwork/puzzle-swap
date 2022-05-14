@@ -76,7 +76,6 @@ class AddLiquidityInterfaceVM {
         this.setInitialized(true);
       }
     );
-    makeAutoObservable(this);
 
     this.updateStats();
     makeAutoObservable(this);
@@ -228,13 +227,16 @@ class AddLiquidityInterfaceVM {
       ],
       [] as Array<{ assetId: string; amount: string }>
     );
+
     accountStore
       .invoke({
         dApp: this.pool.layer2Address,
         payment,
         call: {
           function: "generateIndexAndStake",
-          args: [],
+          args: this.pool.isCustom
+            ? [{ type: "string", value: this.pool.contractAddress }]
+            : [],
         },
       })
       .then((txId) => {
@@ -247,15 +249,16 @@ class AddLiquidityInterfaceVM {
             })
           );
       })
-      .catch((e) =>
+      .catch((e) => {
+        console.error(e);
         this.setNotificationParams(
           buildErrorDialogParams({
             title: "Transaction is not completed",
             description: e.message ?? JSON.stringify(e),
             onTryAgain: this.depositMultiply,
           })
-        )
-      )
+        );
+      })
       .then(() => accountStore.updateAccountAssets(true))
       .finally(() => this._setLoading(false));
   };

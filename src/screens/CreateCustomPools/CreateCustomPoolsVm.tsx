@@ -25,6 +25,7 @@ import { toFile } from "@src/utils/files";
 import bucketService from "@src/services/bucketService";
 import loadCreatePoolStateFromStorage from "@screens/CreateCustomPools/utils/loadCreatePoolStateFromStorage";
 import checkDomainPaid from "@screens/CreateCustomPools/utils/checkDomainPaid";
+import Button from "@components/Button";
 
 const ctx = React.createContext<CreateCustomPoolsVm | null>(null);
 
@@ -353,7 +354,7 @@ class CreateCustomPoolsVm {
     const amount = new BN(400)
       .plus(nftStore.totalPuzzleNftsAmount)
       .div(rate ?? 0);
-    return Math.ceil(amount.toNumber());
+    return Math.ceil(amount.toNumber() + 1);
   }
 
   get canBuyNft() {
@@ -419,19 +420,37 @@ class CreateCustomPoolsVm {
         this.setNotificationParams(
           buildDialogParams({
             type: "success",
-            title: "Congratulations!",
-            description: `You have created pool ${this.title} `,
-            onContinue: () => {
-              this.initialize(null);
-              localStorage.removeItem("puzzle-custom-pool");
-              window.open(`/pool/${this.domain}`);
-            },
-            onCancel: () => {
-              this.initialize(null);
-              localStorage.removeItem("puzzle-custom-pool");
-              window.open(`/pool/${this.domain}`);
-            },
-            continueText: "Go to pool page",
+            title: `“${this.title}” has been created!`,
+            description: `You can change the settings, and track your reward on the pool page `,
+            buttons: [
+              () => (
+                <Button
+                  size="medium"
+                  fixed
+                  onClick={() => {
+                    this.initialize(null);
+                    localStorage.removeItem("puzzle-custom-pool");
+                    window.open(`/pools/${this.domain}/invest`);
+                  }}
+                  kind="secondary"
+                >
+                  Go to Pool page
+                </Button>
+              ),
+              () => (
+                <Button
+                  size="medium"
+                  fixed
+                  onClick={() => {
+                    this.initialize(null);
+                    localStorage.removeItem("puzzle-custom-pool");
+                    window.open("/invest");
+                  }}
+                >
+                  Back to Invest
+                </Button>
+              ),
+            ],
           })
         )
       )
