@@ -80,6 +80,22 @@ export const POOL_CONFIG: IPoolConfig[] = [
     ],
   },
   {
+    domain: "snsbttci",
+    contractAddress: "3PPrsyW3VuxU15FuBKfbVh5JdmAkmU3ApPv",
+    layer2Address: "3P44Y7if4hZAgUn9K3R7buzb3TQn6NzTcu7",
+    baseTokenId: TOKENS_BY_SYMBOL.USDN.assetId,
+    title: "sNSBT_TCI pool",
+    logo: tokenLogos.SNSBTTCI,
+    defaultAssetId0: TOKENS_BY_SYMBOL.SNSBTTCI.assetId,
+    defaultAssetId1: TOKENS_BY_SYMBOL.SNSBT.assetId,
+    tokens: [
+      { ...TOKENS_BY_SYMBOL.SNSBTTCI, share: 75, logo: tokenLogos.SNSBTTCI },
+      { ...TOKENS_BY_SYMBOL.SNSBT, share: 10, logo: tokenLogos.SNSBT },
+      { ...TOKENS_BY_SYMBOL.WAVES, share: 10, logo: tokenLogos.WAVES },
+      { ...TOKENS_BY_SYMBOL.USDN, share: 5, logo: tokenLogos.USDN },
+    ],
+  },
+  {
     domain: "sheg",
     contractAddress: "3PC87Z4vUzet6tTrTQmzJmW1UtouKjLhBJi",
     layer2Address: "3PJvGRBaL5FrK5tHax6cJvkZWrHtDUmiDdF",
