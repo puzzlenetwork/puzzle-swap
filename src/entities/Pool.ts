@@ -136,24 +136,24 @@ class Pool implements IPoolConfig {
     }
     const usdnAsset = this.tokens.find(({ symbol }) => symbol === "USDN")!;
     const usdnLiquidity = this.liquidity[usdnAsset?.assetId];
-    //todo!
-    // const puzzleAsset = this.tokens.find(({ symbol }) => symbol === "PUZZLE")!;
-    // const puzzleLiquidity = this.liquidity[puzzleAsset?.assetId];
+
+    const puzzleAsset = this.tokens.find(({ symbol }) => symbol === "PUZZLE")!;
+    const puzzleLiquidity = this.liquidity[puzzleAsset?.assetId];
 
     let globalLiquidity = null;
-    // // оно чет не правильно считает
-    // if (puzzleAsset && puzzleLiquidity) {
-    //   globalLiquidity = new BN(puzzleLiquidity)
-    //     .div(puzzleAsset.share)
-    //     .times(100)
-    //     .div(1e6);
-    // } else
-    if (usdnAsset && usdnLiquidity) {
+    // todo как получить курс пазла к дол вот тут?
+    if (puzzleAsset && puzzleLiquidity) {
+      globalLiquidity = new BN(puzzleLiquidity)
+        .div(puzzleAsset.share)
+        .times(100)
+        .div(1e8);
+    } else if (usdnAsset && usdnLiquidity) {
       globalLiquidity = new BN(usdnLiquidity)
         .div(usdnAsset.share)
         .times(100)
         .div(1e6);
     }
+
     globalLiquidity && this.setGlobalLiquidity(globalLiquidity);
   };
 
