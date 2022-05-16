@@ -57,12 +57,10 @@ const DialogNotification: React.FC<IDialogNotificationProps> = ({
   return (
     <Dialog {...rest}>
       <Root style={{}} alignItems="center" crossAxisSize="max">
+        <SizedBox height={16} />
         <>
           {icon != null ? (
-            <React.Fragment>
-              <SizedBox height={16} />
-              {icon}
-            </React.Fragment>
+            <React.Fragment>{icon}</React.Fragment>
           ) : (
             <React.Fragment>
               {type === "success" && <SuccessIcon />}
@@ -71,7 +69,7 @@ const DialogNotification: React.FC<IDialogNotificationProps> = ({
             </React.Fragment>
           )}
         </>
-        <SizedBox height={28} />
+        <SizedBox height={8} />
         <Text className="title">{title}</Text>
         {description && (
           <Text style={{ marginTop: 8 }} size="medium" type="secondary">
@@ -193,16 +191,13 @@ export const buildWarningLiquidityDialogParams = ({
 type TBuildParamsProps = {
   title: string;
   description: string;
-  onContinue?: () => void;
-  continueText: string;
-  onCancel: () => void;
+  buttons?: React.FC[];
   type: "success" | "error" | "warning";
 };
 export const buildDialogParams = ({
   title,
   description,
-  onContinue,
-  continueText,
+  buttons,
   type,
 }: TBuildParamsProps): IDialogNotificationProps => {
   return {
@@ -210,13 +205,7 @@ export const buildDialogParams = ({
     description,
     type,
     buttonsDirection: "row",
-    buttons: [
-      () => (
-        <Button size="medium" fixed onClick={onContinue}>
-          {continueText}
-        </Button>
-      ),
-    ],
+    buttons,
   };
 };
 

@@ -122,7 +122,7 @@ class WalletVM {
                 "$ " +
                 (indexTokenRate.gte(0.0001)
                   ? indexTokenRate.toFormat(4)
-                  : indexTokenRate.toFormat(10)),
+                  : indexTokenRate.toFormat(8)),
               usdnEquivalent: "$ " + liquidityInUsdn.toFormat(2),
             };
           }

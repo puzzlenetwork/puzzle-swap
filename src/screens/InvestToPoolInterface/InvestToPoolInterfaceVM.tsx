@@ -3,12 +3,7 @@ import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable, reaction, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
-import {
-  EXPLORER_URL,
-  IToken,
-  NODE_URL,
-  TOKENS_BY_SYMBOL,
-} from "@src/constants";
+import { EXPLORER_URL, IToken, NODE_URL } from "@src/constants";
 import { IPoolStats30Days } from "@stores/PoolsStore";
 import axios from "axios";
 import nodeService from "@src/services/nodeService";
@@ -268,11 +263,7 @@ class InvestToPoolInterfaceVM {
         this.pool.liquidity[token.assetId] ?? BN.ZERO,
         token.decimals
       );
-      const rate = this.pool.currentPrice(
-        token.assetId,
-        TOKENS_BY_SYMBOL.USDN.assetId,
-        1
-      );
+      const rate = this.rootStore.poolsStore.usdnRate(token.assetId);
       return [
         ...acc,
         {
