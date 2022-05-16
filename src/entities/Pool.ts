@@ -234,7 +234,6 @@ class Pool implements IPoolConfig {
         ? this.globalLiquidity.div(BN.formatUnits(globalPoolTokenAmount, 8))
         : BN.ZERO;
 
-    console.log(this.domain, addressIndexStaked.toString());
     if (addressIndexStaked == null || addressIndexStaked.eq(0)) {
       return {
         addressStaked: BN.ZERO,
@@ -252,7 +251,6 @@ class Pool implements IPoolConfig {
     const percent = liquidityInUsdn
       .times(new BN(100))
       .div(this.globalLiquidity);
-    console.log(this.domain, liquidityInUsdn.toString());
     return {
       liquidityInUsdn,
       addressStaked: addressIndexStaked,

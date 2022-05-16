@@ -212,7 +212,7 @@ class InvestToPoolInterfaceVM {
       ? BN.ZERO
       : globalLastCheckTokenInterest;
 
-    const currentInterest = lastCheckInterest.plus(
+    const currentInterest = lastCheckInterest?.plus(
       newEarnings.div(globalIndexStaked)
     );
 
@@ -220,9 +220,11 @@ class InvestToPoolInterfaceVM {
       ? userLastCheckTokenInterest
       : BN.ZERO;
 
-    const rewardAvailable = currentInterest
-      .minus(lastCheckUserInterest)
-      .times(BN.formatUnits(userIndexStaked, 8));
+    const rewardAvailable =
+      currentInterest ??
+      BN.ZERO.minus(lastCheckUserInterest).times(
+        BN.formatUnits(userIndexStaked, 8)
+      );
 
     const rate =
       this.rootStore.poolsStore.usdnRate(token.assetId, 1) ?? BN.ZERO;
