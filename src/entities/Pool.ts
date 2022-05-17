@@ -51,9 +51,25 @@ class Pool implements IPoolConfig {
   public globalVolume: BN | null = null;
   setGlobalVolume = (value: BN) => (this.globalVolume = value);
 
-  public globalLiquidity: BN = BN.ZERO;
-  setGlobalLiquidity = (value: BN) => (this.globalLiquidity = value);
+  public apy: BN | null = null;
+  public setApy = (value: BN) => (this.apy = value);
 
+  public globalLiquidityByUSDN: BN | null = null;
+  setGlobalLiquidityByUSDN = (value: BN | null) =>
+    (this.globalLiquidityByUSDN = value);
+
+  public globalLiquidityByPUZZLE: BN | null = null;
+  setGlobalLiquidityByPUZZLE = (value: BN | null) =>
+    (this.globalLiquidityByPUZZLE = value);
+
+  public get globalLiquidity(): BN {
+    if (this.globalLiquidityByUSDN != null) return this.globalLiquidityByUSDN;
+    else if (this.globalLiquidityByPUZZLE != null && this.puzzleRate.gt(0)) {
+      return this.globalLiquidityByPUZZLE.times(this.puzzleRate);
+    } else {
+      return BN.ZERO;
+    }
+  }
   public globalPoolTokenAmount: BN = BN.ZERO;
   setGlobalPoolTokenAmount = (value: BN) =>
     (this.globalPoolTokenAmount = value);
@@ -61,6 +77,9 @@ class Pool implements IPoolConfig {
   public liquidity: Record<string, BN> = {};
   private setLiquidity = (value: Record<string, BN>) =>
     (this.liquidity = value);
+
+  public puzzleRate: BN = BN.ZERO;
+  public setPuzzleRate = (value: BN) => (this.puzzleRate = value);
 
   constructor(params: IPoolConfig) {
     this.contractAddress = params.contractAddress;
@@ -75,7 +94,7 @@ class Pool implements IPoolConfig {
     this.isCustom = params.isCustom;
     this.artefactOriginTransactionId = params.artefactOriginTransactionId;
     this.owner = params.owner;
-    this.swapFee = params.swapFee ?? 0.2;
+    this.swapFee = params.swapFee ?? 2;
     this.createdAt = params.createdAt ?? "";
 
     makeAutoObservable(this);
@@ -140,21 +159,21 @@ class Pool implements IPoolConfig {
     const puzzleAsset = this.tokens.find(({ symbol }) => symbol === "PUZZLE")!;
     const puzzleLiquidity = this.liquidity[puzzleAsset?.assetId];
 
-    let globalLiquidity = null;
-    // todo как получить курс пазла к дол вот тут?
-    if (puzzleAsset && puzzleLiquidity) {
-      globalLiquidity = new BN(puzzleLiquidity)
-        .div(puzzleAsset.share)
-        .times(100)
-        .div(1e8);
-    } else if (usdnAsset && usdnLiquidity) {
-      globalLiquidity = new BN(usdnLiquidity)
+    let globalLiquidityByUSDN = null;
+    let globalLiquidityByPuzzle = null;
+    if (usdnAsset && usdnLiquidity) {
+      globalLiquidityByUSDN = new BN(usdnLiquidity)
         .div(usdnAsset.share)
         .times(100)
         .div(1e6);
+    } else if (puzzleAsset && puzzleLiquidity) {
+      globalLiquidityByPuzzle = new BN(puzzleLiquidity)
+        .div(puzzleAsset.share)
+        .times(100)
+        .div(1e8);
     }
-
-    globalLiquidity && this.setGlobalLiquidity(globalLiquidity);
+    this.setGlobalLiquidityByUSDN(globalLiquidityByUSDN);
+    this.setGlobalLiquidityByPUZZLE(globalLiquidityByPuzzle);
   };
 
   getAccountLiquidityInfo = async (user: string): Promise<IShortPoolInfo> => {

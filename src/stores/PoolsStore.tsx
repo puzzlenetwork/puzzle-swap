@@ -170,7 +170,7 @@ export default class PoolsStore {
 
   syncPoolsStats = async () => {
     const data = await statsService.getStats();
-    const formattedData = Object.entries(data).reduce((acc, [poolId, obj]) => {
+    const stats = Object.entries(data).reduce((acc, [poolId, obj]) => {
       const bnFormat = Object.entries(obj as IStatsPoolItemResponse).reduce(
         (ac, [propertyName, propertyValue]) => {
           const value = new BN(propertyValue);
@@ -180,7 +180,11 @@ export default class PoolsStore {
       );
       return { ...acc, [poolId]: bnFormat };
     }, {} as Record<string, IStatsPoolItem>);
-    this.setPoolStats(formattedData);
+    this.pools.forEach((pool) => {
+      const apy = stats != null ? stats[pool.domain]?.apy : BN.ZERO;
+      pool.setApy(apy);
+    });
+    this.setPoolStats(stats);
   };
 
   get30DaysPoolStats = async (poolId: string): Promise<IPoolStats30Days> => {
@@ -259,5 +263,8 @@ export default class PoolsStore {
   private syncPuzzleRate = () =>
     wavesCapService
       .getAssetRate(TOKENS_BY_SYMBOL.PUZZLE.assetId)
-      .then(this.setPuzzleRate);
+      .then((rate) => {
+        this.setPuzzleRate(rate);
+        this.pools.forEach((pool) => pool.setPuzzleRate(rate ?? BN.ZERO));
+      });
 }

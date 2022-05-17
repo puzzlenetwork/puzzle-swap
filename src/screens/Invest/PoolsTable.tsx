@@ -99,17 +99,21 @@ const PoolsTable: React.FC = () => {
       )
       .filter((pool) => {
         if (vm.poolCategoryFilter === 0) return true;
-        return pool.tokens
-          .reduce(
-            (acc, { category }) =>
-              category != null ? [...acc, ...category] : [...acc],
-            [] as string[]
-          )
-          .includes(tokenCategoriesEnum[vm.poolCategoryFilter]);
+        const poolsCategories = pool.tokens.reduce(
+          (acc, { category }) =>
+            category != null ? [...acc, ...category] : [...acc],
+          [] as string[]
+        );
+        const categories = poolsCategories.filter(
+          (category) => tokenCategoriesEnum[vm.poolCategoryFilter] === category
+        );
+        return categories.length > 1;
       })
       .filter(({ isCustom }) => {
         if (vm.customPoolFilter === 0) return true;
-        return isCustom != null || isCustom !== false;
+        if (vm.customPoolFilter === 1) return isCustom;
+        if (vm.customPoolFilter === 2) return !isCustom;
+        return false;
       })
       .map((pool) => ({
         onClick: () => navigate(`/pools/${pool.domain}/invest`),

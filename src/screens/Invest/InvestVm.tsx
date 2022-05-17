@@ -56,11 +56,7 @@ class InvestVM {
   };
 
   get pools() {
-    const { poolsStats, pools } = this.rootStore.poolsStore;
-    return pools.map((p) => {
-      const apy = poolsStats != null ? poolsStats[p.domain]?.apy : BN.ZERO;
-      return { ...p, logo: p.logo, baseToken: p.baseToken, apy };
-    });
+    return this.rootStore.poolsStore.pools;
   }
 
   get totalInvestmentBalance(): string | null {

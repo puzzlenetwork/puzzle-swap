@@ -311,7 +311,12 @@ class AddLiquidityInterfaceVM {
             amount: this.baseTokenAmount.toString(),
           },
         ],
-        call: { function: "generateIndexWithOneTokenAndStake", args: [] },
+        call: {
+          function: "generateIndexWithOneTokenAndStake",
+          args: this.pool.isCustom
+            ? [{ type: "string", value: this.pool.contractAddress }]
+            : [],
+        },
       })
       .then((txId) => {
         txId &&
