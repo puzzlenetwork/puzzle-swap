@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { action, makeAutoObservable, when } from "mobx";
+import { makeAutoObservable, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import {
   CONTRACT_ADDRESSES,
@@ -121,8 +121,27 @@ class CreateCustomPoolsVm {
     this.step = s;
   };
 
+  get isThereUsdnOrPuzzle() {
+    return (
+      this.poolsAssets.filter(({ asset }) =>
+        ["USDN", "PUZZLE"].includes(asset.symbol)
+      ).length > 0
+    );
+  }
+
+  get requiredTokensCorrectShare() {
+    return this.poolsAssets
+      .filter(({ asset }) => ["USDN", "PUZZLE"].includes(asset.symbol))
+      .some(({ share }) => share.gte(20));
+  }
+
   get correct0() {
-    return this.poolsAssets.length > 1 && this.totalTakenShare.eq(1000);
+    return (
+      this.poolsAssets.length > 1 &&
+      this.totalTakenShare.eq(1000) &&
+      this.requiredTokensCorrectShare &&
+      this.isThereUsdnOrPuzzle
+    );
   }
 
   get correct1() {
@@ -205,8 +224,6 @@ class CreateCustomPoolsVm {
   };
 
   removeAssetFromPool = (assetId: string) => {
-    const puzzle = TOKENS_BY_SYMBOL.PUZZLE;
-    if (assetId === puzzle.assetId) return;
     const indexOfObject = this.poolsAssets.findIndex(
       ({ asset }) => asset.assetId === assetId
     );
@@ -368,7 +385,6 @@ class CreateCustomPoolsVm {
   }
 
   providedPercentOfPool: BN = new BN(100);
-  @action.bound
   setProvidedPercentOfPool = (value: number) =>
     (this.providedPercentOfPool = new BN(value));
 
@@ -397,11 +413,20 @@ class CreateCustomPoolsVm {
   };
 
   provideLiquidityToPool = async () => {
+    const domain = this.domain;
+    this.setNotificationParams(null);
+    if (domain == null) {
+      this.rootStore.notificationStore.notify(
+        `There is no pool domain, try to refresh the page`,
+        { type: "error" }
+      );
+      return;
+    }
     this._setLoading(true);
-    const pool = await poolsService.getPoolByDomain(this.domain);
+    const pool = await poolsService.getPoolByDomain(domain);
     if (pool == null) {
       this.rootStore.notificationStore.notify(
-        `Cannot find pool with domain ${this.domain}`,
+        `Cannot find pool with domain ${domain}`,
         { type: "error" }
       );
       this._setLoading(false);
@@ -410,7 +435,7 @@ class CreateCustomPoolsVm {
     const accountStore = this.rootStore.accountStore;
     return accountStore
       .invoke({
-        dApp: (pool as any).contractAddress, //fixme
+        dApp: pool.contractAddress,
         payment: this.assetsForInitFunction,
         fee: 100500000,
         call: { function: "init", args: [] },
@@ -430,7 +455,7 @@ class CreateCustomPoolsVm {
                   onClick={() => {
                     this.initialize(null);
                     localStorage.removeItem("puzzle-custom-pool");
-                    window.open(`/pools/${this.domain}/invest`);
+                    window.open(`/pools/${domain}/invest`);
                   }}
                   kind="secondary"
                 >
@@ -454,7 +479,20 @@ class CreateCustomPoolsVm {
           })
         )
       )
-      .catch((e) => console.log(e))
+      .then(async () => {
+        await this.rootStore.poolsStore.syncCustomPools();
+        await this.rootStore.poolsStore.updateCustomPoolsState();
+      })
+      .catch((e) => {
+        this.setNotificationParams(
+          buildErrorDialogParams({
+            title: "Woops! Couldn't provide liquidity",
+            description: e.message ?? e.toString(),
+            onTryAgain: () => this.provideLiquidityToPool,
+          })
+        );
+        console.log(e);
+      })
       .finally(() => this._setLoading(false));
   };
 

@@ -155,24 +155,26 @@ class WithdrawLiquidityVM {
     if (this.userIndexStaked == null) return;
 
     this._setLoading(true);
-
     const value = this.userIndexStaked
       .times(0.01)
       .times(this.percentToWithdraw)
       .toSignificant(0)
       .toString();
+
+    const args = this.pool.isCustom
+      ? [
+          { type: "integer", value },
+          { type: "string", value: this.pool.contractAddress },
+        ]
+      : [{ type: "integer", value }];
+
     this.rootStore.accountStore
       .invoke({
         dApp: this.pool.layer2Address,
         payment: [],
         call: {
           function: "unstakeAndRedeemIndex",
-          args: [
-            {
-              type: "integer",
-              value,
-            },
-          ],
+          args: args as Array<{ type: "integer" | "string"; value: string }>,
         },
       })
       .then((txId) => {
