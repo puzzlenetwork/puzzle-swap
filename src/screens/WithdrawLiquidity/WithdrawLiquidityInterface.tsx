@@ -39,8 +39,11 @@ const WithdrawLiquidityInterfaceImpl = observer(() => {
   const vm = useWithdrawLiquidityVM();
   const { accountStore } = useStores();
   const navigate = useNavigate();
-  if (!vm.initialized && vm.pool == null) return <Loading />;
-  if (vm.initialized && vm.pool == null) {
+  const { poolsStore } = useStores();
+  if (poolsStore.customPools.length === 0 && vm.pool == null) {
+    return <Loading />;
+  }
+  if (poolsStore.customPools.length > 0 && vm.pool == null) {
     return <Navigate to={ROUTES.NOT_FOUND} />;
   }
   return (

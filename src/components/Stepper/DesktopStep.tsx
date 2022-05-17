@@ -46,7 +46,10 @@ const IconContainer = styled.div<{ state: TStep }>`
     align-items: center;
     justify-content: center;
     position: absolute;
-    inset: 4px 0 0 0;
+    top: 4px;
+    bottom: 0;
+    left: 0;
+    right: 0;
     content: url(${doneIcon});
   }
 `;

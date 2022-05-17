@@ -14,6 +14,7 @@ import BN from "@src/utils/BN";
 import poolService from "@src/services/poolsService";
 import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import Tooltip from "@components/Tooltip";
+import { POOL_CONFIG } from "@src/constants";
 
 interface IProps {}
 
@@ -62,6 +63,11 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
       ) {
         setDomainError("2–13 lowercase latin and number characters");
         setValidationProcessing(false);
+        return;
+      }
+      if (POOL_CONFIG.map(({ domain }) => domain).includes(domain)) {
+        vm.setPoolSettingError(true);
+        setDomainError("This domain is already taken");
         return;
       }
       poolService

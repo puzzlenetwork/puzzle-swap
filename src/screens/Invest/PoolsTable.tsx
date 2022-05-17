@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
 import PoolNotFound from "@screens/Invest/PoolNotFound";
@@ -18,7 +18,6 @@ const PoolsTable: React.FC = () => {
   const { poolsStore, accountStore } = useStores();
   const [activeSort, setActiveSort] = useState<0 | 1>(1);
   const vm = useInvestVM();
-  const data = vm.pools;
   const navigate = useNavigate();
 
   const columns = React.useMemo(
@@ -67,92 +66,136 @@ const PoolsTable: React.FC = () => {
     ],
     [vm]
   );
-
-  const filteredPools = data
-    .filter(({ domain }) => domain !== "puzzle")
-    .sort((a, b) => {
-      if (activeSort === 0) {
-        if (a.globalLiquidity != null && b.globalLiquidity != null) {
-          if (a.globalLiquidity.lt(b.globalLiquidity)) {
-            return vm.sortLiquidity ? 1 : -1;
-          } else {
-            return vm.sortLiquidity ? -1 : 1;
+  const [filteredPools, setFilteredPools] = useState<any[]>([]);
+  useMemo(() => {
+    const data = vm.pools
+      .filter(({ domain }) => domain !== "puzzle")
+      .sort((a, b) => {
+        if (activeSort === 0) {
+          if (a.globalLiquidity != null && b.globalLiquidity != null) {
+            if (a.globalLiquidity.lt(b.globalLiquidity)) {
+              return vm.sortLiquidity ? 1 : -1;
+            } else {
+              return vm.sortLiquidity ? -1 : 1;
+            }
+          }
+        } else if (activeSort === 1) {
+          if (a.apy != null && b.apy != null) {
+            if (a.apy.lt(b.apy)) {
+              return vm.sortApy ? 1 : -1;
+            } else {
+              return vm.sortApy ? -1 : 1;
+            }
           }
         }
-      } else if (activeSort === 1) {
-        if (a.apy != null && b.apy != null) {
-          if (a.apy.lt(b.apy)) {
-            return vm.sortApy ? 1 : -1;
-          } else {
-            return vm.sortApy ? -1 : 1;
-          }
-        }
-      }
-      return 1;
-    })
-    .filter(({ title, tokens }) =>
-      vm.searchValue
-        ? [title, ...tokens.map(({ symbol }) => symbol)]
-            .map((v) => v.toLowerCase())
-            .some((v) => v.includes(vm.searchValue.toLowerCase()))
-        : true
-    )
-    .filter((pool) => {
-      if (vm.poolCategoryFilter === 0) return true;
-      return pool.tokens
-        .reduce(
+        return 1;
+      })
+      .filter(({ title, tokens }) =>
+        vm.searchValue
+          ? [title, ...tokens.map(({ symbol }) => symbol)]
+              .map((v) => v.toLowerCase())
+              .some((v) => v.includes(vm.searchValue.toLowerCase()))
+          : true
+      )
+      .filter((pool) => {
+        if (vm.poolCategoryFilter === 0) return true;
+        const poolsCategories = pool.tokens.reduce(
           (acc, { category }) =>
             category != null ? [...acc, ...category] : [...acc],
           [] as string[]
-        )
-        .includes(tokenCategoriesEnum[vm.poolCategoryFilter]);
-    })
-    .map((pool) => ({
-      onClick: () => navigate(`/pools/${pool.domain}/invest`),
-      poolName: (
-        <Row>
-          <SquareTokenIcon src={pool.logo} alt="logo" />
-          <SizedBox width={8} />
-          <Column crossAxisSize="max">
-            <Row alignItems="center">
-              <Text fitContent style={{ whiteSpace: "nowrap" }} weight={500}>
-                {pool.title}
-              </Text>
-            </Row>
-            <TokenTags
-              tokens={pool.tokens}
-              findBalanceByAssetId={accountStore.findBalanceByAssetId}
-            />
-          </Column>
-        </Row>
-      ),
-      accountBalance: (() => {
-        const accountBalance = poolsStore.accountPoolsLiquidity?.find(
-          (o) => pool.domain === o.pool.domain
-        )?.liquidityInUsdn;
-        return accountBalance != null && accountBalance.gt(0)
-          ? `$${accountBalance.toFormat(2)}`
-          : "—";
-      })(),
-      liquidity: pool.globalLiquidity.toFormat(2),
-      volume: (() => {
-        const volume =
-          poolsStore.poolsStats &&
-          poolsStore.poolsStats[pool.domain].monthly_volume != null
-            ? poolsStore.poolsStats[pool.domain].monthly_volume.toFormat(2)
-            : null;
-        return volume != null ? `$ ${volume}` : "—";
-      })(),
-      apy: poolsStore.poolsStats
-        ? poolsStore.poolsStats[pool.domain]?.apy.toFormat(2).concat(" %")
-        : undefined,
-    }));
+        );
+        const categories = poolsCategories.filter(
+          (category) => tokenCategoriesEnum[vm.poolCategoryFilter] === category
+        );
+        return categories.length > 1;
+      })
+      .filter(({ isCustom }) => {
+        if (vm.customPoolFilter === 0) return true;
+        if (vm.customPoolFilter === 1) return isCustom;
+        if (vm.customPoolFilter === 2) return !isCustom;
+        return false;
+      })
+      .map((pool) => ({
+        onClick: () => navigate(`/pools/${pool.domain}/invest`),
+        poolName: (
+          <Row>
+            <SquareTokenIcon src={pool.logo} alt="logo" />
+            <SizedBox width={8} />
+            <Column crossAxisSize="max">
+              <Row alignItems="center">
+                <Text fitContent style={{ whiteSpace: "nowrap" }} weight={500}>
+                  {pool.title}
+                </Text>
+              </Row>
+              <TokenTags
+                tokens={pool.tokens}
+                findBalanceByAssetId={accountStore.findBalanceByAssetId}
+              />
+            </Column>
+          </Row>
+        ),
+        accountBalance: (() => {
+          const data = poolsStore.accountPoolsLiquidity?.find(
+            (v) => pool.domain === v.pool.domain
+          );
+          return data?.liquidityInUsdn != null && data.liquidityInUsdn.gt(0)
+            ? `$${data.liquidityInUsdn.toFormat(2)}`
+            : "—";
+        })(),
+        liquidity: "$ " + pool.globalLiquidity.toFormat(2),
+        volume: (() => {
+          const volume =
+            poolsStore.poolsStats &&
+            poolsStore.poolsStats[pool.domain]?.monthly_volume != null
+              ? poolsStore.poolsStats[pool.domain]?.monthly_volume.toFormat(2)
+              : null;
+          return volume != null ? `$ ${volume}` : "—";
+        })(),
+        apy: poolsStore.poolsStats
+          ? poolsStore.poolsStats[pool.domain]?.apy.toFormat(2).concat(" %")
+          : undefined,
+        owner: pool.owner,
+      }));
+    setFilteredPools(data);
+  }, [
+    vm.pools,
+    vm.sortLiquidity,
+    vm.sortApy,
+    vm.searchValue,
+    vm.poolCategoryFilter,
+    vm.customPoolFilter,
+    activeSort,
+    accountStore.findBalanceByAssetId,
+    poolsStore.poolsStats,
+    poolsStore.accountPoolsLiquidity,
+    navigate,
+  ]);
+
+  const myPools = filteredPools.filter(
+    ({ owner }) => owner != null && accountStore.address === owner
+  );
 
   return (
     <>
+      {myPools.length > 0 && (
+        <>
+          <Row alignItems="center">
+            <Text weight={500} type="secondary" fitContent>
+              My pools ({myPools.length})
+            </Text>
+          </Row>
+          <SizedBox height={8} />
+          <Scrollbar
+            style={{ maxWidth: "calc(100vw - 32px)", borderRadius: 16 }}
+          >
+            <Table style={{ minWidth: 900 }} columns={columns} data={myPools} />
+          </Scrollbar>
+          <SizedBox height={24} />
+        </>
+      )}
       <Row alignItems="center">
         <Text weight={500} type="secondary" fitContent>
-          All pools ({data.length})
+          All pools ({vm.pools.length})
         </Text>
       </Row>
       <SizedBox height={8} />

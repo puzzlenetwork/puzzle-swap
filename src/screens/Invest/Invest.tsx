@@ -66,8 +66,6 @@ const InvestImpl: React.FC<IProps> = () => {
             {accountStore.address != null && <AccountInvestBalance />}
             <SizedBox height={24} />
             <SearchAndFilterTab />
-            {/*<SizedBox height={16} />*/}
-            {/*<AccountPools />*/}
             <SizedBox height={16} />
             <PoolsTable />
           </Root>

@@ -14,6 +14,7 @@ import { useInvestToPoolInterfaceVM } from "./InvestToPoolInterfaceVM";
 import BN from "@src/utils/BN";
 import Skeleton from "react-loading-skeleton";
 import dayjs from "dayjs";
+import { TOKENS_BY_SYMBOL } from "@src/constants";
 
 interface IProps {}
 
@@ -38,16 +39,20 @@ const AvailableToClaim = styled(Row)`
   border-top: 1px solid #f1f2fe;
   padding-top: 18px;
 `;
-const LastClaimDate = styled(Text)`
-  position: absolute;
-  @media (min-width: 880px) {
-    right: 24px;
-  }
+
+const Title = styled(Text)`
+  font-size: 14px;
+  line-height: 20px;
+  color: #8082c5;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 `;
+
 const Reward: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
   const { accountStore } = useStores();
-  const { address, TOKENS } = accountStore;
+  const { address } = accountStore;
   if (address == null) return null;
   const date = dayjs(vm.lastClaimDate?.toNumber() ?? 0);
   const format = date.format("D MMM YYYY");
@@ -59,43 +64,34 @@ const Reward: React.FC<IProps> = () => {
       <SizedBox height={8} />
       <Card>
         <Inner>
-          <Row justifyContent="space-between" style={{ position: "relative" }}>
-            <LastClaimDate
-              type="secondary"
-              textAlign="right"
-              size="medium"
-              style={{ position: "absolute" }}
-            >
-              {!vm.lastClaimDate.eq(0) && "Last claim " + format}
-            </LastClaimDate>
-            <Row>
-              <Icon src={income} alt="income" />
-              <SizedBox width={8} />
-              <Column>
-                <Text type="secondary" size="medium">
-                  Claimed reward
-                </Text>
-                <Text weight={500}>
-                  $
-                  {vm.totalClaimedReward != null ? (
-                    BN.formatUnits(
-                      vm.totalClaimedReward,
-                      TOKENS.USDN.decimals
-                    ).toFormat(2)
-                  ) : (
-                    <Skeleton height={16} />
-                  )}
-                </Text>
-              </Column>
-            </Row>
+          <Row>
+            <Icon src={income} alt="income" />
+            <SizedBox width={8} />
+            <Column crossAxisSize="max">
+              <Row justifyContent="space-between">
+                <Title style={{ flex: 1 }}>Claimed</Title>
+                <Title style={{ flex: 2, textAlign: "right" }}>
+                  {!vm.lastClaimDate.eq(0) && "Last claim " + format}
+                </Title>
+              </Row>
+              <Text weight={500}>
+                $
+                {vm.totalClaimedReward != null ? (
+                  BN.formatUnits(
+                    vm.totalClaimedReward,
+                    TOKENS_BY_SYMBOL.USDN.decimals
+                  ).toFormat(2)
+                ) : (
+                  <Skeleton height={16} />
+                )}
+              </Text>
+            </Column>
           </Row>
           <AvailableToClaim>
             <Icon src={wallet} alt="wallet" />
             <SizedBox width={8} />
             <Column>
-              <Text type="secondary" size="medium">
-                Available to claim
-              </Text>
+              <Title>Available to claim</Title>
               <Text weight={500}>${vm.totalRewardToClaim.toFixed(2)}</Text>
             </Column>
           </AvailableToClaim>

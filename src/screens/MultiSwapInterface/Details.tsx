@@ -3,7 +3,7 @@ import React from "react";
 import Card from "@components/Card";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
-import { useMultiSwapVM } from "@screens/MultiSwapInterface/MultiScreenVM";
+import { useMultiSwapVM } from "@screens/MultiSwapInterface/MultiSwapVM";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
 import Button from "@src/components/Button";

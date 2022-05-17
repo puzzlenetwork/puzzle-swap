@@ -12,9 +12,6 @@ import {
   IDialogNotificationProps,
 } from "@components/Dialog/DialogNotification";
 import Pool from "@src/entities/Pool";
-import poolService from "@src/services/poolsService";
-import { IToken, TOKENS } from "@src/constants";
-import TokenLogos from "@src/constants/tokenLogos";
 
 const ctx = React.createContext<AddLiquidityInterfaceVM | null>(null);
 
@@ -63,39 +60,23 @@ class AddLiquidityInterfaceVM {
   private setInitialized = (v: boolean) => (this.initialized = v);
 
   public get pool() {
-    const pools = this.rootStore.poolsStore.pools;
-    const configPool = pools.find(({ domain }) => domain === this.poolDomain);
-    return configPool ?? this._pool!;
+    return this.rootStore.poolsStore.getPoolByDomain(this.poolDomain);
   }
-
-  private syncPool = (poolDomain: string) =>
-    poolService
-      .getPoolByDomain(poolDomain)
-      .then((poolSettings) => {
-        if (!poolSettings) return;
-        const pool = new Pool({
-          ...poolSettings,
-          tokens: poolSettings.assets.reduce((acc, { assetId, share }) => {
-            const token = Object.values(TOKENS).find(
-              (asset) => assetId === asset.assetId
-            );
-            return token
-              ? [...acc, { ...token, share, logo: TokenLogos[token.symbol] }]
-              : acc;
-          }, [] as Array<IToken & { share: number }>),
-        });
-        this._setPool(pool);
-      })
-      .catch(console.error);
 
   constructor(rootStore: RootStore, poolDomain: string) {
     this.poolDomain = poolDomain;
     this.rootStore = rootStore;
-    this.syncPool(poolDomain).finally(() => this.setInitialized(true));
     when(
-      () => this.pool != null,
-      () => this.syncPool(this.poolDomain)
+      () => this.rootStore.poolsStore.customPools.length > 0,
+      () => {
+        const pool = this.rootStore.poolsStore.customPools.find(
+          ({ domain }) => domain === this.poolDomain
+        );
+        pool && this._setPool(pool);
+        this.setInitialized(true);
+      }
     );
+
     this.updateStats();
     makeAutoObservable(this);
   }
@@ -246,13 +227,16 @@ class AddLiquidityInterfaceVM {
       ],
       [] as Array<{ assetId: string; amount: string }>
     );
+
     accountStore
       .invoke({
         dApp: this.pool.layer2Address,
         payment,
         call: {
           function: "generateIndexAndStake",
-          args: [],
+          args: this.pool.isCustom
+            ? [{ type: "string", value: this.pool.contractAddress }]
+            : [],
         },
       })
       .then((txId) => {
@@ -265,15 +249,16 @@ class AddLiquidityInterfaceVM {
             })
           );
       })
-      .catch((e) =>
+      .catch((e) => {
+        console.error(e);
         this.setNotificationParams(
           buildErrorDialogParams({
             title: "Transaction is not completed",
             description: e.message ?? JSON.stringify(e),
             onTryAgain: this.depositMultiply,
           })
-        )
-      )
+        );
+      })
       .then(() => accountStore.updateAccountAssets(true))
       .finally(() => this._setLoading(false));
   };
@@ -326,7 +311,12 @@ class AddLiquidityInterfaceVM {
             amount: this.baseTokenAmount.toString(),
           },
         ],
-        call: { function: "generateIndexWithOneTokenAndStake", args: [] },
+        call: {
+          function: "generateIndexWithOneTokenAndStake",
+          args: this.pool.isCustom
+            ? [{ type: "string", value: this.pool.contractAddress }]
+            : [],
+        },
       })
       .then((txId) => {
         txId &&

@@ -1,12 +1,15 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { action, makeAutoObservable } from "mobx";
+import { makeAutoObservable, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import {
   CONTRACT_ADDRESSES,
   IToken,
   NODE_URL,
   PUZZLE_NTFS,
+  TOKENS_BY_ASSET_ID,
+  TOKENS_BY_SYMBOL,
+  TOKENS_LIST,
 } from "@src/constants";
 import BN from "@src/utils/BN";
 import {
@@ -22,6 +25,7 @@ import { toFile } from "@src/utils/files";
 import bucketService from "@src/services/bucketService";
 import loadCreatePoolStateFromStorage from "@screens/CreateCustomPools/utils/loadCreatePoolStateFromStorage";
 import checkDomainPaid from "@screens/CreateCustomPools/utils/checkDomainPaid";
+import Button from "@components/Button";
 
 const ctx = React.createContext<CreateCustomPoolsVm | null>(null);
 
@@ -68,17 +72,17 @@ class CreateCustomPoolsVm {
     setInterval(this.saveSettings, 1000);
     const initData = loadCreatePoolStateFromStorage();
     this.initialize(initData);
+    when(() => initData?.maxStep === 2, this.checkIfAlreadyCreated);
   }
 
   initialize = (initData: IInitData | null) => {
-    const { accountStore } = this.rootStore;
     if (initData != null) {
       if (initData.assets != null) {
         this.poolsAssets = initData.assets?.map(
           ({ assetId, share, locked }) => ({
             share: new BN(share).times(10),
             locked,
-            asset: accountStore.TOKENS_ASSET_ID_MAP[assetId],
+            asset: TOKENS_BY_ASSET_ID[assetId],
           })
         );
       }
@@ -117,8 +121,27 @@ class CreateCustomPoolsVm {
     this.step = s;
   };
 
+  get isThereUsdnOrPuzzle() {
+    return (
+      this.poolsAssets.filter(({ asset }) =>
+        ["USDN", "PUZZLE"].includes(asset.symbol)
+      ).length > 0
+    );
+  }
+
+  get requiredTokensCorrectShare() {
+    return this.poolsAssets
+      .filter(({ asset }) => ["USDN", "PUZZLE"].includes(asset.symbol))
+      .some(({ share }) => share.gte(20));
+  }
+
   get correct0() {
-    return this.poolsAssets.length > 1 && this.totalTakenShare.eq(1000);
+    return (
+      this.poolsAssets.length > 1 &&
+      this.totalTakenShare.eq(1000) &&
+      this.requiredTokensCorrectShare &&
+      this.isThereUsdnOrPuzzle
+    );
   }
 
   get correct1() {
@@ -146,10 +169,9 @@ class CreateCustomPoolsVm {
 
   poolsAssets: IPoolToken[] = [];
   setDefaultPoolsAssets = () => {
-    const { accountStore } = this.rootStore;
     this.poolsAssets = [
       {
-        asset: accountStore.TOKENS.PUZZLE,
+        asset: TOKENS_BY_SYMBOL.PUZZLE,
         share: new BN(500),
         locked: false,
       },
@@ -159,6 +181,11 @@ class CreateCustomPoolsVm {
   get totalTakenShare(): BN {
     return this.poolsAssets.reduce((acc, v) => acc.plus(v.share), BN.ZERO);
   }
+
+  checkIfAlreadyCreated = async () => {
+    const res = await poolsService.getPoolByDomain(this.domain);
+    if (res.domain === this.domain) this.setStep(3);
+  };
 
   syncShares = () => {
     const unlockedPercent = this.poolsAssets.reduce(
@@ -197,8 +224,6 @@ class CreateCustomPoolsVm {
   };
 
   removeAssetFromPool = (assetId: string) => {
-    const puzzle = this.rootStore.accountStore.TOKENS.PUZZLE;
-    if (assetId === puzzle.assetId) return;
     const indexOfObject = this.poolsAssets.findIndex(
       ({ asset }) => asset.assetId === assetId
     );
@@ -253,17 +278,15 @@ class CreateCustomPoolsVm {
 
   get tokensToAdd() {
     const { accountStore } = this.rootStore;
-    const balances = Object.values(accountStore.TOKENS)
-      .map((t) => {
-        const balance = accountStore.findBalanceByAssetId(t.assetId);
-        return balance ?? new Balance(t);
-      })
-      .sort((a, b) => {
-        if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
-        if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
-        if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
-        return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
-      });
+    const balances = TOKENS_LIST.map((t) => {
+      const balance = accountStore.findBalanceByAssetId(t.assetId);
+      return balance ?? new Balance(t);
+    }).sort((a, b) => {
+      if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
+      if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
+      if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
+      return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
+    });
     const currentTokens = this.poolsAssets.reduce<string[]>(
       (acc, v) => [...acc, v.asset.assetId],
       []
@@ -283,17 +306,19 @@ class CreateCustomPoolsVm {
 
   buyRandomArtefact = async () => {
     const { accountStore } = this.rootStore;
-    const { TOKENS } = accountStore;
     if (!this.canBuyNft) return;
     if (this.puzzleNFTPrice === 0) return;
-    const amount = BN.parseUnits(this.puzzleNFTPrice, TOKENS.TPUZZLE.decimals);
+    const amount = BN.parseUnits(
+      this.puzzleNFTPrice,
+      TOKENS_BY_SYMBOL.TPUZZLE.decimals
+    );
     this._setLoading(true);
     await accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.createArtefacts,
         payment: [
           {
-            assetId: TOKENS.TPUZZLE.assetId,
+            assetId: TOKENS_BY_SYMBOL.TPUZZLE.assetId,
             amount: amount.toString(),
           },
         ],
@@ -340,27 +365,26 @@ class CreateCustomPoolsVm {
   };
 
   get puzzleNFTPrice() {
-    const { accountStore, poolsStore, nftStore } = this.rootStore;
-    const rate = poolsStore.usdnRate(accountStore.TOKENS.PUZZLE.assetId, 1);
+    const { poolsStore, nftStore } = this.rootStore;
+    const rate = poolsStore.usdnRate(TOKENS_BY_SYMBOL.PUZZLE.assetId, 1);
     if (nftStore.totalPuzzleNftsAmount == null) return 0;
     const amount = new BN(400)
-      .div(rate ?? 0)
-      .plus(nftStore.totalPuzzleNftsAmount);
-    return Math.ceil(amount.toNumber());
+      .plus(nftStore.totalPuzzleNftsAmount)
+      .div(rate ?? 0);
+    return Math.ceil(amount.toNumber() + 1);
   }
 
   get canBuyNft() {
     const { accountStore, nftStore } = this.rootStore;
     if (nftStore.totalPuzzleNftsAmount == null) return false;
     const balance = accountStore.findBalanceByAssetId(
-      accountStore.TOKENS.TPUZZLE.assetId
+      TOKENS_BY_SYMBOL.TPUZZLE.assetId
     );
     if (balance == null) return false;
     return balance.balance?.gte(this.puzzleNFTPrice);
   }
 
   providedPercentOfPool: BN = new BN(100);
-  @action.bound
   setProvidedPercentOfPool = (value: number) =>
     (this.providedPercentOfPool = new BN(value));
 
@@ -389,11 +413,20 @@ class CreateCustomPoolsVm {
   };
 
   provideLiquidityToPool = async () => {
+    const domain = this.domain;
+    this.setNotificationParams(null);
+    if (domain == null) {
+      this.rootStore.notificationStore.notify(
+        `There is no pool domain, try to refresh the page`,
+        { type: "error" }
+      );
+      return;
+    }
     this._setLoading(true);
-    const pool = await poolsService.getPoolByDomain(this.domain);
+    const pool = await poolsService.getPoolByDomain(domain);
     if (pool == null) {
       this.rootStore.notificationStore.notify(
-        `Cannot find pool with domain ${this.domain}`,
+        `Cannot find pool with domain ${domain}`,
         { type: "error" }
       );
       this._setLoading(false);
@@ -402,7 +435,7 @@ class CreateCustomPoolsVm {
     const accountStore = this.rootStore.accountStore;
     return accountStore
       .invoke({
-        dApp: (pool as any).contractAddress, //fixme
+        dApp: pool.contractAddress,
         payment: this.assetsForInitFunction,
         fee: 100500000,
         call: { function: "init", args: [] },
@@ -412,23 +445,54 @@ class CreateCustomPoolsVm {
         this.setNotificationParams(
           buildDialogParams({
             type: "success",
-            title: "Congratulations!",
-            description: `You have created pool ${this.title} `,
-            onContinue: () => {
-              this.initialize(null);
-              localStorage.removeItem("puzzle-custom-pool");
-              window.open(`/pool/${this.domain}`);
-            },
-            onCancel: () => {
-              this.initialize(null);
-              localStorage.removeItem("puzzle-custom-pool");
-              window.open(`/pool/${this.domain}`);
-            },
-            continueText: "Go to pool page",
+            title: `“${this.title}” has been created!`,
+            description: `You can change the settings, and track your reward on the pool page `,
+            buttons: [
+              () => (
+                <Button
+                  size="medium"
+                  fixed
+                  onClick={() => {
+                    this.initialize(null);
+                    localStorage.removeItem("puzzle-custom-pool");
+                    window.open(`/pools/${domain}/invest`);
+                  }}
+                  kind="secondary"
+                >
+                  Go to Pool page
+                </Button>
+              ),
+              () => (
+                <Button
+                  size="medium"
+                  fixed
+                  onClick={() => {
+                    this.initialize(null);
+                    localStorage.removeItem("puzzle-custom-pool");
+                    window.open("/invest");
+                  }}
+                >
+                  Back to Invest
+                </Button>
+              ),
+            ],
           })
         )
       )
-      .catch((e) => console.log(e))
+      .then(async () => {
+        await this.rootStore.poolsStore.syncCustomPools();
+        await this.rootStore.poolsStore.updateCustomPoolsState();
+      })
+      .catch((e) => {
+        this.setNotificationParams(
+          buildErrorDialogParams({
+            title: "Woops! Couldn't provide liquidity",
+            description: e.message ?? e.toString(),
+            onTryAgain: () => this.provideLiquidityToPool,
+          })
+        );
+        console.log(e);
+      })
       .finally(() => this._setLoading(false));
   };
 

@@ -11,6 +11,7 @@ import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomP
 import Notification from "@components/Notification";
 import unknown from "@src/assets/tokens/unknown-logo.svg";
 import Skeleton from "react-loading-skeleton";
+import { useStores } from "@stores";
 
 interface IProps {}
 
@@ -38,6 +39,7 @@ export const SelectArtefactSkeleton = () => (
 );
 
 const SelectArtefact: React.FC<IProps> = () => {
+  const { nftStore } = useStores();
   const [openNftDialog, setOpenNftDialog] = useState(false);
   const vm = useCreateCustomPoolsVM();
   return (
@@ -53,7 +55,9 @@ const SelectArtefact: React.FC<IProps> = () => {
           {vm.artefactToSpend == null ? (
             <Column>
               <Text weight={500}>Artefact is not selected</Text>
-              <Text type="secondary">You have N artefacts</Text>
+              <Text type="secondary">
+                You have {nftStore.accountNFTs?.length} artefacts
+              </Text>
             </Column>
           ) : (
             <Column>
@@ -71,13 +75,13 @@ const SelectArtefact: React.FC<IProps> = () => {
         onNftClick={(artefact) => vm.setArtefactToSpend(artefact)}
       />
       {vm.artefactToSpend != null && (
-        <>
+        <div style={{ width: "100%" }}>
           <SizedBox height={16} />
           <Notification
             type="warning"
             text="Pay attention that this NFT will be burned after the creation of the pool."
           />
-        </>
+        </div>
       )}
     </Root>
   );

@@ -1,10 +1,12 @@
 import { IPoolConfig, IToken, NODE_URL, TRADE_FEE } from "@src/constants";
 import axios from "axios";
-import { action, makeAutoObservable } from "mobx";
+import { makeAutoObservable } from "mobx";
 import BN from "@src/utils/BN";
 import tokenLogos from "@src/constants/tokenLogos";
+import nodeService from "@src/services/nodeService";
+import { getStateByKey } from "@src/utils/getStateByKey";
 
-interface IData {
+export interface IData {
   key: string;
   type: "integer" | "string";
   value: number | string;
@@ -20,12 +22,16 @@ export interface IShortPoolInfo {
 }
 
 class Pool implements IPoolConfig {
+  public readonly owner?: string;
   public readonly domain: string;
   public readonly contractAddress: string;
   public readonly layer2Address?: string;
   public readonly baseTokenId: string;
   public readonly title: string;
   public readonly isCustom?: boolean;
+  public readonly artefactOriginTransactionId?: string;
+  public readonly swapFee: number;
+  public readonly createdAt: string;
   public readonly defaultAssetId0: string;
   public readonly defaultAssetId1: string;
   public readonly tokens: Array<IToken & { share: number }> = [];
@@ -43,19 +49,37 @@ class Pool implements IPoolConfig {
     this.tokens.find((t) => assetId === t.assetId);
 
   public globalVolume: BN | null = null;
-  @action.bound setGlobalVolume = (value: BN) => (this.globalVolume = value);
+  setGlobalVolume = (value: BN) => (this.globalVolume = value);
 
-  public globalLiquidity: BN = BN.ZERO;
-  @action.bound setGlobalLiquidity = (value: BN) =>
-    (this.globalLiquidity = value);
+  public apy: BN | null = null;
+  public setApy = (value: BN) => (this.apy = value);
 
+  public globalLiquidityByUSDN: BN | null = null;
+  setGlobalLiquidityByUSDN = (value: BN | null) =>
+    (this.globalLiquidityByUSDN = value);
+
+  public globalLiquidityByPUZZLE: BN | null = null;
+  setGlobalLiquidityByPUZZLE = (value: BN | null) =>
+    (this.globalLiquidityByPUZZLE = value);
+
+  public get globalLiquidity(): BN {
+    if (this.globalLiquidityByUSDN != null) return this.globalLiquidityByUSDN;
+    else if (this.globalLiquidityByPUZZLE != null && this.puzzleRate.gt(0)) {
+      return this.globalLiquidityByPUZZLE.times(this.puzzleRate);
+    } else {
+      return BN.ZERO;
+    }
+  }
   public globalPoolTokenAmount: BN = BN.ZERO;
-  @action.bound setGlobalPoolTokenAmount = (value: BN) =>
+  setGlobalPoolTokenAmount = (value: BN) =>
     (this.globalPoolTokenAmount = value);
 
   public liquidity: Record<string, BN> = {};
   private setLiquidity = (value: Record<string, BN>) =>
     (this.liquidity = value);
+
+  public puzzleRate: BN = BN.ZERO;
+  public setPuzzleRate = (value: BN) => (this.puzzleRate = value);
 
   constructor(params: IPoolConfig) {
     this.contractAddress = params.contractAddress;
@@ -64,48 +88,17 @@ class Pool implements IPoolConfig {
     this.title = params.title;
     this._logo = params.logo;
     this.tokens = params.tokens;
-    this.defaultAssetId0 = params.defaultAssetId0;
-    this.defaultAssetId1 = params.defaultAssetId1;
+    this.defaultAssetId0 = params.defaultAssetId0 ?? params.tokens[0].assetId;
+    this.defaultAssetId1 = params.defaultAssetId1 ?? params.tokens[1].assetId;
     this.domain = params.domain;
     this.isCustom = params.isCustom;
+    this.artefactOriginTransactionId = params.artefactOriginTransactionId;
+    this.owner = params.owner;
+    this.swapFee = params.swapFee ?? 2;
+    this.createdAt = params.createdAt ?? "";
 
-    this.syncLiquidity().then();
-    setInterval(this.syncLiquidity, 15000);
     makeAutoObservable(this);
   }
-
-  private syncLiquidity = async () => {
-    const globalAttributesUrl = `${NODE_URL}/addresses/data/${this.contractAddress}?matches=global_(.*)`;
-    const { data }: { data: IData[] } = await axios.get(globalAttributesUrl);
-    const balances = data.reduce<Record<string, BN>>((acc, { key, value }) => {
-      const regexp = new RegExp("global_(.*)_balance");
-      regexp.test(key) && (acc[key.match(regexp)![1]] = new BN(value));
-      return acc;
-    }, {});
-    this.setLiquidity(balances);
-
-    const globalPoolTokenAmount = data.find(
-      (v) => v.key === "global_poolToken_amount"
-    );
-    if (globalPoolTokenAmount?.value != null) {
-      this.setGlobalPoolTokenAmount(new BN(globalPoolTokenAmount.value));
-    }
-
-    const globalVolumeValue = data.find((v) => v.key === "global_volume");
-    if (globalVolumeValue?.value != null) {
-      const globalVolume = new BN(globalVolumeValue.value).div(1e6);
-      this.setGlobalVolume(globalVolume);
-    }
-    const usdnAsset = this.tokens.find(({ symbol }) => symbol === "USDN")!;
-    const usdnLiquidity = this.liquidity[usdnAsset.assetId];
-    if (usdnLiquidity != null && usdnAsset.share != null) {
-      const globalLiquidity = new BN(usdnLiquidity)
-        .div(usdnAsset.share)
-        .times(100)
-        .div(1e6);
-      this.setGlobalLiquidity(globalLiquidity);
-    }
-  };
 
   currentPrice = (
     assetId0: string,
@@ -129,17 +122,63 @@ class Pool implements IPoolConfig {
   get indexTokenRate() {
     if (this.globalPoolTokenAmount == null || this.globalPoolTokenAmount.eq(0))
       return BN.ZERO;
-    const indexTokenRate = this.globalLiquidity.div(
+    return this.globalLiquidity.div(
       BN.formatUnits(this.globalPoolTokenAmount, 8)
     );
-    return indexTokenRate;
   }
 
-  @action.bound public getAccountLiquidityInfo = async (
-    address: string
-  ): Promise<IShortPoolInfo> => {
+  syncLiquidity = async (data?: IData[]) => {
+    if (data == null && this.isCustom) return;
+    if (data == null) {
+      const globalAttributesUrl = `${NODE_URL}/addresses/data/${this.contractAddress}?matches=global_(.*)`;
+      const res: { data: IData[] } = await axios.get(globalAttributesUrl);
+      data = res.data;
+    }
+    const balances = data.reduce<Record<string, BN>>((acc, { key, value }) => {
+      const regexp = new RegExp("global_(.*)_balance");
+      regexp.test(key) && (acc[key.match(regexp)![1]] = new BN(value));
+      return acc;
+    }, {});
+    this.setLiquidity(balances);
+
+    const globalPoolTokenAmount = data.find(
+      (v) => v.key === "global_poolToken_amount"
+    );
+    if (globalPoolTokenAmount?.value != null) {
+      this.setGlobalPoolTokenAmount(new BN(globalPoolTokenAmount.value));
+    }
+
+    const globalVolumeValue = data.find((v) => v.key === "global_volume");
+    if (globalVolumeValue?.value != null) {
+      const globalVolume = new BN(globalVolumeValue.value).div(1e6);
+      this.setGlobalVolume(globalVolume);
+    }
+    const usdnAsset = this.tokens.find(({ symbol }) => symbol === "USDN")!;
+    const usdnLiquidity = this.liquidity[usdnAsset?.assetId];
+
+    const puzzleAsset = this.tokens.find(({ symbol }) => symbol === "PUZZLE")!;
+    const puzzleLiquidity = this.liquidity[puzzleAsset?.assetId];
+
+    let globalLiquidityByUSDN = null;
+    let globalLiquidityByPuzzle = null;
+    if (usdnAsset && usdnLiquidity) {
+      globalLiquidityByUSDN = new BN(usdnLiquidity)
+        .div(usdnAsset.share)
+        .times(100)
+        .div(1e6);
+    } else if (puzzleAsset && puzzleLiquidity) {
+      globalLiquidityByPuzzle = new BN(puzzleLiquidity)
+        .div(puzzleAsset.share)
+        .times(100)
+        .div(1e8);
+    }
+    this.setGlobalLiquidityByUSDN(globalLiquidityByUSDN);
+    this.setGlobalLiquidityByPUZZLE(globalLiquidityByPuzzle);
+  };
+
+  getAccountLiquidityInfo = async (user: string): Promise<IShortPoolInfo> => {
     const keysArray = {
-      addressIndexStaked: `${address}_indexStaked`,
+      addressIndexStaked: `${user}_indexStaked`,
       globalIndexStaked: `global_indexStaked`,
       globalPoolTokenAmount: "global_poolToken_amount",
     };
@@ -175,9 +214,10 @@ class Pool implements IPoolConfig {
         shareOfPool: BN.ZERO,
         pool: this,
         indexTokenRate,
-        indexTokenName: "PZ" + staticPoolDomain,
+        indexTokenName: " PZ" + staticPoolDomain,
       };
     }
+
     const liquidityInUsdn = this.globalLiquidity
       .times(addressIndexStaked)
       .div(globalIndexStaked);
@@ -195,27 +235,53 @@ class Pool implements IPoolConfig {
     };
   };
 
-  public contractMatchRequest = async (match: string) => {
-    const url = `${NODE_URL}/addresses/data/${this.contractAddress}?matches=${match}`;
-    const response: { data: IData[] } = await axios.get(url);
-    if (response.data) {
-      return response.data;
-    } else {
-      return null;
+  getAccountLiquidityInfoByState = (
+    user: string,
+    state: IData[]
+  ): IShortPoolInfo => {
+    const addressIndexStaked = new BN(
+      getStateByKey(state, `${user}_indexStaked`) ?? 0
+    );
+    const globalIndexStaked = new BN(
+      getStateByKey(state, `global_indexStaked`) ?? 0
+    );
+    const globalPoolTokenAmount = new BN(
+      getStateByKey(state, "globalPoolTokenAmount") ?? 0
+    );
+    const indexTokenRate =
+      globalPoolTokenAmount && globalPoolTokenAmount.gt(0)
+        ? this.globalLiquidity.div(BN.formatUnits(globalPoolTokenAmount, 8))
+        : BN.ZERO;
+
+    if (addressIndexStaked == null || addressIndexStaked.eq(0)) {
+      return {
+        addressStaked: BN.ZERO,
+        liquidityInUsdn: BN.ZERO,
+        shareOfPool: BN.ZERO,
+        pool: this,
+        indexTokenRate,
+        indexTokenName: " PZ " + this.domain,
+      };
     }
+
+    const liquidityInUsdn = this.globalLiquidity
+      .times(addressIndexStaked)
+      .div(globalIndexStaked);
+    const percent = liquidityInUsdn
+      .times(new BN(100))
+      .div(this.globalLiquidity);
+    return {
+      liquidityInUsdn,
+      addressStaked: addressIndexStaked,
+      shareOfPool: percent,
+      pool: this,
+      indexTokenRate,
+      indexTokenName: " PZ " + this.domain,
+    };
   };
-  public contractKeysRequest = async (keysArray: string[] | string) => {
-    const searchKeys = typeof keysArray === "string" ? [keysArray] : keysArray;
-    const search = new URLSearchParams(searchKeys?.map((s) => ["key", s]));
-    const keys = search.toString();
-    const url = `${NODE_URL}/addresses/data/${this.contractAddress}?${keys}`;
-    const response: { data: IData[] } = await axios.get(url);
-    if (response.data) {
-      return response.data;
-    } else {
-      return null;
-    }
-  };
+
+  contractKeysRequest = (keys: string[] | string) =>
+    nodeService.nodeKeysRequest(NODE_URL, this.contractAddress, keys);
 }
 
 export default Pool;

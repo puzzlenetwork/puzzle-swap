@@ -28,7 +28,7 @@ interface IProps {
 
   onDelete: () => void;
 
-  disabled?: boolean;
+  permanent?: boolean;
 }
 
 const Root = styled.div`
@@ -38,10 +38,7 @@ const Root = styled.div`
   align-items: center;
   width: 100%;
 `;
-const AssetContainer = styled.div<{
-  disabled?: boolean;
-  modalOpened?: boolean;
-}>`
+const AssetContainer = styled.div<{ modalOpened?: boolean }>`
   display: flex;
   flex-direction: row;
   border: 1px solid #f1f2fe;
@@ -49,28 +46,30 @@ const AssetContainer = styled.div<{
   width: fit-content;
   padding: 8px 32px 8px 8px;
   align-items: center;
-  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  cursor: pointer;
   position: relative;
   :after {
     position: absolute;
-    inset: 12px 8px 12px auto;
+    top: 12px;
+    right: 8px;
+    bottom: 12px;
     content: url(${arrowDownIcon});
     transition: 0.4s;
     transform: rotate(${({ modalOpened }) => (modalOpened ? 0 : -90)}deg);
   }
   :hover {
     :after {
-      transform: rotate(${({ disabled }) => (!disabled ? 0 : -90)}deg);
+      transform: rotate(-90deg);
     }
   }
 `;
 
-const StyledClose = styled(Close)<{ disabled?: boolean }>`
+const StyledClose = styled(Close)<{ permanent?: boolean }>`
   margin-left: 10px;
   width: 16px;
   height: 16px;
-  cursor: ${({ disabled }) => (disabled ? "auto" : "pointer")};
-  opacity: ${({ disabled }) => (disabled ? 0 : 1)};
+  cursor: ${({ permanent }) => (permanent ? "auto" : "pointer")};
+  opacity: ${({ permanent }) => (permanent ? 0 : 1)};
 `;
 
 const TokenCompositionRow: React.FC<IProps> = ({
@@ -82,15 +81,17 @@ const TokenCompositionRow: React.FC<IProps> = ({
   locked,
   onLockClick,
   onDelete,
-  disabled,
+  permanent,
 }) => {
   const [openModal, setOpenModal] = useState(false);
+  const selectableTokens = balances.filter(({ symbol }) =>
+    permanent ? ["PUZZLE", "USDN"].includes(symbol) : true
+  );
   return (
     <Root>
       <AssetContainer
-        disabled={disabled}
         modalOpened={openModal}
-        onClick={() => !disabled && setOpenModal(true)}
+        onClick={() => setOpenModal(true)}
       >
         <RoundTokenIcon src={asset.logo} />
         <SizedBox width={8} />
@@ -110,15 +111,15 @@ const TokenCompositionRow: React.FC<IProps> = ({
           <Unlock onClick={onLockClick} style={{ cursor: "pointer" }} />
         )}
         <StyledClose
-          disabled={disabled}
-          onClick={!disabled ? onDelete : undefined}
+          permanent={permanent}
+          onClick={!permanent ? onDelete : undefined}
         />
       </Row>
       <TokenSelectModal
         selectedTokenId={asset.assetId}
         visible={openModal}
         onSelect={(newAssetId) => onUpdateAsset(asset.assetId, newAssetId)}
-        balances={balances}
+        balances={selectableTokens}
         onClose={() => setOpenModal(!openModal)}
       />
     </Root>

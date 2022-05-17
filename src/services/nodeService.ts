@@ -50,16 +50,6 @@ interface IBalance {
   balance: number;
 }
 
-interface ITransactionInfo {
-  stateChanges: {
-    transfers: Array<{
-      address: string;
-      amount: number;
-      asset: string;
-    }>;
-  };
-}
-
 interface IAssetDetails {
   assetId: string;
   issueHeight: number;
@@ -133,9 +123,9 @@ const nodeService = {
   transactionInfo: async (
     node: string,
     txId: string
-  ): Promise<ITransactionInfo | null> => {
+  ): Promise<ITransaction | null> => {
     const url = `${node}/transactions/info/${txId}`;
-    const response: { data: ITransactionInfo } = await axios.get(url);
+    const response: { data: ITransaction } = await axios.get(url);
     if (response.data) {
       return response.data;
     } else {

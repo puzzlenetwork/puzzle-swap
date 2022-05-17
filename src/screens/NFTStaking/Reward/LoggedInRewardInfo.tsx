@@ -9,10 +9,10 @@ import wallet from "@src/assets/icons/wallet.svg";
 import Text from "@components/Text";
 import { useNFTStakingVM } from "@screens/NFTStaking/NFTStakingVM";
 import BN from "@src/utils/BN";
-import { useStores } from "@stores";
 import dayjs from "dayjs";
 import Skeleton from "react-loading-skeleton";
 import Loading from "@components/Loading";
+import { TOKENS_BY_SYMBOL } from "@src/constants";
 
 const Root = styled.div`
   display: grid;
@@ -45,8 +45,6 @@ const LastClaimDate = styled(Text)`
   }
 `;
 const LoggedInRewardInfo: React.FC = () => {
-  const { accountStore } = useStores();
-  const { TOKENS } = accountStore;
   const vm = useNFTStakingVM();
   const date = dayjs(vm.lastClaimDate?.toNumber() ?? 0);
   const format = date.format("D MMM YYYY");
@@ -70,7 +68,7 @@ const LoggedInRewardInfo: React.FC = () => {
             </Text>
             <Text weight={500}>
               {vm.claimedReward != null ? (
-                BN.formatUnits(vm.claimedReward, TOKENS.USDN.decimals)
+                BN.formatUnits(vm.claimedReward, TOKENS_BY_SYMBOL.USDN.decimals)
                   .toFormat(2)
                   .concat(" USDN")
               ) : (

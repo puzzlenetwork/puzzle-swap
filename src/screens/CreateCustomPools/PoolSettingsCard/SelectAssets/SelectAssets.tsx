@@ -10,7 +10,6 @@ import { observer } from "mobx-react-lite";
 import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
 import TokenCompositionRow from "./TokenCompositionRow";
 import TokenSelectModal from "@components/TokensSelectModal/TokenSelectModal";
-import { TOKENS } from "@src/constants";
 import BN from "@src/utils/BN";
 
 interface IProps {}
@@ -29,7 +28,7 @@ const SelectsAssets: React.FC<IProps> = () => {
   const [addAssetModal, openAssetModal] = useState(false);
   const vm = useCreateCustomPoolsVM();
   const assetNotification =
-    "Please note that the pool must include a PUZZLE asset with at least 2% of pool weight and the maximum of 10 different assets.";
+    "Please note that the pool must include a PUZZLE or USDN asset with at least 2% of pool weight and the maximum of 10 different assets.";
   return (
     <Root>
       <Text type="secondary" weight={500}>
@@ -37,11 +36,13 @@ const SelectsAssets: React.FC<IProps> = () => {
       </Text>
       <SizedBox height={8} />
       <Card style={{ width: "100%" }}>
-        <Notification type="info" text={assetNotification} />
+        <Notification
+          type={vm.requiredTokensCorrectShare ? "info" : "error"}
+          text={assetNotification}
+        />
         <Grid>
           {vm.poolsAssets.map(({ asset, share, locked }, index) => {
-            const isPuzzle = asset.assetId === TOKENS.PUZZLE.assetId;
-            const minShare = new BN(isPuzzle ? 20 : 5);
+            const minShare = new BN(5);
             return (
               <TokenCompositionRow
                 key={index + "select-asset"}
@@ -58,7 +59,6 @@ const SelectsAssets: React.FC<IProps> = () => {
                   )
                 }
                 onDelete={() => vm.removeAssetFromPool(asset.assetId)}
-                disabled={isPuzzle}
               />
             );
           })}

@@ -26,7 +26,7 @@ const Root = styled.div`
       cursor: pointer;
 
       :hover {
-        background: #f1f2fe;
+        background: #f8f8ff;
       }
 
       :last-child {

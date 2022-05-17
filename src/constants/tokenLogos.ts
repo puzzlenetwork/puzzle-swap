@@ -37,8 +37,8 @@ import munaLogo from "@src/assets/tokens/MUNA.svg";
 import bnbLogo from "@src/assets/tokens/BNB.svg";
 import shegLogo from "@src/assets/tokens/SHEG.png";
 import snsbtLogo from "@src/assets/tokens/SNSBT.png";
+import snsbtTciLogo from "@src/assets/tokens/sNSBT_TCI.svg";
 import tpuzzleLogo from "@src/assets/tokens/staked-puzzle.svg";
-import tokens from "./tokens.json";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -79,48 +79,9 @@ const tokenLogos: Record<string, string> = {
   BNB: bnbLogo,
   SHEG: shegLogo,
   SNSBT: snsbtLogo,
+  SNSBTTCI: snsbtTciLogo,
   UNKNOWN: unknownLogo,
   TPUZZLE: tpuzzleLogo,
-};
-export const tokenLogosByAssetId: Record<string, string> = {
-  [tokens.DUXPLORER.assetId]: duxplorerLogo,
-  [tokens.MATH.assetId]: mathLogo,
-  [tokens.TURTLE.assetId]: turtleLogo,
-  [tokens.EGGSEGGS.assetId]: eggseggsLogo,
-  [tokens.PESOLATINO.assetId]: latinaLogo,
-  [tokens.FOMO.assetId]: fomoLogo,
-  [tokens.MUNDO.assetId]: mundoLogo,
-  [tokens.EGGPOINT.assetId]: eggPointLogo,
-  [tokens.EGG.assetId]: eggLogo,
-  [tokens.USDN.assetId]: usdnLogo,
-  [tokens.ENDO.assetId]: endoLogo,
-  [tokens.MARVIN.assetId]: marvinLogo,
-  [tokens.EGGMOON.assetId]: eggmoonLogo,
-  [tokens.STREET.assetId]: streetLogo,
-  [tokens.KOLKHOZ.assetId]: kolkhozLogo,
-  [tokens.FORKLOG.assetId]: forkLogLogo,
-  [tokens.CGU.assetId]: cguLogo,
-  [tokens.WAVES.assetId]: wavesLogo,
-  [tokens.SWOP.assetId]: swopLogo,
-  [tokens.VIRES.assetId]: viresLogo,
-  [tokens.NSBT.assetId]: nsbtLogo,
-  [tokens.ENNO.assetId]: ennoLogo,
-  [tokens.SIGN.assetId]: signLogo,
-  [tokens.PUZZLE.assetId]: puzzleLogo,
-  [tokens.USDT.assetId]: usdtLogo,
-  [tokens.RACE.assetId]: raceLogo,
-  [tokens.BTC.assetId]: btcLogo,
-  [tokens.ETH.assetId]: ethLogo,
-  [tokens.LTC.assetId]: ltcLogo,
-  [tokens.USDC.assetId]: usdcLogo,
-  [tokens.EURN.assetId]: eurn,
-  [tokens.WX.assetId]: wxLogo,
-  [tokens.WEST.assetId]: westLogo,
-  [tokens.WCT.assetId]: wctLogo,
-  [tokens.MUNA.assetId]: munaLogo,
-  [tokens.BNB.assetId]: bnbLogo,
-  [tokens.SHEG.assetId]: shegLogo,
-  [tokens.SNSBT.assetId]: snsbtLogo,
 };
 
 export default tokenLogos;

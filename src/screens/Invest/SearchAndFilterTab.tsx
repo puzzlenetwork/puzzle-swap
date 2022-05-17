@@ -12,6 +12,8 @@ import useWindowSize from "@src/hooks/useWindowSize";
 import Text from "@components/Text";
 import close from "@src/assets/icons/primaryBlue16CloseIcon.svg";
 import { Row } from "@src/components/Flex";
+import { ROUTES } from "@src/constants";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {}
 
@@ -84,11 +86,11 @@ const categoriesOptions = [
   { title: "Waves DeFi", key: "defi" },
   { title: "Waves Ducks", key: "duck" },
 ];
-// const createdByOptions = [
-//   { title: "Created by all", key: "all" },
-//   { title: "By community", key: "custom" },
-//   { title: "By Puzzle Swap", key: "puzzle" },
-// ];
+const createdByOptions = [
+  { title: "Created by all", key: "all" },
+  { title: "By community", key: "custom" },
+  { title: "By Puzzle Swap", key: "puzzle" },
+];
 const ClearBtn = styled(Text)`
   margin: 12px 12px 0 12px;
   cursor: pointer;
@@ -115,12 +117,12 @@ const InputWrapper = styled.div`
 `;
 const SearchAndFilterTab: React.FC<IProps> = () => {
   const vm = useInvestVM();
-  // const [activeCategory, setActiveCategory] = useState(categoriesOptions[0]);
-  const isFiltersChosen = vm.poolCategoryFilter !== 0;
+  const navigate = useNavigate();
+  const isFiltersChosen =
+    vm.poolCategoryFilter !== 0 || vm.customPoolFilter !== 0;
   const handleClearFilters = () => {
     vm.setPoolCategoryFilter(0);
-    // setActiveCategory(categoriesOptions[0]);
-    // setActiveCreatedOption(createdByOptions[0]);
+    vm.setCustomPoolFilter(0);
   };
   const { width } = useWindowSize();
   return (
@@ -147,13 +149,16 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
               vm.setPoolCategoryFilter(index);
             }}
           />
-          {/*<SizedBox width={12} />*/}
-          {/*<Select*/}
-          {/*  options={createdByOptions}*/}
-          {/*  selected={activeCreatedOption}*/}
-          {/*  onSelect={setActiveCreatedOption}*/}
-          {/*/>*/}
-          {/*<SizedBox width={12} />*/}
+          <SizedBox width={12} />
+          <Select
+            options={createdByOptions}
+            selected={createdByOptions[vm.customPoolFilter]}
+            onSelect={({ key }) => {
+              const index = createdByOptions.findIndex((o) => o.key === key);
+              vm.setCustomPoolFilter(index);
+            }}
+          />
+          <SizedBox width={12} />
         </StyledRow>
         {isFiltersChosen && (
           <ClearBtn
@@ -172,8 +177,7 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
         <Button
           size="medium"
           fixed={width != null && width <= 1080}
-          disabled
-          // onClick={() => navigate(`${ROUTES.POOLS_CREATE}`)}
+          onClick={() => navigate(`${ROUTES.POOLS_CREATE}`)}
         >
           <Add />
           <SizedBox width={12} />
