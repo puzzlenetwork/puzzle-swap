@@ -68,7 +68,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     contractAddress: "3PCq2VqxGMmEyB8gLoUi8KuV9tYSD3VMC74",
     layer2Address: "3P6oobNcfLt69HMzQC37JAAGBWtrygU4amc",
     baseTokenId: TOKENS_BY_SYMBOL.USDN.assetId,
-    title: "Vires USD LP pool",
+    title: "Vires USD LP",
     logo: tokenLogos.USDN,
     defaultAssetId0: TOKENS_BY_SYMBOL.VIRESUSDC.assetId,
     defaultAssetId1: TOKENS_BY_SYMBOL.USDN.assetId,
