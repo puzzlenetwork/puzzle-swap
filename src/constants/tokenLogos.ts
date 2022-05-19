@@ -80,6 +80,8 @@ const tokenLogos: Record<string, string> = {
   SHEG: shegLogo,
   SNSBT: snsbtLogo,
   SNSBTTCI: snsbtTciLogo,
+  VIRES_USDT_LP: usdtLogo,
+  VIRES_USDC_LP: usdcLogo,
   UNKNOWN: unknownLogo,
   TPUZZLE: tpuzzleLogo,
 };
