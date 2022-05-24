@@ -31,6 +31,7 @@ const TokenTags: React.FC<IProps> = ({ tokens, findBalanceByAssetId }) => {
         const isActive =
           assetBalance && assetBalance.balance && assetBalance.balance.gt(0);
         return (
+          //  todo add unique key
           <Tag key={assetId} background={isActive ? "#C6C9F4" : undefined}>
             {symbol} {share} %
           </Tag>

@@ -70,6 +70,7 @@ class Pool implements IPoolConfig {
       return BN.ZERO;
     }
   }
+
   public globalPoolTokenAmount: BN = BN.ZERO;
   setGlobalPoolTokenAmount = (value: BN) =>
     (this.globalPoolTokenAmount = value);
