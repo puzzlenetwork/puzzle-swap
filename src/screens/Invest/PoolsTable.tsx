@@ -170,11 +170,9 @@ const PoolsTable: React.FC = () => {
     poolsStore.accountPoolsLiquidity,
     navigate,
   ]);
-
   const myPools = filteredPools.filter(
     ({ owner }) => owner != null && accountStore.address === owner
   );
-
   return (
     <>
       {myPools.length > 0 && (

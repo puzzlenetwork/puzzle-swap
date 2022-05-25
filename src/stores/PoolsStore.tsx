@@ -49,7 +49,7 @@ export default class PoolsStore {
           this.updateCustomPoolsState(),
           this.syncPuzzleRate(),
         ]),
-      60 * 1000
+      5 * 1000
     );
     reaction(
       () => this.rootStore.accountStore.address,
