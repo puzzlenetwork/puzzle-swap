@@ -26,12 +26,15 @@ const TokenTags: React.FC<IProps> = ({ tokens, findBalanceByAssetId }) => {
   const moreHiddenAmount = tokens.length - 3;
   return (
     <Root>
-      {tokensToDisplay.map(({ symbol, assetId, share }) => {
+      {tokensToDisplay.map(({ symbol, assetId, share }, i) => {
         const assetBalance = findBalanceByAssetId(assetId);
         const isActive =
           assetBalance && assetBalance.balance && assetBalance.balance.gt(0);
         return (
-          <Tag key={assetId} background={isActive ? "#C6C9F4" : undefined}>
+          <Tag
+            key={assetId + String(i)}
+            background={isActive ? "#C6C9F4" : undefined}
+          >
             {symbol} {share} %
           </Tag>
         );

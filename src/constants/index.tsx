@@ -62,7 +62,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.NSBT, share: 20, logo: tokenLogos.NSBT },
       { ...TOKENS_BY_SYMBOL.USDN, share: 5, logo: tokenLogos.USDN },
     ],
-  }, 
+  },
   {
     domain: "vusd",
     contractAddress: "3PCq2VqxGMmEyB8gLoUi8KuV9tYSD3VMC74",
@@ -73,8 +73,31 @@ export const POOL_CONFIG: IPoolConfig[] = [
     defaultAssetId0: TOKENS_BY_SYMBOL.VIRES_USDC_LP.assetId,
     defaultAssetId1: TOKENS_BY_SYMBOL.USDN.assetId,
     tokens: [
-      { ...TOKENS_BY_SYMBOL.VIRES_USDT_LP, share: 30, logo: tokenLogos.VIRES_USDT_LP },
-      { ...TOKENS_BY_SYMBOL.VIRES_USDC_LP, share: 30, logo: tokenLogos.VIRES_USDC_LP },
+      {
+        ...TOKENS_BY_SYMBOL.VIRES_USDT_LP,
+        share: 30,
+        logo: tokenLogos.VIRES_USDT_LP,
+      },
+      {
+        ...TOKENS_BY_SYMBOL.VIRES_USDC_LP,
+        share: 30,
+        logo: tokenLogos.VIRES_USDC_LP,
+      },
+      { ...TOKENS_BY_SYMBOL.USDN, share: 40, logo: tokenLogos.USDN },
+    ],
+  },
+  {
+    domain: "vusd",
+    contractAddress: "3PCq2VqxGMmEyB8gLoUi8KuV9tYSD3VMC74",
+    layer2Address: "3P6oobNcfLt69HMzQC37JAAGBWtrygU4amc",
+    baseTokenId: TOKENS_BY_SYMBOL.USDN.assetId,
+    title: "Vires USD LP",
+    logo: tokenLogos.USDN,
+    defaultAssetId0: TOKENS_BY_SYMBOL.VIRES_USDC_LP.assetId,
+    defaultAssetId1: TOKENS_BY_SYMBOL.USDN.assetId,
+    tokens: [
+      { ...TOKENS_BY_SYMBOL.VIRESUSDT, share: 30, logo: tokenLogos.VIRESUSDT },
+      { ...TOKENS_BY_SYMBOL.VIRESUSDC, share: 30, logo: tokenLogos.VIRESUSDC },
       { ...TOKENS_BY_SYMBOL.USDN, share: 40, logo: tokenLogos.USDN },
     ],
   },
