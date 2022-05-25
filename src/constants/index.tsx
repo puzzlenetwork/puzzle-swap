@@ -87,21 +87,6 @@ export const POOL_CONFIG: IPoolConfig[] = [
     ],
   },
   {
-    domain: "vusd",
-    contractAddress: "3PCq2VqxGMmEyB8gLoUi8KuV9tYSD3VMC74",
-    layer2Address: "3P6oobNcfLt69HMzQC37JAAGBWtrygU4amc",
-    baseTokenId: TOKENS_BY_SYMBOL.USDN.assetId,
-    title: "Vires USD LP",
-    logo: tokenLogos.USDN,
-    defaultAssetId0: TOKENS_BY_SYMBOL.VIRES_USDC_LP.assetId,
-    defaultAssetId1: TOKENS_BY_SYMBOL.USDN.assetId,
-    tokens: [
-      { ...TOKENS_BY_SYMBOL.VIRESUSDT, share: 30, logo: tokenLogos.VIRESUSDT },
-      { ...TOKENS_BY_SYMBOL.VIRESUSDC, share: 30, logo: tokenLogos.VIRESUSDC },
-      { ...TOKENS_BY_SYMBOL.USDN, share: 40, logo: tokenLogos.USDN },
-    ],
-  },
-  {
     domain: "www",
     contractAddress: "3PAviuHPCX8fD7M5fGpFTQZb4HchWCJb3ct",
     layer2Address: "3PFF8UuNfvAGk6KvgyeD4HfZ4TRmHgtgt5W",
