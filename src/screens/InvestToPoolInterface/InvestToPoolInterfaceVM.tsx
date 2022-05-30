@@ -196,9 +196,10 @@ class InvestToPoolInterfaceVM {
       globalLastCheckTokenEarnings
     ).minus(globalLastCheckTokenEarnings);
 
-    const lastCheckInterest = globalIndexStaked.eq(0)
-      ? BN.ZERO
-      : globalLastCheckTokenInterest;
+    const lastCheckInterest =
+      globalLastCheckTokenInterest == null || globalIndexStaked.eq(0)
+        ? BN.ZERO
+        : globalLastCheckTokenInterest;
 
     const currentInterest = lastCheckInterest.plus(
       newEarnings.div(globalIndexStaked)
