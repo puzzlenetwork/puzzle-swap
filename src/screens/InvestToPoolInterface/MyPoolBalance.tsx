@@ -60,12 +60,13 @@ const MyPoolBalance: React.FC<IProps> = () => {
           <Column>
             <Text textAlign="right" size="medium">
               $
-              {vm.accountLiquidity == null
+              {vm.accountLiquidity == null || vm.accountLiquidity.isNaN
                 ? "0.00"
                 : vm.accountLiquidity?.toFormat(2)}
             </Text>
             <Text textAlign="right" type="secondary" size="small">
               {vm.accountShareOfPool != null &&
+                !vm.accountShareOfPool.isNaN &&
                 `Share of pool ${vm.accountShareOfPool?.toFormat(2)}%`}
             </Text>
           </Column>
@@ -118,9 +119,13 @@ const MyPoolBalance: React.FC<IProps> = () => {
                       className="mobile"
                     >
                       <Text size="medium">
-                        <span>{address !== null ? value : "-"}</span>
+                        <span>
+                          {address !== null && !token.value.isNaN ? value : "-"}
+                        </span>
                         <span style={{ color: "#8082C5" }}>
-                          {address !== null ? `($ ${usdn})` : "-"}
+                          {address !== null && !token.usdnEquivalent.isNaN
+                            ? `($ ${usdn})`
+                            : "-"}
                         </span>
                       </Text>
                     </Row>
