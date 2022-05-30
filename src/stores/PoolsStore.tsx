@@ -34,10 +34,7 @@ export default class PoolsStore {
         ]),
       5 * 1000
     );
-    setInterval(
-      () => Promise.all([this.syncCustomPools(), this.syncPools()]),
-      60 * 1000
-    );
+    setInterval(() => Promise.all([this.syncCustomPools()]), 60 * 1000);
     reaction(
       () => this.rootStore.accountStore.address,
       () => this.updateAccountPoolsLiquidityInfo(true)
@@ -138,12 +135,17 @@ export default class PoolsStore {
 
   syncCustomPools = async () => {
     const configs = await poolService.getPools();
-    const customPools = configs.map((p) => {
-      const tokens = p.assets.map(({ assetId, share }) => ({
-        ...TOKENS_BY_ASSET_ID[assetId],
-        share,
-      }));
-      return new Pool({ ...p, tokens });
+    const customPools: Array<Pool> = [];
+    configs.forEach((pool) => {
+      if (pool.isCustom) {
+        const tokens = pool.assets.map(({ assetId, share }) => ({
+          ...TOKENS_BY_ASSET_ID[assetId],
+          share,
+        }));
+        customPools.push(new Pool({ ...pool, tokens }));
+      } else if (pool.statistics) {
+        this.getPoolByDomain(pool.domain)?.setStatistics(pool.statistics);
+      }
     });
     this.setPools([...this.pools, ...customPools]);
   };
