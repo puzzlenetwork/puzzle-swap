@@ -4,10 +4,10 @@ import { makeAutoObservable, reaction, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import { EXPLORER_URL, IToken, NODE_URL } from "@src/constants";
-import axios from "axios";
 import nodeService from "@src/services/nodeService";
 import { ITransaction } from "@src/utils/types";
 import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
+import makeNodeRequest from "@src/utils/makeNodeRequest";
 
 const ctx = React.createContext<InvestToPoolInterfaceVM | null>(null);
 
@@ -321,9 +321,8 @@ class InvestToPoolInterfaceVM {
   updatePoolTokenBalances = async () => {
     const { pool } = this;
     //todo ✅
-    const { data }: { data: TContractAssetBalancesResponse } = await axios.get(
-      `${NODE_URL}/assets/balance/${pool.contractAddress}`
-    );
+    const { data }: { data: TContractAssetBalancesResponse } =
+      await makeNodeRequest(`/assets/balance/${pool.contractAddress}`);
     const value = data.balances.map((token) => {
       return { assetId: token.assetId, balance: new BN(token.balance) };
     });
@@ -334,10 +333,7 @@ class InvestToPoolInterfaceVM {
     const { isCustom, artefactOriginTransactionId } = this.pool;
     if (isCustom == null || !isCustom || artefactOriginTransactionId == null)
       return;
-    const data = await nodeService.transactionInfo(
-      NODE_URL,
-      artefactOriginTransactionId
-    );
+    const data = await nodeService.transactionInfo(artefactOriginTransactionId);
     this.setNFTPaymentName(
       data?.stateChanges.invokes[0].call.args[0].value.toString() ?? ""
     );
@@ -345,10 +341,7 @@ class InvestToPoolInterfaceVM {
 
   loadTransactionsHistory = async () => {
     //todo ✅
-    const v = await nodeService.transactions(
-      NODE_URL,
-      this.pool.contractAddress
-    );
+    const v = await nodeService.transactions(this.pool.contractAddress);
     v && this.setTransactionsHistory(v);
   };
 
@@ -360,7 +353,6 @@ class InvestToPoolInterfaceVM {
     if (after == null) return;
     //todo ✅
     const v = await nodeService.transactions(
-      NODE_URL,
       pool.contractAddress,
       10,
       after.id

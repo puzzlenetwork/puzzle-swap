@@ -216,7 +216,7 @@ class AccountStore {
     this.setAssetsBalancesLoading(true);
 
     const address = this.address;
-    const data = await nodeService.getAddressBalances(NODE_URL, address);
+    const data = await nodeService.getAddressBalances(address);
     const assetBalances = TOKENS_LIST.map((asset) => {
       const t = data.find(({ assetId }) => asset.assetId === assetId);
       const balance = new BN(t != null ? t.balance : 0);
@@ -366,20 +366,6 @@ class AccountStore {
     });
     return txId;
   };
-
-  // get TOKENS() {
-  //   return TOKENS_LIST.reduce(
-  //     (acc, token) => ({ ...acc, [token.symbol]: token }),
-  //     {} as Record<string, IToken>
-  //   );
-  // }
-
-  // get TOKENS_ASSET_ID_MAP() {
-  //   return TOKENS_LIST.reduce(
-  //     (acc, token) => ({ ...acc, [token.assetId]: token }),
-  //     {} as Record<string, IToken>
-  //   );
-  // }
 }
 
 export default AccountStore;

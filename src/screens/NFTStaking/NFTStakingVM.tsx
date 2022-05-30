@@ -8,7 +8,6 @@ import nodeService from "@src/services/nodeService";
 import {
   CONTRACT_ADDRESSES,
   EXPLORER_URL,
-  NODE_URL,
   TOKENS_BY_SYMBOL,
 } from "@src/constants";
 
@@ -68,7 +67,6 @@ class NFTStakingVM {
       lastClaimDate: `${address}_${usdn}_lastClaim`,
     };
     const response = await nodeService.nodeKeysRequest(
-      NODE_URL,
       contractAddress,
       Object.values(keysArray)
     );

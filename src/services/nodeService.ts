@@ -1,17 +1,5 @@
-import axios from "axios";
 import { ITransaction } from "@src/utils/types";
-
-export interface IStatsPoolItemResponse {
-  apy: number;
-  liquidity: number;
-  monthly_volume: number;
-  weekly_volume: number;
-}
-
-export interface IPoolVolume {
-  date: number;
-  volume: number;
-}
+import makeNodeRequest from "@src/utils/makeNodeRequest";
 
 interface INodeData {
   key: string;
@@ -57,22 +45,19 @@ interface IAssetDetails {
 }
 
 const nodeService = {
-  getAddressNfts: async (node: string, address: string): Promise<INFT[]> => {
-    const url = `${node}/assets/nft/${address}/limit/1000`;
-    const { data } = await axios.get(url);
+  getAddressNfts: async (address: string): Promise<INFT[]> => {
+    const url = `/assets/nft/${address}/limit/1000`;
+    const { data } = await makeNodeRequest(url);
     return data;
   },
-  getAddressBalances: async (
-    node: string,
-    address: string | null
-  ): Promise<IBalance[]> => {
+  getAddressBalances: async (address: string | null): Promise<IBalance[]> => {
     if (address == null) return [];
-    const assetsUrl = `${node}/assets/balance/${address}`;
-    const wavesUrl = `${node}/addresses/balance/details/${address}`;
+    const assetsUrl = `/assets/balance/${address}`;
+    const wavesUrl = `/addresses/balance/details/${address}`;
     return (
       await Promise.all([
-        axios.get(assetsUrl).then(({ data }) => data),
-        axios.get(wavesUrl).then(({ data }) => ({
+        makeNodeRequest(assetsUrl).then(({ data }) => data),
+        makeNodeRequest(wavesUrl).then(({ data }) => ({
           balances: [{ balance: data.regular, assetId: "WAVES" }],
         })),
       ])
@@ -82,15 +67,15 @@ const nodeService = {
     );
   },
   nodeKeysRequest: async (
-    node: string,
     contract: string,
     keys: string[] | string
   ): Promise<INodeData[]> => {
     const searchKeys = typeof keys === "string" ? [keys] : keys;
     const search = new URLSearchParams(searchKeys?.map((s) => ["key", s]));
     const keysArray = search.toString();
-    const url = `${node}/addresses/data/${contract}?${keysArray}`;
-    const response: { data: INodeData[] } = await axios.get(url);
+    const response = await makeNodeRequest(
+      `/addresses/data/${contract}?${keysArray}`
+    );
     if (response.data) {
       return response.data;
     } else {
@@ -98,24 +83,20 @@ const nodeService = {
     }
   },
   nodeMatchRequest: async (
-    node: string,
     contract: string,
     match: string
   ): Promise<INodeData[]> => {
-    const url = `${node}/addresses/data/${contract}?matches=${match}`;
-    const response: { data: INodeData[] } = await axios.get(url);
+    const url = `/addresses/data/${contract}?matches=${match}`;
+    const response: { data: INodeData[] } = await makeNodeRequest(url);
     if (response.data) {
       return response.data;
     } else {
       return [];
     }
   },
-  transactionInfo: async (
-    node: string,
-    txId: string
-  ): Promise<ITransaction | null> => {
-    const url = `${node}/transactions/info/${txId}`;
-    const response: { data: ITransaction } = await axios.get(url);
+  transactionInfo: async (txId: string): Promise<ITransaction | null> => {
+    const url = `/transactions/info/${txId}`;
+    const response: { data: ITransaction } = await makeNodeRequest(url);
     if (response.data) {
       return response.data;
     } else {
@@ -123,7 +104,6 @@ const nodeService = {
     }
   },
   transactions: async (
-    node: string,
     address: string,
     limit = 10,
     after?: string
@@ -132,22 +112,19 @@ const nodeService = {
     if (after != null) {
       urlSearchParams.set("after", after);
     }
-    const url = `${node}/transactions/address/${address}/limit/${limit}?${
+    const url = `/transactions/address/${address}/limit/${limit}?${
       after != null ? urlSearchParams.toString() : ""
     }`;
-    const response: { data: [ITransaction[]] } = await axios.get(url);
+    const response: { data: [ITransaction[]] } = await makeNodeRequest(url);
     if (response.data[0]) {
       return response.data[0];
     } else {
       return null;
     }
   },
-  assetDetails: async (
-    node: string,
-    assetId: string
-  ): Promise<IAssetDetails | null> => {
-    const url = `${node}/assets/details/${assetId}`;
-    const response: { data: IAssetDetails } = await axios.get(url);
+  assetDetails: async (assetId: string): Promise<IAssetDetails | null> => {
+    const url = `/assets/details/${assetId}`;
+    const response: { data: IAssetDetails } = await makeNodeRequest(url);
     if (response.data) {
       return response.data;
     } else {

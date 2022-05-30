@@ -2,15 +2,14 @@ import {
   IPoolConfig,
   IPoolConfigStatistics,
   IToken,
-  NODE_URL,
   TRADE_FEE,
 } from "@src/constants";
-import axios from "axios";
 import { makeAutoObservable } from "mobx";
 import BN from "@src/utils/BN";
 import tokenLogos from "@src/constants/tokenLogos";
 import nodeService from "@src/services/nodeService";
 import { getStateByKey } from "@src/utils/getStateByKey";
+import makeNodeRequest from "@src/utils/makeNodeRequest";
 
 export interface IData {
   key: string;
@@ -135,8 +134,8 @@ class Pool implements IPoolConfig {
   syncLiquidity = async (data?: IData[]) => {
     if (data == null && this.isCustom) return;
     if (data == null) {
-      const globalAttributesUrl = `${NODE_URL}/addresses/data/${this.contractAddress}?matches=global_(.*)`;
-      const res: { data: IData[] } = await axios.get(globalAttributesUrl);
+      const globalAttributesUrl = `/addresses/data/${this.contractAddress}?matches=global_(.*)`;
+      const res: { data: IData[] } = await makeNodeRequest(globalAttributesUrl);
       data = res.data;
     }
     const balances = data.reduce<Record<string, BN>>((acc, { key, value }) => {
@@ -286,7 +285,7 @@ class Pool implements IPoolConfig {
   };
 
   contractKeysRequest = (keys: string[] | string) =>
-    nodeService.nodeKeysRequest(NODE_URL, this.contractAddress, keys);
+    nodeService.nodeKeysRequest(this.contractAddress, keys);
 }
 
 export default Pool;

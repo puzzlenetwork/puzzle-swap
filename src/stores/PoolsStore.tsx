@@ -31,13 +31,17 @@ export default class PoolsStore {
           this.updateAccountPoolsLiquidityInfo(),
           this.updateCustomPoolsState(),
           this.syncPuzzleRate(),
+          this.syncCustomPools(),
         ]),
       5 * 1000
     );
-    setInterval(this.syncCustomPools, 60 * 1000);
     reaction(
       () => this.rootStore.accountStore.address,
-      () => this.updateAccountPoolsLiquidityInfo(true)
+      () =>
+        Promise.all([
+          this.updateAccountPoolsLiquidityInfo(true),
+          this.updateCustomPoolsState(),
+        ])
     );
   }
 

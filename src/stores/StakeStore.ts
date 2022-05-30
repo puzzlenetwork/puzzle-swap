@@ -3,12 +3,7 @@ import { makeAutoObservable, reaction } from "mobx";
 import BN from "@src/utils/BN";
 import stakedPuzzleLogo from "@src/assets/tokens/staked-puzzle.svg";
 import nodeService from "@src/services/nodeService";
-import {
-  CONTRACT_ADDRESSES,
-  NODE_URL,
-  ROUTES,
-  TOKENS_BY_SYMBOL,
-} from "@src/constants";
+import { CONTRACT_ADDRESSES, ROUTES, TOKENS_BY_SYMBOL } from "@src/constants";
 
 export default class StakeStore {
   public rootStore: RootStore;
@@ -43,7 +38,6 @@ export default class StakeStore {
       this.setLoading(true);
     }
     const addressStakedValue = await nodeService.nodeKeysRequest(
-      NODE_URL,
       CONTRACT_ADDRESSES.staking,
       `${address}_staked`
     );
