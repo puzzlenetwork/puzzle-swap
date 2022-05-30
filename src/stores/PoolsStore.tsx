@@ -34,7 +34,7 @@ export default class PoolsStore {
         ]),
       5 * 1000
     );
-    setInterval(() => Promise.all([this.syncCustomPools()]), 60 * 1000);
+    setInterval(this.syncCustomPools, 60 * 1000);
     reaction(
       () => this.rootStore.accountStore.address,
       () => this.updateAccountPoolsLiquidityInfo(true)
@@ -147,7 +147,7 @@ export default class PoolsStore {
         this.getPoolByDomain(pool.domain)?.setStatistics(pool.statistics);
       }
     });
-    this.setPools([...this.pools, ...customPools]);
+    this.setPools([...this.mainPools, ...customPools]);
   };
 
   updateAccountPoolsLiquidityInfo = async (force = false) => {
