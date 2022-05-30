@@ -4,7 +4,6 @@ import { makeAutoObservable, reaction, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import { EXPLORER_URL, IToken, NODE_URL } from "@src/constants";
-import { IPoolStats30Days } from "@stores/PoolsStore";
 import axios from "axios";
 import nodeService from "@src/services/nodeService";
 import { ITransaction } from "@src/utils/types";
@@ -39,9 +38,6 @@ class InvestToPoolInterfaceVM {
 
   loadingHistory: boolean = false;
   private _setLoadingHistory = (l: boolean) => (this.loadingHistory = l);
-
-  public stats: IPoolStats30Days | null = null;
-  private setStats = (stats: IPoolStats30Days | null) => (this.stats = stats);
 
   public indexTokenId: string | null = null;
   private setIndexTokenId = (value: string) => (this.indexTokenId = value);
@@ -93,7 +89,6 @@ class InvestToPoolInterfaceVM {
     when(
       () => this.pool != null,
       async () => {
-        this.updateStats();
         await Promise.all([
           this.updatePoolTokenBalances(),
           this.loadTransactionsHistory(),
@@ -118,13 +113,6 @@ class InvestToPoolInterfaceVM {
       this.updateRewardInfo
     );
   }
-
-  updateStats = () => {
-    this.rootStore.poolsStore
-      .get30DaysPoolStats(this.poolDomain)
-      .then((data) => this.setStats(data))
-      .catch(() => console.error(`Cannot update stats of ${this.poolDomain}`));
-  };
 
   updateAccountLiquidityInfo = async () => {
     if (this.rootStore.accountStore.address) {
@@ -250,10 +238,6 @@ class InvestToPoolInterfaceVM {
     this.setTotalRewardToClaim(totalRewardAmount);
   };
 
-  get isThereSomethingToClaim() {
-    return this.totalRewardToClaim.eq(0);
-  }
-
   get poolCompositionValues() {
     if (this.pool.tokens == null) return [];
     return this.pool.tokens.reduce<
@@ -281,9 +265,10 @@ class InvestToPoolInterfaceVM {
       if (this.userIndexStaked == null || this.userIndexStaked?.eq(0)) {
         return { ...token, usdnEquivalent: BN.ZERO, value: BN.ZERO };
       }
-      const top = this.pool.liquidity[token.assetId].times(
-        this.userIndexStaked ?? BN.ZERO
-      );
+      const top =
+        this.pool.liquidity[token.assetId]?.times(
+          this.userIndexStaked ?? BN.ZERO
+        ) ?? BN.ZERO;
       const tokenAmountToGet = top.div(this.pool.globalPoolTokenAmount);
       const parserAmount = BN.formatUnits(tokenAmountToGet, token.decimals);
       const rate =

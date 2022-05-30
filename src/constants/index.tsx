@@ -332,7 +332,6 @@ export const EXPLORER_URL = "https://new.wavesexplorer.com";
 
 export const SLIPPAGE = 0.95; //if puzzle slippage = 0
 export const TRADE_FEE = 0.95;
-export type TTokenCategory = "global" | "stable" | "defi" | "ducks";
 
 export interface IToken {
   assetId: string;
@@ -341,6 +340,15 @@ export interface IToken {
   decimals: number;
   logo: string;
   category?: string[];
+}
+
+export interface IPoolConfigStatistics {
+  apy: string;
+  monthlyVolume: string;
+  weeklyVolume: string;
+  fees: string;
+  liquidity: string;
+  volume: Array<{ date: number; volume: string }>;
 }
 
 export interface IPoolConfig {
@@ -359,4 +367,5 @@ export interface IPoolConfig {
   swapFee?: number;
   createdAt?: string;
   logo?: string;
+  statistics?: IPoolConfigStatistics;
 }

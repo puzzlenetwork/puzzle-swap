@@ -54,8 +54,8 @@ const TradesVolume: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
   const { width: screenWidth } = useWindowSize();
   const chartWidth = screenWidth ? calcChartWidth(screenWidth) : 0;
-  const data = vm.stats?.volume
-    ?.slice()
+  const data = vm.pool.statistics?.volume
+    .slice()
     .sort((a, b) => (a.date < b.date ? -1 : 1));
   return (
     <Root disabled={data == null || data.length < 2}>
@@ -68,13 +68,13 @@ const TradesVolume: React.FC<IProps> = () => {
           <XAxis
             tickLine={false}
             dataKey="date"
-            tickFormatter={(date) => dayjs.unix(date).format("MMM DD")}
+            tickFormatter={(date) => dayjs(date).format("MMM DD")}
             style={{ fill: "#8082c5" }}
           />
           <Tooltip
             labelFormatter={(date) => (
               <Text type="secondary" size="small">
-                {dayjs.unix(date).format("dddd, MMM DD")}
+                {dayjs(date).format("dddd, MMM DD")}
               </Text>
             )}
             formatter={(volume: number) => (

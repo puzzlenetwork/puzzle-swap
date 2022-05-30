@@ -21,6 +21,7 @@ import { ReactComponent as FacebookIcon } from "@src/assets/icons/facebook.svg";
 import { EXPLORER_URL } from "@src/constants";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import dayjs from "dayjs";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -81,7 +82,9 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
     },
     {
       title: "Fees earned (30 days)",
-      value: `$ ${vm.stats?.fees?.toFormat(2)}`,
+      value: vm.pool.statistics
+        ? `$ ${new BN(vm.pool.statistics.fees).toFormat(2)}`
+        : "–",
     },
   ];
   const customPoolInformation = [

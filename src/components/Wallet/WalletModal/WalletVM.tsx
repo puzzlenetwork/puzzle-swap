@@ -26,8 +26,8 @@ class WalletVM {
   headerExpanded: boolean = true;
   setHeaderExpanded = (state: boolean) => (this.headerExpanded = state);
 
-  tokenToSend: Balance | null = null;
-  public setTokenToSend = (v: Balance) => (this.tokenToSend = v);
+  // tokenToSend: Balance | null = null;
+  // public setTokenToSend = (v: Balance) => (this.tokenToSend = v);
 
   assetsStats: Record<string, BN> | null = null;
   public setAssetsStats = (v: Record<string, BN>) => (this.assetsStats = v);

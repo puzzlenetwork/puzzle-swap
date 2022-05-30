@@ -1,4 +1,10 @@
-import { IPoolConfig, IToken, NODE_URL, TRADE_FEE } from "@src/constants";
+import {
+  IPoolConfig,
+  IPoolConfigStatistics,
+  IToken,
+  NODE_URL,
+  TRADE_FEE,
+} from "@src/constants";
 import axios from "axios";
 import { makeAutoObservable } from "mobx";
 import BN from "@src/utils/BN";
@@ -37,12 +43,10 @@ class Pool implements IPoolConfig {
   public readonly tokens: Array<IToken & { share: number }> = [];
   private readonly _logo?: string;
 
+  public readonly statistics?: IPoolConfigStatistics;
+
   public get logo() {
     return this._logo ?? tokenLogos.UNKNOWN;
-  }
-
-  public get baseToken() {
-    return this.getAssetById(this.baseTokenId);
   }
 
   public getAssetById = (assetId: string) =>
@@ -50,9 +54,6 @@ class Pool implements IPoolConfig {
 
   public globalVolume: BN | null = null;
   setGlobalVolume = (value: BN) => (this.globalVolume = value);
-
-  public apy: BN | null = null;
-  public setApy = (value: BN) => (this.apy = value);
 
   public globalLiquidityByUSDN: BN | null = null;
   setGlobalLiquidityByUSDN = (value: BN | null) =>
@@ -97,6 +98,7 @@ class Pool implements IPoolConfig {
     this.owner = params.owner;
     this.swapFee = params.swapFee ?? 2;
     this.createdAt = params.createdAt ?? "";
+    this.statistics = params.statistics;
 
     makeAutoObservable(this);
   }
