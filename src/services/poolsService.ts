@@ -1,5 +1,6 @@
 import axios from "axios";
 import { TPoolState } from "@stores/PoolsStore";
+import { IPoolConfigStatistics } from "@src/constants";
 
 interface IAssetConfig {
   assetId: string;
@@ -54,7 +55,9 @@ const poolService = {
     );
     return true;
   },
-  getPools: async (): Promise<IPoolSettings[]> => {
+  getPools: async (): Promise<
+    Array<IPoolSettings & { statistics?: IPoolConfigStatistics }>
+  > => {
     const { data } = await axios.get(
       `${process.env.REACT_APP_API_BASE}/api/v1/pools`
     );

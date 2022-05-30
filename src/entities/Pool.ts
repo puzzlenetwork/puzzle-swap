@@ -43,7 +43,9 @@ class Pool implements IPoolConfig {
   public readonly tokens: Array<IToken & { share: number }> = [];
   private readonly _logo?: string;
 
-  public readonly statistics?: IPoolConfigStatistics;
+  public statistics?: IPoolConfigStatistics;
+  public setStatistics = (statistics: IPoolConfigStatistics) =>
+    (this.statistics = statistics);
 
   public get logo() {
     return this._logo ?? tokenLogos.UNKNOWN;
