@@ -37,6 +37,8 @@ import munaLogo from "@src/assets/tokens/MUNA.svg";
 import bnbLogo from "@src/assets/tokens/BNB.svg";
 import shegLogo from "@src/assets/tokens/SHEG.png";
 import snsbtLogo from "@src/assets/tokens/SNSBT.png";
+import usdtViresLogo from "@src/assets/tokens/USDT_VIRES.png";
+import usdcViresLogo from "@src/assets/tokens/USDC_VIRES.png";
 import snsbtTciLogo from "@src/assets/tokens/sNSBT_TCI.svg";
 import tpuzzleLogo from "@src/assets/tokens/staked-puzzle.svg";
 
@@ -80,8 +82,8 @@ const tokenLogos: Record<string, string> = {
   SHEG: shegLogo,
   SNSBT: snsbtLogo,
   SNSBTTCI: snsbtTciLogo,
-  VIRES_USDT_LP: usdtLogo,
-  VIRES_USDC_LP: usdcLogo,
+  VIRES_USDT_LP: usdtViresLogo,
+  VIRES_USDC_LP: usdcViresLogo,
   UNKNOWN: unknownLogo,
   TPUZZLE: tpuzzleLogo,
 };
