@@ -450,6 +450,7 @@ class CreateCustomPoolsVm {
             buttons: [
               () => (
                 <Button
+                  key="Go to Pool page"
                   size="medium"
                   fixed
                   onClick={() => {
@@ -464,6 +465,7 @@ class CreateCustomPoolsVm {
               ),
               () => (
                 <Button
+                  key="Back to Invest"
                   size="medium"
                   fixed
                   onClick={() => {
