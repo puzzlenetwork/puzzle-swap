@@ -13,16 +13,6 @@ export interface IPoolVolume {
   volume: number;
 }
 
-export interface IStatsByPoolAndPeriodResponse extends IStatsPoolItemResponse {
-  fees: number;
-  volume: IPoolVolume[];
-}
-
-export interface IStakingStatsResponse {
-  classic: { apy: number };
-  ultra: { apy: number };
-}
-
 interface INodeData {
   key: string;
   type: "integer" | "string";

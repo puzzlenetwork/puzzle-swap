@@ -6,6 +6,7 @@ import Card from "@src/components/Card";
 import Text from "@src/components/Text";
 import SizedBox from "@components/SizedBox";
 import Skeleton from "react-loading-skeleton";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -29,25 +30,25 @@ const CCard = styled(Card)`
 `;
 const PoolInformation: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
-  const data = vm.stats;
+  const data = vm.pool.statistics;
   const valuesArray = [
     {
       title: "Pool value",
-      value: data?.liquidity ? "$ " + data?.liquidity.toFormat(2) : null,
+      value: data?.liquidity ? "$ " + new BN(data.liquidity).toFormat(2) : null,
     },
     {
       title: "Volume (7d)",
-      value: data?.weekly_volume
-        ? "$ " + data?.weekly_volume.toFormat(2)
+      value: data?.weeklyVolume
+        ? "$ " + new BN(data.weeklyVolume).toFormat(2)
         : null,
     },
     {
       title: "Fees (30D)",
-      value: data?.fees ? "$ " + data?.fees.toFormat(2) : null,
+      value: data?.fees ? "$ " + new BN(data.fees).toFormat(2) : null,
     },
     {
       title: "APY",
-      value: data?.apy ? data?.apy.toFormat(2) + " %" : null,
+      value: data?.apy ? new BN(data.apy).toFormat(2) + " %" : null,
     },
   ];
   return (

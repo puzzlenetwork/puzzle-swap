@@ -9,15 +9,6 @@ export interface ISerializedRootStore {
   accountStore?: ISerializedAccountStore;
 }
 
-export type TPoolStats = {
-  apy: number;
-  fees: number;
-  liquidity: number;
-  monthly_volume: number;
-  weekly_volume: number;
-  volume: { date: number; volume: number }[];
-};
-
 export default class RootStore {
   public accountStore: AccountStore;
   public poolsStore: PoolsStore;

@@ -13,6 +13,7 @@ import Scrollbar from "@components/Scrollbar";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 import group from "@src/assets/icons/group.svg";
+import BN from "@src/utils/BN";
 
 const PoolsTable: React.FC = () => {
   const { poolsStore, accountStore } = useStores();
@@ -80,8 +81,8 @@ const PoolsTable: React.FC = () => {
             }
           }
         } else if (activeSort === 1) {
-          if (a.apy != null && b.apy != null) {
-            if (a.apy.lt(b.apy)) {
+          if (a.statistics?.apy != null && b.statistics?.apy != null) {
+            if (new BN(a.statistics.apy).lt(b.statistics.apy)) {
               return vm.sortApy ? 1 : -1;
             } else {
               return vm.sortApy ? -1 : 1;
@@ -145,15 +146,15 @@ const PoolsTable: React.FC = () => {
         liquidity: "$ " + pool.globalLiquidity.toFormat(2),
         volume: (() => {
           const volume =
-            poolsStore.poolsStats &&
-            poolsStore.poolsStats[pool.domain]?.monthly_volume != null
-              ? poolsStore.poolsStats[pool.domain]?.monthly_volume.toFormat(2)
+            pool.statistics != null
+              ? new BN(pool.statistics.monthlyVolume).toFormat(2)
               : null;
           return volume != null ? `$ ${volume}` : "—";
         })(),
-        apy: poolsStore.poolsStats
-          ? poolsStore.poolsStats[pool.domain]?.apy.toFormat(2).concat(" %")
-          : undefined,
+        apy:
+          pool.statistics != null
+            ? new BN(pool.statistics.apy).toFormat(2).concat(" %")
+            : undefined,
         owner: pool.owner,
       }));
     setFilteredPools(data);
@@ -166,7 +167,6 @@ const PoolsTable: React.FC = () => {
     vm.customPoolFilter,
     activeSort,
     accountStore.findBalanceByAssetId,
-    poolsStore.poolsStats,
     poolsStore.accountPoolsLiquidity,
     navigate,
   ]);

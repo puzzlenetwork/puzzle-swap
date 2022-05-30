@@ -2,10 +2,6 @@ import { RootStore } from "./index";
 import { action, makeAutoObservable, reaction } from "mobx";
 import Pool, { IData, IShortPoolInfo } from "@src/entities/Pool";
 import BN from "@src/utils/BN";
-import statsService, {
-  IPoolVolume,
-  IStatsPoolItemResponse,
-} from "@src/services/statsService";
 import {
   POOL_CONFIG,
   TOKENS_BY_ASSET_ID,
@@ -14,18 +10,6 @@ import {
 import poolsService from "@src/services/poolsService";
 import poolService from "@src/services/poolsService";
 import wavesCapService from "@src/services/wavesCapService";
-
-export interface IStatsPoolItem {
-  weekly_volume: BN;
-  apy: BN;
-  liquidity: BN;
-  monthly_volume: BN;
-}
-
-export interface IPoolStats30Days extends IStatsPoolItem {
-  fees: BN;
-  volume: IPoolVolume[];
-}
 
 export type TPoolState = {
   state: IData[];
@@ -36,7 +20,6 @@ export default class PoolsStore {
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
-    this.syncPoolsStats().then();
     this.syncPools().then();
     this.syncCustomPools().then(this.updateCustomPoolsState);
     this.updateAccountPoolsLiquidityInfo().then();
@@ -50,6 +33,10 @@ export default class PoolsStore {
           this.syncPuzzleRate(),
         ]),
       5 * 1000
+    );
+    setInterval(
+      () => Promise.all([this.syncCustomPools(), this.syncPools()]),
+      60 * 1000
     );
     reaction(
       () => this.rootStore.accountStore.address,
@@ -71,10 +58,6 @@ export default class PoolsStore {
   @action.bound setPools = (pools: Pool[]) => (this.pools = pools);
   getPoolByDomain = (domain: string) =>
     this.pools.find((pool) => pool.domain === domain);
-
-  public poolsStats: Record<string, IStatsPoolItem> | null = null;
-  private setPoolStats = (value: Record<string, IStatsPoolItem>) =>
-    (this.poolsStats = value);
 
   private puzzleRate: BN | null = null;
   private setPuzzleRate = (rate: BN | null) => (this.puzzleRate = rate);
@@ -111,9 +94,6 @@ export default class PoolsStore {
   accountPoolsLiquidityLoading = false;
   @action.bound setAccountPoolsLiquidityLoading = (state: boolean) =>
     (this.accountPoolsLiquidityLoading = state);
-
-  findPoolStatsByPoolId = (poolId: string) =>
-    this.poolsStats && this.poolsStats[poolId];
 
   get liquidity(): Record<string, BN> {
     return this.pools.reduce<Record<string, BN>>(
@@ -166,35 +146,6 @@ export default class PoolsStore {
       return new Pool({ ...p, tokens });
     });
     this.setPools([...this.pools, ...customPools]);
-  };
-
-  syncPoolsStats = async () => {
-    const data = await statsService.getStats();
-    const stats = Object.entries(data).reduce((acc, [poolId, obj]) => {
-      const bnFormat = Object.entries(obj as IStatsPoolItemResponse).reduce(
-        (ac, [propertyName, propertyValue]) => {
-          const value = new BN(propertyValue);
-          return { ...ac, [propertyName]: value };
-        },
-        {} as IStatsPoolItem
-      );
-      return { ...acc, [poolId]: bnFormat };
-    }, {} as Record<string, IStatsPoolItem>);
-    this.pools.forEach((pool) => {
-      const apy = stats != null ? stats[pool.domain]?.apy : BN.ZERO;
-      pool.setApy(apy);
-    });
-    this.setPoolStats(stats);
-  };
-
-  get30DaysPoolStats = async (poolId: string): Promise<IPoolStats30Days> => {
-    const data = await statsService.getStatsByPoolAndPeriod(poolId);
-    return Object.entries(data).reduce((acc, [propertyName, propertyValue]) => {
-      const value = Array.isArray(propertyValue)
-        ? propertyValue
-        : new BN(propertyValue);
-      return { ...acc, [propertyName]: value };
-    }, {} as IPoolStats30Days);
   };
 
   updateAccountPoolsLiquidityInfo = async (force = false) => {

@@ -8,6 +8,7 @@ import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
 import Scrollbar from "./components/Scrollbar";
 import Input from "@components/Input";
+import BN from "@src/utils/BN";
 
 interface IProps {
   onChange: (id: string) => void;
@@ -100,9 +101,8 @@ const ChangePoolModal: React.FC<IProps> = ({
                 </Row>
                 <Column>
                   <Text>
-                    {(poolsStore &&
-                      poolsStore.poolsStats &&
-                      poolsStore.poolsStats[pool.domain]?.apy.toFormat(2)) ??
+                    {(pool.statistics?.apy &&
+                      new BN(pool.statistics?.apy).toFormat(2)) ??
                       "--"}
                     %
                   </Text>

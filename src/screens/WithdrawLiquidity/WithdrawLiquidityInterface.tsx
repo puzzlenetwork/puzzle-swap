@@ -18,6 +18,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import GoBack from "@components/GoBack";
 import Loading from "@components/Loading";
 import { ROUTES } from "@src/constants";
+import BN from "@src/utils/BN";
 
 const Root = styled.div`
   display: flex;
@@ -63,7 +64,10 @@ const WithdrawLiquidityInterfaceImpl = observer(() => {
           title="From"
           poolLogo={vm.pool.logo}
           poolName={vm.pool.title}
-          apy={vm.stats?.apy && vm.stats.apy.toFormat(2) + " %"}
+          apy={
+            vm.pool.statistics?.apy &&
+            new BN(vm.pool.statistics.apy).toFormat(2) + " %"
+          }
           onChangePool={() => vm.setChangePoolModalOpen(true)}
         />
         <SizedBox height={24} />

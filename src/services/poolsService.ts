@@ -30,10 +30,6 @@ interface IPoolSettings {
 }
 
 const poolService = {
-  getPuzzlePools: async (): Promise<IPoolSettings[]> => {
-    await axios.get(`${process.env.REACT_APP_API_BASE}/api/v1/pools`);
-    return [];
-  },
   getPoolByDomain: async (domain: string): Promise<IPoolSettings> => {
     const req = `${process.env.REACT_APP_API_BASE}/api/v1/pools/${domain}`;
     const { data } = await axios.get(req);

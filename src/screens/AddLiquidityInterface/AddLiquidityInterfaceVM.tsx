@@ -4,7 +4,6 @@ import { action, makeAutoObservable, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import Balance from "@src/entities/Balance";
-import { IPoolStats30Days } from "@stores/PoolsStore";
 import {
   buildErrorDialogParams,
   buildSuccessLiquidityDialogParams,
@@ -38,9 +37,6 @@ class AddLiquidityInterfaceVM {
   public changePoolModalOpen: boolean = false;
   setChangePoolModalOpen = (value: boolean) =>
     (this.changePoolModalOpen = value);
-
-  public stats: IPoolStats30Days | null = null;
-  private setStats = (stats: IPoolStats30Days | null) => (this.stats = stats);
 
   loading: boolean = false;
   private _setLoading = (l: boolean) => (this.loading = l);
@@ -77,7 +73,6 @@ class AddLiquidityInterfaceVM {
       }
     );
 
-    this.updateStats();
     makeAutoObservable(this);
   }
 
@@ -95,13 +90,6 @@ class AddLiquidityInterfaceVM {
         return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
       });
   }
-
-  updateStats = () => {
-    this.rootStore.poolsStore
-      .get30DaysPoolStats(this.poolDomain)
-      .then((data) => this.setStats(data))
-      .catch(() => console.error(`Cannot update stats of ${this.poolDomain}`));
-  };
 
   public get baseToken() {
     return this.pool!.getAssetById(this.pool!.baseTokenId)!;
