@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { action, makeAutoObservable } from "mobx";
+import { action, makeAutoObservable, when } from "mobx";
 import { EXPLORER_URL, SLIPPAGE, TRADE_FEE } from "@src/constants";
 import { RootStore, useStores } from "@stores";
 import Balance from "@src/entities/Balance";
@@ -28,6 +28,13 @@ class MultiSwapVM {
     public readonly poolDomain: string
   ) {
     makeAutoObservable(this);
+    when(
+      () => this.pool != null,
+      () => {
+        this.setAssetId0(this.pool?.defaultAssetId0);
+        this.setAssetId1(this.pool?.defaultAssetId1);
+      }
+    );
   }
 
   public get pool() {
