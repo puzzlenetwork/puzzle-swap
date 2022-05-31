@@ -139,19 +139,21 @@ export default class PoolsStore {
 
   syncCustomPools = async () => {
     const configs = await poolService.getPools();
-    const customPools: Array<Pool> = [];
-    configs.forEach((pool) => {
-      if (pool.isCustom) {
-        const tokens = pool.assets.map(({ assetId, share }) => ({
+    const newPools: Array<Pool> = [];
+    configs.forEach((config) => {
+      const pool = this.getPoolByDomain(config.domain);
+      if (pool != null && config.statistics != null) {
+        pool.setStatistics(config.statistics);
+      }
+      if (config.isCustom && pool == null) {
+        const tokens = config.assets.map(({ assetId, share }) => ({
           ...TOKENS_BY_ASSET_ID[assetId],
           share,
         }));
-        customPools.push(new Pool({ ...pool, tokens }));
-      } else if (pool.statistics) {
-        this.getPoolByDomain(pool.domain)?.setStatistics(pool.statistics);
+        newPools.push(new Pool({ ...config, tokens }));
       }
     });
-    this.setPools([...this.mainPools, ...customPools]);
+    this.setPools([...this.pools, ...newPools]);
   };
 
   updateAccountPoolsLiquidityInfo = async (force = false) => {
