@@ -309,7 +309,7 @@ class CreateCustomPoolsVm {
     if (this.puzzleNFTPrice === 0) return;
     const amount = BN.parseUnits(
       this.puzzleNFTPrice,
-      TOKENS_BY_SYMBOL.TPUZZLE.decimals
+      TOKENS_BY_SYMBOL.PUZZLE.decimals
     );
     this._setLoading(true);
     await accountStore
@@ -317,7 +317,7 @@ class CreateCustomPoolsVm {
         dApp: CONTRACT_ADDRESSES.createArtefacts,
         payment: [
           {
-            assetId: TOKENS_BY_SYMBOL.TPUZZLE.assetId,
+            assetId: TOKENS_BY_SYMBOL.PUZZLE.assetId,
             amount: amount.toString(),
           },
         ],
@@ -377,7 +377,7 @@ class CreateCustomPoolsVm {
     const { accountStore, nftStore } = this.rootStore;
     if (nftStore.totalPuzzleNftsAmount == null) return false;
     const balance = accountStore.findBalanceByAssetId(
-      TOKENS_BY_SYMBOL.TPUZZLE.assetId
+      TOKENS_BY_SYMBOL.PUZZLE.assetId
     );
     if (balance == null) return false;
     return balance.balance?.gte(this.puzzleNFTPrice);
