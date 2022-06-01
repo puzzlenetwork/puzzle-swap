@@ -25,7 +25,7 @@ const PoolCreationPayment: React.FC<IProps> = () => {
   const { accountStore, nftStore } = useStores();
 
   const { findBalanceByAssetId } = accountStore;
-  const puzzleBalance = findBalanceByAssetId(TOKENS_BY_SYMBOL.TPUZZLE.assetId);
+  const puzzleBalance = findBalanceByAssetId(TOKENS_BY_SYMBOL.PUZZLE.assetId);
   const vm = useCreateCustomPoolsVM();
   return (
     <Root>
