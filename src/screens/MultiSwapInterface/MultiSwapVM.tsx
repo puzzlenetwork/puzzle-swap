@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { action, makeAutoObservable } from "mobx";
+import { action, makeAutoObservable, when } from "mobx";
 import { EXPLORER_URL, SLIPPAGE, TRADE_FEE } from "@src/constants";
 import { RootStore, useStores } from "@stores";
 import Balance from "@src/entities/Balance";
@@ -28,6 +28,13 @@ class MultiSwapVM {
     public readonly poolDomain: string
   ) {
     makeAutoObservable(this);
+    when(
+      () => this.pool != null,
+      () => {
+        this.setAssetId0(this.pool?.defaultAssetId0);
+        this.setAssetId1(this.pool?.defaultAssetId1);
+      }
+    );
   }
 
   public get pool() {
@@ -54,6 +61,9 @@ class MultiSwapVM {
 
   amount0: BN = BN.ZERO;
   @action.bound setAmount0 = (amount: BN) => (this.amount0 = amount);
+
+  loading: boolean = false;
+  private _setLoading = (l: boolean) => (this.loading = l);
 
   get amount0UsdnEquivalent(): string {
     const { token0 } = this;
@@ -170,7 +180,7 @@ class MultiSwapVM {
     if (this.pool?.contractAddress == null) return;
     if (this.token0 == null || this.amount0.eq(0)) return;
     if (!this.token1 || !this.amount1.gt(0) || !this.minimumToReceive) return;
-
+    this._setLoading(true);
     this.rootStore.accountStore
       .invoke({
         dApp: this.pool.contractAddress,
@@ -207,6 +217,7 @@ class MultiSwapVM {
           type: "error",
           title: "Transaction is not completed",
         });
-      });
+      })
+      .finally(() => this._setLoading(false));
   };
 }

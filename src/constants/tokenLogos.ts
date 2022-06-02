@@ -40,7 +40,6 @@ import snsbtLogo from "@src/assets/tokens/SNSBT.png";
 import usdtViresLogo from "@src/assets/tokens/USDT_VIRES.svg";
 import usdcViresLogo from "@src/assets/tokens/USDC_VIRES.svg";
 import snsbtTciLogo from "@src/assets/tokens/sNSBT_TCI.svg";
-import tpuzzleLogo from "@src/assets/tokens/staked-puzzle.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -85,7 +84,6 @@ const tokenLogos: Record<string, string> = {
   VIRES_USDT_LP: usdtViresLogo,
   VIRES_USDC_LP: usdcViresLogo,
   UNKNOWN: unknownLogo,
-  TPUZZLE: tpuzzleLogo,
 };
 
 export default tokenLogos;

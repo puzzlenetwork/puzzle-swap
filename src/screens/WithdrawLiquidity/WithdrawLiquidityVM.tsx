@@ -4,7 +4,6 @@ import { action, makeAutoObservable, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import { EXPLORER_URL, IToken } from "@src/constants";
-import { IPoolStats30Days } from "@stores/PoolsStore";
 
 const ctx = React.createContext<WithdrawLiquidityVM | null>(null);
 
@@ -31,9 +30,6 @@ class WithdrawLiquidityVM {
   public poolDomain: string;
   public rootStore: RootStore;
 
-  public stats: IPoolStats30Days | null = null;
-  private setStats = (stats: IPoolStats30Days | null) => (this.stats = stats);
-
   public userIndexStaked: BN | null = null;
   private setUserIndexStaked = (value: BN) => (this.userIndexStaked = value);
 
@@ -57,19 +53,11 @@ class WithdrawLiquidityVM {
     this.rootStore = rootStore;
     makeAutoObservable(this);
 
-    when(() => this.pool != null, this.updateStats);
     when(
       () => this.rootStore.accountStore.address != null && this.pool != null,
       () => this.updateUserIndexStaked()
     );
   }
-
-  updateStats = () => {
-    this.rootStore.poolsStore
-      .get30DaysPoolStats(this.poolDomain)
-      .then((data) => this.setStats(data))
-      .catch(() => console.error(`Cannot update stats of ${this.poolDomain}`));
-  };
 
   updateUserIndexStaked = async () => {
     if (this.rootStore.accountStore.address == null) return;

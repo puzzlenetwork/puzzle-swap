@@ -20,6 +20,7 @@ import ChangePoolModal from "@src/ChangePoolModal";
 import Loading from "@components/Loading";
 import { ROUTES } from "@src/constants";
 import { useStores } from "@stores";
+import BN from "@src/utils/BN";
 
 const Root = styled.div`
   display: flex;
@@ -73,7 +74,10 @@ const AddLiquidityInterfaceImpl = observer(() => {
           title="To"
           poolLogo={pool && pool.logo}
           poolName={pool && pool.title}
-          apy={vm.stats?.apy && vm.stats.apy.toFormat(2) + " %"}
+          apy={
+            pool?.statistics?.apy &&
+            new BN(pool?.statistics?.apy).toFormat(2) + " %"
+          }
           onChangePool={() => vm.setChangePoolModalOpen(true)}
         />
         <SizedBox height={24} />

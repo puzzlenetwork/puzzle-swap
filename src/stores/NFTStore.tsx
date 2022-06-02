@@ -2,7 +2,7 @@ import statsService, { IArtWork } from "@src/services/statsService";
 import RootStore from "@stores/RootStore";
 import nodeService, { INFT } from "@src/services/nodeService";
 import { makeAutoObservable, reaction } from "mobx";
-import { CONTRACT_ADDRESSES, NODE_URL, PUZZLE_NTFS } from "@src/constants";
+import { CONTRACT_ADDRESSES, PUZZLE_NTFS } from "@src/constants";
 
 export default class NftStore {
   public rootStore: RootStore;
@@ -66,7 +66,6 @@ export default class NftStore {
 
   private getTotalPuzzlesNftsAmount = async () => {
     const res = await nodeService.nodeKeysRequest(
-      NODE_URL,
       CONTRACT_ADDRESSES.createArtefacts,
       `total_sold_nft`
     );
@@ -79,7 +78,7 @@ export default class NftStore {
     const { address } = this.rootStore.accountStore;
     const { artworks } = this;
     if (address == null || artworks == null) return;
-    const nfts = await nodeService.getAddressNfts(NODE_URL, address);
+    const nfts = await nodeService.getAddressNfts(address);
     const supportedPuzzleNft = nfts
       .filter(
         ({ description, name }) =>
@@ -117,9 +116,8 @@ export default class NftStore {
     if (address == null || artworks == null) return;
     const ultra = CONTRACT_ADDRESSES.ultraStaking;
 
-    const allNftOnStaking = await nodeService.getAddressNfts(NODE_URL, ultra);
+    const allNftOnStaking = await nodeService.getAddressNfts(ultra);
     const addressStakingNft = await nodeService.nodeMatchRequest(
-      NODE_URL,
       ultra,
       `address_${address}_nft_(.*)`
     );

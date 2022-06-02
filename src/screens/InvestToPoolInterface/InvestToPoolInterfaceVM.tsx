@@ -4,11 +4,10 @@ import { makeAutoObservable, reaction, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import { EXPLORER_URL, IToken, NODE_URL } from "@src/constants";
-import { IPoolStats30Days } from "@stores/PoolsStore";
-import axios from "axios";
 import nodeService from "@src/services/nodeService";
 import { ITransaction } from "@src/utils/types";
 import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
+import makeNodeRequest from "@src/utils/makeNodeRequest";
 
 const ctx = React.createContext<InvestToPoolInterfaceVM | null>(null);
 
@@ -39,9 +38,6 @@ class InvestToPoolInterfaceVM {
 
   loadingHistory: boolean = false;
   private _setLoadingHistory = (l: boolean) => (this.loadingHistory = l);
-
-  public stats: IPoolStats30Days | null = null;
-  private setStats = (stats: IPoolStats30Days | null) => (this.stats = stats);
 
   public indexTokenId: string | null = null;
   private setIndexTokenId = (value: string) => (this.indexTokenId = value);
@@ -93,7 +89,6 @@ class InvestToPoolInterfaceVM {
     when(
       () => this.pool != null,
       async () => {
-        this.updateStats();
         await Promise.all([
           this.updatePoolTokenBalances(),
           this.loadTransactionsHistory(),
@@ -118,13 +113,6 @@ class InvestToPoolInterfaceVM {
       this.updateRewardInfo
     );
   }
-
-  updateStats = () => {
-    this.rootStore.poolsStore
-      .get30DaysPoolStats(this.poolDomain)
-      .then((data) => this.setStats(data))
-      .catch(() => console.error(`Cannot update stats of ${this.poolDomain}`));
-  };
 
   updateAccountLiquidityInfo = async () => {
     if (this.rootStore.accountStore.address) {
@@ -208,9 +196,10 @@ class InvestToPoolInterfaceVM {
       globalLastCheckTokenEarnings
     ).minus(globalLastCheckTokenEarnings);
 
-    const lastCheckInterest = globalIndexStaked.eq(0)
-      ? BN.ZERO
-      : globalLastCheckTokenInterest;
+    const lastCheckInterest =
+      globalLastCheckTokenInterest == null || globalIndexStaked.eq(0)
+        ? BN.ZERO
+        : globalLastCheckTokenInterest;
 
     const currentInterest = lastCheckInterest.plus(
       newEarnings.div(globalIndexStaked)
@@ -250,10 +239,6 @@ class InvestToPoolInterfaceVM {
     this.setTotalRewardToClaim(totalRewardAmount);
   };
 
-  get isThereSomethingToClaim() {
-    return this.totalRewardToClaim.eq(0);
-  }
-
   get poolCompositionValues() {
     if (this.pool.tokens == null) return [];
     return this.pool.tokens.reduce<
@@ -281,9 +266,10 @@ class InvestToPoolInterfaceVM {
       if (this.userIndexStaked == null || this.userIndexStaked?.eq(0)) {
         return { ...token, usdnEquivalent: BN.ZERO, value: BN.ZERO };
       }
-      const top = this.pool.liquidity[token.assetId].times(
-        this.userIndexStaked ?? BN.ZERO
-      );
+      const top =
+        this.pool.liquidity[token.assetId]?.times(
+          this.userIndexStaked ?? BN.ZERO
+        ) ?? BN.ZERO;
       const tokenAmountToGet = top.div(this.pool.globalPoolTokenAmount);
       const parserAmount = BN.formatUnits(tokenAmountToGet, token.decimals);
       const rate =
@@ -335,9 +321,8 @@ class InvestToPoolInterfaceVM {
   updatePoolTokenBalances = async () => {
     const { pool } = this;
     //todo ✅
-    const { data }: { data: TContractAssetBalancesResponse } = await axios.get(
-      `${NODE_URL}/assets/balance/${pool.contractAddress}`
-    );
+    const { data }: { data: TContractAssetBalancesResponse } =
+      await makeNodeRequest(`/assets/balance/${pool.contractAddress}`);
     const value = data.balances.map((token) => {
       return { assetId: token.assetId, balance: new BN(token.balance) };
     });
@@ -348,10 +333,7 @@ class InvestToPoolInterfaceVM {
     const { isCustom, artefactOriginTransactionId } = this.pool;
     if (isCustom == null || !isCustom || artefactOriginTransactionId == null)
       return;
-    const data = await nodeService.transactionInfo(
-      NODE_URL,
-      artefactOriginTransactionId
-    );
+    const data = await nodeService.transactionInfo(artefactOriginTransactionId);
     this.setNFTPaymentName(
       data?.stateChanges.invokes[0].call.args[0].value.toString() ?? ""
     );
@@ -359,10 +341,7 @@ class InvestToPoolInterfaceVM {
 
   loadTransactionsHistory = async () => {
     //todo ✅
-    const v = await nodeService.transactions(
-      NODE_URL,
-      this.pool.contractAddress
-    );
+    const v = await nodeService.transactions(this.pool.contractAddress);
     v && this.setTransactionsHistory(v);
   };
 
@@ -374,7 +353,6 @@ class InvestToPoolInterfaceVM {
     if (after == null) return;
     //todo ✅
     const v = await nodeService.transactions(
-      NODE_URL,
       pool.contractAddress,
       10,
       after.id

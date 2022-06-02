@@ -43,10 +43,6 @@ class NotificationStore {
   public rootStore: RootStore;
   _instance?: any;
 
-  isOpenLoginDialog = false;
-  isOpenMobileExplorer = false;
-  isOpenMobileAccount = false;
-
   constructor(rootStore: RootStore) {
     const width = window.innerWidth;
     const mobileStyle = {

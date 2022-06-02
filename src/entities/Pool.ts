@@ -1,10 +1,15 @@
-import { IPoolConfig, IToken, NODE_URL, TRADE_FEE } from "@src/constants";
-import axios from "axios";
+import {
+  IPoolConfig,
+  IPoolConfigStatistics,
+  IToken,
+  TRADE_FEE,
+} from "@src/constants";
 import { makeAutoObservable } from "mobx";
 import BN from "@src/utils/BN";
 import tokenLogos from "@src/constants/tokenLogos";
 import nodeService from "@src/services/nodeService";
 import { getStateByKey } from "@src/utils/getStateByKey";
+import makeNodeRequest from "@src/utils/makeNodeRequest";
 
 export interface IData {
   key: string;
@@ -37,12 +42,12 @@ class Pool implements IPoolConfig {
   public readonly tokens: Array<IToken & { share: number }> = [];
   private readonly _logo?: string;
 
+  public statistics?: IPoolConfigStatistics;
+  public setStatistics = (statistics: IPoolConfigStatistics) =>
+    (this.statistics = statistics);
+
   public get logo() {
     return this._logo ?? tokenLogos.UNKNOWN;
-  }
-
-  public get baseToken() {
-    return this.getAssetById(this.baseTokenId);
   }
 
   public getAssetById = (assetId: string) =>
@@ -50,9 +55,6 @@ class Pool implements IPoolConfig {
 
   public globalVolume: BN | null = null;
   setGlobalVolume = (value: BN) => (this.globalVolume = value);
-
-  public apy: BN | null = null;
-  public setApy = (value: BN) => (this.apy = value);
 
   public globalLiquidityByUSDN: BN | null = null;
   setGlobalLiquidityByUSDN = (value: BN | null) =>
@@ -97,6 +99,7 @@ class Pool implements IPoolConfig {
     this.owner = params.owner;
     this.swapFee = params.swapFee ?? 2;
     this.createdAt = params.createdAt ?? "";
+    this.statistics = params.statistics;
 
     makeAutoObservable(this);
   }
@@ -131,8 +134,8 @@ class Pool implements IPoolConfig {
   syncLiquidity = async (data?: IData[]) => {
     if (data == null && this.isCustom) return;
     if (data == null) {
-      const globalAttributesUrl = `${NODE_URL}/addresses/data/${this.contractAddress}?matches=global_(.*)`;
-      const res: { data: IData[] } = await axios.get(globalAttributesUrl);
+      const globalAttributesUrl = `/addresses/data/${this.contractAddress}?matches=global_(.*)`;
+      const res: { data: IData[] } = await makeNodeRequest(globalAttributesUrl);
       data = res.data;
     }
     const balances = data.reduce<Record<string, BN>>((acc, { key, value }) => {
@@ -282,7 +285,7 @@ class Pool implements IPoolConfig {
   };
 
   contractKeysRequest = (keys: string[] | string) =>
-    nodeService.nodeKeysRequest(NODE_URL, this.contractAddress, keys);
+    nodeService.nodeKeysRequest(this.contractAddress, keys);
 }
 
 export default Pool;

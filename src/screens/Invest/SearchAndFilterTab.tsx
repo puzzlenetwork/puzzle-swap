@@ -12,6 +12,8 @@ import useWindowSize from "@src/hooks/useWindowSize";
 import Text from "@components/Text";
 import close from "@src/assets/icons/primaryBlue16CloseIcon.svg";
 import { Row } from "@src/components/Flex";
+import { ROUTES } from "@src/constants";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {}
 
@@ -115,7 +117,7 @@ const InputWrapper = styled.div`
 `;
 const SearchAndFilterTab: React.FC<IProps> = () => {
   const vm = useInvestVM();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const isFiltersChosen =
     vm.poolCategoryFilter !== 0 || vm.customPoolFilter !== 0;
   const handleClearFilters = () => {

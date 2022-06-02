@@ -2,16 +2,16 @@ import React from "react";
 import Dialog from "@components/Dialog";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 import styled from "@emotion/styled";
-import Scrollbar from "@src/components/Scrollbar";
+import Scrollbar from "@components/Scrollbar";
 import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
-import { Column } from "@src/components/Flex";
+import { Column } from "@components/Flex";
 import Skeleton from "react-loading-skeleton";
 import {
   IPaymentsArtefact,
   useCreateCustomPoolsVM,
-} from "@src/screens/CreateCustomPools/CreateCustomPoolsVm";
+} from "@screens/CreateCustomPools/CreateCustomPoolsVm";
 import Button from "@components/Button";
 import { ReactComponent as Add } from "@src/assets/icons/add.svg";
 
