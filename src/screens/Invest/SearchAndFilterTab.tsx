@@ -177,7 +177,8 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
         <Button
           size="medium"
           fixed={width != null && width <= 1080}
-          onClick={() => navigate(`${ROUTES.POOLS_CREATE}`)}
+          // onClick={() => navigate(`${ROUTES.POOLS_CREATE}`)}
+          disabled
         >
           <Add />
           <SizedBox width={12} />
