@@ -5,7 +5,7 @@ import { RootStore, useStores } from "@stores";
 import {
   CONTRACT_ADDRESSES,
   IToken,
-  PUZZLE_NTFS,
+  PUZZLE_NFTS,
   TOKENS_BY_ASSET_ID,
   TOKENS_BY_SYMBOL,
   TOKENS_LIST,
@@ -355,7 +355,7 @@ class CreateCustomPoolsVm {
         const nftId = transDetails.stateChanges.transfers[0].asset;
         const details = await nodeService.assetDetails(nftId);
         if (details == null) return;
-        const picture = PUZZLE_NTFS.find(
+        const picture = PUZZLE_NFTS.find(
           ({ name }) => name === details.name
         )?.image;
         this.setNotificationParams(
