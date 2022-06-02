@@ -148,7 +148,6 @@ class CreateCustomPoolsVm {
   }
 
   get correct2() {
-    if (this.poolLimit) return false;
     return this.artefactToSpend != null;
   }
 
@@ -187,7 +186,7 @@ class CreateCustomPoolsVm {
     if (res.domain === this.domain) this.setStep(3);
   };
   checkPoolsLimitOfTheDay = async () => {
-    const res = await poolsService.checkCustomPoolLimit();
+    let res = await poolsService.checkCustomPoolLimit();
     if (res) {
       this.setNotificationParams(
         buildDialogParams({
@@ -209,7 +208,6 @@ class CreateCustomPoolsVm {
         })
       );
     }
-    this.setPoolLimit(res);
     return res;
   };
 
@@ -277,9 +275,6 @@ class CreateCustomPoolsVm {
     );
     this.poolsAssets[indexOfObject].locked = val;
   };
-
-  poolLimit = true;
-  private setPoolLimit = (v: boolean) => (this.poolLimit = v);
 
   title: string = "";
   setTitle = (v: string) => (this.title = v);
@@ -545,8 +540,10 @@ class CreateCustomPoolsVm {
   };
 
   handleCreatePool = async () => {
+    //todo удалить когда откажемся от лимитов
     const limited = await this.checkPoolsLimitOfTheDay();
     if (limited) return;
+    //--------------------------------------------
     const { address } = this.rootStore.accountStore;
     if (address === null || this.logo == null) return;
     try {
