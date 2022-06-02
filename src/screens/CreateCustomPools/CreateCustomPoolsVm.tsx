@@ -5,7 +5,7 @@ import { RootStore, useStores } from "@stores";
 import {
   CONTRACT_ADDRESSES,
   IToken,
-  PUZZLE_NTFS,
+  PUZZLE_NFTS,
   TOKENS_BY_ASSET_ID,
   TOKENS_BY_SYMBOL,
   TOKENS_LIST,
@@ -185,6 +185,31 @@ class CreateCustomPoolsVm {
     const res = await poolsService.getPoolByDomain(this.domain);
     if (res.domain === this.domain) this.setStep(3);
   };
+  checkPoolsLimitOfTheDay = async () => {
+    let res = await poolsService.checkCustomPoolLimit();
+    if (res) {
+      this.setNotificationParams(
+        buildDialogParams({
+          type: "warning",
+          title: "Wow!",
+          description: `Daily pools limit is reached. Please join the chat to not miss the next chance"`,
+          buttons: [
+            () => (
+              <Button
+                key="Back to Invest"
+                size="medium"
+                fixed
+                onClick={() => window.open("https://t.me/puzzleswap")}
+              >
+                Go to chat
+              </Button>
+            ),
+          ],
+        })
+      );
+    }
+    return res;
+  };
 
   syncShares = () => {
     const unlockedPercent = this.poolsAssets.reduce(
@@ -330,7 +355,7 @@ class CreateCustomPoolsVm {
         const nftId = transDetails.stateChanges.transfers[0].asset;
         const details = await nodeService.assetDetails(nftId);
         if (details == null) return;
-        const picture = PUZZLE_NTFS.find(
+        const picture = PUZZLE_NFTS.find(
           ({ name }) => name === details.name
         )?.image;
         this.setNotificationParams(
@@ -515,6 +540,10 @@ class CreateCustomPoolsVm {
   };
 
   handleCreatePool = async () => {
+    //todo удалить когда откажемся от лимитов
+    const limited = await this.checkPoolsLimitOfTheDay();
+    if (limited) return;
+    //--------------------------------------------
     const { address } = this.rootStore.accountStore;
     if (address === null || this.logo == null) return;
     try {

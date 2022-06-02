@@ -299,7 +299,7 @@ export const CONTRACT_ADDRESSES = {
   nfts: "3PFQjjDMiZKQZdu5JqTHD7HwgSXyp9Rw9By",
   createArtefacts: "3PFkgvC9y6zHy64zEAscKKgaNY3yipiLqbW",
 };
-export const PUZZLE_NTFS = [
+export const PUZZLE_NFTS = [
   {
     name: "Puzzle Surf",
     desc: "Puzzle Surf artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
