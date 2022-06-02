@@ -2,7 +2,7 @@ import statsService, { IArtWork } from "@src/services/statsService";
 import RootStore from "@stores/RootStore";
 import nodeService, { INFT } from "@src/services/nodeService";
 import { makeAutoObservable, reaction } from "mobx";
-import { CONTRACT_ADDRESSES, PUZZLE_NTFS } from "@src/constants";
+import { CONTRACT_ADDRESSES, PUZZLE_NFTS } from "@src/constants";
 
 export default class NftStore {
   public rootStore: RootStore;
@@ -84,7 +84,7 @@ export default class NftStore {
         ({ description, name }) =>
           artworks.some(
             ({ typeId }) => typeId && description.includes(typeId)
-          ) || PUZZLE_NTFS.some((nft) => name && name.includes(nft.name))
+          ) || PUZZLE_NFTS.some((nft) => name && name.includes(nft.name))
       )
       .map((nft) => ({
         ...nft,
@@ -102,7 +102,7 @@ export default class NftStore {
           const numberName = `${nft.name} #${strOut}`;
           return { ...nft, name: numberName, old: true };
         }
-        const imageLink = PUZZLE_NTFS.find(
+        const imageLink = PUZZLE_NFTS.find(
           ({ name }) => name === nft.name
         )?.image;
         return { ...nft, imageLink };

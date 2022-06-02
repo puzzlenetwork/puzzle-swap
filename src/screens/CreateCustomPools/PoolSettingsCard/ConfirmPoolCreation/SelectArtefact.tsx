@@ -71,7 +71,7 @@ const SelectArtefact: React.FC<IProps> = () => {
       <SelectNftDialog
         visible={openNftDialog}
         onClose={() => setOpenNftDialog(false)}
-        title="Select NTF"
+        title="Select NFT"
         onNftClick={(artefact) => vm.setArtefactToSpend(artefact)}
       />
       {vm.artefactToSpend != null && (
