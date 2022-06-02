@@ -69,6 +69,7 @@ class CreateCustomPoolsVm {
     this.rootStore = rootStore;
     makeAutoObservable(this);
     setInterval(this.saveSettings, 1000);
+    this.checkPoolsLimitOfTheDay().then();
     const initData = loadCreatePoolStateFromStorage();
     this.initialize(initData);
     when(() => initData?.maxStep === 2, this.checkIfAlreadyCreated);
@@ -185,6 +186,18 @@ class CreateCustomPoolsVm {
     const res = await poolsService.getPoolByDomain(this.domain);
     if (res.domain === this.domain) this.setStep(3);
   };
+  checkPoolsLimitOfTheDay = async () => {
+    const res = await poolsService.checkCustomPoolLimit();
+    this.setNotificationParams(
+      buildErrorDialogParams({
+        title: "Sorry",
+        description: `Wow! Daily pools limit is reached. Please join the chat to not miss the next chance"`,
+        onTryAgain: () => this.buyRandomArtefact,
+      })
+    );
+    console.log(res);
+    this.setPoolLimit(res);
+  };
 
   syncShares = () => {
     const unlockedPercent = this.poolsAssets.reduce(
@@ -250,6 +263,9 @@ class CreateCustomPoolsVm {
     );
     this.poolsAssets[indexOfObject].locked = val;
   };
+
+  poolLimit = true;
+  private setPoolLimit = (v: boolean) => (this.poolLimit = v);
 
   title: string = "";
   setTitle = (v: string) => (this.title = v);
