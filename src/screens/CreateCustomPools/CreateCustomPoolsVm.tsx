@@ -69,7 +69,6 @@ class CreateCustomPoolsVm {
     this.rootStore = rootStore;
     makeAutoObservable(this);
     setInterval(this.saveSettings, 1000);
-    this.checkPoolsLimitOfTheDay().then();
     const initData = loadCreatePoolStateFromStorage();
     this.initialize(initData);
     when(() => initData?.maxStep === 2, this.checkIfAlreadyCreated);
@@ -211,6 +210,7 @@ class CreateCustomPoolsVm {
       );
     }
     this.setPoolLimit(res);
+    return res;
   };
 
   syncShares = () => {
@@ -545,6 +545,8 @@ class CreateCustomPoolsVm {
   };
 
   handleCreatePool = async () => {
+    const limited = await this.checkPoolsLimitOfTheDay();
+    if (limited) return;
     const { address } = this.rootStore.accountStore;
     if (address === null || this.logo == null) return;
     try {

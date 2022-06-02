@@ -11,7 +11,6 @@ import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomP
 import TokenCompositionRow from "./TokenCompositionRow";
 import TokenSelectModal from "@components/TokensSelectModal/TokenSelectModal";
 import BN from "@src/utils/BN";
-import DialogNotification from "@components/Dialog/DialogNotification";
 
 interface IProps {}
 
