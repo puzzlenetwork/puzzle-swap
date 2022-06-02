@@ -73,8 +73,7 @@ const poolService = {
   checkCustomPoolLimit: async (): Promise<boolean> => {
     const req = `${process.env.REACT_APP_API_BASE}/api/v1/pools/limit`;
     const { data } = await axios.get(req);
-    console.log(data);
-    return false;
+    return data.isLimited;
   },
 };
 export default poolService;

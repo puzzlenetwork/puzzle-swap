@@ -149,6 +149,7 @@ class CreateCustomPoolsVm {
   }
 
   get correct2() {
+    if (this.poolLimit) return false;
     return this.artefactToSpend != null;
   }
 
@@ -188,14 +189,27 @@ class CreateCustomPoolsVm {
   };
   checkPoolsLimitOfTheDay = async () => {
     const res = await poolsService.checkCustomPoolLimit();
-    this.setNotificationParams(
-      buildErrorDialogParams({
-        title: "Sorry",
-        description: `Wow! Daily pools limit is reached. Please join the chat to not miss the next chance"`,
-        onTryAgain: () => this.buyRandomArtefact,
-      })
-    );
-    console.log(res);
+    if (res) {
+      this.setNotificationParams(
+        buildDialogParams({
+          type: "warning",
+          title: "Wow!",
+          description: `Daily pools limit is reached. Please join the chat to not miss the next chance"`,
+          buttons: [
+            () => (
+              <Button
+                key="Back to Invest"
+                size="medium"
+                fixed
+                onClick={() => window.open("https://t.me/puzzleswap")}
+              >
+                Go to chat
+              </Button>
+            ),
+          ],
+        })
+      );
+    }
     this.setPoolLimit(res);
   };
 
