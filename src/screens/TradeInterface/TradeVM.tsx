@@ -211,7 +211,7 @@ class TradeVM {
     if (token0 == null || amount0.eq(0)) return;
     if (minimumToReceive == null) return;
     this._setLoading(true);
-    accountStore
+    await accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.aggregator,
         payment: [

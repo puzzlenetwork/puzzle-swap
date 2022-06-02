@@ -62,6 +62,9 @@ class MultiSwapVM {
   amount0: BN = BN.ZERO;
   @action.bound setAmount0 = (amount: BN) => (this.amount0 = amount);
 
+  loading: boolean = false;
+  private _setLoading = (l: boolean) => (this.loading = l);
+
   get amount0UsdnEquivalent(): string {
     const { token0 } = this;
     const usdnRate = this.rootStore.poolsStore.usdnRate(this.assetId0, 1);
@@ -177,7 +180,7 @@ class MultiSwapVM {
     if (this.pool?.contractAddress == null) return;
     if (this.token0 == null || this.amount0.eq(0)) return;
     if (!this.token1 || !this.amount1.gt(0) || !this.minimumToReceive) return;
-
+    this._setLoading(true);
     this.rootStore.accountStore
       .invoke({
         dApp: this.pool.contractAddress,
@@ -214,6 +217,7 @@ class MultiSwapVM {
           type: "error",
           title: "Transaction is not completed",
         });
-      });
+      })
+      .finally(() => this._setLoading(false));
   };
 }
