@@ -638,9 +638,12 @@ class CreateCustomPoolsVm {
         .div(rate)
         .times(share.div(1000))
         .times(this.providedPercentOfPool.div(100));
+
       return {
         assetId,
-        amount: BN.parseUnits(amountToProvide, decimals).toString(),
+        amount: BN.parseUnits(amountToProvide, decimals)
+          .toSignificant(0)
+          .toString(),
       };
     });
   }
