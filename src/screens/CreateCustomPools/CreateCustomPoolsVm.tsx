@@ -507,7 +507,7 @@ class CreateCustomPoolsVm {
       )
       .then(async () => {
         await this.rootStore.poolsStore.syncCustomPools();
-        await this.rootStore.poolsStore.updateCustomPoolsState();
+        await this.rootStore.poolsStore.updatePoolsState();
       })
       .catch((e) => {
         this.setNotificationParams(
