@@ -7,6 +7,22 @@ interface INodeData {
   value: number | string;
 }
 
+export interface IAsset {
+  assetId: string;
+  issueHeight: number;
+  issueTimestamp: number;
+  issuer: string;
+  issuerPublicKey: string;
+  name: string;
+  description: string;
+  decimals: number;
+  reissuable: boolean;
+  quantity: number;
+  scripted: boolean;
+  minSponsoredAssetFee: null | number;
+  originTransactionId: string;
+}
+
 export interface INFT {
   assetId: string;
   decimals: number;
@@ -47,6 +63,11 @@ interface IAssetDetails {
 const nodeService = {
   getAddressNfts: async (address: string): Promise<INFT[]> => {
     const url = `/assets/nft/${address}/limit/1000`;
+    const { data } = await makeNodeRequest(url);
+    return data;
+  },
+  getAssetDetails: async (assetId: string): Promise<IAsset | null> => {
+    const url = `/assets/details/${assetId}`;
     const { data } = await makeNodeRequest(url);
     return data;
   },
