@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect } from "react";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import Card from "@components/Card";
@@ -23,33 +23,43 @@ const Root = styled.div`
 
 const PoolCreationPayment: React.FC<IProps> = () => {
   const { accountStore, nftStore } = useStores();
-
   const { findBalanceByAssetId } = accountStore;
   const puzzleBalance = findBalanceByAssetId(TOKENS_BY_SYMBOL.PUZZLE.assetId);
   const vm = useCreateCustomPoolsVM();
+  useEffect(() => {
+    vm.checkIfDomainIsPaidWithCurrentUser();
+  }, [vm]);
+  const paymentMethod = () => {
+    if (nftStore.accountNFTs == null) return <SelectArtefactSkeleton />;
+    if (vm.isDomainPaid) return <Text>You have already paid for domain </Text>;
+    if (nftStore.accountNFTs != null && vm.isThereArtefacts)
+      return <SelectArtefact />;
+    if (
+      puzzleBalance &&
+      puzzleBalance?.balance?.lt(
+        BN.parseUnits(vm.puzzleNFTPrice, puzzleBalance.decimals)
+      )
+    ) {
+      return (
+        <div style={{ width: "100%" }}>
+          <SizedBox height={8} />
+          <Notification
+            type="warning"
+            text={`Your Puzzle balance is too low to buy NFT. You need ${vm.puzzleNFTPrice} PUZZLE`}
+          />
+        </div>
+      );
+    } else {
+      return <NoPayment />;
+    }
+  };
   return (
     <Root>
       <Text type="secondary" weight={500}>
         Payment for creation
       </Text>
       <SizedBox height={8} />
-      <Card>
-        {nftStore.accountNFTs == null && <SelectArtefactSkeleton />}
-        {nftStore.accountNFTs != null &&
-          (vm.isThereArtefacts ? <SelectArtefact /> : <NoPayment />)}
-        {puzzleBalance &&
-          puzzleBalance?.balance?.lt(
-            BN.parseUnits(vm.puzzleNFTPrice, puzzleBalance.decimals)
-          ) && (
-            <div style={{ width: "100%" }}>
-              <SizedBox height={8} />
-              <Notification
-                type="warning"
-                text="Your Puzzle balance is too low to buy NFT."
-              />
-            </div>
-          )}
-      </Card>
+      <Card>{paymentMethod()}</Card>
     </Root>
   );
 };

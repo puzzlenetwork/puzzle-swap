@@ -21,26 +21,24 @@ export default class PoolsStore {
     this.rootStore = rootStore;
     makeAutoObservable(this);
     this.syncPools().then();
-    this.syncCustomPools().then(this.updateCustomPoolsState);
+    this.syncCustomPools().then(this.updatePoolsState);
     this.updateAccountPoolsLiquidityInfo().then();
     this.syncPuzzleRate().then();
-    setInterval(
-      () =>
-        Promise.all([
-          this.syncPoolsLiquidity(),
-          this.updateAccountPoolsLiquidityInfo(),
-          this.updateCustomPoolsState(),
-          this.syncPuzzleRate(),
-          this.syncCustomPools(),
-        ]),
-      5 * 1000
-    );
+    setInterval(() => {
+      this.syncPoolsLiquidity();
+      Promise.all([
+        this.updateAccountPoolsLiquidityInfo(),
+        this.updatePoolsState(),
+        this.syncPuzzleRate(),
+        this.syncCustomPools(),
+      ]);
+    }, 5 * 1000);
     reaction(
       () => this.rootStore.accountStore.address,
       () =>
         Promise.all([
           this.updateAccountPoolsLiquidityInfo(true),
-          this.updateCustomPoolsState(),
+          this.updatePoolsState(),
         ])
     );
   }
@@ -190,34 +188,23 @@ export default class PoolsStore {
     });
   };
 
-  updateCustomPoolsState = async () => {
+  updatePoolsState = async () => {
     if (this.rootStore.accountStore.address == null) return;
     const state = await poolsService.getPoolsStateByUserAddress(
       this.rootStore.accountStore.address
     );
     this.setPoolState(state);
-    this.customPools.forEach((pool) => {
-      const poolState = this.getStateByAddress(pool.contractAddress);
-      if (poolState != null) {
-        pool.syncLiquidity(poolState.state);
-      }
-    });
+    this.syncPoolsLiquidity();
     this.updateAccountCustomPoolsLiquidityInfo(
       this.rootStore.accountStore.address
     );
   };
 
   syncPoolsLiquidity = () =>
-    Promise.all(
-      this.pools.map((pool) => {
-        if (pool.isCustom) {
-          const state = this.getStateByAddress(pool.contractAddress)?.state;
-          return state ? pool.syncLiquidity(state) : Promise.resolve();
-        } else {
-          return pool.syncLiquidity();
-        }
-      })
-    );
+    this.pools.forEach((pool) => {
+      const state = this.getStateByAddress(pool.contractAddress)?.state;
+      state && pool.syncLiquidity(state);
+    });
 
   private syncPuzzleRate = () =>
     wavesCapService

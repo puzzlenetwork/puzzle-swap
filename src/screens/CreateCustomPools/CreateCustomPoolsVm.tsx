@@ -25,6 +25,7 @@ import bucketService from "@src/services/bucketService";
 import loadCreatePoolStateFromStorage from "@screens/CreateCustomPools/utils/loadCreatePoolStateFromStorage";
 import checkDomainPaid from "@screens/CreateCustomPools/utils/checkDomainPaid";
 import Button from "@components/Button";
+import getDomainPaymentArtefactId from "@src/utils/getDomainPaymentArtefactId";
 
 const ctx = React.createContext<CreateCustomPoolsVm | null>(null);
 
@@ -148,7 +149,10 @@ class CreateCustomPoolsVm {
   }
 
   get correct2() {
-    return this.artefactToSpend != null;
+    if (this.isDomainPaid) return true;
+    else {
+      return this.artefactToSpend != null;
+    }
   }
 
   get correct3() {
@@ -276,6 +280,16 @@ class CreateCustomPoolsVm {
     this.poolsAssets[indexOfObject].locked = val;
   };
 
+  isDomainPaid = false;
+  setDomainPaid = (v: boolean) => (this.isDomainPaid = v);
+
+  checkIfDomainIsPaidWithCurrentUser = async () => {
+    const { address } = this.rootStore.accountStore;
+    if (address !== null) {
+      checkDomainPaid(this.domain, address).then((v) => this.setDomainPaid(v));
+    }
+  };
+
   title: string = "";
   setTitle = (v: string) => (this.title = v);
 
@@ -343,6 +357,7 @@ class CreateCustomPoolsVm {
         payment: [
           {
             assetId: TOKENS_BY_SYMBOL.PUZZLE.assetId,
+            // assetId: TOKENS_BY_SYMBOL.TPUZZLE.assetId,
             amount: amount.toString(),
           },
         ],
@@ -402,7 +417,7 @@ class CreateCustomPoolsVm {
     const { accountStore, nftStore } = this.rootStore;
     if (nftStore.totalPuzzleNftsAmount == null) return false;
     const balance = accountStore.findBalanceByAssetId(
-      TOKENS_BY_SYMBOL.PUZZLE.assetId
+      TOKENS_BY_SYMBOL.TPUZZLE.assetId
     );
     if (balance == null) return false;
     return balance.balance?.gte(this.puzzleNFTPrice);
@@ -507,7 +522,7 @@ class CreateCustomPoolsVm {
       )
       .then(async () => {
         await this.rootStore.poolsStore.syncCustomPools();
-        await this.rootStore.poolsStore.updateCustomPoolsState();
+        await this.rootStore.poolsStore.updatePoolsState();
       })
       .catch((e) => {
         this.setNotificationParams(
@@ -549,11 +564,23 @@ class CreateCustomPoolsVm {
     try {
       this._setLoading(true);
       const image = await bucketService.upload(toFile(this.logo));
-
       const artefactDetails = this.rootStore.nftStore.accountNFTs?.find(
         ({ assetId }) => assetId === this.artefactToSpend?.assetId
       );
-      const artefactOriginTransactionId = artefactDetails?.originTransactionId;
+      let artefactOriginTransactionId = artefactDetails?.originTransactionId;
+      if (artefactOriginTransactionId == null) {
+        const artefactId = await getDomainPaymentArtefactId(this.domain);
+        if (artefactId == null) {
+          const nftId = window.prompt(
+            "Please enter asset id of artefact that you have paid for this domain." +
+              " You can find it in wavesexplorer.com"
+          );
+          if (nftId == null) return;
+          const burnedNftDetails = await nodeService.getAssetDetails(nftId);
+          console.log(burnedNftDetails);
+          artefactOriginTransactionId = burnedNftDetails?.originTransactionId;
+        }
+      }
       if (artefactOriginTransactionId == null) {
         this.rootStore.notificationStore.notify(
           "Cannot find artefact origin txId. Try to reload the page",
@@ -562,7 +589,6 @@ class CreateCustomPoolsVm {
         this._setLoading(false);
         return;
       }
-
       await this.spendArtefact();
 
       const assets = this.poolsAssets.map(({ asset, share }) => ({
