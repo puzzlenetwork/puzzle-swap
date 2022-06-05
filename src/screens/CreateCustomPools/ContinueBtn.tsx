@@ -48,7 +48,9 @@ const ContinueBtn: React.FC = () => {
         <Button onClick={vm.handleCreatePool} fixed disabled={!vm.correct2}>
           {vm.isDomainPaid
             ? "Continue"
-            : vm.artefactToSpend == null && "Select an artefact"}
+            : vm.artefactToSpend == null
+            ? "Select an artefact"
+            : "Continue"}
         </Button>
       );
     case 3:

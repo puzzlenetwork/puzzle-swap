@@ -32,6 +32,8 @@ const PoolCreationPayment: React.FC<IProps> = () => {
   const paymentMethod = () => {
     if (nftStore.accountNFTs == null) return <SelectArtefactSkeleton />;
     if (vm.isDomainPaid) return <Text>You have already paid for domain </Text>;
+    if (nftStore.accountNFTs != null && vm.isThereArtefacts)
+      return <SelectArtefact />;
     if (
       puzzleBalance &&
       puzzleBalance?.balance?.lt(
@@ -47,10 +49,7 @@ const PoolCreationPayment: React.FC<IProps> = () => {
           />
         </div>
       );
-    }
-    if (nftStore.accountNFTs != null && vm.isThereArtefacts)
-      return <SelectArtefact />;
-    else {
+    } else {
       return <NoPayment />;
     }
   };
