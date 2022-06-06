@@ -4,6 +4,7 @@ import SizedBox from "@components/SizedBox";
 import AddCustomPoolLiquidityAmount from "./AddCustomPoolLiquidityAmount";
 import DepositComposition from "./DepositComposition";
 import YourPool from "./YourPool";
+import Notification from "@components/Notification";
 
 interface IProps {}
 
@@ -20,6 +21,10 @@ const AddLiquidityToCustomPool: React.FC<IProps> = () => {
       <AddCustomPoolLiquidityAmount />
       <SizedBox height={24} />
       <DepositComposition />
+      <Notification
+        type="info"
+        text="Please note transaction fee is 1.05 WAVES"
+      />
     </Root>
   );
 };
