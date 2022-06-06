@@ -86,9 +86,13 @@ const Table: React.FC<IProps> = ({ columns, data, ...rest }) => {
             prepareRow(row);
             return (
               <tr
+                style={{
+                  opacity: row.original.disabled ? 0.5 : 1,
+                  cursor: row.original.disabled ? "not-allowed" : "pointer",
+                }}
                 {...row.getRowProps()}
                 key={i + "tr"}
-                onClick={() => row.original.onClick()}
+                onClick={() => !row.original.disabled && row.original.onClick()}
               >
                 {row.cells.map((cell, index) => (
                   <td {...cell.getCellProps()} key={index + "td"}>
