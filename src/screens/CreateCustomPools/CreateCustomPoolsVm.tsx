@@ -357,7 +357,6 @@ class CreateCustomPoolsVm {
         payment: [
           {
             assetId: TOKENS_BY_SYMBOL.PUZZLE.assetId,
-            // assetId: TOKENS_BY_SYMBOL.TPUZZLE.assetId,
             amount: amount.toString(),
           },
         ],
@@ -417,7 +416,7 @@ class CreateCustomPoolsVm {
     const { accountStore, nftStore } = this.rootStore;
     if (nftStore.totalPuzzleNftsAmount == null) return false;
     const balance = accountStore.findBalanceByAssetId(
-      TOKENS_BY_SYMBOL.TPUZZLE.assetId
+      TOKENS_BY_SYMBOL.PUZZLE.assetId
     );
     if (balance == null) return false;
     return balance.balance?.gte(this.puzzleNFTPrice);

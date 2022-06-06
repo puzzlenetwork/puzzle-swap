@@ -36,6 +36,15 @@ import wctLogo from "@src/assets/tokens/WCT.svg";
 import munaLogo from "@src/assets/tokens/MUNA.svg";
 import bnbLogo from "@src/assets/tokens/BNB.svg";
 import shegLogo from "@src/assets/tokens/SHEG.png";
+import yfiLogo from "@src/assets/tokens/YFI.svg";
+import ftmLogo from "@src/assets/tokens/FTM.svg";
+import linkLogo from "@src/assets/tokens/LINK.svg";
+import uniLogo from "@src/assets/tokens/UNI.svg";
+import daiLogo from "@src/assets/tokens/DAI.svg";
+import tnLogo from "@src/assets/tokens/TN.svg";
+import maticLogo from "@src/assets/tokens/MATIC.svg";
+import shibLogo from "@src/assets/tokens/SHIB.svg";
+import crvLogo from "@src/assets/tokens/CRV.png";
 import snsbtLogo from "@src/assets/tokens/SNSBT.png";
 import usdtViresLogo from "@src/assets/tokens/USDT_VIRES.svg";
 import usdcViresLogo from "@src/assets/tokens/USDC_VIRES.svg";
@@ -79,6 +88,15 @@ const tokenLogos: Record<string, string> = {
   MUNA: munaLogo,
   BNB: bnbLogo,
   SHEG: shegLogo,
+  YFI: yfiLogo,
+  MATIC: maticLogo,
+  DAI: daiLogo,
+  FTM: ftmLogo,
+  CRV: crvLogo,
+  TN: tnLogo,
+  SHIB: shibLogo,
+  UNI: uniLogo,
+  LINK: linkLogo,
   SNSBT: snsbtLogo,
   SNSBTTCI: snsbtTciLogo,
   VIRES_USDT_LP: usdtViresLogo,

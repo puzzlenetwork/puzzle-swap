@@ -190,6 +190,28 @@ export const POOL_CONFIG: IPoolConfig[] = [
     ],
   },
   {
+    domain: "megapool",
+    contractAddress: "3PLU2okk1GVdoGW7CGbtCwRqFmHfLhsQimc",
+    layer2Address: "3P9rH2R75qNGhj9BfHT9t67hnofqLCJKGWx",
+    baseTokenId: TOKENS_BY_SYMBOL.PUZZLE.assetId,
+    title: "Mega Pool",
+    logo: tokenLogos.CRV,
+    defaultAssetId0: TOKENS_BY_SYMBOL.CRV.assetId,
+    defaultAssetId1: TOKENS_BY_SYMBOL.DAI.assetId,
+    tokens: [
+      { ...TOKENS_BY_SYMBOL.CRV, share: 10, logo: tokenLogos.CRV },
+      { ...TOKENS_BY_SYMBOL.FTM, share: 10, logo: tokenLogos.FTM },
+      { ...TOKENS_BY_SYMBOL.YFI, share: 10, logo: tokenLogos.YFI },
+      { ...TOKENS_BY_SYMBOL.SHIB, share: 10, logo: tokenLogos.SHIB },
+      { ...TOKENS_BY_SYMBOL.MATIC, share: 10, logo: tokenLogos.MATIC },
+      { ...TOKENS_BY_SYMBOL.UNI, share: 10, logo: tokenLogos.UNI },
+      { ...TOKENS_BY_SYMBOL.LINK, share: 10, logo: tokenLogos.LINK },
+      { ...TOKENS_BY_SYMBOL.TN, share: 10, logo: tokenLogos.TN },
+      { ...TOKENS_BY_SYMBOL.DAI, share: 10, logo: tokenLogos.DAI },
+      { ...TOKENS_BY_SYMBOL.PUZZLE, share: 10, logo: tokenLogos.PUZZLE },
+    ],
+  },
+  {
     domain: "farms",
     contractAddress: "3PPRHHF9JKvDLkAc3aHD3Kd5tRZp1CoqAJa",
     layer2Address: "3PDVDYZiwJzK3pu8vcknuLiKCYBPx6XZntG",
@@ -297,8 +319,7 @@ export const CONTRACT_ADDRESSES = {
   ultraStaking: "3PKUxbZaSYfsR7wu2HaAgiirHYwAMupDrYW",
   aggregator: "3PGFHzVGT4NTigwCKP1NcwoXkodVZwvBuuU",
   nfts: "3PFQjjDMiZKQZdu5JqTHD7HwgSXyp9Rw9By",
-  createArtefacts: "3PFkgvC9y6zHy64zEAscKKgaNY3yipiLqbW",
-  // createArtefacts: "3P2wMCDjtxeLdfQrpR8WUe5zNeScM4UaL3o",
+  createArtefacts: "3P2wMCDjtxeLdfQrpR8WUe5zNeScM4UaL3o",
 };
 export const PUZZLE_NFTS = [
   {
