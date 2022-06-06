@@ -118,7 +118,8 @@ const PoolsTable: React.FC = () => {
       })
       .map((pool) => ({
         onClick: () => navigate(`/pools/${pool.domain}/invest`),
-        disabled: pool.statistics == null,
+        disabled:
+          pool.statistics == null && pool.owner !== accountStore.address,
         poolName: (
           <Row>
             <SquareTokenIcon src={pool.logo} alt="logo" />
@@ -167,9 +168,10 @@ const PoolsTable: React.FC = () => {
     vm.poolCategoryFilter,
     vm.customPoolFilter,
     activeSort,
+    accountStore.address,
     accountStore.findBalanceByAssetId,
-    poolsStore.accountPoolsLiquidity,
     navigate,
+    poolsStore.accountPoolsLiquidity,
   ]);
   const myPools = filteredPools.filter(
     ({ owner }) => owner != null && accountStore.address === owner

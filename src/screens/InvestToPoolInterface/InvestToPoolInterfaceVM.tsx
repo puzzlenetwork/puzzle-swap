@@ -440,6 +440,25 @@ class InvestToPoolInterfaceVM {
       })
       .finally(() => this._setLoading(false));
   };
+
+  prepareCompletePoolInitialization = () => {
+    const assets = this.pool.tokens.map((t) => ({
+      assetId: t.assetId,
+      share: new BN(t.share),
+    }));
+    const state = {
+      assets,
+      logo: this.pool.logo,
+      title: this.pool.title,
+      domain: this.pool.domain,
+      step: 3,
+      fileName: "–",
+      fileSize: "–",
+      maxStep: 3,
+      swapFee: this.pool.swapFee,
+    };
+    localStorage.setItem("puzzle-custom-pool", JSON.stringify(state));
+  };
 }
 
 type TContractAssetBalancesResponse = {
