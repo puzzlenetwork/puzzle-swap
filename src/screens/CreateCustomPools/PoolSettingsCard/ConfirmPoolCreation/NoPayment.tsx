@@ -36,7 +36,7 @@ const NoPayment: React.FC<IProps> = () => {
         {nftStore.totalPuzzleNftsAmount == null || vm.loading ? (
           <Loading big />
         ) : (
-          `Buy for ${vm.puzzleNFTPrice} PUZZLE`
+          `Buy for ${vm.puzzleNFTPrice} TPUZZLE`
         )}
       </Button>
     </Root>

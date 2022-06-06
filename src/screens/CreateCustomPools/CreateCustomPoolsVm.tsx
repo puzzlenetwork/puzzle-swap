@@ -346,18 +346,20 @@ class CreateCustomPoolsVm {
     const { accountStore } = this.rootStore;
     if (!this.canBuyNft) return;
     if (this.puzzleNFTPrice === 0) return;
+    //todo tpuzzle
     const amount = BN.parseUnits(
       this.puzzleNFTPrice,
-      TOKENS_BY_SYMBOL.PUZZLE.decimals
+      TOKENS_BY_SYMBOL.TPUZZLE.decimals
     );
     this._setLoading(true);
     await accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.createArtefacts,
+        //todo tpuzzle
         payment: [
           {
-            assetId: TOKENS_BY_SYMBOL.PUZZLE.assetId,
-            // assetId: TOKENS_BY_SYMBOL.TPUZZLE.assetId,
+            // assetId: TOKENS_BY_SYMBOL.PUZZLE.assetId,
+            assetId: TOKENS_BY_SYMBOL.TPUZZLE.assetId,
             amount: amount.toString(),
           },
         ],

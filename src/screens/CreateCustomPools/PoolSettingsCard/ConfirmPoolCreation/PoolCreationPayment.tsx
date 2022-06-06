@@ -24,7 +24,7 @@ const Root = styled.div`
 const PoolCreationPayment: React.FC<IProps> = () => {
   const { accountStore, nftStore } = useStores();
   const { findBalanceByAssetId } = accountStore;
-  const puzzleBalance = findBalanceByAssetId(TOKENS_BY_SYMBOL.PUZZLE.assetId);
+  const puzzleBalance = findBalanceByAssetId(TOKENS_BY_SYMBOL.TPUZZLE.assetId);
   const vm = useCreateCustomPoolsVM();
   useEffect(() => {
     vm.checkIfDomainIsPaidWithCurrentUser();
