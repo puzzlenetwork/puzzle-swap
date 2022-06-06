@@ -118,6 +118,7 @@ const PoolsTable: React.FC = () => {
       })
       .map((pool) => ({
         onClick: () => navigate(`/pools/${pool.domain}/invest`),
+        disabled: pool.statistics == null,
         poolName: (
           <Row>
             <SquareTokenIcon src={pool.logo} alt="logo" />
