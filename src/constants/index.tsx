@@ -319,7 +319,7 @@ export const CONTRACT_ADDRESSES = {
   ultraStaking: "3PKUxbZaSYfsR7wu2HaAgiirHYwAMupDrYW",
   aggregator: "3PGFHzVGT4NTigwCKP1NcwoXkodVZwvBuuU",
   nfts: "3PFQjjDMiZKQZdu5JqTHD7HwgSXyp9Rw9By",
-  createArtefacts: "3P2wMCDjtxeLdfQrpR8WUe5zNeScM4UaL3o",
+  createArtefacts: "3PFkgvC9y6zHy64zEAscKKgaNY3yipiLqbW",
 };
 export const PUZZLE_NFTS = [
   {

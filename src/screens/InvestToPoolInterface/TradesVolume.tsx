@@ -58,7 +58,13 @@ const TradesVolume: React.FC<IProps> = () => {
     .map((v) => ({ ...v, volume: Number(v.volume) }))
     .sort((a, b) => (a.date < b.date ? -1 : 1));
   return (
-    <Root disabled={data == null || data.length < 2}>
+    <Root
+      disabled={
+        data == null ||
+        data.length < 2 ||
+        data.every(({ volume }) => volume === 0)
+      }
+    >
       <Text weight={500} type="secondary">
         Trades volume
       </Text>
