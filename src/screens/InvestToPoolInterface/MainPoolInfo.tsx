@@ -14,7 +14,8 @@ import TransparentDetailsBtn from "@screens/InvestToPoolInterface/TransparentDet
 import { useNavigate } from "react-router-dom";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import TextButton from "@components/TextButton";
-import { EXPLORER_URL } from "@src/constants";
+import { EXPLORER_URL, ROUTES } from "@src/constants";
+import { useStores } from "@stores";
 
 interface IProps {}
 
@@ -49,9 +50,14 @@ const Links = styled.div<{ isCustom?: boolean }>`
 `;
 const MainPoolInfo: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
+  const { accountStore } = useStores();
   const navigate = useNavigate();
   const handleSmartContractClick = () =>
     window.open(`${EXPLORER_URL}/address/${vm.pool.contractAddress}`);
+  const completePoolInitialization = () => {
+    vm.prepareCompletePoolInitialization();
+    navigate(ROUTES.POOLS_CREATE);
+  };
   return (
     <Root>
       <ShortInfo pic={vm.pool.isCustom ? customBg : bg}>
@@ -109,14 +115,26 @@ const MainPoolInfo: React.FC<IProps> = () => {
             </Column>
             <SizedBox height={16} />
             <Row>
-              <Button
-                fixed
-                size="medium"
-                style={{ marginRight: 8 }}
-                onClick={() => navigate(`/pools/${vm.pool.domain}`)}
-              >
-                Trade
-              </Button>
+              {vm.pool.statistics == null &&
+              accountStore.address === vm.pool.owner ? (
+                <Button
+                  fixed
+                  size="medium"
+                  style={{ marginRight: 8 }}
+                  onClick={completePoolInitialization}
+                >
+                  Complete pool initialization
+                </Button>
+              ) : (
+                <Button
+                  fixed
+                  size="medium"
+                  style={{ marginRight: 8 }}
+                  onClick={() => navigate(`/pools/${vm.pool.domain}`)}
+                >
+                  Trade
+                </Button>
+              )}
               <TransparentDetailsBtn />
             </Row>
           </Links>
