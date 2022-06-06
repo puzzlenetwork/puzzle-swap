@@ -189,15 +189,11 @@ export default class PoolsStore {
   };
 
   updatePoolsState = async () => {
-    if (this.rootStore.accountStore.address == null) return;
-    const state = await poolsService.getPoolsStateByUserAddress(
-      this.rootStore.accountStore.address
-    );
+    const address = this.rootStore.accountStore.address;
+    const state = await poolsService.getPoolsStateByUserAddress(address);
     this.setPoolState(state);
     this.syncPoolsLiquidity();
-    this.updateAccountCustomPoolsLiquidityInfo(
-      this.rootStore.accountStore.address
-    );
+    address && this.updateAccountCustomPoolsLiquidityInfo(address);
   };
 
   syncPoolsLiquidity = () =>

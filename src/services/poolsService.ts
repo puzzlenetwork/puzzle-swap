@@ -64,9 +64,11 @@ const poolService = {
     return data;
   },
   getPoolsStateByUserAddress: async (
-    address: string
+    address?: string | null
   ): Promise<TPoolState[]> => {
-    const req = `${process.env.REACT_APP_API_BASE}/api/v1/state/${address}`;
+    const req = `${process.env.REACT_APP_API_BASE}/api/v1/state/${
+      address ?? ""
+    }`;
     const { data } = await axios.get(req);
     return data;
   },
