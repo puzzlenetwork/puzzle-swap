@@ -11,6 +11,10 @@ import { useStores } from "@stores";
 import AddTokenRow from "./AddTokenRow";
 import { Row } from "@components/Flex";
 import { observer } from "mobx-react-lite";
+import Notification from "@components/Notification";
+import TextButton from "@components/TextButton";
+import { Link } from "react-router-dom";
+import { ROUTES } from "@src/constants";
 
 interface IProps {}
 
@@ -32,6 +36,19 @@ const DepositComposition: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   return (
     <Root>
+      {vm.maxToProvide.eq(new BN(0)) && (
+        <Notification
+          type="warning"
+          text={
+            <Text size="medium">
+              Your to get all tokens to provide liquidity to the pool.
+              <Link to={ROUTES.TRADE}>
+                <TextButton kind="secondary">Go to trade.</TextButton>
+              </Link>
+            </Text>
+          }
+        />
+      )}
       <SizedBox height={24} />
       <Text style={{ width: "100%" }} weight={500} type="secondary">
         Deposit composition
