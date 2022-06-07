@@ -526,6 +526,7 @@ class CreateCustomPoolsVm {
         )
       )
       .then(async () => {
+        await poolsService.updateStats(this.domain);
         await this.rootStore.poolsStore.syncCustomPools();
         await this.rootStore.poolsStore.updatePoolsState();
       })
