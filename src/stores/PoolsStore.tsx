@@ -24,12 +24,14 @@ export default class PoolsStore {
     this.syncCustomPools().then(this.updatePoolsState);
     this.updateAccountPoolsLiquidityInfo().then();
     this.syncPuzzleRate().then();
+    this.syncLTCRate().then();
     setInterval(() => {
       this.syncPoolsLiquidity();
       Promise.all([
         this.updateAccountPoolsLiquidityInfo(),
         this.updatePoolsState(),
         this.syncPuzzleRate(),
+        this.syncLTCRate(),
         this.syncCustomPools(),
       ]);
     }, 5 * 1000);
@@ -60,6 +62,9 @@ export default class PoolsStore {
 
   private puzzleRate: BN | null = null;
   private setPuzzleRate = (rate: BN | null) => (this.puzzleRate = rate);
+
+  private LTCRate: BN | null = null;
+  private setLTCRate = (rate: BN | null) => (this.LTCRate = rate);
 
   public poolsState: TPoolState[] | null = null;
   private setPoolState = (value: TPoolState[]) => (this.poolsState = value);
@@ -115,6 +120,11 @@ export default class PoolsStore {
     if (pool == null) return null;
     const usdn = TOKENS_BY_SYMBOL.USDN.assetId;
     const puzzle = TOKENS_BY_SYMBOL.PUZZLE.assetId;
+    //todo fix this!!!
+    if (assetId === TOKENS_BY_SYMBOL.LTC.assetId) {
+      return this.LTCRate ?? BN.ZERO;
+    }
+
     if (pool.tokens.some(({ assetId }) => assetId === usdn)) {
       return pool.currentPrice(assetId, usdn, coefficient);
     } else if (pool.tokens.some(({ assetId }) => assetId === puzzle)) {
@@ -209,4 +219,8 @@ export default class PoolsStore {
         this.setPuzzleRate(rate);
         this.pools.forEach((pool) => pool.setPuzzleRate(rate ?? BN.ZERO));
       });
+  private syncLTCRate = () =>
+    wavesCapService.getAssetRate(TOKENS_BY_SYMBOL.LTC.assetId).then((rate) => {
+      this.setLTCRate(rate);
+    });
 }
