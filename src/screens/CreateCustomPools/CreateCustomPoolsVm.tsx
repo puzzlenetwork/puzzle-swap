@@ -145,7 +145,13 @@ class CreateCustomPoolsVm {
   }
 
   get correct1() {
-    return this.domain.length > 1 && this.logo && !this.poolSettingError;
+    return (
+      this.domain.length > 1 &&
+      this.domain.length < 14 &&
+      this.logo &&
+      !/[^a-z0-9_-]/.test(this.domain) &&
+      !this.poolSettingError
+    );
   }
 
   get correct2() {
