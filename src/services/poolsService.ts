@@ -36,6 +36,16 @@ const poolService = {
     const { data } = await axios.get(req);
     return data;
   },
+  updateStats: async (domain: string): Promise<void> => {
+    await axios(
+      `${process.env.REACT_APP_API_BASE}/api/v1/pools/update-stats/${domain}`,
+      {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        data: { domain },
+      }
+    );
+  },
   checkDomain: async (domain: string): Promise<boolean> => {
     await axios(`${process.env.REACT_APP_API_BASE}/api/v1/pools/check-domain`, {
       method: "POST",
