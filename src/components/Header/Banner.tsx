@@ -63,7 +63,7 @@ const Banner: React.FC<IProps> = ({ closed, setClosed }) => {
     <Root closed={closed}>
       Custom pools are live! 🧩 &nbsp;
       <BoldText onClick={() => navigate(ROUTES.POOLS_CREATE)}>
-        Run you megapool
+        Run your megapool
       </BoldText>
       <CloseIcon className="close" onClick={() => setClosed(true)} />
     </Root>
