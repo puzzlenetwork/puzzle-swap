@@ -60,9 +60,9 @@ const Banner: React.FC<IProps> = ({ closed, setClosed }) => {
   const { accountStore } = useStores();
   return (
     <Root closed={closed}>
-      Puzzle Wallet is live! 🎊&nbsp;
+      Custom pools are live! 🧩 &nbsp;
       <BoldText onClick={() => accountStore.setWalletModalOpened(true)}>
-        Manage your crypto
+        Run you megapool
       </BoldText>
       <CloseIcon className="close" onClick={() => setClosed(true)} />
     </Root>
