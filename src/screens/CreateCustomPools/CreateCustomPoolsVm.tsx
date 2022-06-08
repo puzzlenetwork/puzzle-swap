@@ -561,10 +561,10 @@ class CreateCustomPoolsVm {
   };
 
   handleCreatePool = async () => {
-    //todo удалить когда откажемся от лимитов
-    const limited = await this.checkPoolsLimitOfTheDay();
-    if (limited) return;
-    //--------------------------------------------
+    // //todo удалить когда откажемся от лимитов
+    // const limited = await this.checkPoolsLimitOfTheDay();
+    // if (limited) return;
+    // //--------------------------------------------
     const { address } = this.rootStore.accountStore;
     if (address === null || this.logo == null) return;
     try {

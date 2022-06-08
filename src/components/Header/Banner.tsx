@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { ReactComponent as CloseIcon } from "@src/assets/icons/close.svg";
-import { useStores } from "@stores";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@src/constants";
 
 interface IProps {
   closed: boolean;
@@ -57,12 +58,12 @@ const BoldText = styled.div`
 `;
 
 const Banner: React.FC<IProps> = ({ closed, setClosed }) => {
-  const { accountStore } = useStores();
+  const navigate = useNavigate();
   return (
     <Root closed={closed}>
-      Puzzle Wallet is live! 🎊&nbsp;
-      <BoldText onClick={() => accountStore.setWalletModalOpened(true)}>
-        Manage your crypto
+      Custom pools are live! 🧩 &nbsp;
+      <BoldText onClick={() => navigate(ROUTES.POOLS_CREATE)}>
+        Run your megapool
       </BoldText>
       <CloseIcon className="close" onClick={() => setClosed(true)} />
     </Root>
