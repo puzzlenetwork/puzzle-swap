@@ -583,8 +583,12 @@ class CreateCustomPoolsVm {
           );
           if (nftId == null) return;
           const burnedNftDetails = await nodeService.getAssetDetails(nftId);
-          console.log(burnedNftDetails);
           artefactOriginTransactionId = burnedNftDetails?.originTransactionId;
+        } else {
+          const details = await nodeService.getAssetDetails(artefactId);
+          if (details?.originTransactionId != null) {
+            artefactOriginTransactionId = details?.originTransactionId!;
+          }
         }
       }
       if (artefactOriginTransactionId == null) {
