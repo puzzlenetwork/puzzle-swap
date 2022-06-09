@@ -76,10 +76,12 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
         </TextButton>
       ),
     },
-    {
-      title: "Total fees earned",
-      value: `$ ${vm.pool.globalVolume?.times(0.02)?.toFormat(2)}`,
-    },
+    // {
+    //   title: "Total fees earned",
+    //   value: vm.pool.statistics?.fees
+    //     ? `$ ${new BN(vm.pool.statistics.fees).toFormat(2)}`
+    //     : "–",
+    // },
     {
       title: "Fees earned (30 days)",
       value: vm.pool.statistics
