@@ -111,6 +111,7 @@ const ImageUpload: React.FC<IProps> = ({
         )}
         <div className="btn">
           <input
+            style={{ zIndex: 2 }}
             accept="image/*"
             type="file"
             name="file"
