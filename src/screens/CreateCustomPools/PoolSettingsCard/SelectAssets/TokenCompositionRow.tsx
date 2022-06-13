@@ -28,7 +28,7 @@ interface IProps {
 
   onDelete: () => void;
 
-  permanent?: boolean;
+  baseToken?: boolean;
 }
 
 const Root = styled.div`
@@ -64,12 +64,12 @@ const AssetContainer = styled.div<{ modalOpened?: boolean }>`
   }
 `;
 
-const StyledClose = styled(Close)<{ permanent?: boolean }>`
+const StyledClose = styled(Close)<{ baseToken?: boolean }>`
   margin-left: 10px;
   width: 16px;
   height: 16px;
-  cursor: ${({ permanent }) => (permanent ? "auto" : "pointer")};
-  opacity: ${({ permanent }) => (permanent ? 0 : 1)};
+  cursor: ${({ baseToken }) => (baseToken ? "auto" : "pointer")};
+  opacity: ${({ baseToken }) => (baseToken ? 0.5 : 1)};
 `;
 
 const TokenCompositionRow: React.FC<IProps> = ({
@@ -81,11 +81,11 @@ const TokenCompositionRow: React.FC<IProps> = ({
   locked,
   onLockClick,
   onDelete,
-  permanent,
+  baseToken,
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const selectableTokens = balances.filter(({ symbol }) =>
-    permanent ? ["PUZZLE", "USDN"].includes(symbol) : true
+    baseToken ? ["PUZZLE", "USDN"].includes(symbol) : true
   );
   return (
     <Root>
@@ -111,8 +111,8 @@ const TokenCompositionRow: React.FC<IProps> = ({
           <Unlock onClick={onLockClick} style={{ cursor: "pointer" }} />
         )}
         <StyledClose
-          permanent={permanent}
-          onClick={!permanent ? onDelete : undefined}
+          baseToken={baseToken}
+          onClick={!baseToken ? onDelete : undefined}
         />
       </Row>
       <TokenSelectModal
