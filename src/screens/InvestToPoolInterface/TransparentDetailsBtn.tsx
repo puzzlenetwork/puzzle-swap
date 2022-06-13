@@ -144,6 +144,10 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
       title: "Date of creation",
       value: dayjs(vm.pool.createdAt).format("MMM D, YYYY h:mm A"),
     },
+    {
+      title: "Total creator reward",
+      value: `$ ${vm.pool?.globalEarnedByOwner?.div(1e6).toFormat(2)}`,
+    },
     // {
     //   title: "Total fees earned",
     //   // value: `$ ${vm.pool.globalVolume?.times(0.02)?.toFormat(2) ?? "0.00"}`,

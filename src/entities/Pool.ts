@@ -76,6 +76,9 @@ class Pool implements IPoolConfig {
   setGlobalPoolTokenAmount = (value: BN) =>
     (this.globalPoolTokenAmount = value);
 
+  public globalEarnedByOwner: BN | null = null;
+  setGlobalEarnedByOwner = (value: BN) => (this.globalEarnedByOwner = value);
+
   public liquidity: Record<string, BN> = {};
   private setLiquidity = (value: Record<string, BN>) =>
     (this.liquidity = value);
@@ -179,6 +182,7 @@ class Pool implements IPoolConfig {
       addressIndexStaked: `${user}_indexStaked`,
       globalIndexStaked: `global_indexStaked`,
       globalPoolTokenAmount: "global_poolToken_amount",
+      globalEarnedByOwner: "global_earnedByOwner",
     };
     const [values, staticPoolDomainValue] = await Promise.all([
       this.contractKeysRequest(Object.values(keysArray)),
@@ -198,6 +202,8 @@ class Pool implements IPoolConfig {
       },
       {}
     );
+    const globalEarnedByOwner = parsedNodeResponse["globalEarnedByOwner"];
+    this.setGlobalEarnedByOwner(globalEarnedByOwner);
     const addressIndexStaked = parsedNodeResponse["addressIndexStaked"];
     const globalIndexStaked = parsedNodeResponse["globalIndexStaked"];
     const globalPoolTokenAmount = parsedNodeResponse["globalPoolTokenAmount"];
