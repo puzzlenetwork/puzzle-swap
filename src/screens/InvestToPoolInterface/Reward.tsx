@@ -56,6 +56,10 @@ const Reward: React.FC<IProps> = () => {
   if (address == null) return null;
   const date = dayjs(vm.lastClaimDate?.toNumber() ?? 0);
   const format = date.format("D MMM YYYY");
+  const totalClaimed = BN.formatUnits(
+    vm.totalClaimedReward ?? BN.ZERO,
+    TOKENS_BY_SYMBOL.USDN.decimals
+  ).toFormat(2);
   return (
     <Root>
       <Text weight={500} type="secondary">
@@ -75,14 +79,10 @@ const Reward: React.FC<IProps> = () => {
                 </Title>
               </Row>
               <Text weight={500}>
-                $
                 {vm.totalClaimedReward != null ? (
-                  BN.formatUnits(
-                    vm.totalClaimedReward,
-                    TOKENS_BY_SYMBOL.USDN.decimals
-                  ).toFormat(2)
+                  `$ ${totalClaimed}`
                 ) : (
-                  <Skeleton height={16} />
+                  <Skeleton height={16} width="50%" />
                 )}
               </Text>
             </Column>
@@ -92,7 +92,13 @@ const Reward: React.FC<IProps> = () => {
             <SizedBox width={8} />
             <Column>
               <Title>Available to claim</Title>
-              <Text weight={500}>${vm.totalRewardToClaim.toFixed(2)}</Text>
+              <Text weight={500}>
+                {vm.totalRewardToClaim != null ? (
+                  `$ ${vm.totalRewardToClaim.toFixed(2)}`
+                ) : (
+                  <Skeleton height={16} />
+                )}
+              </Text>
             </Column>
           </AvailableToClaim>
           {vm.loading ? (

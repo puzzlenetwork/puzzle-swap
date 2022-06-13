@@ -52,11 +52,11 @@ class InvestToPoolInterfaceVM {
   private setAccountShareOfPool = (value: BN) =>
     (this.accountShareOfPool = value);
 
-  public totalRewardToClaim: BN = BN.ZERO;
+  public totalRewardToClaim: BN | null = null;
   private setTotalRewardToClaim = (value: BN) =>
     (this.totalRewardToClaim = value);
 
-  public totalClaimedReward: BN = BN.ZERO;
+  public totalClaimedReward: BN | null = null;
   private setTotalClaimedReward = (value: BN) =>
     (this.totalClaimedReward = value);
 
@@ -285,7 +285,8 @@ class InvestToPoolInterfaceVM {
   }
 
   claimRewards = async () => {
-    if (this.totalRewardToClaim.eq(0)) return;
+    if (this.totalRewardToClaim == null || this.totalRewardToClaim.eq(0))
+      return;
     if (this.pool.layer2Address == null) return;
     this._setLoading(true);
     const { accountStore, notificationStore } = this.rootStore;
@@ -317,7 +318,11 @@ class InvestToPoolInterfaceVM {
   };
 
   get canClaimRewards() {
-    return !(this.totalRewardToClaim.eq(0) || this.loading);
+    return !(
+      this.totalRewardToClaim == null ||
+      this.totalRewardToClaim.eq(0) ||
+      this.loading
+    );
   }
 
   updatePoolTokenBalances = async () => {
