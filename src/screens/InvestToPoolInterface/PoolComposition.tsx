@@ -1,19 +1,27 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useMemo, useState } from "react";
 import Text from "@components/Text";
-import Card from "@components/Card";
 import SizedBox from "@components/SizedBox";
-import GridTable from "@components/GridTable";
-import { AdaptiveRow, Column, Row } from "@components/Flex";
+import { Row } from "@components/Flex";
 import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
 import { observer } from "mobx-react-lite";
+import Table from "@components/Table";
+import Scrollbar from "@src/components/Scrollbar";
+import group from "@src/assets/icons/group.svg";
+import useWindowSize from "@src/hooks/useWindowSize";
 
 interface IProps {}
 
-const Root = styled.div`
+const Root = styled.div<{ valueSort?: boolean }>`
   display: flex;
   flex-direction: column;
   padding-top: 24px;
+
+  .value-group {
+    width: 20px;
+    height: 20px;
+    transform: ${({ valueSort }) => (valueSort ? "scale(1)" : "scale(1, -1)")};
+  }
 `;
 
 const Icon = styled.img`
@@ -23,66 +31,82 @@ const Icon = styled.img`
   border: 1px solid #f1f2fe;
 `;
 
-const AdaptiveTableTitle = styled(AdaptiveRow)`
-  justify-content: end;
-  @media (min-width: 880px) {
-    justify-content: start;
-  }
-`;
 const PoolComposition: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
+  const [filteredTokens, setFilteredTokens] = useState<any[]>([]);
+  const [valueSort, setValueSort] = useState(true);
+  const columns = React.useMemo(
+    () => [
+      { Header: "Asset", accessor: "asset" },
+      { Header: "Weight", accessor: "weight" },
+      { Header: "Balance", accessor: "balance" },
+      {
+        accessor: "value",
+        Header: () => (
+          <Row style={{ cursor: "pointer" }}>
+            <Text size="medium" fitContent>
+              Value
+            </Text>
+            <img
+              style={{ paddingLeft: 7 }}
+              src={group}
+              alt="group"
+              className="value-group"
+              onClick={() => setValueSort(!valueSort)}
+            />
+          </Row>
+        ),
+      },
+    ],
+    [valueSort]
+  );
+  useMemo(() => {
+    const data = vm.poolCompositionValues
+      .sort((a, b) => {
+        if (a.value.lt(b.value)) {
+          return valueSort ? 1 : -1;
+        } else {
+          return valueSort ? -1 : 1;
+        }
+      })
+      .map((a) => ({
+        onClick: null,
+        asset: (
+          <Row alignItems="center" mainAxisSize="fit-content">
+            <Icon src={a.logo} alt="logo" />
+            <SizedBox width={8} />
+            <Text fitContent>{a.symbol}</Text>
+          </Row>
+        ),
+        weight: `${a.share} %`,
+        balance: `${a.parsedBalance.toFormat(2)}`,
+        value: `$ ${a.value.toFormat(2)}`,
+      }));
+    setFilteredTokens(data);
+  }, [valueSort, vm.poolCompositionValues]);
+  const { width } = useWindowSize();
   return (
-    <Root>
+    <Root valueSort={valueSort}>
       <Text weight={500} type="secondary">
         Pool composition
       </Text>
       <SizedBox height={8} />
-      <Card style={{ padding: 0 }}>
-        <GridTable desktopTemplate={"1fr 1fr 1fr"} mobileTemplate={"1fr 1fr"}>
-          <div className="gridTitle">
-            <div>Asset</div>
-            <AdaptiveTableTitle>
-              <div className="desktop">Balance</div>
-              <div className="mobile">Balance and value</div>
-            </AdaptiveTableTitle>
-            <AdaptiveRow>
-              <div className="desktop">Value</div>
-            </AdaptiveRow>
-          </div>
-          {vm.poolCompositionValues
-            .sort((a, b) => (a.value!.gt(b.value!) ? -1 : 1))
-            .map((token, i) => (
-              <div className="gridRow" key={i} style={{ cursor: "default" }}>
-                <Row alignItems="center" mainAxisSize="fit-content">
-                  <Icon src={token.logo} alt="logo" />
-                  <SizedBox width={8} />
-                  <Text fitContent>{token.symbol}</Text>
-                </Row>
-                <AdaptiveRow>
-                  <Text className="desktop" fitContent>
-                    {token.parsedBalance.toFormat(2)}
-                  </Text>
-                  <Column
-                    className="mobile"
-                    crossAxisSize="max"
-                    style={{ textAlign: "end" }}
-                  >
-                    <Text size="medium">{token.parsedBalance.toFormat(2)}</Text>
-                    <Text size="small" type="secondary">
-                      $ {token.value.toFormat(2)}
-                    </Text>
-                  </Column>
-                </AdaptiveRow>
-                <AdaptiveRow>
-                  <Text className="desktop" fitContent nowrap>
-                    $ {token.value.toFormat(2)}
-                  </Text>
-                </AdaptiveRow>
-              </div>
-            ))}
-        </GridTable>
-        <SizedBox height={16} />
-      </Card>
+      <Scrollbar
+        style={{
+          maxWidth: "calc(100vw - 32px)",
+          borderRadius: 16,
+        }}
+      >
+        {width && (
+          <Table
+            fitContent={width < 402}
+            columns={columns}
+            data={filteredTokens}
+            style={{ whiteSpace: "nowrap" }}
+          />
+        )}
+      </Scrollbar>
+      <SizedBox height={16} />
     </Root>
   );
 };

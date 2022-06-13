@@ -242,7 +242,8 @@ class InvestToPoolInterfaceVM {
   get poolCompositionValues() {
     if (this.pool.tokens == null) return [];
     return this.pool.tokens.reduce<
-      (IToken & { value: BN; parsedBalance: BN })[]
+      // (IToken & { value: BN; parsedBalance: BN })[]
+      any[]
     >((acc, token) => {
       const balance = BN.formatUnits(
         this.pool.liquidity[token.assetId] ?? BN.ZERO,
@@ -253,6 +254,7 @@ class InvestToPoolInterfaceVM {
         ...acc,
         {
           ...token,
+          share: token.share,
           value: balance.times(rate ?? 0),
           parsedBalance: balance,
         },
