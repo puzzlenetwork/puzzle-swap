@@ -159,7 +159,6 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
         : "–",
     },
   ];
-  console.log(vm.pool.swapFee);
   const information = Array.from(
     vm.pool.isCustom ? customPoolInformation : puzzlePoolInformation
   );

@@ -5,10 +5,14 @@ import styled from "@emotion/styled";
 interface IProps extends TableProps {
   columns: any[];
   data: any[];
+  fitContent?: boolean;
+  onClick?: () => void;
 }
 
-const Root = styled.div`
-  width: 100%;
+const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
+  width: ${({ fitContent }) => (fitContent ? "fit-content" : "100%")};
+  //width: 100%;
+  //width: fit-content;
   border-radius: 16px;
   background: #ffffff;
 
@@ -23,10 +27,10 @@ const Root = styled.div`
       color: #8082c5;
       width: 100%;
       transition: 0.4s;
-      cursor: pointer;
 
       :hover {
-        background: #f8f8ff;
+        ${({ hovered }) => hovered && "cursor: pointer;"};
+        ${({ hovered }) => hovered && "background: #f8f8ff;"};
       }
 
       :last-child {
@@ -61,11 +65,17 @@ const Root = styled.div`
   }
 `;
 
-const Table: React.FC<IProps> = ({ columns, data, ...rest }) => {
+const Table: React.FC<IProps> = ({
+  columns,
+  data,
+  onClick,
+  fitContent,
+  ...rest
+}) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data });
   return (
-    <Root {...rest}>
+    <Root {...rest} hovered={onClick != null} fitContent={fitContent}>
       <table {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup, index) => (
