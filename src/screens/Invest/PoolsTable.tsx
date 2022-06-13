@@ -84,9 +84,15 @@ const PoolsTable: React.FC = () => {
           if (a.statistics?.apy != null && b.statistics?.apy != null) {
             if (new BN(a.statistics.apy).lt(b.statistics.apy)) {
               return vm.sortApy ? 1 : -1;
+            } else if (new BN(a.statistics.apy).eq(b.statistics.apy)) {
+              return 0;
             } else {
               return vm.sortApy ? -1 : 1;
             }
+          } else if (a.statistics?.apy != null) {
+            return -1;
+          } else if (b.statistics?.apy != null) {
+            return 1;
           }
         }
         return 1;
