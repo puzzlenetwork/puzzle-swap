@@ -14,10 +14,12 @@ import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 import group from "@src/assets/icons/group.svg";
 import BN from "@src/utils/BN";
+import Checkbox from "@components/Checkbox";
 
 const PoolsTable: React.FC = () => {
   const { poolsStore, accountStore } = useStores();
   const [activeSort, setActiveSort] = useState<0 | 1>(1);
+  const [showEmptyBalances, setShowEmptyBalances] = useState(true);
   const vm = useInvestVM();
   const navigate = useNavigate();
 
@@ -71,6 +73,21 @@ const PoolsTable: React.FC = () => {
   useMemo(() => {
     const data = vm.pools
       .filter(({ domain }) => domain !== "puzzle")
+      .filter((pool) => {
+        if (!setShowEmptyBalances) {
+          const data = poolsStore.accountPoolsLiquidity?.find(
+            (v) => pool.domain === v.pool.domain
+          );
+          if (
+            data != null &&
+            data.liquidityInUsdn != null &&
+            data.liquidityInUsdn.gt(0)
+          ) {
+            return pool;
+          }
+        }
+        return pool;
+      })
       .sort((a, b) => {
         if (activeSort === 0) {
           if (a.globalLiquidity != null && b.globalLiquidity != null) {
@@ -178,6 +195,7 @@ const PoolsTable: React.FC = () => {
     accountStore.findBalanceByAssetId,
     navigate,
     poolsStore.accountPoolsLiquidity,
+    showEmptyBalances,
   ]);
   const myPools = filteredPools.filter(
     ({ owner }) => owner != null && accountStore.address === owner
@@ -200,10 +218,21 @@ const PoolsTable: React.FC = () => {
           <SizedBox height={24} />
         </>
       )}
-      <Row alignItems="center">
-        <Text weight={500} type="secondary" fitContent>
+      <Row alignItems="center" justifyContent="center">
+        <Text weight={500} type="secondary" fitContent nowrap>
           All pools ({vm.pools.length})
         </Text>
+        {accountStore.address != null && (
+          <>
+            <SizedBox width={8} />
+            <Checkbox
+              checked={showEmptyBalances}
+              onChange={(e) => setShowEmptyBalances(e)}
+            />
+            <SizedBox width={12} />
+            <Text>Show my empty balances</Text>
+          </>
+        )}
       </Row>
       <SizedBox height={8} />
       {filteredPools.length > 0 ? (
