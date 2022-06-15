@@ -42,7 +42,7 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
   const vm = useCreateCustomPoolsVM();
   const swapFeeError = vm.swapFee.gt(30) || vm.swapFee.lt(5);
   const [customPercent, setCustomPercent] = useState<BN>(
-    vm.swapFee ?? new BN(20)
+    vm.swapFee ?? new BN(10)
   );
   const handleChangeCustomPercent = (v: BN) => {
     setCustomPercent(v);

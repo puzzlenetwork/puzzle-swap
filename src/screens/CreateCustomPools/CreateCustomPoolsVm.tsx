@@ -93,7 +93,7 @@ class CreateCustomPoolsVm {
     this.swapFee =
       initData?.swapFee != null && !isNaN(initData?.swapFee)
         ? new BN(initData?.swapFee).times(10)
-        : new BN(5);
+        : new BN(20);
     this.fileName = initData?.fileName ?? null;
     this.title = initData?.title ?? "";
     this.step = initData?.step ?? 0;
