@@ -93,7 +93,7 @@ class CreateCustomPoolsVm {
     this.swapFee =
       initData?.swapFee != null && !isNaN(initData?.swapFee)
         ? new BN(initData?.swapFee).times(10)
-        : new BN(5);
+        : new BN(20);
     this.fileName = initData?.fileName ?? null;
     this.title = initData?.title ?? "";
     this.step = initData?.step ?? 0;
@@ -184,6 +184,11 @@ class CreateCustomPoolsVm {
         share: new BN(500),
         locked: false,
       },
+      {
+        asset: TOKENS_BY_SYMBOL.USDN,
+        share: new BN(500),
+        locked: false,
+      },
     ];
   };
 
@@ -194,31 +199,6 @@ class CreateCustomPoolsVm {
   checkIfAlreadyCreated = async () => {
     const res = await poolsService.getPoolByDomain(this.domain);
     if (res.domain === this.domain) this.setStep(3);
-  };
-  checkPoolsLimitOfTheDay = async () => {
-    let res = await poolsService.checkCustomPoolLimit();
-    if (res) {
-      this.setNotificationParams(
-        buildDialogParams({
-          type: "warning",
-          title: "Wow!",
-          description: `Daily pools limit is reached. Please join the chat to not miss the next chance"`,
-          buttons: [
-            () => (
-              <Button
-                key="Back to Invest"
-                size="medium"
-                fixed
-                onClick={() => window.open("https://t.me/puzzleswap")}
-              >
-                Go to chat
-              </Button>
-            ),
-          ],
-        })
-      );
-    }
-    return res;
   };
 
   syncShares = () => {

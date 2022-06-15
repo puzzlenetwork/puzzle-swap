@@ -88,7 +88,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
     {
       title: "Fees earned (30 days)",
       value: vm.pool.statistics
-        ? `$ ${new BN(vm.pool.statistics.fees).toFormat(2)}`
+        ? `$ ${new BN(vm.pool.statistics.monthlyFees).toFormat(2)}`
         : "–",
     },
   ];
@@ -144,6 +144,10 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
       title: "Date of creation",
       value: dayjs(vm.pool.createdAt).format("MMM D, YYYY h:mm A"),
     },
+    {
+      title: "Total creator reward",
+      value: `$ ${vm.pool?.globalEarnedByOwner?.div(1e6).toFormat(2)}`,
+    },
     // {
     //   title: "Total fees earned",
     //   // value: `$ ${vm.pool.globalVolume?.times(0.02)?.toFormat(2) ?? "0.00"}`,
@@ -155,11 +159,10 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
     {
       title: "Fees earned (30 days)",
       value: vm.pool.statistics
-        ? `$ ${new BN(vm.pool.statistics.fees).toFormat(2)}`
+        ? `$ ${new BN(vm.pool.statistics.monthlyFees).toFormat(2)}`
         : "–",
     },
   ];
-  console.log(vm.pool.swapFee);
   const information = Array.from(
     vm.pool.isCustom ? customPoolInformation : puzzlePoolInformation
   );

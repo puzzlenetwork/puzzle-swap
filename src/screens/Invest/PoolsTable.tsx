@@ -14,10 +14,12 @@ import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 import group from "@src/assets/icons/group.svg";
 import BN from "@src/utils/BN";
+import Checkbox from "@components/Checkbox";
 
 const PoolsTable: React.FC = () => {
   const { poolsStore, accountStore } = useStores();
   const [activeSort, setActiveSort] = useState<0 | 1>(1);
+  const [showEmptyBalances, setShowEmptyBalances] = useState(true);
   const vm = useInvestVM();
   const navigate = useNavigate();
 
@@ -71,6 +73,15 @@ const PoolsTable: React.FC = () => {
   useMemo(() => {
     const data = vm.pools
       .filter(({ domain }) => domain !== "puzzle")
+      .filter((pool) => {
+        if (!showEmptyBalances) {
+          const data = poolsStore.accountPoolsLiquidity?.find(
+            (v) => pool.domain === v.pool.domain
+          );
+          return data?.liquidityInUsdn != null && data.liquidityInUsdn.gt(0);
+        }
+        return true;
+      })
       .sort((a, b) => {
         if (activeSort === 0) {
           if (a.globalLiquidity != null && b.globalLiquidity != null) {
@@ -84,9 +95,15 @@ const PoolsTable: React.FC = () => {
           if (a.statistics?.apy != null && b.statistics?.apy != null) {
             if (new BN(a.statistics.apy).lt(b.statistics.apy)) {
               return vm.sortApy ? 1 : -1;
+            } else if (new BN(a.statistics.apy).eq(b.statistics.apy)) {
+              return 0;
             } else {
               return vm.sortApy ? -1 : 1;
             }
+          } else if (a.statistics?.apy != null) {
+            return -1;
+          } else if (b.statistics?.apy != null) {
+            return 1;
           }
         }
         return 1;
@@ -167,11 +184,12 @@ const PoolsTable: React.FC = () => {
     vm.searchValue,
     vm.poolCategoryFilter,
     vm.customPoolFilter,
+    showEmptyBalances,
+    poolsStore.accountPoolsLiquidity,
     activeSort,
     accountStore.address,
     accountStore.findBalanceByAssetId,
     navigate,
-    poolsStore.accountPoolsLiquidity,
   ]);
   const myPools = filteredPools.filter(
     ({ owner }) => owner != null && accountStore.address === owner
@@ -195,9 +213,20 @@ const PoolsTable: React.FC = () => {
         </>
       )}
       <Row alignItems="center">
-        <Text weight={500} type="secondary" fitContent>
+        <Text weight={500} type="secondary" fitContent nowrap>
           All pools ({vm.pools.length})
         </Text>
+        {accountStore.address != null && (
+          <>
+            <SizedBox width={28} />
+            <Checkbox
+              checked={showEmptyBalances}
+              onChange={(e) => setShowEmptyBalances(e)}
+            />
+            <SizedBox width={12} />
+            <Text>Show my empty balances</Text>
+          </>
+        )}
       </Row>
       <SizedBox height={8} />
       {filteredPools.length > 0 ? (
