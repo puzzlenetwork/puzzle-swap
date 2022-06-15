@@ -368,6 +368,7 @@ export interface IPoolConfigStatistics {
   apy: string;
   monthlyVolume: string;
   weeklyVolume: string;
+  monthlyFees: string;
   fees: string;
   liquidity: string;
   volume: Array<{ date: number; volume: string }>;

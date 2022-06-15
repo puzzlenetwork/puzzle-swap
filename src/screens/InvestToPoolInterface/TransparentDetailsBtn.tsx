@@ -88,7 +88,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
     {
       title: "Fees earned (30 days)",
       value: vm.pool.statistics
-        ? `$ ${new BN(vm.pool.statistics.fees).toFormat(2)}`
+        ? `$ ${new BN(vm.pool.statistics.monthlyFees).toFormat(2)}`
         : "–",
     },
   ];
@@ -159,7 +159,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
     {
       title: "Fees earned (30 days)",
       value: vm.pool.statistics
-        ? `$ ${new BN(vm.pool.statistics.fees).toFormat(2)}`
+        ? `$ ${new BN(vm.pool.statistics.monthlyFees).toFormat(2)}`
         : "–",
     },
   ];
