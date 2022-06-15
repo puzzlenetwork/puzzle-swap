@@ -46,6 +46,7 @@ import maticLogo from "@src/assets/tokens/MATIC.svg";
 import shibLogo from "@src/assets/tokens/SHIB.svg";
 import crvLogo from "@src/assets/tokens/CRV.png";
 import snsbtLogo from "@src/assets/tokens/SNSBT.png";
+import vladLogo from "@src/assets/tokens/VLAD.png";
 import usdtViresLogo from "@src/assets/tokens/USDT_VIRES.svg";
 import usdcViresLogo from "@src/assets/tokens/USDC_VIRES.svg";
 import snsbtTciLogo from "@src/assets/tokens/sNSBT_TCI.svg";
@@ -98,6 +99,7 @@ const tokenLogos: Record<string, string> = {
   UNI: uniLogo,
   LINK: linkLogo,
   SNSBT: snsbtLogo,
+  VLAD: vladLogo,
   SNSBTTCI: snsbtTciLogo,
   VIRES_USDT_LP: usdtViresLogo,
   VIRES_USDC_LP: usdcViresLogo,

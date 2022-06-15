@@ -64,6 +64,20 @@ export const POOL_CONFIG: IPoolConfig[] = [
     ],
   },
   {
+    domain: "vlad",
+    contractAddress: "3P98RJpxfwZpNfAcLjLWMnesX65dpW64Rim",
+    layer2Address: "3PEsmFNhWpPW9AA8Th95hfLWz3bCVY18QAA",
+    baseTokenId: TOKENS_BY_SYMBOL.VLAD.assetId,
+    title: "VLAD Pool",
+    logo: tokenLogos.VLAD,
+    defaultAssetId0: TOKENS_BY_SYMBOL.VLAD.assetId,
+    defaultAssetId1: TOKENS_BY_SYMBOL.PUZZLE.assetId,
+    tokens: [
+      { ...TOKENS_BY_SYMBOL.VLAD, share: 50, logo: tokenLogos.VLAD },
+      { ...TOKENS_BY_SYMBOL.PUZZLE, share: 50, logo: tokenLogos.PUZZLE }
+    ],
+  },
+  {
     domain: "vusd",
     contractAddress: "3PCq2VqxGMmEyB8gLoUi8KuV9tYSD3VMC74",
     layer2Address: "3P6oobNcfLt69HMzQC37JAAGBWtrygU4amc",
