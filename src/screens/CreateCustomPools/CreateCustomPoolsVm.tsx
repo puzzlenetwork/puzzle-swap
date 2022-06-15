@@ -331,7 +331,7 @@ class CreateCustomPoolsVm {
   buyRandomArtefact = async () => {
     const { accountStore } = this.rootStore;
     if (!this.canBuyNft) return;
-    if (this.puzzleNFTPrice === 0) return;
+    if (this.puzzleNFTPrice == null) return;
     const amount = BN.parseUnits(
       this.puzzleNFTPrice,
       TOKENS_BY_SYMBOL.PUZZLE.decimals
@@ -391,10 +391,8 @@ class CreateCustomPoolsVm {
   get puzzleNFTPrice() {
     const { poolsStore, nftStore } = this.rootStore;
     const rate = poolsStore.usdnRate(TOKENS_BY_SYMBOL.PUZZLE.assetId, 1);
-    if (nftStore.totalPuzzleNftsAmount == null) return 0;
-    const amount = new BN(400)
-      .plus(nftStore.totalPuzzleNftsAmount)
-      .div(rate ?? 0);
+    if (nftStore.totalPuzzleNftsAmount == null || rate == null) return null;
+    const amount = new BN(400).plus(nftStore.totalPuzzleNftsAmount).div(rate);
     return Math.ceil(amount.toNumber() + 1);
   }
 
@@ -404,7 +402,7 @@ class CreateCustomPoolsVm {
     const balance = accountStore.findBalanceByAssetId(
       TOKENS_BY_SYMBOL.PUZZLE.assetId
     );
-    if (balance == null) return false;
+    if (balance == null || this.puzzleNFTPrice == null) return false;
     return balance.balance?.gte(this.puzzleNFTPrice);
   }
 
