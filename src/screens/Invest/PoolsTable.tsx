@@ -74,19 +74,13 @@ const PoolsTable: React.FC = () => {
     const data = vm.pools
       .filter(({ domain }) => domain !== "puzzle")
       .filter((pool) => {
-        if (!setShowEmptyBalances) {
+        if (!showEmptyBalances) {
           const data = poolsStore.accountPoolsLiquidity?.find(
             (v) => pool.domain === v.pool.domain
           );
-          if (
-            data != null &&
-            data.liquidityInUsdn != null &&
-            data.liquidityInUsdn.gt(0)
-          ) {
-            return pool;
-          }
+          return data?.liquidityInUsdn != null && data.liquidityInUsdn.gt(0);
         }
-        return pool;
+        return true;
       })
       .sort((a, b) => {
         if (activeSort === 0) {
@@ -190,12 +184,12 @@ const PoolsTable: React.FC = () => {
     vm.searchValue,
     vm.poolCategoryFilter,
     vm.customPoolFilter,
+    showEmptyBalances,
+    poolsStore.accountPoolsLiquidity,
     activeSort,
     accountStore.address,
     accountStore.findBalanceByAssetId,
     navigate,
-    poolsStore.accountPoolsLiquidity,
-    showEmptyBalances,
   ]);
   const myPools = filteredPools.filter(
     ({ owner }) => owner != null && accountStore.address === owner
@@ -218,13 +212,13 @@ const PoolsTable: React.FC = () => {
           <SizedBox height={24} />
         </>
       )}
-      <Row alignItems="center" justifyContent="center">
+      <Row alignItems="center">
         <Text weight={500} type="secondary" fitContent nowrap>
           All pools ({vm.pools.length})
         </Text>
         {accountStore.address != null && (
           <>
-            <SizedBox width={8} />
+            <SizedBox width={28} />
             <Checkbox
               checked={showEmptyBalances}
               onChange={(e) => setShowEmptyBalances(e)}
