@@ -109,22 +109,14 @@ const Transaction: React.FC<IProps> = ({
         amount = totalAddedUsdn;
         return <PoolAction tokens={addedTokens} action="add" />;
       case "generateIndexWithOneTokenAndStake":
-        const oneToken = stateChanges.invokes[1].payment.map(
-          ({ assetId, amount }) => ({
-            amount: new BN(amount),
-            ...TOKENS_BY_ASSET_ID[assetId ?? "WAVES"],
-          })
-        );
-        const totalAddedOneTokenUsdn = oneToken.reduce(
-          (acc, { assetId, amount, decimals }) => {
-            const am = BN.formatUnits(amount, decimals);
-            const rate = usdnRate(assetId, 1) ?? BN.ZERO;
-            return acc.plus(rate.times(am));
-          },
-          BN.ZERO
-        );
-        amount = totalAddedOneTokenUsdn;
-        return <PoolAction tokens={oneToken} action="add" />;
+        const oneToken = {
+          amount: new BN(payment[0].amount),
+          ...TOKENS_BY_ASSET_ID[payment[0].assetId ?? "WAVES"],
+        };
+        const am = BN.formatUnits(oneToken.amount, oneToken.decimals);
+        const rate = usdnRate(oneToken.assetId, 1) ?? BN.ZERO;
+        amount = am.times(rate);
+        return <PoolAction tokens={[oneToken]} action="add" />;
       case "unstakeAndRedeemIndex":
         const removedTokens =
           stateChanges.invokes[1].stateChanges.transfers.map(
