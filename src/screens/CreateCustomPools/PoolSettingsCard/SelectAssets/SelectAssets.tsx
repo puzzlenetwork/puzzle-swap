@@ -52,8 +52,8 @@ const SelectsAssets: React.FC<IProps> = () => {
             containerStyles={{ display: "flex", alignItems: "center" }}
             content={
               <Text>
-                Stake and unstake PZ Index token, which represents the value of
-                your pool share
+                Base token is used to provide liquidity with single asset. Also
+                most of the LP rewards will be accumulated in this token.
               </Text>
             }
           >
