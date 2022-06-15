@@ -84,9 +84,6 @@ const TokenCompositionRow: React.FC<IProps> = ({
   baseToken,
 }) => {
   const [openModal, setOpenModal] = useState(false);
-  const selectableTokens = balances.filter(({ symbol }) =>
-    baseToken ? ["PUZZLE", "USDN"].includes(symbol) : true
-  );
   return (
     <Root>
       <AssetContainer
@@ -119,7 +116,7 @@ const TokenCompositionRow: React.FC<IProps> = ({
         selectedTokenId={asset.assetId}
         visible={openModal}
         onSelect={(newAssetId) => onUpdateAsset(asset.assetId, newAssetId)}
-        balances={selectableTokens}
+        balances={balances}
         onClose={() => setOpenModal(!openModal)}
       />
     </Root>
