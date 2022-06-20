@@ -7,6 +7,7 @@ export const ROUTES = {
   NOT_FOUND: "/404",
   STAKE: "/stake",
   TRADE: "/trade",
+  EXPLORE: "/explore",
   INVEST: "/invest",
   ULTRASTAKE: "/ultrastake",
   WALLET: "/wallet",

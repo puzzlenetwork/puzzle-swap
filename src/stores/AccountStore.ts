@@ -124,7 +124,7 @@ class AccountStore {
     new Promise((resolve, reject) => {
       let attemptsCount = 0;
       const interval = setInterval(async () => {
-        if (window["WavesKeeper"] == null) {
+        if ((window as any).WavesKeeper == null) {
           attemptsCount = attemptsCount + 1;
           if (attemptsCount > 10) {
             clearInterval(interval);
@@ -134,10 +134,13 @@ class AccountStore {
           clearInterval(interval);
         }
 
-        const result = await window["WavesKeeper"].initialPromise
-          .then((keeperApi) => keeperApi.publicState())
+        const result = await (window as any).WavesKeeper.initialPromise
+          .then((keeperApi: any) => keeperApi.publicState())
           .then(() => this.subscribeToKeeperUpdate())
-          .catch(({ code }) => code === "14" && this.subscribeToKeeperUpdate());
+          .catch(
+            ({ code }: { code: string }) =>
+              code === "14" && this.subscribeToKeeperUpdate()
+          );
         resolve(result);
       }, 500);
     });
@@ -154,9 +157,10 @@ class AccountStore {
     switch (loginType) {
       case LOGIN_TYPE.KEEPER:
         this.setSigner(new Signer());
-        const authData = { data: "you know what is the main reason" };
         await this.setupSynchronizationWithKeeper();
-        await this.signer?.setProvider(new ProviderKeeper(authData));
+        // const authData = { data: "you know what is the main reason" };
+        // await this.signer?.setProvider(new ProviderKeeper(authData));
+        await this.signer?.setProvider(new ProviderKeeper());
         break;
       case LOGIN_TYPE.SIGNER_EMAIL:
         this.setSigner(new Signer());
@@ -186,7 +190,7 @@ class AccountStore {
       (reaction) => {
         if (attemptsCount === 2) {
           reaction.dispose();
-        } else if (window["WavesKeeper"]) {
+        } else if ((window as any).WavesKeeper) {
           reaction.dispose();
           this.setWavesKeeperInstalled(true);
         } else {
@@ -198,7 +202,7 @@ class AccountStore {
   };
 
   subscribeToKeeperUpdate = () =>
-    window["WavesKeeper"].on("update", (publicState) =>
+    (window as any).WavesKeeper.on("update", (publicState: any) =>
       this.setAddress(publicState.account?.address ?? null)
     );
 
@@ -280,7 +284,7 @@ class AccountStore {
       data.amount,
       this.assetToSend?.decimals
     ).toString();
-    const tx = await window.WavesKeeper.signAndPublishTransaction({
+    const tx = await (window as any).WavesKeeper.signAndPublishTransaction({
       type: 4,
       data: {
         amount: { tokens: tokenAmount, assetId: data.assetId },
@@ -355,7 +359,7 @@ class AccountStore {
       call: txParams.call,
       payment: txParams.payment,
     };
-    const tx = await window.WavesKeeper.signAndPublishTransaction({
+    const tx = await (window as any).WavesKeeper.signAndPublishTransaction({
       type: 16,
       data,
     } as any);
