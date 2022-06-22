@@ -4,13 +4,21 @@ import Text from "@components/Text";
 import Card from "@components/Card";
 import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
-import { Line, LineChart, Tooltip as RechartsTooltip, XAxis } from "recharts";
+import {
+  Line,
+  LineChart,
+  Tooltip as RechartsTooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import useWindowSize from "@src/hooks/useWindowSize";
 import dayjs from "dayjs";
 import BN from "@src/utils/BN";
 import { Row } from "@src/components/Flex";
 import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import Tooltip from "@components/Tooltip";
+import { TChartDataRecord, useExploreVM } from "@screens/Explore/ExploreVm";
+import Spinner from "@components/Spinner";
 
 interface IProps {}
 
@@ -97,9 +105,27 @@ const ChartAgeButton = styled.div<{ selected?: boolean }>`
   }
 `;
 
+const StyledCard = styled(Card)`
+  height: 320px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ageButtons = [
+  { title: "1D", value: "1d" },
+  { title: "7D", value: "1w" },
+  { title: "1M", value: "1m" },
+  { title: "3M", value: "3m" },
+  { title: "1Y", value: "1y" },
+  { title: "All", value: "all" },
+];
 const PuzzlePriceChart: React.FC<IProps> = () => {
+  const vm = useExploreVM();
   const { width: screenWidth } = useWindowSize();
   const chartWidth = screenWidth ? calcChartWidth(screenWidth) : 0;
+  const chartMin = Math.min(...vm.chart.map(({ volume }) => volume));
+  const chartMax = Math.max(...vm.chart.map(({ volume }) => volume));
   return (
     <Root>
       <TitleWrapper>
@@ -120,46 +146,58 @@ const PuzzlePriceChart: React.FC<IProps> = () => {
           </Tooltip>
         </Row>
         <ChartAgeButtonsWrapper>
-          <ChartAgeButton selected>1D</ChartAgeButton>
-          <ChartAgeButton>7D</ChartAgeButton>
-          <ChartAgeButton>1M</ChartAgeButton>
-          <ChartAgeButton>3M</ChartAgeButton>
-          <ChartAgeButton>1Y</ChartAgeButton>
-          <ChartAgeButton>All</ChartAgeButton>
+          {ageButtons.map(({ title, value }) => (
+            <ChartAgeButton
+              key={value}
+              selected={vm.selectedChartPeriod === value}
+              onClick={() =>
+                vm.setSelectedChartPeriod(value as keyof TChartDataRecord)
+              }
+            >
+              {title}
+            </ChartAgeButton>
+          ))}
         </ChartAgeButtonsWrapper>
       </TitleWrapper>
       <SizedBox height={8} />
-      <Card style={{ height: 320 }}>
-        <LineChart width={chartWidth} height={285} data={[]}>
-          <XAxis
-            tickLine={false}
-            dataKey="date"
-            tickFormatter={(date) => dayjs(date).format("MMM DD")}
-            style={{ fill: "#8082c5" }}
-          />
-          <RechartsTooltip
-            labelFormatter={(date) => (
-              <Text type="secondary" size="small">
-                {dayjs(date).format("dddd, MMM DD")}
-              </Text>
-            )}
-            formatter={(volume: number) => (
-              <Text size="medium">$&nbsp;{new BN(volume).toFormat(2)}</Text>
-            )}
-            contentStyle={{
-              border: "none",
-              filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))",
-            }}
-          />
-          <Line
-            dot={false}
-            type="monotone"
-            dataKey="volume"
-            stroke="#7075E9"
-            strokeWidth={2}
-          />
-        </LineChart>
-      </Card>
+      {vm.chartLoading ? (
+        <StyledCard>
+          <Spinner />
+        </StyledCard>
+      ) : (
+        <StyledCard>
+          <LineChart width={chartWidth} height={285} data={vm.chart}>
+            <YAxis hide domain={[chartMin * 0.99, chartMax * 1.01]} />
+            <XAxis
+              tickLine={false}
+              dataKey="date"
+              tickFormatter={(date) => dayjs(date).format("MM:HH, MMM DD")}
+              style={{ fill: "#8082c5" }}
+            />
+            <RechartsTooltip
+              labelFormatter={(date) => (
+                <Text type="secondary" size="small">
+                  {dayjs(date).format("MM:HH, MMM DD")}
+                </Text>
+              )}
+              formatter={(volume: number) => (
+                <Text size="medium">$&nbsp;{new BN(volume).toFormat(2)}</Text>
+              )}
+              contentStyle={{
+                border: "none",
+                filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))",
+              }}
+            />
+            <Line
+              dot={false}
+              type="monotone"
+              dataKey="volume"
+              stroke="#7075E9"
+              strokeWidth={2}
+            />
+          </LineChart>
+        </StyledCard>
+      )}
     </Root>
   );
 };
