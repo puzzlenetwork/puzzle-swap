@@ -3,6 +3,8 @@ import BN from "@src/utils/BN";
 
 interface IAssetResponse {
   id: string;
+  totalSupply: number;
+  circulating: number;
   data: {
     "firstPrice_usd-n": number;
     "lastPrice_usd-n": number;
@@ -25,6 +27,11 @@ const wavesCapService = {
     return res.data && res.data["lastPrice_usd-n"]
       ? new BN(res.data["lastPrice_usd-n"])
       : null;
+  },
+  getAssetStats: async (assetsId: string): Promise<IAssetResponse> => {
+    const url = `https://wavescap.com/api/asset/${assetsId}.json`;
+    const { data } = await axios.get<IAssetResponse>(url);
+    return data;
   },
 };
 export default wavesCapService;

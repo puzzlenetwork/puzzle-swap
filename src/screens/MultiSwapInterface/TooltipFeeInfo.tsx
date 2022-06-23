@@ -12,9 +12,13 @@ const TooltipFeeInfo: React.FC = () => {
   return (
     <Column>
       <Text>
-        Protocol fee (0.8%):&nbsp;
+        Protocol fee:&nbsp;
         <span style={{ color: "#8082C5" }}>
-          {amount.times(0.008).toFormat(2)} {token1.symbol}
+          {amount
+            .times(0.4)
+            .times(vm.pool.swapFee * 0.01)
+            .toFormat(2)}{" "}
+          {token1.symbol}
         </span>
       </Text>
       <Text>

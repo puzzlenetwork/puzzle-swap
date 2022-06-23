@@ -50,6 +50,8 @@ import vladLogo from "@src/assets/tokens/VLAD.png";
 import usdtViresLogo from "@src/assets/tokens/USDT_VIRES.svg";
 import usdcViresLogo from "@src/assets/tokens/USDC_VIRES.svg";
 import snsbtTciLogo from "@src/assets/tokens/sNSBT_TCI.svg";
+import tsnLogo from "@src/assets/tokens/TSN.svg";
+
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -100,6 +102,7 @@ const tokenLogos: Record<string, string> = {
   LINK: linkLogo,
   SNSBT: snsbtLogo,
   VLAD: vladLogo,
+  TSN: tsnLogo,
   SNSBTTCI: snsbtTciLogo,
   VIRES_USDT_LP: usdtViresLogo,
   VIRES_USDC_LP: usdcViresLogo,

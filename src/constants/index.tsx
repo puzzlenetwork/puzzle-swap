@@ -34,6 +34,20 @@ export const TOKENS_BY_ASSET_ID: Record<string, IToken> = TOKENS_LIST.reduce(
 );
 export const POOL_CONFIG: IPoolConfig[] = [
   {
+    domain: "tsunami",
+    contractAddress: "3PN1eJpdhJyRptcN9iLTarsJBtR2Kb3NXSU",
+    layer2Address: "3P9nxQiTo73ZASrxaVCA7o95gymQbSp7GXf",
+    baseTokenId: TOKENS_BY_SYMBOL.TSN.assetId,
+    title: "Tsunami ILO Pool",
+    logo: tokenLogos.TSN,
+    defaultAssetId0: TOKENS_BY_SYMBOL.TSN.assetId,
+    defaultAssetId1: TOKENS_BY_SYMBOL.USDN.assetId,
+    tokens: [
+      { ...TOKENS_BY_SYMBOL.TSN, share: 90, logo: tokenLogos.TSN },
+      { ...TOKENS_BY_SYMBOL.USDN, share: 10, logo: tokenLogos.USDN },
+    ],
+  },
+  {
     domain: "pool10",
     contractAddress: "3PLiXyywNThdvf3vVEUxwc7TJTucjZvuegh",
     layer2Address: "3P4oa7KAvocZhPXQ1B6ncAopzLEZUtMwbHF",
@@ -368,6 +382,7 @@ export const NODE_URL = "https://nodes-puzzle.wavesnodes.com";
 export const EXPLORER_URL = "https://new.wavesexplorer.com";
 
 export const SLIPPAGE = 0.95; //if puzzle slippage = 0
+export const HIGH_SLIPPAGE = 0.8; //if puzzle slippage = 0
 export const TRADE_FEE = 0.95;
 
 export interface IToken {
