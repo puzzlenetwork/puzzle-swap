@@ -28,6 +28,16 @@ const TooltipFeeInfo: React.FC = () => {
           {token1.symbol}
         </span>
       </Text>
+      <Text>
+        LP fee:{" "}
+        <span style={{ color: "#8082C5" }}>
+          {amount
+            .times(0.6)
+            .times(vm.pool.swapFee * 0.01)
+            .toFormat(2)}{" "}
+          {token1.symbol}
+        </span>
+      </Text>
     </Column>
   );
 };
