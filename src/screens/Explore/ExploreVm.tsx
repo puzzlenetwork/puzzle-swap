@@ -84,15 +84,22 @@ class ExploreVM {
 
   syncTokenDetails = async () => {
     const assetDetails = await wavesCapService.getAssetStats(this.assetId);
-
     const decimals = this.asset?.decimals;
     const firstPrice = new BN(assetDetails.data?.["firstPrice_usd-n"] ?? 0);
-    const lastPrice = new BN(assetDetails.data?.["lastPrice_usd-n"] ?? 0);
+    const currentPrice = new BN(assetDetails.data?.["lastPrice_usd-n"] ?? 0);
+
+    const totalSupply = BN.formatUnits(assetDetails.totalSupply, decimals);
+    const circulatingSupply = BN.formatUnits(
+      assetDetails.circulating,
+      decimals
+    );
     this.setTokenDetails({
-      totalSupply: BN.formatUnits(assetDetails.totalSupply, decimals),
+      totalSupply,
       circulatingSupply: BN.formatUnits(assetDetails.circulating, decimals),
-      change24H: lastPrice.div(firstPrice).minus(1).times(100),
-      currentPrice: lastPrice,
+      change24H: currentPrice.div(firstPrice).minus(1).times(100),
+      currentPrice,
+      fullyDilutedMC: totalSupply.times(currentPrice),
+      marketCap: circulatingSupply.times(currentPrice),
     });
   };
 

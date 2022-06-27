@@ -47,8 +47,16 @@ const TokenInformation = () => {
         </Row>
         <SizedBox height={16} />
         <Row>
-          <Info title="Fully diluted MC" value="1234" loading />
-          <Info title="Market cap" value="1234" loading />
+          <Info
+            title="Fully diluted MC"
+            value={`${vm.tokenDetails.fullyDilutedMC?.toFormat(2)}` ?? "-"}
+            loading={vm.tokenDetails.fullyDilutedMC == null}
+          />
+          <Info
+            title="Market cap"
+            value={`${vm.tokenDetails.marketCap?.toFormat(2)}` ?? "-"}
+            loading={vm.tokenDetails.marketCap == null}
+          />
         </Row>
         <SizedBox height={16} />
         <Row>
