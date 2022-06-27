@@ -6,6 +6,8 @@ import SizedBox from "@components/SizedBox";
 import { ExploreVMProvider } from "./ExploreVm";
 import { Observer } from "mobx-react-lite";
 import BasicInformation from "@screens/Explore/BasicInformation";
+import AggregatorHistory from "@screens/Explore/AggregatorHistory";
+import MegaPoolsHistory from "@screens/Explore/MegaPoolsHistory";
 
 interface IProps {}
 
@@ -46,6 +48,10 @@ const ExploreImpl: React.FC<IProps> = () => {
             {/*</Subtitle>*/}
             <SizedBox height={24} />
             <BasicInformation />
+            <SizedBox height={24} />
+            <AggregatorHistory />
+            <SizedBox height={24} />
+            <MegaPoolsHistory />
           </Root>
         )}
       </Observer>
