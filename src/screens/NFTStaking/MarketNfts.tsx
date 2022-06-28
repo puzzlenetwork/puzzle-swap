@@ -30,7 +30,7 @@ const MarketNfts: React.FC<IProps> = () => {
               buttons={
                 <Anchor style={{ width: "100%" }} href={art.marketLink}>
                   <Button size="medium" fixed>
-                    Buy on SignArt
+                    Buy
                   </Button>
                 </Anchor>
               }

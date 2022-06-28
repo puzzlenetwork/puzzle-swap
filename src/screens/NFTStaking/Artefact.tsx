@@ -20,12 +20,14 @@ const Root = styled.div`
   padding: 8px;
   border-radius: 16px;
   width: fit-content;
+  justify-content: space-between;
 `;
 const Img = styled.img`
   border: 1px solid #f1f2fe;
   border-radius: 12px;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
 `;
 const Bottom = styled.div`
   display: flex;
@@ -47,7 +49,7 @@ const Artefact: React.FC<IProps> = ({
   const price = new BN(marketPrice ?? 0);
   return (
     <Root>
-      <Img src={imageLink ?? noPic} alt="nft" />
+      <Img src={imageLink ?? noPic} />
       <Bottom>
         <Row mainAxisSize="stretch" justifyContent="space-between">
           <Column crossAxisSize="max">
@@ -76,7 +78,7 @@ const Artefact: React.FC<IProps> = ({
 
 export const ArtefactSkeleton = () => (
   <Root>
-    <Img src={noPic} alt="nft" />
+    <Img src={noPic} />
     <Bottom>
       <Row mainAxisSize="stretch" justifyContent="space-between">
         <Column crossAxisSize="max">

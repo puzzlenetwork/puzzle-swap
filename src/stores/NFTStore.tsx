@@ -7,6 +7,10 @@ import { CONTRACT_ADDRESSES, PUZZLE_NFTS } from "@src/constants";
 export default class NftStore {
   public rootStore: RootStore;
 
+  public nftPictures: Record<string, string> | null = null;
+  private _setNftPictures = (v: Record<string, string>) =>
+    (this.nftPictures = v);
+
   public artworks: IArtWork[] | null = null;
   private _setArtworks = (v: IArtWork[]) => (this.artworks = v);
 
@@ -25,7 +29,7 @@ export default class NftStore {
   get accountNFTsToStake() {
     return (
       this.accountNFTs?.filter(({ description }) =>
-        description?.toLowerCase().includes("eagle")
+        ["eagle", "ania"].some((v) => description && description.includes(v))
       ) ?? []
     );
   }
@@ -33,6 +37,7 @@ export default class NftStore {
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
+    this.syncNftPics().then();
     statsService
       .getArtworks()
       .then((d) => this._setArtworks(d))
@@ -80,11 +85,8 @@ export default class NftStore {
     if (address == null || artworks == null) return;
     const nfts = await nodeService.getAddressNfts(address);
     const supportedPuzzleNft = nfts
-      .filter(
-        ({ description, name }) =>
-          artworks.some(
-            ({ typeId }) => typeId && description.includes(typeId)
-          ) || PUZZLE_NFTS.some((nft) => name && name.includes(nft.name))
+      .filter(({ description, name }) =>
+        ["eagle", "ania"].some((v) => description && description.includes(v))
       )
       .map((nft) => ({
         ...nft,
@@ -102,12 +104,23 @@ export default class NftStore {
           const numberName = `${nft.name} #${strOut}`;
           return { ...nft, name: numberName, old: true };
         }
-        const imageLink = PUZZLE_NFTS.find(
+        let imageLink = PUZZLE_NFTS.find(
           ({ name }) => name === nft.name
         )?.image;
+        if (imageLink == null && this.nftPictures != null) {
+          imageLink = this.nftPictures[nft.assetId];
+        }
         return { ...nft, imageLink };
       });
     this.setAccountNFTs(supportedPuzzleNft);
+  };
+  syncNftPics = async () => {
+    const pics = await nodeService.getNFTPictures();
+    const v = pics.reduce((acc, v) => {
+      const id = v.key.split("_");
+      return { ...acc, [id[1]]: v.value };
+    }, {});
+    this._setNftPictures(v);
   };
 
   syncAccountNFTsOnStaking = async () => {
@@ -133,18 +146,27 @@ export default class NftStore {
     }
     const supportedPuzzleNft = allNftOnStaking
       .filter(({ assetId }) => stakedNftIds?.some((id) => id === assetId))
-      .map((nft) => ({
-        ...nft,
-        ...(artworks?.find(
-          ({ typeId }) => typeId && nft.description.includes(typeId)
-        ) ?? []),
-      }))
       .map((nft) => {
-        const searchTerm = "Issue: ";
-        const searchIndex = nft.description?.indexOf(searchTerm) ?? 0;
-        const strOut = nft.description?.substr(searchIndex + searchTerm.length);
-        const numberName = `${nft.name} #${strOut}`;
-        return { ...nft, name: numberName };
+        if (nft.description.toLowerCase().includes("eagle")) {
+          const data = artworks?.find(
+            ({ name }) => name?.toLowerCase() === "eagle"
+          );
+          const searchTerm = "Issue: ";
+          const searchIndex = nft.description?.indexOf(searchTerm) ?? 0;
+          const strOut = nft.description?.substr(
+            searchIndex + searchTerm.length
+          );
+          const numberName = `EAGLE #${strOut}`;
+          return { ...nft, ...data, name: numberName };
+        }
+        if (this.nftPictures != null) {
+          const data = artworks?.find(
+            ({ name }) => name?.toLowerCase() === "ania"
+          );
+          const imageLink = this.nftPictures[nft.assetId];
+          return { ...nft, name: nft.name, imageLink, ...data };
+        }
+        return { ...nft };
       });
     this.setStakedAccountNFTs(supportedPuzzleNft);
   };

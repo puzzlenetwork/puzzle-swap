@@ -80,17 +80,21 @@ const AccountNfts: React.FC<IProps> = () => {
                   </Button>
                 )}
                 <DetailsButton style={{ marginLeft: 8 }}>
-                  <Row alignItems="center">
-                    <LinkIcon />
-                    <SizedBox width={8} />
-                    <Text>View on SignArt</Text>
-                  </Row>
+                  <Anchor href={nft.marketLink}>
+                    <Row alignItems="center">
+                      <LinkIcon />
+                      <SizedBox width={8} />
+                      <Text>View on Market</Text>
+                    </Row>
+                  </Anchor>
                   <SizedBox height={20} />
-                  <Row alignItems="center">
-                    <LinkIcon />
-                    <SizedBox width={8} />
-                    <Text>View on Waves Explorer</Text>
-                  </Row>
+                  <Anchor href={`${EXPLORER_URL}/assets/${nft.assetId}`}>
+                    <Row alignItems="center">
+                      <LinkIcon />
+                      <SizedBox width={8} />
+                      <Text>View on Waves Explorer</Text>
+                    </Row>
+                  </Anchor>
                 </DetailsButton>
               </>
             }
@@ -123,11 +127,11 @@ const AccountNfts: React.FC<IProps> = () => {
                     <Row alignItems="center">
                       <LinkIcon />
                       <SizedBox width={8} />
-                      <Text>View on SignArt</Text>
+                      <Text>View on Market</Text>
                     </Row>
                   </Anchor>
                   <SizedBox height={20} />
-                  <Anchor href={`${EXPLORER_URL}/asset/${nft.assetId}`}>
+                  <Anchor href={`${EXPLORER_URL}/assets/${nft.assetId}`}>
                     <Row alignItems="center">
                       <LinkIcon />
                       <SizedBox width={8} />
