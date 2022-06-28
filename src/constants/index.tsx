@@ -382,7 +382,6 @@ export const NODE_URL = "https://nodes-puzzle.wavesnodes.com";
 export const EXPLORER_URL = "https://new.wavesexplorer.com";
 
 export const SLIPPAGE = 0.95; //if puzzle slippage = 0
-export const HIGH_SLIPPAGE = 0.8; //if puzzle slippage = 0
 export const TRADE_FEE = 0.95;
 
 export interface IToken {
