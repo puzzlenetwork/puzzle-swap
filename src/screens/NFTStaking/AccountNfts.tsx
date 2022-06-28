@@ -80,7 +80,13 @@ const AccountNfts: React.FC<IProps> = () => {
                   </Button>
                 )}
                 <DetailsButton style={{ marginLeft: 8 }}>
-                  <Anchor href={nft.marketLink}>
+                  <Anchor
+                    href={
+                      nft.marketLink == null
+                        ? `https://puzzlemarket.org/nft/${nft.assetId}`
+                        : nft.marketLink
+                    }
+                  >
                     <Row alignItems="center">
                       <LinkIcon />
                       <SizedBox width={8} />
@@ -123,7 +129,13 @@ const AccountNfts: React.FC<IProps> = () => {
                   </Button>
                 )}
                 <DetailsButton style={{ marginLeft: 8 }}>
-                  <Anchor href={nft.marketLink}>
+                  <Anchor
+                    href={
+                      nft.marketLink == null
+                        ? `https://puzzlemarket.org/nft/${nft.assetId}`
+                        : nft.marketLink
+                    }
+                  >
                     <Row alignItems="center">
                       <LinkIcon />
                       <SizedBox width={8} />
