@@ -6,7 +6,7 @@ import axios from "axios";
 import dayjs, { Dayjs } from "dayjs";
 import BN from "@src/utils/BN";
 import wavesCapService from "@src/services/wavesCapService";
-import { TOKENS_LIST } from "@src/constants";
+import { TOKENS_BY_SYMBOL, TOKENS_LIST } from "@src/constants";
 import transactionsService from "@src/services/transactionsService";
 
 const ctx = React.createContext<ExploreVM | null>(null);
@@ -42,12 +42,16 @@ export type TTokenDetails = {
   currentPrice: BN;
   change24H: BN;
 };
+
 class ExploreVM {
-  assetId = "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS";
+  assetId = TOKENS_BY_SYMBOL.PUZZLE.assetId;
 
   get asset() {
     return TOKENS_LIST.find(({ assetId }) => assetId === this.assetId);
   }
+
+  loading = true;
+  setLoading = (v: boolean) => (this.loading = v);
 
   chartLoading = true;
   setChartLoading = (v: boolean) => (this.chartLoading = v);
@@ -89,6 +93,7 @@ class ExploreVM {
   }
 
   public rootStore: RootStore;
+
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
@@ -102,6 +107,7 @@ class ExploreVM {
   }
 
   syncAggregatorTradesHistory = async () => {
+    this.setLoading(true);
     const txs = await transactionsService.getTransactions([
       ["func", "swap"],
       ["func", "swapWithReferral"],
@@ -113,8 +119,10 @@ class ExploreVM {
       ...this.aggregatorTradesHistory,
       ...txs,
     ] as any[]);
+    this.setLoading(false);
   };
   syncMegaPolsInvestHistory = async () => {
+    this.setLoading(true);
     const txs = await transactionsService.getTransactions([
       ["func", "unstakeAndRedeemIndex"],
       ["func", "generateIndexAndStake"],
@@ -126,6 +134,7 @@ class ExploreVM {
       ...this.megaPolsInvestHistory,
       ...txs,
     ] as any[]);
+    this.setLoading(false);
   };
 
   syncTokenDetails = async () => {

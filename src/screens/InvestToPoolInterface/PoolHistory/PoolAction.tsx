@@ -19,7 +19,7 @@ const Root = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 `;
 const Container = styled.div`
   transition: all 0.6s ease;

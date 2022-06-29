@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import React, { useMemo, useState } from "react";
 import TitleWithTips from "@components/TitleWithTips";
+import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import Scrollbar from "@components/Scrollbar";
 import Table from "@components/Table";
@@ -27,8 +28,7 @@ const AggregatorHistory: React.FC<IProps> = () => {
   const columns = React.useMemo(
     () => [
       { Header: "Details", accessor: "details" },
-      //todo rate
-      // { Header: "Rate", accessor: "rate" },
+      { Header: "Rate", accessor: "rate" },
       { Header: "Account", accessor: "account" },
       { Header: "Pool", accessor: "poolName" },
       { Header: "Time", accessor: "time" },
@@ -38,7 +38,6 @@ const AggregatorHistory: React.FC<IProps> = () => {
   useMemo(() => {
     setTr(
       vm.aggregatorTradesHistory.map((v) => {
-        console.log(v);
         return {
           details: (
             <Swap
@@ -55,8 +54,16 @@ const AggregatorHistory: React.FC<IProps> = () => {
               )}
             />
           ),
-          // rate: "1 USDN = 0.018 Puzzle",
-          account: centerEllipsis(v.sender, 6),
+          rate: (() => {
+            const sIn = TOKENS_BY_ASSET_ID[v.call.args[0].value];
+            const sOut = TOKENS_BY_ASSET_ID[v.payment[0].assetId];
+            const amount = BN.formatUnits(
+              new BN(v.call.args[1].value).div(v.payment[0].amount),
+              sIn?.decimals
+            );
+            return `1 ${sIn?.symbol} = ${amount.toString()} ${sOut?.symbol}`;
+          })(),
+          account: <Text type="blue500">{centerEllipsis(v.sender, 6)}</Text>,
           poolName: poolsStore.pools.find(({ domain }) => v.domain === domain)
             ?.title,
           time: (dayjs(v.timestamp) as any).fromNow(),
@@ -78,6 +85,7 @@ const AggregatorHistory: React.FC<IProps> = () => {
           columns={columns}
           data={tr}
           onLoadMore={vm.syncAggregatorTradesHistory}
+          loading={vm.loading}
         />
       </Scrollbar>
     </Root>
