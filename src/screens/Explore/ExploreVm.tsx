@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { makeAutoObservable, reaction } from "mobx";
+import { autorun, makeAutoObservable, reaction } from "mobx";
 import { RootStore, useStores } from "@stores";
 import axios from "axios";
 import dayjs, { Dayjs } from "dayjs";
@@ -44,7 +44,8 @@ export type TTokenDetails = {
 };
 
 class ExploreVM {
-  assetId = TOKENS_BY_SYMBOL.PUZZLE.assetId;
+  assetId: string;
+  setAssetId = (assetId: string) => (this.assetId = assetId);
 
   get asset() {
     return TOKENS_LIST.find(({ assetId }) => assetId === this.assetId);
@@ -97,6 +98,12 @@ class ExploreVM {
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
+    autorun(() => {
+      console.log(window.location.search);
+    });
+    const search = new URLSearchParams(window.location.search);
+    this.assetId = search.get("assetId") ?? TOKENS_BY_SYMBOL.PUZZLE.assetId;
+
     Promise.all([
       this.syncChart(),
       this.syncTokenDetails(),
@@ -171,6 +178,7 @@ class ExploreVM {
   syncChart = async () => {
     if (this.chartData[this.selectedChartPeriod] != null) return;
     this.setChartLoading(true);
+    console.log(this.assetId);
     const req = `https://wavescap.com/api/chart/asset/${this.assetId}-usd-n-${this.selectedChartPeriod}.json`;
     const { data } = await axios.get(req);
     this.setChartData(this.selectedChartPeriod, {

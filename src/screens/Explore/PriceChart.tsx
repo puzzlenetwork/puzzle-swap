@@ -123,7 +123,7 @@ const ageButtons = [
   { title: "1Y", value: "1y" },
   { title: "All", value: "all" },
 ];
-const PuzzlePriceChart: React.FC<IProps> = () => {
+const PriceChart: React.FC<IProps> = () => {
   const vm = useExploreVM();
   const { width: screenWidth } = useWindowSize();
   const chartWidth = screenWidth ? calcChartWidth(screenWidth) : 0;
@@ -133,7 +133,11 @@ const PuzzlePriceChart: React.FC<IProps> = () => {
     <Root>
       <TitleWrapper>
         <TitleWithTips
-          title="PUZZLE price chart"
+          title={
+            vm.asset?.symbol != null
+              ? `${vm.asset?.symbol} price chart`
+              : "Price chart"
+          }
           description=" Base token is used to provide liquidity with single asset. Also most of the LP rewards will be accumulated in this token."
         />
         <ChartAgeButtonsWrapper>
@@ -193,4 +197,4 @@ const PuzzlePriceChart: React.FC<IProps> = () => {
   );
 };
 
-export default observer(PuzzlePriceChart);
+export default observer(PriceChart);
