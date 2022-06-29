@@ -5,6 +5,13 @@ import SizedBox from "@components/SizedBox";
 import Scrollbar from "@components/Scrollbar";
 import Table from "@components/Table";
 import { observer } from "mobx-react-lite";
+import { useExploreVM } from "@screens/Explore/ExploreVm";
+import centerEllipsis from "@src/utils/centerEllipsis";
+import dayjs from "dayjs";
+import Swap from "@screens/InvestToPoolInterface/PoolHistory/Swap";
+import { TOKENS_BY_ASSET_ID } from "@src/constants";
+import BN from "@src/utils/BN";
+import { useStores } from "@stores";
 
 interface IProps {}
 
@@ -14,11 +21,14 @@ const Root = styled.div`
 `;
 
 const AggregatorHistory: React.FC<IProps> = () => {
+  const vm = useExploreVM();
+  const { poolsStore } = useStores();
   const [tr, setTr] = useState<any[]>([]);
   const columns = React.useMemo(
     () => [
       { Header: "Details", accessor: "details" },
-      { Header: "Rate", accessor: "rate" },
+      //todo rate
+      // { Header: "Rate", accessor: "rate" },
       { Header: "Account", accessor: "account" },
       { Header: "Pool", accessor: "poolName" },
       { Header: "Time", accessor: "time" },
@@ -26,15 +36,35 @@ const AggregatorHistory: React.FC<IProps> = () => {
     []
   );
   useMemo(() => {
-    const data = Array.from({ length: 5 }).map(() => ({
-      details: "",
-      rate: "1 USDN = 0.018 Puzzle",
-      account: "3P4…97K",
-      poolName: "Puzzle Pool",
-      time: "1 min ago",
-    }));
-    setTr(data);
-  }, []);
+    setTr(
+      vm.aggregatorTradesHistory.map((v) => {
+        console.log(v);
+        return {
+          details: (
+            <Swap
+              disableIcon
+              token0={TOKENS_BY_ASSET_ID[v.payment[0].assetId ?? "WAVES"]}
+              amount0={BN.formatUnits(
+                v.payment[0].amount,
+                TOKENS_BY_ASSET_ID[v.payment[0].assetId ?? "WAVES"].decimals
+              )}
+              token1={TOKENS_BY_ASSET_ID[v.call.args[0].value]}
+              amount1={BN.formatUnits(
+                v.call.args[1].value,
+                TOKENS_BY_ASSET_ID[v.call.args[0].value]?.decimals
+              )}
+            />
+          ),
+          // rate: "1 USDN = 0.018 Puzzle",
+          account: centerEllipsis(v.sender, 6),
+          poolName: poolsStore.pools.find(({ domain }) => v.domain === domain)
+            ?.title,
+          time: (dayjs(v.timestamp) as any).fromNow(),
+        };
+      })
+    );
+  }, [poolsStore.pools, vm.aggregatorTradesHistory]);
+  if (tr.length === 0) return null;
   return (
     <Root>
       <TitleWithTips
@@ -47,7 +77,7 @@ const AggregatorHistory: React.FC<IProps> = () => {
           style={{ minWidth: 900 }}
           columns={columns}
           data={tr}
-          onLoadMore={() => null}
+          onLoadMore={vm.syncAggregatorTradesHistory}
         />
       </Scrollbar>
     </Root>

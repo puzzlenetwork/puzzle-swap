@@ -7,6 +7,7 @@ import dayjs, { Dayjs } from "dayjs";
 import BN from "@src/utils/BN";
 import wavesCapService from "@src/services/wavesCapService";
 import { TOKENS_LIST } from "@src/constants";
+import transactionsService from "@src/services/transactionsService";
 
 const ctx = React.createContext<ExploreVM | null>(null);
 
@@ -51,6 +52,20 @@ class ExploreVM {
   chartLoading = true;
   setChartLoading = (v: boolean) => (this.chartLoading = v);
 
+  aggregatorTradesHistory: any[] = [];
+  setAggregatorTradesHistory = (v: any[]) => (this.aggregatorTradesHistory = v);
+
+  aggregatorTradesHistorySkip = 0;
+  setAggregatorTradesHistorySkip = (v: number) =>
+    (this.aggregatorTradesHistorySkip = v);
+
+  megaPolsInvestHistory: any[] = [];
+  setMegaPoolsInvestHistory = (v: any[]) => (this.megaPolsInvestHistory = v);
+
+  megaPolsInvestHistorySkip = 0;
+  setMegaPoolsInvestHistorySkip = (v: number) =>
+    (this.aggregatorTradesHistorySkip = v);
+
   tokenDetails: Partial<TTokenDetails> = {};
   setTokenDetails = (v: Partial<TTokenDetails>) => (this.tokenDetails = v);
 
@@ -77,10 +92,41 @@ class ExploreVM {
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
-    this.syncChart();
-    this.syncTokenDetails();
+    Promise.all([
+      this.syncChart(),
+      this.syncTokenDetails(),
+      this.syncAggregatorTradesHistory(),
+      this.syncMegaPolsInvestHistory(),
+    ]).then();
     reaction(() => this.selectedChartPeriod, this.syncChart);
   }
+
+  syncAggregatorTradesHistory = async () => {
+    const txs = await transactionsService.getTransactions([
+      ["func", "swap"],
+      ["func", "swapWithReferral"],
+      ["aggregator", true],
+      ["after", this.aggregatorTradesHistorySkip],
+    ]);
+    this.setAggregatorTradesHistorySkip(this.aggregatorTradesHistorySkip + 5);
+    this.setAggregatorTradesHistory([
+      ...this.aggregatorTradesHistory,
+      ...txs,
+    ] as any[]);
+  };
+  syncMegaPolsInvestHistory = async () => {
+    const txs = await transactionsService.getTransactions([
+      ["func", "unstakeAndRedeemIndex"],
+      ["func", "generateIndexAndStake"],
+      ["func", "generateIndexWithOneTokenAndStake"],
+      ["after", this.megaPolsInvestHistorySkip],
+    ]);
+    this.setMegaPoolsInvestHistorySkip(this.megaPolsInvestHistorySkip + 5);
+    this.setMegaPoolsInvestHistory([
+      ...this.megaPolsInvestHistory,
+      ...txs,
+    ] as any[]);
+  };
 
   syncTokenDetails = async () => {
     const assetDetails = await wavesCapService.getAssetStats(this.assetId);
