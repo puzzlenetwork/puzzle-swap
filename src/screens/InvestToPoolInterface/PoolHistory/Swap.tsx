@@ -13,20 +13,31 @@ interface IProps {
   amount0: BN;
   token1?: IToken;
   amount1: BN;
+  disableIcon?: boolean;
 }
 
 const Root = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
+  //justify-content: center;
 `;
 
-const Swap: React.FC<IProps> = ({ token0, amount0, token1, amount1 }) => {
+const Swap: React.FC<IProps> = ({
+  token0,
+  amount0,
+  token1,
+  amount1,
+  disableIcon,
+}) => {
   return (
     <Root>
-      <Img src={swap} alt="swap" />
-      <SizedBox width={12} />
+      {!disableIcon && (
+        <>
+          <Img src={swap} alt="swap" />
+          <SizedBox width={12} />
+        </>
+      )}
       {token0 && <TokenTag token={token0} amount={amount0} />}
       <SizedBox width={12} />
       <Img width="16px" height="16px" src={arrow} alt="arrow" />

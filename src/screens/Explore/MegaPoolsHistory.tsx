@@ -5,6 +5,10 @@ import { observer } from "mobx-react-lite";
 import SizedBox from "@components/SizedBox";
 import Scrollbar from "@components/Scrollbar";
 import Table from "@components/Table";
+import { useStores } from "@stores";
+import { useExploreVM } from "@screens/Explore/ExploreVm";
+import centerEllipsis from "@src/utils/centerEllipsis";
+import dayjs from "dayjs";
 
 interface IProps {}
 
@@ -14,17 +18,21 @@ const Root = styled.div`
 `;
 
 const MegaPoolsHistory: React.FC<IProps> = () => {
+  const vm = useExploreVM();
   const [tr, setTr] = useState<any[]>([]);
+  const { poolsStore } = useStores();
+
   useMemo(() => {
-    const data = Array.from({ length: 5 }).map(() => ({
+    const data = vm.megaPolsInvestHistory.map((v) => ({
       details: "",
-      poolName: "Puzzle Pool",
+      poolName: poolsStore.pools.find(({ domain }) => v.domain === domain)
+        ?.title,
       value: "$1,999.99",
-      account: "3P4…97K",
-      time: "1 min ago",
+      account: centerEllipsis(v.sender, 6),
+      time: (dayjs(v.timestamp) as any).fromNow(),
     }));
     setTr(data);
-  }, []);
+  }, [poolsStore.pools, vm.megaPolsInvestHistory]);
   const columns = React.useMemo(
     () => [
       { Header: "Details", accessor: "details" },
@@ -35,6 +43,7 @@ const MegaPoolsHistory: React.FC<IProps> = () => {
     ],
     []
   );
+  if (tr.length === 0) return null;
   return (
     <Root>
       <TitleWithTips
