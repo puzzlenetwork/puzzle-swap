@@ -38,7 +38,6 @@ const AggregatorHistory: React.FC<IProps> = () => {
   useMemo(() => {
     setTr(
       vm.aggregatorTradesHistory.map((v) => {
-        console.log(v);
         return {
           details: (
             <Swap
