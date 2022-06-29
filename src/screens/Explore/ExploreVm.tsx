@@ -37,6 +37,7 @@ export type TChartDataRecord = {
 export type TTokenDetails = {
   totalSupply: BN;
   circulatingSupply: BN;
+  totalBurned: BN;
   fullyDilutedMC: BN;
   marketCap: BN;
   currentPrice: BN;
@@ -153,6 +154,7 @@ class ExploreVM {
       currentPrice,
       fullyDilutedMC: totalSupply.times(currentPrice),
       marketCap: circulatingSupply.times(currentPrice),
+      totalBurned: totalSupply.minus(circulatingSupply),
     });
   };
 

@@ -61,9 +61,37 @@ const TokenStatistics: React.FC<IProps> = () => {
       </StyledCard>
       <StyledCard style={{ flex: 1 }}>
         <Text weight={500}>Supply</Text>
+        <Stats
+          data={[
+            {
+              title: "Total supply",
+              value: vm.tokenDetails.totalSupply?.toFormat(2),
+            },
+            {
+              title: "Circulating supply",
+              value: vm.tokenDetails.circulatingSupply?.toFormat(2),
+            },
+            {
+              title: "Total burned",
+              value: vm.tokenDetails.totalBurned?.toFormat(2),
+            },
+          ]}
+        />
       </StyledCard>
       <StyledCard style={{ flex: 1 }}>
         <Text weight={500}>Market cap</Text>
+        <Stats
+          data={[
+            {
+              title: "Fully diluted MC",
+              value: vm.tokenDetails.fullyDilutedMC?.toFormat(2),
+            },
+            {
+              title: "Market cap",
+              value: vm.tokenDetails.marketCap?.toFormat(2),
+            },
+          ]}
+        />
       </StyledCard>
     </Root>
   );
