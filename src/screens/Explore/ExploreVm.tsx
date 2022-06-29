@@ -43,6 +43,7 @@ export type TTokenDetails = {
   currentPrice: BN;
   change24H: BN;
 };
+
 class ExploreVM {
   assetId: string;
   setAssetId = (assetId: string) => (this.assetId = assetId);
@@ -50,6 +51,9 @@ class ExploreVM {
   get asset() {
     return TOKENS_LIST.find(({ assetId }) => assetId === this.assetId);
   }
+
+  loading = true;
+  setLoading = (v: boolean) => (this.loading = v);
 
   chartLoading = true;
   setChartLoading = (v: boolean) => (this.chartLoading = v);
@@ -91,6 +95,7 @@ class ExploreVM {
   }
 
   public rootStore: RootStore;
+
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
@@ -110,6 +115,7 @@ class ExploreVM {
   }
 
   syncAggregatorTradesHistory = async () => {
+    this.setLoading(true);
     const txs = await transactionsService.getTransactions([
       ["func", "swap"],
       ["func", "swapWithReferral"],
@@ -121,8 +127,10 @@ class ExploreVM {
       ...this.aggregatorTradesHistory,
       ...txs,
     ] as any[]);
+    this.setLoading(false);
   };
   syncMegaPolsInvestHistory = async () => {
+    this.setLoading(true);
     const txs = await transactionsService.getTransactions([
       ["func", "unstakeAndRedeemIndex"],
       ["func", "generateIndexAndStake"],
@@ -134,6 +142,7 @@ class ExploreVM {
       ...this.megaPolsInvestHistory,
       ...txs,
     ] as any[]);
+    this.setLoading(false);
   };
 
   syncTokenDetails = async () => {

@@ -19,7 +19,7 @@ const ExploreImpl: React.FC<IProps> = () => {
   console.log(assetId);
   useEffect(() => {
     vm.setAssetId(assetId ?? TOKENS_BY_SYMBOL.PUZZLE.assetId);
-  }, [assetId, vm, window.location.search]);
+  }, [assetId, vm]);
   return (
     <Layout>
       {assetId != null ? <ExploreTokenPage /> : <ExploreProtocolPage />}
