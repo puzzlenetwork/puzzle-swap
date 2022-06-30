@@ -168,11 +168,10 @@ export default class NftStore {
             ({ name }) => name?.toLowerCase() === "ania"
           );
           const imageLink = this.nftPictures[nft.assetId];
-          return { ...nft, name: nft.name, imageLink, ...data };
+          return { ...nft, name: nft.name, ...data, imageLink };
         }
         return { ...nft };
       });
-    console.log(supportedPuzzleNft);
     this.setStakedAccountNFTs(supportedPuzzleNft);
   };
 }
