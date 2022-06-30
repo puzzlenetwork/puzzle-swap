@@ -28,9 +28,16 @@ export default class NftStore {
 
   get accountNFTsToStake() {
     return (
-      this.accountNFTs?.filter(({ description }) =>
-        ["eagle", "ania"].some((v) => description && description.includes(v))
-      ) ?? []
+      this.accountNFTs?.filter(({ description, typeId }) => {
+        if (
+          description &&
+          typeId &&
+          description.toLowerCase().includes("eagle")
+        ) {
+          return description.includes(typeId);
+        }
+        return description && description.includes("@ania");
+      }) ?? []
     );
   }
 
@@ -112,6 +119,7 @@ export default class NftStore {
         }
         return { ...nft, imageLink };
       });
+    console.log(supportedPuzzleNft);
     this.setAccountNFTs(supportedPuzzleNft);
   };
   syncNftPics = async () => {
