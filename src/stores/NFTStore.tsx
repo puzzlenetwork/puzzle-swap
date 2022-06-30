@@ -29,14 +29,10 @@ export default class NftStore {
   get accountNFTsToStake() {
     return (
       this.accountNFTs?.filter(({ description, typeId }) => {
-        if (
-          description &&
-          typeId &&
-          description.toLowerCase().includes("eagle")
-        ) {
+        if (description && typeId) {
           return description.includes(typeId);
         }
-        return description && description.includes("@ania");
+        return false;
       }) ?? []
     );
   }
