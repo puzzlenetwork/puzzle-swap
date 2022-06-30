@@ -8,6 +8,7 @@ import noPic from "@src/assets/noCard.png";
 import BN from "@src/utils/BN";
 import Skeleton from "react-loading-skeleton";
 import Button from "@components/Button";
+import useElementSize from "@src/hooks/useElementSize";
 
 interface IProps extends IArtWork {
   buttons?: JSX.Element;
@@ -19,14 +20,16 @@ const Root = styled.div`
   background: #ffffff;
   padding: 8px;
   border-radius: 16px;
-  width: fit-content;
   justify-content: space-between;
+  @media (min-width: 604px) {
+    width: 100%;
+    max-width: 262px;
+  }
 `;
 const Img = styled.img`
   border: 1px solid #f1f2fe;
   border-radius: 12px;
   width: 100%;
-  height: 100%;
   object-fit: cover;
 `;
 const Bottom = styled.div`
@@ -47,9 +50,10 @@ const Artefact: React.FC<IProps> = ({
 }) => {
   const boostApy = new BN(apy ?? 0);
   const price = new BN(marketPrice ?? 0);
+  const [squareRef, { width }] = useElementSize();
   return (
     <Root>
-      <Img src={imageLink ?? noPic} />
+      <Img ref={squareRef} style={{ height: width }} src={imageLink ?? noPic} />
       <Bottom>
         <Row mainAxisSize="stretch" justifyContent="space-between">
           <Column crossAxisSize="max">
@@ -76,30 +80,32 @@ const Artefact: React.FC<IProps> = ({
   );
 };
 
-export const ArtefactSkeleton = () => (
-  <Root>
-    <Img src={noPic} />
-    <Bottom>
-      <Row mainAxisSize="stretch" justifyContent="space-between">
-        <Column crossAxisSize="max">
-          <Row justifyContent="space-between">
-            <Skeleton height={12} width={80} />
-            <Text type="secondary" size="small" textAlign="right">
-              Floor price
-            </Text>
-          </Row>
-          <Row justifyContent="space-between">
-            <Skeleton height={14} width={130} />
-            <Skeleton height={14} width={50} />
-          </Row>
-        </Column>
-      </Row>
-      <SizedBox height={16} />
-      <Buttons>
-        <Button size="medium" fixed disabled />
-      </Buttons>
-    </Bottom>
-  </Root>
-);
+export const ArtefactSkeleton = () => {
+  return (
+    <Root>
+      <Img src={noPic} />
+      <Bottom>
+        <Row mainAxisSize="stretch" justifyContent="space-between">
+          <Column crossAxisSize="max">
+            <Row justifyContent="space-between">
+              <Skeleton height={12} width={80} />
+              <Text type="secondary" size="small" textAlign="right">
+                Floor price
+              </Text>
+            </Row>
+            <Row justifyContent="space-between">
+              <Skeleton height={14} width={130} />
+              <Skeleton height={14} width={50} />
+            </Row>
+          </Column>
+        </Row>
+        <SizedBox height={16} />
+        <Buttons>
+          <Button size="medium" fixed disabled />
+        </Buttons>
+      </Bottom>
+    </Root>
+  );
+};
 
 export default Artefact;
