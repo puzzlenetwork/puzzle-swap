@@ -88,15 +88,16 @@ export default class NftStore {
     if (address == null || artworks == null) return;
     const nfts = await nodeService.getAddressNfts(address);
     const supportedPuzzleNft = nfts
-      .filter(({ description, name }) =>
-        ["eagle", "ania"].some((v) => description && description.includes(v))
-      )
       .map((nft) => ({
         ...nft,
         ...(artworks.find(
           ({ typeId }) => typeId && nft.description.includes(typeId)
         ) ?? []),
       }))
+      .filter(
+        ({ description, typeId }) =>
+          typeId && description && description.includes(typeId)
+      )
       .map((nft) => {
         const searchTerm = "Issue: ";
         const searchIndex = nft.description?.indexOf(searchTerm) ?? 0;
@@ -115,7 +116,6 @@ export default class NftStore {
         }
         return { ...nft, imageLink };
       });
-    console.log(supportedPuzzleNft);
     this.setAccountNFTs(supportedPuzzleNft);
   };
   syncNftPics = async () => {
@@ -172,6 +172,7 @@ export default class NftStore {
         }
         return { ...nft };
       });
+    console.log(supportedPuzzleNft);
     this.setStakedAccountNFTs(supportedPuzzleNft);
   };
 }

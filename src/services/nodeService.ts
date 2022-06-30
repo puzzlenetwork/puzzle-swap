@@ -38,6 +38,7 @@ export interface INFT {
   quantity: number;
   reissuable: boolean;
   scripted: boolean;
+  typeId?: string;
 }
 
 interface IBalance {
