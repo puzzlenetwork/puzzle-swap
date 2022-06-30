@@ -168,7 +168,7 @@ export default class NftStore {
             ({ name }) => name?.toLowerCase() === "ania"
           );
           const imageLink = this.nftPictures[nft.assetId];
-          return { ...nft, name: nft.name, ...data, imageLink };
+          return { ...nft, ...data, imageLink, name: nft.name };
         }
         return { ...nft };
       });
