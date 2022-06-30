@@ -15,10 +15,9 @@ import useWindowSize from "@src/hooks/useWindowSize";
 import dayjs from "dayjs";
 import BN from "@src/utils/BN";
 import { Row } from "@src/components/Flex";
-import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
-import Tooltip from "@components/Tooltip";
 import { TChartDataRecord, useExploreVM } from "@screens/Explore/ExploreVm";
 import Spinner from "@components/Spinner";
+import TitleWithTips from "@components/TitleWithTips";
 
 interface IProps {}
 
@@ -30,6 +29,7 @@ const Root = styled.div`
   overflow: hidden;
   width: 100%;
   flex: 2;
+
   .recharts-tooltip-item-name,
   .recharts-tooltip-item-separator {
     display: none;
@@ -74,6 +74,7 @@ const ChartAgeButtonsWrapper = styled(Row)`
   & > * {
     margin-right: 4px;
   }
+
   @media (min-width: 880px) {
     justify-content: flex-end;
   }
@@ -96,10 +97,12 @@ const ChartAgeButton = styled.div<{ selected?: boolean }>`
   color: ${({ selected }) => (selected ? "#ffffff" : "#8082C5")};
   transition: 0.4s;
   margin-top: 8px;
+
   &:hover {
     background: #7075e9;
     color: #ffffff;
   }
+
   @media (min-width: 880px) {
     margin-top: 0;
   }
@@ -120,7 +123,7 @@ const ageButtons = [
   { title: "1Y", value: "1y" },
   { title: "All", value: "all" },
 ];
-const PuzzlePriceChart: React.FC<IProps> = () => {
+const PriceChart: React.FC<IProps> = () => {
   const vm = useExploreVM();
   const { width: screenWidth } = useWindowSize();
   const chartWidth = screenWidth ? calcChartWidth(screenWidth) : 0;
@@ -129,22 +132,14 @@ const PuzzlePriceChart: React.FC<IProps> = () => {
   return (
     <Root>
       <TitleWrapper>
-        <Row alignItems="center">
-          <Text weight={500} type="secondary" style={{ width: "fit-content" }}>
-            PUZZLE price chart
-          </Text>
-          <Tooltip
-            containerStyles={{ display: "flex", alignItems: "center" }}
-            content={
-              <Text>
-                Base token is used to provide liquidity with single asset. Also
-                most of the LP rewards will be accumulated in this token.
-              </Text>
-            }
-          >
-            <InfoIcon style={{ marginLeft: 8 }} />
-          </Tooltip>
-        </Row>
+        <TitleWithTips
+          title={
+            vm.asset?.symbol != null
+              ? `${vm.asset?.symbol} price chart`
+              : "Price chart"
+          }
+          description=" Base token is used to provide liquidity with single asset. Also most of the LP rewards will be accumulated in this token."
+        />
         <ChartAgeButtonsWrapper>
           {ageButtons.map(({ title, value }) => (
             <ChartAgeButton
@@ -202,4 +197,4 @@ const PuzzlePriceChart: React.FC<IProps> = () => {
   );
 };
 
-export default observer(PuzzlePriceChart);
+export default observer(PriceChart);

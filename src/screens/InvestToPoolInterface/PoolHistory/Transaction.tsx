@@ -44,26 +44,6 @@ const Transaction: React.FC<IProps> = ({
     return null;
   }
   let amount: BN | null = BN.ZERO;
-  const getTime = () => {
-    const date1 = dayjs(timestamp);
-    const diff = Math.abs(date1.diff(dayjs(), "minute"));
-    if (diff === 0) {
-      return "just now";
-    }
-    if (diff > 0 && diff < 60) {
-      return `${diff} min ago`;
-    }
-    if (diff >= 60 && diff < 60 * 24) {
-      const v = Math.floor(diff / 60);
-      return `about ${v} hours ago`;
-    }
-    if (diff >= 1500 && diff < 60 * 24 * 7) {
-      const v = Math.floor(diff / (60 * 60));
-      return `about ${v + 1} days ago`;
-    } else {
-      return "some time ago";
-    }
-  };
 
   const draw = () => {
     switch (call?.function) {
@@ -168,7 +148,7 @@ const Transaction: React.FC<IProps> = ({
         ${amount?.toFormat(2)}
       </Text>
       <Text fitContent nowrap>
-        {getTime()}
+        {(dayjs(timestamp) as any).fromNow()}
       </Text>
     </Root>
   ) : null;

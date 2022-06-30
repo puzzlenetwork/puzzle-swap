@@ -1,30 +1,11 @@
-import styled from "@emotion/styled";
-import React from "react";
+import React, { useEffect } from "react";
 import Layout from "@components/Layout";
-import Text from "@components/Text";
-import SizedBox from "@components/SizedBox";
-import { ExploreVMProvider } from "./ExploreVm";
-import { Observer } from "mobx-react-lite";
-import BasicInformation from "@screens/Explore/BasicInformation";
+import { ExploreVMProvider, useExploreVM } from "./ExploreVm";
+import ExploreProtocolPage from "@screens/Explore/protocolPage/ExploreProtocolPage";
+import ExploreTokenPage from "@screens/Explore/tokenPage/ExploreTokenPage";
+import { TOKENS_BY_SYMBOL } from "@src/constants";
 
 interface IProps {}
-
-const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  box-sizing: border-box;
-  padding: 0 16px;
-  width: 100%;
-  min-height: 100%;
-  max-width: calc(1160px + 32px);
-  margin-bottom: 24px;
-  margin-top: 40px;
-  text-align: left;
-  @media (min-width: 880px) {
-    margin-top: 56px;
-  }
-`;
 
 // const Subtitle = styled(Text)`
 //   @media (min-width: 880px) {
@@ -32,23 +13,16 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
 //   }
 // `;
 const ExploreImpl: React.FC<IProps> = () => {
+  const vm = useExploreVM();
+  const search = new URLSearchParams(window.location.search);
+  const assetId = search.get("assetId");
+  console.log(assetId);
+  useEffect(() => {
+    vm.setAssetId(assetId ?? TOKENS_BY_SYMBOL.PUZZLE.assetId);
+  }, [assetId, vm]);
   return (
     <Layout>
-      <Observer>
-        {() => (
-          <Root>
-            <Text weight={500} size="large">
-              Explore in Puzzle Mega Pools
-            </Text>
-            {/*<SizedBox height={4} />*/}
-            {/*<Subtitle size="medium" fitContent>*/}
-            {/*  Sub-headline*/}
-            {/*</Subtitle>*/}
-            <SizedBox height={24} />
-            <BasicInformation />
-          </Root>
-        )}
-      </Observer>
+      {assetId != null ? <ExploreTokenPage /> : <ExploreProtocolPage />}
     </Layout>
   );
 };

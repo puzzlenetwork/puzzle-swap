@@ -1,12 +1,16 @@
 import React from "react";
 import { TableProps, useTable } from "react-table";
 import styled from "@emotion/styled";
+import Text from "@components/Text";
+import Loading from "@components/Loading";
 
 interface IProps extends TableProps {
   columns: any[];
   data: any[];
   fitContent?: boolean;
   onClick?: () => void;
+  onLoadMore?: () => void;
+  loading?: boolean;
 }
 
 const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
@@ -70,6 +74,8 @@ const Table: React.FC<IProps> = ({
   data,
   onClick,
   fitContent,
+  onLoadMore,
+  loading,
   ...rest
 }) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
@@ -114,6 +120,17 @@ const Table: React.FC<IProps> = ({
           })}
         </tbody>
       </table>
+      {onLoadMore != null && (
+        <Text
+          type="secondary"
+          weight={500}
+          textAlign="center"
+          style={{ cursor: "pointer", padding: "16px 0" }}
+          onClick={onLoadMore}
+        >
+          {loading ? <Loading big /> : "Load more"}
+        </Text>
+      )}
     </Root>
   );
 };

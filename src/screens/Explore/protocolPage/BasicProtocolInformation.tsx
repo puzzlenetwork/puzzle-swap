@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { Column } from "@components/Flex";
-import PuzzlePriceChart from "@screens/Explore/PuzzlePriceChart";
-import TokenInformation from "@screens/Explore/TokenInformation";
+import PriceChart from "@screens/Explore/PriceChart";
+import TokenInformation from "./TokenInformation";
 
 const Root = styled(Column)`
   width: 100%;
@@ -14,18 +14,18 @@ const Root = styled(Column)`
 
     & > :first-of-type {
       margin-bottom: 0;
-      margin-right: 40px;
+      margin-right: 24px;
     }
   }
 `;
 
-const BasicInformation = () => {
+const BasicProtocolInformation = () => {
   return (
     <Root>
-      <PuzzlePriceChart />
+      <PriceChart />
       <TokenInformation />
     </Root>
   );
 };
 
-export default BasicInformation;
+export default BasicProtocolInformation;

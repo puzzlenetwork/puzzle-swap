@@ -1,12 +1,13 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { makeAutoObservable, reaction } from "mobx";
+import { autorun, makeAutoObservable, reaction } from "mobx";
 import { RootStore, useStores } from "@stores";
 import axios from "axios";
 import dayjs, { Dayjs } from "dayjs";
 import BN from "@src/utils/BN";
 import wavesCapService from "@src/services/wavesCapService";
-import { TOKENS_LIST } from "@src/constants";
+import { TOKENS_BY_SYMBOL, TOKENS_LIST } from "@src/constants";
+import transactionsService from "@src/services/transactionsService";
 
 const ctx = React.createContext<ExploreVM | null>(null);
 
@@ -36,20 +37,40 @@ export type TChartDataRecord = {
 export type TTokenDetails = {
   totalSupply: BN;
   circulatingSupply: BN;
+  totalBurned: BN;
   fullyDilutedMC: BN;
   marketCap: BN;
   currentPrice: BN;
   change24H: BN;
 };
+
 class ExploreVM {
-  assetId = "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS";
+  assetId: string;
+  setAssetId = (assetId: string) => (this.assetId = assetId);
 
   get asset() {
     return TOKENS_LIST.find(({ assetId }) => assetId === this.assetId);
   }
 
+  loading = true;
+  setLoading = (v: boolean) => (this.loading = v);
+
   chartLoading = true;
   setChartLoading = (v: boolean) => (this.chartLoading = v);
+
+  aggregatorTradesHistory: any[] = [];
+  setAggregatorTradesHistory = (v: any[]) => (this.aggregatorTradesHistory = v);
+
+  aggregatorTradesHistorySkip = 0;
+  setAggregatorTradesHistorySkip = (v: number) =>
+    (this.aggregatorTradesHistorySkip = v);
+
+  megaPolsInvestHistory: any[] = [];
+  setMegaPoolsInvestHistory = (v: any[]) => (this.megaPolsInvestHistory = v);
+
+  megaPolsInvestHistorySkip = 0;
+  setMegaPoolsInvestHistorySkip = (v: number) =>
+    (this.aggregatorTradesHistorySkip = v);
 
   tokenDetails: Partial<TTokenDetails> = {};
   setTokenDetails = (v: Partial<TTokenDetails>) => (this.tokenDetails = v);
@@ -74,25 +95,75 @@ class ExploreVM {
   }
 
   public rootStore: RootStore;
+
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
-    this.syncChart();
-    this.syncTokenDetails();
+    autorun(() => {
+      console.log(window.location.search);
+    });
+    const search = new URLSearchParams(window.location.search);
+    this.assetId = search.get("assetId") ?? TOKENS_BY_SYMBOL.PUZZLE.assetId;
+
+    Promise.all([
+      this.syncChart(),
+      this.syncTokenDetails(),
+      this.syncAggregatorTradesHistory(),
+      this.syncMegaPolsInvestHistory(),
+    ]).then();
     reaction(() => this.selectedChartPeriod, this.syncChart);
   }
 
+  syncAggregatorTradesHistory = async () => {
+    this.setLoading(true);
+    const txs = await transactionsService.getTransactions([
+      ["func", "swap"],
+      ["func", "swapWithReferral"],
+      ["aggregator", true],
+      ["after", this.aggregatorTradesHistorySkip],
+    ]);
+    this.setAggregatorTradesHistorySkip(this.aggregatorTradesHistorySkip + 5);
+    this.setAggregatorTradesHistory([
+      ...this.aggregatorTradesHistory,
+      ...txs,
+    ] as any[]);
+    this.setLoading(false);
+  };
+  syncMegaPolsInvestHistory = async () => {
+    this.setLoading(true);
+    const txs = await transactionsService.getTransactions([
+      ["func", "unstakeAndRedeemIndex"],
+      ["func", "generateIndexAndStake"],
+      ["func", "generateIndexWithOneTokenAndStake"],
+      ["after", this.megaPolsInvestHistorySkip],
+    ]);
+    this.setMegaPoolsInvestHistorySkip(this.megaPolsInvestHistorySkip + 5);
+    this.setMegaPoolsInvestHistory([
+      ...this.megaPolsInvestHistory,
+      ...txs,
+    ] as any[]);
+    this.setLoading(false);
+  };
+
   syncTokenDetails = async () => {
     const assetDetails = await wavesCapService.getAssetStats(this.assetId);
-
     const decimals = this.asset?.decimals;
     const firstPrice = new BN(assetDetails.data?.["firstPrice_usd-n"] ?? 0);
-    const lastPrice = new BN(assetDetails.data?.["lastPrice_usd-n"] ?? 0);
+    const currentPrice = new BN(assetDetails.data?.["lastPrice_usd-n"] ?? 0);
+
+    const totalSupply = BN.formatUnits(assetDetails.totalSupply, decimals);
+    const circulatingSupply = BN.formatUnits(
+      assetDetails.circulating,
+      decimals
+    );
     this.setTokenDetails({
-      totalSupply: BN.formatUnits(assetDetails.totalSupply, decimals),
+      totalSupply,
       circulatingSupply: BN.formatUnits(assetDetails.circulating, decimals),
-      change24H: lastPrice.div(firstPrice).minus(1).times(100),
-      currentPrice: lastPrice,
+      change24H: currentPrice.div(firstPrice).minus(1).times(100),
+      currentPrice,
+      fullyDilutedMC: totalSupply.times(currentPrice),
+      marketCap: circulatingSupply.times(currentPrice),
+      totalBurned: totalSupply.minus(circulatingSupply),
     });
   };
 
@@ -109,6 +180,7 @@ class ExploreVM {
   syncChart = async () => {
     if (this.chartData[this.selectedChartPeriod] != null) return;
     this.setChartLoading(true);
+    console.log(this.assetId);
     const req = `https://wavescap.com/api/chart/asset/${this.assetId}-usd-n-${this.selectedChartPeriod}.json`;
     const { data } = await axios.get(req);
     this.setChartData(this.selectedChartPeriod, {
