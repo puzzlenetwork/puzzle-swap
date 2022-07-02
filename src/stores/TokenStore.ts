@@ -51,27 +51,27 @@ export default class TokenStore {
       });
       return [];
     });
-    const statistics = stats.map((assetDetails) => {
-      const asset = TOKENS_BY_ASSET_ID[assetDetails.id];
+    const statistics = stats.map((details) => {
+      const asset = TOKENS_BY_ASSET_ID[details.id];
       const decimals = asset.decimals;
-      const firstPrice = new BN(assetDetails.data?.["firstPrice_usd-n"] ?? 0);
-      const currentPrice = new BN(assetDetails.data?.["lastPrice_usd-n"] ?? 0);
+      const firstPrice = new BN(details.data?.["firstPrice_usd-n"] ?? 0);
+      const currentPrice = new BN(details.data?.["lastPrice_usd-n"] ?? 0);
 
-      const totalSupply = BN.formatUnits(assetDetails.totalSupply, decimals);
-      const circulatingSupply = BN.formatUnits(
-        assetDetails.circulating,
-        decimals
-      );
+      const totalSupply = BN.formatUnits(details.totalSupply, decimals);
+      const circulatingSupply = BN.formatUnits(details.circulating, decimals);
+
+      const change24H = currentPrice.div(firstPrice).minus(1).times(100);
       return {
-        assetId: assetDetails.id,
+        assetId: details.id,
         totalSupply,
-        circulatingSupply: BN.formatUnits(assetDetails.circulating, decimals),
+        circulatingSupply: BN.formatUnits(details.circulating, decimals),
         change24H: currentPrice.div(firstPrice).minus(1).times(100),
+        change24HUsd: change24H.times(currentPrice),
         currentPrice,
         fullyDilutedMC: totalSupply.times(currentPrice),
         marketCap: circulatingSupply.times(currentPrice),
         totalBurned: totalSupply.minus(circulatingSupply),
-        volume24: new BN(assetDetails["24h_vol_usd-n"]),
+        volume24: new BN(details["24h_vol_usd-n"]),
       };
     });
     this.setStatistics(statistics);

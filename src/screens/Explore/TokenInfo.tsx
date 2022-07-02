@@ -4,8 +4,9 @@ import React from "react";
 import SizedBox from "@components/SizedBox";
 import RoundTokenIcon from "@components/RoundTokenIcon";
 import tokenLogos from "@src/constants/tokenLogos";
-import { TOKENS_BY_ASSET_ID } from "@src/constants";
+import { ROUTES, TOKENS_BY_ASSET_ID } from "@src/constants";
 import BN from "@src/utils/BN";
+import { Link } from "react-router-dom";
 
 interface IProps {
   num: number;
@@ -15,24 +16,28 @@ interface IProps {
 
 const TokenInfo: React.FC<IProps> = ({ num, assetId, change }) => {
   return (
-    <Row justifyContent="space-between">
-      <Row mainAxisSize="fit-content">
-        <Text type="purple300">{num}</Text>
-        <SizedBox width={8} />
-        <RoundTokenIcon src={tokenLogos[TOKENS_BY_ASSET_ID[assetId].symbol]} />
-        <SizedBox width={8} />
-        <Text nowrap weight={500}>
-          {TOKENS_BY_ASSET_ID[assetId].name}
-        </Text>
-        <SizedBox width={8} />
-        <Text nowrap type="purple300">
-          {TOKENS_BY_ASSET_ID[assetId].symbol}
+    <Link to={ROUTES.EXPLORE_TOKEN.replace(":assetId", assetId)}>
+      <Row justifyContent="space-between">
+        <Row mainAxisSize="fit-content">
+          <Text type="purple300">{num}</Text>
+          <SizedBox width={8} />
+          <RoundTokenIcon
+            src={tokenLogos[TOKENS_BY_ASSET_ID[assetId].symbol]}
+          />
+          <SizedBox width={8} />
+          <Text nowrap weight={500}>
+            {TOKENS_BY_ASSET_ID[assetId].name}
+          </Text>
+          <SizedBox width={8} />
+          <Text nowrap type="purple300">
+            {TOKENS_BY_ASSET_ID[assetId].symbol}
+          </Text>
+        </Row>
+        <Text type={change.gt(0) ? "success" : "error"} weight={500} fitContent>
+          {change.toFormat(2)}%
         </Text>
       </Row>
-      <Text type={change.gt(0) ? "success" : "error"} weight={500} fitContent>
-        {change.toFormat(2)}%
-      </Text>
-    </Row>
+    </Link>
   );
 };
 export default TokenInfo;
