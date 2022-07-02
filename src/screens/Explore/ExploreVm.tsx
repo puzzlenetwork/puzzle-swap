@@ -68,6 +68,12 @@ class ExploreVM {
   megaPolsInvestHistory: any[] = [];
   setMegaPoolsInvestHistory = (v: any[]) => (this.megaPolsInvestHistory = v);
 
+  tokenCategoryFilter: number = 0;
+  setTokenCategoryFilter = (v: number) => (this.tokenCategoryFilter = v);
+
+  tokenUserFilter: number = 0;
+  setUserFilter = (v: number) => (this.tokenUserFilter = v);
+
   megaPolsInvestHistorySkip = 0;
   setMegaPoolsInvestHistorySkip = (v: number) =>
     (this.aggregatorTradesHistorySkip = v);

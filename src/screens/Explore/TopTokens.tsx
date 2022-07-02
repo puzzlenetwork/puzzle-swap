@@ -4,6 +4,7 @@ import Card from "@components/Card";
 import Text from "@components/Text";
 import { TOKENS_BY_SYMBOL } from "@src/constants";
 import TokenInfo from "@screens/Explore/TokenInfo";
+import { observer } from "mobx-react-lite";
 
 interface IProps {}
 
@@ -62,4 +63,4 @@ const TopTokens: React.FC<IProps> = () => {
     </Root>
   );
 };
-export default TopTokens;
+export default observer(TopTokens);

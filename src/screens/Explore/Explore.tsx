@@ -8,6 +8,7 @@ import ExploreLayout from "@screens/Explore/ExploreLayout";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import TopTokens from "./TopTokens";
+import TokensTable from "./TokensTable";
 
 interface IProps {}
 
@@ -32,6 +33,8 @@ const ExploreImpl: React.FC<IProps> = () => {
         </Text>
         <SizedBox height={24} />
         <TopTokens />
+        <SizedBox height={56} />
+        <TokensTable />
         {/*<BasicProtocolInformation />*/}
         {/*<SizedBox height={24} />*/}
         {/*<AggregatorHistory />*/}
