@@ -42,9 +42,9 @@ const MobileTokenTableRow: React.FC<IProps> = ({ token, fav }) => {
           </Column>
         </Row>
       </Row>
-      <Column justifyContent="flex-end">
-        <Text>$ 1</Text>
-        <Text nowrap type="success" size="small">
+      <Column justifyContent="flex-end" crossAxisSize="max">
+        <Text fitContent>$ 1</Text>
+        <Text fitContent nowrap type="success" size="small">
           + 0%
         </Text>
       </Column>
