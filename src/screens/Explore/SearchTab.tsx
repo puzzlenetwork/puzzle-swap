@@ -3,14 +3,7 @@ import React, { useState } from "react";
 import Input from "@components/Input";
 import Select from "@components/Select";
 import SizedBox from "@components/SizedBox";
-import Divider from "@components/Divider";
-import Button from "@components/Button";
-import { ROUTES } from "@src/constants";
-import { ReactComponent as Add } from "@src/assets/icons/whiteAdd.svg";
 import { Row } from "@components/Flex";
-import Text from "@components/Text";
-import close from "@src/assets/icons/primaryBlue16CloseIcon.svg";
-import useWindowSize from "@src/hooks/useWindowSize";
 import { useExploreVM } from "@screens/Explore/ExploreVm";
 import { observer } from "mobx-react-lite";
 
@@ -25,7 +18,6 @@ const Root = styled.div`
   @media (min-width: 880px) {
     flex-direction: row;
     justify-content: space-between;
-    //justify-content: revert;
   }
 `;
 const Filters = styled.div`
@@ -96,7 +88,7 @@ const SearchTab: React.FC = () => {
             options={categoriesOptions}
             selected={categoriesOptions[vm.tokenCategoryFilter]}
             onSelect={({ key }) => {
-              const index = categoriesOptions.findIndex((o) => o.key === key);
+              // const index = categoriesOptions.findIndex((o) => o.key === key);
               // vm.setPoolCategoryFilter(index);
             }}
           />
@@ -105,7 +97,7 @@ const SearchTab: React.FC = () => {
             options={createdByOptions}
             selected={createdByOptions[vm.tokenUserFilter]}
             onSelect={({ key }) => {
-              const index = createdByOptions.findIndex((o) => o.key === key);
+              // const index = createdByOptions.findIndex((o) => o.key === key);
               // vm.setCustomPoolFilter(index);
             }}
           />

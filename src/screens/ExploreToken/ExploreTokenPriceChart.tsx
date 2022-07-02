@@ -15,7 +15,7 @@ import useWindowSize from "@src/hooks/useWindowSize";
 import dayjs from "dayjs";
 import BN from "@src/utils/BN";
 import { Row } from "@src/components/Flex";
-import { TChartDataRecord, useExploreVM } from "@screens/Explore/ExploreVm";
+import { TChartDataRecord } from "@screens/Explore/ExploreVm";
 import Spinner from "@components/Spinner";
 import TitleWithTips from "@components/TitleWithTips";
 import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";

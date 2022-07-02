@@ -13,10 +13,12 @@ import { Row } from "@src/components/Flex";
 import Button from "@components/Button";
 import { useNavigate } from "react-router-dom";
 import useHover from "@src/hooks/useHover";
+import BN from "@src/utils/BN";
 
 interface IProps {
   token: IToken;
   fav: boolean;
+  change?: BN;
   handleWatchListChange: (assetId: string) => void;
 }
 
@@ -33,6 +35,7 @@ const Fav = styled.img`
 const DesktopTokenTableRow: React.FC<IProps> = ({
   token,
   fav,
+  change,
   handleWatchListChange,
 }) => {
   const navigate = useNavigate();
@@ -66,7 +69,13 @@ const DesktopTokenTableRow: React.FC<IProps> = ({
         </Text>
       </Row>
       <Text>$ 1</Text>
-      <Text>+ 1 %</Text>
+      {change != null ? (
+        <Text type={change?.gt(0) ? "success" : "error"}>
+          {change.toFormat(2)} %
+        </Text>
+      ) : (
+        <Text>no stat</Text>
+      )}
       <Text>$ 12,048,217</Text>
       <Button
         onClick={() => navigate(`/trade?asset1=${token.assetId}`)}

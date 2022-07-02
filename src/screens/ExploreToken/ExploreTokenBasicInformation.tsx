@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import { Column } from "@components/Flex";
-import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
 import Card from "@components/Card";
 import ExploreTokenPriceChart from "@screens/ExploreToken/ExploreTokenPriceChart";
 

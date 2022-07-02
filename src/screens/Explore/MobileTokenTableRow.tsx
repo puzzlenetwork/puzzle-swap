@@ -8,10 +8,12 @@ import { IToken } from "@src/constants";
 import tokenLogos from "@src/constants/tokenLogos";
 import { Column, Row } from "@src/components/Flex";
 import Text from "@components/Text";
+import BN from "@src/utils/BN";
 
 interface IProps {
   token: IToken;
   fav: boolean;
+  change?: BN;
   handleWatchListChange: (assetId: string) => void;
 }
 
@@ -30,6 +32,7 @@ const MobileTokenTableRow: React.FC<IProps> = ({
   token,
   fav,
   handleWatchListChange,
+  change,
 }) => {
   return (
     <Root className="gridRow">
@@ -52,8 +55,13 @@ const MobileTokenTableRow: React.FC<IProps> = ({
       </Row>
       <Column justifyContent="flex-end" crossAxisSize="max">
         <Text fitContent>$ 1</Text>
-        <Text fitContent nowrap type="success" size="small">
-          + 0%
+        <Text
+          fitContent
+          nowrap
+          type={change?.gt(0) ? "success" : "error"}
+          size="small"
+        >
+          {change}%
         </Text>
       </Column>
     </Root>

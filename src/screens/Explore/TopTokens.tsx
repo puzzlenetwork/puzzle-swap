@@ -36,7 +36,7 @@ const TopTokens: React.FC<IProps> = () => {
         <TokensContainer>
           {vm.top3Gainers.map((v, index) => (
             <TokenInfo
-              key={index}
+              key={v.assetId}
               num={index + 1}
               assetId={v.assetId}
               change={v.change24H}
@@ -49,7 +49,7 @@ const TopTokens: React.FC<IProps> = () => {
         <TokensContainer>
           {vm.top3Losers.map((v, index) => (
             <TokenInfo
-              key={index}
+              key={v.assetId}
               num={index + 1}
               assetId={v.assetId}
               change={v.change24H}
