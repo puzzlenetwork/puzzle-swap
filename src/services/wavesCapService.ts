@@ -4,6 +4,7 @@ interface IAssetResponse {
   id: string;
   totalSupply: number;
   circulating: number;
+  "24h_vol_usd-n": number;
   data: {
     "firstPrice_usd-n": number;
     "lastPrice_usd-n": number;
