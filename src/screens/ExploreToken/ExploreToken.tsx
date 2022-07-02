@@ -11,12 +11,12 @@ import { Link, Navigate, useParams } from "react-router-dom";
 import { ROUTES, TOKENS_BY_ASSET_ID } from "@src/constants";
 import { Row } from "@components/Flex";
 import { ReactComponent as ArrowBackIcon } from "@src/assets/icons/backArrow.svg";
+import ExploreTokenBasicInformation from "@screens/ExploreToken/ExploreTokenBasicInformation";
 
 interface IProps {}
 
 const ExploreTokenImpl: React.FC<IProps> = () => {
   const vm = useExploreTokenVM();
-  console.log(vm.asset);
   return (
     <Layout>
       <ExploreLayout>
@@ -33,6 +33,7 @@ const ExploreTokenImpl: React.FC<IProps> = () => {
           {vm.asset.name} ({vm.asset.symbol})
         </Text>
         <SizedBox height={40} />
+        <ExploreTokenBasicInformation />
       </ExploreLayout>
     </Layout>
   );

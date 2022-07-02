@@ -12,7 +12,7 @@ type TTextType =
 type TTextSize = "small" | "medium" | "large";
 type TTextAlign = "center" | "left" | "right" | "justify";
 
-const Text = styled.div<{
+const Text = styled.p<{
   type?: TTextType;
   weight?: 400 | 500;
   size?: TTextSize;
@@ -20,6 +20,7 @@ const Text = styled.div<{
   nowrap?: boolean;
   textAlign?: TTextAlign;
 }>`
+  margin: 0;
   width: ${({ fitContent }) => (fitContent ? "fit-content" : "100%")};
   font-weight: ${({ weight }) => weight ?? 400};
   white-space: ${({ nowrap }) => (nowrap ? "nowrap" : "unset")};

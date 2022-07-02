@@ -114,7 +114,7 @@ export default class PoolsStore {
     if (pool.tokens.some(({ assetId }) => assetId === usdn)) {
       return pool.currentPrice(assetId, usdn, coefficient);
     } else if (pool.tokens.some(({ assetId }) => assetId === puzzle)) {
-      const puzzleRate = tokenStore.statisticsByAssetId[puzzle].currentPrice;
+      const puzzleRate = tokenStore.statisticsByAssetId[puzzle]?.currentPrice;
       const priceInPuzzle = pool.currentPrice(assetId, puzzle, coefficient);
       return priceInPuzzle != null && puzzleRate != null
         ? priceInPuzzle.times(puzzleRate)
