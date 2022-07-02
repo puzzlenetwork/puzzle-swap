@@ -2,8 +2,12 @@ import styled from "@emotion/styled";
 import React from "react";
 import Card from "@components/Card";
 import Text from "@components/Text";
-import { TOKENS_BY_SYMBOL } from "@src/constants";
+import { TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL } from "@src/constants";
 import TokenInfo from "@screens/Explore/TokenInfo";
+import SizedBox from "@components/SizedBox";
+import { Row } from "@components/Flex";
+import RoundTokenIcon from "@components/RoundTokenIcon";
+import tokenLogos from "@src/constants/tokenLogos";
 
 interface IProps {}
 
@@ -39,13 +43,17 @@ const TopTokens: React.FC<IProps> = () => {
     <Root>
       <Card>
         <Title>Biggest gainers</Title>
-        {top.map(() => (
-          <div></div>
-          // <TokenInfo />
+        <SizedBox height={16} />
+        {top.map((v, index) => (
+          <TokenInfo {...v} num={index + 1} />
         ))}
       </Card>
       <Card>
         <Title>Biggest losers</Title>
+        <SizedBox height={16} />
+        {top.map((v, index) => (
+          <TokenInfo {...v} num={index + 1} />
+        ))}
       </Card>
     </Root>
   );

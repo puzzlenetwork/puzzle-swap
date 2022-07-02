@@ -6,6 +6,7 @@ type TTextType =
   | "light"
   | "blue500"
   | "error"
+  | "success"
   | "purple650"
   | "purple300";
 type TTextSize = "small" | "medium" | "large";
@@ -36,6 +37,8 @@ const Text = styled.div<{
           return "color: #ffffff;";
         case "error":
           return "color: #ED827E;";
+        case "success":
+          return "color: #35A15A;";
         case "purple650":
           return "color: #C6C9F4;";
         case "purple300":
