@@ -13,8 +13,7 @@ import { useStores } from "@stores";
 import { tokenCategoriesEnum } from "@components/TokensSelectModal/TokenSelectModal";
 import { useExploreVM } from "@screens/Explore/ExploreVm";
 import BN from "@src/utils/BN";
-import TextButton from "@components/TextButton";
-import { Column, Row } from "@src/components/Flex";
+import { Column } from "@src/components/Flex";
 import Text from "@components/Text";
 import { ReactComponent as NotFoundIcon } from "@src/assets/notFound.svg";
 
@@ -48,7 +47,7 @@ const TokensTable: React.FC<IProps> = () => {
       });
     }
   };
-  const [displayedTokens, setDisplayedTokens] = useState(10);
+  // const [displayedTokens, setDisplayedTokens] = useState(10);
   const [filteredTokens, setFilteredTokens] = useState<IToken[]>([]);
   useMemo(() => {
     const data = vm.assetsWithStats

@@ -40,17 +40,16 @@ const MobileTokenTableRow: React.FC<IProps> = ({
   const navigate = useNavigate();
   return (
     <Root className="gridRow">
-      <Row
-        alignItems="center"
-        onClick={() => navigate(`/explore/token/${token.assetId}`)}
-        style={{ cursor: "pointer" }}
-      >
+      <Row alignItems="center">
         <Fav
           src={fav ? starred : star}
           onClick={() => handleWatchListChange(token.assetId)}
         />
         <SizedBox width={18} />
-        <Row>
+        <Row
+          onClick={() => navigate(`/explore/token/${token.assetId}`)}
+          style={{ cursor: "pointer" }}
+        >
           <SquareTokenIcon src={tokenLogos[token.symbol]} size="small" />
           <SizedBox width={18} />
           <Column>

@@ -47,10 +47,7 @@ const DesktopTokenTableRow: React.FC<IProps> = ({
   const isHover = useHover(hoverRef);
   return (
     <Root className="gridRow">
-      <Row
-        onClick={() => navigate(`/explore/token/${token.assetId}`)}
-        style={{ cursor: "pointer" }}
-      >
+      <Row>
         <Fav
           src={
             fav
@@ -65,15 +62,20 @@ const DesktopTokenTableRow: React.FC<IProps> = ({
           onClick={() => handleWatchListChange(token.assetId)}
         />
         <SizedBox width={18} />
-        <RoundTokenIcon src={tokenLogos[token.symbol]} />
-        <SizedBox width={18} />
-        <Text nowrap weight={500} fitContent>
-          {token.name}
-        </Text>
-        <SizedBox width={18} />
-        <Text nowrap type="purple650" fitContent>
-          {token.symbol}
-        </Text>
+        <Row
+          onClick={() => navigate(`/explore/token/${token.assetId}`)}
+          style={{ cursor: "pointer" }}
+        >
+          <RoundTokenIcon src={tokenLogos[token.symbol]} />
+          <SizedBox width={18} />
+          <Text nowrap weight={500} fitContent>
+            {token.name}
+          </Text>
+          <SizedBox width={18} />
+          <Text nowrap type="purple650" fitContent>
+            {token.symbol}
+          </Text>
+        </Row>
       </Row>
       <Text>$ {rate?.toFormat(2)}</Text>
       {change != null ? (
