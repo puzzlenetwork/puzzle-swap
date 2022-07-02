@@ -5,11 +5,12 @@ import SizedBox from "@components/SizedBox";
 import RoundTokenIcon from "@components/RoundTokenIcon";
 import tokenLogos from "@src/constants/tokenLogos";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
+import BN from "@src/utils/BN";
 
 interface IProps {
   num: number;
   assetId: string;
-  change: number;
+  change: BN;
 }
 
 const TokenInfo: React.FC<IProps> = ({ num, assetId, change }) => {
@@ -28,8 +29,8 @@ const TokenInfo: React.FC<IProps> = ({ num, assetId, change }) => {
           {TOKENS_BY_ASSET_ID[assetId].symbol}
         </Text>
       </Row>
-      <Text type={change > 0 ? "success" : "error"} weight={500} fitContent>
-        {change}%
+      <Text type={change.gt(0) ? "success" : "error"} weight={500} fitContent>
+        {change.toFormat(2)}%
       </Text>
     </Row>
   );

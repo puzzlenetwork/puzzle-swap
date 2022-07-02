@@ -42,7 +42,7 @@ export default class TokenStore {
     index !== -1 && this.watchList.splice(index, 1);
   };
 
-  syncTokenStatistics = async () => {
+  private syncTokenStatistics = async () => {
     const { notificationStore } = this.rootStore;
     const assets = TOKENS_LIST.map(({ assetId }) => assetId);
     const stats = await wavesCapService.getAssetsStats(assets).catch((e) => {
@@ -71,13 +71,13 @@ export default class TokenStore {
         fullyDilutedMC: totalSupply.times(currentPrice),
         marketCap: circulatingSupply.times(currentPrice),
         totalBurned: totalSupply.minus(circulatingSupply),
+        volume24: new BN(assetDetails["24h_vol_usd-n"]),
       };
     });
     this.setStatistics(statistics);
   };
 
   constructor(rootStore: RootStore, initState?: ISerializedTokenStore) {
-    console.log("OK");
     this.rootStore = rootStore;
     makeAutoObservable(this);
     this.watchList = initState?.watchList ?? [];

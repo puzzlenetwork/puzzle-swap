@@ -163,4 +163,18 @@ class ExploreVM {
     });
     this.setChartLoading(false);
   };
+  //----------------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------------------
+  get top3Gainers() {
+    return this.rootStore.tokenStore.statistics
+      .slice()
+      .sort((a, b) => (a.change24H.gt(b.change24H) ? -1 : 1))
+      .slice(0, 3);
+  }
+  get top3Losers() {
+    return this.rootStore.tokenStore.statistics
+      .slice()
+      .sort((a, b) => (a.change24H.gt(b.change24H) ? 1 : -1))
+      .slice(0, 3);
+  }
 }
