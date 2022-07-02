@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import React from "react";
 import Text from "@components/Text";
 import Card from "@components/Card";
-import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
 import {
   Line,
@@ -15,22 +14,16 @@ import useWindowSize from "@src/hooks/useWindowSize";
 import dayjs from "dayjs";
 import BN from "@src/utils/BN";
 import { Row } from "@src/components/Flex";
-import { TChartDataRecord } from "@screens/Explore/ExploreVm";
 import Spinner from "@components/Spinner";
-import TitleWithTips from "@components/TitleWithTips";
 import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
+import ChartAgeButtons from "@screens/ExploreToken/ChartAgeButtons";
 
 interface IProps {}
 
-const Root = styled.div`
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  transition: 0.4s;
-  overflow: hidden;
-  width: 100%;
+const Root = styled(Card)`
+  padding: 0 !important;
+  min-height: 436px;
   flex: 2;
-
   .recharts-tooltip-item-name,
   .recharts-tooltip-item-separator {
     display: none;
@@ -48,82 +41,59 @@ const Root = styled.div`
   .recharts-tooltip-cursor {
     stroke: #7075e9;
   }
+
+  @media (min-width: 880px) {
+    min-height: 402px;
+  }
+`;
+
+const Header = styled(Row)`
+  border-bottom: 1px solid #f1f2fe;
+  padding: 12px 16px;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  .age-btns {
+    display: none;
+  }
+  @media (min-width: 880px) {
+    .age-btns {
+      display: flex;
+    }
+    padding: 20px 24px;
+  }
+`;
+
+const Body = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 24px;
+  flex: 1;
+`;
+
+const Footer = styled(Header)`
+  border-bottom: none;
+  border-top: 1px solid #f1f2fe;
+  display: flex;
+  @media (min-width: 880px) {
+    display: none;
+  }
 `;
 
 const calcChartWidth = (screenWidth: number) => {
   switch (true) {
     case screenWidth > 1160 + 32:
-      return 698;
+      return 674;
     case screenWidth <= 1160 + 32 && screenWidth >= 880:
       return ((screenWidth - 32 - 40) / 3) * 2 - 48;
     case screenWidth < 880:
-      return screenWidth - 82;
+      return screenWidth - 80;
   }
 };
 
-const TitleWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-
-  @media (min-width: 880px) {
-    flex-direction: row;
-    align-items: center;
-  }
-`;
-
-const ChartAgeButtonsWrapper = styled(Row)`
-  & > * {
-    margin-right: 4px;
-  }
-
-  @media (min-width: 880px) {
-    justify-content: flex-end;
-  }
-`;
-
-const ChartAgeButton = styled.div<{ selected?: boolean }>`
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 8px;
-  box-sizing: border-box;
-  height: 24px;
-  background: ${({ selected }) => (selected ? "#7075e9" : "transparent")};
-  border-radius: 6px;
-
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 20px;
-  color: ${({ selected }) => (selected ? "#ffffff" : "#8082C5")};
-  transition: 0.4s;
-  margin-top: 8px;
-
-  &:hover {
-    background: #7075e9;
-    color: #ffffff;
-  }
-
-  @media (min-width: 880px) {
-    margin-top: 0;
-  }
-`;
-
-const StyledCard = styled(Card)`
-  height: 320px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-`;
-
-const ageButtons = [
-  { title: "1D", value: "1d" },
-  { title: "7D", value: "1w" },
-  { title: "1M", value: "1m" },
-  { title: "3M", value: "3m" },
-  { title: "1Y", value: "1y" },
-  { title: "All", value: "all" },
-];
 const ExploreTokenPriceChart: React.FC<IProps> = () => {
   const vm = useExploreTokenVM();
   const { width: screenWidth } = useWindowSize();
@@ -132,37 +102,19 @@ const ExploreTokenPriceChart: React.FC<IProps> = () => {
   const chartMax = Math.max(...vm.chart.map(({ volume }) => volume));
   return (
     <Root>
-      <TitleWrapper>
-        <TitleWithTips
-          title={
-            vm.asset?.symbol != null
-              ? `${vm.asset?.symbol} price chart`
-              : "Price chart"
-          }
-          description=" Base token is used to provide liquidity with single asset. Also most of the LP rewards will be accumulated in this token."
+      <Header>
+        <Text weight={500}>{vm.asset.symbol} to USDN chart</Text>
+        <ChartAgeButtons
+          className="age-btns"
+          value={vm.selectedChartPeriod}
+          onChange={vm.setSelectedChartPeriod}
         />
-        <ChartAgeButtonsWrapper>
-          {ageButtons.map(({ title, value }) => (
-            <ChartAgeButton
-              key={value}
-              selected={vm.selectedChartPeriod === value}
-              onClick={() =>
-                vm.setSelectedChartPeriod(value as keyof TChartDataRecord)
-              }
-            >
-              {title}
-            </ChartAgeButton>
-          ))}
-        </ChartAgeButtonsWrapper>
-      </TitleWrapper>
-      <SizedBox height={8} />
-      {vm.chartLoading ? (
-        <StyledCard>
+      </Header>
+      <Body>
+        {vm.chartLoading ? (
           <Spinner />
-        </StyledCard>
-      ) : (
-        <StyledCard>
-          <LineChart width={chartWidth} height={285} data={vm.chart}>
+        ) : (
+          <LineChart width={chartWidth} height={280} data={vm.chart}>
             <YAxis hide domain={[chartMin * 0.99, chartMax * 1.01]} />
             <XAxis
               tickLine={false}
@@ -192,8 +144,14 @@ const ExploreTokenPriceChart: React.FC<IProps> = () => {
               strokeWidth={2}
             />
           </LineChart>
-        </StyledCard>
-      )}
+        )}
+      </Body>
+      <Footer>
+        <ChartAgeButtons
+          value={vm.selectedChartPeriod}
+          onChange={vm.setSelectedChartPeriod}
+        />
+      </Footer>
     </Root>
   );
 };
