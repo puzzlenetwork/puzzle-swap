@@ -23,6 +23,8 @@ const TokensTable: React.FC<IProps> = () => {
   const { tokenStore, accountStore, notificationStore } = useStores();
   const { width } = useWindowSize();
   const handleWatchListChange = (assetId: string) => {
+    const watchListText =
+      'Keep track of your favorite coins by turning on the "Watchlist" filter above the table';
     if (accountStore.address == null) {
       //todo change to dialog notification
       notificationStore.notify(
@@ -33,17 +35,16 @@ const TokensTable: React.FC<IProps> = () => {
     const tokenStatus = tokenStore.watchList.includes(assetId);
     if (tokenStatus) {
       tokenStore.removeFromWatchList(assetId);
-      console.log("remove");
-      notificationStore.notify(
-        "Connect your wallet to add tokens to the watchlist",
-        { type: "error" }
-      );
+      notificationStore.notify(watchListText, {
+        type: "info",
+        title: `${TOKENS_BY_ASSET_ID[assetId].symbol} has been removed to the watchlist`,
+      });
     } else {
       tokenStore.addToWatchList(assetId);
-      notificationStore.notify(
-        `${TOKENS_BY_ASSET_ID[assetId].symbol} has been added to the watchlist`,
-        { type: "error" }
-      );
+      notificationStore.notify(watchListText, {
+        type: "success",
+        title: `${TOKENS_BY_ASSET_ID[assetId].symbol} has been added to the watchlist`,
+      });
     }
   };
   const [displayedTokens, setDisplayedTokens] = useState(10);

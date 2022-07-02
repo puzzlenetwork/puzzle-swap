@@ -1,7 +1,9 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useRef } from "react";
 import star from "@src/assets/icons/star.svg";
+import starHover from "@src/assets/icons/star-hover.svg";
 import starred from "@src/assets/icons/filled-star.svg";
+import starredHovered from "@src/assets/icons/filled-star-hover.svg";
 import SizedBox from "@components/SizedBox";
 import { IToken } from "@src/constants";
 import tokenLogos from "@src/constants/tokenLogos";
@@ -10,6 +12,7 @@ import Text from "@components/Text";
 import { Row } from "@src/components/Flex";
 import Button from "@components/Button";
 import { useNavigate } from "react-router-dom";
+import useHover from "@src/hooks/useHover";
 
 interface IProps {
   token: IToken;
@@ -33,11 +36,22 @@ const DesktopTokenTableRow: React.FC<IProps> = ({
   handleWatchListChange,
 }) => {
   const navigate = useNavigate();
+  const hoverRef = useRef(null);
+  const isHover = useHover(hoverRef);
   return (
     <Root className="gridRow">
       <Row>
         <Fav
-          src={fav ? starred : star}
+          src={
+            fav
+              ? isHover
+                ? starredHovered
+                : starred
+              : isHover
+              ? starHover
+              : star
+          }
+          ref={hoverRef}
           onClick={() => handleWatchListChange(token.assetId)}
         />
         <SizedBox width={18} />
