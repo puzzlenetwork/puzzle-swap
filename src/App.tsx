@@ -20,6 +20,7 @@ import SendAssetModal from "@components/Wallet/SendAssetModal";
 import { ROUTES } from "./constants";
 import CreateCustomPools from "./screens/CreateCustomPools";
 import Explore from "@screens/Explore";
+import ExploreToken from "@screens/ExploreToken";
 
 const Root = styled(Column)`
   width: 100%;
@@ -40,7 +41,10 @@ const App: React.FC = () => {
         <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
         {/* Stake */}
         <Route path={ROUTES.STAKE} element={<Staking />} />
+
+        {/* Explore */}
         <Route path={ROUTES.EXPLORE} element={<Explore />} />
+        <Route path={ROUTES.EXPLORE_TOKEN} element={<ExploreToken />} />
 
         {/* Swap routes */}
         <Route path={ROUTES.POOL_SWAP} element={<MultiSwapInterface />} />

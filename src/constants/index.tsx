@@ -9,6 +9,7 @@ export const ROUTES = {
   STAKE: "/stake",
   TRADE: "/trade",
   EXPLORE: "/explore",
+  EXPLORE_TOKEN: "/explore/token/:assetId",
   INVEST: "/invest",
   ULTRASTAKE: "/ultrastake",
   WALLET: "/wallet",
