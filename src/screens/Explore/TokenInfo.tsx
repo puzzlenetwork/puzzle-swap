@@ -16,8 +16,8 @@ interface IProps {
 
 const TokenInfo: React.FC<IProps> = ({ num, assetId, change }) => {
   return (
-    <Link to={ROUTES.EXPLORE_TOKEN.replace(":assetId", assetId)}>
-      <Row justifyContent="space-between">
+    <Row justifyContent="space-between">
+      <Link to={ROUTES.EXPLORE_TOKEN.replace(":assetId", assetId)}>
         <Row mainAxisSize="fit-content">
           <Text type="purple300">{num}</Text>
           <SizedBox width={8} />
@@ -33,11 +33,11 @@ const TokenInfo: React.FC<IProps> = ({ num, assetId, change }) => {
             {TOKENS_BY_ASSET_ID[assetId].symbol}
           </Text>
         </Row>
-        <Text type={change.gt(0) ? "success" : "error"} weight={500} fitContent>
-          {change.toFormat(2)}%
-        </Text>
-      </Row>
-    </Link>
+      </Link>
+      <Text type={change.gt(0) ? "success" : "error"} weight={500} fitContent>
+        {change.toFormat(2)}%
+      </Text>
+    </Row>
   );
 };
 export default TokenInfo;
