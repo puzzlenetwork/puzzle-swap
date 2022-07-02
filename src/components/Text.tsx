@@ -6,6 +6,7 @@ type TTextType =
   | "light"
   | "blue500"
   | "error"
+  | "purple650"
   | "purple300";
 type TTextSize = "small" | "medium" | "large";
 type TTextAlign = "center" | "left" | "right" | "justify";
@@ -35,6 +36,8 @@ const Text = styled.div<{
           return "color: #ffffff;";
         case "error":
           return "color: #ED827E;";
+        case "purple650":
+          return "color: #C6C9F4;";
         case "purple300":
           return "color: #C6C9F4;";
         default:

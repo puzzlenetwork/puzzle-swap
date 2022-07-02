@@ -104,7 +104,7 @@ const Header: React.FC<IProps> = () => {
   };
 
   const menuItems = [
-    // { name: "Explore", link: ROUTES.EXPLORE },
+    { name: "Explore", link: ROUTES.EXPLORE },
     { name: "Trade", link: ROUTES.TRADE },
     { name: "Invest", link: ROUTES.INVEST },
     { name: "Stake", link: ROUTES.STAKE },
