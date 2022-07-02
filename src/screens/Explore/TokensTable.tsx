@@ -5,7 +5,7 @@ import SearchTab from "./SearchTab";
 import SizedBox from "@components/SizedBox";
 import GridTable from "@components/GridTable";
 import Card from "@components/Card";
-import { TOKENS_BY_ASSET_ID, TOKENS_LIST } from "@src/constants";
+import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import useWindowSize from "@src/hooks/useWindowSize";
 import DesktopTokenTableRow from "./DesktopTokenTableRow";
 import MobileTokenTableRow from "@screens/Explore/MobileTokenTableRow";
@@ -13,7 +13,6 @@ import { useStores } from "@stores";
 import { tokenCategoriesEnum } from "@components/TokensSelectModal/TokenSelectModal";
 import { useExploreVM } from "@screens/Explore/ExploreVm";
 import BN from "@src/utils/BN";
-import { AdaptiveRow, Row } from "@src/components/Flex";
 
 interface IProps {}
 
