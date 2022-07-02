@@ -5,7 +5,6 @@ import { RootStore, useStores } from "@stores";
 import axios from "axios";
 import dayjs, { Dayjs } from "dayjs";
 import BN from "@src/utils/BN";
-import wavesCapService from "@src/services/wavesCapService";
 import { TOKENS_BY_SYMBOL, TOKENS_LIST } from "@src/constants";
 import transactionsService from "@src/services/transactionsService";
 
@@ -32,16 +31,6 @@ export type TChartDataRecord = {
   "3m"?: TChartData;
   "1y"?: TChartData;
   all?: TChartData;
-};
-
-export type TTokenDetails = {
-  totalSupply: BN;
-  circulatingSupply: BN;
-  totalBurned: BN;
-  fullyDilutedMC: BN;
-  marketCap: BN;
-  currentPrice: BN;
-  change24H: BN;
 };
 
 class ExploreVM {
@@ -78,8 +67,9 @@ class ExploreVM {
   setMegaPoolsInvestHistorySkip = (v: number) =>
     (this.aggregatorTradesHistorySkip = v);
 
-  tokenDetails: Partial<TTokenDetails> = {};
-  setTokenDetails = (v: Partial<TTokenDetails>) => (this.tokenDetails = v);
+  get tokenDetails() {
+    return this.rootStore.tokenStore.statisticsByAssetId[this.assetId] ?? {};
+  }
 
   selectedChartPeriod: keyof TChartDataRecord = "1d";
   setSelectedChartPeriod = (v: keyof TChartDataRecord) =>
@@ -113,7 +103,6 @@ class ExploreVM {
 
     Promise.all([
       this.syncChart(),
-      this.syncTokenDetails(),
       this.syncAggregatorTradesHistory(),
       this.syncMegaPolsInvestHistory(),
     ]).then();
@@ -149,28 +138,6 @@ class ExploreVM {
       ...txs,
     ] as any[]);
     this.setLoading(false);
-  };
-
-  syncTokenDetails = async () => {
-    const assetDetails = await wavesCapService.getAssetStats(this.assetId);
-    const decimals = this.asset?.decimals;
-    const firstPrice = new BN(assetDetails.data?.["firstPrice_usd-n"] ?? 0);
-    const currentPrice = new BN(assetDetails.data?.["lastPrice_usd-n"] ?? 0);
-
-    const totalSupply = BN.formatUnits(assetDetails.totalSupply, decimals);
-    const circulatingSupply = BN.formatUnits(
-      assetDetails.circulating,
-      decimals
-    );
-    this.setTokenDetails({
-      totalSupply,
-      circulatingSupply: BN.formatUnits(assetDetails.circulating, decimals),
-      change24H: currentPrice.div(firstPrice).minus(1).times(100),
-      currentPrice,
-      fullyDilutedMC: totalSupply.times(currentPrice),
-      marketCap: circulatingSupply.times(currentPrice),
-      totalBurned: totalSupply.minus(circulatingSupply),
-    });
   };
 
   get low24H() {
