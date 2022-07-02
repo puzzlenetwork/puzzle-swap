@@ -41,8 +41,11 @@ class ExploreVM {
     return TOKENS_LIST.find(({ assetId }) => assetId === this.assetId);
   }
 
-  get assetWithStats() {
-    return TOKENS_LIST.find(({ assetId }) => assetId === this.assetId);
+  get assetsWithStats() {
+    const { statisticsByAssetId } = this.rootStore.tokenStore;
+    return TOKENS_LIST.filter(({ assetId }) =>
+      Object.keys(statisticsByAssetId).includes(assetId)
+    );
   }
 
   loading = true;

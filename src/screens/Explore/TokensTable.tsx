@@ -13,6 +13,7 @@ import { useStores } from "@stores";
 import { tokenCategoriesEnum } from "@components/TokensSelectModal/TokenSelectModal";
 import { useExploreVM } from "@screens/Explore/ExploreVm";
 import BN from "@src/utils/BN";
+import { AdaptiveRow, Row } from "@src/components/Flex";
 
 interface IProps {}
 
@@ -64,20 +65,22 @@ const TokensTable: React.FC<IProps> = () => {
           desktopTemplate={"2fr 1fr 1fr 1fr 1fr "}
           mobileTemplate={"2fr 1fr"}
         >
-          <div className="gridTitle">
-            <div>Token name</div>
-            <div>Price</div>
-            <div>Change (24h)</div>
-            <div>Volume (24h)</div>
-          </div>
-
-          {TOKENS_LIST.filter(({ name, symbol }) =>
-            vm.tokenNameFilter
-              ? [name, symbol]
-                  .map((v) => v.toLowerCase())
-                  .some((v) => v.includes(vm.tokenNameFilter.toLowerCase()))
-              : true
-          )
+          {width && width >= 880 && (
+            <div className="gridTitle">
+              <div>Token name</div>
+              <div>Price</div>
+              <div>Change (24h)</div>
+              <div>Volume (24h)</div>
+            </div>
+          )}
+          {vm.assetsWithStats
+            .filter(({ name, symbol }) =>
+              vm.tokenNameFilter
+                ? [name, symbol]
+                    .map((v) => v.toLowerCase())
+                    .some((v) => v.includes(vm.tokenNameFilter.toLowerCase()))
+                : true
+            )
             .filter(({ category }) => {
               if (vm.tokenCategoryFilter === 0) return true;
               return category?.includes(
