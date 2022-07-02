@@ -10,7 +10,7 @@ type TTextType =
   | "purple650"
   | "purple300";
 type TTextSize = "small" | "medium" | "large";
-type TTextAlign = "center" | "left" | "right" | "justify";
+type TTextAlign = "center" | "left" | "right" | "justify" | "end";
 
 const Text = styled.p<{
   type?: TTextType;

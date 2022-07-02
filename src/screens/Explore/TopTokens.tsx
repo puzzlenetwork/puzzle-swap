@@ -31,7 +31,7 @@ const TopTokens: React.FC<IProps> = () => {
   const vm = useExploreVM();
   return (
     <Root>
-      <Card>
+      <Card bordered>
         <Title>Biggest gainers</Title>
         <TokensContainer>
           {vm.top3Gainers.map((v, index) => (
@@ -44,7 +44,7 @@ const TopTokens: React.FC<IProps> = () => {
           ))}
         </TokensContainer>
       </Card>
-      <Card>
+      <Card bordered>
         <Title>Biggest losers</Title>
         <TokensContainer>
           {vm.top3Losers.map((v, index) => (

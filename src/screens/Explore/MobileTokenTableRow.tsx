@@ -9,6 +9,7 @@ import tokenLogos from "@src/constants/tokenLogos";
 import { Column, Row } from "@src/components/Flex";
 import Text from "@components/Text";
 import BN from "@src/utils/BN";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {
   token: IToken;
@@ -36,9 +37,14 @@ const MobileTokenTableRow: React.FC<IProps> = ({
   rate,
   change,
 }) => {
+  const navigate = useNavigate();
   return (
     <Root className="gridRow">
-      <Row alignItems="center">
+      <Row
+        alignItems="center"
+        onClick={() => navigate(`/explore/token/${token.assetId}`)}
+        style={{ cursor: "pointer" }}
+      >
         <Fav
           src={fav ? starred : star}
           onClick={() => handleWatchListChange(token.assetId)}
@@ -56,9 +62,9 @@ const MobileTokenTableRow: React.FC<IProps> = ({
         </Row>
       </Row>
       <Column justifyContent="flex-end" crossAxisSize="max">
-        <Text fitContent>$ {rate?.toFormat(2)}</Text>
+        <Text textAlign="end">$ {rate?.toFormat(2)}</Text>
         <Text
-          fitContent
+          textAlign="end"
           nowrap
           type={change?.gt(0) ? "success" : "error"}
           size="small"

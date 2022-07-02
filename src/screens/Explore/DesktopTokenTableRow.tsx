@@ -47,7 +47,10 @@ const DesktopTokenTableRow: React.FC<IProps> = ({
   const isHover = useHover(hoverRef);
   return (
     <Root className="gridRow">
-      <Row>
+      <Row
+        onClick={() => navigate(`/explore/token/${token.assetId}`)}
+        style={{ cursor: "pointer" }}
+      >
         <Fav
           src={
             fav

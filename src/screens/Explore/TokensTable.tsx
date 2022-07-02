@@ -13,7 +13,6 @@ import { useStores } from "@stores";
 import { tokenCategoriesEnum } from "@components/TokensSelectModal/TokenSelectModal";
 import { useExploreVM } from "@screens/Explore/ExploreVm";
 import BN from "@src/utils/BN";
-import Button from "@components/Button";
 import TextButton from "@components/TextButton";
 import { Column, Row } from "@src/components/Flex";
 import Text from "@components/Text";
@@ -146,20 +145,6 @@ const TokensTable: React.FC<IProps> = () => {
               />
             );
           })}
-          <SizedBox height={16} />
-          {vm.assetsWithStats.length !== displayedTokens && (
-            <Row crossAxisSize="max" justifyContent="center">
-              <TextButton
-                kind="secondary"
-                weight={500}
-                style={{ cursor: "pointer" }}
-                onClick={() => setDisplayedTokens(displayedTokens + 10)}
-              >
-                Load more
-              </TextButton>
-            </Row>
-          )}
-          <SizedBox height={16} />
         </GridTable>
       </Card>
     </Root>
