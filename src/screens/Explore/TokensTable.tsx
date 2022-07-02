@@ -1,16 +1,16 @@
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useState } from "react";
 import SearchTab from "./SearchTab";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
-import { useExploreVM } from "@screens/Explore/ExploreVm";
 import GridTable from "@components/GridTable";
 import Card from "@components/Card";
-import { TOKENS_LIST } from "@src/constants";
+import { TOKENS_BY_ASSET_ID, TOKENS_LIST } from "@src/constants";
 import useWindowSize from "@src/hooks/useWindowSize";
 import DesktopTokenTableRow from "./DesktopTokenTableRow";
 import MobileTokenTableRow from "@screens/Explore/MobileTokenTableRow";
+import { useStores } from "@stores";
 
 interface IProps {}
 
@@ -20,8 +20,33 @@ const Root = styled.div`
 `;
 
 const TokensTable: React.FC<IProps> = () => {
-  const vm = useExploreVM();
+  const { tokenStore, accountStore, notificationStore } = useStores();
   const { width } = useWindowSize();
+  const handleWatchListChange = (assetId: string) => {
+    if (accountStore.address == null) {
+      //todo change to dialog notification
+      notificationStore.notify(
+        "Connect your wallet to add tokens to the watchlist",
+        { type: "error" }
+      );
+    }
+    const tokenStatus = tokenStore.watchList.includes(assetId);
+    if (tokenStatus) {
+      tokenStore.removeFromWatchList(assetId);
+      console.log("remove");
+      notificationStore.notify(
+        "Connect your wallet to add tokens to the watchlist",
+        { type: "error" }
+      );
+    } else {
+      tokenStore.addToWatchList(assetId);
+      notificationStore.notify(
+        `${TOKENS_BY_ASSET_ID[assetId].symbol} has been added to the watchlist`,
+        { type: "error" }
+      );
+    }
+  };
+  const [displayedTokens, setDisplayedTokens] = useState(10);
   return (
     <Root>
       <SearchTab />
@@ -41,23 +66,35 @@ const TokensTable: React.FC<IProps> = () => {
             <div>Volume (24h)</div>
           </div>
 
-          {TOKENS_LIST.map((t) =>
+          {TOKENS_LIST.slice(0, displayedTokens).map((t) =>
             width && width >= 880 ? (
-              <DesktopTokenTableRow token={t} fav={false} key={t.assetId} />
+              <DesktopTokenTableRow
+                token={t}
+                fav={tokenStore.watchList.includes(t.assetId)}
+                key={t.assetId}
+                handleWatchListChange={handleWatchListChange}
+              />
             ) : (
-              <MobileTokenTableRow token={t} fav={false} key={t.assetId} />
+              <MobileTokenTableRow
+                token={t}
+                fav={tokenStore.watchList.includes(t.assetId)}
+                key={t.assetId}
+                handleWatchListChange={handleWatchListChange}
+              />
             )
           )}
           <SizedBox height={16} />
-          <Text
-            type="secondary"
-            weight={500}
-            textAlign="center"
-            style={{ cursor: "pointer" }}
-          >
-            {/*{vm.loadingHistory ? <Loading big /> : "Load more"}*/}
-            Load more
-          </Text>
+          {TOKENS_LIST.length !== displayedTokens && (
+            <Text
+              type="secondary"
+              weight={500}
+              textAlign="center"
+              style={{ cursor: "pointer" }}
+              onClick={() => setDisplayedTokens(displayedTokens + 10)}
+            >
+              Load more
+            </Text>
+          )}
           <SizedBox height={16} />
         </GridTable>
       </Card>

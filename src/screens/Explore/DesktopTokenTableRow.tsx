@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 interface IProps {
   token: IToken;
   fav: boolean;
+  handleWatchListChange: (assetId: string) => void;
 }
 
 const Root = styled.div`
@@ -26,12 +27,19 @@ const Fav = styled.img`
   height: 24px;
   cursor: pointer;
 `;
-const DesktopTokenTableRow: React.FC<IProps> = ({ token, fav }) => {
+const DesktopTokenTableRow: React.FC<IProps> = ({
+  token,
+  fav,
+  handleWatchListChange,
+}) => {
   const navigate = useNavigate();
   return (
     <Root className="gridRow">
       <Row>
-        <Fav src={fav ? starred : star} />
+        <Fav
+          src={fav ? starred : star}
+          onClick={() => handleWatchListChange(token.assetId)}
+        />
         <SizedBox width={18} />
         <RoundTokenIcon src={tokenLogos[token.symbol]} />
         <SizedBox width={18} />
@@ -46,7 +54,11 @@ const DesktopTokenTableRow: React.FC<IProps> = ({ token, fav }) => {
       <Text>$ 1</Text>
       <Text>+ 1 %</Text>
       <Text>$ 12,048,217</Text>
-      <Button onClick={() => navigate(`/trade`)} size="medium" kind="secondary">
+      <Button
+        onClick={() => navigate(`/trade?asset1=${token.assetId}`)}
+        size="medium"
+        kind="secondary"
+      >
         Trade
       </Button>
     </Root>

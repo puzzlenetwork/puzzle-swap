@@ -12,6 +12,7 @@ import Text from "@components/Text";
 interface IProps {
   token: IToken;
   fav: boolean;
+  handleWatchListChange: (assetId: string) => void;
 }
 
 const Root = styled.div`
@@ -25,11 +26,18 @@ const Fav = styled.img`
   height: 24px;
   cursor: pointer;
 `;
-const MobileTokenTableRow: React.FC<IProps> = ({ token, fav }) => {
+const MobileTokenTableRow: React.FC<IProps> = ({
+  token,
+  fav,
+  handleWatchListChange,
+}) => {
   return (
     <Root className="gridRow">
       <Row alignItems="center">
-        <Fav src={fav ? starred : star} />
+        <Fav
+          src={fav ? starred : star}
+          onClick={() => handleWatchListChange(token.assetId)}
+        />
         <SizedBox width={18} />
         <Row>
           <SquareTokenIcon src={tokenLogos[token.symbol]} size="small" />
