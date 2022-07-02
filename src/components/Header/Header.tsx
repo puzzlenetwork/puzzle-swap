@@ -19,7 +19,7 @@ const Root = styled(Column)`
   background: #fff;
   align-items: center;
   z-index: 102;
-  box-shadow: 0px 8px 56px rgba(54, 56, 112, 0.16);
+  box-shadow: 0 8px 56px rgba(54, 56, 112, 0.16);
 
   //todo check
   a {
