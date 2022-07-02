@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import { Row } from "@src/components/Flex";
 import Text from "@src/components/Text";
 import React from "react";
@@ -17,7 +16,6 @@ const TokenInfo: React.FC<IProps> = ({ num, assetId, change }) => {
   return (
     <Row justifyContent="space-between">
       <Row mainAxisSize="fit-content">
-        <SizedBox width={8} />
         <Text type="purple300">{num}</Text>
         <SizedBox width={8} />
         <RoundTokenIcon src={tokenLogos[TOKENS_BY_ASSET_ID[assetId].symbol]} />
@@ -31,7 +29,7 @@ const TokenInfo: React.FC<IProps> = ({ num, assetId, change }) => {
         </Text>
       </Row>
       <Text type={change > 0 ? "success" : "error"} weight={500} fitContent>
-        {change} %
+        {change}%
       </Text>
     </Row>
   );

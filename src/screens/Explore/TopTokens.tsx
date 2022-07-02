@@ -2,18 +2,15 @@ import styled from "@emotion/styled";
 import React from "react";
 import Card from "@components/Card";
 import Text from "@components/Text";
-import { TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL } from "@src/constants";
+import { TOKENS_BY_SYMBOL } from "@src/constants";
 import TokenInfo from "@screens/Explore/TokenInfo";
-import SizedBox from "@components/SizedBox";
-import { Row } from "@components/Flex";
-import RoundTokenIcon from "@components/RoundTokenIcon";
-import tokenLogos from "@src/constants/tokenLogos";
 
 interface IProps {}
 
 const Root = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 24px;
   @media (min-width: 880px) {
     flex-direction: row;
   }
@@ -22,6 +19,11 @@ const Title = styled(Text)`
   font-weight: 500;
   font-size: 24px;
   line-height: 32px;
+`;
+const TokensContainer = styled.div`
+  & > * {
+    margin-top: 16px;
+  }
 `;
 
 const TopTokens: React.FC<IProps> = () => {
@@ -43,17 +45,19 @@ const TopTokens: React.FC<IProps> = () => {
     <Root>
       <Card>
         <Title>Biggest gainers</Title>
-        <SizedBox height={16} />
-        {top.map((v, index) => (
-          <TokenInfo {...v} num={index + 1} />
-        ))}
+        <TokensContainer>
+          {top.map((v, index) => (
+            <TokenInfo {...v} num={index + 1} />
+          ))}
+        </TokensContainer>
       </Card>
       <Card>
         <Title>Biggest losers</Title>
-        <SizedBox height={16} />
-        {top.map((v, index) => (
-          <TokenInfo {...v} num={index + 1} />
-        ))}
+        <TokensContainer>
+          {top.map((v, index) => (
+            <TokenInfo {...v} num={index + 1} change={-v.change} />
+          ))}
+        </TokensContainer>
       </Card>
     </Root>
   );
