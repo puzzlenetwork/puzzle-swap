@@ -20,12 +20,12 @@ export default class RootStore {
   public tokenStore: TokenStore;
 
   constructor(initState?: ISerializedRootStore) {
+    this.tokenStore = new TokenStore(this);
     this.notificationStore = new NotificationStore(this);
     this.accountStore = new AccountStore(this, initState?.accountStore);
     this.poolsStore = new PoolsStore(this);
     this.nftStore = new NftStore(this);
     this.stakeStore = new StakeStore(this);
-    this.tokenStore = new TokenStore(this);
     makeAutoObservable(this);
   }
 
