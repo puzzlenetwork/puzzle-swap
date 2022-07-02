@@ -21,6 +21,7 @@ import { ROUTES } from "./constants";
 import CreateCustomPools from "./screens/CreateCustomPools";
 import Explore from "@screens/Explore";
 import ExploreToken from "@screens/ExploreToken";
+import OldExplorer from "./screens/OldExplorer";
 
 const Root = styled(Column)`
   width: 100%;
@@ -43,6 +44,7 @@ const App: React.FC = () => {
         <Route path={ROUTES.STAKE} element={<Staking />} />
 
         {/* Explore */}
+        <Route path={ROUTES.OLD_EXPLORE} element={<OldExplorer />} />
         <Route path={ROUTES.EXPLORE} element={<Explore />} />
         <Route path={ROUTES.EXPLORE_TOKEN} element={<ExploreToken />} />
 

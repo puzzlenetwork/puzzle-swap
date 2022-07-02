@@ -8,6 +8,7 @@ export const ROUTES = {
   NOT_FOUND: "/404",
   STAKE: "/stake",
   TRADE: "/trade",
+  OLD_EXPLORE: "/classic-explore",
   EXPLORE: "/explore",
   EXPLORE_TOKEN: "/explore/token/:assetId",
   INVEST: "/invest",

@@ -4,7 +4,7 @@ import Card from "@components/Card";
 import Text from "@components/Text";
 import { Column, Row } from "@src/components/Flex";
 import { observer } from "mobx-react-lite";
-import { useExploreVM } from "@screens/Explore/ExploreVm";
+import { useOldExploreVM } from "@screens/OldExplorer/OldExploreVm";
 interface IProps {}
 
 const Root = styled.div`
@@ -32,7 +32,7 @@ const Root = styled.div`
 const StyledCard = styled(Card)``;
 
 const TokenStatistics: React.FC<IProps> = () => {
-  const vm = useExploreVM();
+  const vm = useOldExploreVM();
   return (
     <Root>
       <StyledCard style={{ flex: 1 }}>

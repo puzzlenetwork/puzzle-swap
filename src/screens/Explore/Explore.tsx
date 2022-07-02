@@ -10,13 +10,6 @@ import TokensTable from "./TokensTable";
 interface IProps {}
 
 const ExploreImpl: React.FC<IProps> = () => {
-  // const vm = useExploreVM();
-  // const search = new URLSearchParams(window.location.search);
-  // const assetId = search.get("assetId");
-  // console.log(assetId);
-  // useEffect(() => {
-  //   vm.setAssetId(assetId ?? TOKENS_BY_SYMBOL.PUZZLE.assetId);
-  // }, [assetId, vm]);
   return (
     <Layout>
       <ExploreLayout>
@@ -32,13 +25,7 @@ const ExploreImpl: React.FC<IProps> = () => {
         <TopTokens />
         <SizedBox height={56} />
         <TokensTable />
-        {/*<BasicProtocolInformation />*/}
-        {/*<SizedBox height={24} />*/}
-        {/*<AggregatorHistory />*/}
-        {/*<SizedBox height={24} />*/}
-        {/*<MegaPoolsHistory />*/}
       </ExploreLayout>
-      {/*{assetId != null ? <ExploreTokenPage /> : <ExploreProtocolPage />}*/}
     </Layout>
   );
 };
