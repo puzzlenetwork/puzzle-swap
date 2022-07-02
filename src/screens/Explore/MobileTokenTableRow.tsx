@@ -14,6 +14,7 @@ interface IProps {
   token: IToken;
   fav: boolean;
   change?: BN;
+  rate?: BN;
   handleWatchListChange: (assetId: string) => void;
 }
 
@@ -32,6 +33,7 @@ const MobileTokenTableRow: React.FC<IProps> = ({
   token,
   fav,
   handleWatchListChange,
+  rate,
   change,
 }) => {
   return (
@@ -54,14 +56,14 @@ const MobileTokenTableRow: React.FC<IProps> = ({
         </Row>
       </Row>
       <Column justifyContent="flex-end" crossAxisSize="max">
-        <Text fitContent>$ 1</Text>
+        <Text fitContent>$ {rate?.toFormat(2)}</Text>
         <Text
           fitContent
           nowrap
           type={change?.gt(0) ? "success" : "error"}
           size="small"
         >
-          {change}%
+          {change?.toFormat(2)}%
         </Text>
       </Column>
     </Root>

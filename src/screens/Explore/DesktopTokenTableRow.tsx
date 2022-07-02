@@ -19,6 +19,8 @@ interface IProps {
   token: IToken;
   fav: boolean;
   change?: BN;
+  vol24?: BN;
+  rate?: BN;
   handleWatchListChange: (assetId: string) => void;
 }
 
@@ -37,6 +39,8 @@ const DesktopTokenTableRow: React.FC<IProps> = ({
   fav,
   change,
   handleWatchListChange,
+  rate,
+  vol24,
 }) => {
   const navigate = useNavigate();
   const hoverRef = useRef(null);
@@ -68,15 +72,15 @@ const DesktopTokenTableRow: React.FC<IProps> = ({
           {token.symbol}
         </Text>
       </Row>
-      <Text>$ 1</Text>
+      <Text>$ {rate?.toFormat(2)}</Text>
       {change != null ? (
         <Text type={change?.gt(0) ? "success" : "error"}>
           {change.toFormat(2)} %
         </Text>
       ) : (
-        <Text>no stat</Text>
+        <Text>-</Text>
       )}
-      <Text>$ 12,048,217</Text>
+      {vol24 != null ? <Text>$ {vol24.toFormat(2)}</Text> : <Text>-</Text>}
       <Button
         onClick={() => navigate(`/trade?asset1=${token.assetId}`)}
         size="medium"

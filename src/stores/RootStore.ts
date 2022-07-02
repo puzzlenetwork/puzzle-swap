@@ -20,7 +20,7 @@ export default class RootStore {
   public tokenStore: TokenStore;
 
   constructor(initState?: ISerializedRootStore) {
-    this.tokenStore = new TokenStore(this);
+    this.tokenStore = new TokenStore(this, initState?.tokenStore);
     this.notificationStore = new NotificationStore(this);
     this.accountStore = new AccountStore(this, initState?.accountStore);
     this.poolsStore = new PoolsStore(this);

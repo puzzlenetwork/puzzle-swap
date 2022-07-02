@@ -17,6 +17,7 @@ export type TTokenStatistics = {
   marketCap: BN;
   currentPrice: BN;
   change24H: BN;
+  volume24: BN;
 };
 
 export default class TokenStore {

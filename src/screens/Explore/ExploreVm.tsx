@@ -41,6 +41,10 @@ class ExploreVM {
     return TOKENS_LIST.find(({ assetId }) => assetId === this.assetId);
   }
 
+  get assetWithStats() {
+    return TOKENS_LIST.find(({ assetId }) => assetId === this.assetId);
+  }
+
   loading = true;
   setLoading = (v: boolean) => (this.loading = v);
 
@@ -56,6 +60,9 @@ class ExploreVM {
 
   megaPolsInvestHistory: any[] = [];
   setMegaPoolsInvestHistory = (v: any[]) => (this.megaPolsInvestHistory = v);
+
+  tokenNameFilter: string = "";
+  setTokenNameFilter = (v: string) => (this.tokenNameFilter = v);
 
   tokenCategoryFilter: number = 0;
   setTokenCategoryFilter = (v: number) => (this.tokenCategoryFilter = v);
@@ -171,6 +178,7 @@ class ExploreVM {
       .sort((a, b) => (a.change24H.gt(b.change24H) ? -1 : 1))
       .slice(0, 3);
   }
+
   get top3Losers() {
     return this.rootStore.tokenStore.statistics
       .slice()

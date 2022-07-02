@@ -24,18 +24,18 @@ const Filters = styled.div`
   display: flex;
   flex-direction: column;
   padding: 16px;
-  @media (min-width: 1080px) {
+  @media (min-width: 880px) {
     padding: 24px;
   }
 `;
 const Selects = styled.div`
   display: flex;
   flex-wrap: wrap;
-  padding: 0 16px;
+  padding: 0 0 16px 16px;
   align-items: center;
   box-sizing: border-box;
-  @media (min-width: 1080px) {
-    padding: 0 24px;
+  @media (min-width: 880px) {
+    padding: 16px;
     flex-wrap: nowrap;
     width: 100%;
   }
@@ -73,13 +73,12 @@ const createdByOptions = [
 ];
 const InputWrapper = styled.div`
   display: flex;
-  @media (min-width: 1080px) {
+  @media (min-width: 880px) {
     min-width: 340px;
   }
 `;
 const SearchTab: React.FC = () => {
   const vm = useExploreVM();
-  const [v, setV] = useState<string>("");
   return (
     <Root>
       <Selects>
@@ -88,8 +87,8 @@ const SearchTab: React.FC = () => {
             options={categoriesOptions}
             selected={categoriesOptions[vm.tokenCategoryFilter]}
             onSelect={({ key }) => {
-              // const index = categoriesOptions.findIndex((o) => o.key === key);
-              // vm.setPoolCategoryFilter(index);
+              const index = categoriesOptions.findIndex((o) => o.key === key);
+              vm.setTokenCategoryFilter(index);
             }}
           />
           <SizedBox width={12} />
@@ -97,8 +96,8 @@ const SearchTab: React.FC = () => {
             options={createdByOptions}
             selected={createdByOptions[vm.tokenUserFilter]}
             onSelect={({ key }) => {
-              // const index = createdByOptions.findIndex((o) => o.key === key);
-              // vm.setCustomPoolFilter(index);
+              const index = createdByOptions.findIndex((o) => o.key === key);
+              vm.setUserFilter(index);
             }}
           />
           <SizedBox width={12} />
@@ -110,9 +109,8 @@ const SearchTab: React.FC = () => {
             style={{ height: 40 }}
             icon="search"
             placeholder="Search by title or asset…"
-            value={v}
-            onChange={(e) => setV(e.target.value)}
-            suffixCondition={v.length > 1}
+            value={vm.tokenNameFilter}
+            onChange={(e) => vm.setTokenNameFilter(e.target.value)}
           />
         </InputWrapper>
       </Filters>
