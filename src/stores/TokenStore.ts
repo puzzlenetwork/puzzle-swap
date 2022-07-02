@@ -17,7 +17,9 @@ export type TTokenStatistics = {
   marketCap: BN;
   currentPrice: BN;
   change24H: BN;
+  change24HUsd: BN;
   volume24: BN;
+  changeStr: string;
 };
 
 export default class TokenStore {
@@ -62,13 +64,24 @@ export default class TokenStore {
       const circulatingSupply = BN.formatUnits(details.circulating, decimals);
 
       const change24H = currentPrice.div(firstPrice).minus(1).times(100);
+      const change24HUsd = change24H.div(100).times(currentPrice);
+
+      const changePrefix = change24H?.gte(0) ? "+" : "-";
+      const formatChange24HUsd = change24HUsd
+        ?.times(change24H?.gte(0) ? 1 : -1)
+        .toFormat(2);
+      const formatChange24H = change24H
+        ?.times(change24H?.gte(0) ? 1 : -1)
+        .toFormat(2);
+      const changeStr = `${changePrefix} $${formatChange24HUsd} (${formatChange24H}%)`;
       return {
         assetId: details.id,
         totalSupply,
         circulatingSupply: BN.formatUnits(details.circulating, decimals),
-        change24H: currentPrice.div(firstPrice).minus(1).times(100),
-        change24HUsd: change24H.times(currentPrice),
+        change24H,
+        change24HUsd,
         currentPrice,
+        changeStr,
         fullyDilutedMC: totalSupply.times(currentPrice),
         marketCap: circulatingSupply.times(currentPrice),
         totalBurned: totalSupply.minus(circulatingSupply),

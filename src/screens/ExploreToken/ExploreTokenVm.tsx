@@ -60,8 +60,9 @@ class ExploreTokenVM {
   }
 
   selectedChartPeriod: keyof TChartDataRecord = "1d";
-  setSelectedChartPeriod = (v: keyof TChartDataRecord) =>
-    (this.selectedChartPeriod = v);
+  setSelectedChartPeriod = (v: string) =>
+    (this.selectedChartPeriod = v as keyof TChartDataRecord);
+
   chartData: TChartDataRecord = {};
   setChartData = (period: keyof TChartDataRecord, value: TChartData) =>
     (this.chartData = { ...this.chartData, [period]: value });

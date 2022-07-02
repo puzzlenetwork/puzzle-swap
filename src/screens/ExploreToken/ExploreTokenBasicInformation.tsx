@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { Column } from "@components/Flex";
-import Card from "@components/Card";
 import ExploreTokenPriceChart from "@screens/ExploreToken/ExploreTokenPriceChart";
+import ExploreTokenPriceStatistics from "@screens/ExploreToken/ExploreTokenPriceStatistics";
 
 const Root = styled(Column)`
   width: 100%;
@@ -10,7 +10,7 @@ const Root = styled(Column)`
   }
   @media (min-width: 880px) {
     flex-direction: row;
-    align-items: flex-end;
+    //align-items: flex-end;
 
     & > :first-of-type {
       margin-bottom: 0;
@@ -23,7 +23,7 @@ const ExploreTokenBasicInformation = () => {
   return (
     <Root>
       <ExploreTokenPriceChart />
-      <Card />
+      <ExploreTokenPriceStatistics />
     </Root>
   );
 };
