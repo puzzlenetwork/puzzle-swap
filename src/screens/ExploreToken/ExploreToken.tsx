@@ -33,11 +33,6 @@ const ExploreTokenImpl: React.FC<IProps> = () => {
           {vm.asset.name} ({vm.asset.symbol})
         </Text>
         <SizedBox height={40} />
-        {/*<BasicTokenInformation />*/}
-        {/*<SizedBox height={24} />*/}
-        {/*<TokenStatistics />*/}
-        {/*<SizedBox height={24} />*/}
-        {/*<AggregatorHistory />*/}
       </ExploreLayout>
     </Layout>
   );
