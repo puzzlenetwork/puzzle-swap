@@ -3,14 +3,14 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import SearchTab from "./SearchTab";
 import SizedBox from "@components/SizedBox";
-import { Row } from "@components/Flex";
 import Text from "@components/Text";
 import { useExploreVM } from "@screens/Explore/ExploreVm";
 import GridTable from "@components/GridTable";
 import Card from "@components/Card";
 import { TOKENS_LIST } from "@src/constants";
-import Button from "@components/Button";
-import TokenTableRow from "@screens/Explore/TokenTableRow";
+import useWindowSize from "@src/hooks/useWindowSize";
+import DesktopTokenTableRow from "./DesktopTokenTableRow";
+import MobileTokenTableRow from "@screens/Explore/MobileTokenTableRow";
 
 interface IProps {}
 
@@ -21,6 +21,7 @@ const Root = styled.div`
 
 const TokensTable: React.FC<IProps> = () => {
   const vm = useExploreVM();
+  const { width } = useWindowSize();
   return (
     <Root>
       <SearchTab />
@@ -40,9 +41,13 @@ const TokensTable: React.FC<IProps> = () => {
             <div>Volume (24h)</div>
           </div>
 
-          {TOKENS_LIST.map((t) => (
-            <TokenTableRow token={t} fav={false} key={t.assetId} />
-          ))}
+          {TOKENS_LIST.map((t) =>
+            width && width >= 880 ? (
+              <DesktopTokenTableRow token={t} fav={false} key={t.assetId} />
+            ) : (
+              <MobileTokenTableRow token={t} fav={false} key={t.assetId} />
+            )
+          )}
           <SizedBox height={16} />
           <Text
             type="secondary"
