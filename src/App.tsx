@@ -37,7 +37,7 @@ const App: React.FC = () => {
       <Header />
       <Routes>
         {/* Landing */}
-        <Route path={ROUTES.ROOT} element={<Landing />} />
+        <Route path={ROUTES.ROOT} element={<TradeInterface />} />
         {/* 404 */}
         <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
         {/* Stake */}

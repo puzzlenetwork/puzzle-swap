@@ -122,9 +122,9 @@ const Header: React.FC<IProps> = () => {
 
       <TopMenu>
         <Row alignItems="center" crossAxisSize="max">
-          <Link to="/">
+          <a href="https://puzzleswap.org">
             <img className="logo" src={puzzleLogo} alt="logo" />
-          </Link>
+          </a>
           <Desktop>
             <SizedBox width={54} />
             {menuItems.map(({ name, link }) => (
