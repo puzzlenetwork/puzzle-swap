@@ -6,6 +6,7 @@ import TradeWithTokens from "@screens/ExploreToken/TradeWithTokens";
 import useWindowSize from "@src/hooks/useWindowSize";
 import AboutToken from "@screens/ExploreToken/AboutToken";
 import PoolsWithToken from "./PoolsWithToken";
+import OperationsTable from "@screens/ExploreToken/OperationsTable";
 
 const Root = styled(Column)`
   width: 100%;
@@ -32,6 +33,7 @@ const ExploreTokenBasicInformation = () => {
         <ExploreTokenPriceChart />
         {width && width >= 880 && <AboutToken />}
         <PoolsWithToken />
+        <OperationsTable />
       </Column>
       <Column crossAxisSize="max">
         <ExploreTokenPriceStatistics />

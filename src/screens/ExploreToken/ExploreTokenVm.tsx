@@ -103,27 +103,15 @@ class ExploreTokenVM {
   private setOperations = (v: any[]) => (this.operations = v);
   private operationsSkip = 0;
   private setOperationsSkip = (v: number) => (this.operationsSkip = v);
-  private loadOperations = async () => {
+  loadOperations = async () => {
     this.setLoading(true);
 
-    //SWAP
-    //  icon - swapIcon
-    //  tokens
-    //    from - payment[0].assetId
-    //    to - call.args[0].value
-    //  value - payment[0].amount
-    //  time - timestamp
     const params = [
       ["assetId", this.assetId],
-      // ["func", "swap"], //swap
-      // ["func", "swapWithReferral"], //swap
-      // ["func", "unstakeAndRedeemIndex"], //minus
-      // ["func", "generateIndexAndStake"], // plus
-      // ["func", "generateIndexWithOneTokenAndStake"], // plus
       ["after", this.operationsSkip],
     ] as Array<[string, string | number | boolean]>;
     const txs = await transactionsService.getTransactions(params);
-    console.log(txs);
+    // console.log(txs);
     this.setOperationsSkip(this.operationsSkip + 5);
     this.setOperations([...this.operations, ...txs] as any[]);
     this.setLoading(false);

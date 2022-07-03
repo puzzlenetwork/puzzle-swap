@@ -108,7 +108,11 @@ const Table: React.FC<IProps> = ({
                 }}
                 {...row.getRowProps()}
                 key={i + "tr"}
-                onClick={() => !row.original.disabled && row.original.onClick()}
+                onClick={() =>
+                  !row.original.disabled &&
+                  row.original.onClick &&
+                  row.original.onClick()
+                }
               >
                 {row.cells.map((cell, index) => (
                   <td {...cell.getCellProps()} key={index + "td"}>

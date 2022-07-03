@@ -35,6 +35,7 @@ const ExploreTokenPriceStatistics = () => {
           {
             title: "24h Low / 24h High",
             value: `$ ${low.toFormat(2)} / $ ${high.toFormat(2)}`,
+            loading: vm.chartLoading,
           },
         ]}
       />

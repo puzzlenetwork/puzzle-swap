@@ -89,7 +89,7 @@ const PoolsWithToken: React.FC<IProps> = () => {
     accountStore.findBalanceByAssetId,
     navigate,
     poolsStore.pools,
-    sortApy,
+   sortApy,
     vm.asset.assetId,
   ]);
   const columns = React.useMemo(
