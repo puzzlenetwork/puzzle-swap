@@ -55,7 +55,7 @@ const SocialMediaAndFav: React.FC<IProps> = () => {
         icon={tokenStatus ? <StarredIcon /> : <StarIcon />}
         onClick={handleWatchListChange}
       >
-        Add to watchlist
+        {tokenStatus ? " Added to watchlist" : " Add to watchlist"}
       </IconButtonAdaptive>
       <IconButtonAdaptive
         icon={<ShareIcon />}
