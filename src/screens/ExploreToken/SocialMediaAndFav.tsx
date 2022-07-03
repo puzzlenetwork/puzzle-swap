@@ -10,7 +10,6 @@ import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import ShareDialog from "@screens/ExploreToken/dialogs/ShareDialog";
-import Button from "@components/Button";
 
 interface IProps {}
 
