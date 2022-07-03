@@ -6,13 +6,13 @@ import SizedBox from "@components/SizedBox";
 import Scrollbar from "@components/Scrollbar";
 import Table from "@components/Table";
 import { observer } from "mobx-react-lite";
-import { useExploreVM } from "@screens/Explore/ExploreVm";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import dayjs from "dayjs";
 import Swap from "@screens/InvestToPoolInterface/PoolHistory/Swap";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
+import { useOldExploreVM } from "@screens/OldExplorer/OldExploreVm";
 
 interface IProps {}
 
@@ -22,7 +22,7 @@ const Root = styled.div`
 `;
 
 const AggregatorHistory: React.FC<IProps> = () => {
-  const vm = useExploreVM();
+  const vm = useOldExploreVM();
   const { poolsStore } = useStores();
   const [tr, setTr] = useState<any[]>([]);
   const columns = React.useMemo(

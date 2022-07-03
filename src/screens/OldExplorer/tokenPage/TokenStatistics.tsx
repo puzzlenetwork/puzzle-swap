@@ -2,9 +2,9 @@ import styled from "@emotion/styled";
 import React from "react";
 import Card from "@components/Card";
 import Text from "@components/Text";
-import { Column, Row } from "@src/components/Flex";
 import { observer } from "mobx-react-lite";
-import { useExploreVM } from "@screens/Explore/ExploreVm";
+import { useOldExploreVM } from "@screens/OldExplorer/OldExploreVm";
+import StatisticsGroup from "@components/StatisticsGroup";
 interface IProps {}
 
 const Root = styled.div`
@@ -32,12 +32,12 @@ const Root = styled.div`
 const StyledCard = styled(Card)``;
 
 const TokenStatistics: React.FC<IProps> = () => {
-  const vm = useExploreVM();
+  const vm = useOldExploreVM();
   return (
     <Root>
       <StyledCard style={{ flex: 1 }}>
         <Text weight={500}>Price today</Text>
-        <Stats
+        <StatisticsGroup
           data={[
             {
               title: `${vm.asset?.symbol} price`,
@@ -61,7 +61,7 @@ const TokenStatistics: React.FC<IProps> = () => {
       </StyledCard>
       <StyledCard style={{ flex: 1 }}>
         <Text weight={500}>Supply</Text>
-        <Stats
+        <StatisticsGroup
           data={[
             {
               title: "Total supply",
@@ -80,7 +80,7 @@ const TokenStatistics: React.FC<IProps> = () => {
       </StyledCard>
       <StyledCard style={{ flex: 1 }}>
         <Text weight={500}>Market cap</Text>
-        <Stats
+        <StatisticsGroup
           data={[
             {
               title: "Fully diluted MC",
@@ -96,37 +96,5 @@ const TokenStatistics: React.FC<IProps> = () => {
     </Root>
   );
 };
-
-const StatsRoot = styled(Column)`
-  & > * {
-    padding: 8px 0;
-    box-sizing: border-box;
-    border-bottom: 1px solid #f1f2fe;
-  }
-  & > :last-of-type {
-    border-bottom: none;
-  }
-`;
-
-const Stats: React.FC<{
-  data: Array<{
-    title: string;
-    value: string | number | JSX.Element | undefined;
-    valueColor?: string;
-  }>;
-}> = ({ data }) => (
-  <StatsRoot crossAxisSize="max">
-    {data.map(({ title, value, valueColor }, i) => (
-      <Row justifyContent="space-between" alignItems="center" key={i}>
-        <Text type="secondary" size="medium">
-          {title}
-        </Text>
-        <Text style={{ textAlign: "right", color: valueColor }} size="medium">
-          {value}
-        </Text>
-      </Row>
-    ))}
-  </StatsRoot>
-);
 
 export default observer(TokenStatistics);

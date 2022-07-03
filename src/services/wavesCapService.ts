@@ -1,10 +1,10 @@
 import axios from "axios";
-import BN from "@src/utils/BN";
 
 interface IAssetResponse {
   id: string;
   totalSupply: number;
   circulating: number;
+  "24h_vol_usd-n": number;
   data: {
     "firstPrice_usd-n": number;
     "lastPrice_usd-n": number;
@@ -19,19 +19,21 @@ const wavesCapService = {
     }
     const url = `https://wavescap.com/api/assets-info.php?${params.toString()}`;
     const response = await axios.get(url);
-    return response.data.assets != null ? response.data.assets : [];
+    return response.data.assets != null
+      ? response.data.assets.filter((v: any) => v != null)
+      : [];
   },
-  getAssetRate: async (assetsId: string): Promise<BN | null> => {
-    const url = `https://wavescap.com/api/asset/${assetsId}.json`;
-    const { data: res } = await axios.get<IAssetResponse>(url);
-    return res.data && res.data["lastPrice_usd-n"]
-      ? new BN(res.data["lastPrice_usd-n"])
-      : null;
-  },
-  getAssetStats: async (assetsId: string): Promise<IAssetResponse> => {
-    const url = `https://wavescap.com/api/asset/${assetsId}.json`;
-    const { data } = await axios.get<IAssetResponse>(url);
-    return data;
-  },
+  // getAssetRate: async (assetsId: string): Promise<BN | null> => {
+  //   const url = `https://wavescap.com/api/asset/${assetsId}.json`;
+  //   const { data: res } = await axios.get<IAssetResponse>(url);
+  //   return res.data && res.data["lastPrice_usd-n"]
+  //     ? new BN(res.data["lastPrice_usd-n"])
+  //     : null;
+  // },
+  // getAssetStats: async (assetsId: string): Promise<IAssetResponse> => {
+  //   const url = `https://wavescap.com/api/asset/${assetsId}.json`;
+  //   const { data } = await axios.get<IAssetResponse>(url);
+  //   return data;
+  // },
 };
 export default wavesCapService;

@@ -6,11 +6,13 @@ type TTextType =
   | "light"
   | "blue500"
   | "error"
+  | "success"
+  | "purple650"
   | "purple300";
-type TTextSize = "small" | "medium" | "large";
-type TTextAlign = "center" | "left" | "right" | "justify";
+type TTextSize = "small" | "medium" | "large" | "big";
+type TTextAlign = "center" | "left" | "right" | "justify" | "end";
 
-const Text = styled.div<{
+const Text = styled.p<{
   type?: TTextType;
   weight?: 400 | 500;
   size?: TTextSize;
@@ -18,6 +20,7 @@ const Text = styled.div<{
   nowrap?: boolean;
   textAlign?: TTextAlign;
 }>`
+  margin: 0;
   width: ${({ fitContent }) => (fitContent ? "fit-content" : "100%")};
   font-weight: ${({ weight }) => weight ?? 400};
   white-space: ${({ nowrap }) => (nowrap ? "nowrap" : "unset")};
@@ -35,6 +38,10 @@ const Text = styled.div<{
           return "color: #ffffff;";
         case "error":
           return "color: #ED827E;";
+        case "success":
+          return "color: #35A15A;";
+        case "purple650":
+          return "color: #C6C9F4;";
         case "purple300":
           return "color: #C6C9F4;";
         default:
@@ -48,6 +55,8 @@ const Text = styled.div<{
           return "font-size: 12px; line-height: 16px;";
         case "medium":
           return "font-size: 14px; line-height: 20px;";
+        case "big":
+          return "font-size: 24px; line-height: 32px;";
         case "large":
           return "font-size: 32px;line-height: 40px;";
         default:

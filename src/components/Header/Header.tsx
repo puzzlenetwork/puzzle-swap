@@ -19,7 +19,7 @@ const Root = styled(Column)`
   background: #fff;
   align-items: center;
   z-index: 102;
-  box-shadow: 0px 8px 56px rgba(54, 56, 112, 0.16);
+  box-shadow: 0 8px 56px rgba(54, 56, 112, 0.16);
 
   //todo check
   a {
@@ -104,7 +104,7 @@ const Header: React.FC<IProps> = () => {
   };
 
   const menuItems = [
-    // { name: "Explore", link: ROUTES.EXPLORE },
+    { name: "Explore", link: ROUTES.EXPLORE },
     { name: "Trade", link: ROUTES.TRADE },
     { name: "Invest", link: ROUTES.INVEST },
     { name: "Stake", link: ROUTES.STAKE },
@@ -122,9 +122,9 @@ const Header: React.FC<IProps> = () => {
 
       <TopMenu>
         <Row alignItems="center" crossAxisSize="max">
-          <Link to="/">
+          <a href="https://puzzleswap.org">
             <img className="logo" src={puzzleLogo} alt="logo" />
-          </Link>
+          </a>
           <Desktop>
             <SizedBox width={54} />
             {menuItems.map(({ name, link }) => (

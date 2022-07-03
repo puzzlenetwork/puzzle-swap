@@ -6,12 +6,12 @@ import SizedBox from "@components/SizedBox";
 import Scrollbar from "@components/Scrollbar";
 import Table from "@components/Table";
 import { useStores } from "@stores";
-import { useExploreVM } from "@screens/Explore/ExploreVm";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import dayjs from "dayjs";
 import PoolAction from "@screens/InvestToPoolInterface/PoolHistory/PoolAction";
 import BN from "@src/utils/BN";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
+import { useOldExploreVM } from "@screens/OldExplorer/OldExploreVm";
 
 interface IProps {}
 
@@ -21,7 +21,7 @@ const Root = styled.div`
 `;
 
 const MegaPoolsHistory: React.FC<IProps> = () => {
-  const vm = useExploreVM();
+  const vm = useOldExploreVM();
   const [tr, setTr] = useState<any[]>([]);
   const { poolsStore } = useStores();
 

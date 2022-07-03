@@ -3,20 +3,20 @@ import Layout from "@components/Layout";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
-import AggregatorHistory from "@screens/Explore/protocolPage/AggregatorHistory";
-import ExploreLayout from "@screens/Explore/ExploreLayout";
-import { useExploreVM } from "@screens/Explore/ExploreVm";
 import { Navigate } from "react-router-dom";
 import { ROUTES } from "@src/constants";
 import { ReactComponent as ArrowBackIcon } from "@src/assets/icons/backArrow.svg";
 import { Row } from "@src/components/Flex";
-import BasicTokenInformation from "@screens/Explore/tokenPage/BasicTokenInformation";
-import TokenStatistics from "@screens/Explore/tokenPage/TokenStatistics";
+import BasicTokenInformation from "./BasicTokenInformation";
+import TokenStatistics from "./TokenStatistics";
+import AggregatorHistory from "../protocolPage/AggregatorHistory";
+import { useOldExploreVM } from "@screens/OldExplorer/OldExploreVm";
+import ExploreLayout from "../ExploreLayout";
 
 interface IProps {}
 
 const ExploreTokenPage: React.FC<IProps> = () => {
-  const vm = useExploreVM();
+  const vm = useOldExploreVM();
   const asset = vm.asset;
   if (asset == null) return <Navigate to={ROUTES.EXPLORE} />;
 

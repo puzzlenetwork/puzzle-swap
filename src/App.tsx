@@ -20,11 +20,13 @@ import SendAssetModal from "@components/Wallet/SendAssetModal";
 import { ROUTES } from "./constants";
 import CreateCustomPools from "./screens/CreateCustomPools";
 import Explore from "@screens/Explore";
+import ExploreToken from "@screens/ExploreToken";
+import OldExplorer from "./screens/OldExplorer";
 
 const Root = styled(Column)`
   width: 100%;
   align-items: center;
-  background: #f1f2fe;
+  background: #f8f8ff;
   min-height: 100vh;
 `;
 
@@ -35,12 +37,16 @@ const App: React.FC = () => {
       <Header />
       <Routes>
         {/* Landing */}
-        <Route path={ROUTES.ROOT} element={<Landing />} />
+        <Route path={ROUTES.ROOT} element={<TradeInterface />} />
         {/* 404 */}
         <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
         {/* Stake */}
         <Route path={ROUTES.STAKE} element={<Staking />} />
+
+        {/* Explore */}
+        <Route path={ROUTES.OLD_EXPLORE} element={<OldExplorer />} />
         <Route path={ROUTES.EXPLORE} element={<Explore />} />
+        <Route path={ROUTES.EXPLORE_TOKEN} element={<ExploreToken />} />
 
         {/* Swap routes */}
         <Route path={ROUTES.POOL_SWAP} element={<MultiSwapInterface />} />
