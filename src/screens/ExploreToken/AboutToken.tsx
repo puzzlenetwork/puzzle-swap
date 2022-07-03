@@ -4,12 +4,15 @@ import Text from "@components/Text";
 import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
 import SizedBox from "@components/SizedBox";
 import TextButton from "@components/TextButton";
+import SmoothCollapse from "react-smooth-collapse";
 
 interface IProps {}
 
 const Root = styled.div`
   display: flex;
   flex-direction: column;
+  transition: 0.4s;
+  overflow: hidden;
 `;
 const Gradient = styled.div`
   display: flex;
@@ -21,13 +24,17 @@ const Gradient = styled.div`
   background: linear-gradient(180deg, rgba(248, 248, 255, 0) 0%, #f8f8ff 100%);
   z-index: 10;
 `;
-const Container = styled.div`
+const Body = styled(SmoothCollapse)`
   position: relative;
-  transition: 0.4s;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #363870;
+  white-space: pre-wrap;
 `;
 const AboutToken: React.FC<IProps> = () => {
   const vm = useExploreTokenVM();
-  const [opened, setOpend] = useState(false);
+  const [opened, setOpened] = useState(false);
   const text = vm.about;
   return (
     <Root>
@@ -36,19 +43,28 @@ const AboutToken: React.FC<IProps> = () => {
         About {vm.asset.name}
       </Text>
       <SizedBox height={16} />
-      <Container>
-        <Text type="secondary" style={{ whiteSpace: "pre-wrap" }}>
-          {opened ? text : text.slice(0, text.length / 3)}
-        </Text>
+      <Text
+        type="secondary"
+        style={{
+          whiteSpace: "pre-wrap",
+          position: "relative",
+        }}
+      >
+        {text.slice(0, text.length / 3)}
         {!opened && <Gradient />}
-      </Container>
+      </Text>
+      <Body expanded={opened}>
+        <Text type="secondary" style={{ whiteSpace: "pre-wrap" }}>
+          {text.slice(text.length / 3)}
+        </Text>
+      </Body>
       <SizedBox height={16} />
       <TextButton
         kind="secondary"
         weight={500}
-        onClick={() => setOpend(!opened)}
+        onClick={() => setOpened(!opened)}
       >
-        {!opened ? "Read more..." : "Hide"}
+        {!opened ? "Read more..." : "Hide.."}
       </TextButton>
     </Root>
   );

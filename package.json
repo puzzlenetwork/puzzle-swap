@@ -84,6 +84,7 @@
     "react-popper-tooltip": "^4.3.1",
     "react-refresh": "^0.8.3",
     "react-router-dom": "^6.0.2",
+    "react-smooth-collapse": "^2.1.1",
     "react-table": "^7.7.0",
     "recharts": "^2.1.8",
     "resolve": "1.18.1",
