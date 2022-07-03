@@ -47,10 +47,18 @@ const TokensTable: React.FC<IProps> = () => {
       });
     }
   };
-  // const [displayedTokens, setDisplayedTokens] = useState(10);
+  const [displayedTokens, setDisplayedTokens] = useState(10);
+  const isFiltersChosen =
+    vm.tokenCategoryFilter !== 0 ||
+    vm.tokenUserFilter !== 0 ||
+    vm.tokenNameFilter.length !== 0;
   const [filteredTokens, setFilteredTokens] = useState<IToken[]>([]);
   useMemo(() => {
     const data = vm.assetsWithStats
+      .slice(
+        0,
+        !isFiltersChosen ? displayedTokens : vm.assetsWithStats.length - 1
+      )
       .filter(({ name, symbol }) =>
         vm.tokenNameFilter
           ? [name, symbol]
@@ -78,6 +86,8 @@ const TokensTable: React.FC<IProps> = () => {
     setFilteredTokens(data);
   }, [
     accountStore.assetBalances,
+    displayedTokens,
+    isFiltersChosen,
     tokenStore.watchList,
     vm.assetsWithStats,
     vm.tokenCategoryFilter,
@@ -144,6 +154,25 @@ const TokensTable: React.FC<IProps> = () => {
               />
             );
           })}
+          {!isFiltersChosen && displayedTokens !== vm.assetsWithStats.length && (
+            <>
+              <SizedBox height={16} />
+              <Text
+                type="secondary"
+                weight={500}
+                textAlign="center"
+                style={{ cursor: "pointer" }}
+                onClick={() =>
+                  vm.assetsWithStats.length - displayedTokens >= 10
+                    ? setDisplayedTokens(displayedTokens + 10)
+                    : setDisplayedTokens(vm.assetsWithStats.length)
+                }
+              >
+                Load more
+              </Text>
+              <SizedBox height={16} />
+            </>
+          )}
         </GridTable>
       </Card>
     </Root>

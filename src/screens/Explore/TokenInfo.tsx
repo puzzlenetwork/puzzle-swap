@@ -19,22 +19,31 @@ const TokenInfo: React.FC<IProps> = ({ num, assetId, change }) => {
     <Row justifyContent="space-between">
       <Link to={ROUTES.EXPLORE_TOKEN.replace(":assetId", assetId)}>
         <Row mainAxisSize="fit-content">
-          <Text type="purple300">{num}</Text>
+          <Text type="purple300" fitContent>
+            {num}
+          </Text>
           <SizedBox width={8} />
           <RoundTokenIcon
             src={tokenLogos[TOKENS_BY_ASSET_ID[assetId].symbol]}
           />
           <SizedBox width={8} />
-          <Text nowrap weight={500}>
-            {TOKENS_BY_ASSET_ID[assetId].name}
-          </Text>
-          <SizedBox width={8} />
-          <Text nowrap type="purple300">
-            {TOKENS_BY_ASSET_ID[assetId].symbol}
-          </Text>
+          <Row style={{ flexWrap: "wrap" }}>
+            <Text nowrap weight={500} fitContent>
+              {TOKENS_BY_ASSET_ID[assetId].name}
+            </Text>
+            <SizedBox width={8} />
+            <Text nowrap type="purple300" fitContent>
+              {TOKENS_BY_ASSET_ID[assetId].symbol}
+            </Text>
+          </Row>
         </Row>
       </Link>
-      <Text type={change.gt(0) ? "success" : "error"} weight={500} fitContent>
+      <Text
+        type={change.gt(0) ? "success" : "error"}
+        weight={500}
+        fitContent
+        style={{ flexWrap: "wrap" }}
+      >
         {change.toFormat(2)}%
       </Text>
     </Row>

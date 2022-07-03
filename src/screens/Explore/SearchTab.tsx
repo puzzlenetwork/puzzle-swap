@@ -6,6 +6,8 @@ import SizedBox from "@components/SizedBox";
 import { Row } from "@components/Flex";
 import { useExploreVM } from "@screens/Explore/ExploreVm";
 import { observer } from "mobx-react-lite";
+import Text from "@components/Text";
+import close from "@src/assets/icons/primaryBlue16CloseIcon.svg";
 
 const Root = styled.div`
   background: #ffffff;
@@ -41,20 +43,20 @@ const Selects = styled.div`
   }
 `;
 const StyledRow = styled(Row)`
-  //flex-wrap: wrap;
+  flex-wrap: wrap;
 
-  //& > :first-of-type {
-  //  margin-bottom: 8px;
-  //}
-  //
-  //@media (min-width: 380px) {
-  //  & > :first-of-type {
-  //    margin-bottom: 0;
-  //  }
-  //}
-  //@media (min-width: 1080px) {
-  //  flex-wrap: nowrap;
-  //}
+  & > :first-of-type {
+    margin-bottom: 8px;
+  }
+
+  @media (min-width: 380px) {
+    & > :first-of-type {
+      margin-bottom: 0;
+    }
+  }
+  @media (min-width: 1080px) {
+    flex-wrap: nowrap;
+  }
 `;
 const categoriesOptions = [
   { title: "All categories", key: "all" },
@@ -77,8 +79,31 @@ const InputWrapper = styled.div`
     min-width: 340px;
   }
 `;
+const ClearBtn = styled(Text)`
+  margin: 12px 12px 0 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+
+  @media (min-width: 492px) {
+    margin: 0 12px;
+  }
+
+  ::after {
+    position: absolute;
+    right: -20px;
+    top: 2px;
+    content: url(${close});
+  }
+`;
 const SearchTab: React.FC = () => {
   const vm = useExploreVM();
+  const isFiltersChosen =
+    vm.tokenCategoryFilter !== 0 || vm.tokenUserFilter !== 0;
+  const handleClearFilters = () => {
+    vm.setTokenCategoryFilter(0);
+    vm.setUserFilter(0);
+  };
   return (
     <Root>
       <Selects>
@@ -102,6 +127,16 @@ const SearchTab: React.FC = () => {
           />
           <SizedBox width={12} />
         </StyledRow>
+        {isFiltersChosen && (
+          <ClearBtn
+            fitContent
+            weight={500}
+            type="blue500"
+            onClick={handleClearFilters}
+          >
+            Clear all
+          </ClearBtn>
+        )}
       </Selects>
       <Filters>
         <InputWrapper>
