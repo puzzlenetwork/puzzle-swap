@@ -3,6 +3,8 @@ import { Column } from "@components/Flex";
 import ExploreTokenPriceChart from "@screens/ExploreToken/ExploreTokenPriceChart";
 import ExploreTokenPriceStatistics from "@screens/ExploreToken/ExploreTokenPriceStatistics";
 import TradeWithTokens from "@screens/ExploreToken/TradeWithTokens";
+import useWindowSize from "@src/hooks/useWindowSize";
+import AboutToken from "@screens/ExploreToken/AboutToken";
 
 const Root = styled(Column)`
   width: 100%;
@@ -22,15 +24,19 @@ const Root = styled(Column)`
 `;
 
 const ExploreTokenBasicInformation = () => {
+  const { width } = useWindowSize();
   return (
     <Root>
-      <ExploreTokenPriceChart />
+      <Column crossAxisSize="max">
+        <ExploreTokenPriceChart />
+        {width && width >= 880 && <AboutToken />}
+      </Column>
       <Column crossAxisSize="max">
         <ExploreTokenPriceStatistics />
         <TradeWithTokens />
+        {width && width < 880 && <AboutToken />}
       </Column>
     </Root>
   );
 };
-
 export default ExploreTokenBasicInformation;
