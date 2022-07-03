@@ -130,7 +130,12 @@ const PoolsWithToken: React.FC<IProps> = () => {
       </Text>
       <SizedBox height={16} />
       <Scrollbar style={{ maxWidth: "calc(100vw - 32px)", borderRadius: 16 }}>
-        <Table columns={columns} data={pools} style={{ width: "100%" }} />
+        <Table
+          columns={columns}
+          data={pools}
+          style={{ width: "100%" }}
+          withHover
+        />
       </Scrollbar>
     </Root>
   );
