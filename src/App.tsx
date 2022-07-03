@@ -26,7 +26,7 @@ import OldExplorer from "./screens/OldExplorer";
 const Root = styled(Column)`
   width: 100%;
   align-items: center;
-  background: #f1f2fe;
+  background: #f8f8ff;
   min-height: 100vh;
 `;
 
