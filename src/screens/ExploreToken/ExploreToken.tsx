@@ -14,10 +14,8 @@ import { ReactComponent as ArrowBackIcon } from "@src/assets/icons/backArrow.svg
 import ExploreTokenBasicInformation from "@screens/ExploreToken/ExploreTokenBasicInformation";
 import styled from "@emotion/styled";
 import RoundTokenIcon from "@components/RoundTokenIcon";
-import { ReactComponent as StarIcon } from "@src/assets/icons/star.svg";
-import { ReactComponent as ShareIcon } from "@src/assets/icons/share.svg";
-import IconButtonAdaptive from "@screens/ExploreToken/IconButtonAdaptive";
 import { observer } from "mobx-react-lite";
+import SocialMediaAndFav from "@screens/ExploreToken/SocialMediaAndFav";
 
 interface IProps {}
 
@@ -25,17 +23,6 @@ const TokenTitle = styled(Text)`
   @media (min-width: 880px) {
     font-size: 24px;
     line-height: 32px;
-  }
-`;
-
-const ButtonWrapper = styled(Row)`
-  & > :first-of-type {
-    margin-right: 16px;
-  }
-  @media (min-width: 880px) {
-    & > :first-of-type {
-      margin-right: 8px;
-    }
   }
 `;
 
@@ -73,12 +60,7 @@ const ExploreTokenImpl: React.FC<IProps> = observer(() => {
               <span style={{ color: "#8082C5" }}>{vm.asset.symbol}</span>
             </TokenTitle>
           </Row>
-          <ButtonWrapper mainAxisSize="fit-content">
-            <IconButtonAdaptive icon={<StarIcon />}>
-              Add to watchlist
-            </IconButtonAdaptive>
-            <IconButtonAdaptive icon={<ShareIcon />}>Share</IconButtonAdaptive>
-          </ButtonWrapper>
+          <SocialMediaAndFav />
         </Row>
         <SizedBox height={8} />
         <Row alignItems="end" mainAxisSize="fit-content">
