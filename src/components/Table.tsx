@@ -8,6 +8,7 @@ interface IProps extends TableProps {
   columns: any[];
   data: any[];
   fitContent?: boolean;
+  withHover?: boolean;
   onClick?: () => void;
   onLoadMore?: () => void;
   loading?: boolean;
@@ -75,13 +76,14 @@ const Table: React.FC<IProps> = ({
   onClick,
   fitContent,
   onLoadMore,
+  withHover,
   loading,
   ...rest
 }) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data });
   return (
-    <Root {...rest} hovered={onClick != null} fitContent={fitContent}>
+    <Root {...rest} hovered={withHover} fitContent={fitContent}>
       <table {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup, index) => (
