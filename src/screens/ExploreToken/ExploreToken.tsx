@@ -16,6 +16,7 @@ import styled from "@emotion/styled";
 import RoundTokenIcon from "@components/RoundTokenIcon";
 import { observer } from "mobx-react-lite";
 import SocialMediaAndFav from "@screens/ExploreToken/SocialMediaAndFav";
+import TradeWithTokens from "@screens/ExploreToken/TradeWithTokens";
 
 interface IProps {}
 
