@@ -12,13 +12,20 @@ import { useStores } from "@stores";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import TokenTags from "@screens/Invest/TokenTags";
 import { useNavigate } from "react-router-dom";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
-const Root = styled.div`
+const Root = styled.div<{ sort?: boolean }>`
   display: flex;
   flex-direction: column;
   width: 100%;
+
+  .liquidity-group {
+    width: 20px;
+    height: 20px;
+    transform: ${({ sort }) => (sort ? "scale(1)" : "scale(1, -1)")};
+  }
 `;
 
 const PoolsWithToken: React.FC<IProps> = () => {
@@ -26,12 +33,29 @@ const PoolsWithToken: React.FC<IProps> = () => {
   const { poolsStore, accountStore } = useStores();
   const navigate = useNavigate();
   const [pools, setPools] = useState<any>([]);
+  const [sortApy, setSortApy] = useState(true);
   useMemo(() => {
     setPools(
       poolsStore.pools
         .filter(({ tokens }) =>
           tokens.map((t) => t.assetId).includes(vm.asset.assetId)
         )
+        .sort((a, b) => {
+          if (a.statistics?.apy != null && b.statistics?.apy != null) {
+            if (new BN(a.statistics.apy).lt(b.statistics.apy)) {
+              return sortApy ? 1 : -1;
+            } else if (new BN(a.statistics.apy).eq(b.statistics.apy)) {
+              return 0;
+            } else {
+              return sortApy ? -1 : 1;
+            }
+          } else if (a.statistics?.apy != null) {
+            return -1;
+          } else if (b.statistics?.apy != null) {
+            return 1;
+          }
+          return 1;
+        })
         .map((pool) => ({
           onClick: () => {
             navigate(`/pools/${pool.domain}/invest`);
@@ -57,11 +81,17 @@ const PoolsWithToken: React.FC<IProps> = () => {
               </Column>
             </Row>
           ),
-          apy: "100%",
+          apy: new BN(pool.statistics?.apy ?? 0).toFormat(2) + " %",
           value: "$ " + pool.globalLiquidity.toFormat(2),
         }))
     );
-  }, [poolsStore.pools, vm.asset.assetId]);
+  }, [
+    accountStore.findBalanceByAssetId,
+    navigate,
+    poolsStore.pools,
+    sortApy,
+    vm.asset.assetId,
+  ]);
   const columns = React.useMemo(
     () => [
       {
@@ -78,16 +108,22 @@ const PoolsWithToken: React.FC<IProps> = () => {
             <Text size="medium" fitContent>
               APY
             </Text>
-            <img src={group} alt="group" className="liquidity-group" />
+            <img
+              src={group}
+              alt="group"
+              className="liquidity-group"
+              style={{ cursor: "pointer" }}
+              onClick={() => setSortApy(!sortApy)}
+            />
           </Row>
         ),
         accessor: "apy",
       },
     ],
-    []
+    [sortApy]
   );
   return (
-    <Root>
+    <Root sort={sortApy}>
       <SizedBox height={40} />
       <Text weight={500} size="big">
         Pools with {vm.asset.name}
