@@ -7,6 +7,7 @@ import useWindowSize from "@src/hooks/useWindowSize";
 import AboutToken from "@screens/ExploreToken/AboutToken";
 import PoolsWithToken from "./PoolsWithToken";
 import OperationsTable from "@screens/ExploreToken/OperationsTable";
+import SizedBox from "@components/SizedBox";
 
 const Root = styled(Column)`
   width: 100%;
@@ -27,18 +28,29 @@ const Root = styled(Column)`
 
 const ExploreTokenBasicInformation = () => {
   const { width } = useWindowSize();
-  return (
+  return width && width >= 880 ? (
     <Root>
       <Column crossAxisSize="max">
         <ExploreTokenPriceChart />
-        {width && width >= 880 && <AboutToken />}
+        <AboutToken />
         <PoolsWithToken />
         <OperationsTable />
       </Column>
       <Column crossAxisSize="max">
         <ExploreTokenPriceStatistics />
         <TradeWithTokens />
-        {width && width < 880 && <AboutToken />}
+      </Column>
+    </Root>
+  ) : (
+    <Root>
+      <Column crossAxisSize="max">
+        <ExploreTokenPriceChart />
+        <SizedBox height={24} />
+        <ExploreTokenPriceStatistics />
+        <TradeWithTokens />
+        <AboutToken />
+        <PoolsWithToken />
+        <OperationsTable />
       </Column>
     </Root>
   );

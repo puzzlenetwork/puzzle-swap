@@ -10,7 +10,6 @@ const transactionsService = {
         : "";
     const url =
       `${process.env.REACT_APP_API_BASE}/api/v1/transactions` + search;
-    console.log(url);
     const { data } = await axios.get(url);
     return data;
   },
