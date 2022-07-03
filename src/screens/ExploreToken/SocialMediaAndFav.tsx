@@ -9,6 +9,8 @@ import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
 import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
+import ShareDialog from "@screens/ExploreToken/dialogs/ShareDialog";
+import Button from "@components/Button";
 
 interface IProps {}
 
@@ -23,6 +25,7 @@ const ButtonWrapper = styled(Row)`
     }
   }
 `;
+
 const SocialMediaAndFav: React.FC<IProps> = () => {
   const vm = useExploreTokenVM();
   const { assetId } = vm.asset;
@@ -61,6 +64,10 @@ const SocialMediaAndFav: React.FC<IProps> = () => {
       >
         Share
       </IconButtonAdaptive>
+      <ShareDialog
+        visible={visibleModal}
+        onClose={() => setVisibleModal(false)}
+      />
     </ButtonWrapper>
   );
 };

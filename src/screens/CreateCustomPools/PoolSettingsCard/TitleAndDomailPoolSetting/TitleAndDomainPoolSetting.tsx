@@ -129,7 +129,7 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
         </Row>
         <SizedBox height={4} />
         <Input
-          prefix={<Text fitContent>puzzleswap.org/pools/</Text>}
+          prefix={<Text fitContent>app.puzzleswap.org/pools/</Text>}
           value={vm.domain}
           onBlur={(e) => checkDomain(e.target.value)}
           onFocus={() => setDomainError(null)}
