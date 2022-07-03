@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from "react";
-import { TChartDataRecord } from "@screens/Explore/ExploreVm";
 import styled from "@emotion/styled";
 import { Row } from "@components/Flex";
+import { TChartDataRecord } from "@screens/ExploreToken/ExploreTokenVm";
 
 interface IProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
   value: keyof TChartDataRecord;
