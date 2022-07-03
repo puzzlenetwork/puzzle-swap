@@ -24,6 +24,7 @@ const Root = styled(Card)`
   padding: 0 !important;
   min-height: 436px;
   flex: 2;
+
   .recharts-tooltip-item-name,
   .recharts-tooltip-item-separator {
     display: none;
@@ -53,13 +54,16 @@ const Header = styled(Row)`
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
+
   .age-btns {
     display: none;
   }
+
   @media (min-width: 880px) {
     .age-btns {
       display: flex;
     }
+
     padding: 20px 24px;
   }
 `;
@@ -112,7 +116,9 @@ const ExploreTokenPriceChart: React.FC<IProps> = () => {
       </Header>
       <Body>
         {vm.chartLoading ? (
-          <Spinner />
+          <Row style={{ minWidth: chartWidth }} justifyContent="center">
+            <Spinner />
+          </Row>
         ) : (
           <LineChart width={chartWidth} height={280} data={vm.chart}>
             <YAxis hide domain={[chartMin * 0.99, chartMax * 1.01]} />
