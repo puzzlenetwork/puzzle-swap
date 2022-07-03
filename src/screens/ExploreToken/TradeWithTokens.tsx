@@ -18,7 +18,7 @@ const Tag = styled.div`
   display: flex;
   background: #ffffff;
   border: 1px solid #f1f2fe;
-  padding: 8px;
+  padding: 8px 16px 8px 8px;
   border-radius: 8px;
   margin: 0 8px 8px 0;
   cursor: pointer;

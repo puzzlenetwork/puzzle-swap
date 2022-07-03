@@ -1,11 +1,10 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { autorun, makeAutoObservable, reaction } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import { RootStore, useStores } from "@stores";
 import axios from "axios";
 import dayjs, { Dayjs } from "dayjs";
 import BN from "@src/utils/BN";
-import wavesCapService from "@src/services/wavesCapService";
 import { TOKENS_BY_SYMBOL, TOKENS_LIST } from "@src/constants";
 import transactionsService from "@src/services/transactionsService";
 
@@ -32,16 +31,6 @@ export type TChartDataRecord = {
   "3m"?: TChartData;
   "1y"?: TChartData;
   all?: TChartData;
-};
-
-export type TTokenDetails = {
-  totalSupply: BN;
-  circulatingSupply: BN;
-  totalBurned: BN;
-  fullyDilutedMC: BN;
-  marketCap: BN;
-  currentPrice: BN;
-  change24H: BN;
 };
 
 class OldExploreVm {
@@ -72,8 +61,9 @@ class OldExploreVm {
   setMegaPoolsInvestHistorySkip = (v: number) =>
     (this.aggregatorTradesHistorySkip = v);
 
-  tokenDetails: Partial<TTokenDetails> = {};
-  setTokenDetails = (v: Partial<TTokenDetails>) => (this.tokenDetails = v);
+  get tokenDetails() {
+    return this.rootStore.tokenStore.statisticsByAssetId[this.assetId] ?? {};
+  }
 
   selectedChartPeriod: keyof TChartDataRecord = "1d";
   setSelectedChartPeriod = (v: keyof TChartDataRecord) =>
@@ -99,15 +89,11 @@ class OldExploreVm {
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
-    autorun(() => {
-      console.log(window.location.search);
-    });
     const search = new URLSearchParams(window.location.search);
     this.assetId = search.get("assetId") ?? TOKENS_BY_SYMBOL.PUZZLE.assetId;
 
     Promise.all([
       this.syncChart(),
-      this.syncTokenDetails(),
       this.syncAggregatorTradesHistory(),
       this.syncMegaPolsInvestHistory(),
     ]).then();
@@ -145,28 +131,6 @@ class OldExploreVm {
     this.setLoading(false);
   };
 
-  syncTokenDetails = async () => {
-    const assetDetails = await wavesCapService.getAssetsStats([this.assetId]);
-    const decimals = this.asset?.decimals;
-    const firstPrice = new BN(assetDetails[0].data?.["firstPrice_usd-n"] ?? 0);
-    const currentPrice = new BN(assetDetails[0].data?.["lastPrice_usd-n"] ?? 0);
-
-    const totalSupply = BN.formatUnits(assetDetails[0].totalSupply, decimals);
-    const circulatingSupply = BN.formatUnits(
-      assetDetails[0].circulating,
-      decimals
-    );
-    this.setTokenDetails({
-      totalSupply,
-      circulatingSupply: BN.formatUnits(assetDetails[0].circulating, decimals),
-      change24H: currentPrice.div(firstPrice).minus(1).times(100),
-      currentPrice,
-      fullyDilutedMC: totalSupply.times(currentPrice),
-      marketCap: circulatingSupply.times(currentPrice),
-      totalBurned: totalSupply.minus(circulatingSupply),
-    });
-  };
-
   get low24H() {
     const min = Math.min(...this.chart.map(({ volume }) => volume));
     return new BN(min);
@@ -180,7 +144,6 @@ class OldExploreVm {
   syncChart = async () => {
     if (this.chartData[this.selectedChartPeriod] != null) return;
     this.setChartLoading(true);
-    console.log(this.assetId);
     const req = `https://wavescap.com/api/chart/asset/${this.assetId}-usd-n-${this.selectedChartPeriod}.json`;
     const { data } = await axios.get(req);
     this.setChartData(this.selectedChartPeriod, {

@@ -5,6 +5,7 @@ import { RootStore, useStores } from "@stores";
 import { TOKEN_DETAILS_BY_SYMBOL, TOKENS_BY_ASSET_ID } from "@src/constants";
 import dayjs, { Dayjs } from "dayjs";
 import axios from "axios";
+import transactionsService from "@src/services/transactionsService";
 
 const ctx = React.createContext<ExploreTokenVM | null>(null);
 
@@ -80,7 +81,6 @@ class ExploreTokenVM {
   }
 
   syncChart = async () => {
-    console.log("ok");
     if (this.chartData[this.selectedChartPeriod] != null) return;
     this.setChartLoading(true);
     const req = `https://wavescap.com/api/chart/asset/${this.assetId}-usd-n-${this.selectedChartPeriod}.json`;
@@ -93,11 +93,49 @@ class ExploreTokenVM {
     this.setChartLoading(false);
   };
 
+  get pools() {
+    return this.rootStore.poolsStore.pools.filter((p) =>
+      p.tokens.some(({ assetId }) => assetId === this.assetId)
+    );
+  }
+
+  operations: any[] = [];
+  private setOperations = (v: any[]) => (this.operations = v);
+  private operationsSkip = 0;
+  private setOperationsSkip = (v: number) => (this.operationsSkip = v);
+  private loadOperations = async () => {
+    this.setLoading(true);
+
+    //SWAP
+    //  icon - swapIcon
+    //  tokens
+    //    from - payment[0].assetId
+    //    to - call.args[0].value
+    //  value - payment[0].amount
+    //  time - timestamp
+    const params = [
+      ["assetId", this.assetId],
+      // ["func", "swap"], //swap
+      // ["func", "swapWithReferral"], //swap
+      // ["func", "unstakeAndRedeemIndex"], //minus
+      // ["func", "generateIndexAndStake"], // plus
+      // ["func", "generateIndexWithOneTokenAndStake"], // plus
+      ["after", this.operationsSkip],
+    ] as Array<[string, string | number | boolean]>;
+    const txs = await transactionsService.getTransactions(params);
+    console.log(txs);
+    this.setOperationsSkip(this.operationsSkip + 5);
+    this.setOperations([...this.operations, ...txs] as any[]);
+    this.setLoading(false);
+  };
+
   constructor(rootStore: RootStore, assetId: string) {
     this.rootStore = rootStore;
     this.assetId = assetId;
     makeAutoObservable(this);
-    this.syncChart();
+    Promise.all([this.syncChart(), this.loadOperations()]).then(() =>
+      this.setLoading(false)
+    );
     reaction(() => this.selectedChartPeriod, this.syncChart);
   }
 }
