@@ -121,9 +121,9 @@ const ShareDialog: React.FC<IProps> = ({ ...rest }) => {
         <Icon src={vm.asset.logo} alt={vm.asset.symbol} />
       </Bg>
       <Title>
-        The price of PUZZLE
+        The price of {vm.asset.symbol}
         <br />
-        is $ 17.98!
+        is $ {vm.statistics?.currentPrice.toFormat(2)}!
       </Title>
       <ButtonsWrapper>
         {shareInfo.map(({ icon, title, onClick }) => (
