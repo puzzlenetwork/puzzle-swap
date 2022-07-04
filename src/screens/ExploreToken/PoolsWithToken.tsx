@@ -89,7 +89,7 @@ const PoolsWithToken: React.FC<IProps> = () => {
     accountStore.findBalanceByAssetId,
     navigate,
     poolsStore.pools,
-   sortApy,
+    sortApy,
     vm.asset.assetId,
   ]);
   const columns = React.useMemo(
@@ -133,7 +133,7 @@ const PoolsWithToken: React.FC<IProps> = () => {
         <Table
           columns={columns}
           data={pools}
-          style={{ width: "100%" }}
+          // style={{ width: "100%" }}
           withHover
         />
       </Scrollbar>

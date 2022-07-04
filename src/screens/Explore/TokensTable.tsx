@@ -59,6 +59,15 @@ const TokensTable: React.FC<IProps> = () => {
         0,
         !isFiltersChosen ? displayedTokens : vm.assetsWithStats.length - 1
       )
+      .sort((a, b) => {
+        const stats1 = tokenStore.statisticsByAssetId[a.assetId];
+        const stats2 = tokenStore.statisticsByAssetId[b.assetId];
+        if (stats1?.change24H == null && stats2?.change24H == null) return 0;
+        if (stats1?.change24H == null && stats2?.change24H != null) return 1;
+        if (stats1?.change24H == null && stats2?.change24H == null) return -1;
+        return stats1?.change24H.lt(stats2?.change24H) ? 1 : -1;
+      })
+
       .filter(({ name, symbol }) =>
         vm.tokenNameFilter
           ? [name, symbol]
@@ -88,6 +97,7 @@ const TokensTable: React.FC<IProps> = () => {
     accountStore.assetBalances,
     displayedTokens,
     isFiltersChosen,
+    tokenStore.statisticsByAssetId,
     tokenStore.watchList,
     vm.assetsWithStats,
     vm.tokenCategoryFilter,

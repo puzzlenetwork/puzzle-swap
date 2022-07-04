@@ -19,7 +19,6 @@ const Root = styled(Column)`
 
   @media (min-width: 880px) {
     flex-direction: row;
-    //align-items: flex-end;
     & > :first-of-type {
       margin-bottom: 0;
       margin-right: 24px;
