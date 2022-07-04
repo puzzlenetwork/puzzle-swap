@@ -10,6 +10,9 @@ export interface ISerializedTokenStore {
 
 export type TTokenStatistics = {
   assetId: string;
+  decimals: number;
+  name: string;
+  symbol: string;
   totalSupply: BN;
   circulatingSupply: BN;
   totalBurned: BN;
@@ -55,7 +58,7 @@ export default class TokenStore {
       return [];
     });
     const statistics = stats.map((details) => {
-      const asset = TOKENS_BY_ASSET_ID[details.id];
+      const asset = TOKENS_BY_ASSET_ID[details.id] ?? details.precision;
       const decimals = asset.decimals;
       const firstPrice = new BN(details.data?.["firstPrice_usd-n"] ?? 0);
       const currentPrice = new BN(details.data?.["lastPrice_usd-n"] ?? 0);
@@ -76,6 +79,9 @@ export default class TokenStore {
       const changeStr = `${changePrefix} $${formatChange24HUsd} (${formatChange24H}%)`;
       return {
         assetId: details.id,
+        decimals,
+        name: details.name,
+        symbol: details.shortcode,
         totalSupply,
         circulatingSupply: BN.formatUnits(details.circulating, decimals),
         change24H,

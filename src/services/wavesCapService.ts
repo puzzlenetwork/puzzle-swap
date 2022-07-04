@@ -5,6 +5,9 @@ interface IAssetResponse {
   totalSupply: number;
   circulating: number;
   "24h_vol_usd-n": number;
+  precision: number;
+  name: string;
+  shortcode: string;
   data: {
     "firstPrice_usd-n": number;
     "lastPrice_usd-n": number;
@@ -22,6 +25,10 @@ const wavesCapService = {
     return response.data.assets != null
       ? response.data.assets.filter((v: any) => v != null)
       : [];
+  },
+  getAllAssetsStats: async (): Promise<IAssetResponse[]> => {
+    const response = await axios.get("https://wavescap.com/api/assets.json");
+    return response.data;
   },
   // getAssetRate: async (assetsId: string): Promise<BN | null> => {
   //   const url = `https://wavescap.com/api/asset/${assetsId}.json`;

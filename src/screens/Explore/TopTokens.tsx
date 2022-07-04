@@ -5,6 +5,8 @@ import Text from "@components/Text";
 import TokenInfo from "@screens/Explore/TokenInfo";
 import { observer } from "mobx-react-lite";
 import { useExploreVM } from "@screens/Explore/ExploreVm";
+import tokenLogos from "@src/constants/tokenLogos";
+import { TOKENS_BY_ASSET_ID } from "@src/constants";
 
 interface IProps {}
 
@@ -36,10 +38,13 @@ const TopTokens: React.FC<IProps> = () => {
         <TokensContainer>
           {vm.top3Gainers.map((v, index) => (
             <TokenInfo
+              name={v.name}
               key={v.assetId}
               num={index + 1}
               assetId={v.assetId}
               change={v.change24H}
+              logo={tokenLogos[TOKENS_BY_ASSET_ID[v.assetId]?.symbol]}
+              symbol={v.symbol}
             />
           ))}
         </TokensContainer>
@@ -49,10 +54,13 @@ const TopTokens: React.FC<IProps> = () => {
         <TokensContainer>
           {vm.top3Losers.map((v, index) => (
             <TokenInfo
+              name={v.name}
               key={v.assetId}
               num={index + 1}
               assetId={v.assetId}
               change={v.change24H}
+              logo={tokenLogos[TOKENS_BY_ASSET_ID[v.assetId]?.symbol]}
+              symbol={v.symbol}
             />
           ))}
         </TokensContainer>

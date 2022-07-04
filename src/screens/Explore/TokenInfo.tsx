@@ -3,18 +3,27 @@ import Text from "@src/components/Text";
 import React from "react";
 import SizedBox from "@components/SizedBox";
 import RoundTokenIcon from "@components/RoundTokenIcon";
-import tokenLogos from "@src/constants/tokenLogos";
-import { ROUTES, TOKENS_BY_ASSET_ID } from "@src/constants";
+import { ROUTES } from "@src/constants";
 import BN from "@src/utils/BN";
 import { Link } from "react-router-dom";
 
 interface IProps {
   num: number;
   assetId: string;
+  name: string;
+  symbol: string;
+  logo: string;
   change: BN;
 }
 
-const TokenInfo: React.FC<IProps> = ({ num, assetId, change }) => {
+const TokenInfo: React.FC<IProps> = ({
+  num,
+  assetId,
+  name,
+  change,
+  logo,
+  symbol,
+}) => {
   return (
     <Row justifyContent="space-between">
       <Link to={ROUTES.EXPLORE_TOKEN.replace(":assetId", assetId)}>
@@ -23,17 +32,15 @@ const TokenInfo: React.FC<IProps> = ({ num, assetId, change }) => {
             {num}
           </Text>
           <SizedBox width={8} />
-          <RoundTokenIcon
-            src={tokenLogos[TOKENS_BY_ASSET_ID[assetId].symbol]}
-          />
+          <RoundTokenIcon src={logo} />
           <SizedBox width={8} />
           <Row style={{ flexWrap: "wrap" }}>
             <Text nowrap weight={500} fitContent>
-              {TOKENS_BY_ASSET_ID[assetId].name}
+              {name}
             </Text>
             <SizedBox width={8} />
             <Text nowrap type="purple300" fitContent>
-              {TOKENS_BY_ASSET_ID[assetId].symbol}
+              {symbol}
             </Text>
           </Row>
         </Row>
