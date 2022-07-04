@@ -77,7 +77,7 @@ const DesktopTokenTableRow: React.FC<IProps> = ({
           </Text>
         </Row>
       </Row>
-      <Text>$ {rate?.toFormat(2)}</Text>
+      <Text>$ {rate?.gte(0.0001) ? rate?.toFormat(4) : rate?.toFormat(8)}</Text>
       {change != null ? (
         <Text type={change?.gt(0) ? "success" : "error"}>
           {change.toFormat(2)} %
