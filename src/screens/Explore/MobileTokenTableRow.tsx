@@ -61,7 +61,9 @@ const MobileTokenTableRow: React.FC<IProps> = ({
         </Row>
       </Row>
       <Column justifyContent="flex-end" crossAxisSize="max">
-        <Text textAlign="end">$ {rate?.toFormat(2)}</Text>
+        <Text textAlign="end">
+          $ {rate?.gte(0.0001) ? rate?.toFormat(4) : rate?.toFormat(8)}
+        </Text>
         <Text
           textAlign="end"
           nowrap

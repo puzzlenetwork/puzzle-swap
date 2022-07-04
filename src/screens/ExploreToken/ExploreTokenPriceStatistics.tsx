@@ -6,6 +6,7 @@ import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
 import StatisticsGroup from "@components/StatisticsGroup";
 import SizedBox from "@components/SizedBox";
 import BN from "@src/utils/BN";
+import { TOKENS_BY_SYMBOL } from "@src/constants";
 
 const ExploreTokenPriceStatistics = () => {
   const vm = useExploreTokenVM();
@@ -52,10 +53,14 @@ const ExploreTokenPriceStatistics = () => {
             title: "Circulating supply",
             value: vm.statistics?.circulatingSupply?.toFormat(2),
           },
-          {
-            title: "Total burned",
-            value: vm.statistics?.totalBurned?.toFormat(2),
-          },
+          ...(vm.asset.assetId === TOKENS_BY_SYMBOL.PUZZLE.assetId
+            ? [
+                {
+                  title: "Total burned",
+                  value: vm.statistics?.totalBurned?.toFormat(2),
+                },
+              ]
+            : []),
         ]}
       />
       <SizedBox height={24} />
