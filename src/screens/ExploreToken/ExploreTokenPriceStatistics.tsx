@@ -9,8 +9,9 @@ import BN from "@src/utils/BN";
 
 const ExploreTokenPriceStatistics = () => {
   const vm = useExploreTokenVM();
-  const low = new BN(Math.min(...vm.chart.map(({ volume }) => volume)) ?? 0);
-  const high = new BN(Math.max(...vm.chart.map(({ volume }) => volume)) ?? 0);
+  const chart24h = vm.getChartByPeriod("1d");
+  const low = new BN(Math.min(...chart24h.map(({ volume }) => volume)) ?? 0);
+  const high = new BN(Math.max(...chart24h.map(({ volume }) => volume)) ?? 0);
 
   const changeColor = vm.statistics?.change24H?.gte(0) ? "#35A15A" : "#ED827E";
 

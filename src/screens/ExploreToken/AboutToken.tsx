@@ -35,7 +35,6 @@ const Body = styled(SmoothCollapse)`
 const AboutToken: React.FC<IProps> = () => {
   const vm = useExploreTokenVM();
   const [opened, setOpened] = useState(false);
-  const text = vm.about;
   return (
     <Root>
       <SizedBox height={40} />
@@ -50,12 +49,15 @@ const AboutToken: React.FC<IProps> = () => {
           position: "relative",
         }}
       >
-        {text.slice(0, text.length / 3)}
+        {vm.tokenLifeData[0]}
         {!opened && <Gradient />}
       </Text>
       <Body expanded={opened}>
         <Text type="secondary" style={{ whiteSpace: "pre-wrap" }}>
-          {text.slice(text.length / 3)}
+          {vm.tokenLifeData[1]}
+        </Text>
+        <Text type="secondary" style={{ whiteSpace: "pre-wrap" }}>
+          {vm.about != null && vm.about !== "" ? `\n${vm.about}` : ""}
         </Text>
       </Body>
       <SizedBox height={16} />

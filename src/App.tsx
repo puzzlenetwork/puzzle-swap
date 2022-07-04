@@ -7,7 +7,6 @@ import InvestToPoolInterface from "@src/screens/InvestToPoolInterface";
 import Header from "@components/Header";
 import { Column } from "@components/Flex";
 import NotFound from "@screens/NotFound";
-import Landing from "@screens/Landing";
 import { useStores } from "@stores";
 import Invest from "@screens/Invest";
 import WithdrawLiquidityInterface from "@screens/WithdrawLiquidity";

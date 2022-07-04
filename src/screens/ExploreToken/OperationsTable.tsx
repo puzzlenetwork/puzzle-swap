@@ -8,7 +8,11 @@ import { observer } from "mobx-react-lite";
 import dayjs from "dayjs";
 import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
 import BN from "@src/utils/BN";
-import { TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL } from "@src/constants";
+import {
+  EXPLORER_URL,
+  TOKENS_BY_ASSET_ID,
+  TOKENS_BY_SYMBOL,
+} from "@src/constants";
 import PoolAction from "@screens/InvestToPoolInterface/PoolHistory/PoolAction";
 import Swap from "@screens/InvestToPoolInterface/PoolHistory/Swap";
 
@@ -35,6 +39,7 @@ const AggregatorHistory: React.FC<IProps> = () => {
     setTr(
       vm.operations.map((v) => {
         return {
+          onClick: () => window.open(`${EXPLORER_URL}/tx/${v.id}`),
           details: (() => {
             switch (v.call?.function) {
               case "swap":

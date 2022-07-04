@@ -8,6 +8,7 @@ import AboutToken from "@screens/ExploreToken/AboutToken";
 import PoolsWithToken from "./PoolsWithToken";
 import OperationsTable from "@screens/ExploreToken/OperationsTable";
 import SizedBox from "@components/SizedBox";
+import ExploreFooter from "@screens/Explore/ExploreFooter";
 
 const Root = styled(Column)`
   width: 100%;
@@ -35,6 +36,7 @@ const ExploreTokenBasicInformation = () => {
         <AboutToken />
         <PoolsWithToken />
         <OperationsTable />
+        <ExploreFooter />
       </Column>
       <Column crossAxisSize="max">
         <ExploreTokenPriceStatistics />
@@ -51,6 +53,7 @@ const ExploreTokenBasicInformation = () => {
         <AboutToken />
         <PoolsWithToken />
         <OperationsTable />
+        <ExploreFooter />
       </Column>
     </Root>
   );
