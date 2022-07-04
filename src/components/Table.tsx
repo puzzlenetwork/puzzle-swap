@@ -16,8 +16,6 @@ interface IProps extends TableProps {
 
 const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
   width: ${({ fitContent }) => (fitContent ? "fit-content" : "100%")};
-  //width: 100%;
-  //width: fit-content;
   border-radius: 16px;
   background: #ffffff;
 
