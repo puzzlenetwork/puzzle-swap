@@ -110,6 +110,11 @@ const AggregatorHistory: React.FC<IProps> = () => {
           columns={columns}
           data={tr}
           onLoadMore={vm.loadOperations}
+          style={{
+            width: "100%",
+            whiteSpace: "nowrap",
+            minWidth: "fit-content",
+          }}
           loading={vm.loading}
         />
       </Scrollbar>

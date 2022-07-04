@@ -133,7 +133,11 @@ const PoolsWithToken: React.FC<IProps> = () => {
         <Table
           columns={columns}
           data={pools}
-          // style={{ width: "100%" }}
+          style={{
+            whiteSpace: "nowrap",
+            width: "fitContent",
+            minWidth: "fit-content",
+          }}
           withHover
         />
       </Scrollbar>
