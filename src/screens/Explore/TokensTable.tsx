@@ -142,6 +142,9 @@ const TokensTable: React.FC<IProps> = () => {
           )}
           {filteredTokens.map((t) => {
             const rate = poolsStore.usdnRate(t.assetId, 1) ?? BN.ZERO;
+            if (t.symbol === "TSN" || t.symbol === "LTC") {
+              console.log(rate.toFormat(2));
+            }
             const stats = tokenStore.statisticsByAssetId[t.assetId];
             return width && width >= 880 ? (
               <DesktopTokenTableRow
