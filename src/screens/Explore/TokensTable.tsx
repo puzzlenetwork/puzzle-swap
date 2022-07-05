@@ -12,7 +12,6 @@ import MobileTokenTableRow from "@screens/Explore/MobileTokenTableRow";
 import { useStores } from "@stores";
 import { tokenCategoriesEnum } from "@components/TokensSelectModal/TokenSelectModal";
 import { useExploreVM } from "@screens/Explore/ExploreVm";
-import BN from "@src/utils/BN";
 import { Column } from "@src/components/Flex";
 import Text from "@components/Text";
 import { ReactComponent as NotFoundIcon } from "@src/assets/notFound.svg";
@@ -25,8 +24,7 @@ const Root = styled.div`
 `;
 
 const TokensTable: React.FC<IProps> = () => {
-  const { tokenStore, accountStore, notificationStore, poolsStore } =
-    useStores();
+  const { tokenStore, accountStore, notificationStore } = useStores();
   const { width } = useWindowSize();
   const vm = useExploreVM();
   const handleWatchListChange = (assetId: string) => {
@@ -141,10 +139,6 @@ const TokensTable: React.FC<IProps> = () => {
             </Column>
           )}
           {filteredTokens.map((t) => {
-            const rate = poolsStore.usdnRate(t.assetId, 1) ?? BN.ZERO;
-            if (t.symbol === "TSN" || t.symbol === "LTC") {
-              console.log(rate.toFormat(2));
-            }
             const stats = tokenStore.statisticsByAssetId[t.assetId];
             return width && width >= 880 ? (
               <DesktopTokenTableRow
@@ -153,7 +147,7 @@ const TokensTable: React.FC<IProps> = () => {
                 vol24={stats?.volume24}
                 fav={tokenStore.watchList.includes(t.assetId)}
                 key={t.assetId}
-                rate={rate}
+                rate={stats.currentPrice}
                 handleWatchListChange={handleWatchListChange}
               />
             ) : (
@@ -162,7 +156,7 @@ const TokensTable: React.FC<IProps> = () => {
                 change={stats?.change24H}
                 fav={tokenStore.watchList.includes(t.assetId)}
                 key={t.assetId}
-                rate={rate}
+                rate={stats.currentPrice}
                 handleWatchListChange={handleWatchListChange}
               />
             );
