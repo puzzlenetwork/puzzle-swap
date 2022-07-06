@@ -21,12 +21,14 @@ const Card = styled.div<{
     | "baseline";
   flexDirection?: "column" | "row";
   type?: "white" | "dark";
+  bordered?: boolean;
 }>`
   display: flex;
   flex-direction: ${({ flexDirection }) => flexDirection ?? "column"};
   justify-content: ${({ justifyContent }) => justifyContent ?? "default"};
   align-items: ${({ alignItems }) => alignItems ?? "default"};
   max-width: ${({ maxWidth }) => `${maxWidth}px` ?? "100%"};
+  ${({ bordered }) => bordered && `border: 1px solid #F1F2FE;`};
   width: 100%;
   border: 1px solid #f1f2fe;
   border-radius: 16px;

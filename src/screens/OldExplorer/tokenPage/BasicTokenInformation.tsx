@@ -1,9 +1,8 @@
 import styled from "@emotion/styled";
 import { Column } from "@components/Flex";
-import PuzzlePriceChart from "@screens/Explore/PriceChart";
-import TokenInformationCard from "@screens/Explore/tokenPage/TokenInformationCard";
 import { TOKEN_DETAILS_BY_SYMBOL } from "@src/constants";
-import { useExploreVM } from "@screens/Explore/ExploreVm";
+import TokenInformationCard from "./TokenInformationCard";
+import { useOldExploreVM } from "@screens/OldExplorer/OldExploreVm";
 
 const Root = styled(Column)`
   width: 100%;
@@ -22,11 +21,11 @@ const Root = styled(Column)`
 `;
 
 const BasicTokenInformation = () => {
-  const vm = useExploreVM();
+  const vm = useOldExploreVM();
   const details = TOKEN_DETAILS_BY_SYMBOL[vm.asset?.symbol ?? ""];
   return (
     <Root>
-      <PuzzlePriceChart />
+      {/*<PuzzlePriceChart />*/}
       {details != null && <TokenInformationCard info={details} />}
     </Root>
   );

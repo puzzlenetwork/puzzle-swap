@@ -2,7 +2,7 @@
   "name": "puzzle",
   "version": "1.0.0",
   "private": false,
-  "homepage": "https://puzzleswap.org/",
+  "homepage": "https://app.puzzleswap.org/",
   "dependencies": {
     "@babel/core": "7.12.3",
     "@emotion/core": "^11.0.0",
@@ -84,6 +84,7 @@
     "react-popper-tooltip": "^4.3.1",
     "react-refresh": "^0.8.3",
     "react-router-dom": "^6.0.2",
+    "react-smooth-collapse": "^2.1.1",
     "react-table": "^7.7.0",
     "recharts": "^2.1.8",
     "resolve": "1.18.1",

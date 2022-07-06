@@ -1,13 +1,15 @@
 import styled from "@emotion/styled";
 import { Column } from "@components/Flex";
-import PriceChart from "@screens/Explore/PriceChart";
 import TokenInformation from "./TokenInformation";
+import PriceChart from "../PriceChart";
 
 const Root = styled(Column)`
   width: 100%;
+
   & > :first-of-type {
     margin-bottom: 24px;
   }
+
   @media (min-width: 880px) {
     flex-direction: row;
     align-items: flex-end;

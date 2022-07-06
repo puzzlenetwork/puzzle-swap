@@ -235,6 +235,7 @@ const PoolsTable: React.FC = () => {
             style={{ minWidth: 900 }}
             columns={columns}
             data={filteredPools}
+            withHover
           />
         </Scrollbar>
       ) : (

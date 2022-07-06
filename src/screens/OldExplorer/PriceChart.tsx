@@ -15,9 +15,9 @@ import useWindowSize from "@src/hooks/useWindowSize";
 import dayjs from "dayjs";
 import BN from "@src/utils/BN";
 import { Row } from "@src/components/Flex";
-import { TChartDataRecord, useExploreVM } from "@screens/Explore/ExploreVm";
 import Spinner from "@components/Spinner";
 import TitleWithTips from "@components/TitleWithTips";
+import { TChartDataRecord, useOldExploreVM } from "./OldExploreVm";
 
 interface IProps {}
 
@@ -124,7 +124,7 @@ const ageButtons = [
   { title: "All", value: "all" },
 ];
 const PriceChart: React.FC<IProps> = () => {
-  const vm = useExploreVM();
+  const vm = useOldExploreVM();
   const { width: screenWidth } = useWindowSize();
   const chartWidth = screenWidth ? calcChartWidth(screenWidth) : 0;
   const chartMin = Math.min(...vm.chart.map(({ volume }) => volume));

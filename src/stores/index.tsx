@@ -5,6 +5,7 @@ import PoolsStore from "./PoolsStore";
 import AccountStore from "./AccountStore";
 import NFTStore from "./NFTStore";
 import StakeStore from "./StakeStore";
+import TokenStore from "./TokenStore";
 
 export {
   RootStore,
@@ -12,6 +13,7 @@ export {
   AccountStore,
   NFTStore,
   StakeStore,
+  TokenStore,
   storesContext,
   useStores,
 };

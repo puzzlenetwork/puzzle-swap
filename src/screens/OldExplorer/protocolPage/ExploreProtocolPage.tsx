@@ -4,9 +4,9 @@ import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
 import BasicProtocolInformation from "./BasicProtocolInformation";
-import AggregatorHistory from "@screens/Explore/protocolPage/AggregatorHistory";
-import MegaPoolsHistory from "@screens/Explore/protocolPage/MegaPoolsHistory";
-import ExploreLayout from "@screens/Explore/ExploreLayout";
+import AggregatorHistory from "./AggregatorHistory";
+import MegaPoolsHistory from "./MegaPoolsHistory";
+import ExploreLayout from "../ExploreLayout";
 
 interface IProps {}
 

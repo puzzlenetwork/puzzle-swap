@@ -5,6 +5,7 @@ import Text from "@components/Text";
 import { Link } from "react-router-dom";
 import { Row } from "@src/components/Flex";
 import SizedBox from "@components/SizedBox";
+import { ROUTES } from "@src/constants";
 
 interface IProps {}
 
@@ -22,10 +23,10 @@ const Img = styled.img`
   padding-bottom: 44px;
 `;
 const paths = [
-  // { title: "Explore", link: "" },
-  { title: "Trade", link: "/trade" },
-  { title: "Invest", link: "/invest" },
-  { title: "Stake", link: "/stake" },
+  { title: "Explore", link: ROUTES.EXPLORE },
+  { title: "Trade", link: ROUTES.TRADE },
+  { title: "Invest", link: ROUTES.INVEST },
+  { title: "Stake", link: ROUTES.STAKE },
 ];
 const Path = styled(Link)`
   font-weight: 500;

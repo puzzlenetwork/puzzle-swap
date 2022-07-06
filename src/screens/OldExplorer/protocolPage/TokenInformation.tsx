@@ -8,8 +8,8 @@ import Skeleton from "react-loading-skeleton";
 import Button from "@components/Button";
 import { ReactComponent as PuzzleIcon } from "@src/assets/icons/puzzle.svg";
 import { observer } from "mobx-react-lite";
-import { useExploreVM } from "@screens/Explore/ExploreVm";
 import { Link } from "react-router-dom";
+import { useOldExploreVM } from "@screens/OldExplorer/OldExploreVm";
 
 const Root = styled(Column)`
   width: 100%;
@@ -25,7 +25,7 @@ const TradePuzzleButton = styled(Button)`
 `;
 
 const TokenInformation = () => {
-  const vm = useExploreVM();
+  const vm = useOldExploreVM();
   return (
     <Root>
       <Text weight={500} type="secondary" style={{ width: "fit-content" }}>

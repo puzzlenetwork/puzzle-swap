@@ -23,7 +23,7 @@ const Button = styled.button<{
   line-height: 24px;
   color: ${({ kind }) => (kind === "secondary" ? "#7075E9" : "#ffffff")};
   width: ${({ fixed }) => (fixed ? "100%" : "fit-content")};
-
+  transition: 0.4s;
   ${({ size }) =>
     (() => {
       switch (size) {
