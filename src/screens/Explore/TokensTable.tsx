@@ -12,9 +12,12 @@ import MobileTokenTableRow from "@screens/Explore/MobileTokenTableRow";
 import { useStores } from "@stores";
 import { tokenCategoriesEnum } from "@components/TokensSelectModal/TokenSelectModal";
 import { useExploreVM } from "@screens/Explore/ExploreVm";
-import { Column } from "@src/components/Flex";
+import { Column, Row } from "@src/components/Flex";
 import Text from "@components/Text";
 import { ReactComponent as NotFoundIcon } from "@src/assets/notFound.svg";
+import { ReactComponent as SortDownIcon } from "@src/assets/icons/sortDown.svg";
+import { TTokenStatistics } from "@stores/TokenStore";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -23,10 +26,48 @@ const Root = styled.div`
   flex-direction: column;
 `;
 
+const TableTitle: React.FC<{
+  sort: boolean;
+  mode: "descending" | "ascending";
+  onClick: () => void;
+}> = ({ sort, mode, onClick, children }) => (
+  <Row
+    alignItems="center"
+    onClick={onClick}
+    style={{
+      userSelect: "none",
+      cursor: "pointer",
+      ...(sort ? { color: "#363870" } : {}),
+    }}
+  >
+    <div>{children}</div>
+    {sort && mode === "descending" && (
+      <SortDownIcon style={{ marginLeft: 8 }} />
+    )}
+    {sort && mode === "ascending" && (
+      <SortDownIcon style={{ marginLeft: 8, transform: "scale(1, -1)" }} />
+    )}
+  </Row>
+);
+
 const TokensTable: React.FC<IProps> = () => {
   const { tokenStore, accountStore, notificationStore } = useStores();
   const { width } = useWindowSize();
   const vm = useExploreVM();
+  const [sort, setSort] = useState<"price" | "change" | "volume">("change");
+  const [sortMode, setSortMode] = useState<"descending" | "ascending">(
+    "descending"
+  );
+
+  const selectSort = (v: "price" | "change" | "volume") => {
+    if (sort === v) {
+      setSortMode(sortMode === "ascending" ? "descending" : "ascending");
+    } else {
+      setSort(v);
+      setSortMode("descending");
+    }
+  };
+
   const handleWatchListChange = (assetId: string) => {
     const watchListText =
       'Keep track of your favorite coins by turning on the "Watchlist" filter above the table';
@@ -45,25 +86,40 @@ const TokensTable: React.FC<IProps> = () => {
       });
     }
   };
-  const [displayedTokens, setDisplayedTokens] = useState(10);
-  const isFiltersChosen =
-    vm.tokenCategoryFilter !== 0 ||
-    vm.tokenUserFilter !== 0 ||
-    vm.tokenNameFilter.length !== 0;
+  // const [displayedTokens, setDisplayedTokens] = useState(10);
+
   const [filteredTokens, setFilteredTokens] = useState<IToken[]>([]);
   useMemo(() => {
     const data = vm.assetsWithStats
-      .slice(
-        0,
-        !isFiltersChosen ? displayedTokens : vm.assetsWithStats.length - 1
-      )
+      // .slice(
+      //   0,
+      //   !isFiltersChosen ? displayedTokens : vm.assetsWithStats.length - 1
+      // )
       .sort((a, b) => {
-        const stats1 = tokenStore.statisticsByAssetId[a.assetId];
-        const stats2 = tokenStore.statisticsByAssetId[b.assetId];
-        if (stats1?.change24H == null && stats2?.change24H == null) return 0;
-        if (stats1?.change24H == null && stats2?.change24H != null) return 1;
-        if (stats1?.change24H == null && stats2?.change24H == null) return -1;
-        return stats1?.change24H.lt(stats2?.change24H) ? 1 : -1;
+        const stats1: TTokenStatistics | undefined =
+          tokenStore.statisticsByAssetId[a.assetId];
+        const stats2: TTokenStatistics | undefined =
+          tokenStore.statisticsByAssetId[b.assetId];
+        let key: keyof TTokenStatistics | undefined;
+        if (sort === "change") key = "change24H";
+        if (sort === "price") key = "currentPrice";
+        if (sort === "volume") key = "volume24";
+        if (key == null) return 0;
+
+        if (stats1 == null && stats2 == null) return 0;
+        if (stats1[key] == null && stats2[key] != null) {
+          return sortMode === "descending" ? 1 : -1;
+        }
+        if (stats1[key] == null && stats2[key] == null) {
+          return sortMode === "descending" ? -1 : 1;
+        }
+        return sortMode === "descending"
+          ? (stats1[key] as BN).lt(stats2[key])
+            ? 1
+            : -1
+          : (stats1[key] as BN).lt(stats2[key])
+          ? -1
+          : 1;
       })
 
       .filter(({ name, symbol }) =>
@@ -93,8 +149,9 @@ const TokensTable: React.FC<IProps> = () => {
     setFilteredTokens(data);
   }, [
     accountStore.assetBalances,
-    displayedTokens,
-    isFiltersChosen,
+    // displayedTokens,
+    sort,
+    sortMode,
     tokenStore.statisticsByAssetId,
     tokenStore.watchList,
     vm.assetsWithStats,
@@ -119,9 +176,27 @@ const TokensTable: React.FC<IProps> = () => {
           {width && width >= 880 && (
             <div className="gridTitle">
               <div>Token name</div>
-              <div>Price</div>
-              <div>Change (24h)</div>
-              <div>Volume (24h)</div>
+              <TableTitle
+                onClick={() => selectSort("price")}
+                sort={sort === "price"}
+                mode={sortMode}
+              >
+                Price
+              </TableTitle>
+              <TableTitle
+                onClick={() => selectSort("change")}
+                sort={sort === "change"}
+                mode={sortMode}
+              >
+                Change (24h)
+              </TableTitle>
+              <TableTitle
+                onClick={() => selectSort("volume")}
+                sort={sort === "volume"}
+                mode={sortMode}
+              >
+                Volume (24h)
+              </TableTitle>
             </div>
           )}
           {filteredTokens.length === 0 && (
@@ -161,25 +236,25 @@ const TokensTable: React.FC<IProps> = () => {
               />
             );
           })}
-          {!isFiltersChosen && displayedTokens !== vm.assetsWithStats.length && (
-            <>
-              <SizedBox height={16} />
-              <Text
-                type="secondary"
-                weight={500}
-                textAlign="center"
-                style={{ cursor: "pointer" }}
-                onClick={() =>
-                  vm.assetsWithStats.length - displayedTokens >= 10
-                    ? setDisplayedTokens(displayedTokens + 10)
-                    : setDisplayedTokens(vm.assetsWithStats.length)
-                }
-              >
-                Load more
-              </Text>
-              <SizedBox height={16} />
-            </>
-          )}
+          {/*{!isFiltersChosen && displayedTokens !== vm.assetsWithStats.length && (*/}
+          {/*  <>*/}
+          {/*    <SizedBox height={16} />*/}
+          {/*    <Text*/}
+          {/*      type="secondary"*/}
+          {/*      weight={500}*/}
+          {/*      textAlign="center"*/}
+          {/*      style={{ cursor: "pointer" }}*/}
+          {/*      onClick={() =>*/}
+          {/*        vm.assetsWithStats.length - displayedTokens >= 10*/}
+          {/*          ? setDisplayedTokens(displayedTokens + 10)*/}
+          {/*          : setDisplayedTokens(vm.assetsWithStats.length)*/}
+          {/*      }*/}
+          {/*    >*/}
+          {/*      Load more*/}
+          {/*    </Text>*/}
+          {/*    <SizedBox height={16} />*/}
+          {/*  </>*/}
+          {/*)}*/}
         </GridTable>
       </Card>
     </Root>
