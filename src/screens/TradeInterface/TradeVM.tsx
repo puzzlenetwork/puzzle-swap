@@ -9,10 +9,10 @@ import {
   CONTRACT_ADDRESSES,
   EXPLORER_URL,
   IToken,
+  SLIPPAGE,
   TOKENS_BY_ASSET_ID,
   TOKENS_BY_SYMBOL,
   TOKENS_LIST,
-  TRADE_FEE,
 } from "@src/constants";
 
 const ctx = React.createContext<TradeVM | null>(null);
@@ -195,7 +195,7 @@ class TradeVM {
   }
 
   get minimumToReceive(): BN {
-    return this.amount1.times(TRADE_FEE);
+    return this.amount1.times(new BN(100 - SLIPPAGE).div(100));
   }
 
   switchTokens = () => {
