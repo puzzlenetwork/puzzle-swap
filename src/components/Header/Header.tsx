@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
 import puzzleLogo from "@src/assets/logo.svg";
 import mobileMenuIcon from "@src/assets/icons/mobileMenu.svg";
 import closeIcon from "@src/assets/icons/close.svg";
@@ -11,6 +10,8 @@ import SizedBox from "@components/SizedBox";
 import Wallet from "@components/Wallet/Wallet";
 import { observer } from "mobx-react-lite";
 import { ROUTES } from "@src/constants";
+import { useLocation } from "react-router-dom";
+import { Anchor } from "@components/Anchor";
 
 interface IProps {}
 
@@ -54,7 +55,7 @@ const TopMenu = styled.header`
   }
 `;
 
-const MenuItem = styled(Link)<{ selected?: boolean }>`
+const MenuItem = styled(Anchor)<{ selected?: boolean }>`
   display: flex;
   align-items: center;
   font-weight: 500;
@@ -108,6 +109,7 @@ const Header: React.FC<IProps> = () => {
     { name: "Trade", link: ROUTES.TRADE },
     { name: "Invest", link: ROUTES.INVEST },
     { name: "Stake", link: ROUTES.STAKE },
+    { name: "NFT", link: "https://puzzlemarket.org/" },
   ];
   return (
     <Root>
@@ -131,7 +133,8 @@ const Header: React.FC<IProps> = () => {
               <MenuItem
                 key={name}
                 selected={isRoutesEquals(link, location.pathname)}
-                to={link}
+                href={link}
+                target={link !== "https://puzzlemarket.org/" ? "_self" : ""}
               >
                 {name}
               </MenuItem>

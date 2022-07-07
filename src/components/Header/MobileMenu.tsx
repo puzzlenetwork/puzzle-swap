@@ -56,6 +56,7 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
     { name: "Trade", link: ROUTES.TRADE, outer: false },
     { name: "Invest", link: ROUTES.INVEST, outer: false },
     { name: "Stake", link: ROUTES.STAKE, outer: false },
+    { name: "NFT", link: "https://puzzlemarket.org/", outer: true },
   ];
   return (
     <Root {...{ bannerClosed, opened }}>
