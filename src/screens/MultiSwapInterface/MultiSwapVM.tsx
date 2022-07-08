@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { action, makeAutoObservable, when } from "mobx";
-import { EXPLORER_URL, SLIPPAGE, TRADE_FEE } from "@src/constants";
+import { EXPLORER_URL, SLIPPAGE } from "@src/constants";
 import { RootStore, useStores } from "@stores";
 import Balance from "@src/entities/Balance";
 import BN from "@src/utils/BN";
@@ -150,7 +150,9 @@ class MultiSwapVM {
       const rightPart = new BN(1).minus(Math.pow(base, power));
 
       return BN.parseUnits(
-        leftPart.times(rightPart).times(SLIPPAGE),
+        leftPart
+          .times(rightPart)
+          .times(new BN(100 - this.pool.swapFee).div(100)),
         token1.decimals
       );
     } catch (e) {
@@ -172,7 +174,7 @@ class MultiSwapVM {
   }
 
   get minimumToReceive(): BN {
-    return this.amount1.times(TRADE_FEE);
+    return this.amount1.times(new BN(100 - SLIPPAGE).div(100));
   }
 
   swap = async () => {

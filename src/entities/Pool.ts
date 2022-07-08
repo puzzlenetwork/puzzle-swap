@@ -1,9 +1,4 @@
-import {
-  IPoolConfig,
-  IPoolConfigStatistics,
-  IToken,
-  TRADE_FEE,
-} from "@src/constants";
+import { IPoolConfig, IPoolConfigStatistics, IToken } from "@src/constants";
 import { makeAutoObservable } from "mobx";
 import BN from "@src/utils/BN";
 import tokenLogos from "@src/constants/tokenLogos";
@@ -109,7 +104,7 @@ class Pool implements IPoolConfig {
   currentPrice = (
     assetId0: string,
     assetId1: string,
-    coefficient = TRADE_FEE
+    coefficient = 1
   ): BN | null => {
     if (this.tokens == null) return null;
     const asset0 = this.getAssetById(assetId0);

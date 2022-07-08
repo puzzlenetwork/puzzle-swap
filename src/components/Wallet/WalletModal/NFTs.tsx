@@ -8,6 +8,7 @@ import Button from "@components/Button";
 import SizedBox from "@components/SizedBox";
 import { Column } from "@src/components/Flex";
 import { ReactComponent as Pics } from "@src/assets/icons/picsUnion.svg";
+import { Anchor } from "@components/Anchor";
 
 interface IProps {}
 
@@ -74,9 +75,11 @@ const NFTs: React.FC<IProps> = () => {
             Explore Puzzle Market to buy one!
           </Text>
           <SizedBox height={16} />
-          <Button size="medium" kind="secondary">
-            Coming soon...
-          </Button>
+          <Anchor href="https://puzzlemarket.org/">
+            <Button size="medium" kind="secondary">
+              Go to market
+            </Button>
+          </Anchor>
           <SizedBox height={100} />
         </Column>
       )}
