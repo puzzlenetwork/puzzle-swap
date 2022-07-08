@@ -26,7 +26,6 @@ import loadCreatePoolStateFromStorage from "@screens/CreateCustomPools/utils/loa
 import checkDomainPaid from "@screens/CreateCustomPools/utils/checkDomainPaid";
 import Button from "@components/Button";
 import getDomainPaymentArtefactId from "@src/utils/getDomainPaymentArtefactId";
-import nftsPics from "@src/constants/nftsPics";
 
 const ctx = React.createContext<CreateCustomPoolsVm | null>(null);
 
