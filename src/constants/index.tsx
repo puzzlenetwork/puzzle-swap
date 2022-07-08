@@ -393,6 +393,7 @@ export interface IToken {
   name: string;
   symbol: string;
   decimals: number;
+  startPrice?: number;
   logo: string;
   category?: string[];
 }

@@ -106,6 +106,9 @@ export default class PoolsStore {
     const pool = this.pools.find(({ tokens }) =>
       tokens.some((t) => t.assetId === assetId)
     );
+    if (pool == null && TOKENS_BY_ASSET_ID[assetId].startPrice != null) {
+      return new BN(TOKENS_BY_ASSET_ID[assetId].startPrice ?? 0);
+    }
     if (pool == null) return null;
     const { tokenStore } = this.rootStore;
     const usdn = TOKENS_BY_SYMBOL.USDN.assetId;
