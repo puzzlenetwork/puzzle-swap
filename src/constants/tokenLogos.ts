@@ -51,6 +51,11 @@ import usdtViresLogo from "@src/assets/tokens/USDT_VIRES.svg";
 import usdcViresLogo from "@src/assets/tokens/USDC_VIRES.svg";
 import snsbtTciLogo from "@src/assets/tokens/sNSBT_TCI.svg";
 import tsnLogo from "@src/assets/tokens/TSN.svg";
+import busdLogo from "@src/assets/tokens/BUSD.svg";
+import wartLogo from "@src/assets/tokens/WART.svg";
+import ngntLogo from "@src/assets/tokens/NGNT.svg";
+import wxbLogo from "@src/assets/tokens/WXB.png";
+import plutoLogo from "@src/assets/tokens/PLUTO.png";
 
 
 const tokenLogos: Record<string, string> = {
@@ -103,6 +108,11 @@ const tokenLogos: Record<string, string> = {
   SNSBT: snsbtLogo,
   VLAD: vladLogo,
   TSN: tsnLogo,
+  BUSD: busdLogo,
+  WART: wartLogo,
+  NGNT: ngntLogo,
+  WXB: wxbLogo,
+  PLUTO: plutoLogo,
   SNSBTTCI: snsbtTciLogo,
   VIRES_USDT_LP: usdtViresLogo,
   VIRES_USDC_LP: usdcViresLogo,
