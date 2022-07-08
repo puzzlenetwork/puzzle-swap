@@ -59,7 +59,7 @@ const SelectNftDialog: React.FC<IProps> = ({
   ...rest
 }) => {
   const { nftStore } = useStores();
-  const { accountNFTs } = nftStore;
+  // const { accountNFTs } = nftStore;
   const vm = useCreateCustomPoolsVM();
   const handleBuyMore = async () => {
     rest.onClose && rest.onClose({} as any);
@@ -70,7 +70,7 @@ const SelectNftDialog: React.FC<IProps> = ({
       <Scrollbar>
         <Column crossAxisSize="max" style={{ maxHeight: 360 }}>
           <Grid>
-            {accountNFTs == null &&
+            {nftStore.nftForPoolCreation == null &&
               Array.from({ length: 2 }).map((_, index) => (
                 <Skeleton
                   style={{ borderRadius: 8 }}
@@ -79,8 +79,8 @@ const SelectNftDialog: React.FC<IProps> = ({
                   key={index + "skeleton-row"}
                 />
               ))}
-            {accountNFTs &&
-              accountNFTs
+            {nftStore.nftForPoolCreation &&
+              nftStore.nftForPoolCreation
                 ?.filter(({ old }) => !old)
                 .map(({ imageLink, name, assetId }, index) => (
                   <Wrap
@@ -101,7 +101,7 @@ const SelectNftDialog: React.FC<IProps> = ({
                 ))}
           </Grid>
           <SizedBox height={16} />
-          {accountNFTs?.length === 1 && (
+          {nftStore.nftForPoolCreation?.length === 1 && (
             <Button
               fixed
               kind="secondary"

@@ -26,6 +26,7 @@ import loadCreatePoolStateFromStorage from "@screens/CreateCustomPools/utils/loa
 import checkDomainPaid from "@screens/CreateCustomPools/utils/checkDomainPaid";
 import Button from "@components/Button";
 import getDomainPaymentArtefactId from "@src/utils/getDomainPaymentArtefactId";
+import nftsPics from "@src/constants/nftsPics";
 
 const ctx = React.createContext<CreateCustomPoolsVm | null>(null);
 
@@ -323,9 +324,8 @@ class CreateCustomPoolsVm {
     (this.artefactToSpend = v);
 
   get isThereArtefacts() {
-    const { accountNFTs } = this.rootStore.nftStore;
-    if (accountNFTs == null) return false;
-    return accountNFTs.filter(({ old }) => !old).length > 0;
+    const { nftForPoolCreation } = this.rootStore.nftStore;
+    return nftForPoolCreation?.length !== 0;
   }
 
   buyRandomArtefact = async () => {

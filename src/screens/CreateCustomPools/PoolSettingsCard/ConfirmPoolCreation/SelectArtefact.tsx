@@ -40,6 +40,12 @@ export const SelectArtefactSkeleton = () => (
 
 const SelectArtefact: React.FC<IProps> = () => {
   const { nftStore } = useStores();
+  // const nftForCreation = nftStore.accountNFTs?.filter((nft) =>
+  //   Object.keys(nftsPics).some((v) =>
+  //     nft?.description?.includes(v.toLowerCase())
+  //   )
+  // );
+  // console.log(nftForCreation?.length);
   const [openNftDialog, setOpenNftDialog] = useState(false);
   const vm = useCreateCustomPoolsVM();
   return (
@@ -56,7 +62,7 @@ const SelectArtefact: React.FC<IProps> = () => {
             <Column>
               <Text weight={500}>Artefact is not selected</Text>
               <Text type="secondary">
-                You have {nftStore.accountNFTs?.length} artefacts
+                You have {nftStore.nftForPoolCreation?.length ?? 0} artefacts
               </Text>
             </Column>
           ) : (

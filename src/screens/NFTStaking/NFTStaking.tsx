@@ -33,8 +33,9 @@ const Root = styled.div`
 `;
 const NFTStakingImpl: React.FC = () => {
   const { nftStore } = useStores();
-  const { stakedAccountNFTs, accountNFTs, artworks } = nftStore;
+  const { artworks } = nftStore;
   const vm = useNFTStakingVM();
+  // console.log(stakedAccountNFTs?.length);
 
   return (
     <Layout>
@@ -42,8 +43,12 @@ const NFTStakingImpl: React.FC = () => {
         {() => {
           const apy = vm.stats?.ultra?.apy ?? "-";
           const marketNftAmount = artworks?.length;
-          const accountNftAmount =
-            (accountNFTs?.length ?? 0) + (stakedAccountNFTs?.length ?? 0);
+          //todo return amount of nft on wallet
+          // const accountNftAmount =
+          //   (accountNFTs?.length ?? 0) + (stakedAccountNFTs?.length ?? 0);
+          // const accountNftAmount =
+          //   (nftStore.nftForPoolCreation?.length ?? 0) +
+          //   (stakedAccountNFTs?.length ?? 0);
 
           return (
             <Root>
@@ -64,7 +69,7 @@ const NFTStakingImpl: React.FC = () => {
               <Tabs
                 tabs={[
                   { name: "Market", additionalInfo: marketNftAmount },
-                  { name: "On my wallet", additionalInfo: accountNftAmount },
+                  { name: "On my wallet" },
                 ]}
                 activeTab={vm.nftDisplayState}
                 setActive={vm.setNftDisplayState}

@@ -3,6 +3,7 @@ import RootStore from "@stores/RootStore";
 import nodeService, { INFT } from "@src/services/nodeService";
 import { makeAutoObservable, reaction } from "mobx";
 import { CONTRACT_ADDRESSES, PUZZLE_NFTS } from "@src/constants";
+import nftsPics from "@src/constants/nftsPics";
 
 export default class NftStore {
   public rootStore: RootStore;
@@ -94,10 +95,18 @@ export default class NftStore {
           ({ typeId }) => typeId && nft.description.includes(typeId)
         ) ?? []),
       }))
-      .filter(
-        ({ description, typeId }) =>
-          typeId && description && description.includes(typeId)
-      )
+      .filter(({ description, typeId }) => {
+        if (
+          Object.keys(nftsPics).some((v) =>
+            description.toLowerCase()?.includes(v.toLowerCase())
+          )
+        ) {
+          return true;
+        } else if (typeId && description && description.includes(typeId)) {
+          return true;
+        } else return false;
+      })
+
       .map((nft) => {
         const searchTerm = "Issue: ";
         const searchIndex = nft.description?.indexOf(searchTerm) ?? 0;
@@ -174,4 +183,12 @@ export default class NftStore {
       });
     this.setStakedAccountNFTs(supportedPuzzleNft);
   };
+
+  get nftForPoolCreation() {
+    return this.rootStore.nftStore.accountNFTs?.filter((nft) =>
+      Object.keys(nftsPics).some((v) =>
+        nft?.description?.toLowerCase()?.includes(v.toLowerCase())
+      )
+    );
+  }
 }
