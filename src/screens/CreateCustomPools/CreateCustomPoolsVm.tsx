@@ -611,7 +611,7 @@ class CreateCustomPoolsVm {
       (acc, { asset, share }) => {
         const { assetId, decimals } = asset;
         const tokenBalance = findBalanceByAssetId(assetId);
-        const rate = poolsStore.usdnRate(assetId, 1) ?? BN.ZERO;
+        const rate = poolsStore.usdnRate(assetId) ?? BN.ZERO;
         if (tokenBalance?.balance == null) return acc;
         const balance = BN.formatUnits(tokenBalance.balance, decimals);
         const maxDollarValue = balance.times(rate).div(share.div(1000));
