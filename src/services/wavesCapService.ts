@@ -1,4 +1,5 @@
 import axios from "axios";
+import BN from "@src/utils/BN";
 
 interface IAssetResponse {
   id: string;
@@ -30,17 +31,12 @@ const wavesCapService = {
     const response = await axios.get("https://wavescap.com/api/assets.json");
     return response.data;
   },
-  // getAssetRate: async (assetsId: string): Promise<BN | null> => {
-  //   const url = `https://wavescap.com/api/asset/${assetsId}.json`;
-  //   const { data: res } = await axios.get<IAssetResponse>(url);
-  //   return res.data && res.data["lastPrice_usd-n"]
-  //     ? new BN(res.data["lastPrice_usd-n"])
-  //     : null;
-  // },
-  // getAssetStats: async (assetsId: string): Promise<IAssetResponse> => {
-  //   const url = `https://wavescap.com/api/asset/${assetsId}.json`;
-  //   const { data } = await axios.get<IAssetResponse>(url);
-  //   return data;
-  // },
+  getAssetRate: async (assetsId: string): Promise<BN | null> => {
+    const url = `https://wavescap.com/api/asset/${assetsId}.json`;
+    const { data: res } = await axios.get<IAssetResponse>(url);
+    return res.data && res.data["lastPrice_usd-n"]
+      ? new BN(res.data["lastPrice_usd-n"])
+      : null;
+  },
 };
 export default wavesCapService;
