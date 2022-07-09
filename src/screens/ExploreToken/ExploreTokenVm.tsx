@@ -57,12 +57,13 @@ class ExploreTokenVM {
     const currentPrice = this.statistics?.currentPrice?.toFormat(2) ?? "–";
     const volume24 = this.statistics?.volume24?.toFormat(2) ?? "–";
     const sign = this.statistics?.change24H?.gte(0) ? "up" : "down";
+    const descr = this.asset?.description ?? "";
     const change24H = this.statistics?.change24H
       ?.times(this.statistics?.change24H?.gte(0) ? 1 : -1)
       .toFormat(2);
     return [
       `The live ${symbol} price today is $${currentPrice} USDN with a 24-hour trading volume of $${volume24} USDN. We update our ${symbol} to USDN price in real-time.`,
-      `\n${symbol} is ${sign} ${change24H}% in the last 24 hours. Trade ${symbol} using puzzleswap.org aggregator to get the best price!`,
+      `\n${symbol} is ${sign} ${change24H}% in the last 24 hours. Trade ${symbol} using puzzleswap.org aggregator to get the best price!\n${descr}`,
     ];
   }
 

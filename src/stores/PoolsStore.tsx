@@ -9,6 +9,7 @@ import {
 } from "@src/constants";
 import poolsService from "@src/services/poolsService";
 import poolService from "@src/services/poolsService";
+import wavesCapService from "@src/services/wavesCapService";
 
 export type TPoolState = {
   state: IData[];
@@ -22,11 +23,13 @@ export default class PoolsStore {
     this.syncPools().then();
     this.syncCustomPools().then(this.updatePoolsState);
     this.updateAccountPoolsLiquidityInfo().then();
+    this.syncPuzzleRate().then();
     setInterval(() => {
       this.syncPoolsLiquidity();
       Promise.all([
         this.updateAccountPoolsLiquidityInfo(),
         this.updatePoolsState(),
+        this.syncPuzzleRate(),
         this.syncCustomPools(),
       ]);
     }, 5 * 1000);
@@ -41,6 +44,9 @@ export default class PoolsStore {
   }
 
   public rootStore: RootStore;
+
+  public puzzleRate: BN = BN.ZERO;
+  public setPuzzleRate = (value: BN) => (this.puzzleRate = value);
 
   get customPools() {
     return this.pools.filter(({ isCustom }) => isCustom);
@@ -202,15 +208,11 @@ export default class PoolsStore {
       state && pool.syncLiquidity(state);
     });
 
-  // private syncPuzzleRate = () =>
-  //   wavesCapService
-  //     .getAssetRate(TOKENS_BY_SYMBOL.PUZZLE.assetId)
-  //     .then((rate) => {
-  //       this.setPuzzleRate(rate);
-  //       this.pools.forEach((pool) => pool.setPuzzleRate(rate ?? BN.ZERO));
-  //     });
-  // private syncLTCRate = () =>
-  //   wavesCapService.getAssetRate(TOKENS_BY_SYMBOL.LTC.assetId).then((rate) => {
-  //     this.setLTCRate(rate);
-  //   });
+  private syncPuzzleRate = () =>
+    wavesCapService
+      .getAssetRate(TOKENS_BY_SYMBOL.PUZZLE.assetId)
+      .then((rate) => {
+        rate != null && this.setPuzzleRate(rate);
+        this.pools.forEach((pool) => pool.setPuzzleRate(rate ?? BN.ZERO));
+      });
 }
