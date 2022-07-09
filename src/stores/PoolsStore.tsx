@@ -109,17 +109,19 @@ export default class PoolsStore {
   }
 
   usdnRate = (assetId: string, coefficient = 1): BN | null => {
-    const pool = this.pools.find(({ tokens }) =>
-      tokens.some((t) => t.assetId === assetId)
-    );
-    if (pool == null && TOKENS_BY_ASSET_ID[assetId].startPrice != null) {
-      return new BN(TOKENS_BY_ASSET_ID[assetId].startPrice ?? 0);
-    }
-    if (pool == null) return null;
     const { tokenStore } = this.rootStore;
     const usdn = TOKENS_BY_SYMBOL.USDN.assetId;
     const puzzle = TOKENS_BY_SYMBOL.PUZZLE.assetId;
-
+    const pool = this.pools.find(({ tokens }) =>
+      tokens.some((t) => t.assetId === assetId)
+    );
+    if (
+      (pool == null && TOKENS_BY_ASSET_ID[assetId].startPrice != null) ||
+      pool?.currentPrice(assetId, usdn) == null
+    ) {
+      return new BN(TOKENS_BY_ASSET_ID[assetId].startPrice ?? 0);
+    }
+    if (pool == null) return null;
     if (pool.tokens.some(({ assetId }) => assetId === usdn)) {
       return pool.currentPrice(assetId, usdn, coefficient);
     } else if (pool.tokens.some(({ assetId }) => assetId === puzzle)) {
