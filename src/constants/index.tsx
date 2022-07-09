@@ -394,6 +394,7 @@ export interface IToken {
   symbol: string;
   decimals: number;
   startPrice?: number;
+  description?: string;
   logo: string;
   category?: string[];
 }
