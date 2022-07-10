@@ -111,8 +111,8 @@ const PoolsTable: React.FC = () => {
       .filter(({ title, tokens }) =>
         vm.searchValue
           ? [title, ...tokens.map(({ symbol }) => symbol)]
-              .map((v) => v.toLowerCase())
-              .some((v) => v.includes(vm.searchValue.toLowerCase()))
+              .map((v) => v?.toLowerCase())
+              .some((v) => v?.includes(vm.searchValue?.toLowerCase()))
           : true
       )
       .filter((pool) => {
