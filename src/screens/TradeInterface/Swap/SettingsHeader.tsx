@@ -24,14 +24,11 @@ const Root = styled.div`
   }
 `;
 const Icon = styled.img`
-  //width: 40px;
-  //height: 40px;
   cursor: pointer;
 `;
 
 const SettingsHeader: React.FC<IProps> = () => {
   const vm = useTradeVM();
-
   return (
     <Root>
       <Text weight={500}>Trade</Text>
@@ -42,7 +39,11 @@ const SettingsHeader: React.FC<IProps> = () => {
           onClick={() => vm.setOpenedChart(!vm.openedChart)}
         />
         <SizedBox width={8} />
-        <Icon src={settings} alt="pic" />
+        <Icon
+          src={settings}
+          alt="pic"
+          onClick={() => vm.setOpenedSettings(!vm.openedSettings)}
+        />
       </Row>
     </Root>
   );

@@ -39,7 +39,6 @@ const Link = styled.img`
 
 const TokensChart: React.FC<IProps> = () => {
   const vm = useTradeVM();
-  const { tokenStore } = useStores();
   const { getCollapseProps } = useCollapse({
     isExpanded: vm.openedChart,
     duration: 500,

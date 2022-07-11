@@ -44,6 +44,9 @@ class TradeVM {
   openedChart = false;
   setOpenedChart = (v: boolean) => (this.openedChart = v);
 
+  openedSettings = false;
+  setOpenedSettings = (v: boolean) => (this.openedSettings = v);
+
   price: BN = BN.ZERO;
   private _setPrice = (price: BN) => (this.price = price);
 

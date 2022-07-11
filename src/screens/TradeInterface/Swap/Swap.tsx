@@ -21,6 +21,7 @@ import TooltipFeeInfo from "./TooltipFeeInfo";
 import RoutingModal from "./RoutingModal";
 import SwapButton from "./SwapButton";
 import SettingsHeader from "./SettingsHeader";
+import Settings from "@screens/TradeInterface/Swap/Settings";
 
 interface IProps {}
 
@@ -31,10 +32,6 @@ const Root = styled.div`
   justify-content: center;
   box-sizing: border-box;
   padding: 0 16px;
-  //min-width: 100%;
-  //min-height: 100%;
-  //margin-bottom: 24px;
-  //margin-top: 40px;
   @media (min-width: 880px) {
     margin-top: 56px;
   }
@@ -81,11 +78,13 @@ const Swap: React.FC<IProps> = () => {
   return (
     <Root>
       <Card
+        style={{ position: "relative" }}
         paddingDesktop="16px 24px"
         paddingMobile="16px"
         // maxWidth={560}
       >
         <SettingsHeader />
+        <Settings />
         <TokenInput
           decimals={vm.token0.decimals}
           amount={vm.amount0}
