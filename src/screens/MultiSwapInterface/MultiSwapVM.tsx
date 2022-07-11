@@ -1,7 +1,12 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { action, makeAutoObservable, when } from "mobx";
-import { EXPLORER_URL, SLIPPAGE } from "@src/constants";
+import {
+  EXPLORER_URL,
+  HIGH_SLIPPAGE,
+  SLIPPAGE,
+  TOKENS_BY_SYMBOL,
+} from "@src/constants";
 import { RootStore, useStores } from "@stores";
 import Balance from "@src/entities/Balance";
 import BN from "@src/utils/BN";
@@ -28,6 +33,11 @@ class MultiSwapVM {
     public readonly poolDomain: string
   ) {
     makeAutoObservable(this);
+    if (this.poolDomain.includes("pluto")) {
+      setInterval(() => {
+        this.pool.syncLiquidity();
+      }, 5 * 1000);
+    }
     when(
       () => this.pool != null,
       () => {
@@ -174,6 +184,14 @@ class MultiSwapVM {
   }
 
   get minimumToReceive(): BN {
+    //todo remove
+    if (
+      this.pool.tokens
+        .map((t) => t.assetId)
+        .includes(TOKENS_BY_SYMBOL.PLUTO.assetId)
+    ) {
+      return this.amount1.times(new BN(100 - HIGH_SLIPPAGE).div(100));
+    }
     return this.amount1.times(new BN(100 - SLIPPAGE).div(100));
   }
 
