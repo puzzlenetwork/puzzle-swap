@@ -1,9 +1,15 @@
-import { IPoolConfig, IPoolConfigStatistics, IToken } from "@src/constants";
+import {
+  IPoolConfig,
+  IPoolConfigStatistics,
+  IToken,
+  NODE_URL,
+} from "@src/constants";
 import { makeAutoObservable } from "mobx";
 import BN from "@src/utils/BN";
 import tokenLogos from "@src/constants/tokenLogos";
 import nodeService from "@src/services/nodeService";
 import { getStateByKey } from "@src/utils/getStateByKey";
+import axios from "axios";
 
 export interface IData {
   key: string;
@@ -127,6 +133,13 @@ class Pool implements IPoolConfig {
       BN.formatUnits(this.globalPoolTokenAmount, 8)
     );
   }
+
+  asyncSyncLiquidity = async () => {
+    console.log("asyncSyncLiquidity");
+    const globalAttributesUrl = `${NODE_URL}/addresses/data/${this.contractAddress}?matches=global_(.*)`;
+    const { data }: { data: IData[] } = await axios.get(globalAttributesUrl);
+    this.syncLiquidity(data);
+  };
 
   syncLiquidity = (data?: IData[]) => {
     if (data == null) return;

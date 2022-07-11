@@ -33,10 +33,11 @@ class MultiSwapVM {
     public readonly poolDomain: string
   ) {
     makeAutoObservable(this);
-    if (this.poolDomain.includes("pluto")) {
+    //todo check
+    if (this.poolDomain.includes("tsunami")) {
       setInterval(() => {
-        this.pool.syncLiquidity();
-      }, 5 * 1000);
+        this.pool.asyncSyncLiquidity().then();
+      }, 10 * 1000);
     }
     when(
       () => this.pool != null,
