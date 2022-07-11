@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import React, { HTMLAttributes, useState } from "react";
-import { ReactComponent as SwapIcon } from "@src/assets/icons/swap.svg";
+import swap from "@src/assets/icons/swap.svg";
+import newswap from "@src/assets/icons/new-trade-swap.svg";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import { useTradeVM } from "@screens/TradeInterface/TradeVM";
@@ -8,7 +9,9 @@ import { useNavigate } from "react-router-dom";
 import Loading from "@components/Loading";
 import { TOKENS_BY_SYMBOL } from "@src/constants";
 
-interface IProps extends HTMLAttributes<HTMLDivElement> {}
+interface IProps extends HTMLAttributes<HTMLDivElement> {
+  new?: boolean;
+}
 
 const Root = styled.div`
   display: flex;
@@ -48,17 +51,22 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
     : `1 ${token0?.symbol} = ~ ${price?.toFormat(4) ?? "—"} ${token1?.symbol}`;
   return (
     <Root {...rest} onClick={handleSwitch}>
-      <SwapIcon
+      <img
+        alt="swap"
+        src={rest.new ? newswap : swap}
         className="icon"
         style={{
           transform: switched ? "rotate(360deg)" : "rotate(0)",
           margin: "0 8px",
         }}
       />
-      <SizedBox width={8} />
-      <Text>{!vm.synchronizing ? rate : <Loading />}</Text>
-
-      <SizedBox width={16} />
+      {!rest.new && (
+        <>
+          <SizedBox width={8} />
+          <Text>{!vm.synchronizing ? rate : <Loading />}</Text>
+          <SizedBox width={16} />
+        </>
+      )}
     </Root>
   );
 };

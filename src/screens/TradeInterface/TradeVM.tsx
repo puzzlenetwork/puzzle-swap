@@ -41,6 +41,9 @@ class TradeVM {
     setInterval(() => this._syncAmount1(true), 15 * 1000);
   }
 
+  openedChart = false;
+  setOpenedChart = (v: boolean) => (this.openedChart = v);
+
   price: BN = BN.ZERO;
   private _setPrice = (price: BN) => (this.price = price);
 

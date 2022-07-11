@@ -4,7 +4,7 @@ import Text from "@components/Text";
 import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
 import SizedBox from "@components/SizedBox";
 import TextButton from "@components/TextButton";
-import SmoothCollapse from "react-smooth-collapse";
+import useCollapse from "react-collapsed";
 
 interface IProps {}
 
@@ -24,7 +24,7 @@ const Gradient = styled.div`
   background: linear-gradient(180deg, rgba(248, 248, 255, 0) 0%, #f8f8ff 100%);
   z-index: 10;
 `;
-const Body = styled(SmoothCollapse)`
+const Body = styled.div`
   position: relative;
   font-weight: 400;
   font-size: 16px;
@@ -35,6 +35,10 @@ const Body = styled(SmoothCollapse)`
 const AboutToken: React.FC<IProps> = () => {
   const vm = useExploreTokenVM();
   const [opened, setOpened] = useState(false);
+  const { getCollapseProps } = useCollapse({
+    isExpanded: opened,
+    duration: 500,
+  });
   return (
     <Root>
       <SizedBox height={40} />
@@ -52,7 +56,7 @@ const AboutToken: React.FC<IProps> = () => {
         {vm.tokenLifeData[0]}
         {!opened && <Gradient />}
       </Text>
-      <Body expanded={opened}>
+      <Body {...getCollapseProps()}>
         <Text type="secondary" style={{ whiteSpace: "pre-wrap" }}>
           {vm.tokenLifeData[1]}
         </Text>

@@ -16,7 +16,7 @@ import BN from "@src/utils/BN";
 import { Row } from "@src/components/Flex";
 import Spinner from "@components/Spinner";
 import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
-import ChartAgeButtons from "@screens/ExploreToken/ChartAgeButtons";
+import ChartAgeButtons from "@src/components/ChartAgeButtons";
 
 interface IProps {}
 
