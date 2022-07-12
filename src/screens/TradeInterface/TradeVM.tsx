@@ -210,6 +210,7 @@ class TradeVM {
     if (this.synchronizing || parameters == null) return;
     if (token0 == null || amount0.eq(0)) return;
     if (minimumToReceive == null) return;
+    await this._syncAmount1();
     this._setLoading(true);
     await accountStore
       .invoke({
