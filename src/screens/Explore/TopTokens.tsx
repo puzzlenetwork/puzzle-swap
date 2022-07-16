@@ -50,7 +50,7 @@ const TopTokens: React.FC<IProps> = () => {
         </TokensContainer>
       </Card>
       <Card bordered>
-        <Title>Biggest losers</Title>
+        <Title>Worst performers</Title>
         <TokensContainer>
           {vm.top3Losers.map((v, index) => (
             <TokenInfo
