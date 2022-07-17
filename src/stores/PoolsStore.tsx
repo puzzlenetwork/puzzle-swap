@@ -115,13 +115,24 @@ export default class PoolsStore {
     const pool = this.pools.find(({ tokens }) =>
       tokens.some((t) => t.assetId === assetId)
     );
-    if (
-      (pool == null && TOKENS_BY_ASSET_ID[assetId].startPrice != null) ||
-      pool?.currentPrice(assetId, usdn) == null
-    ) {
+    //todo fix this pizdez
+    if (pool == null && TOKENS_BY_ASSET_ID[assetId].startPrice != null) {
       return new BN(TOKENS_BY_ASSET_ID[assetId].startPrice ?? 0);
     }
     if (pool == null) return null;
+    if (
+      pool.currentPrice(assetId, puzzle) == null &&
+      pool.tokens.some((t) => t.assetId === puzzle)
+    ) {
+      return BN.ZERO;
+    }
+    if (
+      pool.currentPrice(assetId, usdn) == null &&
+      pool.tokens.some((t) => t.assetId === usdn)
+    ) {
+      return BN.ZERO;
+    }
+
     if (pool.tokens.some(({ assetId }) => assetId === usdn)) {
       return pool.currentPrice(assetId, usdn, coefficient);
     } else if (pool.tokens.some(({ assetId }) => assetId === puzzle)) {
