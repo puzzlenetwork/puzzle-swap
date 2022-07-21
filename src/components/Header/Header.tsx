@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import puzzleLogo from "@src/assets/logo.svg";
 import mobileMenuIcon from "@src/assets/icons/mobileMenu.svg";
 import closeIcon from "@src/assets/icons/close.svg";
-import Banner from "./Banner";
 import { Column, Row } from "@components/Flex";
 import MobileMenu from "@components/Header/MobileMenu";
 import SizedBox from "@components/SizedBox";
@@ -120,7 +119,7 @@ const Header: React.FC<IProps> = () => {
           {...{ bannerClosed }}
         />
       </Mobile>
-      <Banner closed={bannerClosed} setClosed={setBannerClosed} />
+      {/*<Banner closed={bannerClosed} setClosed={setBannerClosed} />*/}
 
       <TopMenu>
         <Row alignItems="center" crossAxisSize="max">
