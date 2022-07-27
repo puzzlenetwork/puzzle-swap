@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import React from "react";
 import { useTradeVM } from "@screens/TradeInterface/TradeVM";
 import { observer } from "mobx-react-lite";
-import useCollapse from "react-collapsed";
 import Card from "@components/Card";
 import { ReactComponent as Close } from "@src/assets/icons/darkClose.svg";
 import Text from "@components/Text";
@@ -17,7 +16,8 @@ import Button from "@components/Button";
 
 interface IProps {}
 
-const Root = styled(Card)`
+const Root = styled(Card)<{ expanded: boolean }>`
+  ${({ expanded }) => (!expanded ? "display:none;" : "")}
   position: absolute;
   z-index: 20;
   top: 0;
@@ -27,13 +27,11 @@ const Root = styled(Card)`
   inset: 0;
 `;
 
-//todo
 const Tag = styled.div<{ active?: boolean }>`
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 8px 20px;
   color: ${({ active }) => (active ? "#ffffff" : "")};
   background: ${({ active }) => (active ? "#7075E9" : "#fffff")};
   border: 1px solid ${({ active }) => (active ? "#7075E9" : "#f1f2fe")};
@@ -41,14 +39,15 @@ const Tag = styled.div<{ active?: boolean }>`
   border-radius: 10px;
   cursor: pointer;
   white-space: nowrap;
+  padding: 8px 12px;
+  height: 40px;
+  @media (min-width: 880px) {
+    padding: 8px 20px;
+  }
 `;
 
 const Settings: React.FC<IProps> = () => {
   const vm = useTradeVM();
-  const { getCollapseProps } = useCollapse({
-    isExpanded: vm.openedSettings,
-    easing: "cubic-bezier(0.1, 0.7, 1.0, 0.1)",
-  });
   const handleClose = () => vm.setOpenedSettings(false);
   const handleSave = () => {
     handleClose();
@@ -58,10 +57,10 @@ const Settings: React.FC<IProps> = () => {
   };
   return (
     <Root
+      expanded={vm.openedSettings}
       paddingDesktop="16px 24px"
       paddingMobile="16px"
       justifyContent="space-between"
-      {...getCollapseProps()}
     >
       {/*header*/}
       <Row
@@ -74,18 +73,16 @@ const Settings: React.FC<IProps> = () => {
       </Row>
       <SizedBox height={24} />
       {/*body*/}
-      <Column>
-        <Column>
+      <Column mainAxisSize="stretch">
+        <Column crossAxisSize="max">
           <Tooltip
             config={{ placement: "bottom-end", trigger: "click" }}
             content={
-              <Column>
-                <Text>
-                  Maximum acceptable % difference between the expected amount of
-                  token and the amount you actually receive if the token ratio
-                  in the pool suddenly change.
-                </Text>
-              </Column>
+              <Text>
+                Maximum acceptable % difference between the expected amount of
+                token and the amount you actually receive if the token ratio in
+                the pool suddenly change.
+              </Text>
             }
           >
             <Row alignItems="center">

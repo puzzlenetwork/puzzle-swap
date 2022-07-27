@@ -34,9 +34,6 @@ const Root = styled.div`
   justify-content: center;
   box-sizing: border-box;
   padding: 0 16px;
-  @media (min-width: 880px) {
-    margin-top: 56px;
-  }
 `;
 
 const Swap: React.FC<IProps> = ({ squareRef, ...rest }) => {

@@ -1,3 +1,4 @@
-import TokensChart from "./TokensChart";
+import TokensChartDesktop from "./TokensChartDesktop";
+import TokensChartMobile from "./TokensChartMobile";
 
-export default TokensChart;
+export { TokensChartMobile, TokensChartDesktop };

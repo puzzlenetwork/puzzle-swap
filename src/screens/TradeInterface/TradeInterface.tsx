@@ -3,11 +3,10 @@ import React from "react";
 import { observer, Observer } from "mobx-react-lite";
 import Layout from "@components/Layout";
 import { TradeVMProvider, useTradeVM } from "@screens/TradeInterface/TradeVM";
-import TokensChart from "@components/TokensChart";
 import Swap from "./Swap";
 import useElementSize from "@src/hooks/useElementSize";
 import useWindowSize from "@src/hooks/useWindowSize";
-import Dialog from "@components/Dialog";
+import { TokensChartDesktop, TokensChartMobile } from "@components/TokensChart";
 
 const Root = styled.div`
   display: flex;
@@ -16,6 +15,9 @@ const Root = styled.div`
   justify-content: center;
   margin-bottom: 24px;
   margin-top: 40px;
+  @media (min-width: 880px) {
+    margin-top: 56px;
+  }
 `;
 
 const TradeInterfaceImpl: React.FC = observer(() => {
@@ -28,22 +30,20 @@ const TradeInterfaceImpl: React.FC = observer(() => {
         {() => (
           <Root>
             {width && width > 880 && (
-              <TokensChart
-                height={height}
+              <TokensChartDesktop
+                height={height + 18}
                 token0={vm.token0}
                 token1={vm.token1}
                 visible={vm.openedChart}
               />
             )}
             {width && width <= 880 && (
-              <Dialog visible={vm.openedChart}>
-                <TokensChart
-                  height={height}
-                  token0={vm.token0}
-                  token1={vm.token1}
-                  visible={vm.openedChart}
-                />
-              </Dialog>
+              <TokensChartMobile
+                token0={vm.token0}
+                token1={vm.token1}
+                visible={vm.openedChart}
+                onClose={() => vm.setOpenedChart(false)}
+              />
             )}
             <Swap squareRef={squareRef} />
           </Root>
