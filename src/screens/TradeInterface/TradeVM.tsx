@@ -9,7 +9,6 @@ import {
   CONTRACT_ADDRESSES,
   EXPLORER_URL,
   IToken,
-  SLIPPAGE,
   TOKENS_BY_ASSET_ID,
   TOKENS_BY_SYMBOL,
   TOKENS_LIST,
@@ -201,7 +200,8 @@ class TradeVM {
   }
 
   get minimumToReceive(): BN {
-    return this.amount1.times(new BN(100 - SLIPPAGE).div(100));
+    const slippage = this.rootStore.poolsStore.slippage;
+    return this.amount1.times(new BN(100 - slippage).div(100));
   }
 
   switchTokens = () => {

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { action, makeAutoObservable, when } from "mobx";
-import { EXPLORER_URL, SLIPPAGE } from "@src/constants";
+import { EXPLORER_URL } from "@src/constants";
 import { RootStore, useStores } from "@stores";
 import Balance from "@src/entities/Balance";
 import BN from "@src/utils/BN";
@@ -174,7 +174,8 @@ class MultiSwapVM {
   }
 
   get minimumToReceive(): BN {
-    return this.amount1.times(new BN(100 - SLIPPAGE).div(100));
+    const slippage = this.rootStore.poolsStore.slippage;
+    return this.amount1.times(new BN(100 - slippage).div(100));
   }
 
   swap = async () => {

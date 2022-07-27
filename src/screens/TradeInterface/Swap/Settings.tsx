@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useState } from "react";
 import { useTradeVM } from "@screens/TradeInterface/TradeVM";
 import { observer } from "mobx-react-lite";
 import Card from "@components/Card";
@@ -13,6 +13,7 @@ import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import ShareTokenInput from "@screens/CreateCustomPools/PoolSettingsCard/SelectAssets/ShareTokenInput";
 import TextButton from "@components/TextButton";
 import Button from "@components/Button";
+import { useStores } from "@stores";
 
 interface IProps {}
 
@@ -48,6 +49,7 @@ const Tag = styled.div<{ active?: boolean }>`
 
 const Settings: React.FC<IProps> = () => {
   const vm = useTradeVM();
+  // const { poolsStore } = useStores();
   const handleClose = () => vm.setOpenedSettings(false);
   const handleSave = () => {
     handleClose();
