@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { HTMLAttributes } from "react";
 import Card from "@components/Card";
 import TokenInput from "@components/TokenInput";
 import SwitchTokensButton from "@screens/TradeInterface/SwitchTokensButton";
@@ -23,7 +23,9 @@ import SwapButton from "./SwapButton";
 import SettingsHeader from "./SettingsHeader";
 import Settings from "@screens/TradeInterface/Swap/Settings";
 
-interface IProps {}
+interface IProps extends HTMLAttributes<HTMLDivElement> {
+  squareRef: any;
+}
 
 const Root = styled.div`
   display: flex;
@@ -37,7 +39,7 @@ const Root = styled.div`
   }
 `;
 
-const Swap: React.FC<IProps> = () => {
+const Swap: React.FC<IProps> = ({ squareRef, ...rest }) => {
   const { notificationStore } = useStores();
   const vm = useTradeVM();
   const navigate = useNavigate();
@@ -76,8 +78,9 @@ const Swap: React.FC<IProps> = () => {
     vm.setAssetId1(assetId);
   };
   return (
-    <Root>
+    <Root {...rest}>
       <Card
+        ref={squareRef}
         style={{ position: "relative" }}
         paddingDesktop="16px 24px"
         paddingMobile="16px"
