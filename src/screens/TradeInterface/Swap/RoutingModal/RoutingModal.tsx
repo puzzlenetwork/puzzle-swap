@@ -3,10 +3,10 @@ import Dialog from "@components/Dialog";
 import Text from "@components/Text";
 import styled from "@emotion/styled";
 import { useTradeVM } from "@screens/TradeInterface/TradeVM";
-import RoutingSchema from "@screens/TradeInterface/RoutingModal/RoutingSchema";
 import SizedBox from "@components/SizedBox";
 import BN from "@src/utils/BN";
 import Loading from "@components/Loading";
+import RoutingSchema from "./RoutingSchema";
 
 interface IProps {
   onClose: () => void;

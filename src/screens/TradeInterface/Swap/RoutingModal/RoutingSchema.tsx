@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { useTradeVM } from "@screens/TradeInterface/TradeVM";
-import Route from "@screens/TradeInterface/RoutingModal/Route";
 import { ReactComponent as Arrow } from "@src/assets/icons/blackRightArrow.svg";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
+import Route from "./Route";
 
 interface IProps {}
 
