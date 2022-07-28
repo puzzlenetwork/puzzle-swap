@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useState } from "react";
+import React from "react";
 import { useTradeVM } from "@screens/TradeInterface/TradeVM";
 import { observer } from "mobx-react-lite";
 import Card from "@components/Card";
@@ -13,7 +13,6 @@ import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import ShareTokenInput from "@screens/CreateCustomPools/PoolSettingsCard/SelectAssets/ShareTokenInput";
 import TextButton from "@components/TextButton";
 import Button from "@components/Button";
-import { useStores } from "@stores";
 
 interface IProps {}
 

@@ -81,7 +81,6 @@ const Swap: React.FC<IProps> = ({ squareRef, ...rest }) => {
         style={{ position: "relative" }}
         paddingDesktop="16px 24px"
         paddingMobile="16px"
-        // maxWidth={560}
       >
         <SettingsHeader />
         <Settings />

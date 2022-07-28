@@ -10,7 +10,6 @@ import {
 import poolsService from "@src/services/poolsService";
 import poolService from "@src/services/poolsService";
 import wavesCapService from "@src/services/wavesCapService";
-import { LOGIN_TYPE } from "@stores/AccountStore";
 
 export type TPoolState = {
   state: IData[];
