@@ -95,7 +95,7 @@ const isRoutesEquals = (a: string, b: string) =>
 
 const Header: React.FC<IProps> = () => {
   const [mobileMenuOpened, setMobileMenuOpened] = useState(false);
-  const [bannerClosed, setBannerClosed] = useState(false);
+  const [bannerClosed /*, setBannerClosed*/] = useState(false);
   const location = useLocation();
   const toggleMenu = (state: boolean) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
