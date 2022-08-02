@@ -178,7 +178,9 @@ class AddLiquidityInterfaceVM {
       );
       return acc.plus(usdnEquivalent);
     }, BN.ZERO);
-    return !total.isNaN() ? "$ " + total.toFormat(2) : null;
+    return !total.isNaN()
+      ? "$ " + total.toFormat(total?.toNumber() > 0.001 ? 2 : 4)
+      : null;
   }
 
   get baseTokenBalance() {
