@@ -6,10 +6,6 @@ body {
     background: #fff;
 }
 
-iframe {
-    display: none !important;
-}
-
 body.noscroll {
     overflow-y: hidden;
 }
