@@ -56,7 +56,17 @@ import wartLogo from "@src/assets/tokens/WART.svg";
 import ngntLogo from "@src/assets/tokens/NGNT.svg";
 import wxbLogo from "@src/assets/tokens/WXB.png";
 import plutoLogo from "@src/assets/tokens/PLUTO.png";
-
+import WXUSDNWXLP from "@src/assets/tokens/WXUSDNWXLP.svg";
+import wxWXUSDN_TCI from "@src/assets/tokens/wxWXUSDN_TCI.svg";
+import usdtusdn from "@src/assets/tokens/usdtusdn.svg";
+import wxUSDTUSDN_TCI from "@src/assets/tokens/wxUSDTUSDN_TCI.svg";
+import USDCUSDNLP from "@src/assets/tokens/usdcusdn.svg";
+import wxUSDCUSDN_TCI from "@src/assets/tokens/wxUSDCUSDN_TCI.svg";
+import USDCUSDTLP from "@src/assets/tokens/usdcusdt.svg";
+import wxUSDCUSDT_TCI from "@src/assets/tokens/wxUSDCUSDT_TCI.svg";
+import PUZZLEUSDNLP from "@src/assets/tokens/puzzleusdn.svg";
+import wxPUZZLEUSDN_TCI from "@src/assets/tokens/wxPUZZLEUSDN_TCI.svg";
+import WW from "@src/assets/tokens/WW.jpeg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -116,6 +126,17 @@ const tokenLogos: Record<string, string> = {
   SNSBTTCI: snsbtTciLogo,
   VIRES_USDT_LP: usdtViresLogo,
   VIRES_USDC_LP: usdcViresLogo,
+  WX_USDNWXLP: WXUSDNWXLP,
+  wxWXUSDN_TCI: wxWXUSDN_TCI,
+  USDTUSDNWXLP: usdtusdn,
+  wxUSDTUSDN_TCI: wxUSDTUSDN_TCI,
+  USDCUSDNLP: USDCUSDNLP,
+  wxUSDCUSDN_TCI: wxUSDCUSDN_TCI,
+  USDCUSDTLP: USDCUSDTLP,
+  wxUSDCUSDT_TCI: wxUSDCUSDT_TCI,
+  PUZZLEUSDNLP: PUZZLEUSDNLP,
+  wxPUZZLEUSDN_TCI: wxPUZZLEUSDN_TCI,
+  WW: WW,
   UNKNOWN: unknownLogo,
 };
 
