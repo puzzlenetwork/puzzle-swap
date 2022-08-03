@@ -24,6 +24,12 @@ const Root = styled.div`
   }
 `;
 
+const buildRateStr = (
+  symbol0: string | undefined,
+  symbol1: string | undefined,
+  price1?: string | number | undefined
+) => `1 ${symbol0} = ${price1 != null ? `~ ${price1}` : "–"} ${symbol1}`;
+
 const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
   const vm = useTradeVM();
   const { token0, token1, price } = vm;
@@ -42,13 +48,20 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
   };
   const stablesIds = [
     TOKENS_BY_SYMBOL.USDN.assetId,
-    TOKENS_BY_SYMBOL.USDT!.assetId,
+    TOKENS_BY_SYMBOL.USDT.assetId,
   ];
+
   const rate = stablesIds.some((assetId) => assetId === token0?.assetId)
-    ? `1 ${token1?.symbol} = ~ ${price.pow(-1)?.toFormat(4) ?? "—"} ${
-        token0?.symbol
-      }`
-    : `1 ${token0?.symbol} = ~ ${price?.toFormat(4) ?? "—"} ${token1?.symbol}`;
+    ? buildRateStr(
+        token1?.symbol,
+        token0?.symbol,
+        price != null && price.gt(0) ? price.pow(-1)?.toFormat(4) : undefined
+      )
+    : buildRateStr(
+        token0?.symbol,
+        token1?.symbol,
+        price != null && price.gt(0) ? price?.toFormat(4) : undefined
+      );
   return (
     <Root {...rest} onClick={handleSwitch}>
       <img
