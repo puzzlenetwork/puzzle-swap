@@ -49,13 +49,7 @@ class AccountStore {
     if (this.isBrowserSupportsWavesKeeper) {
       this.setupWavesKeeper();
     }
-    if (initState) {
-      this.setLoginType(initState.loginType);
-      if (initState.loginType === LOGIN_TYPE.KEEPER) {
-        this.setupSynchronizationWithKeeper();
-      }
-      this.setAddress(initState.address);
-    }
+
     Promise.all([this.checkScriptedAccount(), this.updateAccountAssets()]);
     setInterval(this.updateAccountAssets, 10 * 1000);
     reaction(

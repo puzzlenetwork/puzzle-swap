@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
 import React, { HTMLAttributes } from "react";
-import FilledText from "@screens/TradeInterface/RoutingModal/FilledText";
 import Text from "@components/Text";
 import { ISchemaExchange } from "@screens/TradeInterface/TradeVM";
 import SizedBox from "@components/SizedBox";
 import { Row } from "src/components/Flex";
 import RoundTokenIcon from "@components/RoundTokenIcon";
+import FilledText from "./FilledText";
 
 interface IProps extends ISchemaExchange, HTMLAttributes<HTMLDivElement> {}
 

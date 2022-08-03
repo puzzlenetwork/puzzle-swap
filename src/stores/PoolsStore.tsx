@@ -16,9 +16,22 @@ export type TPoolState = {
   contractAddress: string;
 };
 
+export interface ISerializedPoolsStore {
+  slippage: number;
+}
+
 export default class PoolsStore {
-  constructor(rootStore: RootStore) {
+  slippage: number;
+  setSlippage = (v: number) =>
+    !isNaN(v) && v > 1 && v < 100 && (v ^ 0) === v && (this.slippage = v);
+
+  serialize = (): ISerializedPoolsStore => ({
+    slippage: this.slippage,
+  });
+
+  constructor(rootStore: RootStore, initialState?: ISerializedPoolsStore) {
     this.rootStore = rootStore;
+    this.slippage = initialState?.slippage ?? 5;
     makeAutoObservable(this);
     this.syncPools().then();
     this.syncCustomPools().then(this.updatePoolsState);

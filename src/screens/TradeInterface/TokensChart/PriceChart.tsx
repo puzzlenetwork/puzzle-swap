@@ -98,7 +98,7 @@ const calcChartWidth = (screenWidth: number) => {
   }
 };
 
-const ExploreTokenPriceChart: React.FC<IProps> = () => {
+const PriceChart: React.FC<IProps> = () => {
   const vm = useExploreTokenVM();
   const { width: screenWidth } = useWindowSize();
   const chartWidth = screenWidth ? calcChartWidth(screenWidth) : 0;
@@ -162,4 +162,4 @@ const ExploreTokenPriceChart: React.FC<IProps> = () => {
   );
 };
 
-export default observer(ExploreTokenPriceChart);
+export default observer(PriceChart);
