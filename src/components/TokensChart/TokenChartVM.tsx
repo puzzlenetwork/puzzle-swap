@@ -85,7 +85,6 @@ class TokenChartVM {
   }
 
   syncChart = async () => {
-    console.log("sync start");
     // if (this.chartLoading) return;
     if (this.chartData[this.selectedChartPeriod] != null) return;
     this.setChartLoading(true);
@@ -118,7 +117,6 @@ class TokenChartVM {
     );
     this.setChartLoading(false);
     this.setChartUnavailable(false);
-    console.log("sync end");
   };
 
   constructor(rootStore: RootStore, assetId0: string, assetId1: string) {
