@@ -23,6 +23,7 @@ import TokenInput from "@src/components/TokenInput";
 import Loading from "@components/Loading";
 import { ROUTES } from "@src/constants";
 import { useStores } from "@stores";
+import Divider from "@components/Divider";
 
 const Root = styled.div`
   display: flex;
@@ -129,6 +130,25 @@ const MultiSwapInterfaceImpl: React.FC = observer(() => {
                 >
                   <InfoIcon />
                 </Tooltip>
+              )}
+            </Row>
+          </SwapDetailRow>
+          <Divider />
+          <SwapDetailRow title="Minimum to receive">
+            <Row
+              alignItems="center"
+              mainAxisSize="fit-content"
+              justifyContent="flex-end"
+            >
+              {vm.priceImpact && (
+                <Text nowrap>
+                  ~{" "}
+                  {BN.formatUnits(
+                    vm.minimumToReceive,
+                    vm.token1?.decimals
+                  ).toFormat(2)}{" "}
+                  {vm.token1?.symbol}
+                </Text>
               )}
             </Row>
           </SwapDetailRow>
