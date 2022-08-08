@@ -21,7 +21,7 @@ export const TokenChartVMProvider: React.FC<{
 
 export const useTokenChartVM = () => useVM(ctx);
 
-type TChartData = Array<{ date: string; volume: number }>;
+type TChartData = Array<{ date: string; price: number }>;
 
 export type TChartDataRecord = {
   "1d"?: TChartData;
@@ -62,10 +62,10 @@ class TokenChartVM {
   }
 
   get chartMin() {
-    return Math.min(...this.chart.map(({ volume }) => volume));
+    return Math.min(...this.chart.map(({ price }) => price));
   }
   get chartMax() {
-    return Math.max(...this.chart.map(({ volume }) => volume));
+    return Math.max(...this.chart.map(({ price }) => price));
   }
 
   selectedChartPeriod: keyof TChartDataRecord = "1d";
@@ -85,12 +85,21 @@ class TokenChartVM {
   }
 
   syncChart = async () => {
-    console.log("sync start");
     // if (this.chartLoading) return;
     if (this.chartData[this.selectedChartPeriod] != null) return;
     this.setChartLoading(true);
-    const req = `https://wavescap.com/api/chart/pair/${this.assetId0}-${this.assetId1}-${this.selectedChartPeriod}.json`;
-    // const req = `https://wavescap.com/api/chart/dapp/3PN1eJpdhJyRptcN9iLTarsJBtR2Kb3NXSU-swap-${this.assetId0}-${this.assetId1}-${this.selectedChartPeriod}.json`;
+    const marketsReq = `https://wavescap.com/api/markets/${this.assetId1}.json`;
+    const { data: markets }: { data: any[] } = await axios.get(marketsReq);
+
+    const market = markets.find(
+      (m) => m.amount_asset_id === this.assetId0 && m.dapp != null
+    );
+    if (market == null) {
+      this.setChartLoading(false);
+      this.setChartUnavailable(true);
+      return;
+    }
+    const req = `https://wavescap.com/api/chart/dapp/${market.dapp}-${market.dapp_func}-${this.assetId1}-${this.assetId0}-${this.selectedChartPeriod}.json`;
     const res = await axios.get(req).catch(() => {
       this.setChartUnavailable(true);
       return null;
@@ -99,16 +108,14 @@ class TokenChartVM {
     this.setChartData(
       this.selectedChartPeriod,
       res.data.data.map(({ data }: any) => {
-        // console.log(dayjs(data.time).format("MM:HH, MMM DD"));
         return {
           date: data.time,
-          volume: data.weightedAveragePrice,
+          price: data.weightedAveragePrice,
         };
       })
     );
     this.setChartLoading(false);
     this.setChartUnavailable(false);
-    console.log("sync end");
   };
 
   constructor(rootStore: RootStore, assetId0: string, assetId1: string) {
