@@ -29,22 +29,22 @@ const TradeInterfaceImpl: React.FC = observer(() => {
       <Observer>
         {() => (
           <Root>
-            {/*{width && width > 880 && (*/}
-            {/*  <TokensChartDesktop*/}
-            {/*    height={height + 18}*/}
-            {/*    token0={vm.token0}*/}
-            {/*    token1={vm.token1}*/}
-            {/*    visible={vm.openedChart}*/}
-            {/*  />*/}
-            {/*)}*/}
-            {/*{width && width <= 880 && (*/}
-            {/*  <TokensChartMobile*/}
-            {/*    token0={vm.token0}*/}
-            {/*    token1={vm.token1}*/}
-            {/*    visible={vm.openedChart}*/}
-            {/*    onClose={() => vm.setOpenedChart(false)}*/}
-            {/*  />*/}
-            {/*)}*/}
+            {width && width > 880 && (
+              <TokensChartDesktop
+                height={height + 18}
+                token0={vm.token0}
+                token1={vm.token1}
+                visible={vm.openedChart}
+              />
+            )}
+            {width && width <= 880 && (
+              <TokensChartMobile
+                token0={vm.token0}
+                token1={vm.token1}
+                visible={vm.openedChart}
+                onClose={() => vm.setOpenedChart(false)}
+              />
+            )}
             <Swap squareRef={squareRef} />
           </Root>
         )}
