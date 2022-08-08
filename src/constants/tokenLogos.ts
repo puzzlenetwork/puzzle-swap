@@ -139,6 +139,7 @@ const tokenLogos: Record<string, string> = {
   wxPUZZLEUSDN_TCI: wxPUZZLEUSDN_TCI,
   WW: WW,
   MINI: MINI,
+  SURF: "https://testnet-dev.neutrino.at/images/assets/SURF.svg",
   UNKNOWN: unknownLogo,
 };
 
