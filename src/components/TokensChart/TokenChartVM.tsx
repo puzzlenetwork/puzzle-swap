@@ -21,7 +21,7 @@ export const TokenChartVMProvider: React.FC<{
 
 export const useTokenChartVM = () => useVM(ctx);
 
-type TChartData = Array<{ date: string; volume: number }>;
+type TChartData = Array<{ date: string; price: number }>;
 
 export type TChartDataRecord = {
   "1d"?: TChartData;
@@ -62,10 +62,10 @@ class TokenChartVM {
   }
 
   get chartMin() {
-    return Math.min(...this.chart.map(({ volume }) => volume));
+    return Math.min(...this.chart.map(({ price }) => price));
   }
   get chartMax() {
-    return Math.max(...this.chart.map(({ volume }) => volume));
+    return Math.max(...this.chart.map(({ price }) => price));
   }
 
   selectedChartPeriod: keyof TChartDataRecord = "1d";
@@ -108,10 +108,9 @@ class TokenChartVM {
     this.setChartData(
       this.selectedChartPeriod,
       res.data.data.map(({ data }: any) => {
-        // console.log(dayjs(data.time).format("MM:HH, MMM DD"));
         return {
           date: data.time,
-          volume: data.weightedAveragePrice,
+          price: data.weightedAveragePrice,
         };
       })
     );

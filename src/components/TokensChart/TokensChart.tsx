@@ -58,8 +58,8 @@ const TokensChart: React.FC<IProps> = () => {
                     {dayjs(date).format("MM:HH, MMM DD")}
                   </Text>
                 )}
-                formatter={(volume: number) => (
-                  <Text size="medium">$&nbsp;{new BN(volume).toFormat(2)}</Text>
+                formatter={(price: number) => (
+                  <Text size="medium">$&nbsp;{new BN(price).toFormat(2)}</Text>
                 )}
                 contentStyle={{
                   border: "none",
@@ -69,7 +69,7 @@ const TokensChart: React.FC<IProps> = () => {
               <Line
                 dot={false}
                 type="monotone"
-                dataKey="volume"
+                dataKey="price"
                 stroke="#7075E9"
                 strokeWidth={2}
               />
