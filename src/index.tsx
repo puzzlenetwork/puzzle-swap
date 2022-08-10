@@ -28,12 +28,12 @@ autorun(
 );
 
 ReactDOM.render(
-  <React.StrictMode>
-    <storesContext.Provider value={mobxStore}>
-      <Router>
-        <App />
-      </Router>
-    </storesContext.Provider>
-  </React.StrictMode>,
+  // <React.StrictMode>
+  <storesContext.Provider value={mobxStore}>
+    <Router>
+      <App />
+    </Router>
+  </storesContext.Provider>,
+  // </React.StrictMode>,
   document.getElementById("root")
 );
