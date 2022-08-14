@@ -21,6 +21,7 @@ import CreateCustomPools from "./screens/CreateCustomPools";
 import Explore from "@screens/Explore";
 import ExploreToken from "@screens/ExploreToken";
 import OldExplorer from "./screens/OldExplorer";
+import BoostApy from "./screens/BoostApy";
 
 const Root = styled(Column)`
   width: 100%;
@@ -58,6 +59,9 @@ const App: React.FC = () => {
 
         {/* Invest pool info routes */}
         <Route path={ROUTES.POOLS_INVEST} element={<InvestToPoolInterface />} />
+
+        {/* Boost pool Apy  */}
+        <Route path={ROUTES.POOL_BOOST} element={<BoostApy />} />
 
         {/* Add liquidity routes */}
         <Route

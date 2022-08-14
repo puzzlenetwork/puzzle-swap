@@ -66,7 +66,7 @@ import USDCUSDTLP from "@src/assets/tokens/usdcusdt.svg";
 import wxUSDCUSDT_TCI from "@src/assets/tokens/wxUSDCUSDT_TCI.svg";
 import PUZZLEUSDNLP from "@src/assets/tokens/puzzleusdn.svg";
 import wxPUZZLEUSDN_TCI from "@src/assets/tokens/wxPUZZLEUSDN_TCI.svg";
-import WW from "@src/assets/tokens/WW.jpeg";
+import WW from "@src/assets/tokens/ww.jpeg";
 import MINI from "@src/assets/tokens/mini.jpeg";
 
 const tokenLogos: Record<string, string> = {
