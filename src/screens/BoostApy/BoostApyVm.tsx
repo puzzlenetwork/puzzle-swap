@@ -4,6 +4,14 @@ import { makeAutoObservable, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import Balance from "@src/entities/Balance";
+import { CONTRACT_ADDRESSES } from "@src/constants";
+import {
+  buildErrorDialogParams,
+  buildSuccessBoostParams,
+  IDialogNotificationProps,
+} from "@components/Dialog/DialogNotification";
+import dayjs from "dayjs";
+import poolsService from "@src/services/poolsService";
 
 const ctx = React.createContext<BoostApyVm | null>(null);
 
@@ -24,6 +32,21 @@ class BoostApyVm {
   public poolDomain: string;
   public rootStore: RootStore;
 
+  constructor(rootStore: RootStore, poolDomain: string) {
+    this.poolDomain = poolDomain;
+    this.rootStore = rootStore;
+    makeAutoObservable(this);
+    when(
+      () => this.pool != null,
+      () => {
+        this.setAssetId(this.pool.tokens[0].assetId);
+      }
+    );
+  }
+
+  loading: boolean = false;
+  private _setLoading = (l: boolean) => (this.loading = l);
+
   public get pool() {
     return this.rootStore?.poolsStore.getPoolByDomain(this.poolDomain)!;
   }
@@ -36,6 +59,10 @@ class BoostApyVm {
 
   amount: BN = BN.ZERO;
   setAmount = (amount: BN) => (this.amount = amount);
+
+  public notificationParams: IDialogNotificationProps | null = null;
+  public setNotificationParams = (params: IDialogNotificationProps | null) =>
+    (this.notificationParams = params);
 
   get token() {
     return this.pool?.tokens.find(({ assetId }) => assetId === this.assetId);
@@ -83,33 +110,74 @@ class BoostApyVm {
       .usdnRate(this.assetId, 1)
       ?.times(BN.formatUnits(this.amount, this.token?.decimals));
 
-    //                     (amount)                         (days)
-    //apyBoost = (1 + boostingAmount / poolLiquidity)  ** (365 / boostingDays)
+    if (
+      this.amount.eq(0) ||
+      this.days === 0 ||
+      this.pool?.globalLiquidity.eq(0)
+    )
+      return "0.00 %";
     const amount = usdnEquivalent?.div(this.pool.globalLiquidity).plus(1);
     const days = new BN(365).div(this.days);
-    const percent = amount?.pow(days);
-    console.log({
-      liquidity: this.pool?.globalLiquidity.toString(),
-      days: days?.toString(),
-      amount: amount?.toString(),
-      percent: percent?.toFormat(2),
-    });
-    return "100%";
+    const percent = Math.pow(amount?.toNumber() ?? 1, days.toNumber());
+
+    return new BN(percent)?.toFormat(2) + " %";
   }
 
   get isAllDataProvided() {
-    return this.days > 0 && this.days <= 365 && !this.amount.eq(0);
-  }
-
-  constructor(rootStore: RootStore, poolDomain: string) {
-    this.poolDomain = poolDomain;
-    this.rootStore = rootStore;
-    makeAutoObservable(this);
-    when(
-      () => this.pool != null,
-      () => {
-        this.setAssetId(this.pool.tokens[0].assetId);
-      }
+    return (
+      this.days > 0 &&
+      this.days <= 365 &&
+      !this.amount.eq(0) &&
+      !this.loading &&
+      this.amount.lte(this.balance ?? 0)
     );
   }
+
+  get formattedDays() {
+    return dayjs().add(this.days, "day").format("MMM D, YYYY");
+  }
+
+  boost = async () => {
+    if (this.pool?.contractAddress == null) return;
+    if (this.token == null) return;
+    if (this.amount.eq(0)) return;
+    this._setLoading(true);
+    this.setNotificationParams(null);
+
+    this.rootStore.accountStore
+      .invoke({
+        dApp: CONTRACT_ADDRESSES.boost,
+        payment: [
+          { assetId: this.token.assetId, amount: this.amount.toString() },
+        ],
+        call: {
+          function: "addBoosting",
+          args: [
+            { type: "string", value: this.pool.contractAddress },
+            { type: "integer", value: this.days.toString() },
+          ],
+        },
+      })
+      .then((txId) => {
+        txId &&
+          this.setNotificationParams(
+            buildSuccessBoostParams({
+              domain: this.poolDomain,
+              description: `${this.pool.title} APY boosted by ${this.calcBoostedApy} until ${this.formattedDays}`,
+            })
+          );
+      })
+      .then(() => poolsService.updateStats(this.pool.domain))
+      .catch((e) => {
+        console.error(e);
+        this.setNotificationParams(
+          buildErrorDialogParams({
+            title: "Transaction is not completed",
+            description: e.message ?? JSON.stringify(e),
+            onTryAgain: this.boost,
+          })
+        );
+      })
+      .finally(() => this._setLoading(false));
+  };
 }

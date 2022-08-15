@@ -13,8 +13,8 @@ import { useParams } from "react-router-dom";
 import CalcBoostingAmountCard from "./CalcBoostingAmountCard";
 import Button from "@components/Button";
 import { Column, Row } from "@src/components/Flex";
-import dayjs from "dayjs";
 import { useStores } from "@stores";
+import DialogNotification from "@components/Dialog/DialogNotification";
 
 interface IProps {}
 
@@ -63,7 +63,7 @@ const BoostApyImpl: React.FC<IProps> = () => {
             { title: "Boosted APY", value: vm.calcBoostedApy },
             {
               title: "Boosting end date",
-              value: dayjs().add(vm.days, "day").format("MMM D, YYYY"),
+              value: vm.formattedDays,
             },
             { title: "Transaction fee", value: "0.005 WAVES" },
           ];
@@ -100,7 +100,11 @@ const BoostApyImpl: React.FC<IProps> = () => {
                       ))}
                     </Details>
                     <SizedBox height={24} />
-                    <Button fixed disabled={!vm.isAllDataProvided}>
+                    <Button
+                      fixed
+                      disabled={!vm.isAllDataProvided}
+                      onClick={vm.boost}
+                    >
                       {vm.isAllDataProvided ? "Boost" : "Fill the form"}
                     </Button>
                   </>
@@ -113,6 +117,16 @@ const BoostApyImpl: React.FC<IProps> = () => {
                   </Button>
                 )}
               </Root>
+              <DialogNotification
+                onClose={() => vm.setNotificationParams(null)}
+                title={vm.notificationParams?.title ?? ""}
+                description={vm.notificationParams?.description}
+                buttonsDirection={vm.notificationParams?.buttonsDirection}
+                type={vm.notificationParams?.type}
+                buttons={vm.notificationParams?.buttons}
+                style={{ maxWidth: 360 }}
+                visible={vm.notificationParams != null}
+              />
             </Layout>
           );
         }}
@@ -123,7 +137,6 @@ const BoostApyImpl: React.FC<IProps> = () => {
 
 const BoostApy: React.FC = () => {
   const { poolDomain } = useParams<{ poolDomain: string }>();
-  console.log(poolDomain);
   return (
     <BoostApyVmProvider poolDomain={poolDomain ?? ""}>
       <BoostApyImpl />
