@@ -28,7 +28,7 @@ class BoostApyVm {
     return this.rootStore?.poolsStore.getPoolByDomain(this.poolDomain)!;
   }
 
-  public days: number = 0;
+  public days: number = 1;
   public setDays = (v: number) => (this.days = v);
 
   assetId: string = this.pool?.defaultAssetId0!;
@@ -79,13 +79,22 @@ class BoostApyVm {
   }
 
   get calcBoostedApy() {
-    const usdnRate = this.rootStore?.poolsStore.usdnRate(this.assetId, 1);
-    const v = new BN(1)
-      .plus(new BN(usdnRate ?? 1).div(this.pool?.globalLiquidity))
-      .times(new BN(365).div(this.days));
-    console.log(v.toString());
-    return "100%";
+    const usdnEquivalent = this.rootStore?.poolsStore
+      .usdnRate(this.assetId, 1)
+      ?.times(BN.formatUnits(this.amount, this.token?.decimals));
+
+    //                     (amount)                         (days)
     //apyBoost = (1 + boostingAmount / poolLiquidity)  ** (365 / boostingDays)
+    const amount = usdnEquivalent?.div(this.pool.globalLiquidity).plus(1);
+    const days = new BN(365).div(this.days);
+    const percent = amount?.pow(days);
+    console.log({
+      liquidity: this.pool?.globalLiquidity.toString(),
+      days: days?.toString(),
+      amount: amount?.toString(),
+      percent: percent?.toFormat(2),
+    });
+    return "100%";
   }
 
   get isAllDataProvided() {

@@ -54,7 +54,7 @@ const MobileTokenTableRow: React.FC<IProps> = ({
           <SizedBox width={18} />
           <Column>
             <Text>{token.name}</Text>
-            <Text type="purple650" size="small">
+            <Text type="purple300" size="small">
               {token.symbol}
             </Text>
           </Column>

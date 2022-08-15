@@ -14,6 +14,7 @@ import CalcBoostingAmountCard from "./CalcBoostingAmountCard";
 import Button from "@components/Button";
 import { Column, Row } from "@src/components/Flex";
 import dayjs from "dayjs";
+import { useStores } from "@stores";
 
 interface IProps {}
 
@@ -53,11 +54,11 @@ const Details = styled(Column)`
 `;
 const BoostApyImpl: React.FC<IProps> = () => {
   const vm = useBoostApyVm();
+  const { accountStore } = useStores();
   return (
     <Layout>
       <Observer>
         {() => {
-          console.log(vm.days);
           const details = [
             { title: "Boosted APY", value: vm.calcBoostedApy },
             {
@@ -69,7 +70,10 @@ const BoostApyImpl: React.FC<IProps> = () => {
           return (
             <Layout>
               <Root>
-                <GoBack link="/invest" text={`Back to ${vm.pool?.title}`} />
+                <GoBack
+                  link={`/pools/${vm.pool?.domain}/invest`}
+                  text={`Back to ${vm.pool?.title}`}
+                />
                 <SizedBox height={24} />
                 <Text weight={500} size="large">
                   BoostApy in Puzzle Mega Pools
@@ -83,20 +87,31 @@ const BoostApyImpl: React.FC<IProps> = () => {
                 <SizedBox height={24} />
                 <CalcBoostingAmountCard />
                 <SizedBox height={24} />
-                <Details crossAxisSize="max">
-                  {details.map(({ title, value }, i) => (
-                    <Row justifyContent="space-between" key={i + "row"}>
-                      <Text type="secondary" fitContent>
-                        {title}
-                      </Text>
-                      <Text fitContent>{value}</Text>
-                    </Row>
-                  ))}
-                </Details>
-                <SizedBox height={24} />
-                <Button fixed disabled={!vm.isAllDataProvided}>
-                  {vm.isAllDataProvided ? "Boost" : "Fill the form"}
-                </Button>
+                {accountStore.address != null ? (
+                  <>
+                    <Details crossAxisSize="max">
+                      {details.map(({ title, value }, i) => (
+                        <Row justifyContent="space-between" key={i + "row"}>
+                          <Text type="secondary" fitContent>
+                            {title}
+                          </Text>
+                          <Text fitContent>{value}</Text>
+                        </Row>
+                      ))}
+                    </Details>
+                    <SizedBox height={24} />
+                    <Button fixed disabled={!vm.isAllDataProvided}>
+                      {vm.isAllDataProvided ? "Boost" : "Fill the form"}
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    onClick={() => accountStore.setLoginModalOpened(true)}
+                    fixed
+                  >
+                    Connect wallet
+                  </Button>
+                )}
               </Root>
             </Layout>
           );
@@ -108,6 +123,7 @@ const BoostApyImpl: React.FC<IProps> = () => {
 
 const BoostApy: React.FC = () => {
   const { poolDomain } = useParams<{ poolDomain: string }>();
+  console.log(poolDomain);
   return (
     <BoostApyVmProvider poolDomain={poolDomain ?? ""}>
       <BoostApyImpl />

@@ -401,6 +401,7 @@ export interface IToken {
 
 export interface IPoolConfigStatistics {
   apy: string;
+  boostedApy?: string;
   monthlyVolume: string;
   weeklyVolume: string;
   monthlyFees: string;

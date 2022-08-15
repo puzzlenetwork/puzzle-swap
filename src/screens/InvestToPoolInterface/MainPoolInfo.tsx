@@ -16,6 +16,7 @@ import centerEllipsis from "@src/utils/centerEllipsis";
 import TextButton from "@components/TextButton";
 import { EXPLORER_URL, ROUTES } from "@src/constants";
 import { useStores } from "@stores";
+import SquareTokenIcon from "@components/SquareTokenIcon";
 
 interface IProps {}
 
@@ -62,13 +63,19 @@ const MainPoolInfo: React.FC<IProps> = () => {
     <Root>
       <ShortInfo pic={vm.pool.isCustom ? customBg : bg}>
         <Column crossAxisSize="max">
-          <Text type="light" size="large" weight={500}>
-            {vm.pool.title}
-          </Text>
-          <SizedBox height={4} />
-          <Text type="purple300" size="medium">
-            Trade fees: {vm.pool.swapFee}%
-          </Text>
+          <Row alignItems="center">
+            <SquareTokenIcon src={vm.pool.logo} alt="pool-pic" />
+            <SizedBox width={12} />
+            <Column>
+              <Text type="light" size="large" weight={500}>
+                {vm.pool.title}
+              </Text>
+              <SizedBox height={4} />
+              <Text type="purple300" size="medium">
+                Trade fees: {vm.pool.swapFee}%
+              </Text>
+            </Column>
+          </Row>
           <Links isCustom={vm.pool.isCustom}>
             <Column>
               <Text type="purple300" size="medium" nowrap>
