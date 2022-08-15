@@ -15,6 +15,7 @@ import Button from "@components/Button";
 import { Column, Row } from "@src/components/Flex";
 import { useStores } from "@stores";
 import DialogNotification from "@components/Dialog/DialogNotification";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -60,12 +61,47 @@ const BoostApyImpl: React.FC<IProps> = () => {
       <Observer>
         {() => {
           const details = [
-            { title: "Boosted APY", value: vm.calcBoostedApy },
+            {
+              title: "Boosted APY",
+              value: (
+                <Row mainAxisSize="fit-content" alignItems="center">
+                  <Text
+                    fitContent
+                    crossed
+                    type="secondary"
+                    size="small"
+                    ellipsis={150}
+                  >
+                    {new BN(vm.pool?.statistics?.apy ?? 0).toFormat(2) + " %"}
+                  </Text>
+                  <SizedBox width={2} />
+                  <Text
+                    fitContent
+                    weight={500}
+                    style={{ maxWidth: "150" }}
+                    ellipsis={150}
+                  >
+                    {vm.calcBoostedApy}
+                  </Text>
+                </Row>
+              ),
+            },
             {
               title: "Boosting end date",
-              value: vm.formattedDays,
+              value: (
+                <Text fitContent type="secondary">
+                  {vm.formattedDays}
+                </Text>
+              ),
             },
-            { title: "Transaction fee", value: "0.005 WAVES" },
+            {
+              title: "Transaction fee",
+              value: (
+                <Text fitContent type="secondary">
+                  0.005 WAVES
+                </Text>
+              ),
+            },
           ];
           return (
             <Layout>
@@ -95,7 +131,7 @@ const BoostApyImpl: React.FC<IProps> = () => {
                           <Text type="secondary" fitContent>
                             {title}
                           </Text>
-                          <Text fitContent>{value}</Text>
+                          {value}
                         </Row>
                       ))}
                     </Details>

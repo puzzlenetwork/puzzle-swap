@@ -181,11 +181,7 @@ const PoolsTable: React.FC = () => {
           <Row>
             {pool.statistics?.boostedApy != null ? (
               <Row alignItems="center">
-                <Text
-                  fitContent
-                  type="secondary"
-                  style={{ textDecoration: "line-through" }}
-                >
+                <Text fitContent type="secondary" crossed>
                   {new BN(pool.statistics.apy).toFormat(2).concat(" %")}
                 </Text>
                 <SizedBox width={2} />

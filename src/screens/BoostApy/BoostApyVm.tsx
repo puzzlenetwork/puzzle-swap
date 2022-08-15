@@ -120,7 +120,7 @@ class BoostApyVm {
     const days = new BN(365).div(this.days);
     const percent = Math.pow(amount?.toNumber() ?? 1, days.toNumber());
 
-    return new BN(percent)?.toFormat(2) + " %";
+    return new BN(percent).times(100)?.toFormat(2) + " %";
   }
 
   get isAllDataProvided() {

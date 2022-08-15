@@ -17,12 +17,15 @@ const Text = styled.p<{
   size?: TTextSize;
   fitContent?: boolean;
   nowrap?: boolean;
+  crossed?: boolean;
+  ellipsis?: number;
   textAlign?: TTextAlign;
 }>`
   margin: 0;
   width: ${({ fitContent }) => (fitContent ? "fit-content" : "100%")};
   font-weight: ${({ weight }) => weight ?? 400};
   white-space: ${({ nowrap }) => (nowrap ? "nowrap" : "unset")};
+  text-decoration: ${({ crossed }) => (crossed ? "line-through" : "unset")};
   text-align: ${({ textAlign }) => textAlign ?? "default"};
   ${({ type }) =>
     (() => {
@@ -45,6 +48,9 @@ const Text = styled.p<{
           return "color: #363870;";
       }
     })()}
+  ${({ ellipsis }) =>
+    ellipsis != null &&
+    `max-width: ${ellipsis}px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;`};
   ${({ size }) =>
     (() => {
       switch (size) {
