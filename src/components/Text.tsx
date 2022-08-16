@@ -7,7 +7,6 @@ type TTextType =
   | "blue500"
   | "error"
   | "success"
-  | "purple650"
   | "purple300";
 type TTextSize = "small" | "medium" | "large" | "big";
 type TTextAlign = "center" | "left" | "right" | "justify" | "end";
@@ -18,12 +17,15 @@ const Text = styled.p<{
   size?: TTextSize;
   fitContent?: boolean;
   nowrap?: boolean;
+  crossed?: boolean;
+  ellipsis?: number;
   textAlign?: TTextAlign;
 }>`
   margin: 0;
   width: ${({ fitContent }) => (fitContent ? "fit-content" : "100%")};
   font-weight: ${({ weight }) => weight ?? 400};
   white-space: ${({ nowrap }) => (nowrap ? "nowrap" : "unset")};
+  text-decoration: ${({ crossed }) => (crossed ? "line-through" : "unset")};
   text-align: ${({ textAlign }) => textAlign ?? "default"};
   ${({ type }) =>
     (() => {
@@ -40,14 +42,15 @@ const Text = styled.p<{
           return "color: #ED827E;";
         case "success":
           return "color: #35A15A;";
-        case "purple650":
-          return "color: #C6C9F4;";
         case "purple300":
           return "color: #C6C9F4;";
         default:
           return "color: #363870;";
       }
     })()}
+  ${({ ellipsis }) =>
+    ellipsis != null &&
+    `max-width: ${ellipsis}px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;`};
   ${({ size }) =>
     (() => {
       switch (size) {

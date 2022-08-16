@@ -21,6 +21,7 @@ export const ROUTES = {
   POOLS_INVEST: "/pools/:poolDomain/invest",
   POOLS_CREATE: "/pools/create",
   POOL_SWAP: "/pools/:poolDomain",
+  POOL_BOOST: "/pools/:poolDomain/boost",
 };
 
 export const TOKEN_DETAILS_BY_SYMBOL: Record<string, string> = tokensDetails;
@@ -354,6 +355,7 @@ export const CONTRACT_ADDRESSES = {
   aggregator: "3PGFHzVGT4NTigwCKP1NcwoXkodVZwvBuuU",
   nfts: "3PFQjjDMiZKQZdu5JqTHD7HwgSXyp9Rw9By",
   createArtefacts: "3PFkgvC9y6zHy64zEAscKKgaNY3yipiLqbW",
+  boost: "3PAeY7RgwuNUZNscGqahqJxFTFDkh7fbNwJ",
 };
 export const PUZZLE_NFTS = [
   {
@@ -399,6 +401,8 @@ export interface IToken {
 
 export interface IPoolConfigStatistics {
   apy: string;
+  boostedApy?: string;
+  boostedDate?: string;
   monthlyVolume: string;
   weeklyVolume: string;
   monthlyFees: string;

@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import group from "@src/assets/icons/group.svg";
 import BN from "@src/utils/BN";
 import Checkbox from "@components/Checkbox";
+import Tag from "@src/components/Tag";
 
 const PoolsTable: React.FC = () => {
   const { poolsStore, accountStore } = useStores();
@@ -146,6 +147,12 @@ const PoolsTable: React.FC = () => {
                 <Text fitContent style={{ whiteSpace: "nowrap" }} weight={500}>
                   {pool.title}
                 </Text>
+                <SizedBox width={4} />
+                {pool.statistics?.boostedApy != null && (
+                  <Tag background="#7075E9" type="primary">
+                    Boosted APY 🚀
+                  </Tag>
+                )}
               </Row>
               <TokenTags
                 tokens={pool.tokens}
@@ -170,10 +177,24 @@ const PoolsTable: React.FC = () => {
               : null;
           return volume != null ? `$ ${volume}` : "—";
         })(),
-        apy:
-          pool.statistics != null
-            ? new BN(pool.statistics.apy).toFormat(2).concat(" %")
-            : undefined,
+        apy: (
+          <Row>
+            {pool.statistics?.boostedApy != null ? (
+              <Row alignItems="center">
+                <Text fitContent type="secondary" crossed>
+                  {new BN(pool.statistics.apy).toFormat(2).concat(" %")}
+                </Text>
+                <SizedBox width={2} />
+                {new BN(pool.statistics.apy)
+                  .plus(pool.statistics.boostedApy)
+                  .toFormat(2)
+                  .concat(" %")}
+              </Row>
+            ) : (
+              new BN(pool.statistics?.apy ?? 0).toFormat(2).concat(" %")
+            )}
+          </Row>
+        ),
         owner: pool.owner,
       }));
     setFilteredPools(data);

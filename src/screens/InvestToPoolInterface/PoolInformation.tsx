@@ -7,6 +7,7 @@ import Text from "@src/components/Text";
 import SizedBox from "@components/SizedBox";
 import Skeleton from "react-loading-skeleton";
 import BN from "@src/utils/BN";
+import { Row } from "@src/components/Flex";
 
 interface IProps {}
 
@@ -49,20 +50,44 @@ const PoolInformation: React.FC<IProps> = () => {
     {
       title: "APY",
       value: data?.apy ? new BN(data.apy).toFormat(2) + " %" : null,
+      newValue: data?.boostedApy
+        ? new BN(data.boostedApy).plus(data.apy).toFormat(2) + " %"
+        : null,
     },
   ];
   return (
     <Root>
-      {valuesArray.map(({ title, value }, index) => (
+      {valuesArray.map(({ title, value, newValue }, index) => (
         <CCard key={index}>
           <Text type="secondary" size="medium">
             {title}
           </Text>
           <SizedBox height={4} />
           {value != null ? (
-            <Text style={{ fontSize: "20px", lineHeight: "24px" }}>
-              {value}
-            </Text>
+            newValue != null ? (
+              <Row>
+                <Text
+                  fitContent
+                  style={{ fontSize: "20px", lineHeight: "24px" }}
+                  type="error"
+                  weight={500}
+                >
+                  {newValue}
+                </Text>
+                <SizedBox width={4} />
+                <Text
+                  fitContent
+                  type="secondary"
+                  style={{ textDecoration: "line-through" }}
+                >
+                  {value}
+                </Text>
+              </Row>
+            ) : (
+              <Text style={{ fontSize: "20px", lineHeight: "24px" }}>
+                {value}
+              </Text>
+            )
           ) : (
             <Skeleton height={24} />
           )}

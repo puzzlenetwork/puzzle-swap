@@ -128,7 +128,7 @@ export default class PoolsStore {
     const pool = this.pools.find(({ tokens }) =>
       tokens.some((t) => t.assetId === assetId)
     );
-    const startPrice = TOKENS_BY_ASSET_ID[assetId].startPrice;
+    const startPrice = TOKENS_BY_ASSET_ID[assetId]?.startPrice;
     //todo fix this pizdez !!!
     if (pool == null && startPrice != null) {
       return new BN(startPrice ?? 0);

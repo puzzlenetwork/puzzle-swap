@@ -236,4 +236,30 @@ export const buildSuccessNFTSaleDialogParams = ({
   };
 };
 
+//Boosting
+
+type TBuildSuccessBoostProps = {
+  description: string;
+  domain: string;
+};
+
+export const buildSuccessBoostParams = ({
+  description,
+  domain,
+}: TBuildSuccessBoostProps): IDialogNotificationProps => {
+  return {
+    title: `Successfully boosted!`,
+    description,
+    buttons: [
+      () => (
+        <Anchor href={`/pools/${domain}/invest`} style={{ width: "100%" }}>
+          <Button key="explorer" size="medium" kind="secondary" fixed>
+            Back to Pool page
+          </Button>
+        </Anchor>
+      ),
+    ],
+  };
+};
+
 export default DialogNotification;

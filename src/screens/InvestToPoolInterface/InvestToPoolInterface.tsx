@@ -21,6 +21,7 @@ import { Navigate, useParams } from "react-router-dom";
 import Loading from "@components/Loading";
 import { ROUTES } from "@src/constants";
 import { useStores } from "@stores";
+import Boosting from "./Boosting";
 
 const Root = styled.div`
   display: flex;
@@ -78,6 +79,7 @@ const InvestToPoolInterfaceImpl: React.FC = observer(() => {
         <GoBack link="/invest" text="Back to Pools list" />
         <SizedBox height={24} />
         <MainPoolInfo />
+        <Boosting />
         <PoolInformation />
         <Body>
           <MainBlock>
