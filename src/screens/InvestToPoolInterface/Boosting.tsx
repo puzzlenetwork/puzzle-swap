@@ -11,6 +11,7 @@ import BN from "@src/utils/BN";
 import Button from "@components/Button";
 import { useNavigate } from "react-router-dom";
 import useWindowSize from "@src/hooks/useWindowSize";
+import dayjs from "dayjs";
 
 interface IProps {}
 
@@ -53,7 +54,7 @@ const Boosting: React.FC<IProps> = () => {
         <Column crossAxisSize="max">
           <Text type="light" weight={500}>
             Up to {new BN(data.apy).plus(data.boostedApy ?? 0).toFormat(2)} %
-            APY until Aug 20{" "}
+            APY until {dayjs(data.boostedDate).format("MMM D")}
           </Text>
           <Text type="light">Hurry up to get the increased reward!</Text>
         </Column>

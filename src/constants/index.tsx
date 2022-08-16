@@ -355,7 +355,7 @@ export const CONTRACT_ADDRESSES = {
   aggregator: "3PGFHzVGT4NTigwCKP1NcwoXkodVZwvBuuU",
   nfts: "3PFQjjDMiZKQZdu5JqTHD7HwgSXyp9Rw9By",
   createArtefacts: "3PFkgvC9y6zHy64zEAscKKgaNY3yipiLqbW",
-  boost: "3PAPVqsf4rWzHTS1tKCdMBdNB5TU79dVk4G",
+  boost: "3PAeY7RgwuNUZNscGqahqJxFTFDkh7fbNwJ",
 };
 export const PUZZLE_NFTS = [
   {
@@ -402,6 +402,7 @@ export interface IToken {
 export interface IPoolConfigStatistics {
   apy: string;
   boostedApy?: string;
+  boostedDate?: string;
   monthlyVolume: string;
   weeklyVolume: string;
   monthlyFees: string;
