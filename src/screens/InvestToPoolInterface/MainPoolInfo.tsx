@@ -168,16 +168,16 @@ const MainPoolInfo: React.FC<IProps> = () => {
                   Trade
                 </Button>
               )}
-              {accountStore.address === vm.pool.owner && (
-                <Button
-                  fixed
-                  size="medium"
-                  style={{ marginRight: 8 }}
-                  onClick={() => navigate(`/pools/${vm.pool.domain}/boost`)}
-                >
-                  Boost APY
-                </Button>
-              )}
+              {/*{accountStore.address === vm.pool.owner && (*/}
+              {/*  <Button*/}
+              {/*    fixed*/}
+              {/*    size="medium"*/}
+              {/*    style={{ marginRight: 8 }}*/}
+              {/*    onClick={() => navigate(`/pools/${vm.pool.domain}/boost`)}*/}
+              {/*  >*/}
+              {/*    Boost APY*/}
+              {/*  </Button>*/}
+              {/*)}*/}
               <TransparentDetailsBtn />
             </Row>
           </Links>
