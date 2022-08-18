@@ -76,6 +76,17 @@ class BN extends BigNumber {
     return new BN(super.dp(decimalPlaces, roundingMode));
   }
 
+  toBigFormat(decimalPlaces: number): string {
+    if (super.toNumber() > 999 && super.toNumber() < 1000000) {
+      return (super.toNumber() / 1000).toFixed(1) + "K";
+    } else if (super.toNumber() > 1000000) {
+      return (super.toNumber() / 1000000).toFixed(1) + "M";
+    } else if (super.toNumber() < 900) {
+      return super.toFormat(decimalPlaces); // if value < 1000, nothing to do
+    }
+    return super.toFormat(decimalPlaces);
+  }
+
   toSignificant(
     significantDigits: number,
     roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN
