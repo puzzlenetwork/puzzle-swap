@@ -72,7 +72,7 @@ const DesktopTokenTableRow: React.FC<IProps> = ({
             {token.name}
           </Text>
           <SizedBox width={18} />
-          <Text nowrap type="purple650" fitContent>
+          <Text nowrap type="purple300" fitContent>
             {token.symbol}
           </Text>
         </Row>

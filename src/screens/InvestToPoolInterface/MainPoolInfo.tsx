@@ -16,6 +16,8 @@ import centerEllipsis from "@src/utils/centerEllipsis";
 import TextButton from "@components/TextButton";
 import { EXPLORER_URL, ROUTES } from "@src/constants";
 import { useStores } from "@stores";
+import SquareTokenIcon from "@components/SquareTokenIcon";
+import useWindowSize from "@src/hooks/useWindowSize";
 
 interface IProps {}
 
@@ -48,6 +50,26 @@ const Links = styled.div<{ isCustom?: boolean }>`
     padding-top: 44px;
   }
 `;
+const Hat = styled.div`
+  display: flex;
+  flex-direction: row-reverse;
+  width: 100%;
+  justify-content: space-between;
+  @media (min-width: 880px) {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+  }
+`;
+const Title = styled(Text)`
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 500;
+  @media (min-width: 880px) {
+    font-size: 32px;
+    line-height: 40px;
+  }
+`;
 const MainPoolInfo: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
   const { accountStore } = useStores();
@@ -58,17 +80,28 @@ const MainPoolInfo: React.FC<IProps> = () => {
     vm.prepareCompletePoolInitialization();
     navigate(ROUTES.POOLS_CREATE);
   };
+  const { width } = useWindowSize();
   return (
     <Root>
       <ShortInfo pic={vm.pool.isCustom ? customBg : bg}>
         <Column crossAxisSize="max">
-          <Text type="light" size="large" weight={500}>
-            {vm.pool.title}
-          </Text>
-          <SizedBox height={4} />
-          <Text type="purple300" size="medium">
-            Trade fees: {vm.pool.swapFee}%
-          </Text>
+          <Hat>
+            <SquareTokenIcon
+              size={width != null && width < 880 ? "small" : "default"}
+              src={vm.pool.logo}
+              alt="pool-pic"
+            />
+            <SizedBox width={12} />
+            <Column>
+              <Title type="light" size="large" weight={500}>
+                {vm.pool.title}
+              </Title>
+              <SizedBox height={4} />
+              <Text type="purple300" size="medium">
+                Trade fees: {vm.pool.swapFee}%
+              </Text>
+            </Column>
+          </Hat>
           <Links isCustom={vm.pool.isCustom}>
             <Column>
               <Text type="purple300" size="medium" nowrap>
@@ -135,6 +168,16 @@ const MainPoolInfo: React.FC<IProps> = () => {
                   Trade
                 </Button>
               )}
+              {/*{accountStore.address === vm.pool.owner && (*/}
+              {/*  <Button*/}
+              {/*    fixed*/}
+              {/*    size="medium"*/}
+              {/*    style={{ marginRight: 8 }}*/}
+              {/*    onClick={() => navigate(`/pools/${vm.pool.domain}/boost`)}*/}
+              {/*  >*/}
+              {/*    Boost APY*/}
+              {/*  </Button>*/}
+              {/*)}*/}
               <TransparentDetailsBtn />
             </Row>
           </Links>
