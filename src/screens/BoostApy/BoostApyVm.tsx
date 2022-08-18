@@ -167,7 +167,9 @@ class BoostApyVm {
             })
           );
       })
-      .then(() => poolsService.updateStats(this.pool.domain))
+      .then(async () => {
+        await poolsService.updateStats(this.pool.domain);
+      })
       .catch((e) => {
         console.error(e);
         this.setNotificationParams(
