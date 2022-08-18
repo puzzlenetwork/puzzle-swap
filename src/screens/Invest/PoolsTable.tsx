@@ -93,17 +93,25 @@ const PoolsTable: React.FC = () => {
             }
           }
         } else if (activeSort === 1) {
-          if (a.statistics?.apy != null && b.statistics?.apy != null) {
-            if (new BN(a.statistics.apy).lt(b.statistics.apy)) {
+          const apy0 =
+            a.statistics?.boostedApy != null
+              ? a.statistics?.boostedApy
+              : a.statistics?.apy;
+          const apy1 =
+            b.statistics?.boostedApy != null
+              ? b.statistics?.boostedApy
+              : b.statistics?.apy;
+          if (apy0 != null && apy1 != null) {
+            if (new BN(apy0).lt(apy1)) {
               return vm.sortApy ? 1 : -1;
-            } else if (new BN(a.statistics.apy).eq(b.statistics.apy)) {
+            } else if (new BN(apy0).eq(apy1)) {
               return 0;
             } else {
               return vm.sortApy ? -1 : 1;
             }
-          } else if (a.statistics?.apy != null) {
+          } else if (apy0 != null) {
             return -1;
-          } else if (b.statistics?.apy != null) {
+          } else if (apy1 != null) {
             return 1;
           }
         }
@@ -187,7 +195,7 @@ const PoolsTable: React.FC = () => {
                 <SizedBox width={2} />
                 {new BN(pool.statistics.apy)
                   .plus(pool.statistics.boostedApy)
-                  .toFormat(2)
+                  .toBigFormat(2)
                   .concat(" %")}
               </Row>
             ) : (

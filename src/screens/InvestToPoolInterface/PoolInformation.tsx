@@ -51,7 +51,7 @@ const PoolInformation: React.FC<IProps> = () => {
       title: "APY",
       value: data?.apy ? new BN(data.apy).toFormat(2) + " %" : null,
       newValue: data?.boostedApy
-        ? new BN(data.boostedApy).plus(data.apy).toFormat(2) + " %"
+        ? new BN(data.boostedApy).plus(data.apy).toBigFormat(2) + " %"
         : null,
     },
   ];
