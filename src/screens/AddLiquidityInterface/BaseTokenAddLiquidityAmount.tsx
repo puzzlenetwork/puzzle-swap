@@ -28,7 +28,7 @@ const BaseTokenAddLiquidityAmount: React.FC<IProps> = () => {
   const handleCallDepositBaseToken = async () => {
     const slippagePercent = vm.baseTokenSlippage;
     vm.setNotificationParams(null);
-    if (slippagePercent.times(100).gte(10)) {
+    if (slippagePercent.times(100).gte(3)) {
       vm.showHighSlippageWarning();
     } else {
       await vm.depositBaseToken();
