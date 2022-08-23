@@ -23,6 +23,7 @@ import ExploreToken from "@screens/ExploreToken";
 import OldExplorer from "./screens/OldExplorer";
 import BoostApy from "./screens/BoostApy";
 import ThemeWrapper from "@src/themes/ThemeProvider";
+import GlobalStyles from "@src/themes/GlobalStyles";
 
 const Root = styled(Column)`
   width: 100%;
@@ -99,6 +100,7 @@ const App: React.FC = () => {
           visible={accountStore.sendAssetModalOpened}
         />
       </Root>
+      <GlobalStyles />
     </ThemeWrapper>
   );
 };

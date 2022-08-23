@@ -37,6 +37,7 @@ export interface ITransferParams {
 }
 
 export interface ISerializedAccountStore {
+  selectedTheme: THEME_TYPE | null;
   address: string | null;
   loginType: LOGIN_TYPE | null;
 }
@@ -51,6 +52,8 @@ class AccountStore {
       this.setupWavesKeeper();
     }
     if (initState) {
+      initState.selectedTheme != null &&
+        (this.selectedTheme = initState.selectedTheme);
       this.setLoginType(initState.loginType);
       if (initState.loginType === LOGIN_TYPE.KEEPER) {
         this.setupSynchronizationWithKeeper();
@@ -217,6 +220,7 @@ class AccountStore {
     );
 
   serialize = (): ISerializedAccountStore => ({
+    selectedTheme: this.selectedTheme,
     address: this.address,
     loginType: this.loginType,
   });

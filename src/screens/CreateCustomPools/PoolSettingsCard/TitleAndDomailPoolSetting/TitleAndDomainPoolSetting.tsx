@@ -30,9 +30,12 @@ const Tag = styled.div<{ active?: boolean }>`
   justify-content: center;
   align-items: center;
   padding: 8px 20px;
-  color: ${({ active }) => (active ? "#ffffff" : "")};
-  background: ${({ active }) => (active ? "#7075E9" : "#fffff")};
-  border: 1px solid ${({ active }) => (active ? "#7075E9" : "#f1f2fe")};
+  color: ${({ active, theme }) => (active ? theme.colors.white : "")};
+  background: ${({ active, theme }) =>
+    active ? theme.colors.blue500 : theme.colors.white};
+  border: 1px solid
+    ${({ active, theme }) =>
+      active ? theme.colors.blue500 : theme.colors.primary100};
   box-sizing: border-box;
   border-radius: 10px;
   cursor: pointer;

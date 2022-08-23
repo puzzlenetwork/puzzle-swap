@@ -12,7 +12,6 @@ import { useLocation } from "react-router-dom";
 import { Anchor } from "@components/Anchor";
 import { useTheme } from "@emotion/react";
 import Tooltip from "@components/Tooltip";
-import arrowIcon from "@src/assets/icons/arrowRightBorderless.svg";
 import LinkGroup from "@components/LinkGroup";
 import DarkMode from "@components/Header/DarkMode";
 

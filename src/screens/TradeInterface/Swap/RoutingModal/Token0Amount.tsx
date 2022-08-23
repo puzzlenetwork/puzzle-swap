@@ -3,9 +3,10 @@ import React from "react";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import SizedBox from "@components/SizedBox";
 import { Column } from "@src/components/Flex";
-import { ReactComponent as Arrow } from "@src/assets/icons/blackRightArrow.svg";
 import tokenLogos from "@src/constants/tokenLogos";
 import FilledText from "./FilledText";
+import Img from "@components/Img";
+import { useTheme } from "@emotion/react";
 
 interface IProps {
   imgSrc?: string;
@@ -24,6 +25,7 @@ const Token0Amount: React.FC<IProps> = ({
   imgSrc,
   displayPercent,
 }) => {
+  const theme = useTheme();
   return (
     <Root>
       <Column justifyContent="center" alignItems="center">
@@ -40,7 +42,7 @@ const Token0Amount: React.FC<IProps> = ({
         )}
       </Column>
       <SizedBox width={21} />
-      <Arrow style={{ fill: "black" }} />
+      <Img height="100%" src={theme.images.icons.rightArrow} />
     </Root>
   );
 };

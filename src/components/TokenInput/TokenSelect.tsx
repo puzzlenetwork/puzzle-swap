@@ -2,9 +2,11 @@ import styled from "@emotion/styled";
 import React, { HTMLAttributes } from "react";
 import SizedBox from "@components/SizedBox";
 import { Row, Column } from "@components/Flex";
-import { ReactComponent as ArrowDownIcon } from "@src/assets/icons/arrowDown.svg";
+// import { ReactComponent as ArrowDownIcon } from "@src/assets/icons/arrowDown.svg";
 import { IToken } from "@src/constants";
 import SquareTokenIcon from "@components/SquareTokenIcon";
+import Img from "../Img";
+import { useTheme } from "@emotion/react";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   token?: IToken;
@@ -39,6 +41,7 @@ const TokenSelect: React.FC<IProps> = ({
   balance,
   ...rest
 }) => {
+  const theme = useTheme();
   return (
     <Root {...rest}>
       <Row alignItems="center">
@@ -49,7 +52,8 @@ const TokenSelect: React.FC<IProps> = ({
           <Balance>{balance ?? "—"}</Balance>
         </Column>
       </Row>
-      {selectable && <ArrowDownIcon />}
+      {/*{selectable && <ArrowDownIcon />}*/}
+      {selectable && <Img src={theme.images.icons.arrowDown} alt="arrow" />}
     </Root>
   );
 };

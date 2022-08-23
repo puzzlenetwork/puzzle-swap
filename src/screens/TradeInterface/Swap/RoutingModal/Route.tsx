@@ -2,8 +2,10 @@ import styled from "@emotion/styled";
 import React, { HTMLAttributes } from "react";
 import { ISchemaRoute } from "@screens/TradeInterface/TradeVM";
 import Asset from "./Asset";
-import { ReactComponent as Arrow } from "@src/assets/icons/blackRightArrow.svg";
+// import { ReactComponent as Arrow } from "@src/assets/icons/blackRightArrow.svg";
 import Token0Amount from "./Token0Amount";
+import Img from "@components/Img";
+import { useTheme } from "@emotion/react";
 
 interface IProps extends ISchemaRoute, HTMLAttributes<HTMLDivElement> {
   token0Logo: string;
@@ -24,6 +26,7 @@ const Route: React.FC<IProps> = ({
   isAmount0Empty,
   isSingleRoute,
 }) => {
+  const theme = useTheme();
   const per = percent.isInteger() ? percent.toFormat(0) : percent.toFormat(2);
   return (
     <Root>
@@ -37,16 +40,18 @@ const Route: React.FC<IProps> = ({
           <Asset {...item} key={index} />
           {array.length - 1 !== index && (
             <div style={{ position: "relative" }}>
-              <Arrow
+              <Img
                 height="100%"
+                src={theme.images.icons.rightArrow}
                 style={{ position: "absolute", right: "-8px" }}
               />
             </div>
           )}
           {isSingleRoute && (
             <div style={{ position: "relative" }}>
-              <Arrow
+              <Img
                 height="100%"
+                src={theme.images.icons.rightArrow}
                 style={{ position: "absolute", right: "-8px" }}
               />
             </div>

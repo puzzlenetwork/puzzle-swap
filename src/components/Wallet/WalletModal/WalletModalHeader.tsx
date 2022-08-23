@@ -10,7 +10,6 @@ import { ReactComponent as Disconnect } from "@src/assets/icons/disconnect.svg";
 import { observer } from "mobx-react-lite";
 import { useWalletVM } from "@components/Wallet/WalletModal/WalletVM";
 import { EXPLORER_URL } from "@src/constants";
-import { useTheme } from "@emotion/react";
 import { themes } from "@src/themes/ThemeProvider";
 
 interface IProps {}
@@ -55,7 +54,6 @@ const WalletModalHeader: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const { address } = accountStore;
   const vm = useWalletVM();
-  const theme = useTheme();
   const action = [
     {
       icon: <Copy className="img" />,

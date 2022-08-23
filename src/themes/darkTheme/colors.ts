@@ -8,7 +8,7 @@ const colors = {
   success: "#35A15A",
   error: "#ED827E",
 };
-
+// eslint-disable-next-line
 export default {
   ...colors,
   primary800: "#FFFFFF",
@@ -24,6 +24,7 @@ export default {
   icon: {
     borderColor: colors.primary800,
   },
+  gradient: "rgba(0, 0, 0, 0.5);",
   tokenDescGradient:
     "linear-gradient(180deg, rgba(248, 248, 255, 0) 0%, #181931 100%)",
   noNftGradient:

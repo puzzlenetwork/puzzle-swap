@@ -71,7 +71,7 @@ const Root = styled.div<{
     }
 
     ::placeholder {
-      color: #8082c5;
+      color: ${({ theme }) => theme.colors.primary650};
     }
 
     ::-webkit-outer-spin-button,

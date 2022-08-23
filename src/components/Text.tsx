@@ -31,21 +31,21 @@ const Text = styled.p<{
     (() => {
       switch (type) {
         case "primary":
-          return `color: ${theme.colors.primary800};`;
+          return `color: ${theme.colors?.primary800};`;
         case "secondary":
-          return `color: ${theme.colors.primary650};`;
+          return `color: ${theme.colors?.primary650};`;
         case "blue500":
-          return `color: ${theme.colors.blue500};`;
+          return `color: ${theme.colors?.blue500};`;
         case "light":
-          return `color: ${theme.colors.white};`;
+          return `color: ${theme.colors?.white};`;
         case "error":
-          return `color: ${theme.colors.error};`;
+          return `color: ${theme.colors?.error};`;
         case "success":
-          return `color: ${theme.colors.success};`;
+          return `color: ${theme.colors?.success};`;
         case "purple300":
-          return `color: ${theme.colors.primary300};`;
+          return `color: ${theme.colors?.primary300};`;
         default:
-          return `color: ${theme.colors.primary800};`;
+          return `color: ${theme.colors?.primary800};`;
       }
     })()}
   ${({ ellipsis }) =>

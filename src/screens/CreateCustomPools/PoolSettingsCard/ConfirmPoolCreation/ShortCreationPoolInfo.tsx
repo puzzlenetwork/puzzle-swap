@@ -7,6 +7,7 @@ import Card from "@components/Card";
 import { Column, Row } from "@components/Flex";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
+import { useTheme } from "@emotion/react";
 
 interface IProps {}
 
@@ -26,15 +27,16 @@ const Tokens = styled.div`
 `;
 
 const Tag = styled.div`
-  background: #f1f2fe;
+  background: ${({ theme }) => theme.colors.primary100};
   border-radius: 6px;
   font-size: 12px;
   line-height: 16px;
-  color: #363870;
+  color: ${({ theme }) => theme.colors.primary800};
   padding: 4px 8px;
 `;
 const ShortCreationPoolInfo: React.FC<IProps> = () => {
   const vm = useCreateCustomPoolsVM();
+  const theme = useTheme();
   return (
     <Root>
       <Text type="secondary" weight={500}>
@@ -57,7 +59,7 @@ const ShortCreationPoolInfo: React.FC<IProps> = () => {
           {vm.poolsAssets.map((token, index) => (
             <Tag key={index + "custom-fee"}>
               <span>{token.asset.symbol}&nbsp;</span>
-              <span style={{ color: "#8082C5" }}>
+              <span style={{ color: theme.colors.primary650 }}>
                 {token.share.div(10).toFormat()}%
               </span>
             </Tag>

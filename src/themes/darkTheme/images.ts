@@ -1,6 +1,12 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+// eslint-disable-next-line
 export default {
   icons: {
     logo: require("@src/assets/icons/darkLogo.svg").default,
+    rightArrow: require("@src/assets/icons/whiteRightArrow.svg").default,
+    swap: require("@src/assets/icons/darkSwap.svg").default,
+    group: require("@src/assets/icons/whiteGroup.svg").default,
+    arrowDown: require("@src/assets/icons/darkArrowDown.svg").default,
+    done: require("@src/assets/icons/darkDone.svg").default,
+    add: require("@src/assets/icons/darkAdd.svg").default,
   },
 };
