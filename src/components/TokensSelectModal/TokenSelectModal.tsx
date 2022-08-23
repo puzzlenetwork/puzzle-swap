@@ -48,7 +48,7 @@ const Scroll = styled.div`
     display: none;
   }
 
-  border-bottom: 1px solid #f1f2fe;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.primary100};
 `;
 const TokenSelectModal: React.FC<IProps> = ({
   onClose,

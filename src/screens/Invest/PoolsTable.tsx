@@ -16,6 +16,7 @@ import group from "@src/assets/icons/group.svg";
 import BN from "@src/utils/BN";
 import Checkbox from "@components/Checkbox";
 import Tag from "@src/components/Tag";
+import { useTheme } from "@emotion/react";
 
 const PoolsTable: React.FC = () => {
   const { poolsStore, accountStore } = useStores();
@@ -23,6 +24,7 @@ const PoolsTable: React.FC = () => {
   const [showEmptyBalances, setShowEmptyBalances] = useState(true);
   const vm = useInvestVM();
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const columns = React.useMemo(
     () => [
@@ -157,7 +159,7 @@ const PoolsTable: React.FC = () => {
                 </Text>
                 <SizedBox width={4} />
                 {pool.statistics?.boostedApy != null && (
-                  <Tag background="#7075E9" type="primary">
+                  <Tag background={theme.colors.blue500} type="primary">
                     Boosted APY 🚀
                   </Tag>
                 )}
@@ -207,6 +209,7 @@ const PoolsTable: React.FC = () => {
       }));
     setFilteredPools(data);
   }, [
+    theme.colors.blue500,
     vm.pools,
     vm.sortLiquidity,
     vm.sortApy,

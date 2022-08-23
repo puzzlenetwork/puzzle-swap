@@ -13,6 +13,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import "rc-slider/assets/index.css";
 import "rc-dialog/assets/index.css";
 import dayjs from "dayjs";
+
 const relativeTime = require("dayjs/plugin/relativeTime");
 dayjs.extend(relativeTime);
 

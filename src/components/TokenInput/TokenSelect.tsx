@@ -4,6 +4,7 @@ import SizedBox from "@components/SizedBox";
 import { Row, Column } from "@components/Flex";
 import { ReactComponent as ArrowDownIcon } from "@src/assets/icons/arrowDown.svg";
 import { IToken } from "@src/constants";
+import SquareTokenIcon from "@components/SquareTokenIcon";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   token?: IToken;
@@ -23,23 +24,13 @@ const TokenName = styled.div`
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
-  color: #363870;
+  color: ${({ theme }) => theme.colors.primary800};
 `;
 
 const Balance = styled.div`
   font-size: 14px;
   line-height: 20px;
   color: #8082c5;
-`;
-
-const TokenIcon = styled.img`
-  border: 1px solid #f1f2fe;
-  border-radius: 12px;
-  box-sizing: border-box;
-  width: 56px;
-  height: 56px;
-  box-shadow: none;
-  color: transparent;
 `;
 
 const TokenSelect: React.FC<IProps> = ({
@@ -51,7 +42,7 @@ const TokenSelect: React.FC<IProps> = ({
   return (
     <Root {...rest}>
       <Row alignItems="center">
-        <TokenIcon src={token?.logo} />
+        <SquareTokenIcon src={token?.logo} />
         <SizedBox width={8} />
         <Column justifyContent="center">
           <TokenName>{token?.symbol}</TokenName>

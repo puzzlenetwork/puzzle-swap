@@ -25,9 +25,17 @@ interface IProps
 const Root = styled.div<{ focused?: boolean; error?: boolean }>`
   width: 100%;
   background: ${({ focused }) => (focused ? "#fffff" : "#f1f2fe")};
+
+  background: ${({ theme, focused }) =>
+    focused ? theme.colors.white : theme.colors.primary100};
+
   border: 1px solid
-    ${({ focused, error }) =>
-      error ? "#ED827E" : focused ? "#7075E9" : "#f1f2fe"};
+    ${({ focused, error, theme }) =>
+      error
+        ? `${theme.colors.error}`
+        : focused
+        ? `${theme.colors.blue500}`
+        : `${theme.colors.primary100}`};
 
   :hover {
     border-color: ${({ focused, error }) =>
@@ -47,13 +55,14 @@ const Root = styled.div<{ focused?: boolean; error?: boolean }>`
   input {
     padding: 0;
     width: 100%;
-    color: ${({ focused }) => (focused ? "#363870" : "#8082c5")};
+    color: ${({ focused, theme }) =>
+      focused ? `${theme.colors.primary800}` : `${theme.colors.primary650}`};
     outline: none;
     border: none;
     background-color: transparent;
 
     ::placeholder {
-      color: #8082c5;
+      color: ${({ theme }) => `${theme.colors.primary650}`};
     }
   }
 `;

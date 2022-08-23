@@ -9,6 +9,7 @@ import SizedBox from "@components/SizedBox";
 import { useInvestVM } from "@screens/Invest/InvestVm";
 import Skeleton from "react-loading-skeleton";
 import { observer } from "mobx-react-lite";
+import { themes } from "@src/themes/ThemeProvider";
 
 interface IProps {}
 
@@ -72,8 +73,12 @@ const AccountInvestBalance: React.FC<IProps> = () => {
         {vm.totalInvestmentBalance != null ? (
           <Text
             weight={500}
-            style={{ fontSize: 24, lineHeight: "32px" }}
-            type="light"
+            style={{
+              fontSize: 24,
+              lineHeight: "32px",
+              color: themes.lightTheme.colors.white,
+            }}
+            // type="light"
           >
             {vm.totalInvestmentBalance}
           </Text>

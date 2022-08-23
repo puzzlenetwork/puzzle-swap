@@ -31,13 +31,13 @@ const Card = styled.div<{ img?: string }>`
   height: 156px;
   border-radius: 8px;
   background: ${({ img }) => `url(${img}) no-repeat center`};
-  background-color: #f1f2fe;
+  background-color: ${({ theme }) => theme.colors.primary100};
   background-size: 156px;
   position: relative;
 `;
 const Tag = styled.div`
   position: absolute;
-  background: #363870;
+  background: ${({ theme }) => theme.colors.primary800};
   border-radius: 6px;
   padding: 4px 8px;
   bottom: 8px;

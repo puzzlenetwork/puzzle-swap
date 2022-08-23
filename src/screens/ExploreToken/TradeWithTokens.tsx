@@ -16,8 +16,8 @@ const Root = styled.div`
 `;
 const Tag = styled.div`
   display: flex;
-  background: #ffffff;
-  border: 1px solid #f1f2fe;
+  background: ${({ theme }) => theme.colors.white};
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
   padding: 8px 16px 8px 8px;
   border-radius: 8px;
   margin: 0 8px 8px 0;

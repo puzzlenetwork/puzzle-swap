@@ -29,6 +29,7 @@ const Root = styled.div`
   max-width: 660px;
   box-sizing: border-box;
   padding: 0 8px 0 16px;
+
   .icon {
     cursor: pointer;
     transition: 0.4s;
@@ -56,7 +57,6 @@ const TokensChartDesktopImpl: React.FC<IProps> = observer(
                 fitContent
               >{`${rest.token0.symbol}/${rest.token1.symbol}`}</Text>
               <SizedBox width={8} />
-              {/*<SwitchTokensButton new />*/}
             </Row>
             <ChartAgeButtons
               className="age-btns"

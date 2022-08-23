@@ -19,9 +19,11 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+
   & > * {
     margin-bottom: 8px;
   }
+
   & > :last-child {
     margin-bottom: 0px;
   }
@@ -30,13 +32,13 @@ const Root = styled.div`
 const StyledLink = styled(Link)`
   font-size: 16px;
   line-height: 24px;
-  color: #363870;
+  color: ${({ theme }) => theme.colors.primary800};
 `;
 
 const StyledAnchor = styled(Anchor)`
   font-size: 16px;
   line-height: 24px;
-  color: #363870;
+  color: ${({ theme }) => theme.colors.primary800};
 `;
 
 const LinkGroup: React.FC<IProps> = ({ title, links, ...rest }) => {

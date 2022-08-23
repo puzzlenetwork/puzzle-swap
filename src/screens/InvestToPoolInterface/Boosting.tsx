@@ -12,6 +12,7 @@ import Button from "@components/Button";
 import { useNavigate } from "react-router-dom";
 import useWindowSize from "@src/hooks/useWindowSize";
 import dayjs from "dayjs";
+import { themes } from "@src/themes/ThemeProvider";
 
 interface IProps {}
 
@@ -23,7 +24,7 @@ const Root = styled.div`
   align-items: center;
   padding: 12px 24px;
   width: 100%;
-  border: 1px solid #f1f2fe;
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
   border-radius: 16px;
   background: #1e2f5f;
   @media (min-width: 880px) {
@@ -45,18 +46,18 @@ const Boosting: React.FC<IProps> = () => {
   const data = vm.pool.statistics;
   const navigate = useNavigate();
   const { width } = useWindowSize();
-
+  const whiteText = { color: themes.lightTheme.colors.white };
   return data?.boostedApy != null ? (
     <Root>
       <Block>
         <Img width="56px" height="56px" src={rocket} />
         <SizedBox width={12} />
         <Column crossAxisSize="max">
-          <Text type="light" weight={500}>
+          <Text weight={500} style={whiteText}>
             Up to {new BN(data.apy).plus(data.boostedApy ?? 0).toBigFormat(2)} %
             APY until {dayjs(data.boostedDate).format("MMM D")}
           </Text>
-          <Text type="light">Hurry up to get the increased reward!</Text>
+          <Text style={whiteText}>Hurry up to get the increased reward!</Text>
         </Column>
       </Block>
       <Button

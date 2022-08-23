@@ -15,9 +15,12 @@ const Tag = styled.div<IProps>`
   box-sizing: border-box;
   font-size: 12px;
   line-height: 16px;
-  color: ${({ type }) => (type === "primary" ? "#fff" : "#363870")};
-  background: ${({ type, background }) =>
-    type === "primary" ? "#7075E9" : background ?? "#F1F2FE"};
+  color: ${({ type, theme }) =>
+    type === "primary" ? theme.colors.white : theme.colors.primary800};
+  background: ${({ type, background, theme }) =>
+    type === "primary"
+      ? theme.colors.blue500
+      : background ?? theme.colors.primary100};
   max-width: fit-content;
   border: none;
 `;

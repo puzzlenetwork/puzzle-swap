@@ -18,11 +18,11 @@ import { useNavigate } from "react-router-dom";
 interface IProps {}
 
 const Root = styled.div`
-  background: #ffffff;
+  background: ${({ theme }) => `${theme.colors.white}`};
   display: flex;
   flex-direction: column;
   width: 100%;
-  border: 1px solid #f1f2fe;
+  border: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
   border-radius: 16px;
   box-sizing: border-box;
   @media (min-width: 1080px) {
