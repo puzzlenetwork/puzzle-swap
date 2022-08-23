@@ -32,7 +32,8 @@ const RopeContainer = styled.div`
 const Rope = styled.div<{ done: boolean }>`
   width: 1px;
   height: 12px;
-  background: ${({ done }) => (done ? "#F1F2FE" : "#C6C9F4")};
+  background: ${({ done, theme }) =>
+    done ? theme.colors.primary100 : theme.colors.primary300};
 `;
 
 const Stepper: React.FC<IProps> = ({

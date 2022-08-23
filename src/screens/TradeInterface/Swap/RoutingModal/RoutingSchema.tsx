@@ -1,11 +1,12 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { useTradeVM } from "@screens/TradeInterface/TradeVM";
-import { ReactComponent as Arrow } from "@src/assets/icons/blackRightArrow.svg";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
 import Route from "./Route";
+import Img from "@components/Img";
+import { useTheme } from "@emotion/react";
 
 interface IProps {}
 
@@ -27,6 +28,7 @@ const RoutesContainer = styled.div`
 `;
 const RoutingSchema: React.FC<IProps> = () => {
   const vm = useTradeVM();
+  const theme = useTheme();
   const values = vm.schemaValues;
   const isAmount0Empty = vm.amount0.eq(0);
   return (
@@ -46,8 +48,9 @@ const RoutingSchema: React.FC<IProps> = () => {
       <SizedBox width={12} />
       <div style={{ position: "relative" }}>
         {values?.length !== 1 && (
-          <Arrow
+          <Img
             height="100%"
+            src={theme.images.icons.rightArrow}
             style={{ position: "absolute", left: "-32px" }}
           />
         )}

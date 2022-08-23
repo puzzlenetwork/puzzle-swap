@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import React, { HTMLAttributes } from "react";
 import Text from "@components/Text";
-import doneIcon from "@src/assets/icons/done.svg";
 import SizedBox from "../SizedBox";
 
 export type TStep = "previous" | "current" | "next";
@@ -31,12 +30,16 @@ const IconContainer = styled.div<{ state: TStep }>`
   flex-shrink: 0;
   transition: 0.4s;
   position: relative;
-  background: ${({ state }) => (state === "current" ? "#7075E9" : "#F1F2FE")};
+  background: ${({ state, theme }) =>
+    state === "current" ? theme.colors.blue500 : theme.colors.primary100};
 
-  ${({ state }) => (state === "previous" ? "background: #c6c9f4;" : "")}
+  ${({ state, theme }) =>
+    state === "previous" ? `background: ${theme.colors.primary300}` : ""}
   & > div {
-    color: ${({ state }) => (state === "current" ? "#ffffff" : "#7075E9")};
-    ${({ state }) => (state === "previous" ? "color: #C6C9F4;" : "")}
+    color: ${({ state, theme }) =>
+      state === "current" ? theme.colors.white : theme.colors.blue500};
+    ${({ state, theme }) =>
+      state === "previous" ? `color: ${theme.colors.primary300};` : ""}
   }
 
   ::after {
@@ -50,13 +53,13 @@ const IconContainer = styled.div<{ state: TStep }>`
     bottom: 0;
     left: 0;
     right: 0;
-    content: url(${doneIcon});
-  }
+    ${({ theme }) => `content: url(${theme.images.icons.done})`}
 `;
 
 const TextContainer = styled(Text)<{ state: TStep }>`
   font-weight: ${({ state }) => (state === "current" ? 500 : 400)};
-  color: ${({ state }) => (state === "next" ? "#8082C5" : "#363870")};
+  color: ${({ state, theme }) =>
+    state === "next" ? theme.colors.primary650 : theme.colors.primary800};
 `;
 const DesktopStep: React.FC<IProps> = ({
   index,

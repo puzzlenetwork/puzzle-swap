@@ -30,7 +30,8 @@ const InputContainer = styled.div<{
   invalid?: boolean;
   readOnly?: boolean;
 }>`
-  background: ${({ focused, error }) => (focused ? "#fffff" : "#f1f2fe")};
+  background: ${({ focused, theme }) =>
+    focused ? "#fffff" : theme.colors.primary100};
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -49,16 +50,20 @@ const InputContainer = styled.div<{
   }
 
   border: 1px solid
-    ${({ focused, readOnly, error }) =>
-      error ? "#ED827E" : focused && !readOnly ? "#7075E9" : "#f1f2fe"};
+    ${({ focused, readOnly, error, theme }) =>
+      error
+        ? theme.colors.error
+        : focused && !readOnly
+        ? theme.colors.blue500
+        : theme.colors.primary100};
 
   :hover {
-    border-color: ${({ readOnly, focused, error }) =>
+    border-color: ${({ readOnly, focused, error, theme }) =>
       error
-        ? "#ED827E"
+        ? theme.colors.error
         : !readOnly && !focused
-        ? "#C6C9F4"
-        : focused ?? "#7075E9"};
+        ? theme.colors.primary300
+        : focused ?? theme.colors.blue500};
   }
 `;
 const LightTokenInput: React.FC<IProps> = (props) => {

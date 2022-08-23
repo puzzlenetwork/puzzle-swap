@@ -21,10 +21,7 @@ const Gradient = styled.div`
   position: absolute;
   margin-bottom: -1px;
 
-  background: -webkit-linear-gradient(
-    rgba(255, 255, 255, 0),
-    rgba(241, 242, 254, 1) 57.65%
-  );
+  background: ${({ theme }) => theme.colors.noNftGradient};
 `;
 const Root = styled.div`
   position: relative;

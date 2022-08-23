@@ -7,8 +7,8 @@ import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/Inves
 import { observer } from "mobx-react-lite";
 import Table from "@components/Table";
 import Scrollbar from "@src/components/Scrollbar";
-import group from "@src/assets/icons/group.svg";
 import useWindowSize from "@src/hooks/useWindowSize";
+import { useTheme } from "@emotion/react";
 
 interface IProps {}
 
@@ -32,6 +32,7 @@ const Icon = styled.img`
 `;
 
 const PoolComposition: React.FC<IProps> = () => {
+  const theme = useTheme();
   const vm = useInvestToPoolInterfaceVM();
   const [filteredTokens, setFilteredTokens] = useState<any[]>([]);
   const [valueSort, setValueSort] = useState(true);
@@ -49,7 +50,7 @@ const PoolComposition: React.FC<IProps> = () => {
             </Text>
             <img
               style={{ paddingLeft: 7 }}
-              src={group}
+              src={theme.images.icons.group}
               alt="group"
               className="value-group"
               onClick={() => setValueSort(!valueSort)}
@@ -58,7 +59,7 @@ const PoolComposition: React.FC<IProps> = () => {
         ),
       },
     ],
-    [valueSort]
+    [valueSort, theme.images.icons.group]
   );
   useMemo(() => {
     const data = vm.poolCompositionValues

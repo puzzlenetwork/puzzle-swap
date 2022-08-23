@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import React, { useMemo, useState } from "react";
 import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
 import { observer } from "mobx-react-lite";
-import group from "@src/assets/icons/group.svg";
 import Scrollbar from "@components/Scrollbar";
 import Table from "@components/Table";
 import { Column, Row } from "@components/Flex";
@@ -13,6 +12,7 @@ import SquareTokenIcon from "@components/SquareTokenIcon";
 import TokenTags from "@screens/Invest/TokenTags";
 import { useNavigate } from "react-router-dom";
 import BN from "@src/utils/BN";
+import { useTheme } from "@emotion/react";
 
 interface IProps {}
 
@@ -34,6 +34,7 @@ const PoolsWithToken: React.FC<IProps> = () => {
   const navigate = useNavigate();
   const [pools, setPools] = useState<any>([]);
   const [sortApy, setSortApy] = useState(true);
+  const theme = useTheme();
   useMemo(() => {
     setPools(
       poolsStore.pools
@@ -109,7 +110,7 @@ const PoolsWithToken: React.FC<IProps> = () => {
               APY
             </Text>
             <img
-              src={group}
+              src={theme.images.icons.group}
               alt="group"
               className="liquidity-group"
               style={{ cursor: "pointer" }}
@@ -120,7 +121,7 @@ const PoolsWithToken: React.FC<IProps> = () => {
         accessor: "apy",
       },
     ],
-    [sortApy]
+    [sortApy, theme.images.icons.group]
   );
   return (
     <Root sort={sortApy}>

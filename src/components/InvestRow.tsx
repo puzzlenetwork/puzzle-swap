@@ -27,22 +27,23 @@ const Root = styled.div<{ withClickLogic?: boolean }>`
   padding: 8px 24px;
 
   :hover {
-    background: ${({ withClickLogic }) => withClickLogic && "#f1f2fe;"};
+    background: ${({ withClickLogic, theme }) =>
+      withClickLogic && `${theme.colors.primary100}`};
   }
 
   .green {
-    color: #35a15a;
+    color: ${({ theme }) => theme.colors.success};
   }
 
   .red {
-    color: #ed827e;
+    color: ${({ theme }) => theme.colors.error};
   }
 `;
 const DefaultIcon = styled.div`
   width: 40px;
   height: 40px;
-  color: #f1f2fe;
-  border: 1px solid #f1f2fe;
+  color: ${({ theme }) => theme.colors.primary100};
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
   border-radius: 8px;
 `;
 const InvestRow: React.FC<IProps> = ({

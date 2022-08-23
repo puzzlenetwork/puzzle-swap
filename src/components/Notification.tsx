@@ -6,6 +6,7 @@ import error from "@src/assets/icons/error.svg";
 import warning from "@src/assets/icons/warning.svg";
 import SizedBox from "@components/SizedBox";
 import { Column } from "./Flex";
+import { themes } from "@src/themes/ThemeProvider";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   type: "warning" | "info" | "error";
@@ -15,17 +16,17 @@ interface IProps extends HTMLAttributes<HTMLDivElement> {
 const Root = styled.div<{ type: "warning" | "info" | "error" }>`
   display: flex;
   flex-direction: row;
-  ${({ type }) =>
+  ${({ type, theme }) =>
     (() => {
       switch (type) {
         case "warning":
           return "background: #FCF4F1;";
         case "info":
-          return "background: #f1f2fe;";
+          return `background: ${theme.colors.primary100}`;
         case "error":
           return "background: #FCF0EF;";
         default:
-          return "background: #363870;";
+          return `background: ${theme.colors.primary800}`;
       }
     })()}
   border-radius: 12px;
@@ -57,7 +58,13 @@ const Notification: React.FC<IProps> = ({ text, type, ...rest }) => {
       <SizedBox width={10} />
       <Column justifyContent="center" mainAxisSize="stretch">
         {typeof text === "string" ? (
-          <Text style={{ height: "100%" }} size="medium">
+          <Text
+            style={{
+              height: "100%",
+              color: themes.lightTheme.colors.primary800,
+            }}
+            size="medium"
+          >
             {text}
           </Text>
         ) : (

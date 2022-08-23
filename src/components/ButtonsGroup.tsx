@@ -11,9 +11,12 @@ const Root = styled.div`
   display: flex;
 `;
 const Btn = styled.div<{ active?: boolean }>`
-  background: ${({ active }) => (active ? "#7075E9" : "#ffffff")};
-  color: ${({ active }) => (active ? "#ffffff" : "#363870")};
-  border: 1px solid #f1f2fe;
+  background: ${({ active, theme }) =>
+    active ? theme.colors.blue500 : theme.colors.white};
+  color: ${({ active, theme }) =>
+    active ? theme.colors.white : theme.colors.primary800};
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
+
   border-radius: 6px;
   flex: none;
   order: 1;

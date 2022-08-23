@@ -17,7 +17,7 @@ interface IProps extends TableProps {
 const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
   width: ${({ fitContent }) => (fitContent ? "fit-content" : "100%")};
   border-radius: 16px;
-  background: #ffffff;
+  background: ${({ theme }) => `${theme.colors.white}`};
 
   table {
     width: 100%;
@@ -27,13 +27,14 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
       font-weight: 400;
       font-size: 14px;
       line-height: 20px;
-      color: #8082c5;
+      color: ${({ theme }) => `${theme.colors.primary650}`};
       width: 100%;
       transition: 0.4s;
 
       :hover {
         ${({ hovered }) => hovered && "cursor: pointer;"};
-        ${({ hovered }) => hovered && "background: #f8f8ff;"};
+        ${({ hovered, theme }) =>
+          hovered && `background: ${theme.colors.primary50};`};
       }
 
       :last-child {
@@ -48,8 +49,8 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
       line-height: 16px;
       text-align: left;
       padding: 14px;
-      border-bottom: 1px solid #f1f2fe;
-      background: #ffffff;
+      border-bottom: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
+      background: ${({ theme }) => `${theme.colors.white}`};
       cursor: default;
     }
 
@@ -57,9 +58,9 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
       font-weight: 400;
       font-size: 16px;
       line-height: 20px;
-      color: #363870;
+      color: ${({ theme }) => `${theme.colors.primary800}`};
       padding: 16px;
-      border-bottom: 1px solid #f1f2fe;
+      border-bottom: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
 
       :last-child {
         border-right: 0;

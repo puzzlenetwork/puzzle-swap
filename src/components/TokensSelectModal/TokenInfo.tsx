@@ -23,14 +23,15 @@ const Root = styled.div<{ withClickLogic?: boolean }>`
   padding: 10px 24px;
 
   :hover {
-    background: ${({ withClickLogic }) => withClickLogic && "#f1f2fe;"};
+    background: ${({ withClickLogic, theme }) =>
+      withClickLogic && `${theme.colors.primary100}`};
   }
 `;
 const DefaultIcon = styled.div`
   width: 40px;
   height: 40px;
-  color: #f1f2fe;
-  border: 1px solid #f1f2fe;
+  color: ${({ theme }) => theme.colors.primary100};
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
   border-radius: 8px;
 `;
 const Name = styled.div`
@@ -38,14 +39,15 @@ const Name = styled.div`
   font-weight: normal;
   font-size: 14px;
   line-height: 20px;
-  color: #363870;
+  color: ${({ theme }) => theme.colors.primary800};
 `;
 const Symbol = styled.div`
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
   line-height: 16px;
-  color: #8082c5;
+  color: ${({ theme }) => theme.colors.primary650};
+
   text-transform: uppercase;
 `;
 const Gradient = styled.div`
@@ -55,7 +57,7 @@ const Gradient = styled.div`
   top: 0;
   width: 100%;
   position: absolute;
-  background: rgba(255, 255, 255, 0.5);
+  background: ${({ theme }) => theme.colors.gradient};
   z-index: 10;
   cursor: not-allowed;
 `;

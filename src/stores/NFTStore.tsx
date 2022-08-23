@@ -44,7 +44,11 @@ export default class NftStore {
     this.syncNftPics().then();
     statsService
       .getArtworks()
-      .then((d) => this._setArtworks(d))
+      .then((d) => {
+        const fix = d;
+        fix[0].imageLink = nftsPics["EAGLE"];
+        this._setArtworks(fix);
+      })
       .then(() =>
         Promise.all([
           this.syncAccountNFTs(),

@@ -12,7 +12,7 @@ interface IProps extends ISchemaExchange, HTMLAttributes<HTMLDivElement> {}
 const Root = styled.div<{ singleAsset?: boolean; singleRoute?: boolean }>`
   display: flex;
   flex-direction: column;
-  border: 1px solid #f1f2fe;
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
   box-sizing: border-box;
   border-radius: 12px;
   padding: 16px;

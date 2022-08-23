@@ -16,7 +16,7 @@ interface IProps {
 const Title = styled(Text)`
   b {
     font-weight: normal;
-    color: #363870;
+    color: ${({ theme }) => theme.colors.primary800};
   }
 `;
 const RoutingModal: React.FC<IProps> = ({ ...rest }) => {

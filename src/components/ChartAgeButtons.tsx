@@ -11,7 +11,7 @@ interface IProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
 const Root = styled(Row)`
   padding: 4px;
   box-sizing: border-box;
-  background: #f1f2fe;
+  background: ${({ theme }) => theme.colors.primary100};
   border-radius: 8px;
 `;
 
@@ -32,7 +32,8 @@ const ChartAgeButton = styled.div<{ selected?: boolean }>`
   padding: 0 8px;
   box-sizing: border-box;
   height: 24px;
-  background: ${({ selected }) => (selected ? "#fff" : "transparent")};
+  background: ${({ selected, theme }) =>
+    selected ? theme.colors.white : "transparent"};
   border-radius: 6px;
   box-shadow: ${({ selected }) =>
     selected ? "0px 8px 24px rgba(54, 56, 112, 0.16)" : "none"};
@@ -40,7 +41,8 @@ const ChartAgeButton = styled.div<{ selected?: boolean }>`
   font-size: 14px;
   line-height: 20px;
   flex: 1;
-  color: ${({ selected }) => (selected ? "#7075E9" : "#8082C5")};
+  color: ${({ selected, theme }) =>
+    selected ? theme.colors.blue500 : theme.colors.primary650};
   transition: 0.4s;
 
   @media (min-width: 880px) {

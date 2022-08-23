@@ -21,7 +21,7 @@ const Gradient = styled.div`
   top: 40%;
   width: 100%;
   position: absolute;
-  background: linear-gradient(180deg, rgba(248, 248, 255, 0) 0%, #f8f8ff 100%);
+  background: ${({ theme }) => theme.colors.tokenDescGradient};
   z-index: 10;
 `;
 const Body = styled.div`

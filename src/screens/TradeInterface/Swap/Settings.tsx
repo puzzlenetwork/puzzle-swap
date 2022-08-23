@@ -13,6 +13,7 @@ import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import ShareTokenInput from "@screens/CreateCustomPools/PoolSettingsCard/SelectAssets/ShareTokenInput";
 import TextButton from "@components/TextButton";
 import Button from "@components/Button";
+import { useTheme } from "@emotion/react";
 
 interface IProps {}
 
@@ -32,9 +33,12 @@ const Tag = styled.div<{ active?: boolean }>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  color: ${({ active }) => (active ? "#ffffff" : "")};
-  background: ${({ active }) => (active ? "#7075E9" : "#fffff")};
-  border: 1px solid ${({ active }) => (active ? "#7075E9" : "#f1f2fe")};
+  color: ${({ active, theme }) => (active ? theme.colors.white : "")};
+  background: ${({ active, theme }) =>
+    active ? theme.colors.blue500 : theme.colors.white};
+  border: 1px solid
+    ${({ active, theme }) =>
+      active ? theme.colors.blue500 : theme.colors.primary100};
   box-sizing: border-box;
   border-radius: 10px;
   cursor: pointer;
@@ -45,9 +49,9 @@ const Tag = styled.div<{ active?: boolean }>`
     padding: 8px 20px;
   }
 `;
-
 const Settings: React.FC<IProps> = () => {
   const vm = useTradeVM();
+  const theme = useTheme();
   // const { poolsStore } = useStores();
   const handleClose = () => vm.setOpenedSettings(false);
   const handleSave = () => {
@@ -67,7 +71,10 @@ const Settings: React.FC<IProps> = () => {
       <Row
         alignItems="center"
         justifyContent="space-between"
-        style={{ borderBottom: "1px solid #f1f2fe", paddingBottom: 16 }}
+        style={{
+          borderBottom: `1px solid ${theme.colors.primary100}`,
+          paddingBottom: 16,
+        }}
       >
         <Text weight={500}>Settings</Text>
         <Close onClick={handleClose} style={{ cursor: "pointer" }} />
@@ -118,7 +125,10 @@ const Settings: React.FC<IProps> = () => {
       <Row
         alignItems="center"
         justifyContent="space-between"
-        style={{ borderTop: "1px solid #f1f2fe", paddingTop: 16 }}
+        style={{
+          borderTop: `1px solid ${theme.colors.primary100}`,
+          paddingTop: 16,
+        }}
       >
         <TextButton kind="secondary" weight={500} onClick={handleReset}>
           Reset

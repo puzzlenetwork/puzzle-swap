@@ -17,7 +17,7 @@ interface IProps {
 
 const Root = styled.div`
   display: flex;
-  border-bottom: 1px solid #c6c9f4;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.primary300};
   width: 100%;
 `;
 const Tab = styled.div<{ active?: boolean }>`
@@ -27,13 +27,14 @@ const Tab = styled.div<{ active?: boolean }>`
   padding-bottom: 12px;
   border-bottom: 4px solid #7075e9;
   cursor: pointer;
-  border-bottom: ${({ active }) =>
-    active ? "4px solid #7075e9" : "4px solid transparent"};
+  border-bottom: ${({ active, theme }) =>
+    active ? `4px solid ${theme.colors.blue500}` : "4px solid transparent"};
   margin-bottom: -1px;
   user-select: none;
 
   :hover {
-    border-bottom: ${({ active }) => !active && "4px solid #c6c9f4"}
+    border-bottom: ${({ active, theme }) =>
+      !active && `4px solid ${theme.colors.primary300}`}
   }
 }
 `;

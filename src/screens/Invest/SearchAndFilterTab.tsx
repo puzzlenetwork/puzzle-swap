@@ -6,7 +6,7 @@ import { useInvestVM } from "@screens/Invest/InvestVm";
 import Divider from "@src/components/Divider";
 import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
-import { ReactComponent as Add } from "@src/assets/icons/whiteAdd.svg";
+// import { ReactComponent as Add } from "@src/assets/icons/whiteAdd.svg";
 import Select from "@components/Select";
 import useWindowSize from "@src/hooks/useWindowSize";
 import Text from "@components/Text";
@@ -14,15 +14,17 @@ import close from "@src/assets/icons/primaryBlue16CloseIcon.svg";
 import { Row } from "@src/components/Flex";
 import { ROUTES } from "@src/constants";
 import { useNavigate } from "react-router-dom";
+import Img from "@components/Img";
+import { useTheme } from "@emotion/react";
 
 interface IProps {}
 
 const Root = styled.div`
-  background: #ffffff;
+  background: ${({ theme }) => `${theme.colors.white}`};
   display: flex;
   flex-direction: column;
   width: 100%;
-  border: 1px solid #f1f2fe;
+  border: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
   border-radius: 16px;
   box-sizing: border-box;
   @media (min-width: 1080px) {
@@ -124,6 +126,7 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
     vm.setPoolCategoryFilter(0);
     vm.setCustomPoolFilter(0);
   };
+  const theme = useTheme();
   const { width } = useWindowSize();
   return (
     <Root>
@@ -179,7 +182,7 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
           fixed={width != null && width <= 1080}
           onClick={() => navigate(`${ROUTES.POOLS_CREATE}`)}
         >
-          <Add />
+          <Img src={theme.images.icons.add} alt="add" />
           <SizedBox width={12} />
           Create a pool
         </Button>

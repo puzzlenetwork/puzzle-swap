@@ -10,11 +10,11 @@ import Text from "@components/Text";
 import close from "@src/assets/icons/primaryBlue16CloseIcon.svg";
 
 const Root = styled.div`
-  background: #ffffff;
+  background: ${({ theme }) => theme.colors.white};
   display: flex;
   flex-direction: column-reverse;
   width: 100%;
-  border: 1px solid #f1f2fe;
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
   border-radius: 16px;
   box-sizing: border-box;
   @media (min-width: 880px) {

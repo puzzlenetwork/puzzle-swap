@@ -14,6 +14,7 @@ import BN from "@src/utils/BN";
 import Tooltip from "@components/Tooltip";
 import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import { Row } from "@src/components/Flex";
+import { useTheme } from "@emotion/react";
 
 interface IProps {}
 
@@ -30,6 +31,7 @@ const Grid = styled.div`
 const SelectsAssets: React.FC<IProps> = () => {
   const [addAssetModal, openAssetModal] = useState(false);
   const vm = useCreateCustomPoolsVM();
+  const theme = useTheme();
   const assetNotification =
     "Please note that the pool must include a PUZZLE or USDN asset with at least 2% of pool weight and the maximum of 10 different assets.";
   return (
@@ -86,7 +88,7 @@ const SelectsAssets: React.FC<IProps> = () => {
         <SizedBox
           height={1}
           style={{
-            background: "#F1F2FE",
+            background: theme.colors.primary100,
             width: "calc(100% + 48px)",
             margin: "24px 0 24px -24px",
           }}
