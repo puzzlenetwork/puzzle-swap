@@ -2,6 +2,15 @@ import React from "react";
 import { css, Global, useTheme } from "@emotion/react";
 
 const globalModalStyles = (theme: any) => `
+
+body {
+    margin: 0;
+    font-family: "Roboto", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background:  ${theme.colors.white};
+}
+
 .rc-dialog-mask {
     background: rgba(0, 0, 0, 0.4);
 }
@@ -54,6 +63,32 @@ const globalModalStyles = (theme: any) => `
 .rc-dialog-close {
     opacity: 1;
 }
+
+.rc-notification {
+    top: 30px;
+    right: 16px;
+}
+
+.rc-notification-notice {
+ background: ${theme.colors.white};
+ 
+}
+
+.rc-notification-notice-content {
+    display: flex;
+    background: ${theme.colors.white};
+}
+
+.custom-notification .rc-notification-notice-close {
+    opacity: 1;
+    top: 16px;
+    right: 16px;
+}
+
+.custom-notification .rc-notification-notice-close > svg > path {
+    fill: ${theme.colors.primary300};
+}
+
 
 `;
 

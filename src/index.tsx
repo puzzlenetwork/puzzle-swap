@@ -13,6 +13,8 @@ import "react-loading-skeleton/dist/skeleton.css";
 import "rc-slider/assets/index.css";
 import "rc-dialog/assets/index.css";
 import dayjs from "dayjs";
+import ThemeWrapper from "./themes/ThemeProvider";
+import GlobalStyles from "@src/themes/GlobalStyles";
 
 const relativeTime = require("dayjs/plugin/relativeTime");
 dayjs.extend(relativeTime);
@@ -31,9 +33,12 @@ autorun(
 ReactDOM.render(
   // <React.StrictMode>
   <storesContext.Provider value={mobxStore}>
-    <Router>
-      <App />
-    </Router>
+    <ThemeWrapper>
+      <Router>
+        <App />
+      </Router>
+      <GlobalStyles />
+    </ThemeWrapper>
   </storesContext.Provider>,
   // </React.StrictMode>,
   document.getElementById("root")
