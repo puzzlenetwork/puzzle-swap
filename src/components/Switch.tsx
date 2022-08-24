@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React from "react";
 
 interface IProps {
-  value: any;
+  value: boolean;
   onChange: () => void;
 }
 
@@ -31,6 +31,11 @@ const Root = styled.div`
     right: 0;
     bottom: 0;
     background-color: ${({ theme }) => theme.colors.primary100};
+
+    :disabled {
+      background-color: ${({ theme }) => theme.colors.primary300};
+    }
+
     -webkit-transition: 0.4s;
     transition: 0.4s;
   }
@@ -49,7 +54,7 @@ const Root = styled.div`
   }
 
   input:checked + .slider {
-    background-color: ${({ theme }) => theme.colors.primary100};
+    background-color: ${({ theme }) => theme.colors.blue500};
   }
 
   input:focus + .slider {
@@ -76,7 +81,7 @@ const Switch: React.FC<IProps> = ({ value, onChange }) => {
   return (
     <Root>
       <label className="switch">
-        <input type="checkbox" value={value} onChange={onChange} />
+        <input type="checkbox" checked={value} onChange={onChange} />
         <span className="slider round" />
       </label>
     </Root>

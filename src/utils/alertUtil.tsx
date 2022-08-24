@@ -25,7 +25,7 @@ const Link = styled.a`
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
-  color: #7075e9;
+  color: ${({ theme }) => theme.colors.blue500};
   cursor: pointer;
 `;
 

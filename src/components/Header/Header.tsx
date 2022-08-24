@@ -14,6 +14,7 @@ import { useTheme } from "@emotion/react";
 import Tooltip from "@components/Tooltip";
 import LinkGroup from "@components/LinkGroup";
 import DarkMode from "@components/Header/DarkMode";
+import isRoutesEquals from "@src/utils/isRoutesEquals";
 
 interface IProps {}
 
@@ -97,9 +98,6 @@ const Desktop = styled.div`
     justify-content: center;
   }
 `;
-
-const isRoutesEquals = (a: string, b: string) =>
-  a.replaceAll("/", "") === b.replaceAll("/", "");
 
 const Header: React.FC<IProps> = () => {
   const [mobileMenuOpened, setMobileMenuOpened] = useState(false);

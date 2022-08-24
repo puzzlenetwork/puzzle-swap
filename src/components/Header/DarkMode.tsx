@@ -24,15 +24,10 @@ const DarkMode: React.FC<IProps> = ({ ...rest }) => {
   return (
     <Root {...rest}>
       <Img src={moon} />
-
       <Text>Dark mode</Text>
       <Switch
         onChange={() => accountStore.toggleTheme()}
-        value={
-          accountStore.selectedTheme === THEME_TYPE.DARK_THEME
-            ? "unchecked"
-            : "checked"
-        }
+        value={accountStore.selectedTheme === THEME_TYPE.DARK_THEME}
       />
     </Root>
   );
