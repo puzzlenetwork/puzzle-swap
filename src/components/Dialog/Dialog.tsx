@@ -1,7 +1,7 @@
 import React from "react";
 import RcDialog from "rc-dialog";
-import "rc-dialog/assets/index.css";
-import "./styles.css";
+// import "rc-dialog/assets/index.css";
+// import "./styles.css";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 import { ReactComponent as CloseIcon } from "@src/assets/icons/close.svg";
 

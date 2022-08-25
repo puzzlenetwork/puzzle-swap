@@ -26,14 +26,23 @@ const Root = styled.div<{
   disabled?: boolean;
 }>`
   position: relative;
-  background: ${({ focused }) => (focused ? "#fffff" : "#f1f2fe")};
+  background: ${({ focused, theme }) =>
+    focused ? theme.colors.white : theme.colors.primary100};
   border: 1px solid
-    ${({ focused, error }) =>
-      error ? "#ED827E" : focused ? "#7075E9" : "#f1f2fe"};
+    ${({ focused, error, theme }) =>
+      error
+        ? theme.colors.error
+        : focused
+        ? theme.colors.blue500
+        : theme.colors.primary100};
 
   :hover {
-    border-color: ${({ focused, error }) =>
-      error ? "#ED827E" : !focused ? "#C6C9F4" : "#7075E9"};
+    border-color: ${({ focused, error, theme }) =>
+      error
+        ? theme.colors.error
+        : !focused
+        ? theme.colors.primary650
+        : theme.colors.blue500};
   }
 
   border-radius: 12px;
@@ -51,7 +60,8 @@ const Root = styled.div<{
     padding: 0;
     width: 41px;
     height: 22px;
-    color: ${({ focused }) => (focused ? "#363870" : "#8082c5")};
+    color: ${({ focused, theme }) =>
+      focused ? theme.colors.primary800 : theme.colors.primary650};
     outline: none;
     border: none;
     background-color: transparent;
@@ -61,7 +71,7 @@ const Root = styled.div<{
     }
 
     ::placeholder {
-      color: #8082c5;
+      color: ${({ theme }) => theme.colors.primary650};
     }
 
     ::-webkit-outer-spin-button,

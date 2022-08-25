@@ -21,13 +21,16 @@ const Root = styled.div<{ focused?: boolean }>`
   display: flex;
   padding: 8px 8px 8px 12px;
   border-radius: 10px;
-  background: ${({ focused }) => (focused ? "#ffffff" : "#F1F2FE")};
-  border: 1px solid ${({ focused }) => (focused ? "#7075e9" : "#f1f2fe")};
+  background: ${({ focused, theme }) =>
+    focused ? theme.colors.white : theme.colors.primary100};
+  border: 1px solid
+    ${({ focused, theme }) =>
+      focused ? theme.colors.blue500 : theme.colors.primary100};
   outline: none;
   font-weight: 400;
   font-size: 16px;
   line-height: 24px;
-  color: #363870;
+  color: ${({ theme }) => theme.colors.primary800};
   align-items: center;
   white-space: nowrap;
 
@@ -46,14 +49,15 @@ const Option = styled.div<{ active?: boolean }>`
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
-  color: ${({ active }) => (active ? "#3638708F" : "#363870")};
+  color: ${({ active, theme }) =>
+    active ? "#3638708F" : theme.colors.primary800};
   padding: 10px 12px 10px 22px;
-  background: #ffffff;
+  background: ${({ theme }) => `${theme.colors.white}`};
   margin: 0 -16px;
   white-space: nowrap;
 
   :hover {
-    background: #f1f2fe;
+    background: ${({ theme }) => `${theme.colors.primary100}`};
   }
 
   ::after {

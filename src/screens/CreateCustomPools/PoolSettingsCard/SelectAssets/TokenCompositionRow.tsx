@@ -41,13 +41,14 @@ const Root = styled.div`
 const AssetContainer = styled.div<{ modalOpened?: boolean }>`
   display: flex;
   flex-direction: row;
-  border: 1px solid #f1f2fe;
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
   border-radius: 10px;
   width: fit-content;
   padding: 8px 32px 8px 8px;
   align-items: center;
   cursor: pointer;
   position: relative;
+
   :after {
     position: absolute;
     top: 12px;
@@ -57,6 +58,7 @@ const AssetContainer = styled.div<{ modalOpened?: boolean }>`
     transition: 0.4s;
     transform: rotate(${({ modalOpened }) => (modalOpened ? 0 : -90)}deg);
   }
+
   :hover {
     :after {
       transform: rotate(-90deg);

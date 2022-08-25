@@ -5,6 +5,7 @@ import Text from "@components/Text";
 import { IAssetBalance } from "@src/entities/Balance";
 import { IToken } from "@src/constants";
 import { Row } from "@components/Flex";
+import { useTheme } from "@emotion/react";
 
 interface IProps {
   tokens: ({ share: number } & IToken)[];
@@ -24,6 +25,7 @@ const TokenTags: React.FC<IProps> = ({ tokens, findBalanceByAssetId }) => {
   const needToHide = tokens.length > 3;
   const tokensToDisplay = needToHide ? tokens.slice(0, 3) : tokens;
   const moreHiddenAmount = tokens.length - 3;
+  const theme = useTheme();
   return (
     <Root>
       {tokensToDisplay.map(({ symbol, assetId, share }, i) => {
@@ -33,7 +35,7 @@ const TokenTags: React.FC<IProps> = ({ tokens, findBalanceByAssetId }) => {
         return (
           <Tag
             key={assetId + String(i)}
-            background={isActive ? "#C6C9F4" : undefined}
+            background={isActive ? theme.colors.primary300 : undefined}
           >
             {symbol} {share} %
           </Tag>

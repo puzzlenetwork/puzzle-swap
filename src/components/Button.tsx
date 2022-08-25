@@ -13,17 +13,21 @@ const Button = styled.button<{
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
-  background: ${({ kind }) => (kind === "secondary" ? "#fff" : "#7075e9")};
+  background: ${({ kind, theme }) =>
+    kind === "secondary" ? theme.colors.white : theme.colors.blue500};
   border: 1px solid
-    ${({ kind }) => (kind === "secondary" ? "#F1F2FE" : "#7075e9")};
+    ${({ kind, theme }) =>
+      kind === "secondary" ? theme.colors.primary100 : theme.colors.blue500};
   border-radius: 12px;
   box-shadow: none;
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
-  color: ${({ kind }) => (kind === "secondary" ? "#7075E9" : "#ffffff")};
+  color: ${({ kind, theme }) =>
+    kind === "secondary" ? theme.colors.blue500 : theme.colors.white};
   width: ${({ fixed }) => (fixed ? "100%" : "fit-content")};
   transition: 0.4s;
+
   ${({ size }) =>
     (() => {
       switch (size) {
@@ -35,20 +39,25 @@ const Button = styled.button<{
           return "padding: 0 24px; height: 56px;";
       }
     })()}
-
   :hover {
     cursor: pointer;
-    background: ${({ kind }) => (kind === "secondary" ? "#F1F2FE" : "#6563dd")};
+    background: ${({ kind, theme }) =>
+      kind === "secondary" ? theme.colors.primary100 : "#6563dd"};
     border: 1px solid
-      ${({ kind }) => (kind === "secondary" ? "#F1F2FE" : "#6563dd")};
+      ${({ kind, theme }) =>
+        kind === "secondary" ? theme.colors.primary100 : "#6563dd"};
     color: ${({ kind }) => kind === "secondary" && "#6563DD"};
   }
 
   :disabled {
     opacity: ${({ kind }) => (kind === "secondary" ? 0.4 : 1)};
-    background: ${({ kind }) => (kind === "secondary" ? "#fff" : "#c6c9f4")};
+    background: ${({ kind, theme }) =>
+      kind === "secondary" ? theme.colors.white : theme.colors.primary300};
     border: 1px solid
-      ${({ kind }) => (kind === "secondary" ? "#F1F2FE" : "#c6c9f4")};
+      ${({ kind, theme }) =>
+        kind === "secondary"
+          ? theme.colors.primary100
+          : theme.colors.primary300};
     cursor: not-allowed;
   }
 `;

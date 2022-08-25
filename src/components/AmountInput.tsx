@@ -8,7 +8,7 @@ const Root = styled.input`
   background: transparent;
   outline: none;
   width: 100%;
-  color: #363870;
+  color: ${({ theme }) => theme.colors.primary800};
 
   ::-webkit-outer-spin-button,
   ::-webkit-inner-spin-button {
@@ -21,7 +21,7 @@ const Root = styled.input`
   }
 
   ::placeholder {
-    color: #8082c5;
+    color: ${({ theme }) => theme.colors.primary650};
   }
 `;
 

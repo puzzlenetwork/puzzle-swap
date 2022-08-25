@@ -17,7 +17,7 @@ interface IProps extends IArtWork {
 const Root = styled.div`
   display: flex;
   flex-direction: column;
-  background: #ffffff;
+  background: ${({ theme }) => theme.colors.white};
   padding: 8px;
   border-radius: 16px;
   justify-content: space-between;
@@ -27,7 +27,7 @@ const Root = styled.div`
   }
 `;
 const Img = styled.img`
-  border: 1px solid #f1f2fe;
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
   border-radius: 12px;
   width: 100%;
   object-fit: cover;

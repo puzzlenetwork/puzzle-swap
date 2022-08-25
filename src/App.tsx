@@ -22,11 +22,12 @@ import Explore from "@screens/Explore";
 import ExploreToken from "@screens/ExploreToken";
 import OldExplorer from "./screens/OldExplorer";
 import BoostApy from "./screens/BoostApy";
+import MobileNavBar from "./components/MobileNavBar";
 
 const Root = styled(Column)`
   width: 100%;
   align-items: center;
-  background: #f8f8ff;
+  background: ${({ theme }) => theme.colors.primary50};
   min-height: 100vh;
 `;
 
@@ -93,6 +94,7 @@ const App: React.FC = () => {
         onClose={() => accountStore.setSendAssetModalOpened(false)}
         visible={accountStore.sendAssetModalOpened}
       />
+      <MobileNavBar />
     </Root>
   );
 };

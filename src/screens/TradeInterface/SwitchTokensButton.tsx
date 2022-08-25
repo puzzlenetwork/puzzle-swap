@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import React, { HTMLAttributes, useState } from "react";
-import swap from "@src/assets/icons/swap.svg";
 import newswap from "@src/assets/icons/new-trade-swap.svg";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
@@ -8,6 +7,7 @@ import { useTradeVM } from "@screens/TradeInterface/TradeVM";
 import { useNavigate } from "react-router-dom";
 import Loading from "@components/Loading";
 import { TOKENS_BY_SYMBOL } from "@src/constants";
+import { useTheme } from "@emotion/react";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   new?: boolean;
@@ -32,6 +32,7 @@ const buildRateStr = (
 
 const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
   const vm = useTradeVM();
+  const theme = useTheme();
   const { token0, token1, price } = vm;
   const navigate = useNavigate();
   const [switched, setSwitched] = useState(false);
@@ -66,7 +67,7 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
     <Root {...rest} onClick={handleSwitch}>
       <img
         alt="swap"
-        src={rest.new ? newswap : swap}
+        src={rest.new ? newswap : theme.images.icons.swap}
         className="icon"
         style={{
           transform: switched ? "rotate(360deg)" : "rotate(0)",

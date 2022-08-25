@@ -27,25 +27,25 @@ const Text = styled.p<{
   white-space: ${({ nowrap }) => (nowrap ? "nowrap" : "unset")};
   text-decoration: ${({ crossed }) => (crossed ? "line-through" : "unset")};
   text-align: ${({ textAlign }) => textAlign ?? "default"};
-  ${({ type }) =>
+  ${({ type, theme }) =>
     (() => {
       switch (type) {
         case "primary":
-          return "color: #363870;";
+          return `color: ${theme.colors?.primary800};`;
         case "secondary":
-          return "color: #8082C5;";
+          return `color: ${theme.colors?.primary650};`;
         case "blue500":
-          return "color: #7075E9;";
+          return `color: ${theme.colors?.blue500};`;
         case "light":
-          return "color: #ffffff;";
+          return `color: ${theme.colors?.white};`;
         case "error":
-          return "color: #ED827E;";
+          return `color: ${theme.colors?.error};`;
         case "success":
-          return "color: #35A15A;";
+          return `color: ${theme.colors?.success};`;
         case "purple300":
-          return "color: #C6C9F4;";
+          return `color: ${theme.colors?.primary300};`;
         default:
-          return "color: #363870;";
+          return `color: ${theme.colors?.primary800};`;
       }
     })()}
   ${({ ellipsis }) =>

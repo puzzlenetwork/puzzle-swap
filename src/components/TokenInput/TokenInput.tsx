@@ -10,6 +10,7 @@ import AmountInput from "@components/AmountInput";
 import _ from "lodash";
 import TokenSelect from "@components/TokenInput/TokenSelect";
 import TokenSelectModal from "../TokensSelectModal";
+
 interface IProps {
   balances: Balance[];
 
@@ -49,7 +50,8 @@ const InputContainer = styled.div<{
   invalid?: boolean;
   readOnly?: boolean;
 }>`
-  background: ${({ focused }) => (focused ? "#fffff" : "#f1f2fe")};
+  background: ${({ focused, theme }) =>
+    focused ? theme.colors.white : theme.colors.primary100};
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -68,11 +70,14 @@ const InputContainer = styled.div<{
   }
 
   border: 1px solid
-    ${({ focused, readOnly }) => (focused && !readOnly ? "#7075E9" : "#f1f2fe")};
+    ${({ focused, readOnly, theme }) =>
+      focused && !readOnly ? theme.colors.blue500 : theme.colors.primary100};
 
   :hover {
-    border-color: ${({ readOnly, focused }) =>
-      !readOnly && !focused ? "#C6C9F4" : focused ?? "#7075E9"};
+    border-color: ${({ readOnly, focused, theme }) =>
+      !readOnly && !focused
+        ? theme.colors.primary650
+        : focused ?? theme.colors.blue500};
   }
 `;
 const TokenInput: React.FC<IProps> = (props) => {

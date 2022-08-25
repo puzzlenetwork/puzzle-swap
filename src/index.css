@@ -1,10 +1,3 @@
-body {
-    margin: 0;
-    font-family: "Roboto", sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background: #fff;
-}
 
 body.noscroll {
     overflow-y: hidden;
@@ -34,21 +27,3 @@ a {
     font-weight: 500;
 }
 
-.rc-notification {
-    top: 30px;
-    right: 16px;
-}
-
-.rc-notification-notice-content {
-    display: flex;
-}
-
-.custom-notification .rc-notification-notice-close {
-    opacity: 1;
-    top: 16px;
-    right: 16px;
-}
-
-.custom-notification .rc-notification-notice-close > svg > path {
-    fill: #C6C9F4;
-}

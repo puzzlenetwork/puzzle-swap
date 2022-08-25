@@ -8,6 +8,7 @@ import Scrollbar from "@components/Scrollbar";
 import { Column } from "../Flex";
 import { observer } from "mobx-react-lite";
 import { ROUTES } from "@src/constants";
+import DarkMode from "@components/Header/DarkMode";
 
 interface IProps {
   onClose: () => void;
@@ -19,10 +20,12 @@ const Root = styled.div<{ bannerClosed: boolean; opened: boolean }>`
   z-index: 100;
   background: rgba(0, 0, 0, 0.4);
   position: absolute;
-  top: ${({ bannerClosed }) => (bannerClosed ? 64 : 144)}px;
+  // top: ${({ bannerClosed }) => (bannerClosed ? 64 : 144)}px;
+  top: 64px;
   left: 0;
   right: 0;
-  height: calc(100vh - ${({ bannerClosed }) => (bannerClosed ? 64 : 144)}px);
+  //height: calc(100vh - ${({ bannerClosed }) => (bannerClosed ? 64 : 144)}px);
+  height: calc(100vh - 64px);
   transition: 0.2s;
   overflow: hidden;
 
@@ -30,19 +33,18 @@ const Root = styled.div<{ bannerClosed: boolean; opened: boolean }>`
   .menu-body {
     display: flex;
     flex-direction: column;
-    background: #fff;
+    background: ${({ theme }) => theme.colors.white};
   }
 `;
 
 const WalletWrapper = styled.div`
   padding: 24px;
-  border-top: 1px solid #f1f2fe;
+  border-top: 1px solid ${({ theme }) => theme.colors.primary100};
 `;
 
 const toolsMenu = [
-  { name: "Puzzle Explorer", link: "https://puzzlescan.com/", outer: true },
   { name: "Notifications bot", link: "https://t.me/puzzle_swap", outer: true },
-  { name: "Charts", link: "https://dxd-team.xyz/puzzle/", outer: true },
+  { name: "Alerts bot", link: "https://t.me/puzzle_alerts_bot", outer: true },
 ];
 const communityMenu = [
   { name: "Telegram", link: "https://t.me/puzzleswap", outer: true },
@@ -72,6 +74,7 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
             <SizedBox height={24} width={1} />
           </Column>
         </Scrollbar>
+        <DarkMode style={{ margin: 16 }} />
         <WalletWrapper>
           <Wallet />
         </WalletWrapper>

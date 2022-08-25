@@ -27,7 +27,8 @@ const Pool = styled.div<{ active?: boolean }>`
   box-sizing: border-box;
 
   :hover {
-    ${({ active }) => !active && "background: #f1f2fe;"};
+    ${({ active, theme }) =>
+      !active && `background: ${theme.colors.primary100}`};
   }
 `;
 
@@ -38,7 +39,7 @@ const Gradient = styled.div`
   top: 0;
   width: 100%;
   position: absolute;
-  background: rgba(255, 255, 255, 0.5);
+  background: ${({ theme }) => theme.colors.gradient};
   z-index: 10;
 `;
 const ChangePoolModal: React.FC<IProps> = ({

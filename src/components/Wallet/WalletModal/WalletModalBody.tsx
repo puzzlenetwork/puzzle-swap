@@ -15,7 +15,7 @@ interface IProps {}
 const Root = styled(Column)`
   width: 100%;
   box-sizing: border-box;
-  background: #fff;
+  background: ${({ theme }) => theme.colors.white};
 
   & > * {
     width: 100%;
@@ -24,7 +24,7 @@ const Root = styled(Column)`
 
 const TabsWrapper = styled(Row)`
   border-radius: 16px 16px 0px 0px;
-  background: #fff;
+  background: ${({ theme }) => theme.colors.white};
   height: 56px;
   margin-top: -56px;
 `;

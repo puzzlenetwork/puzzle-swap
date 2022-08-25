@@ -16,6 +16,7 @@ import styled from "@emotion/styled";
 import RoundTokenIcon from "@components/RoundTokenIcon";
 import { observer } from "mobx-react-lite";
 import SocialMediaAndFav from "@screens/ExploreToken/SocialMediaAndFav";
+import { useTheme } from "@emotion/react";
 
 interface IProps {}
 
@@ -39,6 +40,7 @@ const PriceTitle = styled(Text)`
 
 const ExploreTokenImpl: React.FC<IProps> = observer(() => {
   const vm = useExploreTokenVM();
+  const theme = useTheme();
   return (
     <Layout>
       <ExploreLayout>
@@ -57,7 +59,9 @@ const ExploreTokenImpl: React.FC<IProps> = observer(() => {
             <SizedBox width={8} />
             <TokenTitle weight={500}>
               {vm.asset.name}&nbsp;
-              <span style={{ color: "#8082C5" }}>{vm.asset.symbol}</span>
+              <span style={{ color: theme.colors.primary650 }}>
+                {vm.asset.symbol}
+              </span>
             </TokenTitle>
           </Row>
           <SocialMediaAndFav />

@@ -15,7 +15,7 @@ const Root = styled.div`
   flex-direction: row;
   align-items: center;
   padding: 4px 8px;
-  background: #f1f2fe;
+  background: ${({ theme }) => theme.colors.primary100};
   border-radius: 8px;
 `;
 

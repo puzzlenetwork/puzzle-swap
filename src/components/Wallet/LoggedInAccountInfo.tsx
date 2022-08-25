@@ -36,13 +36,14 @@ const AddressContainer = styled.div<{ expanded: boolean }>`
   height: 40px;
   padding: 0 16px;
   box-sizing: border-box;
-  border: 1px solid #f1f2fe;
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
   border-radius: 10px;
   cursor: pointer;
-  background: ${({ expanded }) => (expanded ? "#f1f2fe" : "#fff")};
+  background: ${({ expanded, theme }) =>
+    expanded ? theme.colors.primary100 : theme.colors.white};
 
   :hover {
-    background: #f1f2fe;
+    background: ${({ theme }) => theme.colors.primary100};
   }
 
   .avatar {

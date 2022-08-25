@@ -23,8 +23,8 @@ const FilledText = styled.div<{
   font-weight: normal;
   font-size: 12px;
   line-height: 16px;
-  color: #363870;
-  background: #f1f2fe;
+  color: ${({ theme }) => theme.colors.primary800};
+  background: ${({ theme }) => theme.colors.primary100};
   border-radius: 6px;
   padding: 4px 9px;
   white-space: nowrap;
@@ -33,7 +33,7 @@ const FilledText = styled.div<{
     font-weight: normal;
     font-size: 12px;
     line-height: 16px;
-    color: #8082c5;
+    color: ${({ theme }) => theme.colors.primary650};
   }
 `;
 

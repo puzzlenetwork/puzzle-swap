@@ -18,6 +18,7 @@ import { EXPLORER_URL, ROUTES } from "@src/constants";
 import { useStores } from "@stores";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import useWindowSize from "@src/hooks/useWindowSize";
+import { themes } from "@src/themes/ThemeProvider";
 
 interface IProps {}
 
@@ -81,6 +82,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
     navigate(ROUTES.POOLS_CREATE);
   };
   const { width } = useWindowSize();
+  const whiteText = { color: themes.lightTheme.colors.white };
   return (
     <Root>
       <ShortInfo pic={vm.pool.isCustom ? customBg : bg}>
@@ -93,7 +95,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
             />
             <SizedBox width={12} />
             <Column>
-              <Title type="light" size="large" weight={500}>
+              <Title size="large" weight={500} style={whiteText}>
                 {vm.pool.title}
               </Title>
               <SizedBox height={4} />

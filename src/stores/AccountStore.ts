@@ -10,6 +10,7 @@ import { getCurrentBrowser } from "@src/utils/getCurrentBrowser";
 import BN from "@src/utils/BN";
 import { nodeInteraction, waitForTx } from "@waves/waves-transactions";
 import nodeService from "@src/services/nodeService";
+import { THEME_TYPE } from "@src/themes/ThemeProvider";
 
 export enum LOGIN_TYPE {
   SIGNER_SEED = "SIGNER_SEED",
@@ -36,6 +37,7 @@ export interface ITransferParams {
 }
 
 export interface ISerializedAccountStore {
+  selectedTheme: THEME_TYPE | null;
   address: string | null;
   loginType: LOGIN_TYPE | null;
 }
@@ -50,6 +52,8 @@ class AccountStore {
       this.setupWavesKeeper();
     }
     if (initState) {
+      initState.selectedTheme != null &&
+        (this.selectedTheme = initState.selectedTheme);
       this.setLoginType(initState.loginType);
       if (initState.loginType === LOGIN_TYPE.KEEPER) {
         this.setupSynchronizationWithKeeper();
@@ -64,6 +68,15 @@ class AccountStore {
         Promise.all([this.checkScriptedAccount(), this.updateAccountAssets()])
     );
   }
+
+  selectedTheme: THEME_TYPE = THEME_TYPE.DARK_THEME;
+
+  toggleTheme = (): void => {
+    this.selectedTheme =
+      this.selectedTheme === THEME_TYPE.LIGHT_THEME
+        ? THEME_TYPE.DARK_THEME
+        : THEME_TYPE.LIGHT_THEME;
+  };
 
   isAccScripted = false;
   setIsAccScripted = (v: boolean) => (this.isAccScripted = v);
@@ -207,6 +220,7 @@ class AccountStore {
     );
 
   serialize = (): ISerializedAccountStore => ({
+    selectedTheme: this.selectedTheme,
     address: this.address,
     loginType: this.loginType,
   });

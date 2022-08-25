@@ -36,14 +36,14 @@ const Icon = styled.img`
   width: 40px;
 `;
 const AvailableToClaim = styled(Row)`
-  border-top: 1px solid #f1f2fe;
+  border-top: 1px solid ${({ theme }) => theme.colors.primary100};
   padding-top: 18px;
 `;
 
 const Title = styled(Text)`
   font-size: 14px;
   line-height: 20px;
-  color: #8082c5;
+
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;

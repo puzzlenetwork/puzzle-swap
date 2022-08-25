@@ -10,6 +10,7 @@ import { ReactComponent as Disconnect } from "@src/assets/icons/disconnect.svg";
 import { observer } from "mobx-react-lite";
 import { useWalletVM } from "@components/Wallet/WalletModal/WalletVM";
 import { EXPLORER_URL } from "@src/constants";
+import { themes } from "@src/themes/ThemeProvider";
 
 interface IProps {}
 
@@ -71,13 +72,14 @@ const WalletModalHeader: React.FC<IProps> = () => {
       onClick: vm.handleLogOut,
     },
   ];
+  const whiteText = { color: themes.lightTheme.colors.white };
   return (
     <Root headerExpanded={vm.headerExpanded}>
       <Column alignItems="center" crossAxisSize="max">
-        <Text fitContent size="medium" type="light">
+        <Text fitContent size="medium" style={whiteText}>
           {vm.signInInfo}
         </Text>
-        <Text fitContent type="light" size="large">
+        <Text fitContent size="large" style={whiteText}>
           $&nbsp;
           {vm.totalInvestmentAmount}
         </Text>
@@ -87,7 +89,7 @@ const WalletModalHeader: React.FC<IProps> = () => {
             <Action onClick={onClick} key={text}>
               {icon}
               <SizedBox height={6} />
-              <Text size="small" type="light" fitContent>
+              <Text size="small" style={whiteText} fitContent>
                 {text}
               </Text>
             </Action>
