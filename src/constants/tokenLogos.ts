@@ -68,6 +68,7 @@ import PUZZLEUSDNLP from "@src/assets/tokens/puzzleusdn.svg";
 import wxPUZZLEUSDN_TCI from "@src/assets/tokens/wxPUZZLEUSDN_TCI.svg";
 import WW from "@src/assets/tokens/ww.jpeg";
 import MINI from "@src/assets/tokens/mini.jpeg";
+import SURF from "@src/assets/tokens/surf.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -139,7 +140,7 @@ const tokenLogos: Record<string, string> = {
   wxPUZZLEUSDN_TCI: wxPUZZLEUSDN_TCI,
   WW: WW,
   MINI: MINI,
-  SURF: "https://testnet-dev.neutrino.at/images/assets/SURF.svg",
+  SURF: SURF,
   UNKNOWN: unknownLogo,
 };
 
