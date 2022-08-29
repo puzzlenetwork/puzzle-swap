@@ -31,7 +31,7 @@ const Root = styled.div<{
   border: 1px solid
     ${({ focused, error, theme }) =>
       error
-        ? theme.colors.error
+        ? theme.colors.error500
         : focused
         ? theme.colors.blue500
         : theme.colors.primary100};
@@ -39,7 +39,7 @@ const Root = styled.div<{
   :hover {
     border-color: ${({ focused, error, theme }) =>
       error
-        ? theme.colors.error
+        ? theme.colors.error500
         : !focused
         ? theme.colors.primary650
         : theme.colors.blue500};

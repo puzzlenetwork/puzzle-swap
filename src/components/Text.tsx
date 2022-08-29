@@ -39,7 +39,7 @@ const Text = styled.p<{
         case "light":
           return `color: ${theme.colors?.white};`;
         case "error":
-          return `color: ${theme.colors?.error};`;
+          return `color: ${theme.colors?.error500};`;
         case "success":
           return `color: ${theme.colors?.success};`;
         case "purple300":

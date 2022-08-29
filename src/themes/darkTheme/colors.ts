@@ -6,7 +6,15 @@ const colors = {
   primary50: "#f8f8ff",
   blue500: "#7075E9",
   success: "#35A15A",
-  error: "#ED827E",
+  success550: "#1F8943",
+  success500: "#35A15A",
+  success100: "#E6F3EB",
+  error550: "#D66662",
+  error500: "#ED827E",
+  error100: "#FCF0EF",
+  attention550: "#D9916E",
+  attention500: "#EDAA8A",
+  attention100: "#FCF4F1",
 };
 // eslint-disable-next-line
 export default {
@@ -17,6 +25,9 @@ export default {
   primary100: "#363970",
   primary50: "#181931",
   white: "#232345",
+  success100: "#1C2F37",
+  error100: "#3A2A3D",
+  attention100: "#3A303F",
 
   card: {
     background: "#212345",

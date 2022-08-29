@@ -89,6 +89,11 @@ body {
     fill: ${theme.colors.primary300};
 }
 
+.recharts-default-tooltip { 
+
+background-color: ${theme.colors.white} !important;
+
+}
 
 `;
 
