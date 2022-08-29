@@ -36,11 +36,11 @@ const Root = styled(Card)`
   }
 
   .xAxis > line {
-    stroke: #f1f2fe;
+    stroke: ${({ theme }) => `${theme.colors.primary100}`};
   }
 
   .recharts-tooltip-cursor {
-    stroke: #7075e9;
+    stroke: ${({ theme }) => `${theme.colors.blue500}`};
   }
 
   @media (min-width: 880px) {
@@ -49,7 +49,7 @@ const Root = styled(Card)`
 `;
 
 const Header = styled(Row)`
-  border-bottom: 1px solid #f1f2fe;
+  border-bottom: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
   padding: 12px 16px;
   justify-content: space-between;
   align-items: center;
@@ -80,7 +80,7 @@ const Body = styled.div`
 
 const Footer = styled(Header)`
   border-bottom: none;
-  border-top: 1px solid #f1f2fe;
+  border-top: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
   display: flex;
   @media (min-width: 880px) {
     display: none;

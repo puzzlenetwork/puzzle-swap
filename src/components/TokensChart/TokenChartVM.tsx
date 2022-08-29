@@ -57,6 +57,7 @@ class TokenChartVM {
   get statistics0() {
     return this.rootStore.tokenStore.statisticsByAssetId[this.assetId0];
   }
+
   get statistics1() {
     return this.rootStore.tokenStore.statisticsByAssetId[this.assetId1];
   }
@@ -64,19 +65,23 @@ class TokenChartVM {
   get chartMin() {
     return Math.min(...this.chart.map(({ price }) => price));
   }
+
   get chartMax() {
     return Math.max(...this.chart.map(({ price }) => price));
   }
 
   selectedChartPeriod: keyof TChartDataRecord = "1d";
-  setSelectedChartPeriod = (v: string) =>
-    (this.selectedChartPeriod = v as keyof TChartDataRecord);
+  setSelectedChartPeriod = (v: string) => {
+    console.log(v);
+    this.selectedChartPeriod = v as keyof TChartDataRecord;
+  };
 
   chartData: TChartDataRecord = {};
   setChartData = (period: keyof TChartDataRecord, value: TChartData) =>
     (this.chartData = { ...this.chartData, [period]: value });
 
   getChartByPeriod(period: keyof TChartDataRecord) {
+    console.log(this.chartData);
     return this.chartData[period ?? this.selectedChartPeriod] ?? [];
   }
 

@@ -8,6 +8,15 @@ const colors = {
   blue500: "#7075E9",
   success: "#35A15A",
   error: "#ED827E",
+  success550: "#1F8943",
+  success500: "#35A15A",
+  success100: "#E6F3EB",
+  error550: "#D66662",
+  error500: "#ED827E",
+  error100: "#FCF0EF",
+  attention550: "#D9916E",
+  attention500: "#EDAA8A",
+  attention100: "#FCF4F1",
 };
 // eslint-disable-next-line
 export default {

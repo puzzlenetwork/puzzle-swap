@@ -32,7 +32,7 @@ const Root = styled.div<{ focused?: boolean; error?: boolean }>`
   border: 1px solid
     ${({ focused, error, theme }) =>
       error
-        ? `${theme.colors.error}`
+        ? `${theme.colors.error550}`
         : focused
         ? `${theme.colors.blue500}`
         : `${theme.colors.primary100}`};

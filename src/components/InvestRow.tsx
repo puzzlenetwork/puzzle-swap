@@ -36,7 +36,7 @@ const Root = styled.div<{ withClickLogic?: boolean }>`
   }
 
   .red {
-    color: ${({ theme }) => theme.colors.error};
+    color: ${({ theme }) => theme.colors.error500};
   }
 `;
 const DefaultIcon = styled.div`

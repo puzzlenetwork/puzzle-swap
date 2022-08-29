@@ -8,8 +8,9 @@ const Root = styled(Column)`
   & > * {
     padding: 8px 0;
     box-sizing: border-box;
-    border-bottom: 1px solid #f1f2fe;
+    border-bottom: 1px solid ${({ theme }) => theme.colors.primary650};
   }
+
   & > :last-of-type {
     border-bottom: none;
   }

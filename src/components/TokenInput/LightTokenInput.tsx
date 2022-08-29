@@ -52,7 +52,7 @@ const InputContainer = styled.div<{
   border: 1px solid
     ${({ focused, readOnly, error, theme }) =>
       error
-        ? theme.colors.error
+        ? theme.colors.error500
         : focused && !readOnly
         ? theme.colors.blue500
         : theme.colors.primary100};
@@ -60,7 +60,7 @@ const InputContainer = styled.div<{
   :hover {
     border-color: ${({ readOnly, focused, error, theme }) =>
       error
-        ? theme.colors.error
+        ? theme.colors.error500
         : !readOnly && !focused
         ? theme.colors.primary300
         : focused ?? theme.colors.blue500};
