@@ -14,7 +14,7 @@ const Root = styled.div<{ disable?: boolean }>`
   flex-direction: row;
   justify-content: space-between;
   padding: 16px 24px;
-  border: 1px solid #f1f2fe;
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
   box-sizing: border-box;
   border-radius: 12px;
   margin: 4px 0;
