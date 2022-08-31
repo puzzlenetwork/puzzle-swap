@@ -29,7 +29,8 @@ const aggregatorService = {
     assetId1: string,
     amount: BN
   ): Promise<ICalcResponse> => {
-    const url = `https://api.puzzleswap.org//aggregator/calc?token0=${assetId0}&token1=${assetId1}&amountIn=${amount.toString()}`;
+    // const url = `https://api.puzzleswap.org//aggregator/calc?token0=${assetId0}&token1=${assetId1}&amountIn=${amount.toString()}`;
+    const url = `https://floating-sierra-13117.herokuapp.com/aggregator/calc?token0=${assetId0}&token1=${assetId1}&amountIn=${amount.toString()}`;
     const { data } = await axios.get(url);
     return data;
   },
