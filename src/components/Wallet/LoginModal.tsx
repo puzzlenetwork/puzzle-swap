@@ -26,7 +26,7 @@ const loginTypes = [
     type: LOGIN_TYPE.SIGNER_SEED,
   },
   {
-    title: "Waves Keeper",
+    title: "Keeper Wallet",
     icon: keeper,
     type: LOGIN_TYPE.KEEPER,
   },
