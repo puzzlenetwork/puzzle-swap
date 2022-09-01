@@ -12,15 +12,15 @@ export interface IArtWork {
 }
 
 export interface IStakingStatsResponse {
-  classic: { apy: number };
-  ultra: { apy: number };
+  stakingApy: string;
+  ultraApy: string;
 }
 
 type TArtworksResponse = IArtWork[];
 
 const statsService = {
   getStakingStats: async (): Promise<IStakingStatsResponse> => {
-    const url = "https://api.puzzleswap.org/stats/staking";
+    const url = `${process.env.REACT_APP_API_BASE}/api/v1/stats`;
     const { data } = await axios.get(url);
     return data;
   },

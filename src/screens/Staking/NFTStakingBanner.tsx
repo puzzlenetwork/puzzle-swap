@@ -46,7 +46,7 @@ const NFTStakingBanner: React.FC = () => {
           <Title type="light">NFT Staking</Title>
           <Text type="light" style={{ maxWidth: 195 }}>
             Buy and stake NFTs to get APY boost up to{" "}
-            {vm.stats != null ? vm.stats?.ultra.toFormat(2).concat(" %") : "—"}
+            {vm.stats != null ? "47.50".concat(" %") : "—"}
           </Text>
           <SizedBox height={16} />
           <Link to={ROUTES.ULTRASTAKE}>
