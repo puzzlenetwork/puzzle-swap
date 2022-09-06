@@ -1,9 +1,6 @@
 import styled from "@emotion/styled";
-import React, { HTMLAttributes, useState } from "react";
-import Card from "@components/Card";
+import React, { HTMLAttributes } from "react";
 import { observer } from "mobx-react-lite";
-import SettingsHeader from "./SettingsHeader";
-import Settings from "./Swap/Settings";
 import Swap from "./Swap";
 import Limit from "./Limit";
 import { useTradeVM } from "@screens/TradeInterface/TradeVM";

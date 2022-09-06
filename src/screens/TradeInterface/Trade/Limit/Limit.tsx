@@ -6,7 +6,8 @@ import Card from "@components/Card";
 import SettingsHeader from "@screens/TradeInterface/Trade/SettingsHeader";
 import Settings from "@screens/TradeInterface/Trade/Swap/Settings";
 import SizedBox from "@components/SizedBox";
-import Text from "@components/Text";
+import Tokens from "./Tokens";
+import Prices from "./Prices";
 
 interface IProps {}
 
@@ -31,7 +32,9 @@ const LimitImpl: React.FC<IProps> = observer(() => {
       >
         <SettingsHeader />
         <Settings />
-        <Text>Limit</Text>
+        <Tokens />
+        <SizedBox height={16} />
+        <Prices />
       </Card>
       <SizedBox height={16} />
     </Root>
