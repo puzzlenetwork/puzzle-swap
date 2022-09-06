@@ -16,6 +16,7 @@ const Root = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  position: relative;
   //border-bottom: 1px solid ${({ theme }) => theme.colors.primary100};
   padding-bottom: 16px;
   margin-bottom: 16px;
@@ -27,6 +28,10 @@ const Icon = styled.img`
   cursor: pointer;
 `;
 
+const IconsBlock = styled(Row)`
+  position: absolute;
+  right: 0;
+`;
 const SettingsHeader: React.FC<IProps> = () => {
   const vm = useTradeVM();
   return (
@@ -36,7 +41,7 @@ const SettingsHeader: React.FC<IProps> = () => {
         activeTab={vm.activeAction}
         setActive={vm.setActiveAction}
       />
-      <Row mainAxisSize="fit-content">
+      <IconsBlock mainAxisSize="fit-content">
         <Icon
           src={vm.openedChart ? chart : nochart}
           alt="pic"
@@ -48,7 +53,7 @@ const SettingsHeader: React.FC<IProps> = () => {
           alt="pic"
           onClick={() => vm.setOpenedSettings(!vm.openedSettings)}
         />
-      </Row>
+      </IconsBlock>
     </Root>
   );
 };

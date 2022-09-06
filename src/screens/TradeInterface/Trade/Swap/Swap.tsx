@@ -20,8 +20,8 @@ import { observer } from "mobx-react-lite";
 import TooltipFeeInfo from "./TooltipFeeInfo";
 import RoutingModal from "./RoutingModal";
 import SwapButton from "./SwapButton";
-import SettingsHeader from "./SettingsHeader";
 import Settings from "./Settings";
+import SettingsHeader from "../SettingsHeader";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   squareRef: any;

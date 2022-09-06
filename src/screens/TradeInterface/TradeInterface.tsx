@@ -6,7 +6,7 @@ import { TradeVMProvider, useTradeVM } from "@screens/TradeInterface/TradeVM";
 import useElementSize from "@src/hooks/useElementSize";
 import useWindowSize from "@src/hooks/useWindowSize";
 import { TokensChartDesktop, TokensChartMobile } from "@components/TokensChart";
-import Swap from "@screens/TradeInterface/Trade/Swap";
+import Trade from "./Trade";
 
 const Root = styled.div`
   display: flex;
@@ -46,7 +46,7 @@ const TradeInterfaceImpl: React.FC = observer(() => {
                 onClose={() => vm.setOpenedChart(false)}
               />
             )}
-            <Swap squareRef={squareRef} />
+            <Trade squareRef={squareRef} />
           </Root>
         )}
       </Observer>
