@@ -40,6 +40,9 @@ class TradeVM {
     setInterval(() => this._syncAmount1(true), 15 * 1000);
   }
 
+  public activeAction: number = 0;
+  setActiveAction = (v: number) => (this.activeAction = v);
+
   openedChart = false;
   setOpenedChart = (v: boolean) => (this.openedChart = v);
 

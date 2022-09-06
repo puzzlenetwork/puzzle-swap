@@ -21,7 +21,7 @@ import TooltipFeeInfo from "./TooltipFeeInfo";
 import RoutingModal from "./RoutingModal";
 import SwapButton from "./SwapButton";
 import SettingsHeader from "./SettingsHeader";
-import Settings from "@screens/TradeInterface/Swap/Settings";
+import Settings from "./Settings";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   squareRef: any;
@@ -34,6 +34,8 @@ const Root = styled.div`
   justify-content: center;
   box-sizing: border-box;
   padding: 0 16px;
+  width: 100%;
+  max-width: 560px;
 `;
 
 const Swap: React.FC<IProps> = ({ squareRef, ...rest }) => {

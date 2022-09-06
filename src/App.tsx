@@ -30,7 +30,12 @@ const Root = styled(Column)`
   background: ${({ theme }) => theme.colors.primary50};
   min-height: 100vh;
 `;
-
+const MobileSpace = styled.div`
+  height: 56px;
+  @media (min-width: 880px) {
+    display: none;
+  }
+`;
 const App: React.FC = () => {
   const { accountStore } = useStores();
   return (
@@ -94,6 +99,7 @@ const App: React.FC = () => {
         onClose={() => accountStore.setSendAssetModalOpened(false)}
         visible={accountStore.sendAssetModalOpened}
       />
+      <MobileSpace />
       <MobileNavBar />
     </Root>
   );

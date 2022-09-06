@@ -3,13 +3,14 @@ import React from "react";
 import { observer, Observer } from "mobx-react-lite";
 import Layout from "@components/Layout";
 import { TradeVMProvider, useTradeVM } from "@screens/TradeInterface/TradeVM";
-import Swap from "./Swap";
 import useElementSize from "@src/hooks/useElementSize";
 import useWindowSize from "@src/hooks/useWindowSize";
 import { TokensChartDesktop, TokensChartMobile } from "@components/TokensChart";
+import Swap from "@screens/TradeInterface/Trade/Swap";
 
 const Root = styled.div`
   display: flex;
+  width: 100%;
   flex-direction: row;
   align-items: center;
   justify-content: center;

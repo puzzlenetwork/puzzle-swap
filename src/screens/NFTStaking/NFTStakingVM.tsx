@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { action, makeAutoObservable, reaction, when } from "mobx";
+import { makeAutoObservable, reaction, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import statsService from "@src/services/statsService";
@@ -41,7 +41,7 @@ class NFTStakingVM {
   }
 
   public nftDisplayState: number = 0;
-  @action.bound setNftDisplayState = (v: number) => (this.nftDisplayState = v);
+  setNftDisplayState = (v: number) => (this.nftDisplayState = v);
 
   public claimedReward: BN | null = null;
   public availableToClaim: BN | null = null;
