@@ -37,8 +37,8 @@ const Overview: React.FC = () => {
             Weekly based APY
           </Text>
           <Text style={{ fontSize: 20 }}>
-            {vm.stats != null ? (
-              vm.stats?.classic.toFormat(2).concat(" %")
+            {vm.stats?.stakingApy != null ? (
+              vm.stats.stakingApy.toFormat(2).concat(" %")
             ) : (
               <Skeleton height={20} width={110} />
             )}
