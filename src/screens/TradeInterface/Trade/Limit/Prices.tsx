@@ -40,7 +40,14 @@ const Prices: React.FC<IProps> = () => {
             Market price
           </Text>
         </Row>
-        <Input />
+        <SizedBox height={4} />
+        <Input
+          suffix={
+            <Text fitContent type="secondary" size="medium">
+              $15
+            </Text>
+          }
+        />
       </Column>
       <SizedBox height={16} />
       <Column crossAxisSize="max">
@@ -65,7 +72,14 @@ const Prices: React.FC<IProps> = () => {
             I want to get
           </Text>
         </Row>
-        <Input />
+        <SizedBox height={4} />
+        <Input
+          suffix={
+            <Text fitContent type="secondary" size="medium">
+              $15
+            </Text>
+          }
+        />
       </Column>
       <SizedBox height={16} />
       <Note>

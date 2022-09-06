@@ -4,10 +4,10 @@ import { LimitVMProvider } from "@screens/TradeInterface/Trade/Limit/LimitVM";
 import { observer } from "mobx-react-lite";
 import Card from "@components/Card";
 import SettingsHeader from "@screens/TradeInterface/Trade/SettingsHeader";
-import Settings from "@screens/TradeInterface/Trade/Swap/Settings";
 import SizedBox from "@components/SizedBox";
 import Tokens from "./Tokens";
 import Prices from "./Prices";
+import MyOrders from "./MyOrders";
 
 interface IProps {}
 
@@ -31,12 +31,12 @@ const LimitImpl: React.FC<IProps> = observer(() => {
         paddingMobile="16px"
       >
         <SettingsHeader />
-        <Settings />
         <Tokens />
         <SizedBox height={16} />
         <Prices />
       </Card>
-      <SizedBox height={16} />
+      <SizedBox height={40} />
+      <MyOrders />
     </Root>
   );
 });

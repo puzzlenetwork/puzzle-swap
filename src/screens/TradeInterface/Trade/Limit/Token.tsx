@@ -48,6 +48,7 @@ const Token: React.FC<IProps> = (props) => {
         </Column>
         <SizedBox width={12} />
         <Img
+          style={{ cursor: "pointer" }}
           src={theme.images.icons.arrowDownWithBorder}
           alt="arrow"
           onClick={() => setOpenModal(true)}

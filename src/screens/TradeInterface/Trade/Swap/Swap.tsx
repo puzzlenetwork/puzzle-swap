@@ -84,7 +84,7 @@ const Swap: React.FC<IProps> = ({ squareRef, ...rest }) => {
         paddingDesktop="16px 24px"
         paddingMobile="16px"
       >
-        <SettingsHeader />
+        <SettingsHeader withSetting />
         <Settings />
         <TokenInput
           decimals={vm.token0.decimals}

@@ -93,7 +93,7 @@ const Input: React.FC<IProps> = ({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
         />
-        {suffixCondition && suffix}
+        {suffixCondition || (suffix != null && suffix)}
       </Root>
       {error ? (
         <Text size="small" type="error" style={{ paddingTop: 4 }}>

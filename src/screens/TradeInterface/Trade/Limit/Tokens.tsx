@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { useLimitVM } from "@screens/TradeInterface/Trade/Limit/LimitVM";
-import { observer } from "mobx-react-lite";
 import SizedBox from "@components/SizedBox";
 import Img from "@components/Img";
 import { useTheme } from "@emotion/react";
@@ -22,6 +21,17 @@ const Tokens: React.FC<IProps> = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const handleSetAssetId0 = (assetId: string) => {
+    if (assetId === vm.assetId1) return;
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    urlSearchParams.set("asset0", assetId);
+    navigate({
+      pathname: window.location.pathname,
+      search: `?${urlSearchParams.toString()}`,
+    });
+    vm.setAssetId0(assetId);
+    tradeVm.setAssetId0(assetId);
+  };
+  const handleSetAssetId1 = (assetId: string) => {
     if (assetId === vm.assetId1) return;
     const urlSearchParams = new URLSearchParams(window.location.search);
     urlSearchParams.set("asset0", assetId);
@@ -55,9 +65,9 @@ const Tokens: React.FC<IProps> = () => {
       <Token
         assetId={vm.assetId1}
         balances={vm.balances}
-        setAssetId={handleSetAssetId0}
+        setAssetId={handleSetAssetId1}
       />
     </Root>
   );
 };
-export default observer(Tokens);
+export default Tokens;
