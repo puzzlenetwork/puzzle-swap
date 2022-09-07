@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { HTMLAttributes } from "react";
+import React from "react";
 import Card from "@components/Card";
 import TokenInput from "@components/TokenInput";
 import SizedBox from "@components/SizedBox";
@@ -23,9 +23,7 @@ import { useSwapVM } from "@screens/TradeInterface/SwapVM";
 import SwitchTokensButton from "./SwitchTokensButton";
 import Details from "./Details";
 
-interface IProps extends HTMLAttributes<HTMLDivElement> {
-  squareRef: any;
-}
+interface IProps {}
 
 const Root = styled.div`
   display: flex;
@@ -38,7 +36,7 @@ const Root = styled.div`
   max-width: 560px;
 `;
 
-const Swap: React.FC<IProps> = ({ squareRef, ...rest }) => {
+const Swap: React.FC<IProps> = ({ ...rest }) => {
   const { notificationStore } = useStores();
   const vm = useSwapVM();
   const navigate = useNavigate();
@@ -79,7 +77,6 @@ const Swap: React.FC<IProps> = ({ squareRef, ...rest }) => {
   return (
     <Root {...rest}>
       <Card
-        ref={squareRef}
         style={{ position: "relative" }}
         paddingDesktop="16px 24px"
         paddingMobile="16px"

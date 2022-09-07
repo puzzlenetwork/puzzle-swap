@@ -8,6 +8,8 @@ import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
 import Tabs from "@components/Tabs";
 import { useSwapVM } from "@screens/TradeInterface/SwapVM";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@src/constants";
 
 interface IProps {
   withSetting?: boolean;
@@ -35,12 +37,22 @@ const IconsBlock = styled(Row)`
 `;
 const SettingsHeader: React.FC<IProps> = ({ withSetting }) => {
   const vm = useSwapVM();
+  const navigate = useNavigate();
   return (
     <Root>
       <Tabs
         tabs={[{ name: "Swap" }, { name: "Limit" }]}
         activeTab={vm.activeAction}
-        setActive={vm.setActiveAction}
+        setActive={(n) => {
+          const urlSearchParams = new URLSearchParams(window.location.search);
+          urlSearchParams.set("asset0", vm.assetId0);
+          urlSearchParams.set("asset01", vm.assetId1);
+          navigate({
+            pathname: n === 0 ? ROUTES.TRADE : ROUTES.LIMIT_ORDER,
+            search: `?${urlSearchParams.toString()}`,
+          });
+          vm.setActiveAction(n);
+        }}
       />
       <IconsBlock mainAxisSize="fit-content">
         {withSetting != null && (

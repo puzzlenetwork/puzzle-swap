@@ -23,6 +23,7 @@ import ExploreToken from "@screens/ExploreToken";
 import OldExplorer from "./screens/OldExplorer";
 import BoostApy from "./screens/BoostApy";
 import MobileNavBar from "./components/MobileNavBar";
+import Landing from "@screens/Landing";
 
 const Root = styled(Column)`
   width: 100%;
@@ -43,7 +44,7 @@ const App: React.FC = () => {
       <Header />
       <Routes>
         {/* Landing */}
-        <Route path={ROUTES.ROOT} element={<TradeInterface />} />
+        <Route path={ROUTES.ROOT} element={<Landing />} />
         {/* 404 */}
         <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
         {/* Stake */}
@@ -59,6 +60,7 @@ const App: React.FC = () => {
 
         {/* Trade */}
         <Route path={ROUTES.TRADE} element={<TradeInterface />} />
+        <Route path={ROUTES.LIMIT_ORDER} element={<TradeInterface />} />
 
         {/* Invest table routes */}
         <Route path={ROUTES.INVEST} element={<Invest />} />

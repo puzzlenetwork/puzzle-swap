@@ -71,10 +71,8 @@ class TokenChartVM {
   }
 
   selectedChartPeriod: keyof TChartDataRecord = "1d";
-  setSelectedChartPeriod = (v: string) => {
-    console.log(v);
-    this.selectedChartPeriod = v as keyof TChartDataRecord;
-  };
+  setSelectedChartPeriod = (v: string) =>
+    (this.selectedChartPeriod = v as keyof TChartDataRecord);
 
   chartData: TChartDataRecord = {};
   setChartData = (period: keyof TChartDataRecord, value: TChartData) =>

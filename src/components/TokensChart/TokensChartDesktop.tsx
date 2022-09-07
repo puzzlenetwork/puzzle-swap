@@ -14,6 +14,7 @@ import {
   useTokenChartVM,
 } from "@components/TokensChart/TokenChartVM";
 import LearnMoreTokenChartButtons from "@components/TokensChart/LearnMoreTokenChartButtons";
+import MyOrders from "@screens/TradeInterface/Trade/LimitOrders/MyOrders";
 
 interface IProps {
   token0: IToken;
@@ -46,7 +47,6 @@ const TokensChartDesktopImpl: React.FC<IProps> = observer(
       isExpanded: rest.visible,
       duration: 500,
     });
-    console.log("Card height", height);
     const vm = useTokenChartVM();
     return (
       <Root {...getCollapseProps()}>
@@ -69,6 +69,8 @@ const TokensChartDesktopImpl: React.FC<IProps> = observer(
         </Card>
         <SizedBox height={16} />
         <LearnMoreTokenChartButtons />
+        <SizedBox height={40} />
+        <MyOrders />
       </Root>
     );
   }

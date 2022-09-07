@@ -167,6 +167,11 @@ class LimitOrdersVM {
 
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
+    const params = new URLSearchParams(window.location.search);
+    const asset0 = params.get("asset0")?.toString();
+    const asset1 = params.get("asset1")?.toString();
+    this.assetId0 = asset0 ?? TOKENS_BY_SYMBOL.USDN.assetId;
+    this.assetId1 = asset1 ?? TOKENS_BY_SYMBOL.PUZZLE.assetId;
     this.sync();
     setInterval(this.sync, 60 * 1000);
   }
