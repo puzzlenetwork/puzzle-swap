@@ -3,6 +3,7 @@ export default {
   icons: {
     logo: require("@src/assets/icons/darkLogo.svg").default,
     rightArrow: require("@src/assets/icons/whiteRightArrow.svg").default,
+    orderRightArrow: require("@src/assets/icons/orderArrow.svg").default,
     swap: require("@src/assets/icons/darkSwap.svg").default,
     group: require("@src/assets/icons/whiteGroup.svg").default,
     arrowDown: require("@src/assets/icons/darkArrowDown.svg").default,

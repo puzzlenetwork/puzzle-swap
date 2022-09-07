@@ -3,6 +3,7 @@ export default {
   icons: {
     logo: require("@src/assets/logo.svg").default,
     rightArrow: require("@src/assets/icons/blackRightArrow.svg").default,
+    orderRightArrow: require("@src/assets/icons/orderArrow.svg").default,
     swap: require("@src/assets/icons/swap.svg").default,
     group: require("@src/assets/icons/group.svg").default,
     limitOrderArrow: require("@src/assets/icons/limitOrderArrow.svg").default,

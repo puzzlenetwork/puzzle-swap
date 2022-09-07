@@ -8,9 +8,12 @@ import Img from "@components/Img";
 import { useTheme } from "@emotion/react";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import BN from "@src/utils/BN";
-import { Cell, Pie, PieChart } from "recharts";
+import Progressbar from "@components/Progressbar";
+import { ReactComponent as CloseIcon } from "@src/assets/icons/cancelOrder.svg";
 
-interface IProps extends IOrder {}
+interface IProps extends IOrder {
+  onCancel: (id: string) => void;
+}
 
 const Root = styled.div`
   display: flex;
@@ -20,6 +23,7 @@ const Root = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.primary100};
   border-radius: 16px;
   padding: 18px;
+  box-sizing: border-box;
 `;
 
 const Order: React.FC<IProps> = ({
@@ -29,6 +33,8 @@ const Order: React.FC<IProps> = ({
   amount0,
   token1,
   token0,
+  id,
+  onCancel,
 }) => {
   const theme = useTheme();
   const t0 = TOKENS_BY_ASSET_ID[token0];
@@ -37,45 +43,44 @@ const Order: React.FC<IProps> = ({
   const am1 = BN.formatUnits(amount1, t1.decimals);
   const f0 = BN.formatUnits(fulfilled0, t1.decimals);
   const price = am1.div(am0);
-  const data = [
-    { name: "all", students: am0.toNumber },
-    { name: "f", students: f0.toNumber },
-  ];
   return (
     <Root>
-      <PieChart width={50} height={50}>
-        <Pie
-          data={data}
-          innerRadius={10}
-          outerRadius={10}
-          fill="#C6C9F4"
-          paddingAngle={2}
-          dataKey="value"
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} />
-          ))}
-        </Pie>
-      </PieChart>
-
-      <Column>
-        <Row alignItems="center">
-          <Text size="medium" fitContent weight={500}>
-            {am0.toFormat(2)} {t0.symbol}
+      <Row alignItems="center">
+        <Progressbar percent={f0.toNumber()} />
+        <SizedBox width={10} />
+        <Column>
+          <Row alignItems="center">
+            <Text size="medium" fitContent weight={500}>
+              {am0.toFormat(2)} {t0.symbol}
+            </Text>
+            <SizedBox width={2} />
+            <Img
+              height="16px"
+              width="16px"
+              src={theme.images.icons.orderRightArrow}
+            />
+            <SizedBox width={2} />
+            <Text size="medium" fitContent weight={500}>
+              {am1.toFormat(2)} {t1.symbol}
+            </Text>
+          </Row>
+          <Text type="secondary" size="small">
+            Price: {price.toFormat(2)} {t1.symbol}
           </Text>
-          <SizedBox width={2} />
-          <Img height="16px" width="16px" src={theme.images.icons.rightArrow} />
-          <SizedBox width={2} />
-          <Text size="medium" fitContent weight={500}>
-            {am1.toFormat(2)} {t1.symbol}
-          </Text>
-        </Row>
-        <Text type="secondary" size="small">
-          Price: {price.toFormat(2)} {t1.symbol}
+        </Column>
+      </Row>
+      <Row
+        mainAxisSize="fit-content"
+        alignItems="center"
+        justifyContent="center"
+        style={{ cursor: "pointer" }}
+        onClick={() => onCancel(id)}
+      >
+        <CloseIcon style={{ height: 16, width: 16 }} />
+        <SizedBox width={2} />
+        <Text size="medium" weight={500} type="blue500" fitContent>
+          Cancel
         </Text>
-      </Column>
-      <Row mainAxisSize="fit-content">
-        <Text fitContent>Cancel</Text>
       </Row>
     </Root>
   );
