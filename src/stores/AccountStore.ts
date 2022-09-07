@@ -384,6 +384,19 @@ class AccountStore {
     });
     return txId;
   };
+
+  get balances() {
+    const { accountStore } = this.rootStore;
+    return TOKENS_LIST.map((t) => {
+      const balance = accountStore.findBalanceByAssetId(t.assetId);
+      return balance ?? new Balance(t);
+    }).sort((a, b) => {
+      if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
+      if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
+      if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
+      return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
+    });
+  }
 }
 
 export default AccountStore;

@@ -6,6 +6,10 @@ import SizedBox from "@components/SizedBox";
 import { useStores } from "@stores";
 import { Column } from "@src/components/Flex";
 import Button from "@components/Button";
+import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
+import { observer } from "mobx-react-lite";
+import OrdersHistory from "@screens/TradeInterface/Trade/LimitOrders/OrdersHistory";
+import OpenedOrders from "@screens/TradeInterface/Trade/LimitOrders/OpenedOrders";
 
 interface IProps {}
 
@@ -16,6 +20,7 @@ const Root = styled.div`
 `;
 
 const MyOrders: React.FC<IProps> = () => {
+  const vm = useLimitOrdersVM();
   const [activeTab, setActiveTab] = useState(0);
   const { accountStore } = useStores();
   return (
@@ -43,9 +48,12 @@ const MyOrders: React.FC<IProps> = () => {
           </Button>
         </Column>
       ) : (
-        <></>
+        <Column justifyContent="center" alignItems="center" crossAxisSize="max">
+          {activeTab === 0 && <OpenedOrders />}
+          {activeTab === 1 && <OrdersHistory />}
+        </Column>
       )}
     </Root>
   );
 };
-export default MyOrders;
+export default observer(MyOrders);

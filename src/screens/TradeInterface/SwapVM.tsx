@@ -2,16 +2,15 @@ import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { action, makeAutoObservable, reaction } from "mobx";
 import { RootStore, useStores } from "@stores";
-import Balance from "@src/entities/Balance";
 import BN from "@src/utils/BN";
 import aggregatorService, { TCalcRoute } from "@src/services/aggregatorService";
 import {
   CONTRACT_ADDRESSES,
   EXPLORER_URL,
   IToken,
+  ROUTES,
   TOKENS_BY_ASSET_ID,
   TOKENS_BY_SYMBOL,
-  TOKENS_LIST,
 } from "@src/constants";
 
 const ctx = React.createContext<SwapVM | null>(null);
@@ -27,6 +26,7 @@ export const useSwapVM = () => useVM(ctx);
 class SwapVM {
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
+    this.setActiveAction(window.location.pathname === ROUTES.TRADE ? 0 : 1);
     const params = new URLSearchParams(window.location.search);
     const asset0 = params.get("asset0")?.toString();
     const asset1 = params.get("asset1")?.toString();
@@ -150,7 +150,9 @@ class SwapVM {
   };
 
   get token0() {
-    return this.balances.find(({ assetId }) => assetId === this.assetId0)!;
+    return this.rootStore.accountStore.balances.find(
+      ({ assetId }) => assetId === this.assetId0
+    )!;
   }
 
   get balance0() {
@@ -158,7 +160,9 @@ class SwapVM {
   }
 
   get token1() {
-    return this.balances.find(({ assetId }) => assetId === this.assetId1)!;
+    return this.rootStore.accountStore.balances.find(
+      ({ assetId }) => assetId === this.assetId1
+    )!;
   }
 
   get simpleRoute() {
@@ -187,20 +191,7 @@ class SwapVM {
   }
 
   getBalanceByAssetId = (assetId: string) =>
-    this.balances.find((b) => assetId === b.assetId);
-
-  get balances() {
-    const { accountStore } = this.rootStore;
-    return TOKENS_LIST.map((t) => {
-      const balance = accountStore.findBalanceByAssetId(t.assetId);
-      return balance ?? new Balance(t);
-    }).sort((a, b) => {
-      if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
-      if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
-      if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
-      return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
-    });
-  }
+    this.rootStore.accountStore.balances.find((b) => assetId === b.assetId);
 
   get minimumToReceive(): BN {
     const slippage = this.rootStore.poolsStore.slippage;

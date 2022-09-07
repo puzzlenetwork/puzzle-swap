@@ -6,6 +6,7 @@ import { useTheme } from "@emotion/react";
 import Token from "./Token";
 import { useNavigate } from "react-router-dom";
 import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
+import { useStores } from "@stores";
 
 interface IProps {}
 
@@ -16,6 +17,7 @@ const Root = styled.div`
 
 const Tokens: React.FC<IProps> = () => {
   const vm = useLimitOrdersVM();
+  const { accountStore } = useStores();
   const theme = useTheme();
   const navigate = useNavigate();
   const handleSetAssetId0 = (assetId: string) => {
@@ -44,7 +46,7 @@ const Tokens: React.FC<IProps> = () => {
     <Root>
       <Token
         assetId={vm.assetId0}
-        balances={vm.balances}
+        balances={accountStore.balances}
         setAssetId={handleSetAssetId0}
       />
       <SizedBox height={8} style={{ position: "relative" }}>
@@ -62,7 +64,7 @@ const Tokens: React.FC<IProps> = () => {
       </SizedBox>
       <Token
         assetId={vm.assetId1}
-        balances={vm.balances}
+        balances={accountStore.balances}
         setAssetId={handleSetAssetId1}
       />
     </Root>

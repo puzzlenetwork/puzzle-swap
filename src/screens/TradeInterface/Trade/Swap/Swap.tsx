@@ -37,7 +37,7 @@ const Root = styled.div`
 `;
 
 const Swap: React.FC<IProps> = ({ ...rest }) => {
-  const { notificationStore } = useStores();
+  const { notificationStore, accountStore } = useStores();
   const vm = useSwapVM();
   const navigate = useNavigate();
 
@@ -89,7 +89,7 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
           setAmount={vm.setAmount0}
           assetId={vm.assetId0}
           setAssetId={handleSetAssetId0}
-          balances={vm.balances}
+          balances={accountStore.balances}
           onMaxClick={vm.amount0MaxClickFunc}
           selectable
         />
@@ -99,7 +99,7 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
           amount={vm.amount1}
           assetId={vm.assetId1}
           setAssetId={handleSetAssetId1}
-          balances={vm.balances}
+          balances={accountStore.balances}
           selectable
         />
         <SizedBox height={24} />
