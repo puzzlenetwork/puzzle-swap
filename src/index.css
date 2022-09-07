@@ -7,6 +7,10 @@ a {
     text-decoration: none;
 }
 
+iframe {
+    display: none !important;
+}
+
 #root {
     display: flex;
     flex-direction: column;

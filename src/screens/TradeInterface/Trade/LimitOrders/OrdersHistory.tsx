@@ -10,6 +10,6 @@ const Root = styled.div`
 `;
 
 const OrdersHistory: React.FC<IProps> = () => {
-  return <Root></Root>;
+  return <Root>OrdersHistory</Root>;
 };
 export default observer(OrdersHistory);

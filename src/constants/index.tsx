@@ -357,8 +357,7 @@ export const CONTRACT_ADDRESSES = {
   nfts: "3PFQjjDMiZKQZdu5JqTHD7HwgSXyp9Rw9By",
   createArtefacts: "3PFkgvC9y6zHy64zEAscKKgaNY3yipiLqbW",
   boost: "3PAeY7RgwuNUZNscGqahqJxFTFDkh7fbNwJ",
-  limitOrders: "3MtjjEoEs6Rcqkh8tYjPmBxZND58FuMtRWN",
-  // limitOrders: "3PBFhK8tHA5smWpy6emaFjaUiVso95GWhGS",
+  limitOrders: "3PPrfNMnk8z8QhZcqMyJk69mF65s2Rbz3B6",
 };
 export const PUZZLE_NFTS = [
   {

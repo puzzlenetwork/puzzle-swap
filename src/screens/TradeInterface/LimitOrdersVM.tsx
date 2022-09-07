@@ -28,7 +28,7 @@ const getOrderStateKeys = (orderId: string) => [
   `order_${orderId}_status`,
 ];
 
-interface IOrder {
+export interface IOrder {
   id: string;
   amount0: BN;
   token0: string;
@@ -55,13 +55,12 @@ class LimitOrdersVM {
   amount1: BN = BN.ZERO;
   setAmount1 = (amount: BN) => (this.amount1 = amount);
 
+  loading: boolean = false;
+  private _setLoading = (l: boolean) => (this.loading = l);
+
   sync = async () => {
-    //todo fix when mainnet contract will deployed
-    const address = "3My6LmrRSRvJ73T14oT5k53SGPavGFoacWc";
     const orderIdList: string[] = await makeNodeRequest(
-      `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}/user_${address}_orders`,
-      //todo fix when mainnet contract will deployed
-      { chainId: "T" }
+      `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}/user_${this.rootStore.accountStore.address}_orders`
     )
       .then(({ data }) => data.value.split(","))
       .catch(() => []);
@@ -73,11 +72,7 @@ class LimitOrdersVM {
     );
     const ordersData: INodeData[] = await makeNodeRequest(
       `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}`,
-      {
-        //todo fix when mainnet contract will deployed
-        chainId: "T",
-        postData: { keys },
-      }
+      { postData: { keys } }
     )
       .then(({ data }) => data)
       .catch(() => []);
@@ -85,7 +80,7 @@ class LimitOrdersVM {
       id,
       amount0: new BN(getStateByKey(ordersData, `order_${id}_amount0`) ?? 0),
       token0: getStateByKey(ordersData, `order_${id}_token0`) ?? "",
-      amount1: new BN(getStateByKey(ordersData, `order_${id}_amount0`) ?? 0),
+      amount1: new BN(getStateByKey(ordersData, `order_${id}_amount1`) ?? 0),
       token1: getStateByKey(ordersData, `order_${id}_token1`) ?? "",
       fulfilled0: new BN(
         getStateByKey(ordersData, `order_${id}_fulfilled0`) ?? 0
@@ -96,6 +91,7 @@ class LimitOrdersVM {
       status: getStateByKey(ordersData, `order_${id}_status`) ?? "closed",
     }));
     this.setOrders(orders as IOrder[]);
+    console.log("orders", orders);
   };
 
   get token0() {

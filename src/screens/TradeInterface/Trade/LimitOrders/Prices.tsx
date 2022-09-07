@@ -89,8 +89,6 @@ const Prices: React.FC<IProps> = () => {
           Transaction fee 0.005 WAVES
         </Text>
       </Note>
-      <SizedBox height={16} />
-      <Button fixed>Place an order</Button>
     </Root>
   );
 };

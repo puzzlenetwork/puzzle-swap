@@ -8,6 +8,7 @@ import Prices from "./Prices";
 import MyOrders from "./MyOrders";
 import useWindowSize from "@src/hooks/useWindowSize";
 import { useSwapVM } from "@screens/TradeInterface/SwapVM";
+import PlaceOrderBtn from "@screens/TradeInterface/Trade/LimitOrders/PlaceOrderBtn";
 
 interface IProps {}
 
@@ -36,6 +37,8 @@ const LimitOrders: React.FC<IProps> = ({ ...rest }) => {
         <Tokens />
         <SizedBox height={16} />
         <Prices />
+        <SizedBox height={16} />
+        <PlaceOrderBtn />
       </Card>
       <SizedBox height={40} />
       {((width && width < 880) || !openedChart) && <MyOrders />}
