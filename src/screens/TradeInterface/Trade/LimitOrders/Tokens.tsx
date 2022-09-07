@@ -1,12 +1,11 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { useLimitVM } from "@screens/TradeInterface/Trade/Limit/LimitVM";
 import SizedBox from "@components/SizedBox";
 import Img from "@components/Img";
 import { useTheme } from "@emotion/react";
 import Token from "./Token";
 import { useNavigate } from "react-router-dom";
-import { useTradeVM } from "@screens/TradeInterface/TradeVM";
+import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
 
 interface IProps {}
 
@@ -16,8 +15,7 @@ const Root = styled.div`
 `;
 
 const Tokens: React.FC<IProps> = () => {
-  const vm = useLimitVM();
-  const tradeVm = useTradeVM();
+  const vm = useLimitOrdersVM();
   const theme = useTheme();
   const navigate = useNavigate();
   const handleSetAssetId0 = (assetId: string) => {
@@ -29,7 +27,7 @@ const Tokens: React.FC<IProps> = () => {
       search: `?${urlSearchParams.toString()}`,
     });
     vm.setAssetId0(assetId);
-    tradeVm.setAssetId0(assetId);
+    // tradeVm.setAssetId0(assetId);
   };
   const handleSetAssetId1 = (assetId: string) => {
     if (assetId === vm.assetId1) return;
@@ -40,7 +38,7 @@ const Tokens: React.FC<IProps> = () => {
       search: `?${urlSearchParams.toString()}`,
     });
     vm.setAssetId0(assetId);
-    tradeVm.setAssetId0(assetId);
+    // tradeVm.setAssetId0(assetId);
   };
   return (
     <Root>

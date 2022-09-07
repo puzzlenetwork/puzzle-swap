@@ -46,6 +46,7 @@ const TokensChartDesktopImpl: React.FC<IProps> = observer(
       isExpanded: rest.visible,
       duration: 500,
     });
+    console.log("Card height", height);
     const vm = useTokenChartVM();
     return (
       <Root {...getCollapseProps()}>

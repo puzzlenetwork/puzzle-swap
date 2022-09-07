@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 
 import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
-import { useTradeVM } from "@screens/TradeInterface/TradeVM";
+import { useSwapVM } from "@screens/TradeInterface/SwapVM";
 
 const Root = styled(Card)`
   display: flex;
@@ -32,7 +32,7 @@ const Root = styled(Card)`
 
 const Details: React.FC = () => {
   const { poolsStore } = useStores();
-  const vm = useTradeVM();
+  const vm = useSwapVM();
 
   return (
     <Root>

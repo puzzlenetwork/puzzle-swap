@@ -13,15 +13,15 @@ import makeNodeRequest from "@src/utils/makeNodeRequest";
 import { INodeData } from "@src/services/nodeService";
 import { getStateByKey } from "@src/utils/getStateByKey";
 
-const ctx = React.createContext<LimitVM | null>(null);
+const ctx = React.createContext<LimitOrdersVM | null>(null);
 
-export const LimitVMProvider: React.FC = ({ children }) => {
+export const LimitOrdersVMProvider: React.FC = ({ children }) => {
   const rootStore = useStores();
-  const store = useMemo(() => new LimitVM(rootStore), [rootStore]);
+  const store = useMemo(() => new LimitOrdersVM(rootStore), [rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
 
-export const useLimitVM = () => useVM(ctx);
+export const useLimitOrdersVM = () => useVM(ctx);
 
 const getOrderStateKeys = (orderId: string) => [
   `order_${orderId}_amount0`,
@@ -44,7 +44,7 @@ interface IOrder {
   status: "active" | "closed" | "canceled";
 }
 
-class LimitVM {
+class LimitOrdersVM {
   orders: Array<IOrder> = [];
   setOrders = (orders: Array<IOrder>) => (this.orders = orders);
 

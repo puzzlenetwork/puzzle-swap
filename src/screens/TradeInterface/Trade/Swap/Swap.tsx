@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import React, { HTMLAttributes } from "react";
 import Card from "@components/Card";
 import TokenInput from "@components/TokenInput";
-import SwitchTokensButton from "@screens/TradeInterface/SwitchTokensButton";
 import SizedBox from "@components/SizedBox";
 import SwapDetailRow from "@components/SwapDetailRow";
 import { Row } from "@components/Flex";
@@ -12,9 +11,7 @@ import { ReactComponent as ShowMoreIcon } from "@src/assets/icons/showMore.svg";
 import Divider from "@components/Divider";
 import Tooltip from "@components/Tooltip";
 import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
-import Details from "@screens/TradeInterface/Details";
 import { useStores } from "@stores";
-import { useTradeVM } from "@screens/TradeInterface/TradeVM";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import TooltipFeeInfo from "./TooltipFeeInfo";
@@ -22,6 +19,9 @@ import RoutingModal from "./RoutingModal";
 import SwapButton from "./SwapButton";
 import Settings from "./Settings";
 import SettingsHeader from "../SettingsHeader";
+import { useSwapVM } from "@screens/TradeInterface/SwapVM";
+import SwitchTokensButton from "./SwitchTokensButton";
+import Details from "./Details";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   squareRef: any;
@@ -40,7 +40,7 @@ const Root = styled.div`
 
 const Swap: React.FC<IProps> = ({ squareRef, ...rest }) => {
   const { notificationStore } = useStores();
-  const vm = useTradeVM();
+  const vm = useSwapVM();
   const navigate = useNavigate();
 
   const handleSetAssetId0 = (assetId: string) => {

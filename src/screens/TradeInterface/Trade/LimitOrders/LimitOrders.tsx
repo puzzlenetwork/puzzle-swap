@@ -1,7 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
-import { LimitVMProvider } from "@screens/TradeInterface/Trade/Limit/LimitVM";
-import { observer } from "mobx-react-lite";
+import React, { HTMLAttributes } from "react";
 import Card from "@components/Card";
 import SettingsHeader from "@screens/TradeInterface/Trade/SettingsHeader";
 import SizedBox from "@components/SizedBox";
@@ -9,7 +7,9 @@ import Tokens from "./Tokens";
 import Prices from "./Prices";
 import MyOrders from "./MyOrders";
 
-interface IProps {}
+interface IProps extends HTMLAttributes<HTMLDivElement> {
+  squareRef: any;
+}
 
 const Root = styled.div`
   display: flex;
@@ -22,10 +22,11 @@ const Root = styled.div`
   max-width: 560px;
 `;
 
-const LimitImpl: React.FC<IProps> = observer(() => {
+const LimitOrders: React.FC<IProps> = ({ squareRef, ...rest }) => {
   return (
-    <Root>
+    <Root {...rest}>
       <Card
+        ref={squareRef}
         style={{ position: "relative" }}
         paddingDesktop="16px 24px"
         paddingMobile="16px"
@@ -39,12 +40,6 @@ const LimitImpl: React.FC<IProps> = observer(() => {
       <MyOrders />
     </Root>
   );
-});
+};
 
-const Limit = () => (
-  <LimitVMProvider>
-    <LimitImpl />
-  </LimitVMProvider>
-);
-
-export default Limit;
+export default LimitOrders;

@@ -6,8 +6,8 @@ import nochart from "@src/assets/icons/no-chart.svg";
 import settings from "@src/assets/icons/settings.svg";
 import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
-import { useTradeVM } from "@screens/TradeInterface/TradeVM";
 import Tabs from "@components/Tabs";
+import { useSwapVM } from "@screens/TradeInterface/SwapVM";
 
 interface IProps {
   withSetting?: boolean;
@@ -34,7 +34,7 @@ const IconsBlock = styled(Row)`
   right: 0;
 `;
 const SettingsHeader: React.FC<IProps> = ({ withSetting }) => {
-  const vm = useTradeVM();
+  const vm = useSwapVM();
   return (
     <Root>
       <Tabs

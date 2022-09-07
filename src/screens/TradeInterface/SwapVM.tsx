@@ -14,17 +14,17 @@ import {
   TOKENS_LIST,
 } from "@src/constants";
 
-const ctx = React.createContext<TradeVM | null>(null);
+const ctx = React.createContext<SwapVM | null>(null);
 
-export const TradeVMProvider: React.FC = ({ children }) => {
+export const SwapVMProvider: React.FC = ({ children }) => {
   const rootStore = useStores();
-  const store = useMemo(() => new TradeVM(rootStore), [rootStore]);
+  const store = useMemo(() => new SwapVM(rootStore), [rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
 
-export const useTradeVM = () => useVM(ctx);
+export const useSwapVM = () => useVM(ctx);
 
-class TradeVM {
+class SwapVM {
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
     const params = new URLSearchParams(window.location.search);

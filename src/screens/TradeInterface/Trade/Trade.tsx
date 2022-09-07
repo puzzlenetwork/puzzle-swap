@@ -2,8 +2,8 @@ import styled from "@emotion/styled";
 import React, { HTMLAttributes } from "react";
 import { observer } from "mobx-react-lite";
 import Swap from "./Swap";
-import Limit from "./Limit";
-import { useTradeVM } from "@screens/TradeInterface/TradeVM";
+import { useSwapVM } from "@screens/TradeInterface/SwapVM";
+import LimitOrders from "./LimitOrders";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   squareRef: any;
@@ -21,11 +21,11 @@ const Root = styled.div`
 `;
 
 const Trade: React.FC<IProps> = ({ squareRef, ...rest }) => {
-  const vm = useTradeVM();
+  const vm = useSwapVM();
   return (
     <Root {...rest}>
       {vm.activeAction === 0 && <Swap squareRef={squareRef} />}
-      {vm.activeAction === 1 && <Limit />}
+      {vm.activeAction === 1 && <LimitOrders squareRef={squareRef} />}
     </Root>
   );
 };

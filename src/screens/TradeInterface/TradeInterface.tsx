@@ -2,11 +2,12 @@ import styled from "@emotion/styled";
 import React from "react";
 import { observer, Observer } from "mobx-react-lite";
 import Layout from "@components/Layout";
-import { TradeVMProvider, useTradeVM } from "@screens/TradeInterface/TradeVM";
 import useElementSize from "@src/hooks/useElementSize";
 import useWindowSize from "@src/hooks/useWindowSize";
 import { TokensChartDesktop, TokensChartMobile } from "@components/TokensChart";
 import Trade from "./Trade";
+import { SwapVMProvider, useSwapVM } from "@screens/TradeInterface/SwapVM";
+import { LimitOrdersVMProvider } from "@screens/TradeInterface/LimitOrdersVM";
 
 const Root = styled.div`
   display: flex;
@@ -22,7 +23,7 @@ const Root = styled.div`
 `;
 
 const TradeInterfaceImpl: React.FC = observer(() => {
-  const vm = useTradeVM();
+  const vm = useSwapVM();
   const [squareRef, { height }] = useElementSize();
   const { width } = useWindowSize();
   return (
@@ -55,8 +56,10 @@ const TradeInterfaceImpl: React.FC = observer(() => {
 });
 
 const TradeInterface: React.FC = () => (
-  <TradeVMProvider>
-    <TradeInterfaceImpl />
-  </TradeVMProvider>
+  <SwapVMProvider>
+    <LimitOrdersVMProvider>
+      <TradeInterfaceImpl />
+    </LimitOrdersVMProvider>
+  </SwapVMProvider>
 );
 export default TradeInterface;

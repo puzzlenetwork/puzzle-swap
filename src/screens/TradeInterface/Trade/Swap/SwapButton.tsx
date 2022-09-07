@@ -2,14 +2,14 @@ import React from "react";
 import { useStores } from "@stores";
 import Button from "@components/Button";
 import { observer } from "mobx-react-lite";
-import { useTradeVM } from "@screens/TradeInterface/TradeVM";
 import Loading from "@components/Loading";
+import { useSwapVM } from "@screens/TradeInterface/SwapVM";
 
 interface IProps {}
 
 const SwapButton: React.FC<IProps> = () => {
   const { accountStore } = useStores();
-  const vm = useTradeVM();
+  const vm = useSwapVM();
   const { amount0, token0, balance0, amount1, synchronizing, loading } = vm;
   switch (true) {
     case accountStore.address == null:
