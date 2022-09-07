@@ -9,6 +9,9 @@ import {
   TOKENS_LIST,
 } from "@src/constants";
 import Balance from "@src/entities/Balance";
+import makeNodeRequest from "@src/utils/makeNodeRequest";
+import { INodeData } from "@src/services/nodeService";
+import { getStateByKey } from "@src/utils/getStateByKey";
 
 const ctx = React.createContext<LimitVM | null>(null);
 
@@ -20,7 +23,31 @@ export const LimitVMProvider: React.FC = ({ children }) => {
 
 export const useLimitVM = () => useVM(ctx);
 
+const getOrderStateKeys = (orderId: string) => [
+  `order_${orderId}_amount0`,
+  `order_${orderId}_token0`,
+  `order_${orderId}_amount1`,
+  `order_${orderId}_token1`,
+  `order_${orderId}_fulfilled0`,
+  `order_${orderId}_fulfilled1`,
+  `order_${orderId}_status`,
+];
+
+interface IOrder {
+  id: string;
+  amount0: BN;
+  token0: string;
+  amount1: BN;
+  token1: string;
+  fulfilled0: BN;
+  fulfilled1: BN;
+  status: "active" | "closed" | "canceled";
+}
+
 class LimitVM {
+  orders: Array<IOrder> = [];
+  setOrders = (orders: Array<IOrder>) => (this.orders = orders);
+
   assetId0: string = TOKENS_BY_SYMBOL.USDN.assetId;
   setAssetId0 = (assetId: string) => (this.assetId0 = assetId);
 
@@ -33,7 +60,48 @@ class LimitVM {
   amount1: BN = BN.ZERO;
   setAmount1 = (amount: BN) => (this.amount1 = amount);
 
-  sync = async () => {};
+  sync = async () => {
+    //todo fix when mainnet contract will deployed
+    const address = "3My6LmrRSRvJ73T14oT5k53SGPavGFoacWc";
+    const orderIdList: string[] = await makeNodeRequest(
+      `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}/user_${address}_orders`,
+      //todo fix when mainnet contract will deployed
+      { chainId: "T" }
+    )
+      .then(({ data }) => data.value.split(","))
+      .catch(() => []);
+    if (orderIdList.length === 0) return;
+
+    const keys = orderIdList.reduce(
+      (acc, id) => [...acc, ...getOrderStateKeys(id)],
+      [] as string[]
+    );
+    const ordersData: INodeData[] = await makeNodeRequest(
+      `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}`,
+      {
+        //todo fix when mainnet contract will deployed
+        chainId: "T",
+        postData: { keys },
+      }
+    )
+      .then(({ data }) => data)
+      .catch(() => []);
+    const orders = orderIdList.map((id) => ({
+      id,
+      amount0: new BN(getStateByKey(ordersData, `order_${id}_amount0`) ?? 0),
+      token0: getStateByKey(ordersData, `order_${id}_token0`) ?? "",
+      amount1: new BN(getStateByKey(ordersData, `order_${id}_amount0`) ?? 0),
+      token1: getStateByKey(ordersData, `order_${id}_token1`) ?? "",
+      fulfilled0: new BN(
+        getStateByKey(ordersData, `order_${id}_fulfilled0`) ?? 0
+      ),
+      fulfilled1: new BN(
+        getStateByKey(ordersData, `order_${id}_fulfilled1`) ?? 0
+      ),
+      status: getStateByKey(ordersData, `order_${id}_status`) ?? "closed",
+    }));
+    this.setOrders(orders as IOrder[]);
+  };
 
   get balances() {
     const { accountStore } = this.rootStore;
@@ -99,5 +167,7 @@ class LimitVM {
 
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
+    this.sync();
+    setInterval(this.sync, 60 * 1000);
   }
 }
