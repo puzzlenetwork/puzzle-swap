@@ -13,24 +13,20 @@ const Button = styled.button<{
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
-  border: 1px solid ${({ kind, theme }) =>
-    kind === "secondary" ? theme.colors.primary100 : theme.colors.blue500};
-
-  border: 1px solid;
-  border-color: ${({ kind, theme }) =>
-    (() => {
-      switch (kind) {
-        case "primary":
-          return `${theme.colors.blue500}`;
-        case "secondary":
-          return theme.colors.primary100;
-        case "danger":
-          return theme.colors.error500;
-        default:
-          return theme.colors.blue500;
-      }
-    })()}
-
+  border: 1px solid
+    ${({ kind, theme }) =>
+      (() => {
+        switch (kind) {
+          case "primary":
+            return theme.colors.blue500;
+          case "secondary":
+            return theme.colors.primary100;
+          case "danger":
+            return theme.colors.error500;
+          default:
+            return theme.colors.primary100;
+        }
+      })()};
 
   border-radius: 12px;
   box-shadow: none;
@@ -45,13 +41,13 @@ const Button = styled.button<{
     (() => {
       switch (kind) {
         case "primary":
-          return `background: ${theme.colors?.white}; color: ${theme.colors?.white}`;
+          return `background: ${theme.colors.blue500}; color:#fffff;`;
         case "secondary":
-          return `background: ${theme.colors?.blue500}; color: ${theme.colors?.blue500}`;
+          return `background: ${theme.colors.white}; color:${theme.colors.blue500};`;
         case "danger":
-          return `background: ${theme.colors?.error500}; color:#fffff`;
+          return `background: ${theme.colors.error500}; color: #fff;`;
         default:
-          return `background: ${theme.colors?.primary800}; color: ${theme.colors?.white}`;
+          return `background: ${theme.colors.blue500}; color:${theme.colors.white};`;
       }
     })()}
   ${({ size }) =>
@@ -67,21 +63,35 @@ const Button = styled.button<{
     })()}
   :hover {
     cursor: pointer;
-    background: ${({ kind, theme }) =>
-      kind === "secondary" ? theme.colors.primary100 : "#6563dd"};
-    border: 1px solid ${({ kind, theme }) =>
-      kind === "secondary" ? theme.colors.primary100 : "#6563dd"};
-    color: ${({ kind }) => kind === "secondary" && "#6563DD"};
+    ${({ kind, theme }) =>
+      (() => {
+        switch (kind) {
+          case "primary":
+            return `background: #6563dd ;border: 1px solid #6563dd`;
+          case "secondary":
+            return `background: ${theme.colors.primary100}; border: 1px solid ${theme.colors.primary100}; color: #6563DD`;
+          case "danger":
+            return `background: ${theme.colors.error550}; border: 1px solid ${theme.colors.error550}`;
+          default:
+            return `background: #6563dd; border: 1px solid`;
+        }
+      })()}
   }
 
   :disabled {
-    opacity: ${({ kind }) => (kind === "secondary" ? 0.4 : 1)};
-    background: ${({ kind, theme }) =>
-      kind === "secondary" ? theme.colors.white : theme.colors.primary300};
-
-    border: 1px solid ${({ kind, theme }) =>
-      kind === "secondary" ? theme.colors.primary100 : theme.colors.primary300};
-
+    ${({ kind, theme }) =>
+      (() => {
+        switch (kind) {
+          case "primary":
+            return `background: ${theme.colors.primary300}; border: 1px solid #6563dd; opacity: 1;`;
+          case "secondary":
+            return `background: ${theme.colors.white}; border: 1px solid ${theme.colors.primary100}; opacity: 0.4;`;
+          case "danger":
+            return `background: ${theme.colors.error100}; border: 1px solid ${theme.colors.error100}`;
+          default:
+            return `background: #6563dd; border: 1px solid`;
+        }
+      })()}
     cursor: not-allowed;
   }
 `;
