@@ -8,7 +8,6 @@ import { SwapVMProvider, useSwapVM } from "@screens/TradeInterface/SwapVM";
 import { LimitOrdersVMProvider } from "@screens/TradeInterface/LimitOrdersVM";
 import Swap from "@screens/TradeInterface/Trade/Swap";
 import LimitOrders from "@screens/TradeInterface/Trade/LimitOrders";
-import DialogNotification from "@components/Dialog/DialogNotification";
 
 const Root = styled.div`
   display: flex;

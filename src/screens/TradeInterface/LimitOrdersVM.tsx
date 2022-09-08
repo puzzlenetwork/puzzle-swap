@@ -9,10 +9,8 @@ import { INodeData } from "@src/services/nodeService";
 import { getStateByKey } from "@src/utils/getStateByKey";
 import {
   buildCancelOrderParams,
-  buildErrorDialogParams,
   IDialogNotificationProps,
 } from "@components/Dialog/DialogNotification";
-import Button from "@components/Button";
 
 const ctx = React.createContext<LimitOrdersVM | null>(null);
 
@@ -52,6 +50,13 @@ class LimitOrdersVM {
   assetId0: string = TOKENS_BY_SYMBOL.USDN.assetId;
   setAssetId0 = (assetId: string) => (this.assetId0 = assetId);
 
+  price: BN = BN.ZERO;
+  setPrice = (price: BN) => (this.price = price);
+
+  get isMarketPrice() {
+    return BN.ZERO;
+  }
+
   amount0: BN = BN.ZERO;
   setAmount0 = (amount: BN) => (this.amount0 = amount);
 
@@ -61,32 +66,21 @@ class LimitOrdersVM {
   amount1: BN = BN.ZERO;
   setAmount1 = (amount: BN) => (this.amount1 = amount);
 
-  loading: boolean = false;
-  private _setLoading = (l: boolean) => (this.loading = l);
+  loading: boolean = true;
+  private setLoading = (l: boolean) => (this.loading = l);
 
-  public notificationParams: IDialogNotificationProps | null = {
-    icon: <></>,
-    title: `Are you sure you want cancel the order?`,
-    description:
-      "The current order progress will not be canceled, but further execution will stop",
-    buttons: [
-      () => (
-        <Button key="explorer" size="medium" kind="danger" fixed>
-          Cancel the order
-        </Button>
-      ),
-      () => (
-        <Button key="explorer" size="medium" kind="secondary" fixed>
-          Back to Pool page
-        </Button>
-      ),
-    ],
+  switchTokens = () => {
+    const assetId0 = this.assetId0;
+    this.setAssetId0(this.assetId1);
+    this.setAssetId1(assetId0);
   };
+
+  public notificationParams: IDialogNotificationProps | null = null;
   public setNotificationParams = (params: IDialogNotificationProps | null) =>
     (this.notificationParams = params);
 
   sync = async () => {
-    this._setLoading(true);
+    this.setLoading(true);
     const orderIdList: string[] = await makeNodeRequest(
       `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}/user_${this.rootStore.accountStore.address}_orders`
     )
@@ -119,7 +113,7 @@ class LimitOrdersVM {
       status: getStateByKey(ordersData, `order_${id}_status`) ?? "closed",
     }));
     this.setOrders(orders as IOrder[]);
-    this._setLoading(true);
+    this.setLoading(true);
   };
 
   get token0() {
@@ -193,7 +187,7 @@ class LimitOrdersVM {
     const asset1 = params.get("asset1")?.toString();
     this.assetId0 = asset0 ?? TOKENS_BY_SYMBOL.USDN.assetId;
     this.assetId1 = asset1 ?? TOKENS_BY_SYMBOL.PUZZLE.assetId;
-    this.sync();
+    this.sync().then(() => this.setLoading(false));
     setInterval(this.sync, 60 * 1000);
   }
 }

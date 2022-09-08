@@ -1,10 +1,13 @@
 import styled from "@emotion/styled";
 import { Column, Row } from "@src/components/Flex";
 import Text from "@src/components/Text";
-import React, { useState } from "react";
+import React from "react";
 import Input from "@components/Input";
 import SizedBox from "@components/SizedBox";
-import Button from "@components/Button";
+import { TOKENS_BY_ASSET_ID } from "@src/constants";
+import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
+import { observer } from "mobx-react-lite";
+import { useStores } from "@stores";
 
 interface IProps {}
 
@@ -13,38 +16,37 @@ const Root = styled.div`
   flex-direction: column;
 `;
 const Note = styled.div``;
+
+const TextButton = styled(Text)<{ active?: boolean }>`
+  width: fit-content;
+  font-size: 14px;
+  line-height: 20px;
+  cursor: pointer;
+  font-weight: ${({ active }) => (active ? 500 : 400)};
+  color: ${({ theme, active }) =>
+    active ? theme.colors?.primary800 : theme.colors?.primary650};
+`;
 const Prices: React.FC<IProps> = () => {
-  const [price, setPrice] = useState(0);
-  const [get, setGet] = useState(0);
+  const vm = useLimitOrdersVM();
+  const { poolsStore } = useStores();
   return (
     <Root>
       <Column crossAxisSize="max">
         <Row>
-          <Text
-            fitContent
-            size="medium"
-            weight={price === 0 ? 500 : 400}
-            type={price === 0 ? "primary" : "secondary"}
-            onClick={() => setPrice(0)}
-          >
-            Custom price
-          </Text>
+          <TextButton active>Custom price</TextButton>
           <SizedBox width={12} />
-          <Text
-            fitContent
-            size="medium"
-            weight={price === 1 ? 500 : 400}
-            type={price === 1 ? "primary" : "secondary"}
-            onClick={() => setPrice(1)}
-          >
-            Market price
-          </Text>
+          <TextButton onClick={() => null}>Market price</TextButton>
         </Row>
         <SizedBox height={4} />
         <Input
+          prefix={
+            <Text fitContent type="secondary" size="medium">
+              {TOKENS_BY_ASSET_ID[vm.assetId0].symbol}&nbsp;
+            </Text>
+          }
           suffix={
             <Text fitContent type="secondary" size="medium">
-              $15
+              ${poolsStore.usdnRate(vm.assetId0)?.toFormat(2)}
             </Text>
           }
         />
@@ -52,31 +54,22 @@ const Prices: React.FC<IProps> = () => {
       <SizedBox height={16} />
       <Column crossAxisSize="max">
         <Row>
-          <Text
-            fitContent
-            size="medium"
-            weight={get === 0 ? 500 : 400}
-            type={get === 0 ? "primary" : "secondary"}
-            onClick={() => setGet(0)}
-          >
+          <TextButton onClick={() => null} active>
             I want to pay
-          </Text>
+          </TextButton>
           <SizedBox width={12} />
-          <Text
-            fitContent
-            size="medium"
-            weight={get === 1 ? 500 : 400}
-            type={get === 1 ? "primary" : "secondary"}
-            onClick={() => setGet(1)}
-          >
-            I want to get
-          </Text>
+          <TextButton onClick={() => null}>I want to get</TextButton>
         </Row>
         <SizedBox height={4} />
         <Input
+          prefix={
+            <Text fitContent type="secondary" size="medium">
+              {TOKENS_BY_ASSET_ID[vm.assetId1].symbol}&nbsp;
+            </Text>
+          }
           suffix={
             <Text fitContent type="secondary" size="medium">
-              $15
+              ${poolsStore.usdnRate(vm.assetId1)?.toFormat(2)}
             </Text>
           }
         />
@@ -92,4 +85,4 @@ const Prices: React.FC<IProps> = () => {
     </Root>
   );
 };
-export default Prices;
+export default observer(Prices);

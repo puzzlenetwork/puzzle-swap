@@ -17,6 +17,7 @@ interface IProps {
 }
 
 const Root = styled.div`
+  cursor: pointer;
   display: flex;
   padding: 16px;
   background: ${({ theme }) => theme.colors.primary100};
@@ -31,37 +32,34 @@ const Token: React.FC<IProps> = (props) => {
   const theme = useTheme();
 
   return (
-    <Root>
-      <Row alignItems="center">
-        <SquareTokenIcon size="small" src={token?.logo} />
-        <SizedBox width={12} />
-        <Text weight={500}>{token?.name}</Text>
-      </Row>
-      <Row alignItems="center" mainAxisSize="fit-content">
-        <Column style={{ textAlign: "right" }}>
-          <Text weight={500} size="medium">
-            {token?.formatBalance}
-          </Text>
-          <Text type="secondary" size="small">
-            ${token?.usdnEquivalent?.toFormat(2)}
-          </Text>
-        </Column>
-        <SizedBox width={12} />
-        <Img
-          style={{ cursor: "pointer" }}
-          src={theme.images.icons.arrowDownWithBorder}
-          alt="arrow"
-          onClick={() => setOpenModal(true)}
-        />
-      </Row>
+    <>
+      <Root onClick={() => setOpenModal(true)}>
+        <Row alignItems="center">
+          <SquareTokenIcon size="small" src={token?.logo} />
+          <SizedBox width={12} />
+          <Text weight={500}>{token?.name}</Text>
+        </Row>
+        <Row alignItems="center" mainAxisSize="fit-content">
+          <Column style={{ textAlign: "right" }}>
+            <Text weight={500} size="medium">
+              {token?.formatBalance}
+            </Text>
+            <Text type="secondary" size="small">
+              ${token?.usdnEquivalent?.toFormat(2)}
+            </Text>
+          </Column>
+          <SizedBox width={12} />
+          <Img src={theme.images.icons.arrowDownWithBorder} alt="arrow" />
+        </Row>
+      </Root>
       <TokenSelectModal
         selectedTokenId={props.assetId}
         visible={openModal}
         onSelect={props.setAssetId}
         balances={props.balances}
-        onClose={() => setOpenModal(!openModal)}
+        onClose={() => setOpenModal(false)}
       />
-    </Root>
+    </>
   );
 };
 export default observer(Token);
