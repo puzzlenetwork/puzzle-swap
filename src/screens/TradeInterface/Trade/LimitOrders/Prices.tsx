@@ -15,7 +15,13 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
 `;
-const Note = styled.div``;
+const Note = styled.div`
+  padding: 16px;
+  gap: 4px;
+
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
+  border-radius: 12px;
+`;
 
 const TextButton = styled(Text)<{ active?: boolean }>`
   width: fit-content;
@@ -29,13 +35,24 @@ const TextButton = styled(Text)<{ active?: boolean }>`
 const Prices: React.FC<IProps> = () => {
   const vm = useLimitOrdersVM();
   const { poolsStore } = useStores();
+  const percents = [25, 50, 75, 100];
   return (
     <Root>
       <Column crossAxisSize="max">
         <Row>
-          <TextButton active>Custom price</TextButton>
+          <TextButton
+            onClick={() => vm.setPriceSettings(0)}
+            active={vm.priceSettings === 0}
+          >
+            Custom price
+          </TextButton>
           <SizedBox width={12} />
-          <TextButton onClick={() => null}>Market price</TextButton>
+          <TextButton
+            onClick={() => vm.setPriceSettings(1)}
+            active={vm.priceSettings === 1}
+          >
+            Market price
+          </TextButton>
         </Row>
         <SizedBox height={4} />
         <Input
@@ -54,11 +71,19 @@ const Prices: React.FC<IProps> = () => {
       <SizedBox height={16} />
       <Column crossAxisSize="max">
         <Row>
-          <TextButton onClick={() => null} active>
+          <TextButton
+            onClick={() => vm.setPaymentSettings(0)}
+            active={vm.paymentSettings === 0}
+          >
             I want to pay
           </TextButton>
           <SizedBox width={12} />
-          <TextButton onClick={() => null}>I want to get</TextButton>
+          <TextButton
+            onClick={() => vm.setPaymentSettings(1)}
+            active={vm.paymentSettings === 1}
+          >
+            I want to get
+          </TextButton>
         </Row>
         <SizedBox height={4} />
         <Input
@@ -73,6 +98,22 @@ const Prices: React.FC<IProps> = () => {
             </Text>
           }
         />
+        <SizedBox height={4} />
+        {vm.paymentSettings === 0 && (
+          <Row>
+            {percents.map((v) => (
+              <Text
+                key={v}
+                fitContent
+                type="blue500"
+                size="small"
+                style={{ paddingRight: 12, cursor: "pointer" }}
+              >
+                {v}%{" "}
+              </Text>
+            ))}
+          </Row>
+        )}
       </Column>
       <SizedBox height={16} />
       <Note>

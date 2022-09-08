@@ -69,6 +69,12 @@ class LimitOrdersVM {
   loading: boolean = true;
   private setLoading = (l: boolean) => (this.loading = l);
 
+  priceSettings: 0 | 1 = 0;
+  setPriceSettings = (value: 0 | 1) => (this.priceSettings = value);
+
+  paymentSettings: 0 | 1 = 0;
+  setPaymentSettings = (value: 0 | 1) => (this.paymentSettings = value);
+
   switchTokens = () => {
     const assetId0 = this.assetId0;
     this.setAssetId0(this.assetId1);
@@ -80,7 +86,6 @@ class LimitOrdersVM {
     (this.notificationParams = params);
 
   sync = async () => {
-    this.setLoading(true);
     const orderIdList: string[] = await makeNodeRequest(
       `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}/user_${this.rootStore.accountStore.address}_orders`
     )
@@ -113,7 +118,6 @@ class LimitOrdersVM {
       status: getStateByKey(ordersData, `order_${id}_status`) ?? "closed",
     }));
     this.setOrders(orders as IOrder[]);
-    this.setLoading(true);
   };
 
   get token0() {
@@ -170,18 +174,21 @@ class LimitOrdersVM {
         })
       );
 
-  checkOrderCancel = (id: string) => {
-    console.log(this.notificationParams);
+  checkOrderCancel = (id?: string, many?: boolean) => {
     this.setNotificationParams(
       buildCancelOrderParams({
-        onCancel: () => this.cancelOrder(id),
+        onCancel: () => (many ? {} : this.cancelOrder(id ?? "")),
       })
     );
-    console.log(this.notificationParams);
   };
+
+  get openedOrders() {
+    return this.orders.filter((v) => v.status === "active");
+  }
 
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
+    this.setLoading(true);
     const params = new URLSearchParams(window.location.search);
     const asset0 = params.get("asset0")?.toString();
     const asset1 = params.get("asset1")?.toString();

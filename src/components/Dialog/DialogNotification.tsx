@@ -265,16 +265,21 @@ export const buildSuccessBoostParams = ({
 
 type TBuildCancelOrderProps = {
   onCancel: () => void;
+  many?: boolean;
 };
 
 export const buildCancelOrderParams = ({
   onCancel,
+  many,
 }: TBuildCancelOrderProps): IDialogNotificationProps => {
   return {
     icon: <></>,
-    title: `Are you sure you want cancel the order?`,
-    description:
-      "The current order progress will not be canceled, but further execution will stop",
+    title: many
+      ? "Are you sure you want cancel all orders?"
+      : "Are you sure you want cancel the order?",
+    description: many
+      ? "The current orders progress will not be canceled, but further execution will stop"
+      : "The current order progress will not be canceled, but further execution will stop",
     buttons: [
       () => (
         <Button
@@ -284,7 +289,7 @@ export const buildCancelOrderParams = ({
           fixed
           onClick={onCancel}
         >
-          Cancel the order
+          {many ? "Cancel all orders" : "Cancel the order"}
         </Button>
       ),
       () => (
