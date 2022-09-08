@@ -83,13 +83,13 @@ const Button = styled.button<{
       (() => {
         switch (kind) {
           case "primary":
-            return `background: ${theme.colors.primary300}; border: 1px solid #6563dd; opacity: 1;`;
+            return `background: ${theme.colors.primary300}; border: 1px solid ${theme.colors.primary300}; opacity: 1;`;
           case "secondary":
             return `background: ${theme.colors.white}; border: 1px solid ${theme.colors.primary100}; opacity: 0.4;`;
           case "danger":
             return `background: ${theme.colors.error100}; border: 1px solid ${theme.colors.error100}`;
           default:
-            return `background: #6563dd; border: 1px solid`;
+            return `background: ${theme.colors.primary300}; border: 1px solid ${theme.colors.primary300}; opacity: 1;`;
         }
       })()}
     cursor: not-allowed;

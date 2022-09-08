@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useState } from "react";
 import SizedBox from "@components/SizedBox";
 import { useTheme } from "@emotion/react";
 import Token from "./Token";
@@ -23,6 +23,7 @@ const ArrowImg = styled.img`
   right: calc(50% - 16px);
   top: -12px;
   transition: 0.4s;
+
   :hover {
     transform: rotate(180deg);
   }
@@ -53,6 +54,17 @@ const Tokens: React.FC<IProps> = () => {
     });
     vm.setAssetId1(assetId);
   };
+
+  const handleSwitch = () => {
+    vm.switchTokens();
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    urlSearchParams.set("asset0", vm.assetId0);
+    urlSearchParams.set("asset1", vm.assetId1);
+    navigate({
+      pathname: window.location.pathname,
+      search: `?${urlSearchParams.toString()}`,
+    });
+  };
   return (
     <Root>
       <Token
@@ -62,7 +74,7 @@ const Tokens: React.FC<IProps> = () => {
       />
       <SizedBox height={8} style={{ position: "relative" }}>
         <ArrowImg
-          onClick={vm.switchTokens}
+          onClick={handleSwitch}
           src={theme.images.icons.limitOrderArrow}
         />
       </SizedBox>

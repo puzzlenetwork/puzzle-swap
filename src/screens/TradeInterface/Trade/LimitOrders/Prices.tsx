@@ -2,11 +2,11 @@ import styled from "@emotion/styled";
 import { Column, Row } from "@src/components/Flex";
 import Text from "@src/components/Text";
 import React from "react";
-import Input from "@components/Input";
 import SizedBox from "@components/SizedBox";
-import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
 import { observer } from "mobx-react-lite";
+import LimitTokenInput from "./LimitTokenInput";
+import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import { useStores } from "@stores";
 
 interface IProps {}
@@ -34,7 +34,6 @@ const TextButton = styled(Text)<{ active?: boolean }>`
 `;
 const Prices: React.FC<IProps> = () => {
   const vm = useLimitOrdersVM();
-  const { poolsStore } = useStores();
   const percents = [25, 50, 75, 100];
   return (
     <Root>
@@ -48,24 +47,24 @@ const Prices: React.FC<IProps> = () => {
           </TextButton>
           <SizedBox width={12} />
           <TextButton
-            onClick={() => vm.setPriceSettings(1)}
+            onClick={() => {
+              vm.makePriceFromMarket();
+              vm.setPriceSettings(1);
+            }}
             active={vm.priceSettings === 1}
           >
             Market price
           </TextButton>
         </Row>
         <SizedBox height={4} />
-        <Input
-          prefix={
-            <Text fitContent type="secondary" size="medium">
-              {TOKENS_BY_ASSET_ID[vm.assetId0].symbol}&nbsp;
-            </Text>
-          }
-          suffix={
-            <Text fitContent type="secondary" size="medium">
-              ${poolsStore.usdnRate(vm.assetId0)?.toFormat(2)}
-            </Text>
-          }
+        <LimitTokenInput
+          assetId={vm.token0.assetId}
+          decimals={vm.token0.decimals}
+          amount={vm.price}
+          setAmount={vm.setPrice}
+          usdnEquivalent={vm.dollEq0}
+          error={false}
+          disabled={vm.priceSettings === 1}
         />
       </Column>
       <SizedBox height={16} />
@@ -86,17 +85,13 @@ const Prices: React.FC<IProps> = () => {
           </TextButton>
         </Row>
         <SizedBox height={4} />
-        <Input
-          prefix={
-            <Text fitContent type="secondary" size="medium">
-              {TOKENS_BY_ASSET_ID[vm.assetId1].symbol}&nbsp;
-            </Text>
-          }
-          suffix={
-            <Text fitContent type="secondary" size="medium">
-              ${poolsStore.usdnRate(vm.assetId1)?.toFormat(2)}
-            </Text>
-          }
+        <LimitTokenInput
+          assetId={vm.token1.assetId}
+          decimals={vm.token1.decimals}
+          amount={vm.payment}
+          setAmount={vm.setPayment}
+          usdnEquivalent={vm.dollEq1}
+          error={false}
         />
         <SizedBox height={4} />
         {vm.paymentSettings === 0 && (
@@ -108,6 +103,10 @@ const Prices: React.FC<IProps> = () => {
                 type="blue500"
                 size="small"
                 style={{ paddingRight: 12, cursor: "pointer" }}
+                onClick={() => {
+                  console.log("percent click");
+                  vm.onPercentClick(v);
+                }}
               >
                 {v}%{" "}
               </Text>
@@ -117,7 +116,7 @@ const Prices: React.FC<IProps> = () => {
       </Column>
       <SizedBox height={16} />
       <Note>
-        <Text size="strange">You’ll get 0 PUZZLE</Text>
+        <Text size="big">You’ll get 0 {vm.token1.symbol}</Text>
         <SizedBox height={4} />
         <Text type="secondary" size="medium">
           Transaction fee 0.005 WAVES

@@ -50,21 +50,18 @@ class LimitOrdersVM {
   assetId0: string = TOKENS_BY_SYMBOL.USDN.assetId;
   setAssetId0 = (assetId: string) => (this.assetId0 = assetId);
 
-  price: BN = BN.ZERO;
-  setPrice = (price: BN) => (this.price = price);
-
   get isMarketPrice() {
     return BN.ZERO;
   }
 
-  amount0: BN = BN.ZERO;
-  setAmount0 = (amount: BN) => (this.amount0 = amount);
+  price: BN = BN.ZERO;
+  setPrice = (amount: BN) => (this.price = amount);
 
   assetId1: string = TOKENS_BY_SYMBOL.PUZZLE.assetId;
   setAssetId1 = (assetId: string) => (this.assetId1 = assetId);
 
-  amount1: BN = BN.ZERO;
-  setAmount1 = (amount: BN) => (this.amount1 = amount);
+  payment: BN = BN.ZERO;
+  setPayment = (amount: BN) => (this.payment = amount);
 
   loading: boolean = true;
   private setLoading = (l: boolean) => (this.loading = l);
@@ -130,22 +127,34 @@ class LimitOrdersVM {
     return this.token0?.balance;
   }
 
+  get balance1() {
+    return this.token1?.balance;
+  }
+
   get token1() {
     return this.rootStore.accountStore.balances.find(
       ({ assetId }) => assetId === this.assetId1
     )!;
   }
 
+  makePriceFromMarket = () => {
+    const marketPriceOfToken0 = this.rootStore.poolsStore.t2tPrice(
+      this.assetId0,
+      this.assetId1
+    );
+    this.setPrice(marketPriceOfToken0);
+  };
+
   createOrder = async () =>
     this.rootStore.accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.limitOrders,
-        payment: [{ assetId: this.assetId0, amount: this.amount0.toString() }],
+        payment: [{ assetId: this.assetId0, amount: this.price.toString() }],
         call: {
           function: "createOrder",
           args: [
             { type: "string", value: this.assetId1 },
-            { type: "integer", value: this.amount1.toString() },
+            { type: "integer", value: this.payment.toString() },
           ],
         },
       })
@@ -184,6 +193,27 @@ class LimitOrdersVM {
 
   get openedOrders() {
     return this.orders.filter((v) => v.status === "active");
+  }
+
+  onPercentClick = (percent: number) => {
+    const amount = new BN(percent).times(this.balance1 ?? 1).div(100);
+    this.setPayment(amount);
+  };
+
+  get dollEq0() {
+    const v = this.rootStore.poolsStore
+      .usdnRate(this.assetId0)
+      ?.times(this.price);
+    if (v == null) return "$ 0.00";
+    return `$ ${BN.formatUnits(v, this.token0.decimals).toFormat(2)}`;
+  }
+
+  get dollEq1() {
+    const v = this.rootStore.poolsStore
+      .usdnRate(this.assetId1)
+      ?.times(this.payment);
+    if (v == null) return "$ 0.00";
+    return `$ ${BN.formatUnits(v, this.token1.decimals).toFormat(2)}`;
   }
 
   constructor(private rootStore: RootStore) {

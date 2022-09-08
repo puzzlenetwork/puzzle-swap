@@ -34,7 +34,7 @@ class SendAssetVM {
     makeAutoObservable(this);
   }
 
-  @action.bound onMaxClick = () => {
+  onMaxClick = () => {
     const { assetToSend } = this.rootStore.accountStore;
     this.setAmount(assetToSend!.balance ?? BN.ZERO);
   };
