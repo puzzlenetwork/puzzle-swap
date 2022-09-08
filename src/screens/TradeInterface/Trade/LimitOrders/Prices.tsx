@@ -7,7 +7,7 @@ import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
 import { observer } from "mobx-react-lite";
 import LimitTokenInput from "./LimitTokenInput";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
-import { useStores } from "@stores";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -58,6 +58,8 @@ const Prices: React.FC<IProps> = () => {
         </Row>
         <SizedBox height={4} />
         <LimitTokenInput
+          placeholder={vm.priceSettings === 1 && vm.loading ? "..." : "0.00"}
+          prefix={TOKENS_BY_ASSET_ID[vm.assetId0].symbol}
           assetId={vm.token0.assetId}
           decimals={vm.token0.decimals}
           amount={vm.price}
@@ -65,6 +67,7 @@ const Prices: React.FC<IProps> = () => {
           usdnEquivalent={vm.dollEq0}
           error={false}
           disabled={vm.priceSettings === 1}
+          // onEdit={() => vm.setPriceSettings(0)}
         />
       </Column>
       <SizedBox height={16} />
@@ -86,6 +89,11 @@ const Prices: React.FC<IProps> = () => {
         </Row>
         <SizedBox height={4} />
         <LimitTokenInput
+          prefix={
+            TOKENS_BY_ASSET_ID[
+              vm.paymentSettings === 0 ? vm.assetId1 : vm.assetId0
+            ].symbol
+          }
           assetId={vm.token1.assetId}
           decimals={vm.token1.decimals}
           amount={vm.payment}
@@ -116,7 +124,17 @@ const Prices: React.FC<IProps> = () => {
       </Column>
       <SizedBox height={16} />
       <Note>
-        <Text size="big">You’ll get 0 {vm.token1.symbol}</Text>
+        <Text size="big">
+          {vm.paymentSettings === 0
+            ? `You’ll get ${BN.formatUnits(
+                vm.finalAmount,
+                vm.token0.decimals
+              ).toFormat(2)} ${vm.token0.symbol}`
+            : `You’ll pay ${BN.formatUnits(
+                vm.finalAmount,
+                vm.token1.decimals
+              ).toFormat(2)} ${vm.token1.symbol}`}
+        </Text>
         <SizedBox height={4} />
         <Text type="secondary" size="medium">
           Transaction fee 0.005 WAVES

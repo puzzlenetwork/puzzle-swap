@@ -8,7 +8,7 @@ type TTextType =
   | "error"
   | "success"
   | "purple300";
-type TTextSize = "small" | "medium" | "large" | "big" | "strange";
+type TTextSize = "small" | "medium" | "large" | "big";
 type TTextAlign = "center" | "left" | "right" | "justify" | "end";
 
 const Text = styled.p<{
@@ -58,8 +58,6 @@ const Text = styled.p<{
           return "font-size: 12px; line-height: 16px;";
         case "medium":
           return "font-size: 14px; line-height: 20px;";
-        case "strange":
-          return "font-size: 20px;line-height: 24px;";
         case "big":
           return "font-size: 20px; line-height: 24px;";
         case "large":

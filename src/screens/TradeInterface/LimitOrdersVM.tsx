@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import { useVM } from "@src/hooks/useVM";
 import BN from "@src/utils/BN";
@@ -11,6 +11,7 @@ import {
   buildCancelOrderParams,
   IDialogNotificationProps,
 } from "@components/Dialog/DialogNotification";
+import aggregatorService from "@src/services/aggregatorService";
 
 const ctx = React.createContext<LimitOrdersVM | null>(null);
 
@@ -44,6 +45,20 @@ export interface IOrder {
 }
 
 class LimitOrdersVM {
+  constructor(private rootStore: RootStore) {
+    makeAutoObservable(this);
+    this.setLoading(true);
+    const params = new URLSearchParams(window.location.search);
+    const asset0 = params.get("asset0")?.toString();
+    const asset1 = params.get("asset1")?.toString();
+    this.assetId0 = asset0 ?? TOKENS_BY_SYMBOL.USDN.assetId;
+    this.assetId1 = asset1 ?? TOKENS_BY_SYMBOL.PUZZLE.assetId;
+    this.sync().then(() => this.setLoading(false));
+    setInterval(this.sync, 60 * 1000);
+
+    when(() => this.priceSettings === 1, this.getMarketPrice);
+  }
+
   orders: Array<IOrder> = [];
   setOrders = (orders: Array<IOrder>) => (this.orders = orders);
 
@@ -216,15 +231,28 @@ class LimitOrdersVM {
     return `$ ${BN.formatUnits(v, this.token1.decimals).toFormat(2)}`;
   }
 
-  constructor(private rootStore: RootStore) {
-    makeAutoObservable(this);
-    this.setLoading(true);
-    const params = new URLSearchParams(window.location.search);
-    const asset0 = params.get("asset0")?.toString();
-    const asset1 = params.get("asset1")?.toString();
-    this.assetId0 = asset0 ?? TOKENS_BY_SYMBOL.USDN.assetId;
-    this.assetId1 = asset1 ?? TOKENS_BY_SYMBOL.PUZZLE.assetId;
-    this.sync().then(() => this.setLoading(false));
-    setInterval(this.sync, 60 * 1000);
+  get finalAmount(): BN {
+    if (this.paymentSettings === 0) {
+      const v1 = BN.formatUnits(this.price, this.token1.decimals);
+      const v2 = BN.formatUnits(this.payment, this.token0.decimals);
+      return BN.parseUnits(v1.times(v2), this.token0.decimals);
+    } else if (this.paymentSettings === 1) {
+      const v1 = BN.formatUnits(this.price, this.token0.decimals);
+      const v2 = BN.formatUnits(this.payment, this.token1.decimals);
+      console.log(v2.div(1).toString());
+      return BN.parseUnits(v2.div(v1), this.token1.decimals);
+    }
+    return BN.ZERO;
   }
+
+  getMarketPrice = async () => {
+    this.setLoading(true);
+    const res = await aggregatorService.calc(
+      this.assetId1,
+      this.assetId0,
+      BN.parseUnits(1, this.token1.decimals)
+    );
+    this.setPrice(new BN(res.estimatedOut));
+    this.setLoading(false);
+  };
 }

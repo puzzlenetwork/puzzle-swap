@@ -5,16 +5,18 @@ import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
 import BigNumberInput from "@components/BigNumberInput";
 import AmountInput from "@components/AmountInput";
-import { TOKENS_BY_ASSET_ID } from "@src/constants";
 
 interface IProps {
   assetId: string;
+  prefix: string;
+  placeholder?: string;
   decimals: number;
   amount: BN;
   setAmount?: (amount: BN) => void;
   usdnEquivalent?: string;
   error?: boolean;
   disabled?: boolean;
+  onEdit?: () => void;
 }
 
 const Root = styled.div`
@@ -80,7 +82,7 @@ const LimitTokenInput: React.FC<IProps> = (props) => {
           type={focused ? "primary" : "secondary"}
           style={{ paddingRight: 2, fontSize: 16 }}
         >
-          {TOKENS_BY_ASSET_ID[props.assetId].symbol}
+          {props.prefix}
         </Text>
         <BigNumberInput
           renderInput={(props, ref) => (
@@ -102,8 +104,11 @@ const LimitTokenInput: React.FC<IProps> = (props) => {
           autofocus={focused}
           decimals={props.decimals}
           value={props.amount}
-          onChange={(v) => props.setAmount && props.setAmount(v)}
-          placeholder="0.00"
+          onChange={(v) => {
+            props.setAmount && props.setAmount(v);
+            props.onEdit && props.onEdit();
+          }}
+          placeholder={props.placeholder ?? "0.00"}
           readOnly={!props.setAmount}
         />
 

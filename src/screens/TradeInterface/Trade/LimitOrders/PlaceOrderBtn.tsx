@@ -33,7 +33,7 @@ const PlaceOrderBtn: React.FC<IProps> = () => {
     case payment!.gt(balance0!):
       return (
         <Button disabled fixed>
-          Insufficient {`${token0?.name ?? ""} `}balance
+          Insufficient {`${token0?.symbol ?? ""} `}balance
         </Button>
       );
     default:
