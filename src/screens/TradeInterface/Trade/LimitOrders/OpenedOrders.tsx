@@ -16,7 +16,11 @@ const OpenedOrders: React.FC<IProps> = () => {
   return (
     <Root>
       {vm.orders.map((v) => (
-        <Order {...v} key={`order_${v.id}`} />
+        <Order
+          {...v}
+          key={`order_${v.id}`}
+          onCancel={() => vm.checkOrderCancel(v.id)}
+        />
       ))}
     </Root>
   );

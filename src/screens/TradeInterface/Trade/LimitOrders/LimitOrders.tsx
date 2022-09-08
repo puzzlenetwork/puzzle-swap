@@ -9,6 +9,8 @@ import MyOrders from "./MyOrders";
 import useWindowSize from "@src/hooks/useWindowSize";
 import { useSwapVM } from "@screens/TradeInterface/SwapVM";
 import PlaceOrderBtn from "@screens/TradeInterface/Trade/LimitOrders/PlaceOrderBtn";
+import DialogNotification from "@components/Dialog/DialogNotification";
+import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
 
 interface IProps {}
 
@@ -26,6 +28,7 @@ const Root = styled.div`
 const LimitOrders: React.FC<IProps> = ({ ...rest }) => {
   const { width } = useWindowSize();
   const { openedChart } = useSwapVM();
+  const vm = useLimitOrdersVM();
   return (
     <Root {...rest}>
       <Card
@@ -40,8 +43,19 @@ const LimitOrders: React.FC<IProps> = ({ ...rest }) => {
         <SizedBox height={16} />
         <PlaceOrderBtn />
       </Card>
+
       <SizedBox height={40} />
       {((width && width < 880) || !openedChart) && <MyOrders />}
+      <DialogNotification
+        onClose={() => vm.setNotificationParams(null)}
+        title={vm.notificationParams?.title ?? ""}
+        description={vm.notificationParams?.description}
+        buttonsDirection={vm.notificationParams?.buttonsDirection}
+        type={vm.notificationParams?.type}
+        buttons={vm.notificationParams?.buttons}
+        style={{ maxWidth: 360 }}
+        visible={vm.notificationParams != null}
+      />
     </Root>
   );
 };

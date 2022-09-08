@@ -12,7 +12,7 @@ import Progressbar from "@components/Progressbar";
 import { ReactComponent as CloseIcon } from "@src/assets/icons/cancelOrder.svg";
 
 interface IProps extends IOrder {
-  onCancel: (id: string) => void;
+  onCancel: () => void;
 }
 
 const Root = styled.div`
@@ -74,7 +74,7 @@ const Order: React.FC<IProps> = ({
         alignItems="center"
         justifyContent="center"
         style={{ cursor: "pointer" }}
-        onClick={() => onCancel(id)}
+        onClick={onCancel}
       >
         <CloseIcon style={{ height: 16, width: 16 }} />
         <SizedBox width={2} />

@@ -261,5 +261,39 @@ export const buildSuccessBoostParams = ({
     ],
   };
 };
+//CancelOrder
+
+type TBuildCancelOrderProps = {
+  onCancel: () => void;
+};
+
+export const buildCancelOrderParams = ({
+  onCancel,
+}: TBuildCancelOrderProps): IDialogNotificationProps => {
+  return {
+    icon: <></>,
+    title: `Are you sure you want cancel the order?`,
+    description:
+      "The current order progress will not be canceled, but further execution will stop",
+    buttons: [
+      () => (
+        <Button
+          key="explorer"
+          size="medium"
+          kind="danger"
+          fixed
+          onClick={onCancel}
+        >
+          Cancel the order
+        </Button>
+      ),
+      () => (
+        <Button key="explorer" size="medium" kind="secondary" fixed>
+          Back to Pool page
+        </Button>
+      ),
+    ],
+  };
+};
 
 export default DialogNotification;
