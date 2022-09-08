@@ -11,6 +11,7 @@ import { useSwapVM } from "@screens/TradeInterface/SwapVM";
 import PlaceOrderBtn from "@screens/TradeInterface/Trade/LimitOrders/PlaceOrderBtn";
 import DialogNotification from "@components/Dialog/DialogNotification";
 import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
+import { observer } from "mobx-react-lite";
 
 interface IProps {}
 
@@ -60,4 +61,4 @@ const LimitOrders: React.FC<IProps> = ({ ...rest }) => {
   );
 };
 
-export default LimitOrders;
+export default observer(LimitOrders);
