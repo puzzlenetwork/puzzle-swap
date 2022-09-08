@@ -49,6 +49,7 @@ const LimitOrders: React.FC<IProps> = ({ ...rest }) => {
       {((width && width < 880) || !openedChart) && <MyOrders />}
       <DialogNotification
         onClose={() => vm.setNotificationParams(null)}
+        icon={vm.notificationParams?.icon}
         title={vm.notificationParams?.title ?? ""}
         description={vm.notificationParams?.description}
         buttonsDirection={vm.notificationParams?.buttonsDirection}

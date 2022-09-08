@@ -9,10 +9,8 @@ import { INodeData } from "@src/services/nodeService";
 import { getStateByKey } from "@src/utils/getStateByKey";
 import {
   buildCancelOrderParams,
-  buildErrorDialogParams,
   IDialogNotificationProps,
 } from "@components/Dialog/DialogNotification";
-import Button from "@components/Button";
 
 const ctx = React.createContext<LimitOrdersVM | null>(null);
 
@@ -64,24 +62,7 @@ class LimitOrdersVM {
   loading: boolean = false;
   private _setLoading = (l: boolean) => (this.loading = l);
 
-  public notificationParams: IDialogNotificationProps | null = {
-    icon: <></>,
-    title: `Are you sure you want cancel the order?`,
-    description:
-      "The current order progress will not be canceled, but further execution will stop",
-    buttons: [
-      () => (
-        <Button key="explorer" size="medium" kind="danger" fixed>
-          Cancel the order
-        </Button>
-      ),
-      () => (
-        <Button key="explorer" size="medium" kind="secondary" fixed>
-          Back to Pool page
-        </Button>
-      ),
-    ],
-  };
+  public notificationParams: IDialogNotificationProps | null = null;
   public setNotificationParams = (params: IDialogNotificationProps | null) =>
     (this.notificationParams = params);
 
