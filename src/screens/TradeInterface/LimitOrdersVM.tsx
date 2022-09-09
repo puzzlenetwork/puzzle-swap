@@ -195,7 +195,7 @@ class LimitOrdersVM {
       this.paymentSettings === 0 ? this.finalAmount : this.payment;
     const requiredToken = this.token0;
     this.setLoading(true);
-    this.rootStore.accountStore
+    await this.rootStore.accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.limitOrders,
         payment: [
@@ -233,7 +233,9 @@ class LimitOrdersVM {
 
   cancelOrder = async (orderId: string) => {
     this.setLoading(true);
-    this.rootStore.accountStore
+    this.setNotificationParams(null);
+    this.setOrderToDisplayDetails(null);
+    await this.rootStore.accountStore
       .invoke({
         payment: [],
         dApp: CONTRACT_ADDRESSES.limitOrders,
@@ -258,8 +260,6 @@ class LimitOrdersVM {
             }
           )
       )
-      .then(() => this.setNotificationParams(null))
-      .then(() => this.setOrderToDisplayDetails(null))
       .then(() => this.sync())
       .catch((e) =>
         this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
@@ -277,8 +277,8 @@ class LimitOrdersVM {
     );
     if (activeOrders.length === 0) return;
     const ordersToCancel = activeOrders.map(({ id }) => id).join(",");
-
-    this.rootStore.accountStore
+    this.setNotificationParams(null);
+    await this.rootStore.accountStore
       .invoke({
         payment: [],
         dApp: CONTRACT_ADDRESSES.proxyLimitOrders,
@@ -300,7 +300,6 @@ class LimitOrdersVM {
             }
           )
       )
-      .then(() => this.setNotificationParams(null))
       .then(() => this.sync())
       .catch((e) =>
         this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
