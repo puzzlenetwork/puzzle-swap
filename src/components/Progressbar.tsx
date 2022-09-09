@@ -5,18 +5,26 @@ import "react-circular-progressbar/dist/styles.css";
 
 interface IProps {
   percent: number;
+  red?: boolean;
 }
 
-const Root = styled.div`
+const Root = styled.div<{ red?: boolean }>`
   width: 32px;
   height: 32px;
 
+  .CircularProgressbar .CircularProgressbar-trail {
+    stroke: ${({ theme, red }) =>
+      red ? theme.colors.error100 : theme.colors.primary100};
+  }
+
   .CircularProgressbar .CircularProgressbar-path {
-    stroke: ${({ theme }) => theme.colors.blue500};
+    stroke: ${({ theme, red }) =>
+      red ? theme.colors.error500 : theme.colors.blue500};
   }
 
   .CircularProgressbar .CircularProgressbar-text {
-    fill: ${({ theme }) => theme.colors.blue500};
+    fill: ${({ theme, red }) =>
+      red ? theme.colors.error500 : theme.colors.blue500};
   }
 
   .CircularProgressbar .CircularProgressbar-text {
@@ -26,9 +34,9 @@ const Root = styled.div`
   }
 `;
 
-const Progressbar: React.FC<IProps> = ({ percent }) => {
+const Progressbar: React.FC<IProps> = ({ percent, red }) => {
   return (
-    <Root>
+    <Root red={red}>
       <CircularProgressbar value={percent} text={`${percent}%`} />
     </Root>
   );

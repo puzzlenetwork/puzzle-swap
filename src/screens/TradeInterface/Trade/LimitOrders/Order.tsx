@@ -12,18 +12,12 @@ import Progressbar from "@components/Progressbar";
 import { ReactComponent as CloseIcon } from "@src/assets/icons/cancelOrder.svg";
 
 interface IProps extends IOrder {
-  onCancel: () => void;
+  onCancel?: () => void;
 }
 
 const Root = styled.div`
   display: flex;
-  background: ${({ theme }) => theme.colors.white};
-  width: 100%;
   align-items: center;
-  border: 1px solid ${({ theme }) => theme.colors.primary100};
-  border-radius: 16px;
-  padding: 18px;
-  box-sizing: border-box;
 `;
 
 const Order: React.FC<IProps> = ({
@@ -32,6 +26,7 @@ const Order: React.FC<IProps> = ({
   amount0,
   token1,
   token0,
+  status,
   onCancel,
 }) => {
   const theme = useTheme();
@@ -44,7 +39,7 @@ const Order: React.FC<IProps> = ({
   return (
     <Root>
       <Row alignItems="center">
-        <Progressbar percent={percent.toNumber()} />
+        <Progressbar percent={percent.toNumber()} red={status === "canceled"} />
         <SizedBox width={10} />
         <Column>
           <Row alignItems="center">
@@ -67,19 +62,21 @@ const Order: React.FC<IProps> = ({
           </Text>
         </Column>
       </Row>
-      <Row
-        mainAxisSize="fit-content"
-        alignItems="center"
-        justifyContent="center"
-        style={{ cursor: "pointer" }}
-        onClick={onCancel}
-      >
-        <CloseIcon style={{ height: 16, width: 16 }} />
-        <SizedBox width={2} />
-        <Text size="medium" weight={500} type="blue500" fitContent>
-          Cancel
-        </Text>
-      </Row>
+      {onCancel && (
+        <Row
+          mainAxisSize="fit-content"
+          alignItems="center"
+          justifyContent="center"
+          style={{ cursor: "pointer" }}
+          onClick={onCancel}
+        >
+          <CloseIcon style={{ height: 16, width: 16 }} />
+          <SizedBox width={2} />
+          <Text size="medium" weight={500} type="blue500" fitContent>
+            Cancel
+          </Text>
+        </Row>
+      )}
     </Root>
   );
 };

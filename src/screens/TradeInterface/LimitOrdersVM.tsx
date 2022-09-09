@@ -13,7 +13,6 @@ import {
 } from "@components/Dialog/DialogNotification";
 import aggregatorService from "@src/services/aggregatorService";
 import dayjs from "dayjs";
-import { log } from "util";
 
 const ctx = React.createContext<LimitOrdersVM | null>(null);
 
@@ -44,7 +43,7 @@ export interface IOrder {
   token1: string;
   fulfilled0: BN;
   fulfilled1: BN;
-  timestamp: dayjs.Dayjs;
+  timestamp: number;
   status: "active" | "closed" | "canceled";
 }
 
@@ -155,7 +154,7 @@ class LimitOrdersVM {
         token1: "DG2xFkPdDwKUoBkzGAhQtLpSGzfXLiCYPEzeKH2Ad24p",
         fulfilled0: new BN(80000000),
         fulfilled1: new BN(0),
-        status: "active",
+        status: "canceled",
         timestamp: dayjs(1659999600000),
       },
       {
@@ -178,7 +177,7 @@ class LimitOrdersVM {
         fulfilled0: new BN(0),
         fulfilled1: new BN(0),
         status: "active",
-        timestamp: dayjs(1662713690993),
+        timestamp: 1662713690993,
       },
     ];
     // this.setOrders(orders as IOrder[]);
@@ -250,25 +249,58 @@ class LimitOrdersVM {
           type: "error",
         })
       );
+  cancelAllOrders = async () => {
+    const activeOrders = this.orders.filter(
+      ({ status }) => status === "active"
+    );
+    if (activeOrders.length === 0) return;
+    const ordersToCancel = activeOrders.map(({ id }) => id).join(",");
+
+    this.rootStore.accountStore
+      .invoke({
+        payment: [],
+        dApp: CONTRACT_ADDRESSES.proxyLimitOrders,
+        call: {
+          function: "cancelMany",
+          args: [{ type: "string", value: ordersToCancel }],
+        },
+      })
+      .then(() => this.setNotificationParams(null))
+      .then(() => this.sync())
+      .catch((e) =>
+        this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
+          type: "error",
+        })
+      );
+  };
 
   checkOrderCancel = (id?: string, many?: boolean) => {
     this.setNotificationParams(
       buildCancelOrderParams({
-        onCancel: () => (many ? {} : this.cancelOrder(id ?? "")),
+        onCancel: () =>
+          many ? this.cancelAllOrders() : this.cancelOrder(id ?? ""),
+        many,
       })
     );
   };
 
-  get openedOrders() {
-    const active = this.orders.filter((v) => v.status === "active");
-    if (active.length === 0) return [];
-    return Object.values(
-      active.reduce((a, o) => {
-        const day = o.timestamp.startOf("day");
-        // (a[day] ??= []).push({ ...o });
-        return a;
-      }, {} as any)
-    );
+  groupedOrders(opened?: boolean) {
+    const orders = opened
+      ? this.orders.filter((v) => v.status === "active")
+      : this.orders.filter((v) => v.status !== "active");
+    const sorted = orders
+      .slice()
+      .sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1));
+    if (sorted.length === 0) return {};
+    return sorted.reduce((acc, order) => {
+      const day = dayjs(order.timestamp).startOf("day").toDate().getTime();
+      Array.isArray(acc[day]) ? acc[day].push(order) : (acc[day] = [order]);
+      return acc;
+    }, {} as Record<number, Array<IOrder>>);
+  }
+
+  get isThereOpenedOrders() {
+    return this.orders.filter((v) => v.status === "active").length > 0;
   }
 
   onPercentClick = (percent: number) => {

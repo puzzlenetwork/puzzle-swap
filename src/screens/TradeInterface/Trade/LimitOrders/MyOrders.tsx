@@ -36,9 +36,9 @@ const MyOrders: React.FC<IProps> = () => {
           activeTab={activeTab}
           setActive={(v) => setActiveTab(v)}
         />
-        {accountStore.address == null &&
+        {accountStore.address != null &&
           activeTab === 0 &&
-          vm.openedOrders.length > 0 && (
+          vm.isThereOpenedOrders && (
             <Row
               mainAxisSize="fit-content"
               alignItems="center"

@@ -2,6 +2,10 @@ import styled from "@emotion/styled";
 import React from "react";
 import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
 import { observer } from "mobx-react-lite";
+import { Column } from "@src/components/Flex";
+import Text from "@src/components/Text";
+import dayjs from "dayjs";
+import SizedBox from "@components/SizedBox";
 import Order from "./Order";
 
 interface IProps {}
@@ -10,18 +14,52 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
 `;
+const Orders = styled.div`
+  display: flex;
+  flex-direction: column;
+  background: ${({ theme }) => theme.colors.white};
+  width: 100%;
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
+  border-radius: 16px;
+  padding: 18px;
+  box-sizing: border-box;
+
+  & > * {
+    padding: 10px 0;
+    border-bottom: 1px solid ${({ theme }) => theme.colors.primary100};
+  }
+
+  & > :first-of-type {
+    padding-top: 0;
+  }
+
+  & > :last-of-type {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+`;
 
 const OpenedOrders: React.FC<IProps> = () => {
   const vm = useLimitOrdersVM();
-  console.log(vm.openedOrders);
   return (
     <Root>
-      {vm.orders.map((v) => (
-        <Order
-          {...v}
-          key={`order_${v.id}`}
-          onCancel={() => vm.checkOrderCancel(v.id)}
-        />
+      {Object.entries(vm.groupedOrders(true)).map(([time, orders]) => (
+        <Column key={time} crossAxisSize="max">
+          <Text type="secondary" size="small">
+            {dayjs(time).format("MMM DD, YYYY")}
+          </Text>
+          <SizedBox height={8} />
+          <Orders>
+            {orders.map((o) => (
+              <Order
+                key={o.id}
+                onCancel={() => vm.checkOrderCancel(o.id)}
+                {...o}
+              />
+            ))}
+          </Orders>
+          <SizedBox height={24} />
+        </Column>
       ))}
     </Root>
   );

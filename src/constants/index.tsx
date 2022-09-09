@@ -358,6 +358,7 @@ export const CONTRACT_ADDRESSES = {
   createArtefacts: "3PFkgvC9y6zHy64zEAscKKgaNY3yipiLqbW",
   boost: "3PAeY7RgwuNUZNscGqahqJxFTFDkh7fbNwJ",
   limitOrders: "3PPrfNMnk8z8QhZcqMyJk69mF65s2Rbz3B6",
+  proxyLimitOrders: "3PM4Mn2iwQnUkeMxTJJAuriiVEGAcQwDU5H",
 };
 export const PUZZLE_NFTS = [
   {
