@@ -53,6 +53,7 @@ const OpenedOrders: React.FC<IProps> = () => {
             {orders.map((o) => (
               <Order
                 key={o.id}
+                onClick={() => vm.setOrderToDisplayDetails(o)}
                 onCancel={() => vm.checkOrderCancel(o.id)}
                 {...o}
               />

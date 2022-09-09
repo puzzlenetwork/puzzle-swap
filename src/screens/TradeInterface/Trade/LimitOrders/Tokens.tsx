@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
 import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";
+import { useSwapVM } from "@screens/TradeInterface/SwapVM";
 
 interface IProps {}
 
@@ -31,6 +32,7 @@ const ArrowImg = styled.img`
 
 const Tokens: React.FC<IProps> = () => {
   const vm = useLimitOrdersVM();
+  const swapVm = useSwapVM();
   const { accountStore } = useStores();
   const theme = useTheme();
   const navigate = useNavigate();
@@ -43,6 +45,7 @@ const Tokens: React.FC<IProps> = () => {
       search: `?${urlSearchParams.toString()}`,
     });
     vm.setAssetId0(assetId);
+    swapVm.setAssetId0(assetId);
   };
   const handleSetAssetId1 = (assetId: string) => {
     if (assetId === vm.assetId1) return;
@@ -53,6 +56,7 @@ const Tokens: React.FC<IProps> = () => {
       search: `?${urlSearchParams.toString()}`,
     });
     vm.setAssetId1(assetId);
+    swapVm.setAssetId1(assetId);
   };
 
   const handleSwitch = () => {
@@ -64,6 +68,8 @@ const Tokens: React.FC<IProps> = () => {
       pathname: window.location.pathname,
       search: `?${urlSearchParams.toString()}`,
     });
+    swapVm.setAssetId0(vm.assetId0);
+    swapVm.setAssetId1(vm.assetId1);
   };
   return (
     <Root>

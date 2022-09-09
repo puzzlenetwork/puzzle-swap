@@ -51,7 +51,11 @@ const OrderHistory: React.FC<IProps> = () => {
           <SizedBox height={8} />
           <Orders>
             {orders.map((o) => (
-              <Order key={o.id} {...o} />
+              <Order
+                key={o.id}
+                onClick={() => vm.setOrderToDisplayDetails(o)}
+                {...o}
+              />
             ))}
           </Orders>
           <SizedBox height={24} />

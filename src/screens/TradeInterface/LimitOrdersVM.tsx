@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { makeAutoObservable, when } from "mobx";
+import { action, makeAutoObservable, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import { useVM } from "@src/hooks/useVM";
 import BN from "@src/utils/BN";
@@ -100,40 +100,44 @@ class LimitOrdersVM {
   public setNotificationParams = (params: IDialogNotificationProps | null) =>
     (this.notificationParams = params);
 
-  sync = async () => {
-    const orderIdList: string[] = await makeNodeRequest(
-      `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}/user_${this.rootStore.accountStore.address}_orders`
-    )
-      .then(({ data }) => data.value.split(","))
-      .catch(() => []);
-    if (orderIdList.length === 0) return;
+  orderToDisplayDetails: IOrder | null = null;
+  setOrderToDisplayDetails = (v: IOrder | null) =>
+    (this.orderToDisplayDetails = v);
 
-    const keys = orderIdList.reduce(
-      (acc, id) => [...acc, ...getOrderStateKeys(id)],
-      [] as string[]
-    );
-    const ordersData: INodeData[] = await makeNodeRequest(
-      `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}`,
-      { postData: { keys } }
-    )
-      .then(({ data }) => data)
-      .catch(() => []);
-    const orders = orderIdList.map((id) => ({
-      id,
-      amount0: new BN(getStateByKey(ordersData, `order_${id}_amount0`) ?? 0),
-      token0: getStateByKey(ordersData, `order_${id}_token0`) ?? "",
-      timestamp: dayjs(getStateByKey(ordersData, `order_${id}_timestamp`) ?? 0),
-      amount1: new BN(getStateByKey(ordersData, `order_${id}_amount1`) ?? 0),
-      token1: getStateByKey(ordersData, `order_${id}_token1`) ?? "",
-      fulfilled0: new BN(
-        getStateByKey(ordersData, `order_${id}_fulfilled0`) ?? 0
-      ),
-      fulfilled1: new BN(
-        getStateByKey(ordersData, `order_${id}_fulfilled1`) ?? 0
-      ),
-      status: getStateByKey(ordersData, `order_${id}_status`) ?? "closed",
-    }));
-    console.log(orders);
+  sync = async () => {
+    // const orderIdList: string[] = await makeNodeRequest(
+    //   `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}/user_${this.rootStore.accountStore.address}_orders`
+    // )
+    //   .then(({ data }) => data.value.split(","))
+    //   .catch(() => []);
+    // if (orderIdList.length === 0) return;
+    //
+    // const keys = orderIdList.reduce(
+    //   (acc, id) => [...acc, ...getOrderStateKeys(id)],
+    //   [] as string[]
+    // );
+    // const ordersData: INodeData[] = await makeNodeRequest(
+    //   `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}`,
+    //   { postData: { keys } }
+    // )
+    //   .then(({ data }) => data)
+    //   .catch(() => []);
+    // const orders = orderIdList.map((id) => ({
+    //   id,
+    //   amount0: new BN(getStateByKey(ordersData, `order_${id}_amount0`) ?? 0),
+    //   token0: getStateByKey(ordersData, `order_${id}_token0`) ?? "",
+    //   timestamp: dayjs(getStateByKey(ordersData, `order_${id}_timestamp`) ?? 0),
+    //   amount1: new BN(getStateByKey(ordersData, `order_${id}_amount1`) ?? 0),
+    //   token1: getStateByKey(ordersData, `order_${id}_token1`) ?? "",
+    //   fulfilled0: new BN(
+    //     getStateByKey(ordersData, `order_${id}_fulfilled0`) ?? 0
+    //   ),
+    //   fulfilled1: new BN(
+    //     getStateByKey(ordersData, `order_${id}_fulfilled1`) ?? 0
+    //   ),
+    //   status: getStateByKey(ordersData, `order_${id}_status`) ?? "closed",
+    // }));
+    // console.log(orders);
     const v = [
       {
         id: "1",
@@ -212,16 +216,28 @@ class LimitOrdersVM {
     this.setPrice(marketPriceOfToken0);
   };
 
-  createOrder = async () =>
+  createOrder = async () => {
+    if (this.price.eq(0) || this.payment.eq(0)) return;
+    const paymentAmount =
+      this.paymentSettings === 0 ? this.payment : this.finalAmount;
+    const paymentToken = this.paymentSettings === 0 ? this.token0 : this.token1;
+
+    const requiredAmount =
+      this.paymentSettings === 0 ? this.finalAmount : this.payment;
+    const requiredToken =
+      this.paymentSettings === 0 ? this.token1 : this.token0;
+
     this.rootStore.accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.limitOrders,
-        payment: [{ assetId: this.assetId0, amount: this.price.toString() }],
+        payment: [
+          { assetId: paymentToken.assetId, amount: paymentAmount.toString() },
+        ],
         call: {
           function: "createOrder",
           args: [
-            { type: "string", value: this.assetId1 },
-            { type: "integer", value: this.payment.toString() },
+            { type: "string", value: requiredToken.assetId },
+            { type: "integer", value: requiredAmount.toString() },
           ],
         },
       })
@@ -231,6 +247,7 @@ class LimitOrdersVM {
           type: "error",
         })
       );
+  };
 
   cancelOrder = async (orderId: string) =>
     this.rootStore.accountStore
@@ -277,9 +294,21 @@ class LimitOrdersVM {
   checkOrderCancel = (id?: string, many?: boolean) => {
     this.setNotificationParams(
       buildCancelOrderParams({
-        onCancel: () =>
+        onOrderCancel: () =>
           many ? this.cancelAllOrders() : this.cancelOrder(id ?? ""),
         many,
+        onCancel: () => this.setNotificationParams(null),
+      })
+    );
+  };
+
+  checkOrderDetails = (id?: string, many?: boolean) => {
+    this.setNotificationParams(
+      buildCancelOrderParams({
+        onOrderCancel: () =>
+          many ? this.cancelAllOrders() : this.cancelOrder(id ?? ""),
+        many,
+        onCancel: () => this.setNotificationParams(null),
       })
     );
   };
@@ -317,14 +346,16 @@ class LimitOrdersVM {
   }
 
   get dollEq1() {
+    const token = this.paymentSettings === 0 ? this.token1 : this.token0;
     const v = this.rootStore.poolsStore
-      .usdnRate(this.assetId1)
+      .usdnRate(token.assetId)
       ?.times(this.payment);
     if (v == null) return "$ 0.00";
-    return `$ ${BN.formatUnits(v, this.token1.decimals).toFormat(2)}`;
+    return `$ ${BN.formatUnits(v, token.decimals).toFormat(2)}`;
   }
 
   get finalAmount(): BN {
+    if (this.price.eq(0) || this.payment.eq(0)) return BN.ZERO;
     if (this.paymentSettings === 0) {
       const v1 = BN.formatUnits(this.price, this.token1.decimals);
       const v2 = BN.formatUnits(this.payment, this.token0.decimals);

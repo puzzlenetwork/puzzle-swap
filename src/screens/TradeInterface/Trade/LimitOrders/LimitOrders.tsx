@@ -12,6 +12,7 @@ import PlaceOrderBtn from "@screens/TradeInterface/Trade/LimitOrders/PlaceOrderB
 import DialogNotification from "@components/Dialog/DialogNotification";
 import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
 import { observer } from "mobx-react-lite";
+import OrderDetailsModal from "./OrderDetailsModal";
 
 interface IProps {}
 
@@ -57,6 +58,10 @@ const LimitOrders: React.FC<IProps> = ({ ...rest }) => {
         buttons={vm.notificationParams?.buttons}
         style={{ maxWidth: 360 }}
         visible={vm.notificationParams != null}
+      />
+      <OrderDetailsModal
+        visible={vm.orderToDisplayDetails != null}
+        onClose={() => vm.setOrderToDisplayDetails(null)}
       />
     </Root>
   );

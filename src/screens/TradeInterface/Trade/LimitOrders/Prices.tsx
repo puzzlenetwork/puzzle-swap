@@ -32,6 +32,13 @@ const TextButton = styled(Text)<{ active?: boolean }>`
   color: ${({ theme, active }) =>
     active ? theme.colors?.primary800 : theme.colors?.primary650};
 `;
+const Percents = styled(Row)`
+  & > * {
+    :hover {
+      color: ${({ theme }) => theme.colors.primary800};
+    }
+  }
+`;
 const Prices: React.FC<IProps> = () => {
   const vm = useLimitOrdersVM();
   const percents = [25, 50, 75, 100];
@@ -103,7 +110,7 @@ const Prices: React.FC<IProps> = () => {
         />
         <SizedBox height={4} />
         {vm.paymentSettings === 0 && (
-          <Row>
+          <Percents>
             {percents.map((v) => (
               <Text
                 key={v}
@@ -119,7 +126,7 @@ const Prices: React.FC<IProps> = () => {
                 {v}%{" "}
               </Text>
             ))}
-          </Row>
+          </Percents>
         )}
       </Column>
       <SizedBox height={16} />

@@ -264,11 +264,13 @@ export const buildSuccessBoostParams = ({
 //CancelOrder
 
 type TBuildCancelOrderProps = {
+  onOrderCancel: () => void;
   onCancel: () => void;
   many?: boolean;
 };
 
 export const buildCancelOrderParams = ({
+  onOrderCancel,
   onCancel,
   many,
 }: TBuildCancelOrderProps): IDialogNotificationProps => {
@@ -287,18 +289,23 @@ export const buildCancelOrderParams = ({
           size="medium"
           kind="danger"
           fixed
-          onClick={onCancel}
+          onClick={onOrderCancel}
         >
           {many ? "Cancel all orders" : "Cancel the order"}
         </Button>
       ),
       () => (
-        <Button key="explorer" size="medium" kind="secondary" fixed>
-          Back to Pool page
+        <Button
+          key="explorer"
+          size="medium"
+          kind="secondary"
+          fixed
+          onClick={onCancel}
+        >
+          Cancel
         </Button>
       ),
     ],
   };
 };
-
 export default DialogNotification;

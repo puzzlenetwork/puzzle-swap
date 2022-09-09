@@ -37,7 +37,7 @@ const Token: React.FC<IProps> = (props) => {
         <Row alignItems="center">
           <SquareTokenIcon size="small" src={token?.logo} />
           <SizedBox width={12} />
-          <Text weight={500}>{token?.name}</Text>
+          <Text weight={500}>{token?.symbol}</Text>
         </Row>
         <Row alignItems="center" mainAxisSize="fit-content">
           <Column style={{ textAlign: "right" }}>

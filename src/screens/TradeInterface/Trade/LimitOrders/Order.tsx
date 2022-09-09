@@ -8,11 +8,12 @@ import Img from "@components/Img";
 import { useTheme } from "@emotion/react";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import BN from "@src/utils/BN";
-import Progressbar from "@components/Progressbar";
 import { ReactComponent as CloseIcon } from "@src/assets/icons/cancelOrder.svg";
+import CircularProgressbar from "@src/components/CircularProgressbar";
 
 interface IProps extends IOrder {
   onCancel?: () => void;
+  onClick?: () => void;
 }
 
 const Root = styled.div`
@@ -28,6 +29,7 @@ const Order: React.FC<IProps> = ({
   token0,
   status,
   onCancel,
+  onClick,
 }) => {
   const theme = useTheme();
   const t0 = TOKENS_BY_ASSET_ID[token0];
@@ -38,8 +40,11 @@ const Order: React.FC<IProps> = ({
   const price = am1.div(am0);
   return (
     <Root>
-      <Row alignItems="center">
-        <Progressbar percent={percent.toNumber()} red={status === "canceled"} />
+      <Row alignItems="center" onClick={onClick} style={{ cursor: "pointer" }}>
+        <CircularProgressbar
+          percent={percent.toNumber()}
+          red={status === "canceled"}
+        />
         <SizedBox width={10} />
         <Column>
           <Row alignItems="center">

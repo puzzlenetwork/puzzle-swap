@@ -104,8 +104,7 @@ class SwapVM {
   private _setAmount1 = (amount: BN) => (this.amount1 = amount);
 
   routingModalOpened: boolean = false;
-  @action.bound setRoutingModalState = (state: boolean) =>
-    (this.routingModalOpened = state);
+  setRoutingModalState = (state: boolean) => (this.routingModalOpened = state);
 
   //todo cun out kludge with invalidAmount
   private _syncAmount1 = (quiet = false) => {
