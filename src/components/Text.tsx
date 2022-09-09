@@ -59,7 +59,7 @@ const Text = styled.p<{
         case "medium":
           return "font-size: 14px; line-height: 20px;";
         case "big":
-          return "font-size: 24px; line-height: 32px;";
+          return "font-size: 20px; line-height: 24px;";
         case "large":
           return "font-size: 32px;line-height: 40px;";
         default:

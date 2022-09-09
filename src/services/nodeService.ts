@@ -2,7 +2,7 @@ import { ITransaction } from "@src/utils/types";
 import makeNodeRequest from "@src/utils/makeNodeRequest";
 import { CONTRACT_ADDRESSES } from "@src/constants";
 
-interface INodeData {
+export interface INodeData {
   key: string;
   type: "integer" | "string";
   value: number | string;

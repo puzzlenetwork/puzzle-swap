@@ -3,11 +3,11 @@ import React, { HTMLAttributes, useState } from "react";
 import newswap from "@src/assets/icons/new-trade-swap.svg";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
-import { useTradeVM } from "@screens/TradeInterface/TradeVM";
 import { useNavigate } from "react-router-dom";
 import Loading from "@components/Loading";
 import { TOKENS_BY_SYMBOL } from "@src/constants";
 import { useTheme } from "@emotion/react";
+import { useSwapVM } from "@screens/TradeInterface/SwapVM";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   new?: boolean;
@@ -31,7 +31,7 @@ const buildRateStr = (
 ) => `1 ${symbol0} = ${price1 != null ? `~ ${price1}` : "–"} ${symbol1}`;
 
 const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
-  const vm = useTradeVM();
+  const vm = useSwapVM();
   const theme = useTheme();
   const { token0, token1, price } = vm;
   const navigate = useNavigate();

@@ -121,6 +121,14 @@ export default class PoolsStore {
     );
   }
 
+  t2tPrice = (assetId0: string, assetId1: string): BN => {
+    const poolWithTokens = this.pools.find(({ tokens }) =>
+      tokens.some((t) => [assetId0, assetId1].includes(t.assetId))
+    );
+    console.log(poolWithTokens);
+    return BN.ZERO;
+    //const intersection = array1.filter(element => array2.includes(element));
+  };
   usdnRate = (assetId: string, coefficient = 1): BN | null => {
     const { tokenStore } = this.rootStore;
     const usdn = TOKENS_BY_SYMBOL.USDN.assetId;

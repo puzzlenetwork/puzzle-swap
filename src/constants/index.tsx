@@ -8,6 +8,7 @@ export const ROUTES = {
   NOT_FOUND: "/404",
   STAKE: "/stake",
   TRADE: "/trade",
+  LIMIT_ORDER: "/limitOrder",
   OLD_EXPLORE: "/classic-explore",
   EXPLORE: "/explore",
   EXPLORE_TOKEN: "/explore/token/:assetId",
@@ -356,6 +357,8 @@ export const CONTRACT_ADDRESSES = {
   nfts: "3PFQjjDMiZKQZdu5JqTHD7HwgSXyp9Rw9By",
   createArtefacts: "3PFkgvC9y6zHy64zEAscKKgaNY3yipiLqbW",
   boost: "3PAeY7RgwuNUZNscGqahqJxFTFDkh7fbNwJ",
+  limitOrders: "3PPrfNMnk8z8QhZcqMyJk69mF65s2Rbz3B6",
+  proxyLimitOrders: "3PM4Mn2iwQnUkeMxTJJAuriiVEGAcQwDU5H",
 };
 export const PUZZLE_NFTS = [
   {

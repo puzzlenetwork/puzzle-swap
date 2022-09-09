@@ -1,11 +1,10 @@
 import styled from "@emotion/styled";
 import React, { HTMLAttributes } from "react";
-import { ISchemaRoute } from "@screens/TradeInterface/TradeVM";
 import Asset from "./Asset";
-// import { ReactComponent as Arrow } from "@src/assets/icons/blackRightArrow.svg";
 import Token0Amount from "./Token0Amount";
 import Img from "@components/Img";
 import { useTheme } from "@emotion/react";
+import { ISchemaRoute } from "@screens/TradeInterface/SwapVM";
 
 interface IProps extends ISchemaRoute, HTMLAttributes<HTMLDivElement> {
   token0Logo: string;

@@ -2,15 +2,16 @@ import React from "react";
 import { useStores } from "@stores";
 import Button from "@components/Button";
 import { observer } from "mobx-react-lite";
-import { useTradeVM } from "@screens/TradeInterface/TradeVM";
 import Loading from "@components/Loading";
+import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
 
 interface IProps {}
 
-const SwapButton: React.FC<IProps> = () => {
+const PlaceOrderBtn: React.FC<IProps> = () => {
   const { accountStore } = useStores();
-  const vm = useTradeVM();
-  const { amount0, token0, balance0, amount1, synchronizing, loading } = vm;
+  const vm = useLimitOrdersVM();
+  const { price, paymentError0, paymentError1, payment, loading, initialized } =
+    vm;
   switch (true) {
     case accountStore.address == null:
       return (
@@ -18,10 +19,10 @@ const SwapButton: React.FC<IProps> = () => {
           Connect wallet
         </Button>
       );
-    case synchronizing:
+    case !initialized:
       return (
-        <Button disabled fixed>
-          Please wait <Loading />
+        <Button fixed disabled>
+          Place order
         </Button>
       );
     case loading:
@@ -30,36 +31,24 @@ const SwapButton: React.FC<IProps> = () => {
           Transaction in progress <Loading />
         </Button>
       );
-    case amount0 == null || amount1 == null || amount0.eq(0):
+    case price == null || payment == null || price.eq(0) || payment.eq(0):
       return (
         <Button disabled fixed>
           Enter an amount
         </Button>
       );
-    case amount0!.gt(balance0!):
+    case paymentError1 || paymentError0:
       return (
         <Button disabled fixed>
-          Insufficient {`${token0?.name ?? ""} `}balance
-        </Button>
-      );
-    case vm.priceImpact && vm.priceImpact.eq(100):
-      return (
-        <Button disabled fixed>
-          Price impact too high
-        </Button>
-      );
-    case amount0 != null && amount1 != null && !synchronizing:
-      return (
-        <Button onClick={vm.swap} fixed>
-          Swap
+          Insufficient balance
         </Button>
       );
     default:
       return (
-        <Button disabled fixed>
-          Swap
+        <Button fixed onClick={vm.createOrder}>
+          Place order
         </Button>
       );
   }
 };
-export default observer(SwapButton);
+export default observer(PlaceOrderBtn);
