@@ -3,7 +3,11 @@ import { makeAutoObservable, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import { useVM } from "@src/hooks/useVM";
 import BN from "@src/utils/BN";
-import { CONTRACT_ADDRESSES, TOKENS_BY_SYMBOL } from "@src/constants";
+import {
+  CONTRACT_ADDRESSES,
+  EXPLORER_URL,
+  TOKENS_BY_SYMBOL,
+} from "@src/constants";
 import makeNodeRequest from "@src/utils/makeNodeRequest";
 import { INodeData } from "@src/services/nodeService";
 import { getStateByKey } from "@src/utils/getStateByKey";
@@ -149,6 +153,7 @@ class LimitOrdersVM {
       ),
       status: getStateByKey(ordersData, `order_${id}_status`) ?? "closed",
     }));
+    console.log(orders);
     this.setOrders(orders as IOrder[]);
   };
 
@@ -184,13 +189,12 @@ class LimitOrdersVM {
     if (this.price.eq(0) || this.payment.eq(0)) return;
     const paymentAmount =
       this.paymentSettings === 0 ? this.payment : this.finalAmount;
-    const paymentToken = this.paymentSettings === 0 ? this.token0 : this.token1;
+    const paymentToken = this.token1;
 
     const requiredAmount =
       this.paymentSettings === 0 ? this.finalAmount : this.payment;
-    const requiredToken =
-      this.paymentSettings === 0 ? this.token1 : this.token0;
-
+    const requiredToken = this.token0;
+    this.setLoading(true);
     this.rootStore.accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.limitOrders,
@@ -205,24 +209,55 @@ class LimitOrdersVM {
           ],
         },
       })
+      .then(
+        (txId) =>
+          txId &&
+          this.rootStore.notificationStore.notify(
+            `You can find your cancelled orders in orders history`,
+            {
+              type: "success",
+              title: `Order has been placed`,
+              link: `${EXPLORER_URL}/tx/${txId}`,
+              linkTitle: "View on Explorer",
+            }
+          )
+      )
       .then(() => this.sync())
       .catch((e) =>
         this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
           type: "error",
         })
       );
+    this.setLoading(false);
   };
 
-  cancelOrder = async (orderId: string) =>
+  cancelOrder = async (orderId: string) => {
+    this.setLoading(true);
     this.rootStore.accountStore
       .invoke({
         payment: [],
         dApp: CONTRACT_ADDRESSES.limitOrders,
         call: {
           function: "cancelOrder",
-          args: [{ type: "string", value: orderId }],
+          args: [
+            { type: "string", value: orderId },
+            { type: "string", value: "" },
+          ],
         },
       })
+      .then(
+        (txId) =>
+          txId &&
+          this.rootStore.notificationStore.notify(
+            `You can find your cancelled orders in orders history`,
+            {
+              type: "success",
+              title: `Order has been cancelled`,
+              link: `${EXPLORER_URL}/tx/${txId}`,
+              linkTitle: "View on Explorer",
+            }
+          )
+      )
       .then(() => this.setNotificationParams(null))
       .then(() => this.setOrderToDisplayDetails(null))
       .then(() => this.sync())
@@ -231,7 +266,12 @@ class LimitOrdersVM {
           type: "error",
         })
       );
+
+    this.setLoading(false);
+  };
+
   cancelAllOrders = async () => {
+    this.setLoading(true);
     const activeOrders = this.orders.filter(
       ({ status }) => status === "active"
     );
@@ -247,6 +287,19 @@ class LimitOrdersVM {
           args: [{ type: "string", value: ordersToCancel }],
         },
       })
+      .then(
+        (txId) =>
+          txId &&
+          this.rootStore.notificationStore.notify(
+            `You can find your cancelled orders in orders history`,
+            {
+              type: "success",
+              title: `Orders has been cancelled`,
+              link: `${EXPLORER_URL}/tx/${txId}`,
+              linkTitle: "View on Explorer",
+            }
+          )
+      )
       .then(() => this.setNotificationParams(null))
       .then(() => this.sync())
       .catch((e) =>
@@ -254,6 +307,7 @@ class LimitOrdersVM {
           type: "error",
         })
       );
+    this.setLoading(false);
   };
 
   checkOrderCancel = (id?: string, many?: boolean) => {
@@ -353,6 +407,7 @@ class LimitOrdersVM {
       BN.parseUnits(1, this.token1.decimals)
     );
     this.setPrice(new BN(res.estimatedOut));
+    this.setPriceSettings(0);
     this.setMarketPriceLoading(false);
   };
 }

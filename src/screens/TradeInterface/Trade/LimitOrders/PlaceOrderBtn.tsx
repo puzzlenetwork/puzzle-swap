@@ -10,7 +10,8 @@ interface IProps {}
 const PlaceOrderBtn: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const vm = useLimitOrdersVM();
-  const { price, paymentError0, paymentError1, payment, loading } = vm;
+  const { price, paymentError0, paymentError1, payment, loading, initialized } =
+    vm;
   switch (true) {
     case accountStore.address == null:
       return (
@@ -18,13 +19,19 @@ const PlaceOrderBtn: React.FC<IProps> = () => {
           Connect wallet
         </Button>
       );
+    case !initialized:
+      return (
+        <Button fixed disabled>
+          Place order
+        </Button>
+      );
     case loading:
       return (
         <Button disabled fixed>
-          Loading <Loading />
+          Transaction in progress <Loading />
         </Button>
       );
-    case price == null || payment == null || price.eq(0):
+    case price == null || payment == null || price.eq(0) || payment.eq(0):
       return (
         <Button disabled fixed>
           Enter an amount
