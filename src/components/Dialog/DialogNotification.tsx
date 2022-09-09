@@ -302,7 +302,7 @@ export const buildCancelOrderParams = ({
           fixed
           onClick={onCancel}
         >
-          Cancel
+          Back to trade
         </Button>
       ),
     ],

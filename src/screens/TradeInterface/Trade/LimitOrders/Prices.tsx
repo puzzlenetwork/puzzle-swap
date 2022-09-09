@@ -74,7 +74,7 @@ const Prices: React.FC<IProps> = () => {
           usdnEquivalent={vm.dollEq0}
           error={false}
           disabled={vm.priceSettings === 1}
-          // onEdit={() => vm.setPriceSettings(0)}
+          loading={vm.marketPriceLoading}
         />
       </Column>
       <SizedBox height={16} />
@@ -106,7 +106,7 @@ const Prices: React.FC<IProps> = () => {
           amount={vm.payment}
           setAmount={vm.setPayment}
           usdnEquivalent={vm.dollEq1}
-          error={false}
+          error={vm.paymentError0}
         />
         <SizedBox height={4} />
         {vm.paymentSettings === 0 && (
@@ -118,10 +118,7 @@ const Prices: React.FC<IProps> = () => {
                 type="blue500"
                 size="small"
                 style={{ paddingRight: 12, cursor: "pointer" }}
-                onClick={() => {
-                  console.log("percent click");
-                  vm.onPercentClick(v);
-                }}
+                onClick={() => vm.onPercentClick(v)}
               >
                 {v}%{" "}
               </Text>
@@ -131,7 +128,12 @@ const Prices: React.FC<IProps> = () => {
       </Column>
       <SizedBox height={16} />
       <Note>
-        <Text size="big">
+        <Text
+          size="big"
+          type={
+            vm.paymentSettings === 1 && vm.paymentError1 ? "error" : "primary"
+          }
+        >
           {vm.paymentSettings === 0
             ? `You’ll get ${BN.formatUnits(
                 vm.finalAmount,

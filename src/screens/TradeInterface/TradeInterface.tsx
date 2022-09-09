@@ -23,10 +23,8 @@ const Root = styled.div`
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
-  padding: 0 16px;
   width: 100%;
-  max-width: 560px;
+  max-width: 592px;
 `;
 const TradeInterfaceImpl: React.FC = observer(() => {
   const vm = useSwapVM();

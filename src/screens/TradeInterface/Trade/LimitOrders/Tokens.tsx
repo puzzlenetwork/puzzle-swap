@@ -33,11 +33,17 @@ const ArrowImg = styled.img`
 const Tokens: React.FC<IProps> = () => {
   const vm = useLimitOrdersVM();
   const swapVm = useSwapVM();
-  const { accountStore } = useStores();
+  const { accountStore, notificationStore } = useStores();
   const theme = useTheme();
   const navigate = useNavigate();
   const handleSetAssetId0 = (assetId: string) => {
-    if (assetId === vm.assetId1) return;
+    if (assetId === vm.assetId0) {
+      notificationStore.notify("You can't choose same assets", {
+        type: "error",
+        title: "Warning",
+      });
+      return;
+    }
     const urlSearchParams = new URLSearchParams(window.location.search);
     urlSearchParams.set("asset0", assetId);
     navigate({
@@ -48,7 +54,13 @@ const Tokens: React.FC<IProps> = () => {
     swapVm.setAssetId0(assetId);
   };
   const handleSetAssetId1 = (assetId: string) => {
-    if (assetId === vm.assetId1) return;
+    if (assetId === vm.assetId1) {
+      notificationStore.notify("You can't choose same assets", {
+        type: "error",
+        title: "Warning",
+      });
+      return;
+    }
     const urlSearchParams = new URLSearchParams(window.location.search);
     urlSearchParams.set("asset1", assetId);
     navigate({
@@ -88,6 +100,7 @@ const Tokens: React.FC<IProps> = () => {
         assetId={vm.assetId1}
         balances={accountStore.balances}
         setAssetId={handleSetAssetId1}
+        balanceError={vm.paymentError0 || vm.paymentError1}
       />
     </Root>
   );

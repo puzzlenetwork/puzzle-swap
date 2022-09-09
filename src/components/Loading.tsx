@@ -1,5 +1,6 @@
 import React, { HTMLAttributes } from "react";
 import { useEffect, useState } from "react";
+import { useTheme } from "@emotion/react";
 
 interface IProps extends HTMLAttributes<HTMLSpanElement> {
   big?: boolean;
@@ -7,6 +8,7 @@ interface IProps extends HTMLAttributes<HTMLSpanElement> {
 
 const Loading: React.FC<IProps> = ({ big, ...rest }) => {
   const [length, setLength] = useState(3);
+  const theme = useTheme();
   useEffect(() => {
     const interval = setInterval(() => {
       setLength(length === 3 ? 1 : length + 1);
@@ -14,7 +16,10 @@ const Loading: React.FC<IProps> = ({ big, ...rest }) => {
     return () => clearInterval(interval);
   });
   return (
-    <span {...rest} style={{ width: 10, ...rest.style }}>
+    <span
+      {...rest}
+      style={{ width: 10, color: theme.colors.primary800, ...rest.style }}
+    >
       {big
         ? Array.from({ length }, () => "●").join("")
         : Array.from({ length }, () => ".").join("")}

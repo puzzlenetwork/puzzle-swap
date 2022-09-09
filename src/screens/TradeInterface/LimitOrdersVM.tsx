@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { action, makeAutoObservable, when } from "mobx";
+import { makeAutoObservable, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import { useVM } from "@src/hooks/useVM";
 import BN from "@src/utils/BN";
@@ -33,6 +33,7 @@ const getOrderStateKeys = (orderId: string) => [
   `order_${orderId}_fulfilled1`,
   `order_${orderId}_status`,
   `order_${orderId}_timestamp`,
+  `order_${orderId}_txId`,
 ];
 
 export interface IOrder {
@@ -41,6 +42,7 @@ export interface IOrder {
   token0: string;
   amount1: BN;
   token1: string;
+  txId: string;
   fulfilled0: BN;
   fulfilled1: BN;
   timestamp: number;
@@ -56,7 +58,10 @@ class LimitOrdersVM {
     const asset1 = params.get("asset1")?.toString();
     this.assetId0 = asset0 ?? TOKENS_BY_SYMBOL.USDN.assetId;
     this.assetId1 = asset1 ?? TOKENS_BY_SYMBOL.PUZZLE.assetId;
-    this.sync().then(() => this.setLoading(false));
+    this.sync().then(() => {
+      this.setInitialized(true);
+      this.setLoading(false);
+    });
     setInterval(this.sync, 60 * 1000);
 
     when(() => this.priceSettings === 1, this.getMarketPrice);
@@ -81,8 +86,14 @@ class LimitOrdersVM {
   payment: BN = BN.ZERO;
   setPayment = (amount: BN) => (this.payment = amount);
 
+  initialized: boolean = false;
+  private setInitialized = (l: boolean) => (this.initialized = l);
+
   loading: boolean = true;
   private setLoading = (l: boolean) => (this.loading = l);
+
+  marketPriceLoading: boolean = false;
+  private setMarketPriceLoading = (l: boolean) => (this.marketPriceLoading = l);
 
   priceSettings: 0 | 1 = 0;
   setPriceSettings = (value: 0 | 1) => (this.priceSettings = value);
@@ -105,87 +116,40 @@ class LimitOrdersVM {
     (this.orderToDisplayDetails = v);
 
   sync = async () => {
-    // const orderIdList: string[] = await makeNodeRequest(
-    //   `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}/user_${this.rootStore.accountStore.address}_orders`
-    // )
-    //   .then(({ data }) => data.value.split(","))
-    //   .catch(() => []);
-    // if (orderIdList.length === 0) return;
-    //
-    // const keys = orderIdList.reduce(
-    //   (acc, id) => [...acc, ...getOrderStateKeys(id)],
-    //   [] as string[]
-    // );
-    // const ordersData: INodeData[] = await makeNodeRequest(
-    //   `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}`,
-    //   { postData: { keys } }
-    // )
-    //   .then(({ data }) => data)
-    //   .catch(() => []);
-    // const orders = orderIdList.map((id) => ({
-    //   id,
-    //   amount0: new BN(getStateByKey(ordersData, `order_${id}_amount0`) ?? 0),
-    //   token0: getStateByKey(ordersData, `order_${id}_token0`) ?? "",
-    //   timestamp: dayjs(getStateByKey(ordersData, `order_${id}_timestamp`) ?? 0),
-    //   amount1: new BN(getStateByKey(ordersData, `order_${id}_amount1`) ?? 0),
-    //   token1: getStateByKey(ordersData, `order_${id}_token1`) ?? "",
-    //   fulfilled0: new BN(
-    //     getStateByKey(ordersData, `order_${id}_fulfilled0`) ?? 0
-    //   ),
-    //   fulfilled1: new BN(
-    //     getStateByKey(ordersData, `order_${id}_fulfilled1`) ?? 0
-    //   ),
-    //   status: getStateByKey(ordersData, `order_${id}_status`) ?? "closed",
-    // }));
-    // console.log(orders);
-    const v = [
-      {
-        id: "1",
-        amount0: new BN(100000000),
-        token0: "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS",
-        amount1: new BN(18000000),
-        token1: "DG2xFkPdDwKUoBkzGAhQtLpSGzfXLiCYPEzeKH2Ad24p",
-        fulfilled0: new BN(0),
-        fulfilled1: new BN(0),
-        status: "active",
-        timestamp: dayjs(1659999600000),
-      },
-      {
-        id: "2",
-        amount0: new BN(100000000),
-        token0: "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS",
-        amount1: new BN(18000000),
-        token1: "DG2xFkPdDwKUoBkzGAhQtLpSGzfXLiCYPEzeKH2Ad24p",
-        fulfilled0: new BN(80000000),
-        fulfilled1: new BN(0),
-        status: "canceled",
-        timestamp: dayjs(1659999600000),
-      },
-      {
-        id: "3",
-        amount0: new BN(100000000),
-        token0: "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS",
-        amount1: new BN(18000000),
-        token1: "DG2xFkPdDwKUoBkzGAhQtLpSGzfXLiCYPEzeKH2Ad24p",
-        fulfilled0: new BN(0),
-        fulfilled1: new BN(0),
-        status: "active",
-        timestamp: dayjs(1662678000000),
-      },
-      {
-        id: "4",
-        amount0: new BN(100000000),
-        token0: "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS",
-        amount1: new BN(18000000),
-        token1: "DG2xFkPdDwKUoBkzGAhQtLpSGzfXLiCYPEzeKH2Ad24p",
-        fulfilled0: new BN(0),
-        fulfilled1: new BN(0),
-        status: "active",
-        timestamp: 1662713690993,
-      },
-    ];
-    // this.setOrders(orders as IOrder[]);
-    this.setOrders(v as IOrder[]);
+    const orderIdList: string[] = await makeNodeRequest(
+      `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}/user_${this.rootStore.accountStore.address}_orders`
+    )
+      .then(({ data }) => data.value.split(","))
+      .catch(() => []);
+    if (orderIdList.length === 0) return;
+
+    const keys = orderIdList.reduce(
+      (acc, id) => [...acc, ...getOrderStateKeys(id)],
+      [] as string[]
+    );
+    const ordersData: INodeData[] = await makeNodeRequest(
+      `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}`,
+      { postData: { keys } }
+    )
+      .then(({ data }) => data)
+      .catch(() => []);
+    const orders = orderIdList.map((id) => ({
+      id,
+      txId: getStateByKey(ordersData, `order_${id}_txId`) ?? "",
+      amount0: new BN(getStateByKey(ordersData, `order_${id}_amount0`) ?? 0),
+      token0: getStateByKey(ordersData, `order_${id}_token0`) ?? "",
+      timestamp: getStateByKey(ordersData, `order_${id}_timestamp`) ?? 0,
+      amount1: new BN(getStateByKey(ordersData, `order_${id}_amount1`) ?? 0),
+      token1: getStateByKey(ordersData, `order_${id}_token1`) ?? "",
+      fulfilled0: new BN(
+        getStateByKey(ordersData, `order_${id}_fulfilled0`) ?? 0
+      ),
+      fulfilled1: new BN(
+        getStateByKey(ordersData, `order_${id}_fulfilled1`) ?? 0
+      ),
+      status: getStateByKey(ordersData, `order_${id}_status`) ?? "closed",
+    }));
+    this.setOrders(orders as IOrder[]);
   };
 
   get token0() {
@@ -260,6 +224,7 @@ class LimitOrdersVM {
         },
       })
       .then(() => this.setNotificationParams(null))
+      .then(() => this.setOrderToDisplayDetails(null))
       .then(() => this.sync())
       .catch((e) =>
         this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
@@ -345,6 +310,18 @@ class LimitOrdersVM {
     return `$ ${BN.formatUnits(v, this.token0.decimals).toFormat(2)}`;
   }
 
+  get paymentError1() {
+    if (this.payment.eq(0) || this.price.eq(0)) return false;
+    return (
+      this.paymentSettings === 1 && this.finalAmount.gt(this.balance1 ?? 0)
+    );
+  }
+
+  get paymentError0() {
+    if (this.payment.eq(0) || this.price.eq(0)) return false;
+    return this.paymentSettings === 0 && this.payment.gt(this.balance1 ?? 0);
+  }
+
   get dollEq1() {
     const token = this.paymentSettings === 0 ? this.token1 : this.token0;
     const v = this.rootStore.poolsStore
@@ -369,13 +346,13 @@ class LimitOrdersVM {
   }
 
   getMarketPrice = async () => {
-    this.setLoading(true);
+    this.setMarketPriceLoading(true);
     const res = await aggregatorService.calc(
       this.assetId1,
       this.assetId0,
       BN.parseUnits(1, this.token1.decimals)
     );
     this.setPrice(new BN(res.estimatedOut));
-    this.setLoading(false);
+    this.setMarketPriceLoading(false);
   };
 }

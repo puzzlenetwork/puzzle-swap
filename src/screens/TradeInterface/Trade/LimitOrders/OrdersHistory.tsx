@@ -43,6 +43,11 @@ const OrderHistory: React.FC<IProps> = () => {
   const vm = useLimitOrdersVM();
   return (
     <Root>
+      {vm.orders.length === 0 && (
+        <Text textAlign="center">
+          Your orders will show up here. Create an order above this section!
+        </Text>
+      )}
       {Object.entries(vm.groupedOrders()).map(([time, orders]) => (
         <Column key={time} crossAxisSize="max">
           <Text type="secondary" size="small">

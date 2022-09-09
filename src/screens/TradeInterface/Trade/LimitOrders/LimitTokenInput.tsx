@@ -5,6 +5,10 @@ import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
 import BigNumberInput from "@components/BigNumberInput";
 import AmountInput from "@components/AmountInput";
+import Loading from "@components/Loading";
+import { prop } from "@waves/waves-transactions/dist/validators";
+import { Row } from "@src/components/Flex";
+import SizedBox from "@components/SizedBox";
 
 interface IProps {
   assetId: string;
@@ -17,6 +21,7 @@ interface IProps {
   error?: boolean;
   disabled?: boolean;
   onEdit?: () => void;
+  loading?: boolean;
 }
 
 const Root = styled.div`
@@ -84,34 +89,41 @@ const LimitTokenInput: React.FC<IProps> = (props) => {
         >
           {props.prefix}
         </Text>
-        <BigNumberInput
-          renderInput={(props, ref) => (
-            <AmountInput
-              {...props}
-              onFocus={(e) => {
-                props.onFocus && props.onFocus(e);
-                !props.readOnly && setFocused(true);
-              }}
-              onBlur={(e) => {
-                props.onBlur && props.onBlur(e);
-                setFocused(false);
-              }}
-              ref={ref}
-              disabled={props.disabled}
-              small
-            />
-          )}
-          autofocus={focused}
-          decimals={props.decimals}
-          value={props.amount}
-          onChange={(v) => {
-            props.setAmount && props.setAmount(v);
-            props.onEdit && props.onEdit();
-          }}
-          placeholder={props.placeholder ?? "0.00"}
-          readOnly={!props.setAmount}
-        />
-
+        {props.loading ? (
+          <Row>
+            <SizedBox width={2} />
+            <Loading />
+          </Row>
+        ) : (
+          <BigNumberInput
+            renderInput={(props, ref) => (
+              <AmountInput
+                {...props}
+                onFocus={(e) => {
+                  props.onFocus && props.onFocus(e);
+                  !props.readOnly && setFocused(true);
+                }}
+                onBlur={(e) => {
+                  props.onBlur && props.onBlur(e);
+                  setFocused(false);
+                }}
+                ref={ref}
+                disabled={props.disabled}
+                small
+              />
+            )}
+            disabled={props.loading}
+            autofocus={focused}
+            decimals={props.decimals}
+            value={props.amount}
+            onChange={(v) => {
+              props.setAmount && props.setAmount(v);
+              props.onEdit && props.onEdit();
+            }}
+            placeholder={props.placeholder ?? "0.00"}
+            readOnly={!props.setAmount}
+          />
+        )}
         <Text
           style={{ whiteSpace: "nowrap" }}
           type="secondary"

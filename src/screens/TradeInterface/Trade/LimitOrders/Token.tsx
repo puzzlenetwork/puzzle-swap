@@ -14,6 +14,7 @@ interface IProps {
   assetId: string;
   balances: Balance[];
   setAssetId: (assetId: string) => void;
+  balanceError?: boolean;
 }
 
 const Root = styled.div`
@@ -41,7 +42,11 @@ const Token: React.FC<IProps> = (props) => {
         </Row>
         <Row alignItems="center" mainAxisSize="fit-content">
           <Column style={{ textAlign: "right" }}>
-            <Text weight={500} size="medium">
+            <Text
+              weight={500}
+              size="medium"
+              type={props.balanceError ? "error" : "primary"}
+            >
               {token?.formatBalance}
             </Text>
             <Text type="secondary" size="small">

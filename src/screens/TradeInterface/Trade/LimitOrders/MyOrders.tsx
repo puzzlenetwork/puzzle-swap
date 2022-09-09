@@ -11,6 +11,8 @@ import OrdersHistory from "@screens/TradeInterface/Trade/LimitOrders/OrdersHisto
 import OpenedOrders from "@screens/TradeInterface/Trade/LimitOrders/OpenedOrders";
 import { ReactComponent as CloseIcon } from "@src/assets/icons/cancelOrder.svg";
 import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
+import Skeleton from "react-loading-skeleton";
+import { useTheme } from "@emotion/react";
 
 interface IProps {}
 
@@ -73,11 +75,13 @@ const MyOrders: React.FC<IProps> = () => {
             Connect wallet
           </Button>
         </Column>
-      ) : (
+      ) : vm.initialized ? (
         <>
           {activeTab === 0 && <OpenedOrders />}
           {activeTab === 1 && <OrdersHistory />}
         </>
+      ) : (
+        <Skeleton height={56} style={{ marginBottom: 8 }} count={3} />
       )}
     </Root>
   );

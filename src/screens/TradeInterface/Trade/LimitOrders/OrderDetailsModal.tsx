@@ -5,12 +5,15 @@ import styled from "@emotion/styled";
 import SizedBox from "@components/SizedBox";
 import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
 import { Column, Row } from "@src/components/Flex";
-import { TOKENS_BY_ASSET_ID } from "@src/constants";
+import { EXPLORER_URL, TOKENS_BY_ASSET_ID } from "@src/constants";
 import Img from "@components/Img";
 import { useTheme } from "@emotion/react";
 import BN from "@src/utils/BN";
 import dayjs from "dayjs";
 import Progressbar from "@components/Progressbar";
+import Button from "@src/components/Button";
+import cross from "@src/assets/icons/cross.svg";
+import { Anchor } from "@components/Anchor";
 
 interface IProps {
   onClose: () => void;
@@ -38,9 +41,16 @@ const Details = styled(Column)`
     padding-bottom: 0;
   }
 `;
-
+const Btn = styled(Button)`
+  background-color: transparent;
+  color: ${({ theme }) => `${theme.colors.error500}`};
+  border-color: ${({ theme }) => `${theme.colors.error100}`};
+  :hover {
+    background-color: transparent;
+  }
+`;
 const OrderDetailsModal: React.FC<IProps> = ({ ...rest }) => {
-  const { orderToDisplayDetails: order } = useLimitOrdersVM();
+  const { orderToDisplayDetails: order, checkOrderCancel } = useLimitOrdersVM();
   const token0 = TOKENS_BY_ASSET_ID[order?.token0 ?? ""];
   const token1 = TOKENS_BY_ASSET_ID[order?.token1 ?? ""];
   const am0 = BN.formatUnits(order?.amount0 ?? BN.ZERO, token0?.decimals);
@@ -58,9 +68,20 @@ const OrderDetailsModal: React.FC<IProps> = ({ ...rest }) => {
     <Dialog style={{ maxWidth: 360 }} title="Order details" {...rest}>
       <SizedBox height={24} />
       <Column crossAxisSize="max">
-        <Row justifyContent="center">
-          <Icon src={token0?.logo} alt="token0" />
-          <Icon src={token1?.logo} alt="token1" />
+        <Row
+          justifyContent="center"
+          style={{ position: "relative", height: 40 }}
+        >
+          <Icon
+            src={token0?.logo}
+            alt="token0"
+            style={{ position: "absolute", right: "calc(50% - 10px)" }}
+          />
+          <Icon
+            src={token1?.logo}
+            alt="token1"
+            style={{ position: "absolute", right: "calc(50% - 40px)" }}
+          />
         </Row>
         <SizedBox height={12} />
         <Row justifyContent="center" alignItems="center">
@@ -108,6 +129,31 @@ const OrderDetailsModal: React.FC<IProps> = ({ ...rest }) => {
             </Row>
           ))}
         </Details>
+        <SizedBox height={34} />
+        <Column crossAxisSize="max" justifyContent="center">
+          {order?.status === "active" && (
+            <Btn
+              size="medium"
+              fixed
+              kind="danger"
+              onClick={() => checkOrderCancel(order?.id)}
+            >
+              <Img src={cross} alt="add" />
+              <SizedBox width={12} />
+              Cancel order
+            </Btn>
+          )}
+          {order?.txId && (
+            <Anchor
+              style={{ paddingTop: 12, width: "100%" }}
+              href={`${EXPLORER_URL}/tx/${order.txId}`}
+            >
+              <Text weight={500} textAlign="center" type="blue500">
+                View in Waves Explorer
+              </Text>
+            </Anchor>
+          )}
+        </Column>
         <SizedBox height={34} />
       </Column>
     </Dialog>
