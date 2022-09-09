@@ -12,6 +12,8 @@ import {
   IDialogNotificationProps,
 } from "@components/Dialog/DialogNotification";
 import aggregatorService from "@src/services/aggregatorService";
+import dayjs from "dayjs";
+import { log } from "util";
 
 const ctx = React.createContext<LimitOrdersVM | null>(null);
 
@@ -31,6 +33,7 @@ const getOrderStateKeys = (orderId: string) => [
   `order_${orderId}_fulfilled0`,
   `order_${orderId}_fulfilled1`,
   `order_${orderId}_status`,
+  `order_${orderId}_timestamp`,
 ];
 
 export interface IOrder {
@@ -41,6 +44,7 @@ export interface IOrder {
   token1: string;
   fulfilled0: BN;
   fulfilled1: BN;
+  timestamp: dayjs.Dayjs;
   status: "active" | "closed" | "canceled";
 }
 
@@ -119,6 +123,7 @@ class LimitOrdersVM {
       id,
       amount0: new BN(getStateByKey(ordersData, `order_${id}_amount0`) ?? 0),
       token0: getStateByKey(ordersData, `order_${id}_token0`) ?? "",
+      timestamp: dayjs(getStateByKey(ordersData, `order_${id}_timestamp`) ?? 0),
       amount1: new BN(getStateByKey(ordersData, `order_${id}_amount1`) ?? 0),
       token1: getStateByKey(ordersData, `order_${id}_token1`) ?? "",
       fulfilled0: new BN(
@@ -129,7 +134,55 @@ class LimitOrdersVM {
       ),
       status: getStateByKey(ordersData, `order_${id}_status`) ?? "closed",
     }));
-    this.setOrders(orders as IOrder[]);
+    console.log(orders);
+    const v = [
+      {
+        id: "1",
+        amount0: new BN(100000000),
+        token0: "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS",
+        amount1: new BN(18000000),
+        token1: "DG2xFkPdDwKUoBkzGAhQtLpSGzfXLiCYPEzeKH2Ad24p",
+        fulfilled0: new BN(0),
+        fulfilled1: new BN(0),
+        status: "active",
+        timestamp: dayjs(1659999600000),
+      },
+      {
+        id: "2",
+        amount0: new BN(100000000),
+        token0: "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS",
+        amount1: new BN(18000000),
+        token1: "DG2xFkPdDwKUoBkzGAhQtLpSGzfXLiCYPEzeKH2Ad24p",
+        fulfilled0: new BN(80000000),
+        fulfilled1: new BN(0),
+        status: "active",
+        timestamp: dayjs(1659999600000),
+      },
+      {
+        id: "3",
+        amount0: new BN(100000000),
+        token0: "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS",
+        amount1: new BN(18000000),
+        token1: "DG2xFkPdDwKUoBkzGAhQtLpSGzfXLiCYPEzeKH2Ad24p",
+        fulfilled0: new BN(0),
+        fulfilled1: new BN(0),
+        status: "active",
+        timestamp: dayjs(1662678000000),
+      },
+      {
+        id: "4",
+        amount0: new BN(100000000),
+        token0: "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS",
+        amount1: new BN(18000000),
+        token1: "DG2xFkPdDwKUoBkzGAhQtLpSGzfXLiCYPEzeKH2Ad24p",
+        fulfilled0: new BN(0),
+        fulfilled1: new BN(0),
+        status: "active",
+        timestamp: dayjs(1662713690993),
+      },
+    ];
+    // this.setOrders(orders as IOrder[]);
+    this.setOrders(v as IOrder[]);
   };
 
   get token0() {
@@ -207,7 +260,15 @@ class LimitOrdersVM {
   };
 
   get openedOrders() {
-    return this.orders.filter((v) => v.status === "active");
+    const active = this.orders.filter((v) => v.status === "active");
+    if (active.length === 0) return [];
+    return Object.values(
+      active.reduce((a, o) => {
+        const day = o.timestamp.startOf("day");
+        // (a[day] ??= []).push({ ...o });
+        return a;
+      }, {} as any)
+    );
   }
 
   onPercentClick = (percent: number) => {
@@ -239,7 +300,6 @@ class LimitOrdersVM {
     } else if (this.paymentSettings === 1) {
       const v1 = BN.formatUnits(this.price, this.token0.decimals);
       const v2 = BN.formatUnits(this.payment, this.token1.decimals);
-      console.log(v2.div(1).toString());
       return BN.parseUnits(v2.div(v1), this.token1.decimals);
     }
     return BN.ZERO;

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useState } from "react";
+import React from "react";
 import SizedBox from "@components/SizedBox";
 import { useTheme } from "@emotion/react";
 import Token from "./Token";

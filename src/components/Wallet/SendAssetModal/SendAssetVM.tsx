@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { action, makeAutoObservable } from "mobx";
+import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import centerEllipsis from "@src/utils/centerEllipsis";

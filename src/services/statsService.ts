@@ -25,7 +25,7 @@ const statsService = {
     return data;
   },
   getArtworks: async (): Promise<TArtworksResponse> => {
-    const url = "https://api.puzzleswap.org/stats/artworks";
+    const url = "https://puzzle-aggr-api.com/stats/artworks";
     const { data } = await axios.get(url);
     return data;
   },

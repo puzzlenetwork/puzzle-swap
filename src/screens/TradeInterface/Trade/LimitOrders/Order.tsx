@@ -28,12 +28,10 @@ const Root = styled.div`
 
 const Order: React.FC<IProps> = ({
   fulfilled0,
-  fulfilled1,
   amount1,
   amount0,
   token1,
   token0,
-  id,
   onCancel,
 }) => {
   const theme = useTheme();
@@ -41,12 +39,12 @@ const Order: React.FC<IProps> = ({
   const t1 = TOKENS_BY_ASSET_ID[token1];
   const am0 = BN.formatUnits(amount0, t0.decimals);
   const am1 = BN.formatUnits(amount1, t1.decimals);
-  const f0 = BN.formatUnits(fulfilled0, t1.decimals);
+  const percent = fulfilled0.times(100).div(amount0);
   const price = am1.div(am0);
   return (
     <Root>
       <Row alignItems="center">
-        <Progressbar percent={f0.toNumber()} />
+        <Progressbar percent={percent.toNumber()} />
         <SizedBox width={10} />
         <Column>
           <Row alignItems="center">

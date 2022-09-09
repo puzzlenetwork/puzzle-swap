@@ -13,6 +13,7 @@ const Root = styled.div`
 
 const OpenedOrders: React.FC<IProps> = () => {
   const vm = useLimitOrdersVM();
+  console.log(vm.openedOrders);
   return (
     <Root>
       {vm.orders.map((v) => (
