@@ -29,7 +29,7 @@ const aggregatorService = {
     assetId1: string,
     amount: BN
   ): Promise<ICalcResponse> => {
-    const url = `https://waves.puzzle-aggr-api.com/aggregator/calc?token0=${assetId0}&token1=${assetId1}&amountIn=${amount.toString()}`;
+    const url = `https://164.92.199.3:7000/aggregator/calc?token0=${assetId0}&token1=${assetId1}&amountIn=${amount.toString()}`;
     const { data } = await axios.get(url);
     return data;
   },
