@@ -8,6 +8,7 @@ import { observer } from "mobx-react-lite";
 import LimitTokenInput from "./LimitTokenInput";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import BN from "@src/utils/BN";
+import { useStores } from "@stores";
 
 interface IProps {}
 
@@ -41,6 +42,7 @@ const Percents = styled(Row)`
 `;
 const Prices: React.FC<IProps> = () => {
   const vm = useLimitOrdersVM();
+  const { accountStore } = useStores();
   const percents = [25, 50, 75, 100];
   return (
     <Root>
@@ -109,7 +111,7 @@ const Prices: React.FC<IProps> = () => {
           error={vm.paymentError0}
         />
         <SizedBox height={4} />
-        {vm.paymentSettings === 0 && (
+        {accountStore.address != null && vm.paymentSettings === 0 && (
           <Percents>
             {percents.map((v) => (
               <Text

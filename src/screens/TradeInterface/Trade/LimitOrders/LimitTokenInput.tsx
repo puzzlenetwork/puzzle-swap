@@ -6,7 +6,6 @@ import BN from "@src/utils/BN";
 import BigNumberInput from "@components/BigNumberInput";
 import AmountInput from "@components/AmountInput";
 import Loading from "@components/Loading";
-import { prop } from "@waves/waves-transactions/dist/validators";
 import { Row } from "@src/components/Flex";
 import SizedBox from "@components/SizedBox";
 

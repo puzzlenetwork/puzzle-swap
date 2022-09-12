@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { makeAutoObservable, when } from "mobx";
+import { makeAutoObservable, reaction, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import { useVM } from "@src/hooks/useVM";
 import BN from "@src/utils/BN";
@@ -68,6 +68,7 @@ class LimitOrdersVM {
     });
     setInterval(this.sync, 60 * 1000);
 
+    reaction(() => this.rootStore.accountStore?.address, this.sync);
     when(() => this.priceSettings === 1, this.getMarketPrice);
   }
 
@@ -153,7 +154,6 @@ class LimitOrdersVM {
       ),
       status: getStateByKey(ordersData, `order_${id}_status`) ?? "closed",
     }));
-    console.log(orders);
     this.setOrders(orders as IOrder[]);
   };
 
@@ -340,7 +340,7 @@ class LimitOrdersVM {
       .sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1));
     if (sorted.length === 0) return {};
     return sorted.reduce((acc, order) => {
-      const day = dayjs(order.timestamp).startOf("day").toDate().getTime();
+      const day = dayjs(order.timestamp).startOf("day").toDate().getUTCDate();
       Array.isArray(acc[day]) ? acc[day].push(order) : (acc[day] = [order]);
       return acc;
     }, {} as Record<number, Array<IOrder>>);
@@ -364,6 +364,7 @@ class LimitOrdersVM {
   }
 
   get paymentError1() {
+    if (this.rootStore.accountStore.address == null) return false;
     if (this.payment.eq(0) || this.price.eq(0)) return false;
     return (
       this.paymentSettings === 1 && this.finalAmount.gt(this.balance1 ?? 0)
@@ -371,6 +372,7 @@ class LimitOrdersVM {
   }
 
   get paymentError0() {
+    if (this.rootStore.accountStore.address == null) return false;
     if (this.payment.eq(0) || this.price.eq(0)) return false;
     return this.paymentSettings === 0 && this.payment.gt(this.balance1 ?? 0);
   }

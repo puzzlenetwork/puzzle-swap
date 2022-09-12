@@ -12,7 +12,6 @@ import OpenedOrders from "@screens/TradeInterface/Trade/LimitOrders/OpenedOrders
 import { ReactComponent as CloseIcon } from "@src/assets/icons/cancelOrder.svg";
 import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
 import Skeleton from "react-loading-skeleton";
-import { useTheme } from "@emotion/react";
 
 interface IProps {}
 

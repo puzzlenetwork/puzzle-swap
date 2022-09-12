@@ -4,7 +4,6 @@ import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
 import { observer } from "mobx-react-lite";
 import { Column } from "@src/components/Flex";
 import Text from "@src/components/Text";
-import dayjs from "dayjs";
 import SizedBox from "@components/SizedBox";
 import Order from "./Order";
 
@@ -51,7 +50,7 @@ const OrderHistory: React.FC<IProps> = () => {
       {Object.entries(vm.groupedOrders()).map(([time, orders]) => (
         <Column key={time} crossAxisSize="max">
           <Text type="secondary" size="small">
-            {dayjs(time).format("MMM DD, YYYY")}
+            {time}
           </Text>
           <SizedBox height={8} />
           <Orders>
