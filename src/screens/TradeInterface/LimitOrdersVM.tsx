@@ -189,7 +189,7 @@ class LimitOrdersVM {
       this.paymentSettings === 0 ? this.finalAmount : this.payment;
     const requiredToken = this.token0;
     this.setLoading(true);
-    await this.rootStore.accountStore
+    return this.rootStore.accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.limitOrders,
         payment: [
@@ -199,7 +199,7 @@ class LimitOrdersVM {
           function: "createOrder",
           args: [
             { type: "string", value: requiredToken.assetId },
-            { type: "integer", value: requiredAmount.toString() },
+            { type: "integer", value: requiredAmount.toFixed(0).toString() },
           ],
         },
       })
@@ -217,6 +217,7 @@ class LimitOrdersVM {
           )
       )
       .then(() => this.sync())
+      .then(() => this.setLoading(false))
       .then(() => {
         this.setPrice(BN.ZERO);
         this.setPayment(BN.ZERO);
@@ -226,14 +227,13 @@ class LimitOrdersVM {
           type: "error",
         })
       );
-    this.setLoading(false);
   };
 
   cancelOrder = async (orderId: string) => {
     this.setLoading(true);
     this.setNotificationParams(null);
     this.setOrderToDisplayDetails(null);
-    await this.rootStore.accountStore
+    return this.rootStore.accountStore
       .invoke({
         payment: [],
         dApp: CONTRACT_ADDRESSES.limitOrders,
@@ -259,13 +259,12 @@ class LimitOrdersVM {
           )
       )
       .then(() => this.sync())
+      .then(() => this.setLoading(false))
       .catch((e) =>
         this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
           type: "error",
         })
       );
-
-    this.setLoading(false);
   };
 
   cancelAllOrders = async () => {
@@ -276,7 +275,7 @@ class LimitOrdersVM {
     if (activeOrders.length === 0) return;
     const ordersToCancel = activeOrders.map(({ id }) => id).join(",");
     this.setNotificationParams(null);
-    await this.rootStore.accountStore
+    return this.rootStore.accountStore
       .invoke({
         payment: [],
         dApp: CONTRACT_ADDRESSES.proxyLimitOrders,
@@ -299,15 +298,15 @@ class LimitOrdersVM {
           )
       )
       .then(() => this.sync())
+      .then(() => this.setLoading(false))
       .catch((e) =>
         this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
           type: "error",
         })
       );
-    this.setLoading(false);
   };
 
-  checkOrderCancel = (id?: string, many?: boolean) => {
+  checkOrderCancel = async (id?: string, many?: boolean) => {
     this.setNotificationParams(
       buildCancelOrderParams({
         onOrderCancel: () =>

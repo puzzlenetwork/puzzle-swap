@@ -55,6 +55,8 @@ const OrderDetailsModal: React.FC<IProps> = ({ ...rest }) => {
   const token1 = TOKENS_BY_ASSET_ID[order?.token1 ?? ""];
   const am0 = BN.formatUnits(order?.amount0 ?? BN.ZERO, token0?.decimals);
   const am1 = BN.formatUnits(order?.amount1 ?? BN.ZERO, token1?.decimals);
+  console.log(token0);
+  console.log(token1);
   const theme = useTheme();
   const percent = order?.fulfilled0?.times(100).div(order?.amount0);
   const price = am1.div(am0);
