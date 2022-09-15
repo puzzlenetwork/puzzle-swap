@@ -52,7 +52,7 @@ const OpenedOrders: React.FC<IProps> = () => {
       {Object.entries(vm.groupedOrders(true)).map(([time, orders]) => (
         <Column key={time} crossAxisSize="max">
           <Text type="secondary" size="small">
-            {dayjs(time).format("MMM DD, YYYY")}
+            {time}
           </Text>
           <SizedBox height={8} />
           <Orders>

@@ -338,10 +338,13 @@ class LimitOrdersVM {
       .sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1));
     if (sorted.length === 0) return {};
     return sorted.reduce((acc, order) => {
-      const day = dayjs(order.timestamp).startOf("day").toDate().getUTCDate();
+      const day = dayjs(order.timestamp)
+        .startOf("day")
+        .format("MMM DD, YYYY")
+        .toString();
       Array.isArray(acc[day]) ? acc[day].push(order) : (acc[day] = [order]);
       return acc;
-    }, {} as Record<number, Array<IOrder>>);
+    }, {} as Record<string, Array<IOrder>>);
   }
 
   get isThereOpenedOrders() {
