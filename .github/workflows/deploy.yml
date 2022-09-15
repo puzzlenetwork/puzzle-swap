@@ -22,18 +22,18 @@ jobs:
         run: |
           echo "REACT_APP_API_BASE=${REACT_APP_API_BASE_DEV}" >> $GITHUB_ENV
           echo "HEROKU_APP_NAME=puzzlestage" >> $GITHUB_ENV
-          echo "AGGREGATOR_KEY=${AGGREGATOR_KEY_PROD}" >> $GITHUB_ENV
+          echo "AGGREGATOR_KEY=${REACT_APP_AGGREGATOR_KEY_PROD}" >> $GITHUB_ENV
       - name: Deploy to PROD
         if: endsWith(github.ref, '/master')
         run: |
           echo "REACT_APP_API_BASE=${REACT_APP_API_BASE_PROD}" >> $GITHUB_ENV
           echo "HEROKU_APP_NAME=puzzlefi" >> $GITHUB_ENV
-          echo "AGGREGATOR_KEY=${AGGREGATOR_KEY_DEV}" >> $GITHUB_ENV
+          echo "AGGREGATOR_KEY=${REACT_APP_AGGREGATOR_KEY_DEV}" >> $GITHUB_ENV
       - name: Run chekout
         uses: actions/checkout@v2
       - name: Set env
         run: heroku config:set REACT_APP_API_BASE=${{env.REACT_APP_API_BASE}} -a ${{ env.HEROKU_APP_NAME }}
-      - run: heroku config:set AGGREGATOR_KEY="${{env.AGGREGATOR_KEY}}" -a ${{ env.HEROKU_APP_NAME }}
+      - run: heroku config:set AGGREGATOR_KEY="${{env.REACT_APP_AGGREGATOR_KEY}}" -a ${{ env.HEROKU_APP_NAME }}
       - name: Deploy to ${{ env.HEROKU_APP_NAME }}
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
