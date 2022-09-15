@@ -8,6 +8,7 @@ import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
 import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";
 import { useSwapVM } from "@screens/TradeInterface/SwapVM";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -51,6 +52,7 @@ const Tokens: React.FC<IProps> = () => {
       search: `?${urlSearchParams.toString()}`,
     });
     vm.setAssetId0(assetId);
+    vm.setPrice(BN.ZERO);
     swapVm.setAssetId0(assetId);
   };
   const handleSetAssetId1 = (assetId: string) => {
@@ -68,11 +70,12 @@ const Tokens: React.FC<IProps> = () => {
       search: `?${urlSearchParams.toString()}`,
     });
     vm.setAssetId1(assetId);
+    vm.setPrice(BN.ZERO);
     swapVm.setAssetId1(assetId);
   };
 
-  const handleSwitch = () => {
-    vm.switchTokens();
+  const handleSwitch = async () => {
+    await vm.switchTokens();
     const urlSearchParams = new URLSearchParams(window.location.search);
     urlSearchParams.set("asset0", vm.assetId0);
     urlSearchParams.set("asset1", vm.assetId1);

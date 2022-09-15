@@ -109,6 +109,8 @@ class LimitOrdersVM {
   switchTokens = () => {
     const assetId0 = this.assetId0;
     this.setAssetId0(this.assetId1);
+    this.setPrice(BN.ZERO);
+    this.setPayment(BN.ZERO);
     this.setAssetId1(assetId0);
   };
 
@@ -177,14 +179,6 @@ class LimitOrdersVM {
     )!;
   }
 
-  makePriceFromMarket = () => {
-    const marketPriceOfToken0 = this.rootStore.poolsStore.t2tPrice(
-      this.assetId0,
-      this.assetId1
-    );
-    this.setPrice(marketPriceOfToken0);
-  };
-
   createOrder = async () => {
     if (this.price.eq(0) || this.payment.eq(0)) return;
     const paymentAmount =
@@ -223,6 +217,10 @@ class LimitOrdersVM {
           )
       )
       .then(() => this.sync())
+      .then(() => {
+        this.setPrice(BN.ZERO);
+        this.setPayment(BN.ZERO);
+      })
       .catch((e) =>
         this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
           type: "error",

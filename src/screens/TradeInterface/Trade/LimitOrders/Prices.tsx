@@ -56,9 +56,9 @@ const Prices: React.FC<IProps> = () => {
           </TextButton>
           <SizedBox width={12} />
           <TextButton
-            onClick={() => {
-              vm.makePriceFromMarket();
+            onClick={async () => {
               vm.setPriceSettings(1);
+              await vm.getMarketPrice();
             }}
             active={vm.priceSettings === 1}
           >
