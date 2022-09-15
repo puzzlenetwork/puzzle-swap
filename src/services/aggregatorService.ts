@@ -30,7 +30,9 @@ const aggregatorService = {
     amount: BN
   ): Promise<ICalcResponse> => {
     const url = `https://waves.puzzle-aggr-api.com/aggregator/calc?token0=${assetId0}&token1=${assetId1}&amountIn=${amount.toString()}`;
-    const { data } = await axios.get(url);
+    const { data } = await axios.get(url, {
+      headers: { Authorization: `Bearer ${process.env.AGGREGATOR_KEY}` },
+    });
     return data;
   },
 };
