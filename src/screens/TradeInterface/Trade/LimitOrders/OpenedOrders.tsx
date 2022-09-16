@@ -4,7 +4,6 @@ import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
 import { observer } from "mobx-react-lite";
 import { Column } from "@src/components/Flex";
 import Text from "@src/components/Text";
-import dayjs from "dayjs";
 import SizedBox from "@components/SizedBox";
 import Order from "./Order";
 

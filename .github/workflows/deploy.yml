@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Set env
         run: heroku config:set REACT_APP_API_BASE=${{env.REACT_APP_API_BASE}} -a ${{ env.HEROKU_APP_NAME }}
-      - run: heroku config:set AGGREGATOR_KEY="${{env.REACT_APP_AGGREGATOR_KEY}}" -a ${{ env.HEROKU_APP_NAME }}
+      - run: heroku config:set REACT_APP_AGGREGATOR_KEY="${{env.REACT_APP_AGGREGATOR_KEY}}" -a ${{ env.HEROKU_APP_NAME }}
       - name: Deploy to ${{ env.HEROKU_APP_NAME }}
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
