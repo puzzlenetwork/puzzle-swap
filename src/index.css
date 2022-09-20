@@ -7,9 +7,6 @@ a {
     text-decoration: none;
 }
 
-iframe {
-    display: none !important;
-}
 
 #root {
     display: flex;

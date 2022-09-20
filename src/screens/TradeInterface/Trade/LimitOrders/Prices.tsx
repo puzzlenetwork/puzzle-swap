@@ -68,9 +68,9 @@ const Prices: React.FC<IProps> = () => {
         <SizedBox height={4} />
         <LimitTokenInput
           placeholder={vm.priceSettings === 1 && vm.loading ? "..." : "0.00"}
-          prefix={TOKENS_BY_ASSET_ID[vm.assetId0].symbol}
+          prefix={TOKENS_BY_ASSET_ID[vm.assetId1].symbol}
           assetId={vm.token0.assetId}
-          decimals={vm.token0.decimals}
+          decimals={vm.token1.decimals}
           amount={vm.price}
           setAmount={vm.setPrice}
           usdnEquivalent={vm.dollEq0}
@@ -99,12 +99,12 @@ const Prices: React.FC<IProps> = () => {
         <SizedBox height={4} />
         <LimitTokenInput
           prefix={
-            TOKENS_BY_ASSET_ID[
-              vm.paymentSettings === 0 ? vm.assetId1 : vm.assetId0
-            ].symbol
+            vm.paymentSettings === 0 ? vm.token1.symbol : vm.token0.symbol
           }
           assetId={vm.token1.assetId}
-          decimals={vm.token1.decimals}
+          decimals={
+            vm.paymentSettings === 0 ? vm.token1.decimals : vm.token0.decimals
+          }
           amount={vm.payment}
           setAmount={vm.setPayment}
           usdnEquivalent={vm.dollEq1}
