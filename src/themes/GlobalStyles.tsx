@@ -102,6 +102,10 @@ background-color: ${theme.colors.white} !important;
 
 }
 
+.notifications-text {
+ color: ${theme.colors.primary800};
+}
+
 
 `;
 
