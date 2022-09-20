@@ -123,6 +123,7 @@ class LimitOrdersVM {
     (this.orderToDisplayDetails = v);
 
   sync = async () => {
+    if (this.rootStore.accountStore == null) return;
     const orderIdList: string[] = await makeNodeRequest(
       `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}/user_${this.rootStore.accountStore.address}_orders`
     )
@@ -207,7 +208,7 @@ class LimitOrdersVM {
         (txId) =>
           txId &&
           this.rootStore.notificationStore.notify(
-            `You can find your cancelled orders in orders history`,
+            `You can find your active orders in orders history`,
             {
               type: "success",
               title: `Order has been placed`,
