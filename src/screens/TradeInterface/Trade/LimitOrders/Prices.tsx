@@ -6,7 +6,6 @@ import SizedBox from "@components/SizedBox";
 import { useLimitOrdersVM } from "@screens/TradeInterface/LimitOrdersVM";
 import { observer } from "mobx-react-lite";
 import LimitTokenInput from "./LimitTokenInput";
-import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 
@@ -44,6 +43,7 @@ const Prices: React.FC<IProps> = () => {
   const vm = useLimitOrdersVM();
   const { accountStore } = useStores();
   const percents = [25, 50, 75, 100];
+
   return (
     <Root>
       <Column crossAxisSize="max">
@@ -68,12 +68,11 @@ const Prices: React.FC<IProps> = () => {
         <SizedBox height={4} />
         <LimitTokenInput
           placeholder={vm.priceSettings === 1 && vm.loading ? "..." : "0.00"}
-          prefix={TOKENS_BY_ASSET_ID[vm.assetId1].symbol}
-          assetId={vm.token0.assetId}
-          decimals={vm.token1.decimals}
+          prefix={vm.token0.symbol}
+          decimals={vm.token0.decimals}
           amount={vm.price}
           setAmount={vm.setPrice}
-          usdnEquivalent={vm.dollEq0}
+          usdnEquivalent={vm.dollEqForPrice}
           error={false}
           disabled={vm.priceSettings === 1}
           loading={vm.marketPriceLoading}
@@ -98,17 +97,12 @@ const Prices: React.FC<IProps> = () => {
         </Row>
         <SizedBox height={4} />
         <LimitTokenInput
-          prefix={
-            vm.paymentSettings === 0 ? vm.token1.symbol : vm.token0.symbol
-          }
-          assetId={vm.token1.assetId}
-          decimals={
-            vm.paymentSettings === 0 ? vm.token1.decimals : vm.token0.decimals
-          }
+          prefix={vm.tokenForPayment.symbol}
+          decimals={vm.tokenForPayment.decimals}
           amount={vm.payment}
           setAmount={vm.setPayment}
-          usdnEquivalent={vm.dollEq1}
-          error={vm.paymentError0}
+          usdnEquivalent={vm.dollForPayment}
+          error={vm.paymentError}
         />
         <SizedBox height={4} />
         {accountStore.address != null && vm.paymentSettings === 0 && (
@@ -133,18 +127,18 @@ const Prices: React.FC<IProps> = () => {
         <Text
           size="big"
           type={
-            vm.paymentSettings === 1 && vm.paymentError1 ? "error" : "primary"
+            vm.paymentSettings === 1 && vm.paymentError ? "error" : "primary"
           }
         >
           {vm.paymentSettings === 0
             ? `You’ll get ${BN.formatUnits(
                 vm.finalAmount,
-                vm.token0.decimals
-              ).toFormat(2)} ${vm.token0.symbol}`
+                vm.token1.decimals
+              ).toFormat(2)} ${vm.token1.symbol}`
             : `You’ll pay ${BN.formatUnits(
                 vm.finalAmount,
-                vm.token1.decimals
-              ).toFormat(2)} ${vm.token1.symbol}`}
+                vm.token0.decimals
+              ).toFormat(2)} ${vm.token0.symbol}`}
         </Text>
         <SizedBox height={4} />
         <Text type="secondary" size="medium">

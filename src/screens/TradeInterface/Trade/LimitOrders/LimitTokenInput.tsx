@@ -10,7 +10,6 @@ import { Row } from "@src/components/Flex";
 import SizedBox from "@components/SizedBox";
 
 interface IProps {
-  assetId: string;
   prefix: string;
   placeholder?: string;
   decimals: number;

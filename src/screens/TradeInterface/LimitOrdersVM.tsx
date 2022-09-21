@@ -184,11 +184,11 @@ class LimitOrdersVM {
     if (this.price.eq(0) || this.payment.eq(0)) return;
     const paymentAmount =
       this.paymentSettings === 0 ? this.payment : this.finalAmount;
-    const paymentToken = this.token1;
+    const paymentToken = this.token0;
 
     const requiredAmount =
       this.paymentSettings === 0 ? this.finalAmount : this.payment;
-    const requiredToken = this.token0;
+    const requiredToken = this.token1;
     this.setLoading(true);
     return this.rootStore.accountStore
       .invoke({
@@ -229,6 +229,10 @@ class LimitOrdersVM {
         })
       );
   };
+
+  get tokenForPayment() {
+    return this.paymentSettings === 0 ? this.token0 : this.token1;
+  }
 
   cancelOrder = async (orderId: string) => {
     this.setLoading(true);
@@ -352,34 +356,28 @@ class LimitOrdersVM {
   }
 
   onPercentClick = (percent: number) => {
-    const amount = new BN(percent).times(this.balance1 ?? 1).div(100);
+    const amount = new BN(percent).times(this.balance0 ?? 1).div(100);
     this.setPayment(amount);
   };
 
-  get dollEq0() {
+  get dollEqForPrice() {
     const v = this.rootStore.poolsStore
-      .usdnRate(this.assetId1)
+      .usdnRate(this.assetId0)
       ?.times(this.price);
     if (v == null) return "$ 0.00";
-    return `$ ${BN.formatUnits(v, this.token1.decimals).toFormat(2)}`;
+    return `$ ${BN.formatUnits(v, this.token0.decimals).toFormat(2)}`;
   }
 
-  get paymentError1() {
+  get paymentError() {
     if (this.rootStore.accountStore.address == null) return false;
     if (this.payment.eq(0) || this.price.eq(0)) return false;
-    return (
-      this.paymentSettings === 1 && this.finalAmount.gt(this.balance1 ?? 0)
-    );
+    return this.paymentSettings === 0
+      ? this.payment.gt(this.balance0 ?? 0)
+      : this.finalAmount.gt(this.balance0 ?? 0);
   }
 
-  get paymentError0() {
-    if (this.rootStore.accountStore.address == null) return false;
-    if (this.payment.eq(0) || this.price.eq(0)) return false;
-    return this.paymentSettings === 0 && this.payment.gt(this.balance1 ?? 0);
-  }
-
-  get dollEq1() {
-    const token = this.paymentSettings === 0 ? this.token1 : this.token0;
+  get dollForPayment() {
+    const token = this.paymentSettings === 0 ? this.token0 : this.token1;
     const v = this.rootStore.poolsStore
       .usdnRate(token.assetId)
       ?.times(this.payment);
@@ -389,23 +387,19 @@ class LimitOrdersVM {
 
   get finalAmount(): BN {
     if (this.price.eq(0) || this.payment.eq(0)) return BN.ZERO;
-    if (this.paymentSettings === 0) {
-      const v1 = BN.formatUnits(this.price, this.token0.decimals);
-      const v2 = BN.formatUnits(this.payment, this.token1.decimals);
-      return BN.parseUnits(v2.div(v1), this.token1.decimals);
-    } else {
-      const v1 = BN.formatUnits(this.price, this.token0.decimals);
-      const v2 = BN.formatUnits(this.payment, this.token1.decimals);
-      return BN.parseUnits(v1.times(v2), this.token1.decimals);
-    }
+    const v1 = BN.formatUnits(this.price, this.token0.decimals);
+    const v2 = BN.formatUnits(this.payment, this.tokenForPayment.decimals);
+    return this.paymentSettings === 0
+      ? BN.parseUnits(v2.div(v1), this.token1.decimals)
+      : BN.parseUnits(v1.times(v2), this.token0.decimals);
   }
 
   getMarketPrice = async () => {
     this.setMarketPriceLoading(true);
     const res = await aggregatorService.calc(
-      this.assetId0,
       this.assetId1,
-      BN.parseUnits(1, this.token0.decimals)
+      this.assetId0,
+      BN.parseUnits(1, this.token1.decimals)
     );
     this.setPrice(new BN(res.estimatedOut));
     this.setPriceSettings(0);

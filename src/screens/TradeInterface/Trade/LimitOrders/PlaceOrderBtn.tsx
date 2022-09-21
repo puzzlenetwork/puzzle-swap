@@ -10,8 +10,7 @@ interface IProps {}
 const PlaceOrderBtn: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const vm = useLimitOrdersVM();
-  const { price, paymentError0, paymentError1, payment, loading, initialized } =
-    vm;
+  const { price, paymentError, payment, loading, initialized } = vm;
   switch (true) {
     case accountStore.address == null:
       return (
@@ -37,7 +36,7 @@ const PlaceOrderBtn: React.FC<IProps> = () => {
           Enter an amount
         </Button>
       );
-    case paymentError1 || paymentError0:
+    case paymentError:
       return (
         <Button disabled fixed>
           Insufficient balance
