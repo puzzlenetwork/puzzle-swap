@@ -95,6 +95,18 @@ background-color: ${theme.colors.white} !important;
 
 }
 
+.react-loading-skeleton {
+
+--base-color: ${theme.colors.white};
+--highlight-color: ${theme.colors.primary100};
+
+}
+
+.notifications-text {
+ color: ${theme.colors.primary800};
+}
+
+
 `;
 
 const GlobalStyles: React.FC = () => {

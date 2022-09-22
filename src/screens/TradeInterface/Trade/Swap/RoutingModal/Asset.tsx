@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React, { HTMLAttributes } from "react";
 import Text from "@components/Text";
-import { ISchemaExchange } from "@screens/TradeInterface/TradeVM";
+import { ISchemaExchange } from "@screens/TradeInterface/SwapVM";
 import SizedBox from "@components/SizedBox";
 import { Row } from "src/components/Flex";
 import RoundTokenIcon from "@components/RoundTokenIcon";

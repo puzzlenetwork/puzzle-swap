@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "@emotion/styled";
 
-const Root = styled.input`
-  font-size: 20px;
+const Root = styled.input<{ small?: boolean }>`
+  font-size: ${({ small }) => (small ? "16px;" : "20px")};
   line-height: 24px;
   border: none;
   background: transparent;
@@ -25,13 +25,14 @@ const Root = styled.input`
   }
 `;
 
-type TProps = React.InputHTMLAttributes<HTMLInputElement>;
+type TProps = React.InputHTMLAttributes<HTMLInputElement> & { small?: boolean };
 
 const AmountInput = React.forwardRef<HTMLInputElement, TProps>(
   ({ onWheel, ...props }, ref) => (
     <Root
       {...props}
       ref={ref}
+      small={props.small}
       type="number"
       onWheel={(e) => {
         e.target && (e.target as any).blur();

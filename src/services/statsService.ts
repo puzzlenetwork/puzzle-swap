@@ -1,4 +1,5 @@
 import axios from "axios";
+import * as process from "process";
 
 export interface IArtWork {
   floorPrice?: number;
@@ -25,7 +26,7 @@ const statsService = {
     return data;
   },
   getArtworks: async (): Promise<TArtworksResponse> => {
-    const url = "https://api.puzzleswap.org/stats/artworks";
+    const url = `${process.env.REACT_APP_AGGR_API}/stats/artworks`;
     const { data } = await axios.get(url);
     return data;
   },

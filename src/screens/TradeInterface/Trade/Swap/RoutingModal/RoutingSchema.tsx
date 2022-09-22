@@ -1,12 +1,12 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { useTradeVM } from "@screens/TradeInterface/TradeVM";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
 import Route from "./Route";
 import Img from "@components/Img";
 import { useTheme } from "@emotion/react";
+import { useSwapVM } from "@screens/TradeInterface/SwapVM";
 
 interface IProps {}
 
@@ -27,7 +27,7 @@ const RoutesContainer = styled.div`
   flex: 1;
 `;
 const RoutingSchema: React.FC<IProps> = () => {
-  const vm = useTradeVM();
+  const vm = useSwapVM();
   const theme = useTheme();
   const values = vm.schemaValues;
   const isAmount0Empty = vm.amount0.eq(0);

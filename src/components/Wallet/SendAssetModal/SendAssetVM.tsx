@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { action, makeAutoObservable } from "mobx";
+import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import centerEllipsis from "@src/utils/centerEllipsis";
@@ -34,7 +34,7 @@ class SendAssetVM {
     makeAutoObservable(this);
   }
 
-  @action.bound onMaxClick = () => {
+  onMaxClick = () => {
     const { assetToSend } = this.rootStore.accountStore;
     this.setAmount(assetToSend!.balance ?? BN.ZERO);
   };

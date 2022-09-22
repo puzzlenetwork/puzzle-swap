@@ -25,7 +25,7 @@ const Link = styled.a`
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
-  color: ${({ theme }) => theme.colors.blue500};
+  color: #7075e9;
   cursor: pointer;
 `;
 
@@ -40,13 +40,14 @@ const getAlert = (
         <Icon type={type} />
         <Column>
           {title && (
-            <Text size="medium" weight={500}>
+            <Text size="medium" className="notifications-text" weight={500}>
               {title}
             </Text>
           )}
           <Text
             size="small"
             type="secondary"
+            className="notifications-text"
             style={{ marginTop: 2, width: "100%", wordBreak: "break-word" }}
           >
             {content}
@@ -73,7 +74,6 @@ const Icon: React.FunctionComponent<{
   let icon = null;
   const Root = styled.div`
     margin-right: 16px;
-    //flex: 1;
   `;
   switch (type) {
     case "error":

@@ -12,6 +12,7 @@ const Root = styled.div`
   cursor: pointer;
   align-items: center;
   margin: 16px 0;
+
   .icon {
     transition: 0.4s;
   }

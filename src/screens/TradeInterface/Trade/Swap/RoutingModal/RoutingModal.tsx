@@ -2,11 +2,11 @@ import React from "react";
 import Dialog from "@components/Dialog";
 import Text from "@components/Text";
 import styled from "@emotion/styled";
-import { useTradeVM } from "@screens/TradeInterface/TradeVM";
 import SizedBox from "@components/SizedBox";
 import BN from "@src/utils/BN";
 import Loading from "@components/Loading";
 import RoutingSchema from "./RoutingSchema";
+import { useSwapVM } from "@screens/TradeInterface/SwapVM";
 
 interface IProps {
   onClose: () => void;
@@ -20,7 +20,7 @@ const Title = styled(Text)`
   }
 `;
 const RoutingModal: React.FC<IProps> = ({ ...rest }) => {
-  const vm = useTradeVM();
+  const vm = useSwapVM();
   const { token0, token1, aggregatedProfit } = vm;
   const profit = BN.formatUnits(aggregatedProfit, token1.decimals);
   return (

@@ -1,8 +1,7 @@
 import styled from "@emotion/styled";
-import React, { HTMLAttributes } from "react";
+import React from "react";
 import Card from "@components/Card";
 import TokenInput from "@components/TokenInput";
-import SwitchTokensButton from "@screens/TradeInterface/SwitchTokensButton";
 import SizedBox from "@components/SizedBox";
 import SwapDetailRow from "@components/SwapDetailRow";
 import { Row } from "@components/Flex";
@@ -12,20 +11,19 @@ import { ReactComponent as ShowMoreIcon } from "@src/assets/icons/showMore.svg";
 import Divider from "@components/Divider";
 import Tooltip from "@components/Tooltip";
 import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
-import Details from "@screens/TradeInterface/Details";
 import { useStores } from "@stores";
-import { useTradeVM } from "@screens/TradeInterface/TradeVM";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import TooltipFeeInfo from "./TooltipFeeInfo";
 import RoutingModal from "./RoutingModal";
 import SwapButton from "./SwapButton";
-import SettingsHeader from "./SettingsHeader";
-import Settings from "@screens/TradeInterface/Swap/Settings";
+import Settings from "./Settings";
+import SettingsHeader from "../SettingsHeader";
+import { useSwapVM } from "@screens/TradeInterface/SwapVM";
+import SwitchTokensButton from "./SwitchTokensButton";
+import Details from "./Details";
 
-interface IProps extends HTMLAttributes<HTMLDivElement> {
-  squareRef: any;
-}
+interface IProps {}
 
 const Root = styled.div`
   display: flex;
@@ -34,11 +32,13 @@ const Root = styled.div`
   justify-content: center;
   box-sizing: border-box;
   padding: 0 16px;
+  width: 100%;
+  max-width: 560px;
 `;
 
-const Swap: React.FC<IProps> = ({ squareRef, ...rest }) => {
-  const { notificationStore } = useStores();
-  const vm = useTradeVM();
+const Swap: React.FC<IProps> = ({ ...rest }) => {
+  const { notificationStore, accountStore } = useStores();
+  const vm = useSwapVM();
   const navigate = useNavigate();
 
   const handleSetAssetId0 = (assetId: string) => {
@@ -77,12 +77,11 @@ const Swap: React.FC<IProps> = ({ squareRef, ...rest }) => {
   return (
     <Root {...rest}>
       <Card
-        ref={squareRef}
         style={{ position: "relative" }}
         paddingDesktop="16px 24px"
         paddingMobile="16px"
       >
-        <SettingsHeader />
+        <SettingsHeader withSetting />
         <Settings />
         <TokenInput
           decimals={vm.token0.decimals}
@@ -90,7 +89,7 @@ const Swap: React.FC<IProps> = ({ squareRef, ...rest }) => {
           setAmount={vm.setAmount0}
           assetId={vm.assetId0}
           setAssetId={handleSetAssetId0}
-          balances={vm.balances}
+          balances={accountStore.balances}
           onMaxClick={vm.amount0MaxClickFunc}
           selectable
         />
@@ -100,7 +99,7 @@ const Swap: React.FC<IProps> = ({ squareRef, ...rest }) => {
           amount={vm.amount1}
           assetId={vm.assetId1}
           setAssetId={handleSetAssetId1}
-          balances={vm.balances}
+          balances={accountStore.balances}
           selectable
         />
         <SizedBox height={24} />

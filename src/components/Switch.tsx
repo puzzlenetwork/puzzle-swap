@@ -43,12 +43,13 @@ const Root = styled.div`
   .slider:before {
     position: absolute;
     content: "";
-    //
     width: 18px;
     height: 18px;
     left: 3px;
     bottom: 3px;
     background-color: white;
+    box-shadow: 0px 2px 4px rgba(54, 56, 112, 0.12);
+
     -webkit-transition: 0.4s;
     transition: 0.4s;
   }

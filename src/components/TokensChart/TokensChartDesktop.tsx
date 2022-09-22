@@ -14,6 +14,8 @@ import {
   useTokenChartVM,
 } from "@components/TokensChart/TokenChartVM";
 import LearnMoreTokenChartButtons from "@components/TokensChart/LearnMoreTokenChartButtons";
+import MyOrders from "@screens/TradeInterface/Trade/LimitOrders/MyOrders";
+import { useSwapVM } from "@screens/TradeInterface/SwapVM";
 
 interface IProps {
   token0: IToken;
@@ -47,6 +49,7 @@ const TokensChartDesktopImpl: React.FC<IProps> = observer(
       duration: 500,
     });
     const vm = useTokenChartVM();
+    const swapVm = useSwapVM();
     return (
       <Root {...getCollapseProps()}>
         <Card style={{ height }}>
@@ -68,6 +71,8 @@ const TokensChartDesktopImpl: React.FC<IProps> = observer(
         </Card>
         <SizedBox height={16} />
         <LearnMoreTokenChartButtons />
+        <SizedBox height={40} />
+        {swapVm.activeAction === 1 && <MyOrders />}
       </Root>
     );
   }

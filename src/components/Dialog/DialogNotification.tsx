@@ -261,5 +261,51 @@ export const buildSuccessBoostParams = ({
     ],
   };
 };
+//CancelOrder
 
+type TBuildCancelOrderProps = {
+  onOrderCancel: () => void;
+  onCancel: () => void;
+  many?: boolean;
+};
+
+export const buildCancelOrderParams = ({
+  onOrderCancel,
+  onCancel,
+  many,
+}: TBuildCancelOrderProps): IDialogNotificationProps => {
+  return {
+    icon: <></>,
+    title: many
+      ? "Are you sure you want cancel all orders?"
+      : "Are you sure you want cancel the order?",
+    description: many
+      ? "The current orders progress will not be canceled, but further execution will stop"
+      : "The current order progress will not be canceled, but further execution will stop",
+    buttons: [
+      () => (
+        <Button
+          key="explorer"
+          size="medium"
+          kind="danger"
+          fixed
+          onClick={onOrderCancel}
+        >
+          {many ? "Cancel all orders" : "Cancel the order"}
+        </Button>
+      ),
+      () => (
+        <Button
+          key="explorer"
+          size="medium"
+          kind="secondary"
+          fixed
+          onClick={onCancel}
+        >
+          Back to trade
+        </Button>
+      ),
+    ],
+  };
+};
 export default DialogNotification;

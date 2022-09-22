@@ -23,6 +23,7 @@ import ExploreToken from "@screens/ExploreToken";
 import OldExplorer from "./screens/OldExplorer";
 import BoostApy from "./screens/BoostApy";
 import MobileNavBar from "./components/MobileNavBar";
+import Landing from "@screens/Landing";
 
 const Root = styled(Column)`
   width: 100%;
@@ -30,7 +31,12 @@ const Root = styled(Column)`
   background: ${({ theme }) => theme.colors.primary50};
   min-height: 100vh;
 `;
-
+const MobileSpace = styled.div`
+  height: 56px;
+  @media (min-width: 880px) {
+    display: none;
+  }
+`;
 const App: React.FC = () => {
   const { accountStore } = useStores();
   return (
@@ -38,7 +44,7 @@ const App: React.FC = () => {
       <Header />
       <Routes>
         {/* Landing */}
-        <Route path={ROUTES.ROOT} element={<TradeInterface />} />
+        <Route path={ROUTES.ROOT} element={<Landing />} />
         {/* 404 */}
         <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
         {/* Stake */}
@@ -54,6 +60,7 @@ const App: React.FC = () => {
 
         {/* Trade */}
         <Route path={ROUTES.TRADE} element={<TradeInterface />} />
+        <Route path={ROUTES.LIMIT_ORDER} element={<TradeInterface />} />
 
         {/* Invest table routes */}
         <Route path={ROUTES.INVEST} element={<Invest />} />
@@ -94,6 +101,7 @@ const App: React.FC = () => {
         onClose={() => accountStore.setSendAssetModalOpened(false)}
         visible={accountStore.sendAssetModalOpened}
       />
+      <MobileSpace />
       <MobileNavBar />
     </Root>
   );
