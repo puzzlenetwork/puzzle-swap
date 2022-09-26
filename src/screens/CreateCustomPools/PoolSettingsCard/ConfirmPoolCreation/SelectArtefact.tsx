@@ -40,12 +40,6 @@ export const SelectArtefactSkeleton = () => (
 
 const SelectArtefact: React.FC<IProps> = () => {
   const { nftStore } = useStores();
-  // const nftForCreation = nftStore.accountNFTs?.filter((nft) =>
-  //   Object.keys(nftsPics).some((v) =>
-  //     nft?.description?.includes(v.toLowerCase())
-  //   )
-  // );
-  // console.log(nftForCreation?.length);
   const [openNftDialog, setOpenNftDialog] = useState(false);
   const vm = useCreateCustomPoolsVM();
   return (

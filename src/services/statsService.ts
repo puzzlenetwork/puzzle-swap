@@ -26,7 +26,8 @@ const statsService = {
     return data;
   },
   getArtworks: async (): Promise<TArtworksResponse> => {
-    const url = `${process.env.REACT_APP_AGGR_API}/stats/artworks`;
+    // const url = `${process.env.REACT_APP_AGGR_API}/stats/artworks`;
+    const url = `https://waves.puzzle-aggr-api.com/stats/artworks`;
     const { data } = await axios.get(url);
     return data;
   },
