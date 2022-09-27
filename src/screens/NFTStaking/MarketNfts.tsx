@@ -22,8 +22,8 @@ const MarketNfts: React.FC<IProps> = () => {
 
   return (
     <Root>
-      {nftStore.artworks != null
-        ? nftStore.artworks.map((art, index) => (
+      {nftStore.NFTSOnMarketForStaking != null
+        ? nftStore.NFTSOnMarketForStaking.map((art, index) => (
             <Artefact
               key={index}
               {...art}

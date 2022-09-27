@@ -46,7 +46,6 @@ const Tag = styled.div`
 const NFTs: React.FC<IProps> = () => {
   const { nftStore } = useStores();
   const { accountNFTs } = nftStore;
-
   return (
     <Root>
       <Grid>

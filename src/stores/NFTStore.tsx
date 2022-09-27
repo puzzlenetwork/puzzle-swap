@@ -1,9 +1,60 @@
-import statsService, { IArtWork } from "@src/services/statsService";
+import { IArtWork } from "@src/services/statsService";
 import RootStore from "@stores/RootStore";
 import nodeService, { INFT } from "@src/services/nodeService";
 import { makeAutoObservable, reaction } from "mobx";
 import { CONTRACT_ADDRESSES, PUZZLE_NFTS } from "@src/constants";
 import nftsPics from "@src/constants/nftsPics";
+
+const requiredNfts = [
+  {
+    name: "EAGLE",
+    typeId: "DxJAxqQhWAojdnzmcZpHAE3Hbm39JPAaCq9rEMJqNn61",
+    floorPrice: 7777000000,
+    apy: 43.2,
+    marketLink:
+      "https://mainnet.sign-art.app/user/3PFTZA987iHHbP6UWVTbbrquNetcFSULqUP/artwork/DxJAxqQhWAojdnzmcZpHAE3Hbm39JPAaCq9rEMJqNn61",
+    imageLink: nftsPics["EAGLE"],
+  },
+  {
+    name: "ANIA",
+    typeId: "@anianklv",
+    apy: 35.11,
+    marketLink:
+      "https://puzzlemarket.org/collection/3PMki5sHBsQb4KgDknbUwsL3YgxaCzaZnCJ/ania",
+    imageLink:
+      "https://ipfs.io/ipfs/QmUH9fyeRGNv366GhxWRfQxZ1Aoh5QXX6bBnTRcnheTwz4",
+  },
+  {
+    name: "Puzzle Surf",
+    typeId:
+      "Puzzle Surf artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
+    imageLink: nftsPics["SURF"],
+  },
+  {
+    name: "Puzzle Desert",
+    typeId:
+      "Puzzle Desert artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
+    imageLink: nftsPics["DESERT"],
+  },
+  {
+    name: "Puzzle Airplane",
+    typeId:
+      "Puzzle Airplane artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
+    imageLink: nftsPics["AIRPLANE"],
+  },
+  {
+    name: "Puzzle Wheel",
+    typeId:
+      "Puzzle Wheel artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
+    imageLink: nftsPics["WHEEL"],
+  },
+  {
+    name: "Puzzle Khalifa",
+    description:
+      "Puzzle Khalifa artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
+    typeId: nftsPics["KHALIFA"],
+  },
+];
 
 export default class NftStore {
   public rootStore: RootStore;
@@ -12,8 +63,8 @@ export default class NftStore {
   private _setNftPictures = (v: Record<string, string>) =>
     (this.nftPictures = v);
 
-  public artworks: IArtWork[] | null = null;
-  private _setArtworks = (v: IArtWork[]) => (this.artworks = v);
+  public artworks: IArtWork[] | null = requiredNfts;
+  // private _setArtworks = (v: IArtWork[]) => (this.artworks = v);
 
   public totalPuzzleNftsAmount: number | null = null;
   private _setTotalPuzzleNftsAmount = (v: number) =>
@@ -28,13 +79,10 @@ export default class NftStore {
     (this.accountNFTs = v);
 
   get accountNFTsToStake() {
-    return (
-      this.accountNFTs?.filter(({ description, typeId }) => {
-        if (description && typeId) {
-          return description.includes(typeId);
-        }
-        return false;
-      }) ?? []
+    return this.accountNFTs?.filter(
+      ({ typeId }) =>
+        typeId === "DxJAxqQhWAojdnzmcZpHAE3Hbm39JPAaCq9rEMJqNn61" ||
+        typeId === "@anianklv"
     );
   }
 
@@ -42,20 +90,11 @@ export default class NftStore {
     this.rootStore = rootStore;
     makeAutoObservable(this);
     this.syncNftPics().then();
-    statsService
-      .getArtworks()
-      .then((d) => {
-        const fix = d;
-        fix[0].imageLink = nftsPics["EAGLE"];
-        this._setArtworks(fix);
-      })
-      .then(() =>
-        Promise.all([
-          this.syncAccountNFTs(),
-          this.syncAccountNFTsOnStaking(),
-          this.getTotalPuzzlesNftsAmount(),
-        ])
-      );
+    Promise.all([
+      this.syncAccountNFTs(),
+      this.syncAccountNFTsOnStaking(),
+      this.getTotalPuzzlesNftsAmount(),
+    ]);
 
     reaction(
       () => this.rootStore.accountStore.address,
@@ -100,15 +139,7 @@ export default class NftStore {
         ) ?? []),
       }))
       .filter(({ description, typeId }) => {
-        if (
-          Object.keys(nftsPics).some((v) =>
-            description.toLowerCase()?.includes(v.toLowerCase())
-          )
-        ) {
-          return true;
-        } else if (typeId && description && description.includes(typeId)) {
-          return true;
-        } else return false;
+        return typeId && description && description.includes(typeId ?? "");
       })
 
       .map((nft) => {
@@ -193,6 +224,14 @@ export default class NftStore {
       Object.keys(nftsPics).some((v) =>
         nft?.description?.toLowerCase()?.includes(v.toLowerCase())
       )
+    );
+  }
+
+  get NFTSOnMarketForStaking() {
+    return this.artworks?.filter(
+      ({ typeId }) =>
+        typeId === "DxJAxqQhWAojdnzmcZpHAE3Hbm39JPAaCq9rEMJqNn61" ||
+        typeId === "@anianklv"
     );
   }
 }
