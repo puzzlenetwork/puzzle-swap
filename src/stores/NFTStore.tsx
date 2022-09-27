@@ -1,4 +1,4 @@
-import statsService, { IArtWork } from "@src/services/statsService";
+import { IArtWork } from "@src/services/statsService";
 import RootStore from "@stores/RootStore";
 import nodeService, { INFT } from "@src/services/nodeService";
 import { makeAutoObservable, reaction } from "mobx";
