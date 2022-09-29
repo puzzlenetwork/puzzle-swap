@@ -28,7 +28,7 @@ const Root = styled.div`
 `;
 
 const AccountNfts: React.FC<IProps> = () => {
-  const { accountStore, nftStore } = useStores();
+  const { accountStore, nftStore, stakeStore } = useStores();
   const { accountNFTsToStake, stakedAccountNFTs } = nftStore;
   const vm = useNFTStakingVM();
   if (accountStore.address == null)
@@ -64,6 +64,11 @@ const AccountNfts: React.FC<IProps> = () => {
             {...nft}
             key={index + "accountNFT"}
             name={nft.name}
+            apy={
+              nft.typeId != null && nft.typeId.includes("ania")
+                ? stakeStore.stats?.aniaApy?.toNumber()
+                : stakeStore.stats?.eagleApy?.toNumber()
+            }
             buttons={
               <>
                 {!vm.loading ? (

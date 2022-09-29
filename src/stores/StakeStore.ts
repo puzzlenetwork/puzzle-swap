@@ -4,6 +4,13 @@ import BN from "@src/utils/BN";
 import stakedPuzzleLogo from "@src/assets/tokens/staked-puzzle.svg";
 import nodeService from "@src/services/nodeService";
 import { CONTRACT_ADDRESSES, ROUTES, TOKENS_BY_SYMBOL } from "@src/constants";
+import poolService from "@src/services/poolsService";
+
+export interface IStakingStats {
+  stakingApy?: BN;
+  aniaApy?: BN;
+  eagleApy?: BN;
+}
 
 export default class StakeStore {
   public rootStore: RootStore;
@@ -15,9 +22,13 @@ export default class StakeStore {
   public loading: boolean = false;
   public setLoading = (v: boolean) => (this.loading = v);
 
+  public stats: IStakingStats | null = null;
+  private _setStats = (v: IStakingStats) => (this.stats = v);
+
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
+    this.syncStats().then();
     this.updateStakedInvestments().then();
     setInterval(this.updateStakedInvestments, 30 * 1000);
     reaction(
@@ -25,6 +36,15 @@ export default class StakeStore {
       () => this.updateStakedInvestments(true)
     );
   }
+
+  syncStats = async () => {
+    const data = await poolService.getStats();
+    const formattedData = Object.entries(data).reduce(
+      (acc, [name, v]) => ({ ...acc, [name]: new BN(v) }),
+      {} as IStakingStats
+    );
+    this._setStats(formattedData);
+  };
 
   updateStakedInvestments = async (force = false) => {
     const { address } = this.rootStore.accountStore;

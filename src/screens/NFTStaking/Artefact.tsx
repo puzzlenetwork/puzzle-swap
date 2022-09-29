@@ -3,12 +3,12 @@ import React from "react";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import { Column, Row } from "@src/components/Flex";
-import { IArtWork } from "@src/services/statsService";
 import noPic from "@src/assets/noCard.png";
 import BN from "@src/utils/BN";
 import Skeleton from "react-loading-skeleton";
 import Button from "@components/Button";
 import useElementSize from "@src/hooks/useElementSize";
+import { IArtWork } from "@stores/NFTStore";
 
 interface IProps extends IArtWork {
   buttons?: JSX.Element;

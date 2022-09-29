@@ -7,6 +7,7 @@ import { Column } from "@src/components/Flex";
 import { observer } from "mobx-react-lite";
 import { useStakingVM } from "@screens/Staking/StakingVM";
 import Skeleton from "react-loading-skeleton";
+import { useStores } from "@stores";
 
 const Root = styled.div`
   display: flex;
@@ -25,6 +26,7 @@ const Container = styled(Card)`
 `;
 const Overview: React.FC = () => {
   const vm = useStakingVM();
+  const { stakeStore } = useStores();
   return (
     <Root>
       <Text weight={500} type="secondary">
@@ -37,8 +39,8 @@ const Overview: React.FC = () => {
             Weekly based APY
           </Text>
           <Text style={{ fontSize: 20 }}>
-            {vm.stats?.stakingApy != null ? (
-              vm.stats.stakingApy.toFormat(2).concat(" %")
+            {stakeStore.stats?.stakingApy != null ? (
+              stakeStore.stats.stakingApy.toFormat(2).concat(" %")
             ) : (
               <Skeleton height={20} width={110} />
             )}

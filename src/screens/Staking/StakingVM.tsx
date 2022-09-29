@@ -5,7 +5,6 @@ import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import Balance from "@src/entities/Balance";
 import stakedPuzzleLogo from "@src/assets/tokens/staked-puzzle.svg";
-import statsService from "@src/services/statsService";
 import nodeService from "@src/services/nodeService";
 import {
   CONTRACT_ADDRESSES,
@@ -23,20 +22,9 @@ export const StakingVMProvider: React.FC = ({ children }) => {
 
 export const useStakingVM = () => useVM(ctx);
 
-export interface IStakingStats {
-  stakingApy?: BN;
-  ultraApy?: BN;
-}
-
 class StakingVM {
-  private stakingContractAddress: string = "";
-  private _setStakingAddress = (v: string) => (this.stakingContractAddress = v);
-
   loading: boolean = false;
   private _setLoading = (l: boolean) => (this.loading = l);
-
-  public stats: IStakingStats | null = null;
-  private _setStats = (v: IStakingStats) => (this.stats = v);
 
   public action: 0 | 1 = 0;
   @action.bound setAction = (v: 0 | 1) => (this.action = v);
@@ -54,8 +42,6 @@ class StakingVM {
   private _setLastClaimDate = (v: BN) => (this.lastClaimDate = v);
 
   constructor(private rootStore: RootStore) {
-    this.syncStats().then();
-    this._setStakingAddress(CONTRACT_ADDRESSES.staking);
     makeAutoObservable(this);
     this.updateAddressStakingInfo();
     // when(() => accountStore.address !== null, this.updateAddressStakingInfo);
@@ -94,7 +80,6 @@ class StakingVM {
 
   private updateAddressStakingInfo = async () => {
     const { address } = this.rootStore.accountStore;
-    const { stakingContractAddress } = this;
     if (address == null) {
       this._setGlobalStaked(BN.ZERO);
       this._setAddressStaked(BN.ZERO);
@@ -114,7 +99,7 @@ class StakingVM {
       lastClaimDate: `${address}_${usdn}_lastClaim`,
     };
     const response = await nodeService.nodeKeysRequest(
-      stakingContractAddress,
+      CONTRACT_ADDRESSES.staking,
       Object.values(keysArray)
     );
     //todo вынести в отдельную фунцию
@@ -148,15 +133,6 @@ class StakingVM {
       .times(addressStaked);
     this._setAvailableToClaim(addressStaked ? availableToClaim : BN.ZERO);
     lastClaimDate && this._setLastClaimDate(lastClaimDate);
-  };
-
-  syncStats = async () => {
-    const data = await statsService.getStakingStats();
-    const formattedData = Object.entries(data).reduce(
-      (acc, [name, v]) => ({ ...acc, [name]: new BN(v) }),
-      {} as IStakingStats
-    );
-    this._setStats(formattedData);
   };
 
   claimReward = async () => {

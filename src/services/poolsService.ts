@@ -7,6 +7,12 @@ interface IAssetConfig {
   share: number;
 }
 
+export interface IStakingStatsResponse {
+  stakingApy: string;
+  aniaApy: string;
+  eagleApy: string;
+}
+
 interface ICreatePoolData {
   domain: string;
   image: string;
@@ -68,8 +74,16 @@ const poolService = {
   getPools: async (): Promise<
     Array<IPoolSettings & { statistics?: IPoolConfigStatistics }>
   > => {
+    console.log(process.env.REACT_APP_API_BASE);
     const { data } = await axios.get(
       `${process.env.REACT_APP_API_BASE}/api/v1/pools`
+    );
+    return data;
+  },
+  getStats: async (): Promise<IStakingStatsResponse> => {
+    console.log(process.env.REACT_APP_API_BASE);
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_API_BASE}/api/v1/stats`
     );
     return data;
   },

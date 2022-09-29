@@ -3,13 +3,13 @@ import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable, reaction, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
-import statsService from "@src/services/statsService";
 import nodeService from "@src/services/nodeService";
 import {
   CONTRACT_ADDRESSES,
   EXPLORER_URL,
   TOKENS_BY_SYMBOL,
 } from "@src/constants";
+import poolsService from "@src/services/poolsService";
 
 const ctx = React.createContext<NFTStakingVM | null>(null);
 
@@ -29,7 +29,7 @@ class NFTStakingVM {
 
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
-    statsService.getStakingStats().then((d) => this._setStats(d));
+    poolsService.getStats().then((d) => this._setStats(d));
     when(
       () => rootStore.accountStore.address != null,
       this.updateAddressStakingInfo
