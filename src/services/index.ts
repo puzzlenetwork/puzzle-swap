@@ -1,4 +1,4 @@
-import statsService from "@src/services/statsService";
 import aggregatorService from "@src/services/aggregatorService";
+import nodeService from "@src/services/nodeService";
 
-export default { statsService, aggregatorService };
+export default { aggregatorService, nodeService };

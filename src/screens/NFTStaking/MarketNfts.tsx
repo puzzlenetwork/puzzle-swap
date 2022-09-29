@@ -18,7 +18,7 @@ const Root = styled.div`
   }
 `;
 const MarketNfts: React.FC<IProps> = () => {
-  const { nftStore } = useStores();
+  const { nftStore, stakeStore } = useStores();
 
   return (
     <Root>
@@ -27,6 +27,11 @@ const MarketNfts: React.FC<IProps> = () => {
             <Artefact
               key={index}
               {...art}
+              apy={
+                art.typeId != null && art.typeId.includes("ania")
+                  ? stakeStore.stats?.aniaApy?.toNumber()
+                  : stakeStore.stats?.eagleApy?.toNumber()
+              }
               buttons={
                 <Anchor style={{ width: "100%" }} href={art.marketLink}>
                   <Button size="medium" fixed>

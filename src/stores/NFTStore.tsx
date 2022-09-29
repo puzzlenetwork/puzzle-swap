@@ -1,16 +1,25 @@
-import { IArtWork } from "@src/services/statsService";
 import RootStore from "@stores/RootStore";
 import nodeService, { INFT } from "@src/services/nodeService";
 import { makeAutoObservable, reaction } from "mobx";
 import { CONTRACT_ADDRESSES, PUZZLE_NFTS } from "@src/constants";
 import nftsPics from "@src/constants/nftsPics";
 
+export interface IArtWork {
+  floorPrice?: number;
+  marketPrice?: number;
+  name?: string;
+  imageLink?: string;
+  marketLink?: string;
+  typeId?: string;
+  apy?: number;
+  old?: boolean;
+}
+
 const requiredNfts = [
   {
     name: "EAGLE",
     typeId: "DxJAxqQhWAojdnzmcZpHAE3Hbm39JPAaCq9rEMJqNn61",
     floorPrice: 7777000000,
-    apy: 43.2,
     marketLink:
       "https://mainnet.sign-art.app/user/3PFTZA987iHHbP6UWVTbbrquNetcFSULqUP/artwork/DxJAxqQhWAojdnzmcZpHAE3Hbm39JPAaCq9rEMJqNn61",
     imageLink: nftsPics["EAGLE"],
@@ -18,7 +27,6 @@ const requiredNfts = [
   {
     name: "ANIA",
     typeId: "@anianklv",
-    apy: 35.11,
     marketLink:
       "https://puzzlemarket.org/collection/3PMki5sHBsQb4KgDknbUwsL3YgxaCzaZnCJ/ania",
     imageLink:
@@ -64,7 +72,6 @@ export default class NftStore {
     (this.nftPictures = v);
 
   public artworks: IArtWork[] | null = requiredNfts;
-  // private _setArtworks = (v: IArtWork[]) => (this.artworks = v);
 
   public totalPuzzleNftsAmount: number | null = null;
   private _setTotalPuzzleNftsAmount = (v: number) =>
