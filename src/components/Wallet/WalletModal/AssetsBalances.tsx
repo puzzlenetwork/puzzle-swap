@@ -10,6 +10,7 @@ import { ReactComponent as NotFoundIcon } from "@src/assets/notFound.svg";
 import styled from "@emotion/styled";
 import { useStores } from "@stores";
 import Skeleton from "react-loading-skeleton";
+import BN from "@src/utils/BN";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -21,7 +22,7 @@ const Root = styled.div`
 
 const AssetsBalances: React.FC<IProps> = () => {
   const vm = useWalletVM();
-  const { accountStore, poolsStore } = useStores();
+  const { accountStore, poolsStore, tokenStore } = useStores();
   if (accountStore.assetBalances === null)
     return (
       <Root style={{ padding: "0 24px" }}>
@@ -33,10 +34,12 @@ const AssetsBalances: React.FC<IProps> = () => {
       {vm.balances.length !== 0 ? (
         vm.balances.map((b) => {
           const rate = poolsStore.usdnRate(b.assetId)?.toFormat(2);
-          const rateChange = vm.assetsStats && vm.assetsStats[b.assetId];
+          const rateChange = tokenStore.statistics.find(
+            ({ assetId }) => assetId === b.assetId
+          );
           return (
             <InvestRow
-              rateChange={rateChange}
+              rateChange={rateChange?.change24H ?? BN.ZERO}
               key={b.assetId}
               logo={b.logo}
               topLeftInfo={b.name}

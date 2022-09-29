@@ -22,7 +22,7 @@ const Root = styled.div`
 const Investments: React.FC = () => {
   const { accountStore, poolsStore, stakeStore } = useStores();
   const vm = useWalletVM();
-  const { stakedNfts, investments } = vm;
+  //todo fix jumping investments
   if (
     poolsStore.accountPoolsLiquidity == null ||
     stakeStore.stakedAccountPuzzle == null
@@ -34,8 +34,8 @@ const Investments: React.FC = () => {
     );
   return (
     <Root>
-      {investments != null || stakedNfts == null
-        ? investments.map((item, index) => (
+      {vm.investments != null
+        ? vm.investments.map((item, index) => (
             <Link to={item.onClickPath} key={index + "investment"}>
               <InvestRow
                 withClickLogic
@@ -49,7 +49,7 @@ const Investments: React.FC = () => {
             </Link>
           ))
         : Array.from({ length: 2 }).map(() => <InvestRowSkeleton />)}
-      {investments != null && investments.length === 0 && (
+      {vm.investments.length === 0 && (
         <Column justifyContent="center" alignItems="center" crossAxisSize="max">
           <SizedBox height={16} />
           <NotFoundIcon />

@@ -7,7 +7,6 @@ import Balance from "@src/entities/Balance";
 import { LOGIN_TYPE } from "@src/stores/AccountStore";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import BN from "@src/utils/BN";
-import wavesCapService from "@src/services/wavesCapService";
 import { ROUTES, TOKENS_LIST } from "@src/constants";
 
 const ctx = React.createContext<WalletVM | null>(null);
@@ -26,22 +25,9 @@ class WalletVM {
   headerExpanded: boolean = true;
   setHeaderExpanded = (state: boolean) => (this.headerExpanded = state);
 
-  // tokenToSend: Balance | null = null;
-  // public setTokenToSend = (v: Balance) => (this.tokenToSend = v);
-
-  assetsStats: Record<string, BN> | null = null;
-  public setAssetsStats = (v: Record<string, BN>) => (this.assetsStats = v);
-
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
-    this.getAssetsStats();
     makeAutoObservable(this);
-    // when(
-    //   () => this.rootStore.accountStore.assetBalances != null,
-    //   this.getAssetsStats
-    // );
-    // reaction(() => this.rootStore.accountStore?.address, this.getAssetsStats);
-    setInterval(this.getAssetsStats, 15 * 1000);
   }
 
   handleCopyAddress = () => {
@@ -90,7 +76,8 @@ class WalletVM {
   }
 
   get totalInvestmentAmount() {
-    const balancesAmount = this.balances.reduce(
+    const { balances } = this.rootStore.accountStore;
+    const balancesAmount = balances.reduce(
       (acc, b) => acc.plus(b.usdnEquivalent ?? 0),
       BN.ZERO
     );
@@ -145,27 +132,13 @@ class WalletVM {
       }
     );
     const stakedPuzzle = stakeStore.puzzleWallet;
-    return [...stakedNftData, ...poolsData, ...stakedPuzzle];
+    return [...stakedNftData, ...poolsData, ...stakedPuzzle].sort((a, b) =>
+      new BN(a.usdnEquivalent).gt(b.usdnEquivalent) ? 1 : -1
+    );
   }
 
   get stakedNfts() {
     const { nftStore } = this.rootStore;
     return nftStore.stakedAccountNFTs ?? [];
   }
-
-  getAssetsStats = async () => {
-    if (this.balances.length === 0) return;
-    const topAssets = this.balances
-      .slice(0, 10)
-      .reduce<string[]>((acc, v) => [...acc, v.assetId], []);
-    const responses = await wavesCapService.getAssetsStats(topAssets);
-    const assetInfo = responses.reduce<Record<string, BN>>((acc, value) => {
-      if (value == null) return acc;
-      const firstPrice = new BN(value.data?.["firstPrice_usd-n"] ?? 0);
-      const lastPrice = new BN(value.data?.["lastPrice_usd-n"] ?? 0);
-      let rate = lastPrice.div(firstPrice).minus(1).times(100);
-      return { ...acc, [value.id]: rate };
-    }, {});
-    this.setAssetsStats(assetInfo);
-  };
 }

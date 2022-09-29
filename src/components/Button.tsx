@@ -24,7 +24,7 @@ const Button = styled.button<{
           case "danger":
             return theme.colors.error500;
           default:
-            return theme.colors.primary100;
+            return theme.colors.blue500;
         }
       })()};
 
@@ -73,7 +73,7 @@ const Button = styled.button<{
           case "danger":
             return `background: ${theme.colors.error550}; border: 1px solid ${theme.colors.error550}`;
           default:
-            return `background: #6563dd; border: 1px solid`;
+            return `background: #6563dd; border: 1px solid #6563dd`;
         }
       })()}
   }
