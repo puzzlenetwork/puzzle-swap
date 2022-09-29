@@ -74,7 +74,6 @@ const poolService = {
   getPools: async (): Promise<
     Array<IPoolSettings & { statistics?: IPoolConfigStatistics }>
   > => {
-    console.log(process.env.REACT_APP_API_BASE);
     const { data } = await axios.get(
       `${process.env.REACT_APP_API_BASE}/api/v1/pools`
     );

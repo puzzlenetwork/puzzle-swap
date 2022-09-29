@@ -1,13 +1,14 @@
 import styled from "@emotion/styled";
 import React, { useState } from "react";
 import Text from "@components/Text";
-import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
 import BigNumberInput from "@components/BigNumberInput";
 import AmountInput from "@components/AmountInput";
 import Loading from "@components/Loading";
 import { Row } from "@src/components/Flex";
 import SizedBox from "@components/SizedBox";
+import { useTheme } from "@emotion/react";
+import { observer } from "mobx-react-lite";
 
 interface IProps {
   prefix: string;
@@ -72,7 +73,7 @@ const InputContainer = styled.div<{
 `;
 const LimitTokenInput: React.FC<IProps> = (props) => {
   const [focused, setFocused] = useState(false);
-
+  const theme = useTheme();
   return (
     <Root>
       <InputContainer
@@ -90,7 +91,7 @@ const LimitTokenInput: React.FC<IProps> = (props) => {
         {props.loading ? (
           <Row>
             <SizedBox width={2} />
-            <Loading />
+            <Loading style={{ color: theme.colors.blue500 }} />
           </Row>
         ) : (
           <BigNumberInput
