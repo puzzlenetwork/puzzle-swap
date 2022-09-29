@@ -6,9 +6,9 @@ import SizedBox from "@components/SizedBox";
 import styled from "@emotion/styled";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
-import Scrollbar from "./components/Scrollbar";
 import Input from "@components/Input";
 import BN from "@src/utils/BN";
+import Scrollbar from "./Scrollbar";
 
 interface IProps {
   onChange: (id: string) => void;

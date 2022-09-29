@@ -21,6 +21,7 @@ type TArtworksResponse = IArtWork[];
 
 const statsService = {
   getStakingStats: async (): Promise<IStakingStatsResponse> => {
+    console.log(process.env.REACT_APP_API_BASE);
     const url = `${process.env.REACT_APP_API_BASE}/api/v1/stats`;
     const { data } = await axios.get(url);
     return data;

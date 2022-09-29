@@ -16,11 +16,11 @@ import GoBack from "@components/GoBack";
 import Card from "@components/Card";
 import SwitchButtons from "@components/SwitchButtons";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-import ChangePoolModal from "@src/ChangePoolModal";
 import Loading from "@components/Loading";
 import { ROUTES } from "@src/constants";
 import { useStores } from "@stores";
 import BN from "@src/utils/BN";
+import ChangePoolModal from "@src/components/ChangePoolModal";
 
 const Root = styled.div`
   display: flex;

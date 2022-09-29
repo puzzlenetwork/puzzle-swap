@@ -13,12 +13,12 @@ import ShortPoolInfoCard from "@components/ShortPoolInfoCard";
 import WithdrawLiquidityAmount from "./WithdrawLiquidityAmount";
 import WithdrawLiquidityTable from "./WithdrawLiquidityTable";
 import Button from "@components/Button";
-import ChangePoolModal from "@src/ChangePoolModal";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import GoBack from "@components/GoBack";
 import Loading from "@components/Loading";
 import { ROUTES } from "@src/constants";
 import BN from "@src/utils/BN";
+import ChangePoolModal from "@src/components/ChangePoolModal";
 
 const Root = styled.div`
   display: flex;
