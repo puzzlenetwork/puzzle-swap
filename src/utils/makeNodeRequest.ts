@@ -25,6 +25,8 @@ const makeNodeRequest = async (
   return new Promise(async (resolve, reject) => {
     let nodeIndex = 0;
     let success = false;
+    console.log(params?.postData);
+
     while (!success) {
       const url = nodes[nodeIndex] + request;
       try {

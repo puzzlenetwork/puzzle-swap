@@ -68,6 +68,13 @@ const nodeService = {
     const { data } = await makeNodeRequest(url);
     return data;
   },
+  evaluate: async (address: string, expression: string): Promise<any> => {
+    const url = `/utils/script/evaluate/${address}`;
+    const { data } = await makeNodeRequest(url, {
+      postData: { expr: expression },
+    });
+    return data;
+  },
   getAssetDetails: async (assetId: string): Promise<IAsset | null> => {
     const url = `/assets/details/${assetId}`;
     const { data } = await makeNodeRequest(url);

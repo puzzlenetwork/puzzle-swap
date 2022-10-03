@@ -3,7 +3,12 @@ import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable, reaction, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
-import { EXPLORER_URL, IToken, NODE_URL } from "@src/constants";
+import {
+  CONTRACT_ADDRESSES,
+  EXPLORER_URL,
+  IToken,
+  NODE_URL,
+} from "@src/constants";
 import nodeService from "@src/services/nodeService";
 import { ITransaction } from "@src/utils/types";
 import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
@@ -86,6 +91,7 @@ class InvestToPoolInterfaceVM {
     this.rootStore = rootStore;
     makeAutoObservable(this);
     when(() => this.pool?.isCustom === true, this.loadNFTPaymentInfo);
+    this.calcReward().then();
     when(
       () => this.pool != null,
       async () => {
@@ -107,6 +113,10 @@ class InvestToPoolInterfaceVM {
     when(
       () => rootStore.accountStore.address != null && this.pool != null,
       this.updateAccountLiquidityInfo
+    );
+    when(
+      () => rootStore.accountStore.address != null && this.pool != null,
+      this.calcReward
     );
     when(
       () => rootStore.accountStore.address != null && this.pool != null,
@@ -238,10 +248,20 @@ class InvestToPoolInterfaceVM {
     );
     this.setTotalRewardToClaim(totalRewardAmount);
   };
+  calcReward = async () => {
+    const { address } = this.rootStore.accountStore;
+    const { contractAddress } = this.pool;
+    if (address == null || contractAddress == null) return;
+    const data = await nodeService.evaluate(
+      CONTRACT_ADDRESSES.calcReward,
+      `calcRewardToClaim(false, "${contractAddress}", "${address}")`
+    );
+    console.log(data);
+    console.log(data.result.value);
+  };
 
   get poolCompositionValues() {
     if (this.pool.tokens == null) return [];
-    // (IToken & { value: BN; parsedBalance: BN })[]
     return this.pool.tokens.reduce<any[]>((acc, token) => {
       const balance = BN.formatUnits(
         this.pool.liquidity[token.assetId] ?? BN.ZERO,
