@@ -21,11 +21,11 @@ const Root = styled.div<{ type: "warning" | "info" | "error" }>`
         case "warning":
           return `background: ${theme.colors.attention100};`;
         case "info":
-          return `background: ${theme.colors.primary100}`;
+          return `background: ${theme.colors.primary100};`;
         case "error":
-          return `background: ${theme.colors.error100}`;
+          return `background: ${theme.colors.error100};`;
         default:
-          return `background: ${theme.colors.attention100}`;
+          return `background: ${theme.colors.primary100};`;
       }
     })()}
   border-radius: 12px;

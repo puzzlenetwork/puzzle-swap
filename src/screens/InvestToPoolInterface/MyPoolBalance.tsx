@@ -59,15 +59,12 @@ const MyPoolBalance: React.FC<IProps> = () => {
           </Column>
           <Column>
             <Text textAlign="right" size="medium">
-              $
-              {vm.accountLiquidity == null || vm.accountLiquidity.isNaN()
-                ? "0.00"
-                : vm.accountLiquidity?.toFormat(2)}
+              $ {vm.totalProvidedLiquidityByAddress.toFormat(2)}
             </Text>
             <Text textAlign="right" type="secondary" size="small">
-              {vm.accountShareOfPool != null &&
-                !vm.accountShareOfPool.isNaN() &&
-                `Share of pool ${vm.accountShareOfPool?.toFormat(2)}%`}
+              {vm.shareOfPool != null &&
+                !vm.shareOfPool.isNaN() &&
+                `Share of pool ${vm.shareOfPool?.toFormat(2)}%`}
             </Text>
           </Column>
         </Header>

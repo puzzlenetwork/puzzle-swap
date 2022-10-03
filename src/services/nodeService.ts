@@ -1,4 +1,4 @@
-import { ITransaction } from "@src/utils/types";
+import { IEvaluateScript, ITransaction } from "@src/utils/types";
 import makeNodeRequest from "@src/utils/makeNodeRequest";
 import { CONTRACT_ADDRESSES } from "@src/constants";
 
@@ -68,7 +68,10 @@ const nodeService = {
     const { data } = await makeNodeRequest(url);
     return data;
   },
-  evaluate: async (address: string, expression: string): Promise<any> => {
+  evaluate: async (
+    address: string,
+    expression: string
+  ): Promise<IEvaluateScript> => {
     const url = `/utils/script/evaluate/${address}`;
     const { data } = await makeNodeRequest(url, {
       postData: { expr: expression },
