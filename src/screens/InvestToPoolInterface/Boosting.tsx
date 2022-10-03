@@ -55,7 +55,7 @@ const Boosting: React.FC<IProps> = () => {
         <Column crossAxisSize="max">
           <Text weight={500} style={whiteText}>
             Up to {new BN(data.apy).plus(data.boostedApy ?? 0).toBigFormat(2)} %
-            APY until {dayjs(data.boostedDate).format("MMM D")}
+            APY until {dayjs(data.boostedDate).format("YYYY MMM D")}
           </Text>
           <Text style={whiteText}>Hurry up to get the increased reward!</Text>
         </Column>
