@@ -181,7 +181,7 @@ class Pool implements IPoolConfig {
     };
     const [values, staticPoolDomainValue] = await Promise.all([
       this.contractKeysRequest(Object.values(keysArray)),
-      this.contractKeysRequest([`static_poolDomain`]),
+      this.contractKeysRequest(`static_poolDomain`),
     ]);
     const staticPoolDomain =
       staticPoolDomainValue?.length === 1 ? staticPoolDomainValue[0].value : "";

@@ -86,9 +86,9 @@ const LPStaking: React.FC<IProps> = () => {
             </Text>
             <Text nowrap>
               $
-              {vm.accountLiquidity == null
+              {vm.totalProvidedLiquidityByAddress == null
                 ? "0.00"
-                : vm.accountLiquidity?.toFormat(2)}
+                : vm.totalProvidedLiquidityByAddress?.toFormat(2)}
             </Text>
             <SizedBox height={16} />
             <Button

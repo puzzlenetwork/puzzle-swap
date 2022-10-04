@@ -484,7 +484,12 @@ import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable, reaction, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
-import { EXPLORER_URL, IToken, NODE_URL } from "@src/constants";
+import {
+  CONTRACT_ADDRESSES,
+  EXPLORER_URL,
+  NODE_URL,
+  TOKENS_BY_ASSET_ID,
+} from "@src/constants";
 import nodeService from "@src/services/nodeService";
 import { ITransaction } from "@src/utils/types";
 import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
@@ -505,11 +510,6 @@ export const InvestToPoolInterfaceVMProvider: React.FC<{
 
 export const useInvestToPoolInterfaceVM = () => useVM(ctx);
 
-type IReward = {
-  value: BN;
-  usdEquivalent: BN;
-};
-
 class InvestToPoolInterfaceVM {
   public poolDomain: string;
   public rootStore: RootStore;
@@ -526,13 +526,6 @@ class InvestToPoolInterfaceVM {
   public indexTokenBalance: BN = BN.ZERO;
   private setIndexBalance = (value: BN) => (this.indexTokenBalance = value);
 
-  public accountLiquidity: BN | null = null;
-  private setAccountLiquidity = (value: BN) => (this.accountLiquidity = value);
-
-  public accountShareOfPool: BN | null = null;
-  private setAccountShareOfPool = (value: BN) =>
-    (this.accountShareOfPool = value);
-
   public totalRewardToClaim: BN | null = null;
   private setTotalRewardToClaim = (value: BN) =>
     (this.totalRewardToClaim = value);
@@ -543,6 +536,9 @@ class InvestToPoolInterfaceVM {
 
   public lastClaimDate: BN = BN.ZERO;
   private _setLastClaimDate = (v: BN) => (this.lastClaimDate = v);
+
+  public globalIndexStaked: BN = BN.ZERO;
+  private _setGlobalIndexStaked = (v: BN) => (this.globalIndexStaked = v);
 
   public poolAssetBalances: { assetId: string; balance: BN }[] = [];
   private setPoolAssetBalances = (value: { assetId: string; balance: BN }[]) =>
@@ -572,7 +568,9 @@ class InvestToPoolInterfaceVM {
       async () => {
         await Promise.all([
           this.updatePoolTokenBalances(),
+          this.getAddressActivityInfo(),
           this.loadTransactionsHistory(),
+          this.calcRewards(),
           this.syncIndexTokenInfo(),
         ]);
       }
@@ -580,30 +578,12 @@ class InvestToPoolInterfaceVM {
     reaction(
       () => this.rootStore.accountStore?.address,
       () => {
-        this.pool != null && this.updateRewardInfo();
+        this.pool != null && this.getAddressActivityInfo();
+        this.pool != null && this.calcRewards();
         this.pool != null && this.updatePoolTokenBalances();
-        this.pool != null && this.updateAccountLiquidityInfo();
       }
     );
-    when(
-      () => rootStore.accountStore.address != null && this.pool != null,
-      this.updateAccountLiquidityInfo
-    );
-    when(
-      () => rootStore.accountStore.address != null && this.pool != null,
-      this.updateRewardInfo
-    );
   }
-
-  updateAccountLiquidityInfo = async () => {
-    if (this.rootStore.accountStore.address) {
-      const info = await this.pool.getAccountLiquidityInfo(
-        this.rootStore.accountStore.address
-      );
-      this.setAccountShareOfPool(info.shareOfPool);
-      this.setAccountLiquidity(info.liquidityInUsdn);
-    }
-  };
 
   syncIndexTokenInfo = async () => {
     const { address } = this.rootStore.accountStore;
@@ -618,22 +598,11 @@ class InvestToPoolInterfaceVM {
       this.setIndexBalance(new BN(balance ?? 0));
     }
   };
-  getTokenRewardInfo = async (
-    token: IToken
-  ): Promise<IReward & { assetId: string }> => {
-    const { accountStore } = this.rootStore;
-    const { address } = accountStore;
-    const assetBalance = this.poolAssetBalances.find(
-      ({ assetId }) => assetId === token.assetId
-    );
-    const realBalance = assetBalance?.balance ?? BN.ZERO;
-
+  getAddressActivityInfo = async () => {
+    const { address } = this.rootStore.accountStore;
+    if (address == null) return;
     const keysArray = {
-      globalTokenBalance: `global_${token.assetId}_balance`,
-      globalLastCheckTokenEarnings: `global_lastCheck_${token.assetId}_earnings`,
       globalIndexStaked: "global_indexStaked",
-      globalLastCheckTokenInterest: `global_lastCheck_${token.assetId}_interest`,
-      userLastCheckTokenInterest: `${address}_lastCheck_${token.assetId}_interest`,
       userIndexStaked: `${address}_indexStaked`,
       claimedReward: `${address}_claimedRewardValue`,
       lastClaimDate: `${address}_lastClaim`,
@@ -655,74 +624,45 @@ class InvestToPoolInterfaceVM {
       {}
     );
 
-    const globalTokenBalance = parsedNodeResponse["globalTokenBalance"];
-    const globalLastCheckTokenEarnings =
-      parsedNodeResponse["globalLastCheckTokenEarnings"];
-    const globalIndexStaked =
-      parsedNodeResponse["globalIndexStaked"] ?? BN.ZERO;
-    const globalLastCheckTokenInterest =
-      parsedNodeResponse["globalLastCheckTokenInterest"];
-    const userLastCheckTokenInterest =
-      parsedNodeResponse["userLastCheckTokenInterest"];
-    const userIndexStaked = parsedNodeResponse["userIndexStaked"];
     const claimedReward = parsedNodeResponse["claimedReward"];
     const lastClaimDate = parsedNodeResponse["lastClaimDate"];
-
+    const userIndexStaked = parsedNodeResponse["userIndexStaked"];
+    const globalIndexStaked = parsedNodeResponse["globalIndexStaked"];
+    lastClaimDate && this._setLastClaimDate(lastClaimDate);
     this.setTotalClaimedReward(claimedReward ?? BN.ZERO);
     this.setUserIndexStaked(userIndexStaked);
-    lastClaimDate && this._setLastClaimDate(lastClaimDate);
-
-    const newEarnings = BN.max(
-      realBalance.minus(globalTokenBalance),
-      globalLastCheckTokenEarnings
-    ).minus(globalLastCheckTokenEarnings);
-
-    const lastCheckInterest =
-      globalLastCheckTokenInterest == null || globalIndexStaked.eq(0)
-        ? BN.ZERO
-        : globalLastCheckTokenInterest;
-
-    const currentInterest = lastCheckInterest.plus(
-      newEarnings.div(globalIndexStaked)
-    );
-
-    const lastCheckUserInterest = userLastCheckTokenInterest
-      ? userLastCheckTokenInterest
-      : BN.ZERO;
-
-    const rewardAvailable = currentInterest
-      .minus(lastCheckUserInterest)
-      .times(BN.formatUnits(userIndexStaked, 8));
-
-    const rate =
-      this.rootStore.poolsStore.usdnRate(token.assetId, 1) ?? BN.ZERO;
-
-    const usdEquivalent = rewardAvailable.times(rate);
-
-    return {
-      value: rewardAvailable.isNaN()
-        ? BN.ZERO
-        : BN.formatUnits(rewardAvailable, token.decimals),
-      assetId: token.assetId,
-      usdEquivalent: BN.formatUnits(usdEquivalent, token.decimals),
-    };
+    this._setGlobalIndexStaked(globalIndexStaked);
   };
 
-  updateRewardInfo = async () => {
-    const rawData = await Promise.all(
-      this.pool.tokens.map(this.getTokenRewardInfo)
+  calcRewards = async () => {
+    const { address } = this.rootStore.accountStore;
+    if (address == null || this.pool?.contractAddress == null) return;
+    const data = await nodeService.evaluate(
+      CONTRACT_ADDRESSES.calcReward,
+      `calcRewardToClaim(false, "${this.pool?.contractAddress}", "${address}")`
     );
-    const totalRewardAmount = rawData.reduce(
-      (acc, value) =>
-        acc.plus(value.usdEquivalent.isNaN() ? BN.ZERO : value.usdEquivalent),
-      BN.ZERO
-    );
-    this.setTotalRewardToClaim(totalRewardAmount);
+    const tokensStr = data.result.value["_2"].value;
+    const tokens = tokensStr
+      .toString()
+      .split("|")
+      .filter((v) => v !== "");
+    const totalRewardInDoll = tokens.reduce((acc, v) => {
+      const details = v.split(",");
+      const assetId = details[0];
+      const amount = details[1];
+      if (new BN(amount).lt(0)) {
+        return acc.plus(0);
+      }
+      const dollEquivalent = this.rootStore.poolsStore
+        .usdnRate(assetId)
+        ?.times(BN.formatUnits(amount, TOKENS_BY_ASSET_ID[assetId].decimals));
+      return acc.plus(dollEquivalent ?? 0);
+    }, BN.ZERO);
+    this.setTotalRewardToClaim(totalRewardInDoll);
   };
 
   get poolCompositionValues() {
     if (this.pool.tokens == null) return [];
-    // (IToken & { value: BN; parsedBalance: BN })[]
     return this.pool.tokens.reduce<any[]>((acc, token) => {
       const balance = BN.formatUnits(
         this.pool.liquidity[token.assetId] ?? BN.ZERO,
@@ -739,6 +679,27 @@ class InvestToPoolInterfaceVM {
         },
       ];
     }, []);
+  }
+
+  get totalProvidedLiquidityByAddress() {
+    if (
+      this.rootStore.accountStore.address == null ||
+      this.userIndexStaked == null
+    )
+      return BN.ZERO;
+    const liquidityInUsdn = this.pool.globalLiquidity
+      .times(this.userIndexStaked)
+      .div(this.globalIndexStaked);
+    return liquidityInUsdn.isNaN() ? BN.ZERO : liquidityInUsdn;
+  }
+
+  get shareOfPool() {
+    if (this.rootStore.accountStore.address == null) return BN.ZERO;
+
+    const percent = this.totalProvidedLiquidityByAddress
+      .times(new BN(100))
+      .div(this.pool.globalLiquidity);
+    return percent;
   }
 
   get poolBalancesTable() {
@@ -792,7 +753,7 @@ class InvestToPoolInterfaceVM {
           title: "Transaction is not completed",
         });
       })
-      .then(this.updateRewardInfo)
+      .then(this.calcRewards)
       .finally(() => this._setLoading(false));
   };
 
@@ -806,7 +767,6 @@ class InvestToPoolInterfaceVM {
 
   updatePoolTokenBalances = async () => {
     const { pool } = this;
-    //todo ✅
     const { data }: { data: TContractAssetBalancesResponse } =
       await makeNodeRequest(`/assets/balance/${pool.contractAddress}`);
     const value = data.balances.map((token) => {
@@ -826,7 +786,6 @@ class InvestToPoolInterfaceVM {
   };
 
   loadTransactionsHistory = async () => {
-    //todo ✅
     const v = await nodeService.transactions(this.pool.contractAddress);
     v && this.setTransactionsHistory(v);
   };
@@ -837,7 +796,6 @@ class InvestToPoolInterfaceVM {
     if (transactionsHistory == null) return;
     const after = transactionsHistory.slice(-1).pop();
     if (after == null) return;
-    //todo ✅
     const v = await nodeService.transactions(
       pool.contractAddress,
       10,
@@ -880,7 +838,7 @@ class InvestToPoolInterfaceVM {
           title: "Transaction is not completed",
         });
       })
-      .then(this.updateRewardInfo)
+      .then(this.calcRewards)
       .finally(() => this._setLoading(false));
   };
 
@@ -908,7 +866,7 @@ class InvestToPoolInterfaceVM {
         },
       })
       .then(this.syncIndexTokenInfo)
-      .then(this.updateRewardInfo)
+      .then(this.calcRewards)
       .then(this.updatePoolTokenBalances)
       .then((txId) => {
         notificationStore.notify(`Your have staked index token`, {

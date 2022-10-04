@@ -201,10 +201,6 @@ export interface ITransaction {
                         {
                           type: string;
                           value: number;
-                        },
-                        {
-                          type: string;
-                          value: string;
                         }
                       ];
                     };
@@ -466,4 +462,20 @@ export interface ITransaction {
       }
     ];
   };
+}
+
+export interface IEvaluateScript {
+  result: {
+    type: string;
+    value: Record<
+      string,
+      {
+        type: string;
+        value: string | number | boolean | [];
+      }
+    >;
+  };
+  complexity: number;
+  expr: string;
+  address: string;
 }
