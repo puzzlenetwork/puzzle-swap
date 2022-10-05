@@ -80,7 +80,6 @@ const poolService = {
     return data;
   },
   getStats: async (): Promise<IStakingStatsResponse> => {
-    console.log(process.env.REACT_APP_API_BASE);
     const { data } = await axios.get(
       `${process.env.REACT_APP_API_BASE}/api/v1/stats`
     );

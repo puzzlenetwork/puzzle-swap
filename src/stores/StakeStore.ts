@@ -91,8 +91,8 @@ export default class StakeStore {
       logo: stakedPuzzleLogo,
       name: "Puzzle Staking",
       amount,
-      nuclearValue: "$ " + puzzleRate.toFormat(2),
-      usdnEquivalent: "$ " + usdnEquivalent.toFormat(2),
+      nuclearValue: puzzleRate,
+      usdnEquivalent: usdnEquivalent,
     };
     return !usdnEquivalent.eq(0) ? [{ ...item }] : [];
   }

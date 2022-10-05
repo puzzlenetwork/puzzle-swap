@@ -60,9 +60,9 @@ class InvestVM {
   }
 
   get totalInvestmentBalance(): string | null {
-    const { accountPoolsLiquidity } = this.rootStore.poolsStore;
-    if (accountPoolsLiquidity == null) return null;
-    const value = accountPoolsLiquidity?.reduce(
+    const { investedInPools } = this.rootStore.poolsStore;
+    if (investedInPools == null) return null;
+    const value = investedInPools?.reduce(
       (acc, v) => acc.plus(v.liquidityInUsdn),
       BN.ZERO
     );

@@ -77,7 +77,7 @@ const PoolsTable: React.FC = () => {
       .filter(({ domain }) => domain !== "puzzle")
       .filter((pool) => {
         if (!showEmptyBalances) {
-          const data = poolsStore.accountPoolsLiquidity?.find(
+          const data = poolsStore.investedInPools?.find(
             (v) => pool.domain === v.pool.domain
           );
           return data?.liquidityInUsdn != null && data.liquidityInUsdn.gt(0);
@@ -171,7 +171,7 @@ const PoolsTable: React.FC = () => {
           </Row>
         ),
         accountBalance: (() => {
-          const data = poolsStore.accountPoolsLiquidity?.find(
+          const data = poolsStore.investedInPools?.find(
             (v) => pool.domain === v.pool.domain
           );
           return data?.liquidityInUsdn != null && data.liquidityInUsdn.gt(0)
@@ -216,7 +216,7 @@ const PoolsTable: React.FC = () => {
     vm.poolCategoryFilter,
     vm.customPoolFilter,
     showEmptyBalances,
-    poolsStore.accountPoolsLiquidity,
+    poolsStore.investedInPools,
     activeSort,
     accountStore.address,
     accountStore.findBalanceByAssetId,

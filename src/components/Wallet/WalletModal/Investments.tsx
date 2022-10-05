@@ -22,9 +22,8 @@ const Root = styled.div`
 const Investments: React.FC = () => {
   const { accountStore, poolsStore, stakeStore } = useStores();
   const vm = useWalletVM();
-  //todo fix jumping investments
   if (
-    poolsStore.accountPoolsLiquidity == null ||
+    poolsStore.investedInPools == null ||
     stakeStore.stakedAccountPuzzle == null
   )
     return (
@@ -35,19 +34,27 @@ const Investments: React.FC = () => {
   return (
     <Root>
       {vm.investments != null
-        ? vm.investments.map((item, index) => (
-            <Link to={item.onClickPath} key={index + "investment"}>
-              <InvestRow
-                withClickLogic
-                onClick={() => accountStore.setWalletModalOpened(false)}
-                logo={item.logo}
-                topLeftInfo={item.name}
-                topRightInfo={item.amount}
-                bottomRightInfo={item.usdnEquivalent}
-                bottomLeftInfo={item.nuclearValue}
-              />
-            </Link>
-          ))
+        ? vm.investments.map((item, index) => {
+            const nuclearValue = item.nuclearValue.gte(0.0001)
+              ? item.nuclearValue.toFormat(2)
+              : item.nuclearValue.toFormat(8);
+            const usdnEquivalent = item.usdnEquivalent.gte(0.0001)
+              ? item.usdnEquivalent.toFormat(2)
+              : item.usdnEquivalent.toFormat(8);
+            return (
+              <Link to={item.onClickPath} key={index + "investment"}>
+                <InvestRow
+                  withClickLogic
+                  onClick={() => accountStore.setWalletModalOpened(false)}
+                  logo={item.logo}
+                  topLeftInfo={item.name}
+                  topRightInfo={item.amount}
+                  bottomRightInfo={"$ " + usdnEquivalent}
+                  bottomLeftInfo={"$ " + nuclearValue}
+                />
+              </Link>
+            );
+          })
         : Array.from({ length: 2 }).map(() => <InvestRowSkeleton />)}
       {vm.investments.length === 0 && (
         <Column justifyContent="center" alignItems="center" crossAxisSize="max">

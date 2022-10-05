@@ -1,5 +1,5 @@
 import { RootStore } from "./index";
-import { action, makeAutoObservable, reaction } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import Pool, { IData, IShortPoolInfo } from "@src/entities/Pool";
 import BN from "@src/utils/BN";
 import {
@@ -35,22 +35,22 @@ export default class PoolsStore {
     makeAutoObservable(this);
     this.syncPools().then();
     this.syncCustomPools().then(this.updatePoolsState);
-    this.updateAccountPoolsLiquidityInfo().then();
+    this.updateInvestedInPoolsInfo().then();
     this.syncPuzzleRate().then();
     setInterval(() => {
       this.syncPoolsLiquidity();
       Promise.all([
-        this.updateAccountPoolsLiquidityInfo(),
+        this.updateInvestedInPoolsInfo(),
         this.updatePoolsState(),
         this.syncPuzzleRate(),
         this.syncCustomPools(),
       ]);
-    }, 5 * 1000);
+    }, 15 * 1000);
     reaction(
       () => this.rootStore.accountStore.address,
       () =>
         Promise.all([
-          this.updateAccountPoolsLiquidityInfo(true),
+          this.updateInvestedInPoolsInfo(true),
           this.updatePoolsState(),
         ])
     );
@@ -70,7 +70,7 @@ export default class PoolsStore {
   }
 
   pools: Pool[] = [];
-  @action.bound setPools = (pools: Pool[]) => (this.pools = pools);
+  setPools = (pools: Pool[]) => (this.pools = pools);
   getPoolByDomain = (domain: string) =>
     this.pools.find((pool) => pool.domain === domain);
 
@@ -79,33 +79,33 @@ export default class PoolsStore {
   private getStateByAddress = (contractAddress: string) =>
     this.poolsState?.find((v) => v.contractAddress === contractAddress);
 
-  accountPoolsLiquidity: IShortPoolInfo[] | null = null;
-  setAccountPoolsLiquidity = (
+  investedInPools: IShortPoolInfo[] | null = null;
+  setInvestedInPools = (
     v: IShortPoolInfo[] | null,
     options?: { onlyMain?: boolean; onlyCustom?: boolean }
   ) => {
     if (v == null) {
-      this.accountPoolsLiquidity = null;
+      this.investedInPools = null;
     } else if (options?.onlyCustom) {
-      const mainPoolsInfo = this.accountPoolsLiquidity?.filter(
+      const mainPoolsInfo = this.investedInPools?.filter(
         ({ pool }) => !pool.isCustom
       );
-      this.accountPoolsLiquidity =
+      this.investedInPools =
         mainPoolsInfo != null ? [...mainPoolsInfo, ...v] : v;
     } else if (options?.onlyMain) {
-      const customPoolsInfo = this.accountPoolsLiquidity?.filter(
+      const customPoolsInfo = this.investedInPools?.filter(
         ({ pool }) => pool.isCustom
       );
-      this.accountPoolsLiquidity =
+      this.investedInPools =
         customPoolsInfo != null ? [...customPoolsInfo, ...v] : v;
     } else {
-      this.accountPoolsLiquidity = v;
+      this.investedInPools = v;
     }
   };
 
-  accountPoolsLiquidityLoading = false;
-  @action.bound setAccountPoolsLiquidityLoading = (state: boolean) =>
-    (this.accountPoolsLiquidityLoading = state);
+  investedInPoolsLoading = false;
+  setInvestedInPoolsLoading = (state: boolean) =>
+    (this.investedInPoolsLoading = state);
 
   get liquidity(): Record<string, BN> {
     return this.pools.reduce<Record<string, BN>>(
@@ -187,17 +187,17 @@ export default class PoolsStore {
     this.setPools([...this.pools, ...newPools]);
   };
 
-  updateAccountPoolsLiquidityInfo = async (force = false) => {
+  updateInvestedInPoolsInfo = async (force = false) => {
     const { address } = this.rootStore.accountStore;
     if (address == null) {
-      this.setAccountPoolsLiquidity(null);
+      this.setInvestedInPools(null);
       return;
     }
-    if (!force && this.accountPoolsLiquidityLoading) return;
-    this.setAccountPoolsLiquidityLoading(true);
-    this.updateAccountCustomPoolsLiquidityInfo(address);
+    if (!force && this.investedInPoolsLoading) return;
+    this.setInvestedInPoolsLoading(true);
+    await this.updateAccountCustomPoolsLiquidityInfo(address);
     await this.updateAccountMainPoolsLiquidityInfo(address);
-    this.setAccountPoolsLiquidityLoading(false);
+    this.setInvestedInPoolsLoading(false);
   };
 
   private updateAccountCustomPoolsLiquidityInfo = (address: string) => {
@@ -207,7 +207,7 @@ export default class PoolsStore {
         ? [...acc, pool.getAccountLiquidityInfoByState(address, state)]
         : acc;
     }, [] as Array<IShortPoolInfo>);
-    this.setAccountPoolsLiquidity(customPoolsInfo, { onlyCustom: true });
+    this.setInvestedInPools(customPoolsInfo, { onlyCustom: true });
   };
 
   private updateAccountMainPoolsLiquidityInfo = async (address: string) => {
@@ -216,7 +216,7 @@ export default class PoolsStore {
     );
     const newAddress = this.rootStore.accountStore.address;
     if (address !== newAddress) return;
-    this.setAccountPoolsLiquidity(mainPoolsAccountLiquidity, {
+    this.setInvestedInPools(mainPoolsAccountLiquidity, {
       onlyMain: true,
     });
   };
