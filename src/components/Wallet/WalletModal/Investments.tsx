@@ -49,8 +49,12 @@ const Investments: React.FC = () => {
                   logo={item.logo}
                   topLeftInfo={item.name}
                   topRightInfo={item.amount}
-                  bottomRightInfo={"$ " + usdnEquivalent}
-                  bottomLeftInfo={"$ " + nuclearValue}
+                  bottomRightInfo={
+                    "$ " + (item.usdnEquivalent.eq(0) ? "0.00" : usdnEquivalent)
+                  }
+                  bottomLeftInfo={
+                    "$ " + (item.nuclearValue.eq(0) ? "0.00" : nuclearValue)
+                  }
                 />
               </Link>
             );

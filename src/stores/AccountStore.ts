@@ -60,7 +60,7 @@ class AccountStore {
       }
       this.setAddress(initState.address);
     }
-    this.setAddress("3P8qVX189qpoTJZQQQdKS9endHK5sxWsvrd");
+    // this.setAddress("3P8qVX189qpoTJZQQQdKS9endHK5sxWsvrd");
     Promise.all([this.checkScriptedAccount(), this.updateAccountAssets()]);
     setInterval(this.updateAccountAssets, 10 * 1000);
     reaction(
