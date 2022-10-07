@@ -37,7 +37,7 @@ const Order: React.FC<IProps> = ({
   const am0 = BN.formatUnits(amount0, t0.decimals);
   const am1 = BN.formatUnits(amount1, t1.decimals);
   const percent = fulfilled0.times(100).div(amount0);
-  const price = am0.div(am1);
+  const price = am1.div(am0);
   return (
     <Root>
       <Row alignItems="center" onClick={onClick} style={{ cursor: "pointer" }}>
@@ -63,7 +63,7 @@ const Order: React.FC<IProps> = ({
             </Text>
           </Row>
           <Text type="secondary" size="small">
-            Price: {price.toFormat(2)} {t0.symbol}
+            Price: {price.toFormat(2)} {t1.symbol}
           </Text>
         </Column>
       </Row>
