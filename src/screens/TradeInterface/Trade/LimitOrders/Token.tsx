@@ -12,6 +12,7 @@ import { observer } from "mobx-react-lite";
 
 interface IProps {
   assetId: string;
+  badge: string;
   balances: Balance[];
   setAssetId: (assetId: string) => void;
   balanceError?: boolean;
@@ -38,7 +39,12 @@ const Token: React.FC<IProps> = (props) => {
         <Row alignItems="center">
           <SquareTokenIcon size="small" src={token?.logo} />
           <SizedBox width={12} />
-          <Text weight={500}>{token?.symbol}</Text>
+          <Column>
+            <Text size="medium" type="secondary">
+              {props.badge}
+            </Text>
+            <Text weight={500}>{token?.symbol}</Text>
+          </Column>
         </Row>
         <Row alignItems="center" mainAxisSize="fit-content">
           <Column style={{ textAlign: "right" }}>
