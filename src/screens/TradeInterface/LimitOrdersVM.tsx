@@ -230,10 +230,6 @@ class LimitOrdersVM {
       );
   };
 
-  get tokenForPayment() {
-    return this.paymentSettings === 0 ? this.token0 : this.token1;
-  }
-
   cancelOrder = async (orderId: string) => {
     this.setLoading(true);
     this.setNotificationParams(null);
@@ -360,6 +356,14 @@ class LimitOrdersVM {
     this.setPayment(amount);
   };
 
+  get dollEqForPayment() {
+    const v = this.rootStore.poolsStore
+      .usdnRate(this.assetId0)
+      ?.times(this.payment);
+    if (v == null) return "$ 0.00";
+    return `$ ${BN.formatUnits(v, this.token0.decimals).toFormat(2)}`;
+  }
+
   get dollEqForPrice() {
     const v = this.rootStore.poolsStore
       .usdnRate(this.assetId0)
@@ -376,22 +380,11 @@ class LimitOrdersVM {
       : this.finalAmount.gt(this.balance0 ?? 0);
   }
 
-  get dollForPayment() {
-    const token = this.paymentSettings === 0 ? this.token0 : this.token1;
-    const v = this.rootStore.poolsStore
-      .usdnRate(token.assetId)
-      ?.times(this.payment);
-    if (v == null) return "$ 0.00";
-    return `$ ${BN.formatUnits(v, token.decimals).toFormat(2)}`;
-  }
-
   get finalAmount(): BN {
     if (this.price.eq(0) || this.payment.eq(0)) return BN.ZERO;
-    const v1 = BN.formatUnits(this.price, this.token0.decimals);
-    const v2 = BN.formatUnits(this.payment, this.tokenForPayment.decimals);
-    return this.paymentSettings === 0
-      ? BN.parseUnits(v2.div(v1), this.token1.decimals)
-      : BN.parseUnits(v1.times(v2), this.token0.decimals);
+    const v1 = BN.formatUnits(this.price, this.token1.decimals);
+    const v2 = BN.formatUnits(this.payment, this.token0.decimals);
+    return BN.parseUnits(v2.times(v1), this.token1.decimals);
   }
 
   getMarketPrice = async () => {
