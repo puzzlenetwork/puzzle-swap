@@ -84,6 +84,14 @@ class LimitOrdersVM {
   assetId1: string = TOKENS_BY_SYMBOL.PUZZLE.assetId;
   setAssetId1 = (assetId: string) => (this.assetId1 = assetId);
 
+  amountSettings: 0 | 1 = 0;
+  toggleAmountSettings = () =>
+    (this.amountSettings = this.amountSettings === 0 ? 1 : 0);
+
+  priceSettings: 0 | 1 = 0;
+  togglePriceSettings = () =>
+    (this.priceSettings = this.priceSettings === 0 ? 1 : 0);
+
   price: BN = BN.ZERO;
   setPrice = (price: BN, sync?: boolean) => {
     this.price = price;
@@ -186,10 +194,6 @@ class LimitOrdersVM {
 
   get balance0() {
     return this.token0?.balance;
-  }
-
-  get balance1() {
-    return this.token1?.balance;
   }
 
   get token1() {
@@ -370,11 +374,12 @@ class LimitOrdersVM {
   };
 
   get amountDollEq() {
+    const token = this.amountSettings === 0 ? this.token0 : this.token1;
     const v = this.rootStore.poolsStore
-      .usdnRate(this.assetId0)
+      .usdnRate(token.assetId)
       ?.times(this.amount);
     if (v == null) return "$ 0.00";
-    return `$ ${BN.formatUnits(v, this.token0.decimals).toFormat(2)}`;
+    return `$ ${BN.formatUnits(v, token.decimals).toFormat(2)}`;
   }
 
   get priceDollEq() {
@@ -386,11 +391,12 @@ class LimitOrdersVM {
   }
 
   get totalDollEq() {
+    const token = this.amountSettings === 0 ? this.token1 : this.token0;
     const v = this.rootStore.poolsStore
-      .usdnRate(this.assetId1)
-      ?.times(this.total);
+      .usdnRate(token.assetId)
+      ?.times(this.amount);
     if (v == null) return "$ 0.00";
-    return `$ ${BN.formatUnits(v, this.token1.decimals).toFormat(2)}`;
+    return `$ ${BN.formatUnits(v, token.decimals).toFormat(2)}`;
   }
 
   get amountError() {
