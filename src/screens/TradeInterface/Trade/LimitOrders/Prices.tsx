@@ -62,7 +62,7 @@ const Prices: React.FC<IProps> = () => {
       <Column crossAxisSize="max">
         <Row alignItems="center">
           <Text size="medium" type="secondary" fitContent>
-            Amount {vm.amountSettings}
+            Amount
           </Text>
           <SizedBox width={8} />
           <StyledSwapIcon onClick={vm.toggleAmountSettings} />
@@ -101,7 +101,7 @@ const Prices: React.FC<IProps> = () => {
         <Row alignItems="center" justifyContent="space-between">
           <Row alignItems="center">
             <Text size="medium" type="secondary" fitContent>
-              Price {vm.priceSettings}
+              Price
             </Text>
             <SizedBox width={8} />
             <StyledSwapIcon onClick={vm.togglePriceSettings} />
