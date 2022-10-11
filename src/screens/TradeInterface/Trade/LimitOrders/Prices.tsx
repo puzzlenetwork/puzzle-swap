@@ -138,7 +138,7 @@ const Prices: React.FC<IProps> = () => {
           }
           amount={vm.total}
           usdnEquivalent={vm.totalDollEq}
-          error={false}
+          error={vm.totalError}
           setAmount={(v) => vm.setTotal(v, true)}
           loading={vm.marketPriceLoading}
         />

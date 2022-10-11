@@ -111,17 +111,12 @@ class LimitOrdersVM {
     if (this.amount.gt(0) && price.gt(0) && sync) {
       const v1 = BN.formatUnits(price, this.priceToken.decimals);
       const v2 = BN.formatUnits(this.amount, this.amountToken.decimals);
-      //todo объединить
-      if (this.amountSettings === 0 && this.priceSettings === 0) {
+      const as = this.amountSettings;
+      const ps = this.priceSettings;
+      if ((as === 1 && ps === 1) || (as === 0 && ps === 0)) {
         this.setTotal(BN.parseUnits(v2.times(v1), this.totalToken.decimals));
       }
-      if (this.amountSettings === 1 && this.priceSettings === 1) {
-        this.setTotal(BN.parseUnits(v2.times(v1), this.totalToken.decimals));
-      }
-      if (this.amountSettings === 0 && this.priceSettings === 1) {
-        this.setTotal(BN.parseUnits(v2.div(v1), this.totalToken.decimals));
-      }
-      if (this.amountSettings === 1 && this.priceSettings === 0) {
+      if ((as === 1 && ps === 0) || (as === 0 && ps === 1)) {
         this.setTotal(BN.parseUnits(v2.div(v1), this.totalToken.decimals));
       }
     }
@@ -133,16 +128,12 @@ class LimitOrdersVM {
     if (this.price.gt(0) && amount.gt(0) && sync) {
       const v1 = BN.formatUnits(this.price, this.priceToken.decimals);
       const v2 = BN.formatUnits(amount, this.amountToken.decimals);
-      if (this.amountSettings === 0 && this.priceSettings === 0) {
+      const as = this.amountSettings;
+      const ps = this.priceSettings;
+      if ((as === 0 && ps === 0) || (as === 1 && ps === 1)) {
         this.setTotal(BN.parseUnits(v2.times(v1), this.totalToken.decimals));
       }
-      if (this.amountSettings === 1 && this.priceSettings === 1) {
-        this.setTotal(BN.parseUnits(v2.times(v1), this.totalToken.decimals));
-      }
-      if (this.amountSettings === 0 && this.priceSettings === 1) {
-        this.setTotal(BN.parseUnits(v2.div(v1), this.totalToken.decimals));
-      }
-      if (this.amountSettings === 1 && this.priceSettings === 0) {
+      if ((as === 0 && ps === 1) || (as === 1 && ps === 0)) {
         this.setTotal(BN.parseUnits(v2.div(v1), this.totalToken.decimals));
       }
     }
@@ -154,17 +145,13 @@ class LimitOrdersVM {
     if (this.amount.gt(0) && this.price.gt(0) && sync) {
       const v1 = BN.formatUnits(this.price, this.priceToken.decimals);
       const v2 = BN.formatUnits(total, this.totalToken.decimals);
-      if (this.amountSettings === 0 && this.priceSettings === 0) {
+      const as = this.amountSettings;
+      const ps = this.priceSettings;
+      if ((as === 0 && ps === 0) || (as === 1 && ps === 0)) {
         this.setAmount(BN.parseUnits(v2.div(v1), this.amountToken.decimals));
       }
-      if (this.amountSettings === 1 && this.priceSettings === 1) {
+      if ((as === 1 && ps === 1) || (as === 0 && ps === 1)) {
         this.setAmount(BN.parseUnits(v2.times(v1), this.amountToken.decimals));
-      }
-      if (this.amountSettings === 0 && this.priceSettings === 1) {
-        this.setAmount(BN.parseUnits(v2.times(v1), this.amountToken.decimals));
-      }
-      if (this.amountSettings === 1 && this.priceSettings === 0) {
-        this.setAmount(BN.parseUnits(v2.div(v1), this.amountToken.decimals));
       }
     }
   };
@@ -255,18 +242,19 @@ class LimitOrdersVM {
 
   createOrder = async () => {
     if (this.price.eq(0) || this.amount.eq(0)) return;
-    if (this.amountError) return;
+    if (this.amountError || this.totalError) return;
     this.setLoading(true);
+
     return this.rootStore.accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.limitOrders,
         payment: [
-          { assetId: this.token0.assetId, amount: this.amount.toFixed(0) },
+          { assetId: this.amountToken.assetId, amount: this.amount.toFixed(0) },
         ],
         call: {
           function: "createOrder",
           args: [
-            { type: "string", value: this.token1.assetId },
+            { type: "string", value: this.totalToken.assetId },
             { type: "integer", value: this.total.toFixed(0).toString() },
           ],
         },
@@ -452,11 +440,15 @@ class LimitOrdersVM {
   }
 
   get amountError() {
-    return false;
-    // if (this.rootStore.accountStore.address == null) return false;
-    // if (this.amount.eq(0) || this.price.eq(0)) return false;
-    // const balance = this.amountSettings === 0 ? this.balance0 : this.balance1;
-    // return this.amount.gt(balance ?? 0);
+    if (this.rootStore.accountStore.address == null) return false;
+    if (this.amount.eq(0) || this.price.eq(0)) return false;
+    return this.amountSettings === 0 && this.amount.gt(this.balance0 ?? 0);
+  }
+
+  get totalError() {
+    if (this.rootStore.accountStore.address == null) return false;
+    if (this.amount.eq(0) || this.price.eq(0)) return false;
+    return this.amountSettings === 1 && this.amount.gt(this.balance1 ?? 0);
   }
 
   get finalAmount(): BN {

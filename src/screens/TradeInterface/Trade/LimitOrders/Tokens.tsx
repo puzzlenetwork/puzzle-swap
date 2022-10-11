@@ -93,7 +93,7 @@ const Tokens: React.FC<IProps> = () => {
         assetId={vm.assetId0}
         balances={accountStore.balances}
         setAssetId={handleSetAssetId0}
-        balanceError={vm.amountError}
+        balanceError={vm.amountError || vm.totalError}
       />
       <SizedBox height={8} style={{ position: "relative" }}>
         <ArrowImg
