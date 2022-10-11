@@ -68,6 +68,7 @@ class LimitOrdersVM {
     });
     setInterval(this.sync, 60 * 1000);
 
+    reaction(() => this.priceSettings, this.getMarketPrice);
     reaction(() => this.rootStore.accountStore?.address, this.sync);
   }
 
@@ -92,13 +93,37 @@ class LimitOrdersVM {
   togglePriceSettings = () =>
     (this.priceSettings = this.priceSettings === 0 ? 1 : 0);
 
+  get amountToken() {
+    return this.amountSettings === 0 ? this.token0 : this.token1;
+  }
+
+  get priceToken() {
+    return this.priceSettings === 0 ? this.token1 : this.token0;
+  }
+
+  get totalToken() {
+    return this.amountSettings === 0 ? this.token1 : this.token0;
+  }
+
   price: BN = BN.ZERO;
   setPrice = (price: BN, sync?: boolean) => {
     this.price = price;
     if (this.amount.gt(0) && price.gt(0) && sync) {
-      const v1 = BN.formatUnits(price, this.token1.decimals);
-      const v2 = BN.formatUnits(this.amount, this.token0.decimals);
-      this.setTotal(BN.parseUnits(v2.times(v1), this.token1.decimals));
+      const v1 = BN.formatUnits(price, this.priceToken.decimals);
+      const v2 = BN.formatUnits(this.amount, this.amountToken.decimals);
+      //todo объединить
+      if (this.amountSettings === 0 && this.priceSettings === 0) {
+        this.setTotal(BN.parseUnits(v2.times(v1), this.totalToken.decimals));
+      }
+      if (this.amountSettings === 1 && this.priceSettings === 1) {
+        this.setTotal(BN.parseUnits(v2.times(v1), this.totalToken.decimals));
+      }
+      if (this.amountSettings === 0 && this.priceSettings === 1) {
+        this.setTotal(BN.parseUnits(v2.div(v1), this.totalToken.decimals));
+      }
+      if (this.amountSettings === 1 && this.priceSettings === 0) {
+        this.setTotal(BN.parseUnits(v2.div(v1), this.totalToken.decimals));
+      }
     }
   };
 
@@ -106,9 +131,20 @@ class LimitOrdersVM {
   setAmount = (amount: BN, sync?: boolean) => {
     this.amount = amount;
     if (this.price.gt(0) && amount.gt(0) && sync) {
-      const v1 = BN.formatUnits(this.price, this.token1.decimals);
-      const v2 = BN.formatUnits(amount, this.token0.decimals);
-      this.setTotal(BN.parseUnits(v2.times(v1), this.token1.decimals));
+      const v1 = BN.formatUnits(this.price, this.priceToken.decimals);
+      const v2 = BN.formatUnits(amount, this.amountToken.decimals);
+      if (this.amountSettings === 0 && this.priceSettings === 0) {
+        this.setTotal(BN.parseUnits(v2.times(v1), this.totalToken.decimals));
+      }
+      if (this.amountSettings === 1 && this.priceSettings === 1) {
+        this.setTotal(BN.parseUnits(v2.times(v1), this.totalToken.decimals));
+      }
+      if (this.amountSettings === 0 && this.priceSettings === 1) {
+        this.setTotal(BN.parseUnits(v2.div(v1), this.totalToken.decimals));
+      }
+      if (this.amountSettings === 1 && this.priceSettings === 0) {
+        this.setTotal(BN.parseUnits(v2.div(v1), this.totalToken.decimals));
+      }
     }
   };
 
@@ -116,9 +152,20 @@ class LimitOrdersVM {
   setTotal = (total: BN, sync?: boolean) => {
     this.total = total;
     if (this.amount.gt(0) && this.price.gt(0) && sync) {
-      const v1 = BN.formatUnits(this.price, this.token1.decimals);
-      const v2 = BN.formatUnits(total, this.token1.decimals);
-      this.setAmount(BN.parseUnits(v2.div(v1), this.token0.decimals));
+      const v1 = BN.formatUnits(this.price, this.priceToken.decimals);
+      const v2 = BN.formatUnits(total, this.totalToken.decimals);
+      if (this.amountSettings === 0 && this.priceSettings === 0) {
+        this.setAmount(BN.parseUnits(v2.div(v1), this.amountToken.decimals));
+      }
+      if (this.amountSettings === 1 && this.priceSettings === 1) {
+        this.setAmount(BN.parseUnits(v2.times(v1), this.amountToken.decimals));
+      }
+      if (this.amountSettings === 0 && this.priceSettings === 1) {
+        this.setAmount(BN.parseUnits(v2.times(v1), this.amountToken.decimals));
+      }
+      if (this.amountSettings === 1 && this.priceSettings === 0) {
+        this.setAmount(BN.parseUnits(v2.div(v1), this.amountToken.decimals));
+      }
     }
   };
 
@@ -194,6 +241,10 @@ class LimitOrdersVM {
 
   get balance0() {
     return this.token0?.balance;
+  }
+
+  get balance1() {
+    return this.token1?.balance;
   }
 
   get token1() {
@@ -369,7 +420,8 @@ class LimitOrdersVM {
   }
 
   onPercentClick = (percent: number) => {
-    const amount = new BN(percent).times(this.balance0 ?? 1).div(100);
+    const balance = this.amountSettings === 0 ? this.balance0 : this.balance1;
+    const amount = new BN(percent).times(balance ?? 1).div(100);
     this.setAmount(amount, true);
   };
 
@@ -400,9 +452,11 @@ class LimitOrdersVM {
   }
 
   get amountError() {
-    if (this.rootStore.accountStore.address == null) return false;
-    if (this.amount.eq(0) || this.price.eq(0)) return false;
-    return this.amount.gt(this.balance0 ?? 0);
+    return false;
+    // if (this.rootStore.accountStore.address == null) return false;
+    // if (this.amount.eq(0) || this.price.eq(0)) return false;
+    // const balance = this.amountSettings === 0 ? this.balance0 : this.balance1;
+    // return this.amount.gt(balance ?? 0);
   }
 
   get finalAmount(): BN {
@@ -414,12 +468,13 @@ class LimitOrdersVM {
 
   getMarketPrice = async () => {
     this.setMarketPriceLoading(true);
+    const token = this.priceSettings === 0 ? this.token0 : this.token1;
     const res = await aggregatorService.calc(
-      this.assetId0,
-      this.assetId1,
-      BN.parseUnits(1, this.token0.decimals)
+      this.priceSettings === 0 ? this.assetId0 : this.assetId1,
+      this.priceSettings === 0 ? this.assetId1 : this.assetId0,
+      BN.parseUnits(1, token.decimals)
     );
-    this.setPrice(new BN(res.estimatedOut));
+    this.setPrice(new BN(res.estimatedOut), true);
     this.setMarketPriceLoading(false);
   };
 }

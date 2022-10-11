@@ -62,7 +62,7 @@ const Prices: React.FC<IProps> = () => {
       <Column crossAxisSize="max">
         <Row alignItems="center">
           <Text size="medium" type="secondary" fitContent>
-            Amount
+            Amount {vm.amountSettings}
           </Text>
           <SizedBox width={8} />
           <StyledSwapIcon onClick={vm.toggleAmountSettings} />
@@ -101,7 +101,7 @@ const Prices: React.FC<IProps> = () => {
         <Row alignItems="center" justifyContent="space-between">
           <Row alignItems="center">
             <Text size="medium" type="secondary" fitContent>
-              Price
+              Price {vm.priceSettings}
             </Text>
             <SizedBox width={8} />
             <StyledSwapIcon onClick={vm.togglePriceSettings} />
@@ -113,8 +113,10 @@ const Prices: React.FC<IProps> = () => {
         <SizedBox height={4} />
         <LimitTokenInput
           placeholder={vm.loading ? "..." : "0.00"}
-          prefix={vm.token1.symbol}
-          decimals={vm.token1.decimals}
+          prefix={vm.priceSettings === 0 ? vm.token1.symbol : vm.token0.symbol}
+          decimals={
+            vm.priceSettings === 0 ? vm.token1.decimals : vm.token0.decimals
+          }
           amount={vm.price}
           setAmount={(v) => vm.setPrice(v, true)}
           usdnEquivalent={vm.priceDollEq}
@@ -130,8 +132,6 @@ const Prices: React.FC<IProps> = () => {
         </Text>
         <SizedBox height={4} />
         <LimitTokenInput
-          // prefix={vm.token1.symbol}
-          // decimals={vm.token1.decimals}
           prefix={vm.amountSettings === 0 ? vm.token1.symbol : vm.token0.symbol}
           decimals={
             vm.amountSettings === 0 ? vm.token1.decimals : vm.token0.decimals
