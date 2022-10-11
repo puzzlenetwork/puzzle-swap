@@ -62,15 +62,17 @@ const Prices: React.FC<IProps> = () => {
       <Column crossAxisSize="max">
         <Row alignItems="center">
           <Text size="medium" type="secondary" fitContent>
-            Amount
+            Amount {vm.amountSettings}
           </Text>
           <SizedBox width={8} />
-          <StyledSwapIcon onClick={vm.switchTokens} />
+          <StyledSwapIcon onClick={vm.toggleAmountSettings} />
         </Row>
         <SizedBox height={4} />
         <LimitTokenInput
-          prefix={vm.token0.symbol}
-          decimals={vm.token0.decimals}
+          prefix={vm.amountSettings === 0 ? vm.token0.symbol : vm.token1.symbol}
+          decimals={
+            vm.amountSettings === 0 ? vm.token0.decimals : vm.token1.decimals
+          }
           amount={vm.amount}
           setAmount={(v) => vm.setAmount(v, true)}
           usdnEquivalent={vm.amountDollEq}
@@ -99,10 +101,10 @@ const Prices: React.FC<IProps> = () => {
         <Row alignItems="center" justifyContent="space-between">
           <Row alignItems="center">
             <Text size="medium" type="secondary" fitContent>
-              Price
+              Price {vm.priceSettings}
             </Text>
             <SizedBox width={8} />
-            <StyledSwapIcon onClick={vm.switchTokens} />
+            <StyledSwapIcon onClick={vm.togglePriceSettings} />
           </Row>
           <TextButton nowrap onClick={vm.getMarketPrice}>
             Set market price
@@ -111,8 +113,10 @@ const Prices: React.FC<IProps> = () => {
         <SizedBox height={4} />
         <LimitTokenInput
           placeholder={vm.loading ? "..." : "0.00"}
-          prefix={vm.token1.symbol}
-          decimals={vm.token1.decimals}
+          prefix={vm.priceSettings === 0 ? vm.token1.symbol : vm.token0.symbol}
+          decimals={
+            vm.priceSettings === 0 ? vm.token1.decimals : vm.token0.decimals
+          }
           amount={vm.price}
           setAmount={(v) => vm.setPrice(v, true)}
           usdnEquivalent={vm.priceDollEq}
@@ -128,11 +132,13 @@ const Prices: React.FC<IProps> = () => {
         </Text>
         <SizedBox height={4} />
         <LimitTokenInput
-          prefix={vm.token1.symbol}
-          decimals={vm.token1.decimals}
+          prefix={vm.amountSettings === 0 ? vm.token1.symbol : vm.token0.symbol}
+          decimals={
+            vm.amountSettings === 0 ? vm.token1.decimals : vm.token0.decimals
+          }
           amount={vm.total}
           usdnEquivalent={vm.totalDollEq}
-          error={false}
+          error={vm.totalError}
           setAmount={(v) => vm.setTotal(v, true)}
           loading={vm.marketPriceLoading}
         />
