@@ -8,7 +8,6 @@ import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import Img from "@components/Img";
 import { useTheme } from "@emotion/react";
-import { observer } from "mobx-react-lite";
 
 interface IProps {
   assetId: string;
@@ -73,4 +72,4 @@ const Token: React.FC<IProps> = (props) => {
     </>
   );
 };
-export default observer(Token);
+export default Token;

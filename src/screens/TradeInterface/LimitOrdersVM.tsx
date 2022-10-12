@@ -414,29 +414,27 @@ class LimitOrdersVM {
   };
 
   get amountDollEq() {
-    const token = this.amountSettings === 0 ? this.token0 : this.token1;
     const v = this.rootStore.poolsStore
-      .usdnRate(token.assetId)
+      .usdnRate(this.amountToken.assetId)
       ?.times(this.amount);
     if (v == null) return "$ 0.00";
-    return `$ ${BN.formatUnits(v, token.decimals).toFormat(2)}`;
+    return `$ ${BN.formatUnits(v, this.amountToken.decimals).toFormat(2)}`;
   }
 
   get priceDollEq() {
     const v = this.rootStore.poolsStore
-      .usdnRate(this.assetId1)
+      .usdnRate(this.priceToken.assetId)
       ?.times(this.price);
     if (v == null) return "$ 0.00";
-    return `$ ${BN.formatUnits(v, this.token1.decimals).toFormat(2)}`;
+    return `$ ${BN.formatUnits(v, this.priceToken.decimals).toFormat(2)}`;
   }
 
   get totalDollEq() {
-    const token = this.amountSettings === 0 ? this.token1 : this.token0;
     const v = this.rootStore.poolsStore
-      .usdnRate(token.assetId)
-      ?.times(this.amount);
+      .usdnRate(this.totalToken.assetId)
+      ?.times(this.total);
     if (v == null) return "$ 0.00";
-    return `$ ${BN.formatUnits(v, token.decimals).toFormat(2)}`;
+    return `$ ${BN.formatUnits(v, this.totalToken.decimals).toFormat(2)}`;
   }
 
   get amountError() {
