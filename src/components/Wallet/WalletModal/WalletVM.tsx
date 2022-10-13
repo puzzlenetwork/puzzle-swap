@@ -49,7 +49,6 @@ class WalletVM {
       this.rootStore.accountStore.setAssetBalances(null),
       this.rootStore.accountStore.setAddress(null),
       this.rootStore.accountStore.setLoginType(null),
-      this.rootStore.poolsStore.setAccountPoolsLiquidity(null),
       this.rootStore.stakeStore.setStakedAccountPuzzle(null),
     ]);
 
@@ -87,7 +86,7 @@ class WalletVM {
   get investments() {
     const { poolsStore, stakeStore } = this.rootStore;
     const poolsData =
-      poolsStore.accountPoolsLiquidity
+      poolsStore.investedInPools
         ?.filter(({ liquidityInUsdn }) => !liquidityInUsdn.eq(0))
         .map(
           ({
@@ -105,35 +104,25 @@ class WalletVM {
               amount:
                 (amount.gte(0.0001) ? amount.toFormat(4) : amount.toFormat(8)) +
                 indexTokenName,
-              nuclearValue:
-                "$ " +
-                (indexTokenRate.gte(0.0001)
-                  ? indexTokenRate.toFormat(4)
-                  : indexTokenRate.toFormat(8)),
-              usdnEquivalent: "$ " + liquidityInUsdn.toFormat(2),
+              nuclearValue: indexTokenRate,
+              usdnEquivalent: liquidityInUsdn,
             };
           }
         ) ?? [];
     const stakedNftData = this.stakedNfts.map(
       ({ imageLink, marketPrice, name }) => {
-        const price =
-          marketPrice == null
-            ? "-"
-            : "$ " + new BN(marketPrice ?? 0).toFormat();
-
         return {
           onClickPath: ROUTES.ULTRASTAKE,
           logo: imageLink,
           amount: "1 NFT",
           name,
-          nuclearValue: price,
-          usdnEquivalent: price,
+          nuclearValue: new BN(marketPrice ?? 0),
+          usdnEquivalent: new BN(marketPrice ?? 0),
         };
       }
     );
-    const stakedPuzzle = stakeStore.puzzleWallet;
-    return [...stakedNftData, ...poolsData, ...stakedPuzzle].sort((a, b) =>
-      new BN(a.usdnEquivalent).gt(b.usdnEquivalent) ? 1 : -1
+    return [...stakedNftData, ...poolsData, ...stakeStore.puzzleWallet].sort(
+      (a, b) => (a.usdnEquivalent.gt(b.usdnEquivalent) ? -1 : 1)
     );
   }
 

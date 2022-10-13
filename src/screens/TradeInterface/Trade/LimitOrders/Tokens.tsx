@@ -89,10 +89,11 @@ const Tokens: React.FC<IProps> = () => {
   return (
     <Root>
       <Token
+        badge="You sell"
         assetId={vm.assetId0}
         balances={accountStore.balances}
         setAssetId={handleSetAssetId0}
-        balanceError={vm.paymentError}
+        balanceError={vm.amountError || vm.totalError}
       />
       <SizedBox height={8} style={{ position: "relative" }}>
         <ArrowImg
@@ -101,6 +102,7 @@ const Tokens: React.FC<IProps> = () => {
         />
       </SizedBox>
       <Token
+        badge="You buy"
         assetId={vm.assetId1}
         balances={accountStore.balances}
         setAssetId={handleSetAssetId1}

@@ -45,6 +45,7 @@ const Btn = styled(Button)`
   background-color: transparent;
   color: ${({ theme }) => `${theme.colors.error500}`};
   border-color: ${({ theme }) => `${theme.colors.error100}`};
+
   :hover {
     background-color: transparent;
   }
@@ -64,6 +65,7 @@ const OrderDetailsModal: React.FC<IProps> = ({ ...rest }) => {
     { key: "To", value: `${am1.toFormat(2)} ${token1?.symbol}` },
     { key: "Transaction fee", value: "0.005 WAVES" },
   ];
+  console.log(order?.status === "canceled");
   return (
     <Dialog style={{ maxWidth: 360 }} title="Order details" {...rest}>
       <SizedBox height={24} />
@@ -108,13 +110,17 @@ const OrderDetailsModal: React.FC<IProps> = ({ ...rest }) => {
           <Row justifyContent="space-between">
             <Text weight={500} fitContent>
               Order progress
+              {order?.status === "canceled" && ` (Cancelled) `}
             </Text>
             <Text type="secondary" fitContent>
               {percent?.toFormat(2)} %
             </Text>
           </Row>
           <SizedBox height={8} />
-          <Progressbar percent={percent?.toNumber() ?? 0} />
+          <Progressbar
+            red={order?.status === "canceled"}
+            percent={percent?.toNumber() ?? 0}
+          />
         </Column>
         <SizedBox height={24} />
         <Details crossAxisSize="max">

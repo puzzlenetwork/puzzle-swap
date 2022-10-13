@@ -6,10 +6,11 @@ interface IProps {
   red?: boolean;
 }
 
-const Root = styled.div`
+const Root = styled.div<{ red?: boolean }>`
   width: 100%;
   height: 8px;
-  background: ${({ theme }) => theme.colors.primary100};
+  background: ${({ theme, red }) =>
+    red ? theme.colors.error100 : theme.colors.primary100};
   border-radius: 4px;
 
   .progress {
@@ -19,9 +20,9 @@ const Root = styled.div`
   }
 `;
 
-const Progressbar: React.FC<IProps> = ({ percent }) => {
+const Progressbar: React.FC<IProps> = ({ percent, red }) => {
   return (
-    <Root>
+    <Root red={red}>
       <div className="progress" style={{ width: `${percent}%` }} />
     </Root>
   );

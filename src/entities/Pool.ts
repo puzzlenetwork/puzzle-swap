@@ -245,13 +245,12 @@ class Pool implements IPoolConfig {
       getStateByKey(state, `global_indexStaked`) ?? 0
     );
     const globalPoolTokenAmount = new BN(
-      getStateByKey(state, "globalPoolTokenAmount") ?? 0
+      getStateByKey(state, "global_poolToken_amount") ?? 0
     );
     const indexTokenRate =
       globalPoolTokenAmount && globalPoolTokenAmount.gt(0)
         ? this.globalLiquidity.div(BN.formatUnits(globalPoolTokenAmount, 8))
         : BN.ZERO;
-
     if (addressIndexStaked == null || addressIndexStaked.eq(0)) {
       return {
         addressStaked: BN.ZERO,

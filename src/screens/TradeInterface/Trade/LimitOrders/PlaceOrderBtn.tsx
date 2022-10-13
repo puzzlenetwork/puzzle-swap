@@ -10,7 +10,7 @@ interface IProps {}
 const PlaceOrderBtn: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const vm = useLimitOrdersVM();
-  const { price, paymentError, payment, loading, initialized } = vm;
+  const { price, amount, amountError, loading, initialized, totalError } = vm;
   switch (true) {
     case accountStore.address == null:
       return (
@@ -30,13 +30,19 @@ const PlaceOrderBtn: React.FC<IProps> = () => {
           Transaction in progress <Loading />
         </Button>
       );
-    case price == null || payment == null || price.eq(0) || payment.eq(0):
+    case price == null || amount == null || price.eq(0) || amount.eq(0):
       return (
         <Button disabled fixed>
           Enter an amount
         </Button>
       );
-    case paymentError:
+    case amountError:
+      return (
+        <Button disabled fixed>
+          Insufficient balance
+        </Button>
+      );
+    case totalError:
       return (
         <Button disabled fixed>
           Insufficient balance
