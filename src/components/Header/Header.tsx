@@ -116,6 +116,7 @@ const Header: React.FC<IProps> = () => {
     { name: "Invest", link: ROUTES.INVEST },
     { name: "Stake", link: ROUTES.STAKE },
     { name: "NFT", link: "https://puzzlemarket.org/" },
+    { name: "Lend", link: "https://lend.puzzleswap.org/" },
   ];
 
   const communityMenu = [
