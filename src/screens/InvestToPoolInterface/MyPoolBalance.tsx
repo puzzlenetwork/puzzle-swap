@@ -78,10 +78,14 @@ const MyPoolBalance: React.FC<IProps> = () => {
             />
           ) : (
             vm.poolBalancesTable.map((token, i) => {
-              const value = token.value.gte(0.01)
+              const value = token.value.isNaN()
+                ? "0.00"
+                : token.value.gte(0.01)
                 ? token.value.toFormat(2)
                 : token.value.toFormat(6);
-              const usdn = token.usdnEquivalent.gte(0.01)
+              const usdn = token.usdnEquivalent.isNaN()
+                ? "0.00"
+                : token.usdnEquivalent.gte(0.01)
                 ? token.usdnEquivalent.toFormat(2)
                 : token.usdnEquivalent.toFormat(6);
               return (

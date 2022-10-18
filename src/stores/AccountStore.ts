@@ -4,7 +4,7 @@ import { ProviderWeb } from "@waves.exchange/provider-web";
 import { ProviderCloud } from "@waves.exchange/provider-cloud";
 import { ProviderKeeper } from "@waves/provider-keeper";
 import { NODE_URL, TOKENS_LIST } from "@src/constants";
-import { action, autorun, makeAutoObservable, reaction } from "mobx";
+import { autorun, makeAutoObservable, reaction } from "mobx";
 import Balance from "@src/entities/Balance";
 import { getCurrentBrowser } from "@src/utils/getCurrentBrowser";
 import BN from "@src/utils/BN";
@@ -60,7 +60,6 @@ class AccountStore {
       }
       this.setAddress(initState.address);
     }
-    // this.setAddress("3P8qVX189qpoTJZQQQdKS9endHK5sxWsvrd");
     Promise.all([this.checkScriptedAccount(), this.updateAccountAssets()]);
     setInterval(this.updateAccountAssets, 10 * 1000);
     reaction(
@@ -83,35 +82,40 @@ class AccountStore {
   setIsAccScripted = (v: boolean) => (this.isAccScripted = v);
 
   isWavesKeeperInstalled = false;
-  @action.bound setWavesKeeperInstalled = (state: boolean) =>
+
+  setWavesKeeperInstalled = (state: boolean) =>
     (this.isWavesKeeperInstalled = state);
 
   assetsBalancesLoading = false;
-  @action.bound setAssetsBalancesLoading = (state: boolean) =>
+
+  setAssetsBalancesLoading = (state: boolean) =>
     (this.assetsBalancesLoading = state);
 
   loginModalOpened: boolean = false;
-  @action.bound setLoginModalOpened = (state: boolean) =>
-    (this.loginModalOpened = state);
+
+  setLoginModalOpened = (state: boolean) => (this.loginModalOpened = state);
 
   walletModalOpened: boolean = false;
-  @action.bound setWalletModalOpened = (state: boolean) =>
-    (this.walletModalOpened = state);
+
+  setWalletModalOpened = (state: boolean) => (this.walletModalOpened = state);
 
   sendAssetModalOpened: boolean = false;
-  @action.bound setSendAssetModalOpened = (state: boolean) =>
+
+  setSendAssetModalOpened = (state: boolean) =>
     (this.sendAssetModalOpened = state);
 
   assetToSend: Balance | null = null;
-  @action.bound setAssetToSend = (state: Balance | null) =>
-    (this.assetToSend = state);
+
+  setAssetToSend = (state: Balance | null) => (this.assetToSend = state);
 
   changePoolModalOpened: boolean = false;
-  @action.bound setChangePoolModalOpened = (state: boolean) =>
+
+  setChangePoolModalOpened = (state: boolean) =>
     (this.changePoolModalOpened = state);
 
   public assetBalances: Balance[] | null = null;
-  @action.bound setAssetBalances = (assetBalances: Balance[] | null) =>
+
+  setAssetBalances = (assetBalances: Balance[] | null) =>
     (this.assetBalances = assetBalances);
 
   findBalanceByAssetId = (assetId: string) =>
@@ -119,15 +123,16 @@ class AccountStore {
     this.assetBalances.find((balance) => balance.assetId === assetId);
 
   public address: string | null = null;
-  @action.bound setAddress = (address: string | null) =>
-    (this.address = address);
+
+  setAddress = (address: string | null) => (this.address = address);
 
   public loginType: LOGIN_TYPE | null = null;
-  @action.bound setLoginType = (loginType: LOGIN_TYPE | null) =>
-    (this.loginType = loginType);
+
+  setLoginType = (loginType: LOGIN_TYPE | null) => (this.loginType = loginType);
 
   public signer: Signer | null = null;
-  @action.bound setSigner = (signer: Signer | null) => (this.signer = signer);
+
+  setSigner = (signer: Signer | null) => (this.signer = signer);
 
   get isBrowserSupportsWavesKeeper(): boolean {
     const browser = getCurrentBrowser();
@@ -172,8 +177,6 @@ class AccountStore {
       case LOGIN_TYPE.KEEPER:
         this.setSigner(new Signer());
         await this.setupSynchronizationWithKeeper();
-        // const authData = { data: "you know what is the main reason" };
-        // await this.signer?.setProvider(new ProviderKeeper(authData));
         await this.signer?.setProvider(new ProviderKeeper());
         break;
       case LOGIN_TYPE.SIGNER_EMAIL:
