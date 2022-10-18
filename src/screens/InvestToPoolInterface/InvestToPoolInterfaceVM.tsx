@@ -6,7 +6,6 @@ import BN from "@src/utils/BN";
 import {
   CONTRACT_ADDRESSES,
   EXPLORER_URL,
-  IToken,
   NODE_URL,
   TOKENS_BY_ASSET_ID,
 } from "@src/constants";
@@ -16,11 +15,6 @@ import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
 import makeNodeRequest from "@src/utils/makeNodeRequest";
 
 const ctx = React.createContext<InvestToPoolInterfaceVM | null>(null);
-
-type IReward = {
-  value: BN;
-  usdEquivalent: BN;
-};
 
 export const InvestToPoolInterfaceVMProvider: React.FC<{
   poolDomain: string;
