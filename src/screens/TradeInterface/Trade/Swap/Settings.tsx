@@ -34,7 +34,8 @@ const Tag = styled.div<{ active?: boolean }>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  color: ${({ active, theme }) => (active ? theme.colors.white : "")};
+  color: ${({ active, theme }) =>
+    active ? theme.colors.white : theme.colors.primary650};
   background: ${({ active, theme }) =>
     active ? theme.colors.blue500 : theme.colors.white};
   border: 1px solid
