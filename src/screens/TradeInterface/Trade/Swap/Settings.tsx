@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import Card from "@components/Card";
 import { ReactComponent as Close } from "@src/assets/icons/darkClose.svg";
@@ -14,6 +14,7 @@ import TextButton from "@components/TextButton";
 import Button from "@components/Button";
 import { useTheme } from "@emotion/react";
 import { useSwapVM } from "@screens/TradeInterface/SwapVM";
+import { useStores } from "@stores";
 
 interface IProps {}
 
@@ -52,11 +53,17 @@ const Tag = styled.div<{ active?: boolean }>`
 const Settings: React.FC<IProps> = () => {
   const vm = useSwapVM();
   const theme = useTheme();
+  const { poolsStore } = useStores();
+  const initialSlippage = new BN(poolsStore.slippage).times(10);
+  const [slippage, setSlippage] = useState(initialSlippage);
+  const isSomethingChanged = slippage.eq(initialSlippage);
   const handleClose = () => vm.setOpenedSettings(false);
   const handleSave = () => {
+    poolsStore.setSlippage(slippage.div(10).toNumber());
     handleClose();
   };
   const handleReset = () => {
+    setSlippage(initialSlippage);
     handleClose();
   };
   return (
@@ -101,20 +108,21 @@ const Settings: React.FC<IProps> = () => {
           </Tooltip>
           <SizedBox height={8} />
           <Row>
-            {[0.1, 0.5, 1].map((v) => (
+            {[1, 3, 5].map((v) => (
               <Tag
                 key={v + "percent"}
-                // onClick={() => vm.setSwapFee(new BN((index + 1) * 10))}
-                // active={vm.swapFee.eq(new BN((index + 1) * 10))}
+                onClick={() => setSlippage(new BN(v * 10))}
+                active={slippage.eq(new BN(v * 10))}
                 style={{ marginRight: 4 }}
               >
                 {v} %
               </Tag>
             ))}
             <ShareTokenInput
-              onClick={() => {}}
-              amount={new BN(20)}
-              onChange={() => null}
+              amount={slippage}
+              onChange={(v) => setSlippage(v)}
+              maxValue={new BN(1000)}
+              error={slippage.gt(1000)}
             />
           </Row>
         </Column>
@@ -132,7 +140,11 @@ const Settings: React.FC<IProps> = () => {
         <TextButton kind="secondary" weight={500} onClick={handleReset}>
           Reset
         </TextButton>
-        <Button size="medium" onClick={handleSave}>
+        <Button
+          size="medium"
+          onClick={handleSave}
+          disabled={isSomethingChanged || slippage.gt(1000)}
+        >
           Save
         </Button>
       </Row>

@@ -91,6 +91,7 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
           setAssetId={handleSetAssetId0}
           balances={accountStore.balances}
           onMaxClick={vm.amount0MaxClickFunc}
+          usdnEquivalent={vm.usdnEquivalent0}
           selectable
         />
         <SwitchTokensButton />
@@ -100,6 +101,7 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
           assetId={vm.assetId1}
           setAssetId={handleSetAssetId1}
           balances={accountStore.balances}
+          usdnEquivalent={vm.usdnEquivalent1}
           selectable
         />
         <SizedBox height={24} />

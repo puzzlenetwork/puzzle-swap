@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { action, makeAutoObservable, reaction } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import aggregatorService, { TCalcRoute } from "@src/services/aggregatorService";
@@ -49,10 +49,12 @@ class SwapVM {
   openedSettings = false;
   setOpenedSettings = (v: boolean) => (this.openedSettings = v);
 
+  slippage = new BN(50);
+  setSlippage = (v: BN) => (this.slippage = v);
+
   price: BN = BN.ZERO;
   private _setPrice = (price: BN) => (this.price = price);
 
-  @action.bound
   private _calculatePrice(
     amount0: BN = this.amount0,
     amount1: BN = this.amount1
@@ -85,19 +87,37 @@ class SwapVM {
   private _setAggregatedProfit = (value: BN) => (this.aggregatedProfit = value);
 
   assetId0: string;
-  @action.bound setAssetId0 = (assetId: string) => (this.assetId0 = assetId);
+  setAssetId0 = (assetId: string) => (this.assetId0 = assetId);
 
   assetId1: string;
-  @action.bound setAssetId1 = (assetId: string) => (this.assetId1 = assetId);
+  setAssetId1 = (assetId: string) => (this.assetId1 = assetId);
 
   amount0: BN = BN.ZERO;
-  @action.bound setAmount0 = (amount: BN) => (this.amount0 = amount);
+  setAmount0 = (amount: BN) => (this.amount0 = amount);
 
   get amount0MaxClickFunc(): (() => void) | undefined {
     const { token0, balance0 } = this;
     return token0 != null && balance0 != null
       ? () => this.setAmount0(balance0)
       : undefined;
+  }
+
+  get usdnEquivalent0() {
+    const rate = this.rootStore.poolsStore.usdnRate(this.token0.assetId);
+    const value = BN.formatUnits(this.amount0, this.token0.decimals).times(
+      rate ?? BN.ZERO
+    );
+    const format = value.eq(0) ? 0 : value?.gt(0.0001) ? 2 : 4;
+    return "$ " + value.toFormat(format);
+  }
+
+  get usdnEquivalent1() {
+    const rate = this.rootStore.poolsStore.usdnRate(this.token1.assetId);
+    const value = BN.formatUnits(this.amount1, this.token1.decimals).times(
+      rate ?? BN.ZERO
+    );
+    const format = value.eq(0) ? 0 : value?.gt(0.0001) ? 2 : 4;
+    return "$ " + value.toFormat(format);
   }
 
   amount1: BN = BN.ZERO;

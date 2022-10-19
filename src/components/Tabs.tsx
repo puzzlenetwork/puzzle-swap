@@ -21,7 +21,6 @@ const Root = styled.div`
   width: 100%;
 `;
 const Tab = styled.div<{ active?: boolean }>`
-  transition: all 0.3s ease;
   text-align: center;
   margin-right: 24px;
   padding-bottom: 12px;
@@ -31,7 +30,7 @@ const Tab = styled.div<{ active?: boolean }>`
     active ? `4px solid ${theme.colors.blue500}` : "4px solid transparent"};
   margin-bottom: -1px;
   user-select: none;
-
+  transition: 0.4s;
   :hover {
     border-bottom: ${({ active, theme }) =>
       !active && `4px solid ${theme.colors.primary300}`}

@@ -72,6 +72,7 @@ const MenuItem = styled(Anchor)<{ selected?: boolean }>`
       selected ? theme.colors.blue500 : "transparent"};
   height: 100%;
   margin: 0 12px;
+  transition: 0.4s;
 
   &:hover {
     border-bottom: 4px solid ${({ theme }) => theme.colors.primary300};
