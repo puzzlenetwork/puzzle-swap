@@ -126,7 +126,8 @@ class SwapVM {
   routingModalOpened: boolean = false;
   setRoutingModalState = (state: boolean) => (this.routingModalOpened = state);
 
-  reject?: () => void;
+  rejectAggregatorPromise?: () => void;
+  setRejectAggregatorPromise = (v: any) => (this.rejectAggregatorPromise = v);
 
   //todo cun out kludge with invalidAmount
   private _syncAmount1 = (quiet = false) => {
@@ -137,9 +138,9 @@ class SwapVM {
     }
     !quiet && this._setSynchronizing(true);
     const defaultAmount0 = BN.parseUnits(1, this.token0.decimals);
-    if (this.reject != null) this.reject();
+    if (this.rejectAggregatorPromise != null) this.rejectAggregatorPromise();
     const promise = new Promise((resolve, reject) => {
-      this.reject = reject;
+      this.rejectAggregatorPromise = reject;
       resolve(
         aggregatorService.calc(
           assetId0,
@@ -170,7 +171,7 @@ class SwapVM {
         this._setParameters(null);
       })
       .finally(() => {
-        this.reject = undefined;
+        this.setRejectAggregatorPromise(undefined);
         this._setSynchronizing(false);
       });
   };
