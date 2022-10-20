@@ -79,7 +79,6 @@ class TokenChartVM {
     (this.chartData = { ...this.chartData, [period]: value });
 
   getChartByPeriod(period: keyof TChartDataRecord) {
-    console.log(this.chartData);
     return this.chartData[period ?? this.selectedChartPeriod] ?? [];
   }
 
