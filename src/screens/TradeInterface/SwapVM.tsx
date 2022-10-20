@@ -126,6 +126,9 @@ class SwapVM {
   routingModalOpened: boolean = false;
   setRoutingModalState = (state: boolean) => (this.routingModalOpened = state);
 
+  rejectAggregatorPromise?: () => void;
+  setRejectAggregatorPromise = (v: any) => (this.rejectAggregatorPromise = v);
+
   //todo cun out kludge with invalidAmount
   private _syncAmount1 = (quiet = false) => {
     const { amount0, assetId0, assetId1 } = this;
@@ -135,29 +138,31 @@ class SwapVM {
     }
     !quiet && this._setSynchronizing(true);
     const defaultAmount0 = BN.parseUnits(1, this.token0.decimals);
-    aggregatorService
-      .calc(assetId0, assetId1, invalidAmount ? defaultAmount0 : amount0)
-      .then(
-        ({
-          estimatedOut,
-          priceImpact,
-          routes,
-          parameters,
-          aggregatedProfit,
-        }) => {
-          !invalidAmount && this._setAmount1(new BN(estimatedOut));
-          this._calculatePrice(
-            invalidAmount ? defaultAmount0 : amount0,
-            new BN(estimatedOut)
-          );
-          this._setSynchronizing(false);
-          !invalidAmount &&
-            this._setPriceImpact(new BN(priceImpact).times(100));
-          this._setParameters(!invalidAmount ? parameters : null);
-          this._setRoute(routes);
-          this._setAggregatedProfit(new BN(aggregatedProfit));
-        }
-      )
+    if (this.rejectAggregatorPromise != null) this.rejectAggregatorPromise();
+    const promise = new Promise((resolve, reject) => {
+      this.rejectAggregatorPromise = reject;
+      resolve(
+        aggregatorService.calc(
+          assetId0,
+          assetId1,
+          invalidAmount ? defaultAmount0 : amount0
+        )
+      );
+    });
+    promise
+      .then((v: any) => {
+        !invalidAmount && this._setAmount1(new BN(v.estimatedOut));
+        this._calculatePrice(
+          invalidAmount ? defaultAmount0 : amount0,
+          new BN(v.estimatedOut)
+        );
+        this._setSynchronizing(false);
+        !invalidAmount &&
+          this._setPriceImpact(new BN(v.priceImpact).times(100));
+        this._setParameters(!invalidAmount ? v.parameters : null);
+        this._setRoute(v.routes);
+        this._setAggregatedProfit(new BN(v.aggregatedProfit));
+      })
       .catch(() => {
         this._setAmount1(BN.ZERO);
         this._setPriceImpact(BN.ZERO);
@@ -165,7 +170,10 @@ class SwapVM {
         this._setPrice(BN.ZERO);
         this._setParameters(null);
       })
-      .finally(() => this._setSynchronizing(false));
+      .finally(() => {
+        this.setRejectAggregatorPromise(undefined);
+        this._setSynchronizing(false);
+      });
   };
 
   get token0() {
