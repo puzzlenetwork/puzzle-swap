@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import Card from "@components/Card";
 import TokenInput from "@components/TokenInput";
 import SizedBox from "@components/SizedBox";
@@ -22,6 +22,8 @@ import SettingsHeader from "../SettingsHeader";
 import { useSwapVM } from "@screens/TradeInterface/SwapVM";
 import SwitchTokensButton from "./SwitchTokensButton";
 import Details from "./Details";
+import BN from "@src/utils/BN";
+import _ from "lodash";
 
 interface IProps {}
 
@@ -39,6 +41,7 @@ const Root = styled.div`
 const Swap: React.FC<IProps> = ({ ...rest }) => {
   const { notificationStore, accountStore } = useStores();
   const vm = useSwapVM();
+  const [amount0, setAmount0] = useState<BN>(vm.amount0);
   const navigate = useNavigate();
 
   const handleSetAssetId0 = (assetId: string) => {
@@ -74,6 +77,24 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
     });
     vm.setAssetId1(assetId);
   };
+
+  const debounce = useMemo(
+    () => _.debounce((val: BN) => setAmount0(val), 1000),
+    []
+  );
+  const handleDebounce = useCallback(
+    (val: BN) => {
+      setAmount0(val);
+      debounce(val);
+    },
+    [debounce]
+  );
+
+  const handleChangeAmount0 = (v: BN) => {
+    handleDebounce(v);
+    vm.setAmount0(v);
+  };
+
   return (
     <Root {...rest}>
       <Card
@@ -85,8 +106,9 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
         <Settings />
         <TokenInput
           decimals={vm.token0.decimals}
-          amount={vm.amount0}
-          setAmount={vm.setAmount0}
+          amount={amount0}
+          // setAmount={vm.setAmount0}
+          setAmount={handleChangeAmount0}
           assetId={vm.assetId0}
           setAssetId={handleSetAssetId0}
           balances={accountStore.balances}
