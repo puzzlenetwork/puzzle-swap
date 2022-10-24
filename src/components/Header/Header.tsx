@@ -122,6 +122,7 @@ const Header: React.FC<IProps> = () => {
 
   const communityMenu = [
     { name: "Telegram chat", link: "https://t.me/puzzleswap", outer: true },
+    { name: "Medium", link: "https://medium.com/@puzzlenetwork", outer: true },
     {
       name: "Notifications bot",
       link: "https://t.me/puzzle_swap",
