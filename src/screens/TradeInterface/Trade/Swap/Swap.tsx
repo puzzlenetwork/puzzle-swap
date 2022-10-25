@@ -94,6 +94,10 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
     handleDebounce(v);
     vm.setAmount0(v);
   };
+  const handleMaxClick = () => {
+    vm.amount0MaxClickFunc && vm.amount0MaxClickFunc();
+    vm.balance0 && setAmount0(vm.balance0);
+  };
 
   return (
     <Root {...rest}>
@@ -107,12 +111,11 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
         <TokenInput
           decimals={vm.token0.decimals}
           amount={amount0}
-          // setAmount={vm.setAmount0}
           setAmount={handleChangeAmount0}
           assetId={vm.assetId0}
           setAssetId={handleSetAssetId0}
           balances={accountStore.balances}
-          onMaxClick={vm.amount0MaxClickFunc}
+          onMaxClick={handleMaxClick}
           usdnEquivalent={vm.usdnEquivalent0}
           selectable
         />
