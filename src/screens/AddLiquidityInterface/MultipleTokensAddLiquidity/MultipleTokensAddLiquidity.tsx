@@ -42,7 +42,7 @@ const HideDesktop = styled.div`
 const FixedMobileBlock = styled.div`
   display: flex;
   position: fixed;
-  bottom: 0;
+  bottom: 64px;
   left: 0;
   right: 0;
   justify-content: center;
