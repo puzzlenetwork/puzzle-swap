@@ -50,6 +50,7 @@ const FixedMobileBlock = styled.div`
   @media (min-width: calc(560px + 32px)) {
     position: relative;
     padding: 0;
+    bottom: 0;
   }
 `;
 
