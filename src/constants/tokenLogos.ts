@@ -49,6 +49,7 @@ import snsbtLogo from "@src/assets/tokens/SNSBT.png";
 import vladLogo from "@src/assets/tokens/VLAD.png";
 import usdtViresLogo from "@src/assets/tokens/USDT_VIRES.svg";
 import usdcViresLogo from "@src/assets/tokens/USDC_VIRES.svg";
+import usdnViresVested from "@src/assets/tokens/usdn-vires-vested.png";
 import snsbtTciLogo from "@src/assets/tokens/sNSBT_TCI.svg";
 import tsnLogo from "@src/assets/tokens/TSN.svg";
 import busdLogo from "@src/assets/tokens/BUSD.svg";
@@ -142,6 +143,7 @@ const tokenLogos: Record<string, string> = {
   MINI: MINI,
   SURF: SURF,
   UNKNOWN: unknownLogo,
+  VVUSDNLP: usdnViresVested,
 };
 
 export default tokenLogos;
