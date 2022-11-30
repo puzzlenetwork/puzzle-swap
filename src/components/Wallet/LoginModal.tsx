@@ -1,7 +1,6 @@
 import React from "react";
 import Dialog from "@components/Dialog";
 import { LOGIN_TYPE } from "@stores/AccountStore";
-import LoginType from "./LoginType";
 import seed from "@src/assets/icons/seed.svg";
 import email from "@src/assets/icons/email.svg";
 import keeper from "@src/assets/icons/keeper.svg";
@@ -40,13 +39,13 @@ const LoginModal: React.FC<IProps> = ({ onLogin, ...rest }) => {
   const isKeeperDisabled = !accountStore.isWavesKeeperInstalled;
   return (
     <Dialog style={{ maxWidth: 360 }} title="Connect wallet" {...rest}>
-      {loginTypes.map((t) =>
-        t.type === LOGIN_TYPE.KEEPER && isKeeperDisabled ? (
-          <LoginType {...t} key={t.type} />
-        ) : (
-          <LoginType {...t} key={t.type} onClick={handleLogin(t.type)} />
-        )
-      )}
+      {/*{loginTypes.map((t) =>*/}
+      {/*  t.type === LOGIN_TYPE.KEEPER && isKeeperDisabled ? (*/}
+      {/*    <LoginType {...t} key={t.type} />*/}
+      {/*  ) : (*/}
+      {/*    <LoginType {...t} key={t.type} onClick={handleLogin(t.type)} />*/}
+      {/*  )*/}
+      {/*)}*/}
     </Dialog>
   );
 };

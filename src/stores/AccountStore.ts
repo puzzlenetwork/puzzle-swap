@@ -12,10 +12,19 @@ import { nodeInteraction, waitForTx } from "@waves/waves-transactions";
 import nodeService from "@src/services/nodeService";
 import { THEME_TYPE } from "@src/themes/ThemeProvider";
 
+//WX.Network Email
+//Keeper Wallet
+//Keeper Mobile
+//MetaMask
+//Seed phrase
+//Ledger
 export enum LOGIN_TYPE {
   SIGNER_SEED = "SIGNER_SEED",
   SIGNER_EMAIL = "SIGNER_EMAIL",
   KEEPER = "KEEPER",
+  KEEPER_MOBILE = "KEEPER_MOBILE",
+  LEDGER = "LEDGER",
+  METAMASK = "METAMASK",
 }
 
 export interface IInvokeTxParams {
@@ -94,7 +103,6 @@ class AccountStore {
   loginModalOpened: boolean = false;
 
   setLoginModalOpened = (state: boolean) => (this.loginModalOpened = state);
-
   walletModalOpened: boolean = false;
 
   setWalletModalOpened = (state: boolean) => (this.walletModalOpened = state);

@@ -1,20 +1,21 @@
 import React from "react";
 import styled from "@emotion/styled";
-import logo from "@src/assets/images/bigLogo.svg";
-import { ReactComponent as CloseIcon } from "@src/assets/icons/closeBtn.svg";
+import { ReactComponent as CloseIcon } from "@src/assets/icons/close.svg";
 import Button from "@components/Button";
 import { useStores } from "@stores";
+import { themes } from "@src/themes/ThemeProvider";
+import useWindowSize from "@src/hooks/useWindowSize";
 
 interface IProps {}
 
 const Root = styled.div`
   display: flex;
   box-sizing: border-box;
-  padding: 0 16px;
+  padding: 40px 12px;
   height: 80px;
   z-index: 2;
   align-items: center;
-  max-width: calc(1160px + 32px);
+  //max-width: calc(1160px + 32px);
   width: 100%;
   justify-content: space-between;
   color: white;
@@ -25,7 +26,7 @@ const Root = styled.div`
   }
 `;
 const Logo = styled.img`
-  height: 48px;
+  height: 40px;
 `;
 const CloseButton = styled(Button)`
   width: 40px;
@@ -34,10 +35,18 @@ const CloseButton = styled(Button)`
 
 const LoginScreenHeader: React.FC<IProps> = () => {
   const { accountStore } = useStores();
+  const { width } = useWindowSize();
   return (
     <Root>
       <a href="/">
-        <Logo src={logo} />
+        <Logo
+          src={
+            width && width >= 1280
+              ? themes.darkTheme.images.icons.logo
+              : themes.lightTheme.images.icons.logo
+          }
+          alt="logo"
+        />
       </a>
       <CloseButton
         size="medium"

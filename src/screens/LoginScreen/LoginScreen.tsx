@@ -7,9 +7,15 @@ import { Anchor } from "@components/Anchor";
 import Text from "@components/Text";
 import styled from "@emotion/styled";
 import { Column, Row } from "@components/Flex";
-import Button from "@components/Button";
 import LoginScreenHeader from "@screens/LoginScreen/LoginScreenHeader";
-import pic from "@src/assets/images/connectWalletPic.png";
+import email from "@src/assets/icons/email.svg";
+import seed from "@src/assets/icons/seed.svg";
+import keeper from "@src/assets/icons/keeper.svg";
+import metamask from "@src/assets/icons/metamask.svg";
+import ledger from "@src/assets/icons/ledger.svg";
+
+import pic from "@src/assets/loginScreenPuzzleRender.svg";
+import LoginType from "./LoginType";
 
 interface IProps {}
 
@@ -33,7 +39,7 @@ const Root = styled.div`
 
 const Pic = styled.div`
   background: url(${pic}) center no-repeat #eeeeee;
-  background-size: contain;
+  background-size: cover;
   min-width: 640px;
   height: 100vh;
   display: none;
@@ -44,31 +50,61 @@ const Pic = styled.div`
   }
 `;
 
-const layoutStyle: React.CSSProperties = {
-  position: "fixed",
-  top: 0,
-  left: 0,
-  bottom: 0,
-  right: 0,
-  zIndex: 10,
-  background: "#fff",
-};
-// const Root = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   width: 100%;
-//   min-height: 100vh;
-//   align-items: center;
-//
-//   & > * {
-//     width: 100%;
-//   }
-// `;
 const Layout = styled.div`
   display: flex;
   flex: 1;
-  height: 100%;
-  justify-content: center;
+
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 10000;
+  background-color: #ffffff;
+  @media (min-width: 1280px) {
+    justify-content: center;
+  }
+`;
+//WX.Network Email
+//Keeper Wallet
+//Keeper Mobile
+//MetaMask
+//Ledger
+const loginTypes = [
+  {
+    title: "WX.Network Email",
+    icon: email,
+    type: LOGIN_TYPE.SIGNER_EMAIL,
+  },
+  {
+    title: "Seed phrase",
+    icon: seed,
+    type: LOGIN_TYPE.SIGNER_SEED,
+  },
+  {
+    title: "MetaMask",
+    icon: metamask,
+    type: LOGIN_TYPE.METAMASK,
+  },
+  {
+    title: "Keeper Mobile",
+    icon: keeper,
+    type: LOGIN_TYPE.KEEPER_MOBILE,
+  },
+  {
+    title: "Keeper Wallet",
+    icon: keeper,
+    type: LOGIN_TYPE.KEEPER,
+  },
+  {
+    title: "Ledger",
+    icon: ledger,
+    type: LOGIN_TYPE.LEDGER,
+  },
+];
+const Container = styled(Column)`
+  width: 100%;
 `;
 const LoginScreen: React.FC<IProps> = () => {
   const { accountStore } = useStores();
@@ -79,7 +115,7 @@ const LoginScreen: React.FC<IProps> = () => {
   const isKeeperDisabled = !accountStore.isWavesKeeperInstalled;
   if (!accountStore.loginModalOpened) return null;
   return (
-    <Layout style={layoutStyle}>
+    <Layout>
       <LoginScreenHeader />
       <Row alignItems="center">
         <Pic />
@@ -90,34 +126,23 @@ const LoginScreen: React.FC<IProps> = () => {
             crossAxisSize="max"
             style={{ maxWidth: 360 }}
           >
-            <Text size="large" textAlign="center">
+            <Text size="large" textAlign="center" weight={500}>
               Connect wallet
             </Text>
             <SizedBox height={40} />
-            <Button
-              kind="secondary"
-              onClick={handleLogin(LOGIN_TYPE.SIGNER_EMAIL)}
-            >
-              Waves.Exchange email
-            </Button>
-            <SizedBox height={16} />
-            <Button
-              kind="secondary"
-              onClick={handleLogin(LOGIN_TYPE.SIGNER_SEED)}
-            >
-              Seed phrase
-            </Button>
-            <SizedBox height={16} />
-            <Button
-              kind="secondary"
-              onClick={
-                !isKeeperDisabled ? handleLogin(LOGIN_TYPE.KEEPER) : undefined
-              }
-              disabled={isKeeperDisabled}
-            >
-              Keeper Wallet
-            </Button>
-            <SizedBox height={40} />
+            <Container>
+              {loginTypes.map((t) =>
+                t.type === LOGIN_TYPE.KEEPER && isKeeperDisabled ? (
+                  <LoginType {...t} key={t.type} />
+                ) : (
+                  <LoginType
+                    {...t}
+                    key={t.type}
+                    onClick={handleLogin(t.type)}
+                  />
+                )
+              )}
+            </Container>
           </Column>
           <SizedBox height={8} />
           <Text weight={500} size="medium" textAlign="center">
