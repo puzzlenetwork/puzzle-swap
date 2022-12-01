@@ -13,8 +13,8 @@ import BN from "@src/utils/BN";
 import { nodeInteraction, waitForTx } from "@waves/waves-transactions";
 import nodeService from "@src/services/nodeService";
 import { THEME_TYPE } from "@src/themes/ThemeProvider";
-import { wavesAddress2eth } from "@waves/node-api-js";
 import centerEllipsis from "@src/utils/centerEllipsis";
+import { wavesAddress2eth } from "@waves/node-api-js";
 
 export enum LOGIN_TYPE {
   SIGNER_SEED = "SIGNER_SEED",
