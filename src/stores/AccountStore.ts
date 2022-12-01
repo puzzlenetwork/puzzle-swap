@@ -235,6 +235,7 @@ class AccountStore {
       this.setEthAddress(ethereumAddress);
     }
     this.setAddress(loginData?.address ?? null);
+    await this.updateAccountAssets();
   };
 
   logout() {
