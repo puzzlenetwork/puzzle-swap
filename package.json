@@ -19,6 +19,8 @@
     "@waves.exchange/provider-cloud": "^1.0.2",
     "@waves.exchange/provider-web": "^1.1.1",
     "@waves/provider-keeper": "^0.2.6",
+    "@waves/provider-ledger": "^0.2.1",
+    "@waves/provider-metamask": "^1.1.6",
     "@waves/signer": "^1.0.6",
     "@waves/waves-transactions": "^4.2.1-beta.2",
     "axios": "^0.24.0",

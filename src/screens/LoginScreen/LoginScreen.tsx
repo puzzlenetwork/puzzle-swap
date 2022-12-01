@@ -24,7 +24,7 @@ const Root = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: #ffffff;
+  background: ${({ theme }) => theme.colors.white};
   z-index: 10;
   padding: 16px;
   width: 100%;
@@ -61,48 +61,12 @@ const Layout = styled.div`
   bottom: 0;
   right: 0;
   z-index: 10000;
-  background-color: #ffffff;
+  background-color: ${({ theme }) => theme.colors.white};
   @media (min-width: 1280px) {
     justify-content: center;
   }
 `;
-//WX.Network Email
-//Keeper Wallet
-//Keeper Mobile
-//MetaMask
-//Ledger
-const loginTypes = [
-  {
-    title: "WX.Network Email",
-    icon: email,
-    type: LOGIN_TYPE.SIGNER_EMAIL,
-  },
-  {
-    title: "Seed phrase",
-    icon: seed,
-    type: LOGIN_TYPE.SIGNER_SEED,
-  },
-  {
-    title: "MetaMask",
-    icon: metamask,
-    type: LOGIN_TYPE.METAMASK,
-  },
-  {
-    title: "Keeper Mobile",
-    icon: keeper,
-    type: LOGIN_TYPE.KEEPER_MOBILE,
-  },
-  {
-    title: "Keeper Wallet",
-    icon: keeper,
-    type: LOGIN_TYPE.KEEPER,
-  },
-  {
-    title: "Ledger",
-    icon: ledger,
-    type: LOGIN_TYPE.LEDGER,
-  },
-];
+
 const Container = styled(Column)`
   width: 100%;
 `;
@@ -112,7 +76,45 @@ const LoginScreen: React.FC<IProps> = () => {
     accountStore
       .login(loginType)
       .then(() => accountStore.setLoginModalOpened(false));
-  const isKeeperDisabled = !accountStore.isWavesKeeperInstalled;
+  const isMetamaskInstalled = typeof window.ethereum !== "undefined";
+  const loginTypes = [
+    {
+      title: "WX.Network Email",
+      icon: email,
+      type: LOGIN_TYPE.SIGNER_EMAIL,
+      active: true,
+    },
+    {
+      title: "Seed phrase",
+      icon: seed,
+      type: LOGIN_TYPE.SIGNER_SEED,
+      active: true,
+    },
+    {
+      title: "MetaMask",
+      icon: metamask,
+      type: LOGIN_TYPE.METAMASK,
+      active: isMetamaskInstalled,
+    },
+    // {
+    //   title: "Keeper Mobile",
+    //   icon: keeper,
+    //   type: LOGIN_TYPE.KEEPER_MOBILE,
+    //   active: true,
+    // },
+    {
+      title: "Keeper Wallet",
+      icon: keeper,
+      type: LOGIN_TYPE.KEEPER,
+      active: accountStore.isWavesKeeperInstalled,
+    },
+    {
+      title: "Ledger",
+      icon: ledger,
+      type: LOGIN_TYPE.LEDGER,
+      active: true,
+    },
+  ];
   if (!accountStore.loginModalOpened) return null;
   return (
     <Layout>
@@ -131,17 +133,13 @@ const LoginScreen: React.FC<IProps> = () => {
             </Text>
             <SizedBox height={40} />
             <Container>
-              {loginTypes.map((t) =>
-                t.type === LOGIN_TYPE.KEEPER && isKeeperDisabled ? (
-                  <LoginType {...t} key={t.type} />
-                ) : (
-                  <LoginType
-                    {...t}
-                    key={t.type}
-                    onClick={handleLogin(t.type)}
-                  />
-                )
-              )}
+              {loginTypes.map((t) => (
+                <LoginType
+                  {...t}
+                  key={t.type}
+                  onClick={t.active ? handleLogin(t.type) : undefined}
+                />
+              ))}
             </Container>
           </Column>
           <SizedBox height={8} />

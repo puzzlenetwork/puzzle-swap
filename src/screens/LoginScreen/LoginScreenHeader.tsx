@@ -5,6 +5,7 @@ import Button from "@components/Button";
 import { useStores } from "@stores";
 import { themes } from "@src/themes/ThemeProvider";
 import useWindowSize from "@src/hooks/useWindowSize";
+import { useTheme } from "@emotion/react";
 
 interface IProps {}
 
@@ -15,10 +16,9 @@ const Root = styled.div`
   height: 80px;
   z-index: 2;
   align-items: center;
-  //max-width: calc(1160px + 32px);
   width: 100%;
   justify-content: space-between;
-  color: white;
+  color: ${({ theme }) => theme.colors.white};
   @media (min-width: 1280px) {
     padding: 16px 24px;
     border-bottom: 1px solid transparent;
@@ -36,6 +36,7 @@ const CloseButton = styled(Button)`
 const LoginScreenHeader: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const { width } = useWindowSize();
+  const theme = useTheme();
   return (
     <Root>
       <a href="/">
@@ -43,7 +44,7 @@ const LoginScreenHeader: React.FC<IProps> = () => {
           src={
             width && width >= 1280
               ? themes.darkTheme.images.icons.logo
-              : themes.lightTheme.images.icons.logo
+              : theme.images.icons.logo
           }
           alt="logo"
         />

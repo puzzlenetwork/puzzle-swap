@@ -1,10 +1,16 @@
 /// <reference types="node" />
 /// <reference types="react" />
 /// <reference types="react-dom" />
+
+interface Window {
+  ethereum?: IEthereumProvider;
+}
+
 declare module "react-bodymovin";
 declare global {
   interface Window {
     WavesKeeper: any;
+    ethereum: any;
   }
 }
 

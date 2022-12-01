@@ -4,6 +4,8 @@ import { ProviderWeb } from "@waves.exchange/provider-web";
 import { ProviderCloud } from "@waves.exchange/provider-cloud";
 import { ProviderKeeper } from "@waves/provider-keeper";
 import { NODE_URL, TOKENS_LIST } from "@src/constants";
+import { ProviderMetamask } from "@waves/provider-metamask";
+import { ProviderLedger } from "@waves/provider-ledger";
 import { autorun, makeAutoObservable, reaction } from "mobx";
 import Balance from "@src/entities/Balance";
 import { getCurrentBrowser } from "@src/utils/getCurrentBrowser";
@@ -11,18 +13,14 @@ import BN from "@src/utils/BN";
 import { nodeInteraction, waitForTx } from "@waves/waves-transactions";
 import nodeService from "@src/services/nodeService";
 import { THEME_TYPE } from "@src/themes/ThemeProvider";
+import { wavesAddress2eth } from "@waves/node-api-js";
+import centerEllipsis from "@src/utils/centerEllipsis";
 
-//WX.Network Email
-//Keeper Wallet
-//Keeper Mobile
-//MetaMask
-//Seed phrase
-//Ledger
 export enum LOGIN_TYPE {
   SIGNER_SEED = "SIGNER_SEED",
   SIGNER_EMAIL = "SIGNER_EMAIL",
   KEEPER = "KEEPER",
-  KEEPER_MOBILE = "KEEPER_MOBILE",
+  // KEEPER_MOBILE = "KEEPER_MOBILE",
   LEDGER = "LEDGER",
   METAMASK = "METAMASK",
 }
@@ -48,6 +46,7 @@ export interface ITransferParams {
 export interface ISerializedAccountStore {
   selectedTheme: THEME_TYPE | null;
   address: string | null;
+  ethAddress: string | null;
   loginType: LOGIN_TYPE | null;
 }
 
@@ -68,6 +67,7 @@ class AccountStore {
         this.setupSynchronizationWithKeeper();
       }
       this.setAddress(initState.address);
+      this.setEthAddress(initState.ethAddress);
     }
     Promise.all([this.checkScriptedAccount(), this.updateAccountAssets()]);
     setInterval(this.updateAccountAssets, 10 * 1000);
@@ -91,38 +91,31 @@ class AccountStore {
   setIsAccScripted = (v: boolean) => (this.isAccScripted = v);
 
   isWavesKeeperInstalled = false;
-
   setWavesKeeperInstalled = (state: boolean) =>
     (this.isWavesKeeperInstalled = state);
 
   assetsBalancesLoading = false;
-
   setAssetsBalancesLoading = (state: boolean) =>
     (this.assetsBalancesLoading = state);
 
   loginModalOpened: boolean = false;
-
   setLoginModalOpened = (state: boolean) => (this.loginModalOpened = state);
-  walletModalOpened: boolean = false;
 
+  walletModalOpened: boolean = false;
   setWalletModalOpened = (state: boolean) => (this.walletModalOpened = state);
 
   sendAssetModalOpened: boolean = false;
-
   setSendAssetModalOpened = (state: boolean) =>
     (this.sendAssetModalOpened = state);
 
   assetToSend: Balance | null = null;
-
   setAssetToSend = (state: Balance | null) => (this.assetToSend = state);
 
   changePoolModalOpened: boolean = false;
-
   setChangePoolModalOpened = (state: boolean) =>
     (this.changePoolModalOpened = state);
 
   public assetBalances: Balance[] | null = null;
-
   setAssetBalances = (assetBalances: Balance[] | null) =>
     (this.assetBalances = assetBalances);
 
@@ -131,15 +124,15 @@ class AccountStore {
     this.assetBalances.find((balance) => balance.assetId === assetId);
 
   public address: string | null = null;
-
   setAddress = (address: string | null) => (this.address = address);
 
-  public loginType: LOGIN_TYPE | null = null;
+  public ethAddress: string | null = null;
+  setEthAddress = (v: string | null) => (this.ethAddress = v);
 
+  public loginType: LOGIN_TYPE | null = null;
   setLoginType = (loginType: LOGIN_TYPE | null) => (this.loginType = loginType);
 
   public signer: Signer | null = null;
-
   setSigner = (signer: Signer | null) => (this.signer = signer);
 
   get isBrowserSupportsWavesKeeper(): boolean {
@@ -182,6 +175,14 @@ class AccountStore {
   login = async (loginType: LOGIN_TYPE) => {
     this.setLoginType(loginType);
     switch (loginType) {
+      case LOGIN_TYPE.METAMASK:
+        this.setSigner(new Signer());
+        await this.signer?.setProvider(new ProviderMetamask());
+        break;
+      case LOGIN_TYPE.LEDGER:
+        this.setSigner(new Signer());
+        await this.signer?.setProvider(new ProviderLedger());
+        break;
       case LOGIN_TYPE.KEEPER:
         this.setSigner(new Signer());
         await this.setupSynchronizationWithKeeper();
@@ -200,11 +201,17 @@ class AccountStore {
         return;
     }
     const loginData = await this.signer?.login();
+    if (loginType === LOGIN_TYPE.METAMASK && loginData != null) {
+      const ethereumAddress = wavesAddress2eth(loginData.address);
+      this.setEthAddress(ethereumAddress);
+    }
+
     this.setAddress(loginData?.address ?? null);
   };
 
   logout() {
     this.setAddress(null);
+    this.setEthAddress(null);
     this.setLoginType(null);
   }
 
@@ -234,6 +241,7 @@ class AccountStore {
   serialize = (): ISerializedAccountStore => ({
     selectedTheme: this.selectedTheme,
     address: this.address,
+    ethAddress: this.ethAddress,
     loginType: this.loginType,
   });
 
@@ -265,16 +273,29 @@ class AccountStore {
   };
 
   ///------------------transfer
-  public transfer = async (trParams: ITransferParams) =>
-    this.loginType === LOGIN_TYPE.KEEPER
-      ? this.transferWithKeeper(trParams)
-      : this.transferWithSigner(trParams);
+
+  public transfer = async (txParams: ITransferParams) => {
+    switch (this.loginType) {
+      case LOGIN_TYPE.LEDGER:
+        return this.transferWithSigner(txParams, LOGIN_TYPE.LEDGER);
+      case LOGIN_TYPE.SIGNER_SEED:
+        return this.transferWithSigner(txParams, LOGIN_TYPE.SIGNER_SEED);
+      case LOGIN_TYPE.SIGNER_EMAIL:
+        return this.transferWithSigner(txParams, LOGIN_TYPE.SIGNER_EMAIL);
+      case LOGIN_TYPE.KEEPER:
+        return this.transferWithKeeper(txParams);
+      case LOGIN_TYPE.METAMASK:
+        return this.transferWithSigner(txParams, LOGIN_TYPE.METAMASK);
+    }
+    return null;
+  };
 
   private transferWithSigner = async (
-    data: ITransferParams
+    data: ITransferParams,
+    loginType: LOGIN_TYPE
   ): Promise<string | null> => {
     if (this.signer == null) {
-      await this.login(this.loginType ?? LOGIN_TYPE.SIGNER_EMAIL);
+      await this.login(this.loginType ?? loginType);
     }
     if (this.signer == null) {
       this.rootStore.notificationStore.notify("You need to login firstly", {
@@ -331,16 +352,28 @@ class AccountStore {
 
   ///////////------------invoke
 
-  public invoke = async (txParams: IInvokeTxParams) =>
-    this.loginType === LOGIN_TYPE.KEEPER
-      ? this.invokeWithKeeper(txParams)
-      : this.invokeWithSigner(txParams);
+  public invoke = async (txParams: IInvokeTxParams) => {
+    switch (this.loginType) {
+      case LOGIN_TYPE.LEDGER:
+        return this.invokeWithSigner(txParams, LOGIN_TYPE.LEDGER);
+      case LOGIN_TYPE.SIGNER_SEED:
+        return this.invokeWithSigner(txParams, LOGIN_TYPE.SIGNER_SEED);
+      case LOGIN_TYPE.SIGNER_EMAIL:
+        return this.invokeWithSigner(txParams, LOGIN_TYPE.SIGNER_EMAIL);
+      case LOGIN_TYPE.KEEPER:
+        return this.invokeWithKeeper(txParams);
+      case LOGIN_TYPE.METAMASK:
+        return this.invokeWithSigner(txParams, LOGIN_TYPE.METAMASK);
+    }
+    return null;
+  };
 
   private invokeWithSigner = async (
-    txParams: IInvokeTxParams
+    txParams: IInvokeTxParams,
+    loginType: LOGIN_TYPE
   ): Promise<string | null> => {
     if (this.signer == null) {
-      await this.login(this.loginType ?? LOGIN_TYPE.SIGNER_EMAIL);
+      await this.login(this.loginType ?? loginType);
     }
     if (this.signer == null) {
       this.rootStore.notificationStore.notify("You need to login firstly", {
@@ -408,6 +441,24 @@ class AccountStore {
       if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
       return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
     });
+  }
+
+  get addressToDisplay(): string {
+    return this.ethAddress == null
+      ? centerEllipsis(this.address ?? "", 6)
+      : centerEllipsis(this.ethAddress ?? "", 10);
+  }
+
+  get signInMethod(): string {
+    switch (this.loginType) {
+      case LOGIN_TYPE.SIGNER_SEED:
+        return "Signer";
+      case LOGIN_TYPE.KEEPER:
+        return "Keeper";
+      case LOGIN_TYPE.METAMASK:
+        return "Metamask";
+    }
+    return "login";
   }
 }
 

@@ -4,7 +4,6 @@ import { Row } from "@components/Flex";
 import { ReactComponent as WalletIcon } from "@src/assets/icons/pink-wallet.svg";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
-import centerEllipsis from "@src/utils/centerEllipsis";
 import arrowIcon from "@src/assets/icons/arrowRightBorderless.svg";
 import * as identityImg from "identity-img";
 import { useStores } from "@stores";
@@ -63,7 +62,7 @@ const AddressContainer = styled.div<{ expanded: boolean }>`
 
 const LoggedInAccountInfo: React.FC<IProps> = () => {
   const { accountStore } = useStores();
-  const { address } = accountStore;
+  const { address, addressToDisplay } = accountStore;
   const avatar = address && identityImg.create(address, { size: 24 * 3 });
   const [accountOpened, setAccountOpened] = useState<boolean>(false);
   return (
@@ -83,7 +82,7 @@ const LoggedInAccountInfo: React.FC<IProps> = () => {
       >
         <AddressContainer expanded={accountOpened}>
           <img className="avatar" src={avatar!} alt="avatar" />
-          <Text>{centerEllipsis(address ?? "", 6)}</Text>
+          <Text>{addressToDisplay}</Text>
           <SizedBox width={10} />
           <img src={arrowIcon} className="menu-arrow" alt="arrow" />
         </AddressContainer>
