@@ -64,13 +64,16 @@ class AccountStore {
         (this.selectedTheme = initState.selectedTheme);
       this.setLoginType(initState.loginType);
       if (initState.loginType === LOGIN_TYPE.KEEPER) {
-        this.setupSynchronizationWithKeeper();
+        this.setupSynchronizationWithKeeper().then();
+      }
+      if (initState.loginType === LOGIN_TYPE.METAMASK) {
+        this.setupSynchronizationWithMetamask().then();
       }
       this.setAddress(initState.address);
       this.setEthAddress(initState.ethAddress);
     }
     Promise.all([this.checkScriptedAccount(), this.updateAccountAssets()]);
-    setInterval(this.updateAccountAssets, 10 * 1000);
+    setInterval(this.updateAccountAssets, 15 * 1000);
     reaction(
       () => this.address,
       () =>
@@ -165,6 +168,31 @@ class AccountStore {
       }, 500);
     });
 
+  setupSynchronizationWithMetamask = () =>
+    new Promise((resolve, reject) => {
+      let attemptsCount = 0;
+      const interval = setInterval(async () => {
+        if (window?.ethereum == null) {
+          attemptsCount = attemptsCount + 1;
+          if (attemptsCount > 10) {
+            clearInterval(interval);
+            reject("❌ There is no Metamask");
+          }
+        } else {
+          clearInterval(interval);
+        }
+
+        const result = await window?.ethereum.on(
+          "accountsChanged",
+          (addresses: string[]) => {
+            addresses.length > 0 && this.setEthAddress(addresses[0]);
+            this.login(LOGIN_TYPE.METAMASK);
+          }
+        );
+        resolve(result);
+      }, 500);
+    });
+
   checkScriptedAccount = async () => {
     const { address } = this;
     if (address == null) return;
@@ -177,6 +205,7 @@ class AccountStore {
     switch (loginType) {
       case LOGIN_TYPE.METAMASK:
         this.setSigner(new Signer());
+        await this.setupSynchronizationWithMetamask();
         await this.signer?.setProvider(new ProviderMetamask());
         break;
       case LOGIN_TYPE.LEDGER:
@@ -205,7 +234,6 @@ class AccountStore {
       const ethereumAddress = wavesAddress2eth(loginData.address);
       this.setEthAddress(ethereumAddress);
     }
-
     this.setAddress(loginData?.address ?? null);
   };
 
@@ -234,9 +262,9 @@ class AccountStore {
   };
 
   subscribeToKeeperUpdate = () =>
-    (window as any).WavesKeeper.on("update", (publicState: any) =>
-      this.setAddress(publicState.account?.address ?? null)
-    );
+    (window as any).WavesKeeper.on("update", (publicState: any) => {
+      this.setAddress(publicState.account?.address ?? null);
+    });
 
   serialize = (): ISerializedAccountStore => ({
     selectedTheme: this.selectedTheme,
