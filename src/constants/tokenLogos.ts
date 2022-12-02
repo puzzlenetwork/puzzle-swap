@@ -70,6 +70,7 @@ import wxPUZZLEUSDN_TCI from "@src/assets/tokens/wxPUZZLEUSDN_TCI.svg";
 import WW from "@src/assets/tokens/ww.jpeg";
 import MINI from "@src/assets/tokens/mini.jpeg";
 import SURF from "@src/assets/tokens/surf.svg";
+import SWAVES from "@src/assets/tokens/swaves.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -144,6 +145,7 @@ const tokenLogos: Record<string, string> = {
   SURF: SURF,
   UNKNOWN: unknownLogo,
   VVUSDNLP: usdnViresVested,
+  SWAVES: SWAVES,
 };
 
 export default tokenLogos;
