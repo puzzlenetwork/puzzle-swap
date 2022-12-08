@@ -58,9 +58,9 @@ const requiredNfts = [
   },
   {
     name: "Puzzle Khalifa",
-    description:
+    typeId:
       "Puzzle Khalifa artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
-    typeId: nftsPics["KHALIFA"],
+    imageLink: nftsPics["KHALIFA"],
   },
 ];
 
