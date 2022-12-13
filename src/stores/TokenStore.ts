@@ -60,8 +60,8 @@ export default class TokenStore {
     const statistics = stats.map((details) => {
       const asset = TOKENS_BY_ASSET_ID[details.id] ?? details.precision;
       const decimals = asset.decimals;
-      const firstPrice = new BN(details.data?.["firstPrice_usd-n"] ?? 0);
-      const currentPrice = new BN(details.data?.["lastPrice_usd-n"] ?? 0);
+      const firstPrice = new BN(details.data?.["firstPrice_usdt"] ?? 0);
+      const currentPrice = new BN(details.data?.["lastPrice_usdt"] ?? 0);
 
       const totalSupply = BN.formatUnits(details.totalSupply, decimals);
       const circulatingSupply = BN.formatUnits(details.circulating, decimals);
@@ -91,7 +91,7 @@ export default class TokenStore {
         fullyDilutedMC: totalSupply.times(currentPrice),
         marketCap: circulatingSupply.times(currentPrice),
         totalBurned: totalSupply.minus(circulatingSupply),
-        volume24: new BN(details["24h_vol_usd-n"]),
+        volume24: new BN(details["24h_vol_usdt"]),
       };
     });
     this.setStatistics(statistics);
