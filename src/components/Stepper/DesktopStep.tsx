@@ -34,13 +34,14 @@ const IconContainer = styled.div<{ state: TStep }>`
     state === "current" ? theme.colors.blue500 : theme.colors.primary100};
 
   ${({ state, theme }) =>
-    state === "previous" ? `background: ${theme.colors.primary300}` : ""}
+    state === "previous" ? `background: ${theme.colors.primary300};` : ""}
   & > div {
     color: ${({ state, theme }) =>
       state === "current" ? theme.colors.white : theme.colors.blue500};
     ${({ state, theme }) =>
       state === "previous" ? `color: ${theme.colors.primary300};` : ""}
   }
+
 
   ::after {
     transition: 0.4s;
@@ -76,9 +77,11 @@ const DesktopStep: React.FC<IProps> = ({
       disabled={disabled}
     >
       <IconContainer state={state}>
-        <Text fitContent size="small">
-          {index + 1}
-        </Text>
+        {state !== "previous" && (
+          <Text fitContent size="small">
+            {index + 1}
+          </Text>
+        )}
       </IconContainer>
       <SizedBox width={8} />
       <TextContainer {...{ state, size: "medium" }} nowrap>
