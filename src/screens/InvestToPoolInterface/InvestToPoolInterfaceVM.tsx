@@ -308,7 +308,7 @@ class InvestToPoolInterfaceVM {
   };
 
   loadTransactionsHistory = async () => {
-    const v = await nodeService.transactions(this.pool.contractAddress);
+    const v = await nodeService.transactions(this.pool.contractAddress, 20);
     v && this.setTransactionsHistory(v);
   };
 
@@ -320,7 +320,7 @@ class InvestToPoolInterfaceVM {
     if (after == null) return;
     const v = await nodeService.transactions(
       pool.contractAddress,
-      10,
+      20,
       after.id
     );
     this._setLoadingHistory(false);
