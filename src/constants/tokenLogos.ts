@@ -56,7 +56,7 @@ import busdLogo from "@src/assets/tokens/BUSD.svg";
 import wartLogo from "@src/assets/tokens/WART.svg";
 import ngntLogo from "@src/assets/tokens/NGNT.svg";
 import wxbLogo from "@src/assets/tokens/WXB.png";
-import plutoLogo from "@src/assets/tokens/PLUTO.png";
+import plutoLogo from "@src/assets/tokens/pluto.svg";
 import WXUSDNWXLP from "@src/assets/tokens/WXUSDNWXLP.svg";
 import wxWXUSDN_TCI from "@src/assets/tokens/wxWXUSDN_TCI.svg";
 import usdtusdn from "@src/assets/tokens/usdtusdn.svg";
