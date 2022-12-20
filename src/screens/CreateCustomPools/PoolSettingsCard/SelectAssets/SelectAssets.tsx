@@ -10,7 +10,6 @@ import { observer } from "mobx-react-lite";
 import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
 import TokenCompositionRow from "./TokenCompositionRow";
 import TokenSelectModal from "@components/TokensSelectModal/TokenSelectModal";
-import BN from "@src/utils/BN";
 import Tooltip from "@components/Tooltip";
 import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import { Row } from "@src/components/Flex";
@@ -32,6 +31,8 @@ const SelectsAssets: React.FC<IProps> = () => {
   const [addAssetModal, openAssetModal] = useState(false);
   const vm = useCreateCustomPoolsVM();
   const theme = useTheme();
+  const minShareNotification =
+    "Please note that minimal share of token should be 5 %";
   const assetNotification =
     "Please note that the pool must include a PUZZLE or USDN asset with at least 2% of pool weight and the maximum of 10 different assets.";
   return (
@@ -46,6 +47,13 @@ const SelectsAssets: React.FC<IProps> = () => {
           type={vm.requiredTokensCorrectShare ? "info" : "error"}
           text={assetNotification}
         />
+
+        {!vm.isAllTokensShareMoreThanFive && (
+          <>
+            <Notification type="error" text={minShareNotification} />
+            <SizedBox height={16} />
+          </>
+        )}
         <Row alignItems="center" justifyContent="start">
           <Text style={{ width: "fit-content" }} weight={500}>
             Base token
@@ -64,7 +72,7 @@ const SelectsAssets: React.FC<IProps> = () => {
         </Row>
         <SizedBox height={24} />
         {vm.poolsAssets.slice(0, 1).map(({ asset, share, locked }, index) => {
-          const minShare = new BN(5);
+          // const minShare = new BN(5);
           return (
             <TokenCompositionRow
               baseToken
@@ -75,12 +83,7 @@ const SelectsAssets: React.FC<IProps> = () => {
               balances={vm.tokensToAdd}
               asset={asset}
               share={share}
-              setShare={(v) =>
-                vm.changeAssetShareInPool(
-                  asset.assetId,
-                  v.lte(minShare) ? minShare : v
-                )
-              }
+              setShare={(v) => vm.changeAssetShareInPool(asset.assetId, v)}
               onDelete={() => vm.removeAssetFromPool(asset.assetId)}
             />
           );
@@ -99,7 +102,7 @@ const SelectsAssets: React.FC<IProps> = () => {
         <SizedBox height={24} />
         <Grid>
           {vm.poolsAssets.slice(1).map(({ asset, share, locked }, index) => {
-            const minShare = new BN(5);
+            // const minShare = new BN(5);
             return (
               <TokenCompositionRow
                 key={index + "select-asset"}
@@ -109,12 +112,7 @@ const SelectsAssets: React.FC<IProps> = () => {
                 balances={vm.tokensToAdd}
                 asset={asset}
                 share={share}
-                setShare={(v) =>
-                  vm.changeAssetShareInPool(
-                    asset.assetId,
-                    v.lte(minShare) ? minShare : v
-                  )
-                }
+                setShare={(v) => vm.changeAssetShareInPool(asset.assetId, v)}
                 onDelete={() => vm.removeAssetFromPool(asset.assetId)}
               />
             );

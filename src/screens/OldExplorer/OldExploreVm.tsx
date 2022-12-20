@@ -144,7 +144,7 @@ class OldExploreVm {
   syncChart = async () => {
     if (this.chartData[this.selectedChartPeriod] != null) return;
     this.setChartLoading(true);
-    const req = `https://wavescap.com/api/chart/asset/${this.assetId}-usd-n-${this.selectedChartPeriod}.json`;
+    const req = `https://wavescap.com/api/chart/asset/${this.assetId}-usdt-${this.selectedChartPeriod}.json`;
     const { data } = await axios.get(req);
     this.setChartData(this.selectedChartPeriod, {
       ...data,

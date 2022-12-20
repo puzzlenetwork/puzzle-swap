@@ -218,7 +218,7 @@ const TokensTable: React.FC<IProps> = () => {
             return width && width >= 880 ? (
               <DesktopTokenTableRow
                 token={t}
-                change={stats?.change24H}
+                change={!stats?.change24H.isNaN() ? stats?.change24H : BN.ZERO}
                 vol24={stats?.volume24}
                 fav={tokenStore.watchList.includes(t.assetId)}
                 key={t.assetId}

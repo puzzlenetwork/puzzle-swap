@@ -137,6 +137,7 @@ class CreateCustomPoolsVm {
 
   get correct0() {
     return (
+      this.isAllTokensShareMoreThanFive &&
       this.poolsAssets.length > 1 &&
       this.totalTakenShare.eq(1000) &&
       this.requiredTokensCorrectShare &&
@@ -538,10 +539,6 @@ class CreateCustomPoolsVm {
   };
 
   handleCreatePool = async () => {
-    // //todo удалить когда откажемся от лимитов
-    // const limited = await this.checkPoolsLimitOfTheDay();
-    // if (limited) return;
-    // //--------------------------------------------
     const { address } = this.rootStore.accountStore;
     if (address === null || this.logo == null) return;
     try {
@@ -659,5 +656,11 @@ class CreateCustomPoolsVm {
           .toString(),
       };
     });
+  }
+
+  get isAllTokensShareMoreThanFive() {
+    return this.poolsAssets
+      .map((v) => v.share)
+      .every((v) => v.gt(50) || v.eq(50));
   }
 }

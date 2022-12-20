@@ -115,9 +115,11 @@ const MobileStepper: React.FC<IProps> = ({
                 state={state}
                 onClick={() => !disabled && onStepClick(step)}
               >
-                <Text fitContent size="small" weight={500}>
-                  {step + 1}
-                </Text>
+                {state !== "previous" && (
+                  <Text fitContent size="small" weight={500}>
+                    {step + 1}
+                  </Text>
+                )}
               </IconContainer>
               {step !== array.length - 1 && (
                 <RopeContainer>

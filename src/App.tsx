@@ -24,6 +24,7 @@ import OldExplorer from "./screens/OldExplorer";
 import BoostApy from "./screens/BoostApy";
 import MobileNavBar from "./components/MobileNavBar";
 import Landing from "@screens/Landing";
+import LoginScreen from "./screens/LoginScreen";
 
 const Root = styled(Column)`
   width: 100%;
@@ -41,6 +42,7 @@ const App: React.FC = () => {
   const { accountStore } = useStores();
   return (
     <Root>
+      <LoginScreen />
       <Header />
       <Routes>
         {/* Landing */}

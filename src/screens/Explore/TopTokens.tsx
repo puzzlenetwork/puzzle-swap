@@ -7,6 +7,7 @@ import { observer } from "mobx-react-lite";
 import { useExploreVM } from "@screens/Explore/ExploreVm";
 import tokenLogos from "@src/constants/tokenLogos";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -31,6 +32,7 @@ const TokensContainer = styled.div`
 
 const TopTokens: React.FC<IProps> = () => {
   const vm = useExploreVM();
+  console.log(vm.top3Losers);
   return (
     <Root>
       <Card bordered>
@@ -42,7 +44,7 @@ const TopTokens: React.FC<IProps> = () => {
               key={v.assetId}
               num={index + 1}
               assetId={v.assetId}
-              change={v.change24H}
+              change={v.change24H.isNaN() ? BN.ZERO : v.change24H}
               logo={tokenLogos[TOKENS_BY_ASSET_ID[v.assetId]?.symbol]}
               symbol={v.symbol}
             />
@@ -58,7 +60,7 @@ const TopTokens: React.FC<IProps> = () => {
               key={v.assetId}
               num={index + 1}
               assetId={v.assetId}
-              change={v.change24H}
+              change={v.change24H.isNaN() ? BN.ZERO : v.change24H}
               logo={tokenLogos[TOKENS_BY_ASSET_ID[v.assetId]?.symbol]}
               symbol={v.symbol}
             />

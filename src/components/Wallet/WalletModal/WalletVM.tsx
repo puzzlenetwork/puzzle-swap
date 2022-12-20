@@ -4,8 +4,6 @@ import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
 import copy from "copy-to-clipboard";
 import Balance from "@src/entities/Balance";
-import { LOGIN_TYPE } from "@src/stores/AccountStore";
-import centerEllipsis from "@src/utils/centerEllipsis";
 import BN from "@src/utils/BN";
 import { ROUTES, TOKENS_LIST } from "@src/constants";
 
@@ -53,10 +51,8 @@ class WalletVM {
     ]);
 
   get signInInfo() {
-    const { loginType, address } = this.rootStore.accountStore;
-    return `${
-      loginType === LOGIN_TYPE.KEEPER ? "Keeper" : "Signer"
-    }: ${centerEllipsis(address ?? "", 6)}`;
+    const { signInMethod, addressToDisplay } = this.rootStore.accountStore;
+    return `${signInMethod}: ${addressToDisplay}`;
   }
 
   get balances() {

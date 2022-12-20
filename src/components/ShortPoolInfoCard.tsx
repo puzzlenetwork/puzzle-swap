@@ -22,8 +22,9 @@ const Root = styled.div`
   width: 100%;
 
   .cardTitle {
-    white-space: nowrap;
     width: fit-content;
+    text-overflow: ellipsis;
+    overflow-wrap: break-word;
     font-size: 14px;
     line-height: 20px;
     @media (min-width: calc(560px + 32px)) {

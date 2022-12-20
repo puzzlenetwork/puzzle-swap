@@ -3,7 +3,6 @@ import React from "react";
 import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";
 import Button from "@components/Button";
-import LoginModal from "./LoginModal";
 import LoggedInAccountInfo from "@components/Wallet/LoggedInAccountInfo";
 
 interface IProps {}
@@ -32,11 +31,6 @@ const Wallet: React.FC<IProps> = () => {
       ) : (
         <LoggedInAccountInfo />
       )}
-      <LoginModal
-        visible={accountStore.loginModalOpened}
-        onLogin={(loginType) => accountStore.login(loginType)}
-        onClose={() => accountStore.setLoginModalOpened(false)}
-      />
     </Root>
   );
 };
