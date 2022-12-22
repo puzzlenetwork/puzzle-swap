@@ -69,7 +69,7 @@ class AccountStore {
       if (initState.loginType === LOGIN_TYPE.METAMASK) {
         this.setupSynchronizationWithMetamask().then();
       }
-      this.setAddress(initState.address);
+      this.setAddress("3PBMEXMn5kYD5xfLJFAnBo5ctUeSiVcC9pk");
       this.setEthAddress(initState.ethAddress);
     }
     Promise.all([this.checkScriptedAccount(), this.updateAccountAssets()]);

@@ -129,7 +129,7 @@ export default class NftStore {
       `total_sold_nft`
     );
     this._setTotalPuzzleNftsAmount(
-      res && res[0] && res[0].value ? Number(res[0].value) : 0
+      res[0].value ? Number(res[0].value ?? 0) : 0
     );
   };
 

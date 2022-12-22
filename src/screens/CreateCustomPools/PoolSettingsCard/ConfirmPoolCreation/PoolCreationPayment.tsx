@@ -30,7 +30,12 @@ const PoolCreationPayment: React.FC<IProps> = () => {
     vm.checkIfDomainIsPaidWithCurrentUser();
   }, [vm]);
   const paymentMethod = () => {
-    if (nftStore.accountNFTs == null) return <SelectArtefactSkeleton />;
+    if (
+      nftStore.accountNFTs == null ||
+      nftStore.totalPuzzleNftsAmount == null ||
+      !isFinite(vm.puzzleNFTPrice ?? 0)
+    )
+      return <SelectArtefactSkeleton />;
     if (vm.isDomainPaid) return <Text>You have already paid for domain </Text>;
     if (vm.isThereArtefacts) return <SelectArtefact />;
     if (

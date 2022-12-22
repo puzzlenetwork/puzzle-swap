@@ -12,7 +12,6 @@ import {
   useMultiSwapVM,
 } from "@screens/MultiSwapInterface/MultiSwapVM";
 import { observer } from "mobx-react-lite";
-import SwitchTokensButton from "@screens/MultiSwapInterface/SwitchTokensButton";
 import Text from "@components/Text";
 import SwapButton from "@screens/MultiSwapInterface/SwapButton";
 import TooltipFeeInfo from "@screens/MultiSwapInterface/TooltipFeeInfo";
@@ -24,6 +23,7 @@ import Loading from "@components/Loading";
 import { ROUTES } from "@src/constants";
 import { useStores } from "@stores";
 import Divider from "@components/Divider";
+import SwitchTokensButton from "./SwitchTokensButton";
 
 const Root = styled.div`
   display: flex;
@@ -76,7 +76,7 @@ const MultiSwapInterfaceImpl: React.FC = observer(() => {
       pathname: window.location.pathname,
       search: `?${urlSearchParams.toString()}`,
     });
-    vm.setAssetId0(assetId);
+    vm.setAssetId1(assetId);
   };
 
   const { poolsStore } = useStores();

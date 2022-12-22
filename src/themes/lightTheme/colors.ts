@@ -27,6 +27,9 @@ export default {
   icon: {
     borderColor: colors.primary100,
   },
+  select: {
+    selectedTextColor: "#3638708F",
+  },
   gradient: "rgba(255, 255, 255, 0.5)",
   tokenDescGradient:
     "linear-gradient(180deg, rgba(248, 248, 255, 0) 0%, #f8f8ff 100%)",
