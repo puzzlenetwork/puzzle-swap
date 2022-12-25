@@ -51,8 +51,8 @@ class AddLiquidityInterfaceVM {
     (this.notificationParams = params);
 
   providedPercentOfPool: BN = new BN(50);
-  setProvidedPercentOfPool = (value: number) =>
-    (this.providedPercentOfPool = new BN(value));
+  setProvidedPercentOfPool = (value: number | number[]) =>
+    (this.providedPercentOfPool = new BN(value.toString()));
 
   private _pool: Pool | null = null;
   private _setPool = (pool: Pool) => (this._pool = pool);

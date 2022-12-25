@@ -46,8 +46,8 @@ class WithdrawLiquidityVM {
     (this.changePoolModalOpen = value);
 
   percentToWithdraw: BN = new BN(50);
-  setPercentToWithdraw = (value: number) =>
-    (this.percentToWithdraw = new BN(value));
+  setPercentToWithdraw = (value: number | number[]) =>
+    (this.percentToWithdraw = new BN(value.toString()));
 
   public get pool() {
     return this.rootStore.poolsStore.getPoolByDomain(this.poolDomain)!;

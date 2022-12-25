@@ -411,8 +411,8 @@ class CreateCustomPoolsVm {
   }
 
   providedPercentOfPool: BN = new BN(100);
-  setProvidedPercentOfPool = (value: number) =>
-    (this.providedPercentOfPool = new BN(value));
+  setProvidedPercentOfPool = (value: number | number[]) =>
+    (this.providedPercentOfPool = new BN(value.toString()));
 
   get totalAmountToAddLiquidity(): string | null {
     return BN.ZERO.toFormat();
