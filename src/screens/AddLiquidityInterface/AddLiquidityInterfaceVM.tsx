@@ -211,9 +211,12 @@ class AddLiquidityInterfaceVM {
     const payment = Object.entries(this.tokensToDepositAmounts).reduce(
       (acc, [assetId, value]) => [
         ...acc,
-        { assetId, amount: value.toSignificant(0).toString() },
+        {
+          assetId: assetId === "WAVES" ? null : assetId,
+          amount: value.toSignificant(0).toString(),
+        },
       ],
-      [] as Array<{ assetId: string; amount: string }>
+      [] as Array<{ assetId: string | null; amount: string }>
     );
 
     accountStore

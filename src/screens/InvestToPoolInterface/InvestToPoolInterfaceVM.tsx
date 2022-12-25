@@ -384,7 +384,7 @@ class InvestToPoolInterfaceVM {
         dApp: this.pool.contractAddress,
         payment: [
           {
-            assetId: this.indexTokenId,
+            assetId: this.indexTokenId === "WAVES" ? null : this.indexTokenId,
             amount: this.indexTokenBalance.toString(),
           },
         ],

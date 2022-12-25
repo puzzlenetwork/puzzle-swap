@@ -641,7 +641,7 @@ class CreateCustomPoolsVm {
     return min.dollarValue;
   }
 
-  get assetsForInitFunction(): { assetId: string; amount: string }[] {
+  get assetsForInitFunction(): { assetId: string | null; amount: string }[] {
     if (this.tokensToProvideInUsdnMap == null) return [];
     const { poolsStore } = this.rootStore;
 
@@ -654,7 +654,7 @@ class CreateCustomPoolsVm {
         .times(this.providedPercentOfPool.div(100));
 
       return {
-        assetId,
+        assetId: assetId === "WAVES" ? null : assetId,
         amount: BN.parseUnits(amountToProvide, decimals)
           .toSignificant(0)
           .toString(),

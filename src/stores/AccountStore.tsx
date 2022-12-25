@@ -30,7 +30,7 @@ export enum LOGIN_TYPE {
 export interface IInvokeTxParams {
   fee?: number;
   dApp: string;
-  payment: Array<{ assetId: string; amount: string }>;
+  payment: Array<{ assetId: string | null; amount: string }>;
   call: {
     function: string;
     args: Array<{ type: "integer" | "string"; value: string }>;
@@ -40,7 +40,7 @@ export interface IInvokeTxParams {
 export interface ITransferParams {
   recipient: string;
   amount: string;
-  assetId?: string;
+  assetId?: string | null;
   attachment?: string;
   feeAssetId?: string;
 }
@@ -345,10 +345,12 @@ class AccountStore {
       return null;
     }
     try {
+      // console.log(data);
       const ttx = this.signer.transfer({
         ...data,
         fee: this.isAccScripted ? 500000 : 100000,
       });
+      // console.log("ttx of transfer", ttx);
       const txId = await ttx.broadcast().then((tx: any) => tx.id);
       await waitForTx(txId, {
         apiBase: NODE_URL,

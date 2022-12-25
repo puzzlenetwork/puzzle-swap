@@ -154,7 +154,10 @@ class BoostApyVm {
       .invoke({
         dApp: CONTRACT_ADDRESSES.boost,
         payment: [
-          { assetId: this.token.assetId, amount: this.amount.toString() },
+          {
+            assetId: this.token.assetId === "WAVES" ? null : this.token.assetId,
+            amount: this.amount.toString(),
+          },
         ],
         call: {
           function: "addBoosting",

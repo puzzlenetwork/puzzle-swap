@@ -150,7 +150,9 @@ class NFTStakingVM {
     await accountStore
       .invoke({
         dApp: this.contractAddress,
-        payment: [{ assetId, amount: "1" }],
+        payment: [
+          { assetId: assetId === "WAVES" ? null : assetId, amount: "1" },
+        ],
         call: { function: "stake", args: [] },
       })
       .then(

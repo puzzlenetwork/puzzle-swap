@@ -194,7 +194,8 @@ class MultiSwapVM {
         dApp: this.pool.contractAddress,
         payment: [
           {
-            assetId: this.token0.assetId,
+            assetId:
+              this.token0.assetId === "WAVES" ? null : this.token0.assetId,
             amount: this.amount0.toString(),
           },
         ],

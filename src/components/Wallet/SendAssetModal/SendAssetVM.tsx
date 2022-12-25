@@ -102,7 +102,7 @@ class SendAssetVM {
     const data = {
       recipient: this.recipientAddress,
       amount: this.amount.toString(),
-      assetId: assetToSend.assetId,
+      assetId: assetToSend.assetId === "WAVES" ? null : assetToSend.assetId,
     };
     this._setLoading(true);
     accountStore

@@ -248,7 +248,7 @@ class SwapVM {
         dApp: CONTRACT_ADDRESSES.aggregator,
         payment: [
           {
-            assetId: token0.assetId,
+            assetId: token0.assetId === "WAVES" ? null : token0.assetId,
             amount: amount0.toString(),
           },
         ],
