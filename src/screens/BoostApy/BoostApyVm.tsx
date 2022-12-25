@@ -15,9 +15,15 @@ import poolsService from "@src/services/poolsService";
 
 const ctx = React.createContext<BoostApyVm | null>(null);
 
-export const BoostApyVmProvider: React.FC<{
+interface IProps {
+  children: React.ReactNode;
   poolDomain: string;
-}> = ({ poolDomain, children }) => {
+}
+
+export const BoostApyVmProvider: React.FC<IProps> = ({
+  poolDomain,
+  children,
+}) => {
   const rootStore = useStores();
   const store = useMemo(
     () => new BoostApyVm(rootStore, poolDomain),

@@ -4,9 +4,11 @@ import Text from "@components/Text";
 import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
 import SizedBox from "@components/SizedBox";
 import TextButton from "@components/TextButton";
-import useCollapse from "react-collapsed";
+// import useCollapse from "react-collapsed";
 
 interface IProps {}
+
+// fixme
 
 const Root = styled.div`
   display: flex;
@@ -35,10 +37,10 @@ const Body = styled.div`
 const AboutToken: React.FC<IProps> = () => {
   const vm = useExploreTokenVM();
   const [opened, setOpened] = useState(false);
-  const { getCollapseProps } = useCollapse({
-    isExpanded: opened,
-    duration: 500,
-  });
+  // const { getCollapseProps } = useCollapse({
+  //   isExpanded: opened,
+  //   duration: 500,
+  // });
   return (
     <Root>
       <SizedBox height={40} />
@@ -56,7 +58,8 @@ const AboutToken: React.FC<IProps> = () => {
         {vm.tokenLifeData[0]}
         {!opened && <Gradient />}
       </Text>
-      <Body {...getCollapseProps()}>
+      {/*<Body {...getCollapseProps()}>*/}
+      <Body>
         <Text type="secondary" style={{ whiteSpace: "pre-wrap" }}>
           {vm.tokenLifeData[1]}
         </Text>

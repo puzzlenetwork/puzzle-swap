@@ -4,6 +4,7 @@ import TextButton from "@components/TextButton";
 
 interface IProps {
   onClick: () => void;
+  children: React.ReactNode;
 }
 
 const Root = styled.tr`

@@ -7,9 +7,13 @@ import Balance from "@src/entities/Balance";
 import BN from "@src/utils/BN";
 import { ROUTES, TOKENS_LIST } from "@src/constants";
 
+interface IProps {
+  children: React.ReactNode;
+}
+
 const ctx = React.createContext<WalletVM | null>(null);
 
-export const WalletVMProvider: React.FC = ({ children }) => {
+export const WalletVMProvider: React.FC<IProps> = ({ children }) => {
   const rootStore = useStores();
   const store = useMemo(() => new WalletVM(rootStore), [rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;

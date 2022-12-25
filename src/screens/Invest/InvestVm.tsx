@@ -7,9 +7,13 @@ import BN from "@src/utils/BN";
 import poolService from "@src/services/poolsService";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
 
+interface IProps {
+  children: React.ReactNode;
+}
+
 const ctx = React.createContext<InvestVM | null>(null);
 
-export const InvestVMProvider: React.FC = ({ children }) => {
+export const InvestVMProvider: React.FC<IProps> = ({ children }) => {
   const rootStore = useStores();
   const store = useMemo(() => new InvestVM(rootStore), [rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;

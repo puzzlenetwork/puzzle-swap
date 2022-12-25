@@ -16,9 +16,15 @@ import makeNodeRequest from "@src/utils/makeNodeRequest";
 
 const ctx = React.createContext<InvestToPoolInterfaceVM | null>(null);
 
-export const InvestToPoolInterfaceVMProvider: React.FC<{
+interface IProps {
+  children: React.ReactNode;
   poolDomain: string;
-}> = ({ poolDomain, children }) => {
+}
+
+export const InvestToPoolInterfaceVMProvider: React.FC<IProps> = ({
+  poolDomain,
+  children,
+}) => {
   const rootStore = useStores();
   const store = useMemo(
     () => new InvestToPoolInterfaceVM(rootStore, poolDomain),

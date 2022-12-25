@@ -4,7 +4,7 @@ import Card from "@components/Card";
 import { Row } from "@components/Flex";
 import Text from "@components/Text";
 import { observer } from "mobx-react-lite";
-import useCollapse from "react-collapsed";
+// import useCollapse from "react-collapsed";
 import SizedBox from "@components/SizedBox";
 import ChartAgeButtons from "@components/ChartAgeButtons";
 import { IToken } from "@src/constants";
@@ -44,14 +44,16 @@ const Root = styled.div`
 
 const TokensChartDesktopImpl: React.FC<IProps> = observer(
   ({ height, ...rest }) => {
-    const { getCollapseProps } = useCollapse({
-      isExpanded: rest.visible,
-      duration: 500,
-    });
+    // fixme
+    // const { getCollapseProps } = useCollapse({
+    //   isExpanded: rest.visible,
+    //   duration: 500,
+    // });
     const vm = useTokenChartVM();
     const swapVm = useSwapVM();
     return (
-      <Root {...getCollapseProps()}>
+      // <Root {...getCollapseProps()}>
+      <Root>
         <Card style={{ height }}>
           <Row alignItems="center" justifyContent="space-between">
             <Row alignItems="center">
@@ -67,7 +69,8 @@ const TokensChartDesktopImpl: React.FC<IProps> = observer(
               onChange={vm.setSelectedChartPeriod}
             />
           </Row>
-          <TokensChart {...rest} />
+          {/*fixme*/}
+          <TokensChart {...(rest as any)} />
         </Card>
         <SizedBox height={16} />
         <LearnMoreTokenChartButtons />

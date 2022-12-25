@@ -8,7 +8,6 @@ import { observer } from "mobx-react-lite";
 import { Line, LineChart, Tooltip, XAxis } from "recharts";
 import useWindowSize from "@src/hooks/useWindowSize";
 import dayjs from "dayjs";
-import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -83,9 +82,9 @@ const TradesVolume: React.FC<IProps> = () => {
                 {dayjs(date).format("dddd, MMM DD")}
               </Text>
             )}
-            formatter={(volume: number) => (
-              <Text size="medium">$&nbsp;{new BN(volume).toFormat(2)}</Text>
-            )}
+            // formatter={(volume: number) => (
+            //   <Text size="medium">$&nbsp;{new BN(volume).toFormat(2)}</Text>
+            // )}
             contentStyle={{
               border: "none",
               filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))",

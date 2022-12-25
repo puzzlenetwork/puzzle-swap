@@ -37,13 +37,15 @@ const AddCustomPoolLiquidityAmount: React.FC<IProps> = () => {
           )}
         </Text>
         <SizedBox height={16} />
+
+        {/*FIXME*/}
         <Slider
           min={0}
           max={100}
           step={1}
           marks={{ 0: 0, 25: 25, 50: 50, 75: 75, 100: 100 }}
           value={vm.providedPercentOfPool.toNumber()}
-          onChange={vm.setProvidedPercentOfPool}
+          // onChange={vm.setProvidedPercentOfPool}
         />
       </Card>
     </Root>

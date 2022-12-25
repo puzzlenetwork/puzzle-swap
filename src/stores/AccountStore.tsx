@@ -15,12 +15,14 @@ import nodeService from "@src/services/nodeService";
 import { THEME_TYPE } from "@src/themes/ThemeProvider";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import { wavesAddress2eth } from "@waves/node-api-js";
+import { ProviderKeeperMobile } from "@keeper-wallet/provider-keeper-mobile";
+import { IDialogNotificationProps } from "@components/Dialog/DialogNotification";
 
 export enum LOGIN_TYPE {
   SIGNER_SEED = "SIGNER_SEED",
   SIGNER_EMAIL = "SIGNER_EMAIL",
   KEEPER = "KEEPER",
-  // KEEPER_MOBILE = "KEEPER_MOBILE",
+  KEEPER_MOBILE = "KEEPER_MOBILE",
   LEDGER = "LEDGER",
   METAMASK = "METAMASK",
 }
@@ -69,7 +71,7 @@ class AccountStore {
       if (initState.loginType === LOGIN_TYPE.METAMASK) {
         this.setupSynchronizationWithMetamask().then();
       }
-      this.setAddress("3PBMEXMn5kYD5xfLJFAnBo5ctUeSiVcC9pk");
+      this.setAddress(initState.address);
       this.setEthAddress(initState.ethAddress);
     }
     Promise.all([this.checkScriptedAccount(), this.updateAccountAssets()]);
@@ -203,6 +205,10 @@ class AccountStore {
   login = async (loginType: LOGIN_TYPE) => {
     this.setLoginType(loginType);
     switch (loginType) {
+      case LOGIN_TYPE.KEEPER_MOBILE:
+        this.setSigner(new Signer());
+        await this.signer?.setProvider(new ProviderKeeperMobile());
+        break;
       case LOGIN_TYPE.METAMASK:
         this.setSigner(new Signer());
         await this.setupSynchronizationWithMetamask();
@@ -313,6 +319,8 @@ class AccountStore {
         return this.transferWithSigner(txParams, LOGIN_TYPE.SIGNER_EMAIL);
       case LOGIN_TYPE.KEEPER:
         return this.transferWithKeeper(txParams);
+      case LOGIN_TYPE.KEEPER_MOBILE:
+        return this.transferWithSigner(txParams, LOGIN_TYPE.KEEPER_MOBILE);
       case LOGIN_TYPE.METAMASK:
         return this.transferWithSigner(txParams, LOGIN_TYPE.METAMASK);
     }
@@ -323,6 +331,9 @@ class AccountStore {
     data: ITransferParams,
     loginType: LOGIN_TYPE
   ): Promise<string | null> => {
+    if (loginType === LOGIN_TYPE.KEEPER_MOBILE) {
+      this.showRequiredKeeperWalletMsg();
+    }
     if (this.signer == null) {
       await this.login(this.loginType ?? loginType);
     }
@@ -393,6 +404,8 @@ class AccountStore {
         return this.invokeWithKeeper(txParams);
       case LOGIN_TYPE.METAMASK:
         return this.invokeWithSigner(txParams, LOGIN_TYPE.METAMASK);
+      case LOGIN_TYPE.KEEPER_MOBILE:
+        return this.invokeWithSigner(txParams, LOGIN_TYPE.KEEPER_MOBILE);
     }
     return null;
   };
@@ -401,6 +414,9 @@ class AccountStore {
     txParams: IInvokeTxParams,
     loginType: LOGIN_TYPE
   ): Promise<string | null> => {
+    if (loginType === LOGIN_TYPE.KEEPER_MOBILE) {
+      this.showRequiredKeeperWalletMsg();
+    }
     if (this.signer == null) {
       await this.login(this.loginType ?? loginType);
     }
@@ -480,6 +496,8 @@ class AccountStore {
 
   get signInMethod(): string {
     switch (this.loginType) {
+      case LOGIN_TYPE.KEEPER_MOBILE:
+        return "Keeper Mobile";
       case LOGIN_TYPE.SIGNER_SEED:
         return "Signer";
       case LOGIN_TYPE.KEEPER:
@@ -489,6 +507,22 @@ class AccountStore {
     }
     return "login";
   }
+
+  public keeperWalletNotification: IDialogNotificationProps | null = null;
+  public setKeeperWalletNotification = (
+    params: IDialogNotificationProps | null
+  ) => (this.keeperWalletNotification = params);
+
+  showRequiredKeeperWalletMsg = () => {
+    this.rootStore.notificationStore.notify(
+      "Please sign your transaction in Keeper Mobile App",
+      {
+        title: "Signature is required",
+        type: "info",
+        duration: 20,
+      }
+    );
+  };
 }
 
 export default AccountStore;

@@ -18,9 +18,13 @@ import {
 import aggregatorService from "@src/services/aggregatorService";
 import dayjs from "dayjs";
 
+interface IProps {
+  children: React.ReactNode;
+}
+
 const ctx = React.createContext<LimitOrdersVM | null>(null);
 
-export const LimitOrdersVMProvider: React.FC = ({ children }) => {
+export const LimitOrdersVMProvider: React.FC<IProps> = ({ children }) => {
   const rootStore = useStores();
   const store = useMemo(() => new LimitOrdersVM(rootStore), [rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;

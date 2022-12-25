@@ -13,9 +13,13 @@ import {
   TOKENS_BY_SYMBOL,
 } from "@src/constants";
 
+interface IProps {
+  children: React.ReactNode;
+}
+
 const ctx = React.createContext<SwapVM | null>(null);
 
-export const SwapVMProvider: React.FC = ({ children }) => {
+export const SwapVMProvider: React.FC<IProps> = ({ children }) => {
   const rootStore = useStores();
   const store = useMemo(() => new SwapVM(rootStore), [rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;

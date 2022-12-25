@@ -1,13 +1,18 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { action, makeAutoObservable, when } from "mobx";
+import { makeAutoObservable, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import { EXPLORER_URL, IToken } from "@src/constants";
 
+interface IProps {
+  children: React.ReactNode;
+  poolDomain: string;
+}
+
 const ctx = React.createContext<WithdrawLiquidityVM | null>(null);
 
-export const WithdrawLiquidityVMProvider: React.FC<{ poolDomain: string }> = ({
+export const WithdrawLiquidityVMProvider: React.FC<IProps> = ({
   poolDomain,
   children,
 }) => {
@@ -41,7 +46,7 @@ class WithdrawLiquidityVM {
     (this.changePoolModalOpen = value);
 
   percentToWithdraw: BN = new BN(50);
-  @action.bound setPercentToWithdraw = (value: number) =>
+  setPercentToWithdraw = (value: number) =>
     (this.percentToWithdraw = new BN(value));
 
   public get pool() {

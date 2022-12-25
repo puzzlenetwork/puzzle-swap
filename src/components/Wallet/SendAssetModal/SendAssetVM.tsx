@@ -9,7 +9,11 @@ import { EXPLORER_URL } from "@src/constants";
 
 const ctx = React.createContext<SendAssetVM | null>(null);
 
-export const SendAssetVMProvider: React.FC = ({ children }) => {
+interface IProps {
+  children: React.ReactNode;
+}
+
+export const SendAssetVMProvider: React.FC<IProps> = ({ children }) => {
   const rootStore = useStores();
   const store = useMemo(() => new SendAssetVM(rootStore), [rootStore]);
   return <ctx.Provider value={store}> {children} </ctx.Provider>;

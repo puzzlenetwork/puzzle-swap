@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { action, makeAutoObservable, when } from "mobx";
+import { makeAutoObservable, when } from "mobx";
 import { EXPLORER_URL } from "@src/constants";
 import { RootStore, useStores } from "@stores";
 import Balance from "@src/entities/Balance";
@@ -8,7 +8,12 @@ import BN from "@src/utils/BN";
 
 const ctx = React.createContext<MultiSwapVM | null>(null);
 
-export const MultiSwapVMProvider: React.FC<{ poolDomain: string }> = ({
+interface IProps {
+  children: React.ReactNode;
+  poolDomain: string;
+}
+
+export const MultiSwapVMProvider: React.FC<IProps> = ({
   poolDomain,
   children,
 }) => {
@@ -60,7 +65,7 @@ class MultiSwapVM {
   }
 
   amount0: BN = BN.ZERO;
-  @action.bound setAmount0 = (amount: BN) => (this.amount0 = amount);
+  setAmount0 = (amount: BN) => (this.amount0 = amount);
 
   loading: boolean = false;
   private _setLoading = (l: boolean) => (this.loading = l);
@@ -83,7 +88,7 @@ class MultiSwapVM {
   }
 
   assetId1: string = this.pool?.defaultAssetId1!;
-  @action.bound setAssetId1 = (assetId: string) => (this.assetId1 = assetId);
+  setAssetId1 = (assetId: string) => (this.assetId1 = assetId);
 
   get token1() {
     return this.pool?.tokens.find(({ assetId }) => assetId === this.assetId1);

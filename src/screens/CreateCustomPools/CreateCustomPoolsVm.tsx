@@ -27,9 +27,13 @@ import checkDomainPaid from "@screens/CreateCustomPools/utils/checkDomainPaid";
 import Button from "@components/Button";
 import getDomainPaymentArtefactId from "@src/utils/getDomainPaymentArtefactId";
 
+interface IProps {
+  children: React.ReactNode;
+}
+
 const ctx = React.createContext<CreateCustomPoolsVm | null>(null);
 
-export const CreateCustomPoolsVMProvider: React.FC = ({ children }) => {
+export const CreateCustomPoolsVMProvider: React.FC<IProps> = ({ children }) => {
   const rootStore = useStores();
   const store = useMemo(() => new CreateCustomPoolsVm(rootStore), [rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;

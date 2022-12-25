@@ -33,13 +33,14 @@ const WithdrawLiquidityAmount: React.FC<IProps> = () => {
           )}
         </Text>
         <SizedBox height={16} />
+        {/*fixme*/}
         <Slider
           min={0}
           max={100}
           step={1}
           marks={{ 0: 0, 25: 25, 50: 50, 75: 75, 100: 100 }}
           value={vm.percentToWithdraw.toNumber()}
-          onChange={vm.setPercentToWithdraw}
+          onChange={(v) => vm.setPercentToWithdraw(10)}
         />
       </Card>
     </Root>
