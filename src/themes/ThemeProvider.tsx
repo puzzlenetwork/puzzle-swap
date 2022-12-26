@@ -19,7 +19,6 @@ export const themes = {
   darkTheme,
   lightTheme,
 };
-//todo fix
 const ThemeWrapper: React.FC<IProps> = ({ children }) => {
   const { accountStore } = useStores();
   return (
