@@ -3,13 +3,13 @@ import { makeAutoObservable, reaction } from "mobx";
 import Pool, { IData, IShortPoolInfo } from "@src/entities/Pool";
 import BN from "@src/utils/BN";
 import {
+  CONTRACT_ADDRESSES,
   POOL_CONFIG,
   TOKENS_BY_ASSET_ID,
   TOKENS_BY_SYMBOL,
 } from "@src/constants";
-import poolsService from "@src/services/poolsService";
 import poolService from "@src/services/poolsService";
-import wavesCapService from "@src/services/wavesCapService";
+import nodeService from "@src/services/nodeService";
 
 export type TPoolState = {
   state: IData[];
@@ -60,6 +60,9 @@ export default class PoolsStore {
 
   public puzzleRate: BN = BN.ZERO;
   public setPuzzleRate = (value: BN) => (this.puzzleRate = value);
+
+  public usdnRate: BN = BN.ZERO;
+  public setUsdnRate = (value: BN) => (this.usdnRate = value);
 
   get customPools() {
     return this.pools.filter(({ isCustom }) => isCustom);
@@ -121,13 +124,14 @@ export default class PoolsStore {
     );
   }
 
-  usdnRate = (assetId: string, coefficient = 1): BN | null => {
-    const { tokenStore } = this.rootStore;
+  usdtRate = (assetId: string, coefficient = 1): BN | null => {
     const usdn = TOKENS_BY_SYMBOL.USDN.assetId;
+    const usdt = TOKENS_BY_SYMBOL.USDT.assetId;
     const puzzle = TOKENS_BY_SYMBOL.PUZZLE.assetId;
     const pool = this.pools.find(({ tokens }) =>
       tokens.some((t) => t.assetId === assetId)
     );
+
     const startPrice = TOKENS_BY_ASSET_ID[assetId]?.startPrice;
     //todo fix this pizdez !!!
     if (pool == null && startPrice != null) {
@@ -141,21 +145,26 @@ export default class PoolsStore {
       return new BN(startPrice ?? 0);
     }
     if (
-      pool.currentPrice(assetId, usdn) == null &&
-      pool.tokens.some((t) => t.assetId === usdn)
+      pool.currentPrice(assetId, usdt) == null &&
+      pool.tokens.some((t) => t.assetId === usdt)
     ) {
       return new BN(startPrice ?? 0);
     }
 
-    if (pool.tokens.some(({ assetId }) => assetId === usdn)) {
-      return pool.currentPrice(assetId, usdn, coefficient);
+    if (pool.tokens.some(({ assetId }) => assetId === usdt)) {
+      return pool.currentPrice(assetId, usdt, coefficient);
     } else if (pool.tokens.some(({ assetId }) => assetId === puzzle)) {
-      const puzzleRate = tokenStore.statisticsByAssetId[puzzle]?.currentPrice;
+      const puzzleRate = pool.puzzleRate;
       const priceInPuzzle = pool.currentPrice(assetId, puzzle, coefficient);
-      return priceInPuzzle != null && puzzleRate != null
-        ? priceInPuzzle.times(puzzleRate)
-        : null;
+      return priceInPuzzle != null ? priceInPuzzle.times(puzzleRate) : null;
+    } else if (pool.tokens.some(({ assetId }) => assetId === usdn)) {
+      const usdnRate = pool.usdnRate;
+      const priceInUSDN = pool.currentPrice(assetId, usdn);
+      return priceInUSDN != null
+        ? priceInUSDN.times(usdnRate)
+        : new BN(startPrice ?? 0);
     } else {
+      //todo check all tokens like this
       return null;
     }
   };
@@ -223,7 +232,7 @@ export default class PoolsStore {
 
   updatePoolsState = async () => {
     const address = this.rootStore.accountStore.address;
-    const state = await poolsService.getPoolsStateByUserAddress(address);
+    const state = await poolService.getPoolsStateByUserAddress(address);
     this.setPoolState(state);
     this.syncPoolsLiquidity();
     address && this.updateAccountCustomPoolsLiquidityInfo(address);
@@ -235,11 +244,33 @@ export default class PoolsStore {
       state && pool.syncLiquidity(state);
     });
 
-  private syncPuzzleRate = () =>
-    wavesCapService
-      .getAssetRate(TOKENS_BY_SYMBOL.PUZZLE.assetId)
-      .then((rate) => {
-        rate != null && this.setPuzzleRate(rate);
-        this.pools.forEach((pool) => pool.setPuzzleRate(rate ?? BN.ZERO));
-      });
+  private syncPuzzleRate = async () => {
+    const res = await nodeService.nodeKeysRequest(
+      CONTRACT_ADDRESSES.priceOracle,
+      "lastUpdatedBlock"
+    );
+    const lastBlock = res[0].value;
+    const priceResponse = await nodeService.nodeKeysRequest(
+      CONTRACT_ADDRESSES.priceOracle,
+      [
+        `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.PUZZLE.assetId}`,
+        `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.USDN.assetId}`,
+      ]
+    );
+
+    const puzzleRate =
+      priceResponse != null
+        ? BN.formatUnits(priceResponse[0].value, 6)
+        : BN.ZERO;
+    const usdnRate =
+      priceResponse != null
+        ? BN.formatUnits(priceResponse[1].value, 6)
+        : BN.ZERO;
+    this.setPuzzleRate(puzzleRate);
+    this.setUsdnRate(usdnRate);
+    this.pools.forEach((pool) => {
+      pool.setPuzzleRate(puzzleRate);
+      pool.setUsdnRate(usdnRate);
+    });
+  };
 }

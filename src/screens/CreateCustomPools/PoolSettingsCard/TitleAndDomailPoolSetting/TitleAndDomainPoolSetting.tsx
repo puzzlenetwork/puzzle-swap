@@ -30,7 +30,8 @@ const Tag = styled.div<{ active?: boolean }>`
   justify-content: center;
   align-items: center;
   padding: 8px 20px;
-  color: ${({ active, theme }) => (active ? theme.colors.white : "")};
+  color: ${({ active, theme }) =>
+    active ? theme.colors.white : theme.colors.primary800};
   background: ${({ active, theme }) =>
     active ? theme.colors.blue500 : theme.colors.white};
   border: 1px solid

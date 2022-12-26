@@ -6,7 +6,11 @@ import { TOKENS_LIST } from "@src/constants";
 
 const ctx = React.createContext<ExploreVM | null>(null);
 
-export const ExploreVMProvider: React.FC = ({ children }) => {
+interface IProps {
+  children: React.ReactNode;
+}
+
+export const ExploreVMProvider: React.FC<IProps> = ({ children }) => {
   const rootStore = useStores();
   const store = useMemo(() => new ExploreVM(rootStore), [rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;

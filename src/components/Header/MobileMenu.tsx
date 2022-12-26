@@ -47,7 +47,7 @@ const toolsMenu = [
   { name: "Alerts bot", link: "https://t.me/puzzle_alerts_bot", outer: true },
 ];
 const communityMenu = [
-  { name: "Telegram", link: "https://t.me/puzzleswap", outer: true },
+  { name: "Telegram", link: "https://t.me/puzzle_network", outer: true },
   { name: "Twitter", link: "https://twitter.com/puzzle_swap", outer: true },
   { name: "Medium", link: "https://medium.com/@puzzlenetwork", outer: true },
 ];

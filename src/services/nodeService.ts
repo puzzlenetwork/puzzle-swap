@@ -63,6 +63,11 @@ interface IAssetDetails {
 }
 
 const nodeService = {
+  blocksHeight: async (): Promise<{ height: number }> => {
+    const url = `/blocks/height`;
+    const { data } = await makeNodeRequest(url);
+    return data;
+  },
   getAddressNfts: async (address: string): Promise<INFT[]> => {
     const url = `/assets/nft/${address}/limit/1000`;
     const { data } = await makeNodeRequest(url);
@@ -91,7 +96,7 @@ const nodeService = {
       await Promise.all([
         makeNodeRequest(assetsUrl).then(({ data }) => data),
         makeNodeRequest(wavesUrl).then(({ data }) => ({
-          balances: [{ balance: data.regular, assetId: "WAVES" }],
+          balances: [{ balance: data.available, assetId: "WAVES" }],
         })),
       ])
     ).reduce<{ assetId: string; balance: number }[]>(

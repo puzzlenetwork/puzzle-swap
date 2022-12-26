@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
 import React, { HTMLAttributes, useState } from "react";
-import { ReactComponent as SwapIcon } from "@src/assets/icons/swap.svg";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import { useMultiSwapVM } from "@screens/MultiSwapInterface/MultiSwapVM";
+import { useTheme } from "@emotion/react";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -25,9 +25,12 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
     vm.switchTokens();
     setSwitched((v) => !v);
   };
+  const theme = useTheme();
   return (
     <Root {...rest} onClick={handleSwitch}>
-      <SwapIcon
+      <img
+        alt="swap"
+        src={theme.images.icons.swap}
         className="icon"
         style={{
           transform: switched ? "rotate(360deg)" : "rotate(0)",

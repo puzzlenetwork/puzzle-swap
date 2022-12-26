@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { action, makeAutoObservable, when } from "mobx";
+import { makeAutoObservable, when } from "mobx";
 import { EXPLORER_URL } from "@src/constants";
 import { RootStore, useStores } from "@stores";
 import Balance from "@src/entities/Balance";
@@ -8,7 +8,12 @@ import BN from "@src/utils/BN";
 
 const ctx = React.createContext<MultiSwapVM | null>(null);
 
-export const MultiSwapVMProvider: React.FC<{ poolDomain: string }> = ({
+interface IProps {
+  children: React.ReactNode;
+  poolDomain: string;
+}
+
+export const MultiSwapVMProvider: React.FC<IProps> = ({
   poolDomain,
   children,
 }) => {
@@ -60,20 +65,20 @@ class MultiSwapVM {
   }
 
   amount0: BN = BN.ZERO;
-  @action.bound setAmount0 = (amount: BN) => (this.amount0 = amount);
+  setAmount0 = (amount: BN) => (this.amount0 = amount);
 
   loading: boolean = false;
   private _setLoading = (l: boolean) => (this.loading = l);
 
   get amount0UsdnEquivalent(): string {
     const { token0 } = this;
-    const usdnRate = this.rootStore.poolsStore.usdnRate(this.assetId0, 1);
-    if (token0 == null || usdnRate == null) return "—";
-    const result = usdnRate.times(
+    const usdtRate = this.rootStore.poolsStore.usdtRate(this.assetId0, 1);
+    if (token0 == null || usdtRate == null) return "—";
+    const result = usdtRate.times(
       BN.formatUnits(this.amount0, token0.decimals)
     );
     if (!result.gt(0)) return "—";
-    return `~ ${usdnRate
+    return `~ ${usdtRate
       .times(BN.formatUnits(this.amount0, token0.decimals))
       .toFormat(2)} $`;
   }
@@ -83,7 +88,7 @@ class MultiSwapVM {
   }
 
   assetId1: string = this.pool?.defaultAssetId1!;
-  @action.bound setAssetId1 = (assetId: string) => (this.assetId1 = assetId);
+  setAssetId1 = (assetId: string) => (this.assetId1 = assetId);
 
   get token1() {
     return this.pool?.tokens.find(({ assetId }) => assetId === this.assetId1);
@@ -162,13 +167,13 @@ class MultiSwapVM {
 
   get amount1UsdnEquivalent(): string {
     const { token1 } = this;
-    const usdnRate = this.rootStore.poolsStore.usdnRate(this.assetId1, 1);
-    if (token1 == null || usdnRate == null) return "—";
-    const result = usdnRate.times(
+    const usdtRate = this.rootStore.poolsStore.usdtRate(this.assetId1, 1);
+    if (token1 == null || usdtRate == null) return "—";
+    const result = usdtRate.times(
       BN.formatUnits(this.amount1, token1.decimals)
     );
     if (!result.gt(0)) return "—";
-    return `~ ${usdnRate
+    return `~ ${usdtRate
       .times(BN.formatUnits(this.amount1, token1.decimals))
       .toFormat(2)} $`;
   }
@@ -189,7 +194,8 @@ class MultiSwapVM {
         dApp: this.pool.contractAddress,
         payment: [
           {
-            assetId: this.token0.assetId,
+            assetId:
+              this.token0.assetId === "WAVES" ? null : this.token0.assetId,
             amount: this.amount0.toString(),
           },
         ],

@@ -27,7 +27,7 @@ const TokenTag: React.FC<IProps> = ({ token, amount }) => {
       <Img src={token.logo} alt="token" radius="50%" />
       {amount && (
         <Text style={{ marginLeft: 8 }} size="medium">
-          {value.toFormat(value.gte(0.01) ? 2 : 4)}
+          {value.isNaN() ? "0.00" : value.toFormat(value.gte(0.01) ? 2 : 4)}
         </Text>
       )}
     </Root>

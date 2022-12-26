@@ -146,6 +146,7 @@ const tokenLogos: Record<string, string> = {
   UNKNOWN: unknownLogo,
   VVUSDNLP: usdnViresVested,
   SWAVES: SWAVES,
+  SPICE: "https://wavesducks.com/static/img/token/spice.svg",
 };
 
 export default tokenLogos;

@@ -32,7 +32,6 @@ const TokensContainer = styled.div`
 
 const TopTokens: React.FC<IProps> = () => {
   const vm = useExploreVM();
-  console.log(vm.top3Losers);
   return (
     <Root>
       <Card bordered>

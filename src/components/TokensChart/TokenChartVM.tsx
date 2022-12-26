@@ -7,10 +7,17 @@ import axios from "axios";
 
 const ctx = React.createContext<TokenChartVM | null>(null);
 
-export const TokenChartVMProvider: React.FC<{
+interface IProps {
+  children: React.ReactNode;
   assetId0: string;
   assetId1: string;
-}> = ({ assetId0, assetId1, children }) => {
+}
+
+export const TokenChartVMProvider: React.FC<IProps> = ({
+  assetId0,
+  assetId1,
+  children,
+}) => {
   const rootStore = useStores();
   const store = useMemo(
     () => new TokenChartVM(rootStore, assetId0, assetId1),

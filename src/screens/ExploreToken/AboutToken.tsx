@@ -4,7 +4,7 @@ import Text from "@components/Text";
 import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
 import SizedBox from "@components/SizedBox";
 import TextButton from "@components/TextButton";
-import useCollapse from "react-collapsed";
+import useCollapse from "@components/Collapse";
 
 interface IProps {}
 

@@ -9,7 +9,11 @@ import { EXPLORER_URL } from "@src/constants";
 
 const ctx = React.createContext<SendAssetVM | null>(null);
 
-export const SendAssetVMProvider: React.FC = ({ children }) => {
+interface IProps {
+  children: React.ReactNode;
+}
+
+export const SendAssetVMProvider: React.FC<IProps> = ({ children }) => {
   const rootStore = useStores();
   const store = useMemo(() => new SendAssetVM(rootStore), [rootStore]);
   return <ctx.Provider value={store}> {children} </ctx.Provider>;
@@ -84,7 +88,7 @@ class SendAssetVM {
     const { assetToSend } = accountStore;
     if (assetToSend == null) return "";
     const amount = BN.formatUnits(this.amount, assetToSend?.decimals);
-    const rate = poolsStore.usdnRate(assetToSend.assetId, 1) ?? BN.ZERO;
+    const rate = poolsStore.usdtRate(assetToSend.assetId, 1) ?? BN.ZERO;
     return "$ " + rate?.times(amount)?.toFormat(2);
   }
 
@@ -98,7 +102,7 @@ class SendAssetVM {
     const data = {
       recipient: this.recipientAddress,
       amount: this.amount.toString(),
-      assetId: assetToSend.assetId,
+      assetId: assetToSend.assetId === "WAVES" ? null : assetToSend.assetId,
     };
     this._setLoading(true);
     accountStore

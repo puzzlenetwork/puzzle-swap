@@ -11,7 +11,8 @@ import dayjs from "dayjs";
 import PoolAction from "./PoolAction";
 
 interface IProps extends ITransaction {
-  usdnRate: (assetId: string, coefficient: number) => BN | null;
+  currentHeight: number | null;
+  usdtRate: (assetId: string, coefficient: number) => BN | null;
 }
 
 const Root = styled(Row)`
@@ -28,8 +29,10 @@ const Transaction: React.FC<IProps> = ({
   timestamp,
   call,
   stateChanges,
-  usdnRate,
+  usdtRate,
   payment,
+  height,
+  currentHeight,
 }) => {
   if (
     ![
@@ -60,7 +63,7 @@ const Transaction: React.FC<IProps> = ({
         const amount1 = new BN(am1);
         amount = token1 != null ? BN.formatUnits(am1, token1?.decimals) : null;
         if (token1 != null) {
-          const rate = usdnRate(token1.assetId, 1) ?? BN.ZERO;
+          const rate = usdtRate(token1.assetId, 1) ?? BN.ZERO;
           amount = BN.formatUnits(amount1.times(rate), token1.decimals);
         } else {
           amount = null;
@@ -80,7 +83,7 @@ const Transaction: React.FC<IProps> = ({
         }));
         const totalAddedUsdn = addedTokens.reduce(
           (acc, { assetId, amount, decimals }) => {
-            const rate = usdnRate(assetId, 1) ?? BN.ZERO;
+            const rate = usdtRate(assetId, 1) ?? BN.ZERO;
             const am = BN.formatUnits(amount, decimals);
             return acc.plus(am.times(rate));
           },
@@ -94,7 +97,7 @@ const Transaction: React.FC<IProps> = ({
           ...TOKENS_BY_ASSET_ID[payment[0].assetId ?? "WAVES"],
         };
         const am = BN.formatUnits(oneToken.amount, oneToken.decimals);
-        const rate = usdnRate(oneToken.assetId, 1) ?? BN.ZERO;
+        const rate = usdtRate(oneToken.assetId, 1) ?? BN.ZERO;
         amount = am.times(rate);
         return <PoolAction tokens={[oneToken]} action="add" />;
       case "unstakeAndRedeemIndex":
@@ -108,7 +111,7 @@ const Transaction: React.FC<IProps> = ({
         const totalRemovedTokenUsdn = removedTokens.reduce(
           (acc, { assetId, amount, decimals }) => {
             const tokenAmount = BN.formatUnits(amount, decimals);
-            const rate = usdnRate(assetId, 1) ?? BN.ZERO;
+            const rate = usdtRate(assetId, 1) ?? BN.ZERO;
             return acc.plus(rate.times(tokenAmount));
           },
           BN.ZERO
@@ -124,7 +127,7 @@ const Transaction: React.FC<IProps> = ({
         );
         const totalClaimedUsdn = claimedTokens.reduce(
           (acc, { assetId, amount, decimals }) => {
-            const rate = usdnRate(assetId, 1) ?? BN.ZERO;
+            const rate = usdtRate(assetId, 1) ?? BN.ZERO;
             const am = BN.formatUnits(amount, decimals);
             return acc.plus(rate.times(am));
           },
@@ -136,6 +139,8 @@ const Transaction: React.FC<IProps> = ({
         return null;
     }
   };
+  const minutes =
+    currentHeight == null ? 0 : new BN(currentHeight).minus(height).toNumber();
   const details = draw();
   return details != null ? (
     <Root
@@ -145,10 +150,10 @@ const Transaction: React.FC<IProps> = ({
     >
       <Row alignItems="center">{details}</Row>
       <Text fitContent nowrap>
-        ${amount?.toFormat(2)}
+        ${amount.isNaN() ? "0.00" : +amount?.toFormat(2)}
       </Text>
       <Text fitContent nowrap>
-        {(dayjs(timestamp) as any).fromNow()}
+        {(dayjs().subtract(minutes, "minutes") as any).fromNow()}
       </Text>
     </Root>
   ) : null;

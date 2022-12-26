@@ -30,6 +30,7 @@ const TableTitle: React.FC<{
   sort: boolean;
   mode: "descending" | "ascending";
   onClick: () => void;
+  children?: React.ReactNode;
 }> = ({ sort, mode, onClick, children }) => (
   <Row
     alignItems="center"

@@ -84,7 +84,7 @@ export default class StakeStore {
       puzzle.decimals
     );
     const amount = puzzleStakedAmount?.toFormat(2) + ` ${puzzle.symbol}`;
-    const puzzleRate = poolsStore.usdnRate(puzzle.assetId) ?? BN.ZERO;
+    const puzzleRate = poolsStore.usdtRate(puzzle.assetId) ?? BN.ZERO;
     const usdnEquivalent = puzzleStakedAmount.times(puzzleRate);
     const item = {
       onClickPath: ROUTES.STAKE,

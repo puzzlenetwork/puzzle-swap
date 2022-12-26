@@ -96,12 +96,12 @@ const LoginScreen: React.FC<IProps> = () => {
       type: LOGIN_TYPE.METAMASK,
       active: isMetamaskInstalled,
     },
-    // {
-    //   title: "Keeper Mobile",
-    //   icon: keeper,
-    //   type: LOGIN_TYPE.KEEPER_MOBILE,
-    //   active: true,
-    // },
+    {
+      title: "Keeper Mobile",
+      icon: keeper,
+      type: LOGIN_TYPE.KEEPER_MOBILE,
+      active: true,
+    },
     {
       title: "Keeper Wallet",
       icon: keeper,

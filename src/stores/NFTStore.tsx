@@ -58,9 +58,9 @@ const requiredNfts = [
   },
   {
     name: "Puzzle Khalifa",
-    description:
+    typeId:
       "Puzzle Khalifa artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
-    typeId: nftsPics["KHALIFA"],
+    imageLink: nftsPics["KHALIFA"],
   },
 ];
 
@@ -129,7 +129,7 @@ export default class NftStore {
       `total_sold_nft`
     );
     this._setTotalPuzzleNftsAmount(
-      res && res[0] && res[0].value ? Number(res[0].value) : 0
+      res[0].value ? Number(res[0].value ?? 0) : 0
     );
   };
 

@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { action, makeAutoObservable, when } from "mobx";
+import { makeAutoObservable, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import Balance from "@src/entities/Balance";
@@ -14,9 +14,15 @@ import Pool from "@src/entities/Pool";
 
 const ctx = React.createContext<AddLiquidityInterfaceVM | null>(null);
 
-export const AddLiquidityInterfaceVMProvider: React.FC<{
+interface IProps {
+  children: React.ReactNode;
   poolDomain: string;
-}> = ({ poolDomain, children }) => {
+}
+
+export const AddLiquidityInterfaceVMProvider: React.FC<IProps> = ({
+  poolDomain,
+  children,
+}) => {
   const rootStore = useStores();
   const store = useMemo(
     () => new AddLiquidityInterfaceVM(rootStore, poolDomain),
@@ -31,8 +37,7 @@ class AddLiquidityInterfaceVM {
   public poolDomain: string;
   public rootStore: RootStore;
   public baseTokenAmount: BN = BN.ZERO;
-  @action.bound public setBaseTokenAmount = (value: BN) =>
-    (this.baseTokenAmount = value);
+  public setBaseTokenAmount = (value: BN) => (this.baseTokenAmount = value);
 
   public changePoolModalOpen: boolean = false;
   setChangePoolModalOpen = (value: boolean) =>
@@ -46,8 +51,8 @@ class AddLiquidityInterfaceVM {
     (this.notificationParams = params);
 
   providedPercentOfPool: BN = new BN(50);
-  @action.bound setProvidedPercentOfPool = (value: number) =>
-    (this.providedPercentOfPool = new BN(value));
+  setProvidedPercentOfPool = (value: number | number[]) =>
+    (this.providedPercentOfPool = new BN(value.toString()));
 
   private _pool: Pool | null = null;
   private _setPool = (pool: Pool) => (this._pool = pool);
@@ -160,7 +165,7 @@ class AddLiquidityInterfaceVM {
   get baseTokenAmountUsdnEquivalent() {
     if (this.baseToken == null) return "";
     const rate =
-      this.rootStore.poolsStore.usdnRate(this.baseToken.assetId, 1) ?? BN.ZERO;
+      this.rootStore.poolsStore.usdtRate(this.baseToken.assetId, 1) ?? BN.ZERO;
     const value = rate.times(this.baseTokenAmount);
     return "~ " + BN.formatUnits(value, this.baseToken.decimals).toFixed(2);
   }
@@ -170,7 +175,7 @@ class AddLiquidityInterfaceVM {
     if (tokensToDepositAmounts == null || this.pool == null) return null;
     const total = this.pool.tokens.reduce<BN>((acc, token) => {
       const rate =
-        this.rootStore.poolsStore.usdnRate(token.assetId, 1) ?? BN.ZERO;
+        this.rootStore.poolsStore.usdtRate(token.assetId, 1) ?? BN.ZERO;
       const balance = tokensToDepositAmounts[token.assetId];
       const usdnEquivalent = BN.formatUnits(
         balance.times(rate),
@@ -196,13 +201,6 @@ class AddLiquidityInterfaceVM {
     return asset.balance?.gt(0.0001) && !asset.balance.lt(this.baseTokenAmount);
   }
 
-  @action.bound onMaxBaseTokenClick = () => {
-    const userTokenBalance = this.baseTokenBalance;
-    userTokenBalance &&
-      userTokenBalance.balance &&
-      this.setBaseTokenAmount(userTokenBalance.balance);
-  };
-
   depositMultiply = async () => {
     const { accountStore } = this.rootStore;
     if (this.pool?.contractAddress == null) return;
@@ -213,9 +211,12 @@ class AddLiquidityInterfaceVM {
     const payment = Object.entries(this.tokensToDepositAmounts).reduce(
       (acc, [assetId, value]) => [
         ...acc,
-        { assetId, amount: value.toSignificant(0).toString() },
+        {
+          assetId: assetId === "WAVES" ? null : assetId,
+          amount: value.toSignificant(0).toString(),
+        },
       ],
-      [] as Array<{ assetId: string; amount: string }>
+      [] as Array<{ assetId: string | null; amount: string }>
     );
 
     accountStore
@@ -251,6 +252,13 @@ class AddLiquidityInterfaceVM {
       })
       .then(() => accountStore.updateAccountAssets(true))
       .finally(() => this._setLoading(false));
+  };
+
+  onMaxBaseTokenClick = () => {
+    const userTokenBalance = this.baseTokenBalance;
+    userTokenBalance &&
+      userTokenBalance.balance &&
+      this.setBaseTokenAmount(userTokenBalance.balance);
   };
 
   showHighSlippageWarning = () => {

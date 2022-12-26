@@ -37,7 +37,7 @@ const MegaPoolsHistory: React.FC<IProps> = () => {
             // }));
             // const totalAddedUsdn = addedTokens.reduce(
             //   (acc, { assetId, amount, decimals }) => {
-            //     const rate = poolsStore.usdnRate(assetId, 1) ?? BN.ZERO;
+            //     const rate = poolsStore.usdtRate(assetId, 1) ?? BN.ZERO;
             //     const am = BN.formatUnits(amount, decimals);
             //     return acc.plus(am.times(rate));
             //   },
@@ -84,7 +84,7 @@ const MegaPoolsHistory: React.FC<IProps> = () => {
             }));
             const totalAddedUsdn = addedTokens.reduce(
               (acc: any, { assetId, amount, decimals }: any) => {
-                const rate = poolsStore.usdnRate(assetId, 1) ?? BN.ZERO;
+                const rate = poolsStore.usdtRate(assetId, 1) ?? BN.ZERO;
                 const am = BN.formatUnits(amount, decimals);
                 return acc.plus(am.times(rate));
               },
@@ -97,7 +97,7 @@ const MegaPoolsHistory: React.FC<IProps> = () => {
               amount: new BN(v.payment[0].amount),
             };
             const am = BN.formatUnits(t.amount, t.decimals);
-            const rate = poolsStore.usdnRate(t.assetId, 1) ?? BN.ZERO;
+            const rate = poolsStore.usdtRate(t.assetId, 1) ?? BN.ZERO;
             return "$ " + am.times(rate).toFormat(2);
           case "unstakeAndRedeemIndex":
             const removedTokens =
@@ -110,7 +110,7 @@ const MegaPoolsHistory: React.FC<IProps> = () => {
             const totalRemovedTokenUsdn = removedTokens.reduce(
               (acc: any, { assetId, amount, decimals }: any) => {
                 const tokenAmount = BN.formatUnits(amount, decimals);
-                const rate = poolsStore.usdnRate(assetId, 1) ?? BN.ZERO;
+                const rate = poolsStore.usdtRate(assetId, 1) ?? BN.ZERO;
                 return acc.plus(rate.times(tokenAmount));
               },
               BN.ZERO
@@ -125,7 +125,7 @@ const MegaPoolsHistory: React.FC<IProps> = () => {
             // );
             // const totalClaimedUsdn = claimedTokens.reduce(
             //   (acc, { assetId, amount, decimals }) => {
-            //     const rate = poolsStore.usdnRate(assetId, 1) ?? BN.ZERO;
+            //     const rate = poolsStore.usdtRate(assetId, 1) ?? BN.ZERO;
             //     const am = BN.formatUnits(amount, decimals);
             //     return acc.plus(rate.times(am));
             //   },

@@ -7,9 +7,13 @@ import Balance from "@src/entities/Balance";
 import BN from "@src/utils/BN";
 import { ROUTES, TOKENS_LIST } from "@src/constants";
 
+interface IProps {
+  children: React.ReactNode;
+}
+
 const ctx = React.createContext<WalletVM | null>(null);
 
-export const WalletVMProvider: React.FC = ({ children }) => {
+export const WalletVMProvider: React.FC<IProps> = ({ children }) => {
   const rootStore = useStores();
   const store = useMemo(() => new WalletVM(rootStore), [rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
@@ -83,13 +87,13 @@ class WalletVM {
     const { poolsStore, stakeStore } = this.rootStore;
     const poolsData =
       poolsStore.investedInPools
-        ?.filter(({ liquidityInUsdn }) => !liquidityInUsdn.eq(0))
+        ?.filter(({ liquidityInUsdt }) => !liquidityInUsdt.eq(0))
         .map(
           ({
             pool,
             addressStaked,
             indexTokenRate,
-            liquidityInUsdn,
+            liquidityInUsdt,
             indexTokenName,
           }) => {
             const amount = BN.formatUnits(addressStaked, 8);
@@ -101,7 +105,7 @@ class WalletVM {
                 (amount.gte(0.0001) ? amount.toFormat(4) : amount.toFormat(8)) +
                 indexTokenName,
               nuclearValue: indexTokenRate,
-              usdnEquivalent: liquidityInUsdn,
+              usdnEquivalent: liquidityInUsdt,
             };
           }
         ) ?? [];

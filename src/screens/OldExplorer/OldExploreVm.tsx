@@ -8,9 +8,13 @@ import BN from "@src/utils/BN";
 import { TOKENS_BY_SYMBOL, TOKENS_LIST } from "@src/constants";
 import transactionsService from "@src/services/transactionsService";
 
+interface IProps {
+  children: React.ReactNode;
+}
+
 const ctx = React.createContext<OldExploreVm | null>(null);
 
-export const OldExploreVMProvider: React.FC = ({ children }) => {
+export const OldExploreVMProvider: React.FC<IProps> = ({ children }) => {
   const rootStore = useStores();
   const store = useMemo(() => new OldExploreVm(rootStore), [rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
