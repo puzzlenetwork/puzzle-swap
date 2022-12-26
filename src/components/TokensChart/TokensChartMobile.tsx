@@ -27,7 +27,6 @@ const TokensChartMobileImpl: React.FC<IProps> = observer(({ ...rest }) => {
       visible={rest.visible}
       title={`${rest.token0.symbol}/${rest.token1.symbol}`}
     >
-      {/*//todo if its ok*/}
       <TokensChart {...(rest as any)} />
       <SizedBox height={24} />
       <ChartAgeButtons

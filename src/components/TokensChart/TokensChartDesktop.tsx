@@ -67,7 +67,6 @@ const TokensChartDesktopImpl: React.FC<IProps> = observer(
               onChange={vm.setSelectedChartPeriod}
             />
           </Row>
-          {/*fixme*/}
           <TokensChart {...(rest as any)} />
         </Card>
         <SizedBox height={16} />
