@@ -63,6 +63,11 @@ interface IAssetDetails {
 }
 
 const nodeService = {
+  blocksHeight: async (): Promise<{ height: number }> => {
+    const url = `/blocks/height`;
+    const { data } = await makeNodeRequest(url);
+    return data;
+  },
   getAddressNfts: async (address: string): Promise<INFT[]> => {
     const url = `/assets/nft/${address}/limit/1000`;
     const { data } = await makeNodeRequest(url);

@@ -11,6 +11,7 @@ import dayjs from "dayjs";
 import PoolAction from "./PoolAction";
 
 interface IProps extends ITransaction {
+  currentHeight: number | null;
   usdtRate: (assetId: string, coefficient: number) => BN | null;
 }
 
@@ -30,6 +31,8 @@ const Transaction: React.FC<IProps> = ({
   stateChanges,
   usdtRate,
   payment,
+  height,
+  currentHeight,
 }) => {
   if (
     ![
@@ -136,6 +139,8 @@ const Transaction: React.FC<IProps> = ({
         return null;
     }
   };
+  const minutes =
+    currentHeight == null ? 0 : new BN(currentHeight).minus(height).toNumber();
   const details = draw();
   return details != null ? (
     <Root
@@ -145,10 +150,10 @@ const Transaction: React.FC<IProps> = ({
     >
       <Row alignItems="center">{details}</Row>
       <Text fitContent nowrap>
-        ${amount?.toFormat(2)}
+        ${amount.isNaN() ? "0.00" : +amount?.toFormat(2)}
       </Text>
       <Text fitContent nowrap>
-        {(dayjs(timestamp) as any).fromNow()}
+        {(dayjs().subtract(minutes, "minutes") as any).fromNow()}
       </Text>
     </Root>
   ) : null;

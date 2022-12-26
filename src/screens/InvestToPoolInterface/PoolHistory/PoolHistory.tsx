@@ -52,6 +52,7 @@ const PoolHistory: React.FC<IProps> = () => {
                 <Transaction
                   {...tr}
                   key={tr.id}
+                  currentHeight={vm.currentBlockHeight}
                   usdtRate={poolsStore.usdtRate}
                 />
               ))}

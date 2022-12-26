@@ -39,6 +39,9 @@ class InvestToPoolInterfaceVM {
   public poolDomain: string;
   public rootStore: RootStore;
 
+  public currentBlockHeight: number | null = null;
+  private setCurrentBlockHeight = (v: number) => (this.currentBlockHeight = v);
+
   loading: boolean = false;
   private _setLoading = (l: boolean) => (this.loading = l);
 
@@ -92,6 +95,7 @@ class InvestToPoolInterfaceVM {
       () => this.pool != null,
       async () => {
         await Promise.all([
+          this.updateBlockHeight(),
           this.updatePoolTokenBalances(),
           this.getAddressActivityInfo(),
           this.loadTransactionsHistory(),
@@ -293,6 +297,10 @@ class InvestToPoolInterfaceVM {
     );
   }
 
+  updateBlockHeight = async () => {
+    const data = await nodeService.blocksHeight();
+    this.setCurrentBlockHeight(data.height);
+  };
   updatePoolTokenBalances = async () => {
     const { pool } = this;
     const { data }: { data: TContractAssetBalancesResponse } =
