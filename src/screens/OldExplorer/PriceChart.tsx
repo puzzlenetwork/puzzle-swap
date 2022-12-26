@@ -17,6 +17,7 @@ import { Row } from "@src/components/Flex";
 import Spinner from "@components/Spinner";
 import TitleWithTips from "@components/TitleWithTips";
 import { TChartDataRecord, useOldExploreVM } from "./OldExploreVm";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -174,9 +175,7 @@ const PriceChart: React.FC<IProps> = () => {
                   {dayjs(date).format("MM:HH, MMM DD")}
                 </Text>
               )}
-              // formatter={(volume: number) => (
-              //   <Text size="medium">$&nbsp;{new BN(volume).toFormat(2)}</Text>
-              // )}
+              formatter={(value) => "$ " + new BN(`${value}`).toFormat(2)}
               contentStyle={{
                 border: "none",
                 filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))",
