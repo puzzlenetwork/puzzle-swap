@@ -91,7 +91,7 @@ const nodeService = {
       await Promise.all([
         makeNodeRequest(assetsUrl).then(({ data }) => data),
         makeNodeRequest(wavesUrl).then(({ data }) => ({
-          balances: [{ balance: data.regular, assetId: "WAVES" }],
+          balances: [{ balance: data.available, assetId: "WAVES" }],
         })),
       ])
     ).reduce<{ assetId: string; balance: number }[]>(

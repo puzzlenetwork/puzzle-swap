@@ -111,7 +111,7 @@ class WithdrawLiquidityVM {
           .times(this.userIndexStaked ?? BN.ZERO);
         const tokenAmountToGet = top.div(this.pool.globalPoolTokenAmount);
         const parserAmount = BN.formatUnits(tokenAmountToGet, decimals);
-        const rate = this.rootStore.poolsStore.usdnRate(assetId, 1) ?? BN.ZERO;
+        const rate = this.rootStore.poolsStore.usdtRate(assetId, 1) ?? BN.ZERO;
         const usdnEquivalent = BN.formatUnits(
           tokenAmountToGet.times(rate),
           decimals

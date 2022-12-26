@@ -107,7 +107,7 @@ class SwapVM {
   }
 
   get usdnEquivalent0() {
-    const rate = this.rootStore.poolsStore.usdnRate(this.token0.assetId);
+    const rate = this.rootStore.poolsStore.usdtRate(this.token0.assetId);
     const value = BN.formatUnits(this.amount0, this.token0.decimals).times(
       rate ?? BN.ZERO
     );
@@ -116,7 +116,7 @@ class SwapVM {
   }
 
   get usdnEquivalent1() {
-    const rate = this.rootStore.poolsStore.usdnRate(this.token1.assetId);
+    const rate = this.rootStore.poolsStore.usdtRate(this.token1.assetId);
     const value = BN.formatUnits(this.amount1, this.token1.decimals).times(
       rate ?? BN.ZERO
     );

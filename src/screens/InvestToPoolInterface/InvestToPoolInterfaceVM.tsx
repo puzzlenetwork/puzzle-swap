@@ -179,7 +179,7 @@ class InvestToPoolInterfaceVM {
         return acc.plus(0);
       }
       const dollEquivalent = this.rootStore.poolsStore
-        .usdnRate(assetId)
+        .usdtRate(assetId)
         ?.times(BN.formatUnits(amount, TOKENS_BY_ASSET_ID[assetId].decimals));
       return acc.plus(dollEquivalent ?? 0);
     }, BN.ZERO);
@@ -194,7 +194,7 @@ class InvestToPoolInterfaceVM {
         this.pool.liquidity[token.assetId] ?? BN.ZERO,
         token.decimals
       );
-      const rate = this.rootStore.poolsStore.usdnRate(token.assetId);
+      const rate = this.rootStore.poolsStore.usdtRate(token.assetId);
       return [
         ...acc,
         {
@@ -213,10 +213,10 @@ class InvestToPoolInterfaceVM {
       this.userIndexStaked == null
     )
       return BN.ZERO;
-    const liquidityInUsdn = this.pool.globalLiquidity
+    const liquidityInUsdt = this.pool.globalLiquidity
       .times(this.userIndexStaked)
       .div(this.globalIndexStaked);
-    return liquidityInUsdn.isNaN() ? BN.ZERO : liquidityInUsdn;
+    return liquidityInUsdt.isNaN() ? BN.ZERO : liquidityInUsdt;
   }
 
   get shareOfPool() {
@@ -243,7 +243,7 @@ class InvestToPoolInterfaceVM {
       const tokenAmountToGet = top.div(this.pool.globalPoolTokenAmount);
       const parserAmount = BN.formatUnits(tokenAmountToGet, token.decimals);
       const rate =
-        this.rootStore.poolsStore.usdnRate(token.assetId, 1) ?? BN.ZERO;
+        this.rootStore.poolsStore.usdtRate(token.assetId, 1) ?? BN.ZERO;
       const usdnEquivalent = BN.formatUnits(
         tokenAmountToGet.times(rate),
         token.decimals

@@ -394,7 +394,7 @@ class CreateCustomPoolsVm {
 
   get puzzleNFTPrice() {
     const { poolsStore, nftStore } = this.rootStore;
-    const rate = poolsStore.usdnRate(TOKENS_BY_SYMBOL.PUZZLE.assetId, 1);
+    const rate = poolsStore.usdtRate(TOKENS_BY_SYMBOL.PUZZLE.assetId, 1);
     if (nftStore.totalPuzzleNftsAmount == null || rate == null) return null;
     const amount = new BN(400).plus(nftStore.totalPuzzleNftsAmount).div(rate);
     return Math.ceil(amount.toNumber() + 1);
@@ -612,7 +612,7 @@ class CreateCustomPoolsVm {
       (acc, { asset, share }) => {
         const { assetId, decimals } = asset;
         const tokenBalance = findBalanceByAssetId(assetId);
-        const rate = poolsStore.usdnRate(assetId) ?? BN.ZERO;
+        const rate = poolsStore.usdtRate(assetId) ?? BN.ZERO;
         if (tokenBalance?.balance == null) return acc;
         const balance = BN.formatUnits(tokenBalance.balance, decimals);
         const maxDollarValue = balance.times(rate).div(share.div(1000));
@@ -647,7 +647,7 @@ class CreateCustomPoolsVm {
 
     return this.poolsAssets.map(({ asset, share }) => {
       const { assetId, decimals } = asset;
-      const rate = poolsStore.usdnRate(assetId, 1) ?? BN.ZERO;
+      const rate = poolsStore.usdtRate(assetId, 1) ?? BN.ZERO;
       const amountToProvide = this.maxToProvide
         .div(rate)
         .times(share.div(1000))

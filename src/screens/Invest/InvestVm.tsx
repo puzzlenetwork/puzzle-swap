@@ -67,7 +67,7 @@ class InvestVM {
     const { investedInPools } = this.rootStore.poolsStore;
     if (investedInPools == null) return null;
     const value = investedInPools?.reduce(
-      (acc, v) => acc.plus(v.liquidityInUsdn),
+      (acc, v) => acc.plus(v.liquidityInUsdt),
       BN.ZERO
     );
     return "$ " + value?.toFormat(2);

@@ -88,7 +88,7 @@ class SendAssetVM {
     const { assetToSend } = accountStore;
     if (assetToSend == null) return "";
     const amount = BN.formatUnits(this.amount, assetToSend?.decimals);
-    const rate = poolsStore.usdnRate(assetToSend.assetId, 1) ?? BN.ZERO;
+    const rate = poolsStore.usdtRate(assetToSend.assetId, 1) ?? BN.ZERO;
     return "$ " + rate?.times(amount)?.toFormat(2);
   }
 

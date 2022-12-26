@@ -165,7 +165,7 @@ class AddLiquidityInterfaceVM {
   get baseTokenAmountUsdnEquivalent() {
     if (this.baseToken == null) return "";
     const rate =
-      this.rootStore.poolsStore.usdnRate(this.baseToken.assetId, 1) ?? BN.ZERO;
+      this.rootStore.poolsStore.usdtRate(this.baseToken.assetId, 1) ?? BN.ZERO;
     const value = rate.times(this.baseTokenAmount);
     return "~ " + BN.formatUnits(value, this.baseToken.decimals).toFixed(2);
   }
@@ -175,7 +175,7 @@ class AddLiquidityInterfaceVM {
     if (tokensToDepositAmounts == null || this.pool == null) return null;
     const total = this.pool.tokens.reduce<BN>((acc, token) => {
       const rate =
-        this.rootStore.poolsStore.usdnRate(token.assetId, 1) ?? BN.ZERO;
+        this.rootStore.poolsStore.usdtRate(token.assetId, 1) ?? BN.ZERO;
       const balance = tokensToDepositAmounts[token.assetId];
       const usdnEquivalent = BN.formatUnits(
         balance.times(rate),

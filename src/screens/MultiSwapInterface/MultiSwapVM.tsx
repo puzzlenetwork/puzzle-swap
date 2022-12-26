@@ -72,13 +72,13 @@ class MultiSwapVM {
 
   get amount0UsdnEquivalent(): string {
     const { token0 } = this;
-    const usdnRate = this.rootStore.poolsStore.usdnRate(this.assetId0, 1);
-    if (token0 == null || usdnRate == null) return "—";
-    const result = usdnRate.times(
+    const usdtRate = this.rootStore.poolsStore.usdtRate(this.assetId0, 1);
+    if (token0 == null || usdtRate == null) return "—";
+    const result = usdtRate.times(
       BN.formatUnits(this.amount0, token0.decimals)
     );
     if (!result.gt(0)) return "—";
-    return `~ ${usdnRate
+    return `~ ${usdtRate
       .times(BN.formatUnits(this.amount0, token0.decimals))
       .toFormat(2)} $`;
   }
@@ -167,13 +167,13 @@ class MultiSwapVM {
 
   get amount1UsdnEquivalent(): string {
     const { token1 } = this;
-    const usdnRate = this.rootStore.poolsStore.usdnRate(this.assetId1, 1);
-    if (token1 == null || usdnRate == null) return "—";
-    const result = usdnRate.times(
+    const usdtRate = this.rootStore.poolsStore.usdtRate(this.assetId1, 1);
+    if (token1 == null || usdtRate == null) return "—";
+    const result = usdtRate.times(
       BN.formatUnits(this.amount1, token1.decimals)
     );
     if (!result.gt(0)) return "—";
-    return `~ ${usdnRate
+    return `~ ${usdtRate
       .times(BN.formatUnits(this.amount1, token1.decimals))
       .toFormat(2)} $`;
   }

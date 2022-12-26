@@ -92,7 +92,7 @@ const TokensTable: React.FC<IProps> = () => {
           tokens.reduce(
             (acc, { assetId }) => ({
               ...acc,
-              [assetId]: poolsStore.usdnRate(assetId)?.toFormat(2) ?? "0.00",
+              [assetId]: poolsStore.usdtRate(assetId)?.toFormat(2) ?? "0.00",
             }),
             {} as Record<string, string>
           )

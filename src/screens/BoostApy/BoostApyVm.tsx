@@ -102,18 +102,18 @@ class BoostApyVm {
 
   get usdnEquivalent(): string {
     const { token } = this;
-    const usdnRate = this.rootStore?.poolsStore.usdnRate(this.assetId, 1);
-    if (token == null || usdnRate == null) return "—";
-    const result = usdnRate.times(BN.formatUnits(this.amount, token.decimals));
+    const usdtRate = this.rootStore?.poolsStore.usdtRate(this.assetId, 1);
+    if (token == null || usdtRate == null) return "—";
+    const result = usdtRate.times(BN.formatUnits(this.amount, token.decimals));
     if (!result.gt(0)) return "—";
-    return `~ ${usdnRate
+    return `~ ${usdtRate
       .times(BN.formatUnits(this.amount, token.decimals))
       .toFormat(2)} $`;
   }
 
   get calcBoostedApy() {
     const usdnEquivalent = this.rootStore?.poolsStore
-      .usdnRate(this.assetId, 1)
+      .usdtRate(this.assetId, 1)
       ?.times(BN.formatUnits(this.amount, this.token?.decimals));
 
     if (

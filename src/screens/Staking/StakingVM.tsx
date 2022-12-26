@@ -269,7 +269,7 @@ class StakingVM {
   get tokenStakeInputInfo() {
     const { address } = this.rootStore.accountStore;
     const rate =
-      this.rootStore.poolsStore.usdnRate(this.puzzleToken.assetId, 1) ??
+      this.rootStore.poolsStore.usdtRate(this.puzzleToken.assetId, 1) ??
       BN.ZERO;
     const usdnEquivalentValue = rate.times(this.puzzleAmountToStake);
     const usdnEquivalent =
@@ -295,7 +295,7 @@ class StakingVM {
   get unstakeTokenInputInfo() {
     const { address } = this.rootStore.accountStore;
     const rate =
-      this.rootStore.poolsStore.usdnRate(this.puzzleToken.assetId, 1) ??
+      this.rootStore.poolsStore.usdtRate(this.puzzleToken.assetId, 1) ??
       BN.ZERO;
     const usdnEquivalentValue = rate.times(this.puzzleAmountToUnstake);
     const usdnEquivalent =
