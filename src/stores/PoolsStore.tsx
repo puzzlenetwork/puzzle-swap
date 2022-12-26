@@ -8,7 +8,6 @@ import {
   TOKENS_BY_ASSET_ID,
   TOKENS_BY_SYMBOL,
 } from "@src/constants";
-import poolsService from "@src/services/poolsService";
 import poolService from "@src/services/poolsService";
 import nodeService from "@src/services/nodeService";
 
@@ -160,11 +159,7 @@ export default class PoolsStore {
       return priceInPuzzle != null ? priceInPuzzle.times(puzzleRate) : null;
     } else if (pool.tokens.some(({ assetId }) => assetId === usdn)) {
       const usdnRate = pool.usdnRate;
-      console.log(pool);
       const priceInUSDN = pool.currentPrice(assetId, usdn);
-      if (TOKENS_BY_ASSET_ID[assetId].symbol === "BUSD") {
-        console.log("bnb is null ", pool?.domain, priceInUSDN?.toString());
-      }
       return priceInUSDN != null
         ? priceInUSDN.times(usdnRate)
         : new BN(startPrice ?? 0);
@@ -237,7 +232,7 @@ export default class PoolsStore {
 
   updatePoolsState = async () => {
     const address = this.rootStore.accountStore.address;
-    const state = await poolsService.getPoolsStateByUserAddress(address);
+    const state = await poolService.getPoolsStateByUserAddress(address);
     this.setPoolState(state);
     this.syncPoolsLiquidity();
     address && this.updateAccountCustomPoolsLiquidityInfo(address);
