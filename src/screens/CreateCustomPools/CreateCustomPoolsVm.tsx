@@ -128,14 +128,14 @@ class CreateCustomPoolsVm {
   get isThereUsdnOrPuzzle() {
     return (
       this.poolsAssets.filter(({ asset }) =>
-        ["USDN", "PUZZLE"].includes(asset.symbol)
+        ["USDN", "PUZZLE", "USDT"].includes(asset.symbol)
       ).length > 0
     );
   }
 
   get requiredTokensCorrectShare() {
     return this.poolsAssets
-      .filter(({ asset }) => ["USDN", "PUZZLE"].includes(asset.symbol))
+      .filter(({ asset }) => ["USDN", "PUZZLE", "USDT"].includes(asset.symbol))
       .some(({ share }) => share.gte(20));
   }
 
@@ -190,7 +190,7 @@ class CreateCustomPoolsVm {
         locked: false,
       },
       {
-        asset: TOKENS_BY_SYMBOL.USDN,
+        asset: TOKENS_BY_SYMBOL.USDT,
         share: new BN(500),
         locked: false,
       },
