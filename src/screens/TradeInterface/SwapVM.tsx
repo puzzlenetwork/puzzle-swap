@@ -13,9 +13,13 @@ import {
   TOKENS_BY_SYMBOL,
 } from "@src/constants";
 
+interface IProps {
+  children: React.ReactNode;
+}
+
 const ctx = React.createContext<SwapVM | null>(null);
 
-export const SwapVMProvider: React.FC = ({ children }) => {
+export const SwapVMProvider: React.FC<IProps> = ({ children }) => {
   const rootStore = useStores();
   const store = useMemo(() => new SwapVM(rootStore), [rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
@@ -103,7 +107,7 @@ class SwapVM {
   }
 
   get usdnEquivalent0() {
-    const rate = this.rootStore.poolsStore.usdnRate(this.token0.assetId);
+    const rate = this.rootStore.poolsStore.usdtRate(this.token0.assetId);
     const value = BN.formatUnits(this.amount0, this.token0.decimals).times(
       rate ?? BN.ZERO
     );
@@ -112,7 +116,7 @@ class SwapVM {
   }
 
   get usdnEquivalent1() {
-    const rate = this.rootStore.poolsStore.usdnRate(this.token1.assetId);
+    const rate = this.rootStore.poolsStore.usdtRate(this.token1.assetId);
     const value = BN.formatUnits(this.amount1, this.token1.decimals).times(
       rate ?? BN.ZERO
     );
@@ -244,7 +248,7 @@ class SwapVM {
         dApp: CONTRACT_ADDRESSES.aggregator,
         payment: [
           {
-            assetId: token0.assetId,
+            assetId: token0.assetId === "WAVES" ? null : token0.assetId,
             amount: amount0.toString(),
           },
         ],

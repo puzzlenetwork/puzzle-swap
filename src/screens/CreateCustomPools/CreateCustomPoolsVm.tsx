@@ -27,9 +27,13 @@ import checkDomainPaid from "@screens/CreateCustomPools/utils/checkDomainPaid";
 import Button from "@components/Button";
 import getDomainPaymentArtefactId from "@src/utils/getDomainPaymentArtefactId";
 
+interface IProps {
+  children: React.ReactNode;
+}
+
 const ctx = React.createContext<CreateCustomPoolsVm | null>(null);
 
-export const CreateCustomPoolsVMProvider: React.FC = ({ children }) => {
+export const CreateCustomPoolsVMProvider: React.FC<IProps> = ({ children }) => {
   const rootStore = useStores();
   const store = useMemo(() => new CreateCustomPoolsVm(rootStore), [rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
@@ -124,14 +128,14 @@ class CreateCustomPoolsVm {
   get isThereUsdnOrPuzzle() {
     return (
       this.poolsAssets.filter(({ asset }) =>
-        ["USDN", "PUZZLE"].includes(asset.symbol)
+        ["USDN", "PUZZLE", "USDT"].includes(asset.symbol)
       ).length > 0
     );
   }
 
   get requiredTokensCorrectShare() {
     return this.poolsAssets
-      .filter(({ asset }) => ["USDN", "PUZZLE"].includes(asset.symbol))
+      .filter(({ asset }) => ["USDN", "PUZZLE", "USDT"].includes(asset.symbol))
       .some(({ share }) => share.gte(20));
   }
 
@@ -186,7 +190,7 @@ class CreateCustomPoolsVm {
         locked: false,
       },
       {
-        asset: TOKENS_BY_SYMBOL.USDN,
+        asset: TOKENS_BY_SYMBOL.USDT,
         share: new BN(500),
         locked: false,
       },
@@ -390,7 +394,7 @@ class CreateCustomPoolsVm {
 
   get puzzleNFTPrice() {
     const { poolsStore, nftStore } = this.rootStore;
-    const rate = poolsStore.usdnRate(TOKENS_BY_SYMBOL.PUZZLE.assetId, 1);
+    const rate = poolsStore.usdtRate(TOKENS_BY_SYMBOL.PUZZLE.assetId, 1);
     if (nftStore.totalPuzzleNftsAmount == null || rate == null) return null;
     const amount = new BN(400).plus(nftStore.totalPuzzleNftsAmount).div(rate);
     return Math.ceil(amount.toNumber() + 1);
@@ -407,8 +411,8 @@ class CreateCustomPoolsVm {
   }
 
   providedPercentOfPool: BN = new BN(100);
-  setProvidedPercentOfPool = (value: number) =>
-    (this.providedPercentOfPool = new BN(value));
+  setProvidedPercentOfPool = (value: number | number[]) =>
+    (this.providedPercentOfPool = new BN(value.toString()));
 
   get totalAmountToAddLiquidity(): string | null {
     return BN.ZERO.toFormat();
@@ -608,7 +612,7 @@ class CreateCustomPoolsVm {
       (acc, { asset, share }) => {
         const { assetId, decimals } = asset;
         const tokenBalance = findBalanceByAssetId(assetId);
-        const rate = poolsStore.usdnRate(assetId) ?? BN.ZERO;
+        const rate = poolsStore.usdtRate(assetId) ?? BN.ZERO;
         if (tokenBalance?.balance == null) return acc;
         const balance = BN.formatUnits(tokenBalance.balance, decimals);
         const maxDollarValue = balance.times(rate).div(share.div(1000));
@@ -637,20 +641,20 @@ class CreateCustomPoolsVm {
     return min.dollarValue;
   }
 
-  get assetsForInitFunction(): { assetId: string; amount: string }[] {
+  get assetsForInitFunction(): { assetId: string | null; amount: string }[] {
     if (this.tokensToProvideInUsdnMap == null) return [];
     const { poolsStore } = this.rootStore;
 
     return this.poolsAssets.map(({ asset, share }) => {
       const { assetId, decimals } = asset;
-      const rate = poolsStore.usdnRate(assetId, 1) ?? BN.ZERO;
+      const rate = poolsStore.usdtRate(assetId, 1) ?? BN.ZERO;
       const amountToProvide = this.maxToProvide
         .div(rate)
         .times(share.div(1000))
         .times(this.providedPercentOfPool.div(100));
 
       return {
-        assetId,
+        assetId: assetId === "WAVES" ? null : assetId,
         amount: BN.parseUnits(amountToProvide, decimals)
           .toSignificant(0)
           .toString(),

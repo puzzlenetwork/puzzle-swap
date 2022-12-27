@@ -7,9 +7,14 @@ import dayjs, { Dayjs } from "dayjs";
 import axios from "axios";
 import transactionsService from "@src/services/transactionsService";
 
+interface IProps {
+  children: React.ReactNode;
+  assetId: string;
+}
+
 const ctx = React.createContext<ExploreTokenVM | null>(null);
 
-export const ExploreTokenVMProvider: React.FC<{ assetId: string }> = ({
+export const ExploreTokenVMProvider: React.FC<IProps> = ({
   assetId,
   children,
 }) => {

@@ -2,7 +2,7 @@ name: Deploy
 
 env:
   REACT_APP_API_BASE_DEV: https://puzzle-js-back-test.herokuapp.com
-  REACT_APP_API_BASE_PROD: https://jsback.puzzleswap.org
+  REACT_APP_API_BASE_PROD: https://puzzle-js-back.herokuapp.com
   REACT_APP_AGG_API_DEV: https://stage.puzzle-aggr-api.com
   REACT_APP_AGG_API_PROD: https://waves.puzzle-aggr-api.com
 

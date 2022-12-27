@@ -12,7 +12,6 @@ import {
   useMultiSwapVM,
 } from "@screens/MultiSwapInterface/MultiSwapVM";
 import { observer } from "mobx-react-lite";
-import SwitchTokensButton from "@screens/MultiSwapInterface/SwitchTokensButton";
 import Text from "@components/Text";
 import SwapButton from "@screens/MultiSwapInterface/SwapButton";
 import TooltipFeeInfo from "@screens/MultiSwapInterface/TooltipFeeInfo";
@@ -24,6 +23,7 @@ import Loading from "@components/Loading";
 import { ROUTES } from "@src/constants";
 import { useStores } from "@stores";
 import Divider from "@components/Divider";
+import SwitchTokensButton from "./SwitchTokensButton";
 
 const Root = styled.div`
   display: flex;
@@ -44,6 +44,7 @@ const Root = styled.div`
 const MultiSwapInterfaceImpl: React.FC = observer(() => {
   const vm = useMultiSwapVM();
   const navigate = useNavigate();
+  const { notificationStore } = useStores();
 
   useEffect(() => {
     try {
@@ -60,6 +61,13 @@ const MultiSwapInterfaceImpl: React.FC = observer(() => {
   });
 
   const handleSetAssetId0 = (assetId: string) => {
+    if (assetId === vm.assetId1) {
+      notificationStore.notify("You can't choose same assets", {
+        type: "error",
+        title: "Warning",
+      });
+      return;
+    }
     const urlSearchParams = new URLSearchParams(window.location.search);
     urlSearchParams.set("asset0", assetId);
     navigate({
@@ -70,13 +78,20 @@ const MultiSwapInterfaceImpl: React.FC = observer(() => {
   };
 
   const handleSetAssetId1 = (assetId: string) => {
+    if (assetId === vm.assetId0) {
+      notificationStore.notify("You can't choose same assets", {
+        type: "error",
+        title: "Warning",
+      });
+      return;
+    }
     const urlSearchParams = new URLSearchParams(window.location.search);
     urlSearchParams.set("asset1", assetId);
     navigate({
       pathname: window.location.pathname,
       search: `?${urlSearchParams.toString()}`,
     });
-    vm.setAssetId0(assetId);
+    vm.setAssetId1(assetId);
   };
 
   const { poolsStore } = useStores();

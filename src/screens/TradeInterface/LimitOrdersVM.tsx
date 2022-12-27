@@ -18,9 +18,13 @@ import {
 import aggregatorService from "@src/services/aggregatorService";
 import dayjs from "dayjs";
 
+interface IProps {
+  children: React.ReactNode;
+}
+
 const ctx = React.createContext<LimitOrdersVM | null>(null);
 
-export const LimitOrdersVMProvider: React.FC = ({ children }) => {
+export const LimitOrdersVMProvider: React.FC<IProps> = ({ children }) => {
   const rootStore = useStores();
   const store = useMemo(() => new LimitOrdersVM(rootStore), [rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
@@ -415,7 +419,7 @@ class LimitOrdersVM {
 
   get amountDollEq() {
     const v = this.rootStore.poolsStore
-      .usdnRate(this.amountToken.assetId)
+      .usdtRate(this.amountToken.assetId)
       ?.times(this.amount);
     if (v == null) return "$ 0.00";
     return `$ ${BN.formatUnits(v, this.amountToken.decimals).toFormat(2)}`;
@@ -423,7 +427,7 @@ class LimitOrdersVM {
 
   get priceDollEq() {
     const v = this.rootStore.poolsStore
-      .usdnRate(this.priceToken.assetId)
+      .usdtRate(this.priceToken.assetId)
       ?.times(this.price);
     if (v == null) return "$ 0.00";
     return `$ ${BN.formatUnits(v, this.priceToken.decimals).toFormat(2)}`;
@@ -431,7 +435,7 @@ class LimitOrdersVM {
 
   get totalDollEq() {
     const v = this.rootStore.poolsStore
-      .usdnRate(this.totalToken.assetId)
+      .usdtRate(this.totalToken.assetId)
       ?.times(this.total);
     if (v == null) return "$ 0.00";
     return `$ ${BN.formatUnits(v, this.totalToken.decimals).toFormat(2)}`;

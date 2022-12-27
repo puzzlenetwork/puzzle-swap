@@ -83,9 +83,8 @@ const TradesVolume: React.FC<IProps> = () => {
                 {dayjs(date).format("dddd, MMM DD")}
               </Text>
             )}
-            formatter={(volume: number) => (
-              <Text size="medium">$&nbsp;{new BN(volume).toFormat(2)}</Text>
-            )}
+            formatter={(value) => "$ " + new BN(`${value}`).toFormat(2)}
+            itemStyle={{ border: "none" }}
             contentStyle={{
               border: "none",
               filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))",

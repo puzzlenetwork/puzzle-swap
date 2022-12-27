@@ -15,9 +15,15 @@ import poolsService from "@src/services/poolsService";
 
 const ctx = React.createContext<BoostApyVm | null>(null);
 
-export const BoostApyVmProvider: React.FC<{
+interface IProps {
+  children: React.ReactNode;
   poolDomain: string;
-}> = ({ poolDomain, children }) => {
+}
+
+export const BoostApyVmProvider: React.FC<IProps> = ({
+  poolDomain,
+  children,
+}) => {
   const rootStore = useStores();
   const store = useMemo(
     () => new BoostApyVm(rootStore, poolDomain),
@@ -96,18 +102,18 @@ class BoostApyVm {
 
   get usdnEquivalent(): string {
     const { token } = this;
-    const usdnRate = this.rootStore?.poolsStore.usdnRate(this.assetId, 1);
-    if (token == null || usdnRate == null) return "—";
-    const result = usdnRate.times(BN.formatUnits(this.amount, token.decimals));
+    const usdtRate = this.rootStore?.poolsStore.usdtRate(this.assetId, 1);
+    if (token == null || usdtRate == null) return "—";
+    const result = usdtRate.times(BN.formatUnits(this.amount, token.decimals));
     if (!result.gt(0)) return "—";
-    return `~ ${usdnRate
+    return `~ ${usdtRate
       .times(BN.formatUnits(this.amount, token.decimals))
       .toFormat(2)} $`;
   }
 
   get calcBoostedApy() {
     const usdnEquivalent = this.rootStore?.poolsStore
-      .usdnRate(this.assetId, 1)
+      .usdtRate(this.assetId, 1)
       ?.times(BN.formatUnits(this.amount, this.token?.decimals));
 
     if (
@@ -148,7 +154,10 @@ class BoostApyVm {
       .invoke({
         dApp: CONTRACT_ADDRESSES.boost,
         payment: [
-          { assetId: this.token.assetId, amount: this.amount.toString() },
+          {
+            assetId: this.token.assetId === "WAVES" ? null : this.token.assetId,
+            amount: this.amount.toString(),
+          },
         ],
         call: {
           function: "addBoosting",

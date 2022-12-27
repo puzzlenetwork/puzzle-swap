@@ -34,7 +34,7 @@ const SelectsAssets: React.FC<IProps> = () => {
   const minShareNotification =
     "Please note that minimal share of token should be 5 %";
   const assetNotification =
-    "Please note that the pool must include a PUZZLE or USDN asset with at least 2% of pool weight and the maximum of 10 different assets.";
+    "Please note that the pool must include a PUZZLE, USDN or USDT asset with at least 2% of pool weight and the maximum of 10 different assets.";
   return (
     <Root>
       <Text type="secondary" weight={500}>

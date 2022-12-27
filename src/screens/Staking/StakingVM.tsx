@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { action, makeAutoObservable, reaction } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import Balance from "@src/entities/Balance";
@@ -12,9 +12,13 @@ import {
   TOKENS_BY_SYMBOL,
 } from "@src/constants";
 
+interface IProps {
+  children: React.ReactNode;
+}
+
 const ctx = React.createContext<StakingVM | null>(null);
 
-export const StakingVMProvider: React.FC = ({ children }) => {
+export const StakingVMProvider: React.FC<IProps> = ({ children }) => {
   const rootStore = useStores();
   const store = useMemo(() => new StakingVM(rootStore), [rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
@@ -27,7 +31,7 @@ class StakingVM {
   private _setLoading = (l: boolean) => (this.loading = l);
 
   public action: 0 | 1 = 0;
-  @action.bound setAction = (v: 0 | 1) => (this.action = v);
+  setAction = (v: 0 | 1) => (this.action = v);
 
   public globalStaked: BN | null = null;
   public addressStaked: BN | null = null;
@@ -52,11 +56,11 @@ class StakingVM {
   }
 
   public puzzleAmountToStake: BN = BN.ZERO;
-  @action.bound public setPuzzleAmountToStake = (value: BN) =>
+  public setPuzzleAmountToStake = (value: BN) =>
     (this.puzzleAmountToStake = value);
 
   public puzzleAmountToUnstake: BN = BN.ZERO;
-  @action.bound public setPuzzleAmountToUnStake = (value: BN) =>
+  public setPuzzleAmountToUnStake = (value: BN) =>
     (this.puzzleAmountToUnstake = value);
 
   public get puzzleToken() {
@@ -265,7 +269,7 @@ class StakingVM {
   get tokenStakeInputInfo() {
     const { address } = this.rootStore.accountStore;
     const rate =
-      this.rootStore.poolsStore.usdnRate(this.puzzleToken.assetId, 1) ??
+      this.rootStore.poolsStore.usdtRate(this.puzzleToken.assetId, 1) ??
       BN.ZERO;
     const usdnEquivalentValue = rate.times(this.puzzleAmountToStake);
     const usdnEquivalent =
@@ -291,7 +295,7 @@ class StakingVM {
   get unstakeTokenInputInfo() {
     const { address } = this.rootStore.accountStore;
     const rate =
-      this.rootStore.poolsStore.usdnRate(this.puzzleToken.assetId, 1) ??
+      this.rootStore.poolsStore.usdtRate(this.puzzleToken.assetId, 1) ??
       BN.ZERO;
     const usdnEquivalentValue = rate.times(this.puzzleAmountToUnstake);
     const usdnEquivalent =

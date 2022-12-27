@@ -80,7 +80,7 @@ const PoolsTable: React.FC = () => {
           const data = poolsStore.investedInPools?.find(
             (v) => pool.domain === v.pool.domain
           );
-          return data?.liquidityInUsdn != null && data.liquidityInUsdn.gt(0);
+          return data?.liquidityInUsdt != null && data.liquidityInUsdt.gt(0);
         }
         return true;
       })
@@ -174,8 +174,8 @@ const PoolsTable: React.FC = () => {
           const data = poolsStore.investedInPools?.find(
             (v) => pool.domain === v.pool.domain
           );
-          return data?.liquidityInUsdn != null && data.liquidityInUsdn.gt(0)
-            ? `$${data.liquidityInUsdn.toFormat(2)}`
+          return data?.liquidityInUsdt != null && data.liquidityInUsdt.gt(0)
+            ? `$${data.liquidityInUsdt.toFormat(2)}`
             : "—";
         })(),
         liquidity: "$ " + pool.globalLiquidity.toFormat(2),

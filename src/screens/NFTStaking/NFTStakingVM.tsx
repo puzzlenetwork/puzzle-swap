@@ -11,9 +11,13 @@ import {
 } from "@src/constants";
 import poolsService from "@src/services/poolsService";
 
+interface IProps {
+  children: React.ReactNode;
+}
+
 const ctx = React.createContext<NFTStakingVM | null>(null);
 
-export const NFTStakingVMProvider: React.FC = ({ children }) => {
+export const NFTStakingVMProvider: React.FC<IProps> = ({ children }) => {
   const rootStore = useStores();
   const store = useMemo(() => new NFTStakingVM(rootStore), [rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
@@ -146,7 +150,9 @@ class NFTStakingVM {
     await accountStore
       .invoke({
         dApp: this.contractAddress,
-        payment: [{ assetId, amount: "1" }],
+        payment: [
+          { assetId: assetId === "WAVES" ? null : assetId, amount: "1" },
+        ],
         call: { function: "stake", args: [] },
       })
       .then(

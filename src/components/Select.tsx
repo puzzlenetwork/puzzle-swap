@@ -50,7 +50,7 @@ const Option = styled.div<{ active?: boolean }>`
   font-size: 14px;
   line-height: 20px;
   color: ${({ active, theme }) =>
-    active ? "#3638708F" : theme.colors.primary800};
+    active ? theme.colors.select.selectedTextColor : theme.colors.primary800};
   padding: 10px 12px 10px 22px;
   background: ${({ theme }) => `${theme.colors.white}`};
   margin: 0 -16px;

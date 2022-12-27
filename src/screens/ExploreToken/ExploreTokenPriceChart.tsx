@@ -12,11 +12,11 @@ import {
 } from "recharts";
 import useWindowSize from "@src/hooks/useWindowSize";
 import dayjs from "dayjs";
-import BN from "@src/utils/BN";
 import { Row } from "@src/components/Flex";
 import Spinner from "@components/Spinner";
 import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
 import ChartAgeButtons from "@src/components/ChartAgeButtons";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -134,9 +134,7 @@ const ExploreTokenPriceChart: React.FC<IProps> = () => {
                   {dayjs(date).format("MM:HH, MMM DD")}
                 </Text>
               )}
-              formatter={(volume: number) => (
-                <Text size="medium">$&nbsp;{new BN(volume).toFormat(2)}</Text>
-              )}
+              formatter={(value) => "$ " + new BN(`${value}`).toFormat(2)}
               contentStyle={{
                 border: "none",
                 filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))",

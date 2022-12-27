@@ -32,6 +32,9 @@ export default {
   card: {
     background: "#212345",
   },
+  select: {
+    selectedTextColor: "#8182C5",
+  },
   icon: {
     borderColor: colors.primary800,
   },

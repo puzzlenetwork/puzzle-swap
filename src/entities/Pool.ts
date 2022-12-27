@@ -13,7 +13,7 @@ export interface IData {
 
 export interface IShortPoolInfo {
   pool: IPoolConfig;
-  liquidityInUsdn: BN;
+  liquidityInUsdt: BN;
   addressStaked: BN;
   shareOfPool: BN;
   indexTokenRate: BN;
@@ -54,14 +54,21 @@ class Pool implements IPoolConfig {
   setGlobalLiquidityByUSDN = (value: BN | null) =>
     (this.globalLiquidityByUSDN = value);
 
+  public globalLiquidityByUSDT: BN | null = null;
+  setGlobalLiquidityByUSDT = (value: BN | null) =>
+    (this.globalLiquidityByUSDT = value);
+
   public globalLiquidityByPUZZLE: BN | null = null;
   setGlobalLiquidityByPUZZLE = (value: BN | null) =>
     (this.globalLiquidityByPUZZLE = value);
 
   public get globalLiquidity(): BN {
-    if (this.globalLiquidityByUSDN != null) return this.globalLiquidityByUSDN;
+    if (this.globalLiquidityByUSDT != null)
+      return this.globalLiquidityByUSDT.times(this.usdnRate);
     else if (this.globalLiquidityByPUZZLE != null && this.puzzleRate.gt(0)) {
       return this.globalLiquidityByPUZZLE.times(this.puzzleRate);
+    } else if (this.globalLiquidityByUSDN != null && this.usdnRate.gt(0)) {
+      return this.globalLiquidityByUSDN.times(this.usdnRate);
     } else {
       return BN.ZERO;
     }
@@ -80,6 +87,11 @@ class Pool implements IPoolConfig {
 
   public puzzleRate: BN = BN.ZERO;
   public setPuzzleRate = (value: BN) => (this.puzzleRate = value);
+
+  public usdnRate: BN = BN.ZERO;
+  public setUsdnRate = (value: BN) => {
+    this.usdnRate = value;
+  };
 
   constructor(params: IPoolConfig) {
     this.contractAddress = params.contractAddress;
@@ -155,10 +167,10 @@ class Pool implements IPoolConfig {
     const puzzleAsset = this.tokens.find(({ symbol }) => symbol === "PUZZLE")!;
     const puzzleLiquidity = this.liquidity[puzzleAsset?.assetId];
 
-    let globalLiquidityByUSDN = null;
+    let globalLiquidityByUSDT = null;
     let globalLiquidityByPuzzle = null;
     if (usdnAsset && usdnLiquidity) {
-      globalLiquidityByUSDN = new BN(usdnLiquidity)
+      globalLiquidityByUSDT = new BN(usdnLiquidity)
         .div(usdnAsset.share)
         .times(100)
         .div(1e6);
@@ -168,7 +180,7 @@ class Pool implements IPoolConfig {
         .times(100)
         .div(1e8);
     }
-    this.setGlobalLiquidityByUSDN(globalLiquidityByUSDN);
+    this.setGlobalLiquidityByUSDN(globalLiquidityByUSDT);
     this.setGlobalLiquidityByPUZZLE(globalLiquidityByPuzzle);
   };
 
@@ -209,7 +221,7 @@ class Pool implements IPoolConfig {
     if (addressIndexStaked == null || addressIndexStaked.eq(0)) {
       return {
         addressStaked: BN.ZERO,
-        liquidityInUsdn: BN.ZERO,
+        liquidityInUsdt: BN.ZERO,
         shareOfPool: BN.ZERO,
         pool: this,
         indexTokenRate,
@@ -217,15 +229,15 @@ class Pool implements IPoolConfig {
       };
     }
 
-    const liquidityInUsdn = this.globalLiquidity
+    const liquidityInUsdt = this.globalLiquidity
       .times(addressIndexStaked)
       .div(globalIndexStaked);
-    const percent = liquidityInUsdn
+    const percent = liquidityInUsdt
       .times(new BN(100))
       .div(this.globalLiquidity);
 
     return {
-      liquidityInUsdn,
+      liquidityInUsdt,
       addressStaked: addressIndexStaked,
       shareOfPool: percent,
       pool: this,
@@ -254,7 +266,7 @@ class Pool implements IPoolConfig {
     if (addressIndexStaked == null || addressIndexStaked.eq(0)) {
       return {
         addressStaked: BN.ZERO,
-        liquidityInUsdn: BN.ZERO,
+        liquidityInUsdt: BN.ZERO,
         shareOfPool: BN.ZERO,
         pool: this,
         indexTokenRate,
@@ -262,14 +274,14 @@ class Pool implements IPoolConfig {
       };
     }
 
-    const liquidityInUsdn = this.globalLiquidity
+    const liquidityInUsdt = this.globalLiquidity
       .times(addressIndexStaked)
       .div(globalIndexStaked);
-    const percent = liquidityInUsdn
+    const percent = liquidityInUsdt
       .times(new BN(100))
       .div(this.globalLiquidity);
     return {
-      liquidityInUsdn,
+      liquidityInUsdt,
       addressStaked: addressIndexStaked,
       shareOfPool: percent,
       pool: this,

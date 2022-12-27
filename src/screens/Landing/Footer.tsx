@@ -58,7 +58,7 @@ const Footer: React.FC<IProps> = () => {
         </Column>
         <Column className="mobile">
           <Text secondary>Community</Text>
-          <Text target="_blank" href="https://t.me/puzzleswap">
+          <Text target="_blank" href="https://t.me/puzzle_network">
             Telegram
           </Text>
           <Text target="_blank" href="https://twitter.com/puzzle_swap">
