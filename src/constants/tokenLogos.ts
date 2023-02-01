@@ -55,6 +55,7 @@ import tsnLogo from "@src/assets/tokens/TSN.svg";
 import busdLogo from "@src/assets/tokens/BUSD.svg";
 import wartLogo from "@src/assets/tokens/WART.svg";
 import ngntLogo from "@src/assets/tokens/NGNT.svg";
+import tndLogo from "@src/assets/tokens/TND.svg";
 import wxbLogo from "@src/assets/tokens/WXB.png";
 import plutoLogo from "@src/assets/tokens/pluto.svg";
 import WXUSDNWXLP from "@src/assets/tokens/WXUSDNWXLP.svg";
@@ -146,6 +147,7 @@ const tokenLogos: Record<string, string> = {
   UNKNOWN: unknownLogo,
   VVUSDNLP: usdnViresVested,
   SWAVES: SWAVES,
+  TND: tndLogo,
   SPICE: "https://wavesducks.com/static/img/token/spice.svg",
 };
 
