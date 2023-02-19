@@ -125,7 +125,7 @@ export default class PoolsStore {
   }
 
   usdtRate = (assetId: string, coefficient = 1): BN | null => {
-    const usdn = TOKENS_BY_SYMBOL.USDN.assetId;
+    const usdn = TOKENS_BY_SYMBOL.XTN.assetId;
     const usdt = TOKENS_BY_SYMBOL.USDT.assetId;
     const puzzle = TOKENS_BY_SYMBOL.PUZZLE.assetId;
     const pool = this.pools.find(({ tokens }) =>
@@ -254,7 +254,7 @@ export default class PoolsStore {
       CONTRACT_ADDRESSES.priceOracle,
       [
         `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.PUZZLE.assetId}`,
-        `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.USDN.assetId}`,
+        `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.XTN.assetId}`,
       ]
     );
 

@@ -46,7 +46,7 @@ const Option = styled.div<{ active?: boolean }>`
   cursor: pointer;
   position: relative;
   align-items: center;
-  font-weight: 400;
+  font-weight: 500;
   font-size: 14px;
   line-height: 20px;
   color: ${({ active, theme }) =>

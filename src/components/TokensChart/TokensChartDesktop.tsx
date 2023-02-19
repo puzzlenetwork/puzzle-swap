@@ -46,7 +46,8 @@ const TokensChartDesktopImpl: React.FC<IProps> = observer(
   ({ height, ...rest }) => {
     const { getCollapseProps } = useCollapse({
       isExpanded: rest.visible,
-      duration: 500,
+      showDuration: 500,
+      hideDuration: 0,
     });
     const vm = useTokenChartVM();
     const swapVm = useSwapVM();

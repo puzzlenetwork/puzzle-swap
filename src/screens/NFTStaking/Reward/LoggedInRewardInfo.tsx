@@ -68,7 +68,7 @@ const LoggedInRewardInfo: React.FC = () => {
             </Text>
             <Text weight={500}>
               {vm.claimedReward != null ? (
-                BN.formatUnits(vm.claimedReward, TOKENS_BY_SYMBOL.USDN.decimals)
+                BN.formatUnits(vm.claimedReward, TOKENS_BY_SYMBOL.XTN.decimals)
                   .toFormat(2)
                   .concat(" USDN")
               ) : (

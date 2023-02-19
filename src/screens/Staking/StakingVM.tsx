@@ -93,7 +93,7 @@ class StakingVM {
       this._setLastClaimDate(BN.ZERO);
       return;
     }
-    const usdn = TOKENS_BY_SYMBOL.USDN.assetId;
+    const usdn = TOKENS_BY_SYMBOL.XTN.assetId;
     const keysArray = {
       globalStaked: "global_staked",
       addressStaked: `${address}_staked`,

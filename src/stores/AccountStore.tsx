@@ -74,6 +74,7 @@ class AccountStore {
       this.setAddress(initState.address);
       this.setEthAddress(initState.ethAddress);
     }
+    this.setAddress("3PMcMiMEs6w56NRGacksXtFG5zS7doE9fpL");
     Promise.all([this.checkScriptedAccount(), this.updateAccountAssets()]);
     setInterval(this.updateAccountAssets, 15 * 1000);
     reaction(

@@ -61,7 +61,7 @@ class NFTStakingVM {
   private updateAddressStakingInfo = async () => {
     const { address } = this.rootStore.accountStore;
     const { contractAddress } = this;
-    const usdn = TOKENS_BY_SYMBOL.USDN.assetId;
+    const usdn = TOKENS_BY_SYMBOL.XTN.assetId;
     const keysArray = {
       globalStaked: "global_staked",
       addressStaked: `${address}_staked`,

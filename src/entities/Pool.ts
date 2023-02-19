@@ -161,10 +161,10 @@ class Pool implements IPoolConfig {
       const globalVolume = new BN(globalVolumeValue.value).div(1e6);
       this.setGlobalVolume(globalVolume);
     }
-    const usdtAsset = this.tokens.find(({ symbol }) => symbol === "USDN")!;
+    const usdtAsset = this.tokens.find(({ symbol }) => symbol === "USDT")!;
     const usdtLiquidity = this.liquidity[usdtAsset?.assetId];
 
-    const usdnAsset = this.tokens.find(({ symbol }) => symbol === "USDN")!;
+    const usdnAsset = this.tokens.find(({ symbol }) => symbol === "XTN")!;
     const usdnLiquidity = this.liquidity[usdnAsset?.assetId];
 
     const puzzleAsset = this.tokens.find(({ symbol }) => symbol === "PUZZLE")!;
@@ -174,7 +174,7 @@ class Pool implements IPoolConfig {
     let globalLiquidityByPuzzle = null;
     if (usdtAsset && usdtLiquidity) {
       globalLiquidityByUSDT = new BN(usdtLiquidity)
-        .div(usdnAsset.share)
+        .div(usdtAsset.share)
         .times(100)
         .div(1e6);
     } else if (puzzleAsset && puzzleLiquidity) {
@@ -184,7 +184,7 @@ class Pool implements IPoolConfig {
         .div(1e8);
     } else if (usdnAsset && usdnLiquidity) {
       globalLiquidityByUSDT = new BN(usdnLiquidity)
-        .div(puzzleAsset.share)
+        .div(usdnAsset.share)
         .times(100)
         .times(this.usdnRate)
         .div(1e6);

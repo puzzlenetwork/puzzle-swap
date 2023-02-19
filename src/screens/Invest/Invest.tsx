@@ -12,7 +12,11 @@ import PoolsTable from "./PoolsTable";
 
 interface IProps {}
 
-const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
+const Root = styled.div<{
+  apySort?: boolean;
+  liquiditySort?: boolean;
+  balanceSort?: boolean;
+}>`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -26,6 +30,13 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
   text-align: left;
   @media (min-width: 880px) {
     margin-top: 56px;
+  }
+
+  .balance-group {
+    width: 20px;
+    height: 20px;
+    transform: ${({ balanceSort }) =>
+      balanceSort ? "scale(1)" : "scale(1, -1)"};
   }
 
   .apy-group {
@@ -53,7 +64,11 @@ const InvestImpl: React.FC<IProps> = () => {
     <Layout>
       <Observer>
         {() => (
-          <Root apySort={vm.sortApy} liquiditySort={vm.sortLiquidity}>
+          <Root
+            apySort={vm.sortApy}
+            liquiditySort={vm.sortLiquidity}
+            balanceSort={vm.sortBalance}
+          >
             <Text weight={500} size="large">
               Invest in Puzzle Mega Pools
             </Text>

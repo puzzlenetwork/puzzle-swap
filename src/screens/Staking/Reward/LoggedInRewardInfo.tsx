@@ -32,7 +32,7 @@ const LoggedInRewardInfo: React.FC = () => {
       : null;
   const claimedReward =
     vm.claimedReward != null
-      ? BN.formatUnits(vm.claimedReward, TOKENS_BY_SYMBOL.USDN.decimals)
+      ? BN.formatUnits(vm.claimedReward, TOKENS_BY_SYMBOL.XTN.decimals)
       : null;
   const date = dayjs(vm.lastClaimDate?.toNumber() ?? 0);
   const format = date.format("D MMM YYYY");
