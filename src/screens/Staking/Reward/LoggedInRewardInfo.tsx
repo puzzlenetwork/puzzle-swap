@@ -30,9 +30,16 @@ const LoggedInRewardInfo: React.FC = () => {
     vm.availableToClaim != null
       ? BN.formatUnits(vm.availableToClaim, 18)
       : null;
-  const claimedReward =
-    vm.claimedReward != null
-      ? BN.formatUnits(vm.claimedReward, TOKENS_BY_SYMBOL.XTN.decimals)
+  const claimedUSDNReward =
+    vm.claimedRewardInUSDN != null
+      ? BN.formatUnits(vm.claimedRewardInUSDN, TOKENS_BY_SYMBOL.XTN.decimals)
+      : null;
+  const claimedPuzzleReward =
+    vm.claimedRewardInPuzzle != null
+      ? BN.formatUnits(
+          vm.claimedRewardInPuzzle,
+          TOKENS_BY_SYMBOL.PUZZLE.decimals
+        )
       : null;
   const date = dayjs(vm.lastClaimDate?.toNumber() ?? 0);
   const format = date.format("D MMM YYYY");
@@ -47,10 +54,10 @@ const LoggedInRewardInfo: React.FC = () => {
               Claimed reward
             </Text>
             <Text weight={500}>
-              {claimedReward != null ? (
-                claimedReward
-                  .toFormat(claimedReward.gte(0.01) ? 2 : 6)
-                  .concat(" USDN")
+              {claimedUSDNReward != null ? (
+                claimedUSDNReward
+                  .toFormat(claimedUSDNReward.gte(0.01) ? 2 : 6)
+                  .concat(" XTN")
               ) : (
                 <Skeleton height={16} width={110} />
               )}
@@ -60,6 +67,25 @@ const LoggedInRewardInfo: React.FC = () => {
         <Text type="secondary" textAlign="right" size="medium">
           {!vm.lastClaimDate.eq(0) && "Last claim " + format}
         </Text>
+      </Row>
+      <SizedBox height={18} />
+      <Row>
+        <Icon src={income} alt="income" />
+        <SizedBox width={8} />
+        <Column justifyContent="space-between">
+          <Text type="secondary" size="medium">
+            Claimed XTN reward
+          </Text>
+          <Text weight={500}>
+            {claimedPuzzleReward != null ? (
+              claimedPuzzleReward
+                .toFormat(claimedPuzzleReward.gte(0.01) ? 2 : 6)
+                .concat(" PUZZLE")
+            ) : (
+              <Skeleton height={16} width={110} />
+            )}
+          </Text>
+        </Column>
       </Row>
       <SizedBox height={18} />
       <Divider />
@@ -74,11 +100,11 @@ const LoggedInRewardInfo: React.FC = () => {
           <Text weight={500}>
             {availableToClaim != null ? (
               availableToClaim.eq(0) ? (
-                "0.00 USDN"
+                "0.00 PUZZLE"
               ) : (
                 availableToClaim
                   .toFormat(availableToClaim.gte(0.01) ? 2 : 6)
-                  .concat(" USDN")
+                  .concat(" PUZZLE")
               )
             ) : (
               <Skeleton height={16} width={110} />

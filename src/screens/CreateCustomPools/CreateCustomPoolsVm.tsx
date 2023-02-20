@@ -128,14 +128,16 @@ class CreateCustomPoolsVm {
   get isThereUsdnOrPuzzle() {
     return (
       this.poolsAssets.filter(({ asset }) =>
-        ["XTN", "PUZZLE", "USDT"].includes(asset.symbol)
+        ["XTN", "PUZZLE", "USDT", "WAVES"].includes(asset.symbol)
       ).length > 0
     );
   }
 
   get requiredTokensCorrectShare() {
     return this.poolsAssets
-      .filter(({ asset }) => ["XTN", "PUZZLE", "USDT"].includes(asset.symbol))
+      .filter(({ asset }) =>
+        ["XTN", "PUZZLE", "USDT", "WAVES"].includes(asset.symbol)
+      )
       .some(({ share }) => share.gte(20));
   }
 

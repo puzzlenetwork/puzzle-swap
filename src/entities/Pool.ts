@@ -89,9 +89,10 @@ class Pool implements IPoolConfig {
   public setPuzzleRate = (value: BN) => (this.puzzleRate = value);
 
   public usdnRate: BN = BN.ZERO;
-  public setUsdnRate = (value: BN) => {
-    this.usdnRate = value;
-  };
+  public setUsdnRate = (value: BN) => (this.usdnRate = value);
+
+  public wavesRate: BN = BN.ZERO;
+  public setWavesRate = (value: BN) => (this.wavesRate = value);
 
   constructor(params: IPoolConfig) {
     this.contractAddress = params.contractAddress;
@@ -170,6 +171,9 @@ class Pool implements IPoolConfig {
     const puzzleAsset = this.tokens.find(({ symbol }) => symbol === "PUZZLE")!;
     const puzzleLiquidity = this.liquidity[puzzleAsset?.assetId];
 
+    const wavesAsset = this.tokens.find(({ symbol }) => symbol === "WAVES")!;
+    const wavesLiquidity = this.liquidity[wavesAsset?.assetId];
+
     let globalLiquidityByUSDT = null;
     let globalLiquidityByPuzzle = null;
     if (usdtAsset && usdtLiquidity) {
@@ -187,6 +191,12 @@ class Pool implements IPoolConfig {
         .div(usdnAsset.share)
         .times(100)
         .times(this.usdnRate)
+        .div(1e6);
+    } else if (wavesAsset && wavesLiquidity) {
+      globalLiquidityByUSDT = new BN(wavesLiquidity)
+        .div(wavesAsset.share)
+        .times(100)
+        .times(this.wavesRate)
         .div(1e6);
     }
     this.setGlobalLiquidityByUSDN(globalLiquidityByUSDT);
