@@ -35,13 +35,18 @@ class StakingVM {
 
   public globalStaked: BN | null = null;
   public addressStaked: BN | null = null;
-  public claimedReward: BN | null = null;
+  public claimedRewardInUSDN: BN | null = null;
+  public claimedRewardInPuzzle: BN | null = null;
   public availableToClaim: BN | null = null;
   public lastClaimDate: BN = BN.ZERO;
 
   private _setGlobalStaked = (v: BN) => (this.globalStaked = v);
   private _setAddressStaked = (v: BN) => (this.addressStaked = v);
-  private _setClaimedReward = (v: BN) => (this.claimedReward = v);
+
+  private _setClaimedRewardInUSDN = (v: BN) => (this.claimedRewardInUSDN = v);
+  private _setClaimedRewardInPuzzle = (v: BN) =>
+    (this.claimedRewardInPuzzle = v);
+
   private _setAvailableToClaim = (v: BN) => (this.availableToClaim = v);
   private _setLastClaimDate = (v: BN) => (this.lastClaimDate = v);
 
@@ -87,17 +92,19 @@ class StakingVM {
     if (address == null) {
       this._setGlobalStaked(BN.ZERO);
       this._setAddressStaked(BN.ZERO);
-      this._setClaimedReward(BN.ZERO);
-      this._setClaimedReward(BN.ZERO);
+      this._setClaimedRewardInUSDN(BN.ZERO);
+      this._setClaimedRewardInUSDN(BN.ZERO);
       this._setAvailableToClaim(BN.ZERO);
       this._setLastClaimDate(BN.ZERO);
       return;
     }
-    const usdn = TOKENS_BY_SYMBOL.USDN.assetId;
+    const usdn = TOKENS_BY_SYMBOL.XTN.assetId;
+    const puzzle = TOKENS_BY_SYMBOL.PUZZLE.assetId;
     const keysArray = {
       globalStaked: "global_staked",
       addressStaked: `${address}_staked`,
-      claimedReward: `${address}_${usdn}_claimed`,
+      claimedRewardInUSDN: `${address}_${usdn}_claimed`,
+      claimedRewardInPuzzle: `${address}_${puzzle}_claimed`,
       globalLastCheckInterest: `global_lastCheck_${usdn}_interest`,
       addressLastCheckInterest: `${address}_lastCheck_${usdn}_interest`,
       lastClaimDate: `${address}_${usdn}_lastClaim`,
@@ -122,7 +129,8 @@ class StakingVM {
 
     const globalStaked = parsedNodeResponse["globalStaked"];
     const addressStaked = parsedNodeResponse["addressStaked"];
-    const claimedReward = parsedNodeResponse["claimedReward"];
+    const claimedRewardInUSDN = parsedNodeResponse["claimedRewardInUSDN"];
+    const claimedRewardInPuzzle = parsedNodeResponse["claimedRewardInPuzzle"];
     const globalLastCheckInterest =
       parsedNodeResponse["globalLastCheckInterest"];
     const addressLastCheckInterest =
@@ -131,7 +139,9 @@ class StakingVM {
 
     this._setGlobalStaked(globalStaked);
     this._setAddressStaked(addressStaked ?? BN.ZERO);
-    this._setClaimedReward(claimedReward ?? BN.ZERO);
+    this._setClaimedRewardInUSDN(claimedRewardInUSDN ?? BN.ZERO);
+    this._setClaimedRewardInPuzzle(claimedRewardInPuzzle ?? BN.ZERO);
+
     const availableToClaim = globalLastCheckInterest
       .minus(addressLastCheckInterest)
       .times(addressStaked);

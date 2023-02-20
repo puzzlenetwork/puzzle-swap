@@ -19,7 +19,7 @@ import { useTheme } from "@emotion/react";
 
 const PoolsTable: React.FC = () => {
   const { poolsStore, accountStore } = useStores();
-  const [activeSort, setActiveSort] = useState<0 | 1>(1);
+  const [activeSort, setActiveSort] = useState<0 | 1 | 2>(1);
   const [showEmptyBalances, setShowEmptyBalances] = useState(true);
   const vm = useInvestVM();
   const navigate = useNavigate();
@@ -28,7 +28,25 @@ const PoolsTable: React.FC = () => {
   const columns = React.useMemo(
     () => [
       { Header: "Pool name", accessor: "poolName" },
-      { Header: "My balance", accessor: "accountBalance" },
+      {
+        Header: () => (
+          <Row style={{ cursor: "pointer" }}>
+            <Text size="medium" fitContent>
+              My balance
+            </Text>
+            <img
+              src={theme.images.icons.group}
+              alt="group"
+              className="balance-group"
+              onClick={() => {
+                setActiveSort(2);
+                vm.setSortBalance(!vm.sortBalance);
+              }}
+            />
+          </Row>
+        ),
+        accessor: "accountBalance",
+      },
       {
         Header: () => (
           <Row style={{ cursor: "pointer" }}>
@@ -92,6 +110,21 @@ const PoolsTable: React.FC = () => {
             } else {
               return vm.sortLiquidity ? -1 : 1;
             }
+          }
+        } else if (activeSort === 2) {
+          console.log("sort");
+          if (accountStore.address == null) return 1;
+          const balanceA = poolsStore.investedInPools?.find(
+            (v) => a.domain === v.pool.domain
+          );
+          const balanceB = poolsStore.investedInPools?.find(
+            (v) => b.domain === v.pool.domain
+          );
+          if (balanceA == null || balanceB == null) return 1;
+          if (balanceA.liquidityInUsdt.lt(balanceB.liquidityInUsdt)) {
+            return vm.sortBalance ? 1 : -1;
+          } else {
+            return vm.sortBalance ? -1 : 1;
           }
         } else if (activeSort === 1) {
           const apy0 =
@@ -212,6 +245,7 @@ const PoolsTable: React.FC = () => {
     vm.pools,
     vm.sortLiquidity,
     vm.sortApy,
+    vm.sortBalance,
     vm.searchValue,
     vm.poolCategoryFilter,
     vm.customPoolFilter,

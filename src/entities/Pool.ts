@@ -89,9 +89,10 @@ class Pool implements IPoolConfig {
   public setPuzzleRate = (value: BN) => (this.puzzleRate = value);
 
   public usdnRate: BN = BN.ZERO;
-  public setUsdnRate = (value: BN) => {
-    this.usdnRate = value;
-  };
+  public setUsdnRate = (value: BN) => (this.usdnRate = value);
+
+  public wavesRate: BN = BN.ZERO;
+  public setWavesRate = (value: BN) => (this.wavesRate = value);
 
   constructor(params: IPoolConfig) {
     this.contractAddress = params.contractAddress;
@@ -161,17 +162,23 @@ class Pool implements IPoolConfig {
       const globalVolume = new BN(globalVolumeValue.value).div(1e6);
       this.setGlobalVolume(globalVolume);
     }
-    const usdnAsset = this.tokens.find(({ symbol }) => symbol === "USDN")!;
+    const usdtAsset = this.tokens.find(({ symbol }) => symbol === "USDT")!;
+    const usdtLiquidity = this.liquidity[usdtAsset?.assetId];
+
+    const usdnAsset = this.tokens.find(({ symbol }) => symbol === "XTN")!;
     const usdnLiquidity = this.liquidity[usdnAsset?.assetId];
 
     const puzzleAsset = this.tokens.find(({ symbol }) => symbol === "PUZZLE")!;
     const puzzleLiquidity = this.liquidity[puzzleAsset?.assetId];
 
+    const wavesAsset = this.tokens.find(({ symbol }) => symbol === "WAVES")!;
+    const wavesLiquidity = this.liquidity[wavesAsset?.assetId];
+
     let globalLiquidityByUSDT = null;
     let globalLiquidityByPuzzle = null;
-    if (usdnAsset && usdnLiquidity) {
-      globalLiquidityByUSDT = new BN(usdnLiquidity)
-        .div(usdnAsset.share)
+    if (usdtAsset && usdtLiquidity) {
+      globalLiquidityByUSDT = new BN(usdtLiquidity)
+        .div(usdtAsset.share)
         .times(100)
         .div(1e6);
     } else if (puzzleAsset && puzzleLiquidity) {
@@ -179,6 +186,18 @@ class Pool implements IPoolConfig {
         .div(puzzleAsset.share)
         .times(100)
         .div(1e8);
+    } else if (usdnAsset && usdnLiquidity) {
+      globalLiquidityByUSDT = new BN(usdnLiquidity)
+        .div(usdnAsset.share)
+        .times(100)
+        .times(this.usdnRate)
+        .div(1e6);
+    } else if (wavesAsset && wavesLiquidity) {
+      globalLiquidityByUSDT = new BN(wavesLiquidity)
+        .div(wavesAsset.share)
+        .times(100)
+        .times(this.wavesRate)
+        .div(1e6);
     }
     this.setGlobalLiquidityByUSDN(globalLiquidityByUSDT);
     this.setGlobalLiquidityByPUZZLE(globalLiquidityByPuzzle);
