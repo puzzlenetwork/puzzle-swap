@@ -64,13 +64,34 @@ const LoggedInRewardInfo: React.FC = () => {
           <SizedBox width={8} />
           <Column>
             <Text type="secondary" size="medium">
-              Claimed reward
+              Claimed PUZZLE reward
             </Text>
             <Text weight={500}>
-              {vm.claimedReward != null ? (
-                BN.formatUnits(vm.claimedReward, TOKENS_BY_SYMBOL.XTN.decimals)
+              {vm.claimedRewardInPuzzle != null ? (
+                BN.formatUnits(
+                  vm.claimedRewardInPuzzle,
+                  TOKENS_BY_SYMBOL.PUZZLE.decimals
+                )
                   .toFormat(2)
-                  .concat(" USDN")
+                  .concat(" PUZZLE")
+              ) : (
+                <Skeleton height={16} width={90} />
+              )}
+            </Text>
+          </Column>
+          <SizedBox width={16} />
+          <Column>
+            <Text type="secondary" size="medium">
+              Claimed XTN reward
+            </Text>
+            <Text weight={500}>
+              {vm.claimedRewardInUSDN != null ? (
+                BN.formatUnits(
+                  vm.claimedRewardInUSDN,
+                  TOKENS_BY_SYMBOL.XTN.decimals
+                )
+                  .toFormat(2)
+                  .concat(" XTN")
               ) : (
                 <Skeleton height={16} width={90} />
               )}
@@ -89,7 +110,7 @@ const LoggedInRewardInfo: React.FC = () => {
             {vm.availableToClaim != null ? (
               BN.formatUnits(vm.availableToClaim, 18)
                 .toFormat(2)
-                .concat(" USDN")
+                .concat(" PUZZLE")
             ) : (
               <Skeleton height={16} width={90} />
             )}
