@@ -34,7 +34,7 @@ const PoolInformation: React.FC<IProps> = () => {
   const data = vm.pool.statistics;
   const valuesArray = [
     {
-      title: "Pool value",
+      title: "Liquidity",
       value: data?.liquidity ? "$ " + new BN(data.liquidity).toFormat(2) : null,
     },
     {

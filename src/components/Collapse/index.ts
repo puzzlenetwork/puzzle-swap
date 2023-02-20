@@ -23,7 +23,8 @@ import {
 const easeInOut = "cubic-bezier(0.4, 0, 0.2, 1)";
 
 export default function useCollapse({
-  duration,
+  showDuration,
+  hideDuration,
   easing = easeInOut,
   collapseStyles = {},
   expandStyles = {},
@@ -68,7 +69,9 @@ export default function useCollapse({
     if (hasDisabledAnimation) {
       return {};
     }
-    const _duration = duration || getAutoHeightDuration(height);
+    const _duration = isExpanded
+      ? hideDuration
+      : showDuration || getAutoHeightDuration(height);
     return {
       transition: `height ${_duration}ms ${easing}`,
     };

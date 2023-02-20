@@ -48,7 +48,7 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
     setSwitched((v) => !v);
   };
   const stablesIds = [
-    TOKENS_BY_SYMBOL.USDN.assetId,
+    TOKENS_BY_SYMBOL.XTN.assetId,
     TOKENS_BY_SYMBOL.USDT.assetId,
   ];
 

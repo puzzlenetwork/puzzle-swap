@@ -47,25 +47,31 @@ class NFTStakingVM {
   public nftDisplayState: number = 0;
   setNftDisplayState = (v: number) => (this.nftDisplayState = v);
 
-  public claimedReward: BN | null = null;
+  public claimedRewardInUSDN: BN | null = null;
+  public claimedRewardInPuzzle: BN | null = null;
+
   public availableToClaim: BN | null = null;
   public lastClaimDate: BN = BN.ZERO;
 
   public stats: any = null;
   private _setStats = (v: any) => (this.stats = v);
 
-  private _setClaimedReward = (v: BN) => (this.claimedReward = v);
+  private _setClaimedRewardInUSDN = (v: BN) => (this.claimedRewardInUSDN = v);
+  private _setClaimedRewardInPuzzle = (v: BN) =>
+    (this.claimedRewardInPuzzle = v);
   private _setAvailableToClaim = (v: BN) => (this.availableToClaim = v);
   private _setLastClaimDate = (v: BN) => (this.lastClaimDate = v);
 
   private updateAddressStakingInfo = async () => {
     const { address } = this.rootStore.accountStore;
     const { contractAddress } = this;
-    const usdn = TOKENS_BY_SYMBOL.USDN.assetId;
+    const usdn = TOKENS_BY_SYMBOL.XTN.assetId;
+    const puzzle = TOKENS_BY_SYMBOL.PUZZLE.assetId;
     const keysArray = {
       globalStaked: "global_staked",
       addressStaked: `${address}_staked`,
-      claimedReward: `${address}_${usdn}_claimed`,
+      claimedRewardInUSDN: `${address}_${usdn}_claimed`,
+      claimedRewardInPuzzle: `${address}_${puzzle}_claimed`,
       globalLastCheckInterest: `global_lastCheck_${usdn}_interest`,
       addressLastCheckInterest: `${address}_lastCheck_${usdn}_interest`,
       lastClaimDate: `${address}_${usdn}_lastClaim`,
@@ -88,7 +94,8 @@ class NFTStakingVM {
     );
 
     const addressStaked = parsedNodeResponse["addressStaked"];
-    const claimedReward = parsedNodeResponse["claimedReward"];
+    const claimedRewardInUSDN = parsedNodeResponse["claimedRewardInUSDN"];
+    const claimedRewardInPuzzle = parsedNodeResponse["claimedRewardInPuzzle"];
     const globalLastCheckInterest =
       parsedNodeResponse["globalLastCheckInterest"];
     const addressLastCheckInterest =
@@ -97,11 +104,13 @@ class NFTStakingVM {
 
     if (addressStaked == null) {
       this._setAvailableToClaim(BN.ZERO);
-      this._setClaimedReward(BN.ZERO);
+      this._setClaimedRewardInUSDN(BN.ZERO);
+      this._setClaimedRewardInPuzzle(BN.ZERO);
       return;
     }
 
-    this._setClaimedReward(claimedReward);
+    this._setClaimedRewardInUSDN(claimedRewardInUSDN ?? BN.ZERO);
+    this._setClaimedRewardInPuzzle(claimedRewardInPuzzle ?? BN.ZERO);
     const availableToClaim = globalLastCheckInterest
       .minus(addressLastCheckInterest)
       .times(addressStaked);

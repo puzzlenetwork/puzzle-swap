@@ -61,6 +61,9 @@ export default class PoolsStore {
   public puzzleRate: BN = BN.ZERO;
   public setPuzzleRate = (value: BN) => (this.puzzleRate = value);
 
+  public wavesRate: BN = BN.ZERO;
+  public setWavesRate = (value: BN) => (this.wavesRate = value);
+
   public usdnRate: BN = BN.ZERO;
   public setUsdnRate = (value: BN) => (this.usdnRate = value);
 
@@ -125,7 +128,7 @@ export default class PoolsStore {
   }
 
   usdtRate = (assetId: string, coefficient = 1): BN | null => {
-    const usdn = TOKENS_BY_SYMBOL.USDN.assetId;
+    const usdn = TOKENS_BY_SYMBOL.XTN.assetId;
     const usdt = TOKENS_BY_SYMBOL.USDT.assetId;
     const puzzle = TOKENS_BY_SYMBOL.PUZZLE.assetId;
     const pool = this.pools.find(({ tokens }) =>
@@ -254,7 +257,8 @@ export default class PoolsStore {
       CONTRACT_ADDRESSES.priceOracle,
       [
         `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.PUZZLE.assetId}`,
-        `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.USDN.assetId}`,
+        `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.XTN.assetId}`,
+        `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.WAVES.assetId}`,
       ]
     );
 
@@ -266,11 +270,17 @@ export default class PoolsStore {
       priceResponse != null
         ? BN.formatUnits(priceResponse[1].value, 6)
         : BN.ZERO;
+    const wavesRate =
+      priceResponse != null
+        ? BN.formatUnits(priceResponse[2].value, 6)
+        : BN.ZERO;
     this.setPuzzleRate(puzzleRate);
     this.setUsdnRate(usdnRate);
+    this.setWavesRate(wavesRate);
     this.pools.forEach((pool) => {
       pool.setPuzzleRate(puzzleRate);
       pool.setUsdnRate(usdnRate);
+      pool.setWavesRate(wavesRate);
     });
   };
 }

@@ -58,7 +58,7 @@ const Reward: React.FC<IProps> = () => {
   const format = date.format("D MMM YYYY");
   const totalClaimed = BN.formatUnits(
     vm.totalClaimedReward ?? BN.ZERO,
-    TOKENS_BY_SYMBOL.USDN.decimals
+    TOKENS_BY_SYMBOL.XTN.decimals
   ).toFormat(2);
   return (
     <Root>

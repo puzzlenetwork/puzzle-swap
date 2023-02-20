@@ -64,7 +64,7 @@ class LimitOrdersVM {
     const params = new URLSearchParams(window.location.search);
     const asset0 = params.get("asset0")?.toString();
     const asset1 = params.get("asset1")?.toString();
-    this.assetId0 = asset0 ?? TOKENS_BY_SYMBOL.USDN.assetId;
+    this.assetId0 = asset0 ?? TOKENS_BY_SYMBOL.XTN.assetId;
     this.assetId1 = asset1 ?? TOKENS_BY_SYMBOL.PUZZLE.assetId;
     this.sync().then(() => {
       this.setInitialized(true);
@@ -79,7 +79,7 @@ class LimitOrdersVM {
   orders: Array<IOrder> = [];
   setOrders = (orders: Array<IOrder>) => (this.orders = orders);
 
-  assetId0: string = TOKENS_BY_SYMBOL.USDN.assetId;
+  assetId0: string = TOKENS_BY_SYMBOL.XTN.assetId;
   setAssetId0 = (assetId: string) => (this.assetId0 = assetId);
 
   get isMarketPrice() {

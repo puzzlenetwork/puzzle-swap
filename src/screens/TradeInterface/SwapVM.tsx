@@ -34,7 +34,7 @@ class SwapVM {
     const params = new URLSearchParams(window.location.search);
     const asset0 = params.get("asset0")?.toString();
     const asset1 = params.get("asset1")?.toString();
-    this.assetId0 = asset0 ?? TOKENS_BY_SYMBOL.USDN.assetId;
+    this.assetId0 = asset0 ?? TOKENS_BY_SYMBOL.WAVES.assetId;
     this.assetId1 = asset1 ?? TOKENS_BY_SYMBOL.PUZZLE.assetId;
     this._syncAmount1();
     reaction(

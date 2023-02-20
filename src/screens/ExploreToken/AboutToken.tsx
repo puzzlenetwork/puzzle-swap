@@ -37,7 +37,6 @@ const AboutToken: React.FC<IProps> = () => {
   const [opened, setOpened] = useState(false);
   const { getCollapseProps } = useCollapse({
     isExpanded: opened,
-    duration: 500,
   });
   return (
     <Root>

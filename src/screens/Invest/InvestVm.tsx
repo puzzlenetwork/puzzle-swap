@@ -32,6 +32,9 @@ class InvestVM {
   sortLiquidity = true;
   setSortLiquidity = (v: boolean) => (this.sortLiquidity = v);
 
+  sortBalance = true;
+  setSortBalance = (v: boolean) => (this.sortBalance = v);
+
   customPools: Pool[] = [];
   setCustomPools = (v: Pool[]) => (this.customPools = v);
 

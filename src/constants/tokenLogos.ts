@@ -55,8 +55,8 @@ import tsnLogo from "@src/assets/tokens/TSN.svg";
 import busdLogo from "@src/assets/tokens/BUSD.svg";
 import wartLogo from "@src/assets/tokens/WART.svg";
 import ngntLogo from "@src/assets/tokens/NGNT.svg";
-import tndLogo from "@src/assets/tokens/TND.svg";
 import powerLogo from "@src/assets/tokens/POWER.svg";
+import tndLogo from "@src/assets/tokens/TND.svg";
 import wxbLogo from "@src/assets/tokens/WXB.png";
 import plutoLogo from "@src/assets/tokens/pluto.svg";
 import WXUSDNWXLP from "@src/assets/tokens/WXUSDNWXLP.svg";
@@ -84,7 +84,7 @@ const tokenLogos: Record<string, string> = {
   MUNDO: mundoLogo,
   EGGPOINT: eggPointLogo,
   EGG: eggLogo,
-  USDN: usdnLogo,
+  XTN: usdnLogo,
   ENDO: endoLogo,
   MARVIN: marvinLogo,
   EGGMOON: eggmoonLogo,

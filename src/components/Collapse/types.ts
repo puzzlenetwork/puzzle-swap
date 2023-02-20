@@ -60,7 +60,8 @@ export interface UseCollapseInput {
   expandStyles?: {};
   collapseStyles?: {};
   easing?: string;
-  duration?: number;
+  showDuration?: number;
+  hideDuration?: number;
   onCollapseStart?: () => void;
   onCollapseEnd?: () => void;
   onExpandStart?: () => void;
