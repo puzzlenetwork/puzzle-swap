@@ -11,6 +11,7 @@ import Tabs from "@components/Tabs";
 import MarketNfts from "@screens/NFTStaking/MarketNfts";
 import AccountNfts from "@screens/NFTStaking/AccountNfts";
 import { useStores } from "@stores";
+import BN from "@src/utils/BN";
 
 const Root = styled.div`
   display: flex;
@@ -40,9 +41,14 @@ const NFTStakingImpl: React.FC = () => {
     <Layout>
       <Observer>
         {() => {
-          const apy = vm.stats?.ultra?.apy ?? "-";
           const marketNftAmount = artworks?.length;
-
+          const apy =
+            vm.stats != null
+              ? new BN(vm.stats.stakingApy)
+                  .plus(vm.stats.eagleApy)
+                  .toFormat(2)
+                  .concat(" %")
+              : "—";
           return (
             <Root>
               <GoBack link="/stake" text="Back to Staking" />
@@ -54,8 +60,8 @@ const NFTStakingImpl: React.FC = () => {
               <Text type="secondary" className="title">
                 Stake Puzzle NFT to share the rewards pool from Puzzle
                 aggregator fees and boost your staking rewards up to
-                <b style={{ color: "#35A15A" }}> {apy}%</b>. You can stake one
-                of each type of NFTs.
+                <b style={{ color: "#35A15A" }}> {apy}</b>. You can stake one of
+                each type of NFTs.
               </Text>
               <Reward />
               <SizedBox height={40} />
