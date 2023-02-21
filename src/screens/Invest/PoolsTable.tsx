@@ -112,7 +112,6 @@ const PoolsTable: React.FC = () => {
             }
           }
         } else if (activeSort === 2) {
-          console.log("sort");
           if (accountStore.address == null) return 1;
           const balanceA = poolsStore.investedInPools?.find(
             (v) => a.domain === v.pool.domain
