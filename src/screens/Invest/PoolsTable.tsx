@@ -210,7 +210,7 @@ const PoolsTable: React.FC = () => {
             ? `$${data.liquidityInUsdt.toFormat(2)}`
             : "—";
         })(),
-        liquidity: "$ " + pool.globalLiquidity.toFormat(2),
+        liquidity: "$ " + new BN(pool.statistics?.liquidity ?? 0).toFormat(2),
         volume: (() => {
           const volume =
             pool.statistics != null
