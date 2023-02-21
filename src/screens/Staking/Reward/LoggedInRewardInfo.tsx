@@ -46,46 +46,44 @@ const LoggedInRewardInfo: React.FC = () => {
   return (
     <Root>
       <Row justifyContent="space-between">
-        <Row>
+        <Row alignItems="center">
           <Icon src={income} alt="income" />
           <SizedBox width={8} />
           <Column justifyContent="space-between">
             <Text type="secondary" size="medium">
               Claimed reward
             </Text>
-            <Text weight={500}>
-              {claimedUSDNReward != null ? (
-                claimedUSDNReward
-                  .toFormat(claimedUSDNReward.gte(0.01) ? 2 : 6)
-                  .concat(" XTN")
-              ) : (
-                <Skeleton height={16} width={110} />
-              )}
-            </Text>
+            <Column>
+              <Text weight={500}>
+                {claimedUSDNReward != null ? (
+                  claimedUSDNReward
+                    .toFormat(claimedUSDNReward.gte(0.01) ? 2 : 6)
+                    .concat(" XTN")
+                ) : (
+                  <Skeleton height={16} width={110} />
+                )}
+              </Text>
+              <Text weight={500}>
+                {claimedPuzzleReward != null ? (
+                  claimedPuzzleReward
+                    .toFormat(
+                      claimedPuzzleReward.eq(0)
+                        ? 2
+                        : claimedPuzzleReward.gte(0.01)
+                        ? 2
+                        : 6
+                    )
+                    .concat(" PUZZLE")
+                ) : (
+                  <Skeleton height={16} width={110} />
+                )}
+              </Text>
+            </Column>
           </Column>
         </Row>
         <Text type="secondary" textAlign="right" size="medium">
           {!vm.lastClaimDate.eq(0) && "Last claim " + format}
         </Text>
-      </Row>
-      <SizedBox height={18} />
-      <Row>
-        <Icon src={income} alt="income" />
-        <SizedBox width={8} />
-        <Column justifyContent="space-between">
-          <Text type="secondary" size="medium">
-            Claimed XTN reward
-          </Text>
-          <Text weight={500}>
-            {claimedPuzzleReward != null ? (
-              claimedPuzzleReward
-                .toFormat(claimedPuzzleReward.gte(0.01) ? 2 : 6)
-                .concat(" PUZZLE")
-            ) : (
-              <Skeleton height={16} width={110} />
-            )}
-          </Text>
-        </Column>
       </Row>
       <SizedBox height={18} />
       <Divider />
