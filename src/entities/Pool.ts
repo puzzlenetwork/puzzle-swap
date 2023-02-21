@@ -63,8 +63,7 @@ class Pool implements IPoolConfig {
     (this.globalLiquidityByPUZZLE = value);
 
   public get globalLiquidity(): BN {
-    if (this.globalLiquidityByUSDT != null)
-      return this.globalLiquidityByUSDT.times(this.usdnRate);
+    if (this.globalLiquidityByUSDT != null) return this.globalLiquidityByUSDT;
     else if (this.globalLiquidityByPUZZLE != null && this.puzzleRate.gt(0)) {
       return this.globalLiquidityByPUZZLE.times(this.puzzleRate);
     } else if (this.globalLiquidityByUSDN != null && this.usdnRate.gt(0)) {
