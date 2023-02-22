@@ -50,10 +50,6 @@ class Pool implements IPoolConfig {
   public globalVolume: BN | null = null;
   setGlobalVolume = (value: BN) => (this.globalVolume = value);
 
-  public globalLiquidityByUSDN: BN | null = null;
-  setGlobalLiquidityByUSDN = (value: BN | null) =>
-    (this.globalLiquidityByUSDN = value);
-
   public globalLiquidityByUSDT: BN | null = null;
   setGlobalLiquidityByUSDT = (value: BN | null) =>
     (this.globalLiquidityByUSDT = value);
@@ -66,8 +62,6 @@ class Pool implements IPoolConfig {
     if (this.globalLiquidityByUSDT != null) return this.globalLiquidityByUSDT;
     else if (this.globalLiquidityByPUZZLE != null && this.puzzleRate.gt(0)) {
       return this.globalLiquidityByPUZZLE.times(this.puzzleRate);
-    } else if (this.globalLiquidityByUSDN != null && this.usdnRate.gt(0)) {
-      return this.globalLiquidityByUSDN.times(this.usdnRate);
     } else {
       return BN.ZERO;
     }
@@ -198,7 +192,7 @@ class Pool implements IPoolConfig {
         .times(this.wavesRate)
         .div(1e6);
     }
-    this.setGlobalLiquidityByUSDN(globalLiquidityByUSDT);
+    this.setGlobalLiquidityByUSDT(globalLiquidityByUSDT);
     this.setGlobalLiquidityByPUZZLE(globalLiquidityByPuzzle);
   };
 
