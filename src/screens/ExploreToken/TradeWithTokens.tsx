@@ -28,7 +28,7 @@ const TradeWithTokens: React.FC<IProps> = () => {
   const navigate = useNavigate();
   const vm = useExploreTokenVM();
   const tokens = [
-    TOKENS_BY_SYMBOL.USDN,
+    TOKENS_BY_SYMBOL.XTN,
     TOKENS_BY_SYMBOL.USDT,
     TOKENS_BY_SYMBOL.WAVES,
     TOKENS_BY_SYMBOL.ETH,
