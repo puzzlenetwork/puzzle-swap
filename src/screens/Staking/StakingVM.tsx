@@ -105,9 +105,9 @@ class StakingVM {
       addressStaked: `${address}_staked`,
       claimedRewardInUSDN: `${address}_${usdn}_claimed`,
       claimedRewardInPuzzle: `${address}_${puzzle}_claimed`,
-      globalLastCheckInterest: `global_lastCheck_${usdn}_interest`,
-      addressLastCheckInterest: `${address}_lastCheck_${usdn}_interest`,
-      lastClaimDate: `${address}_${usdn}_lastClaim`,
+      globalLastCheckInterest: `global_lastCheck_${puzzle}_interest`,
+      addressLastCheckInterest: `${address}_lastCheck_${puzzle}_interest`,
+      lastClaimDate: `${address}_${puzzle}_lastClaim`,
     };
     const response = await nodeService.nodeKeysRequest(
       CONTRACT_ADDRESSES.staking,
@@ -143,8 +143,8 @@ class StakingVM {
     this._setClaimedRewardInPuzzle(claimedRewardInPuzzle ?? BN.ZERO);
 
     const availableToClaim = globalLastCheckInterest
-      .minus(addressLastCheckInterest)
-      .times(addressStaked);
+      .minus(addressLastCheckInterest ?? BN.ZERO)
+      .times(addressStaked ?? BN.ZERO);
     this._setAvailableToClaim(addressStaked ? availableToClaim : BN.ZERO);
     lastClaimDate && this._setLastClaimDate(lastClaimDate);
   };

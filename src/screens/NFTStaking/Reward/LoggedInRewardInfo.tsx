@@ -59,12 +59,12 @@ const LoggedInRewardInfo: React.FC = () => {
         >
           {!vm.lastClaimDate.eq(0) && "Last claim " + format}
         </LastClaimDate>
-        <Row>
+        <Row alignItems="center">
           <Icon src={income} alt="income" />
           <SizedBox width={8} />
           <Column>
             <Text type="secondary" size="medium">
-              Claimed PUZZLE reward
+              Claimed reward
             </Text>
             <Text weight={500}>
               {vm.claimedRewardInPuzzle != null ? (
@@ -77,12 +77,6 @@ const LoggedInRewardInfo: React.FC = () => {
               ) : (
                 <Skeleton height={16} width={90} />
               )}
-            </Text>
-          </Column>
-          <SizedBox width={16} />
-          <Column>
-            <Text type="secondary" size="medium">
-              Claimed XTN reward
             </Text>
             <Text weight={500}>
               {vm.claimedRewardInUSDN != null ? (
@@ -108,7 +102,7 @@ const LoggedInRewardInfo: React.FC = () => {
           </Text>
           <Text weight={500}>
             {vm.availableToClaim != null ? (
-              BN.formatUnits(vm.availableToClaim, 18)
+              BN.formatUnits(vm.availableToClaim, 20)
                 .toFormat(2)
                 .concat(" PUZZLE")
             ) : (

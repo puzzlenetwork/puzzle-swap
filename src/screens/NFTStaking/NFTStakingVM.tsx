@@ -72,9 +72,9 @@ class NFTStakingVM {
       addressStaked: `${address}_staked`,
       claimedRewardInUSDN: `${address}_${usdn}_claimed`,
       claimedRewardInPuzzle: `${address}_${puzzle}_claimed`,
-      globalLastCheckInterest: `global_lastCheck_${usdn}_interest`,
-      addressLastCheckInterest: `${address}_lastCheck_${usdn}_interest`,
-      lastClaimDate: `${address}_${usdn}_lastClaim`,
+      globalLastCheckInterest: `global_lastCheck_${puzzle}_interest`,
+      addressLastCheckInterest: `${address}_lastCheck_${puzzle}_interest`,
+      lastClaimDate: `${address}_${puzzle}_lastClaim`,
     };
     const response = await nodeService.nodeKeysRequest(
       contractAddress,
@@ -93,13 +93,13 @@ class NFTStakingVM {
       {}
     );
 
-    const addressStaked = parsedNodeResponse["addressStaked"];
+    const addressStaked = parsedNodeResponse["addressStaked"] ?? BN.ZERO;
     const claimedRewardInUSDN = parsedNodeResponse["claimedRewardInUSDN"];
     const claimedRewardInPuzzle = parsedNodeResponse["claimedRewardInPuzzle"];
     const globalLastCheckInterest =
-      parsedNodeResponse["globalLastCheckInterest"];
+      parsedNodeResponse["globalLastCheckInterest"] ?? BN.ZERO;
     const addressLastCheckInterest =
-      parsedNodeResponse["addressLastCheckInterest"];
+      parsedNodeResponse["addressLastCheckInterest"] ?? BN.ZERO;
     const lastClaimDate = parsedNodeResponse["lastClaimDate"];
 
     if (addressStaked == null) {
