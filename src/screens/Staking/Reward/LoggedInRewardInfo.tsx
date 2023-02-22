@@ -28,7 +28,7 @@ const LoggedInRewardInfo: React.FC = () => {
   const vm = useStakingVM();
   const availableToClaim =
     vm.availableToClaim != null
-      ? BN.formatUnits(vm.availableToClaim, 18)
+      ? BN.formatUnits(vm.availableToClaim, 20)
       : null;
   const claimedUSDNReward =
     vm.claimedRewardInUSDN != null

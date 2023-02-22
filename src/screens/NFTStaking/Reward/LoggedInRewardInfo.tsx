@@ -102,7 +102,7 @@ const LoggedInRewardInfo: React.FC = () => {
           </Text>
           <Text weight={500}>
             {vm.availableToClaim != null ? (
-              BN.formatUnits(vm.availableToClaim, 18)
+              BN.formatUnits(vm.availableToClaim, 20)
                 .toFormat(2)
                 .concat(" PUZZLE")
             ) : (
