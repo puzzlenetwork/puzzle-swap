@@ -103,6 +103,7 @@ const tokenLogos: Record<string, string> = {
   RACE: raceLogo,
   BTC: btcLogo,
   ETH: ethLogo,
+  ETHWXG: ethLogo,
   LTC: ltcLogo,
   USDC: usdcLogo,
   EURN: eurn,
