@@ -60,8 +60,8 @@ export default class TokenStore {
     const statistics = stats.map((details) => {
       const asset = TOKENS_BY_ASSET_ID[details.id] ?? details.precision;
       const decimals = asset.decimals;
-      const firstPrice = new BN(details.data?.["firstPrice_usdt"] ?? 0);
-      const currentPrice = new BN(details.data?.["lastPrice_usdt"] ?? 0);
+      const firstPrice = new BN(details.data?.["firstPrice_busd"] ?? 0);
+      const currentPrice = new BN(details.data?.["lastPrice_busd"] ?? 0);
 
       const totalSupply = BN.formatUnits(details.totalSupply, decimals);
       const circulatingSupply = BN.formatUnits(details.circulating, decimals);
