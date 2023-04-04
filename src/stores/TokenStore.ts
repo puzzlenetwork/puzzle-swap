@@ -91,7 +91,7 @@ export default class TokenStore {
         fullyDilutedMC: totalSupply.times(currentPrice),
         marketCap: circulatingSupply.times(currentPrice),
         totalBurned: totalSupply.minus(circulatingSupply),
-        volume24: new BN(details["24h_vol_usdt"]),
+        volume24: new BN(details["24h_vol_busd"]),
       };
     });
     this.setStatistics(statistics);
