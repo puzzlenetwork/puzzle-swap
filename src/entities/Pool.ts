@@ -86,6 +86,10 @@ class Pool implements IPoolConfig {
 
   public wavesRate: BN = BN.ZERO;
   public setWavesRate = (value: BN) => (this.wavesRate = value);
+  
+  public _usdtRate: BN = BN.ZERO;
+  public setUsdtRate = (value: BN) => (this._usdtRate = value);
+
 
   constructor(params: IPoolConfig) {
     this.contractAddress = params.contractAddress;
