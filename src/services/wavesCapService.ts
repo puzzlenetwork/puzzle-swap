@@ -12,6 +12,8 @@ interface IAssetResponse {
   data: {
     firstPrice_usdt: number;
     lastPrice_usdt: number;
+    firstPrice_usdc: number;
+    lastPrice_usdc: number;
   } | null;
 }
 
