@@ -10,8 +10,6 @@ interface IAssetResponse {
   name: string;
   shortcode: string;
   data: {
-    firstPrice_usdt: number;
-    lastPrice_usdt: number;
     firstPrice_usdc: number;
     lastPrice_usdc: number;
   } | null;
