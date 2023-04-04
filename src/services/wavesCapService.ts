@@ -6,6 +6,7 @@ interface IAssetResponse {
   totalSupply: number;
   circulating: number;
   "24h_vol_usdt": number;
+  "24h_vol_busd": number;
   precision: number;
   name: string;
   shortcode: string;
