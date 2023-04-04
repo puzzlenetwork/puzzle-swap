@@ -67,6 +67,9 @@ export default class PoolsStore {
   public usdnRate: BN = BN.ZERO;
   public setUsdnRate = (value: BN) => (this.usdnRate = value);
 
+  public usdtRate: BN = BN.ZERO;
+  public setUsdtRate = (value: BN) => (this.usdtRate = value);
+
   get customPools() {
     return this.pools.filter(({ isCustom }) => isCustom);
   }
@@ -155,7 +158,9 @@ export default class PoolsStore {
     }
 
     if (pool.tokens.some(({ assetId }) => assetId === usdt)) {
-      return pool.currentPrice(assetId, usdt, coefficient);
+      const usdtRate = pool.usdtRate;
+      const priceInUsdt = pool.currentPrice(assetId, usdt, coefficient);
+      return priceInUsdt != null ? priceInUsdt.times(usdtRate) : null;
     } else if (pool.tokens.some(({ assetId }) => assetId === puzzle)) {
       const puzzleRate = pool.puzzleRate;
       const priceInPuzzle = pool.currentPrice(assetId, puzzle, coefficient);
@@ -259,6 +264,7 @@ export default class PoolsStore {
         `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.PUZZLE.assetId}`,
         `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.XTN.assetId}`,
         `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.WAVES.assetId}`,
+        `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.USDT.assetId}`,
       ]
     );
 
@@ -274,13 +280,19 @@ export default class PoolsStore {
       priceResponse != null
         ? BN.formatUnits(priceResponse[2].value, 6)
         : BN.ZERO;
+    const usdtRate =
+      priceResponse != null
+        ? BN.formatUnits(priceResponse[3].value, 6)
+        : BN.ZERO;
     this.setPuzzleRate(puzzleRate);
     this.setUsdnRate(usdnRate);
     this.setWavesRate(wavesRate);
+    this.setUsdtRate(usdtRate);
     this.pools.forEach((pool) => {
       pool.setPuzzleRate(puzzleRate);
       pool.setUsdnRate(usdnRate);
       pool.setWavesRate(wavesRate);
+      pool.setUsdtRate(usdtRate);
     });
   };
 }
