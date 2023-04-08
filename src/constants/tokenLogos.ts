@@ -73,6 +73,9 @@ import WW from "@src/assets/tokens/ww.jpeg";
 import MINI from "@src/assets/tokens/mini.jpeg";
 import SURF from "@src/assets/tokens/surf.svg";
 import SWAVES from "@src/assets/tokens/swaves.svg";
+import USDTWXG from "@src/assets/tokens/USDTWXG.svg";
+import USDCWXG from "@src/assets/tokens/USDCWXG.svg";
+import WBTCWXG from "@src/assets/tokens/WBTCWXG.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -144,6 +147,9 @@ const tokenLogos: Record<string, string> = {
   wxUSDCUSDT_TCI: wxUSDCUSDT_TCI,
   PUZZLEUSDNLP: PUZZLEUSDNLP,
   wxPUZZLEUSDN_TCI: wxPUZZLEUSDN_TCI,
+  USDT_WXG: USDTWXG,
+  USDC_WXG: USDCWXG,
+  WBTC_WXG: WBTCWXG,
   WW: WW,
   MINI: MINI,
   SURF: SURF,
