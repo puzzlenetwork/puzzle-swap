@@ -132,7 +132,7 @@ export default class PoolsStore {
 
   usdtRate = (assetId: string, coefficient = 1): BN | null => {
     const usdn = TOKENS_BY_SYMBOL.XTN.assetId;
-    const usdt = TOKENS_BY_SYMBOL.USDT.assetId;
+    const usdt = TOKENS_BY_SYMBOL.USDT_WXG.assetId;
     const puzzle = TOKENS_BY_SYMBOL.PUZZLE.assetId;
     const pool = this.pools.find(({ tokens }) =>
       tokens.some((t) => t.assetId === assetId)
@@ -263,7 +263,7 @@ export default class PoolsStore {
         `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.PUZZLE.assetId}`,
         `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.XTN.assetId}`,
         `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.WAVES.assetId}`,
-        `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.USDT.assetId}`,
+        `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.USDT_WXG.assetId}`,
       ]
     );
 
