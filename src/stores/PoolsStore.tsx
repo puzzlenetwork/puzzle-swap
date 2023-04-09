@@ -260,10 +260,10 @@ export default class PoolsStore {
     const priceResponse = await nodeService.nodeKeysRequest(
       CONTRACT_ADDRESSES.priceOracle,
       [
-        `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.PUZZLE.assetId}`,
-        `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.XTN.assetId}`,
-        `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.WAVES.assetId}`,
-        `block_${lastBlock}_min_${TOKENS_BY_SYMBOL.USDT_WXG.assetId}`,
+        `block_${lastBlock}_${TOKENS_BY_SYMBOL.PUZZLE.assetId}`,
+        `block_${lastBlock}_${TOKENS_BY_SYMBOL.XTN.assetId}`,
+        `block_${lastBlock}_${TOKENS_BY_SYMBOL.WAVES.assetId}`,
+        `block_${lastBlock}_${TOKENS_BY_SYMBOL.USDT_WXG.assetId}`,
       ]
     );
 
