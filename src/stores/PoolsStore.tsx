@@ -172,7 +172,7 @@ export default class PoolsStore {
         : new BN(startPrice ?? 0);
     } else {
       //todo check all tokens like this
-      return null;
+      return new BN(1);
     }
   };
 
