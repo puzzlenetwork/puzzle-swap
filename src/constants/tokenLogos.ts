@@ -76,6 +76,7 @@ import SWAVES from "@src/assets/tokens/swaves.svg";
 import USDTWXG from "@src/assets/tokens/USDTWXG.svg";
 import USDCWXG from "@src/assets/tokens/USDCWXG.svg";
 import WBTCWXG from "@src/assets/tokens/WBTCWXG.svg";
+import BURNXTN from "@src/assets/tokens/BURNXTN.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -150,6 +151,7 @@ const tokenLogos: Record<string, string> = {
   USDT_WXG: USDTWXG,
   USDC_WXG: USDCWXG,
   WBTC_WXG: WBTCWXG,
+  BURN_XTN: BURNXTN,
   WW: WW,
   MINI: MINI,
   SURF: SURF,

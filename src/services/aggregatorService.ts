@@ -37,6 +37,18 @@ const aggregatorService = {
         Authorization: `Bearer ${process.env.REACT_APP_AGGREGATOR_KEY}`,
       },
     });
+
+    // const stablesLi = ["9wc3LXNA4TEBsXyKtoLE9mrbDD7WMHXvXrCjZvabLAsi", "HGgabTqUS8WtVFUJzfmrTDMgEccJuZLBPhFgQFxvnsoW"]
+    // if (stablesLi.indexOf(assetId0) != -1 && stablesLi.indexOf(assetId1) != -1) {
+    //   const url = `https://nodes-puzzle.wavesnodes.com/addresses/data/3P6H3u6gEvsXtBxsE2ynEN4Ja8DoShNe9DX/${assetId1}_balance`;
+    //   const resp = (await axios.get(url)).data;
+    //   const data2 = (resp.value > amount.toNumber()) ?
+    //       {routes: new Array<TCalcRoute>(), aggregatedProfit: amount.toNumber(), estimatedOut: amount.multipliedBy(1).toNumber(), parameters: `${amount}/3P6H3u6gEvsXtBxsE2ynEN4Ja8DoShNe9DX,puzzle,${assetId0},${assetId1}`, priceImpact: 0}
+    //       : {routes: new Array<TCalcRoute>(), aggregatedProfit: 0, estimatedOut: 0, parameters: "", priceImpact: 0};
+    //
+    //   if (data2.estimatedOut > data.estimatedOut) {return data2}
+    // }
+
     return data;
   },
 };
