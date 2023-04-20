@@ -150,7 +150,7 @@ const tokenLogos: Record<string, string> = {
   wxPUZZLEUSDN_TCI: wxPUZZLEUSDN_TCI,
   USDT_WXG: USDTWXG,
   USDC_WXG: USDCWXG,
-  WBTC_WXG: WBTCWXG,
+  BTC_WXG: WBTCWXG,
   BURN_XTN: BURNXTN,
   WW: WW,
   MINI: MINI,
