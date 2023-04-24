@@ -59,7 +59,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     contractAddress: "3PLiXyywNThdvf3vVEUxwc7TJTucjZvuegh",
     layer2Address: "3P4oa7KAvocZhPXQ1B6ncAopzLEZUtMwbHF",
     baseTokenId: TOKENS_BY_SYMBOL.BTC_WXG.assetId,
-    title: "Pool 10",
+    title: "Pool10",
     logo: tokenLogos.BTC_WXG,
     defaultAssetId0: TOKENS_BY_SYMBOL.BTC_WXG.assetId,
     defaultAssetId1: TOKENS_BY_SYMBOL.XTN.assetId,
