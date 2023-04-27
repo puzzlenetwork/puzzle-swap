@@ -326,7 +326,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     contractAddress: "3PMHkdVCzeLAYuCh92FPtusuxdLk5xMB51y",
     layer2Address: "3P84BhX5dCVs1TCgYnGa57kCHrMz4mUBXyE",
     baseTokenId: TOKENS_BY_SYMBOL.EGG.assetId,
-    title: "Egg Uneven Pool 🥚",
+    title: "Egg UnEven Pool 🥚",
     logo: tokenLogos.EGG,
     defaultAssetId0: TOKENS_BY_SYMBOL.XTN.assetId,
     defaultAssetId1: TOKENS_BY_SYMBOL.EGG.assetId,
