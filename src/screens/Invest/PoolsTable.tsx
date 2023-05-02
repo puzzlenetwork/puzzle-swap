@@ -93,7 +93,7 @@ const PoolsTable: React.FC = () => {
   useMemo(() => {
     const data = vm.pools
       .filter(({ domain }) => domain !== "puzzle")
-      .filter(({ globalLiquidity }) => globalLiquidity.gt(new BN(50)))
+      .filter(({ globalLiquidity }) => globalLiquidity.gt(new BN(20)))
       .filter((pool) => {
         if (!showEmptyBalances) {
           const data = poolsStore.investedInPools?.find(
