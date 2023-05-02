@@ -54,15 +54,9 @@ class Pool implements IPoolConfig {
   setGlobalLiquidityByUSDT = (value: BN | null) =>
     (this.globalLiquidityByUSDT = value);
 
-  public globalLiquidityByPUZZLE: BN | null = null;
-  setGlobalLiquidityByPUZZLE = (value: BN | null) =>
-    (this.globalLiquidityByPUZZLE = value);
-
   public get globalLiquidity(): BN {
     if (this.globalLiquidityByUSDT != null) return this.globalLiquidityByUSDT;
-    else if (this.globalLiquidityByPUZZLE != null && this.puzzleRate.gt(0)) {
-      return this.globalLiquidityByPUZZLE.times(this.puzzleRate);
-    } else {
+    else {
       return BN.ZERO;
     }
   }
@@ -159,7 +153,7 @@ class Pool implements IPoolConfig {
       const globalVolume = new BN(globalVolumeValue.value).div(1e6);
       this.setGlobalVolume(globalVolume);
     }
-    const usdtAsset = this.tokens.find(({ symbol }) => symbol === "USDT")!;
+    const usdtAsset = this.tokens.find(({ assetId }) => assetId === "34N9YcEETLWn93qYQ64EsP1x89tSruJU44RrEMSXXEPJ")!;
     const usdtLiquidity = this.liquidity[usdtAsset?.assetId];
 
     const usdnAsset = this.tokens.find(({ symbol }) => symbol === "XTN")!;
@@ -172,16 +166,17 @@ class Pool implements IPoolConfig {
     const wavesLiquidity = this.liquidity[wavesAsset?.assetId];
 
     let globalLiquidityByUSDT = null;
-    let globalLiquidityByPuzzle = null;
     if (usdtAsset && usdtLiquidity) {
       globalLiquidityByUSDT = new BN(usdtLiquidity)
         .div(usdtAsset.share)
+        .times(this._usdtRate)
         .times(100)
         .div(1e6);
     } else if (puzzleAsset && puzzleLiquidity) {
-      globalLiquidityByPuzzle = new BN(puzzleLiquidity)
+      globalLiquidityByUSDT = new BN(puzzleLiquidity)
         .div(puzzleAsset.share)
         .times(100)
+        .times(this.puzzleRate)
         .div(1e8);
     } else if (usdnAsset && usdnLiquidity) {
       globalLiquidityByUSDT = new BN(usdnLiquidity)
@@ -194,10 +189,9 @@ class Pool implements IPoolConfig {
         .div(wavesAsset.share)
         .times(100)
         .times(this.wavesRate)
-        .div(1e6);
+        .div(1e8);
     }
     this.setGlobalLiquidityByUSDT(globalLiquidityByUSDT);
-    this.setGlobalLiquidityByPUZZLE(globalLiquidityByPuzzle);
   };
 
   getAccountLiquidityInfo = async (user: string): Promise<IShortPoolInfo> => {

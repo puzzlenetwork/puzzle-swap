@@ -77,7 +77,7 @@ class TokenChartVM {
     return Math.max(...this.chart.map(({ price }) => price));
   }
 
-  selectedChartPeriod: keyof TChartDataRecord = "1d";
+  selectedChartPeriod: keyof TChartDataRecord = "all";
   setSelectedChartPeriod = (v: string) =>
     (this.selectedChartPeriod = v as keyof TChartDataRecord);
 

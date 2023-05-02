@@ -59,7 +59,7 @@ const TokensChartDesktopImpl: React.FC<IProps> = observer(
               <Text
                 weight={500}
                 fitContent
-              >{`${rest.token0.symbol}/${rest.token1.symbol}`}</Text>
+              >{`${rest.token1.symbol}/${rest.token0.symbol}`}</Text>
               <SizedBox width={8} />
             </Row>
             <ChartAgeButtons

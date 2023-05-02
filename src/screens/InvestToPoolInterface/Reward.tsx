@@ -80,10 +80,10 @@ const Reward: React.FC<IProps> = () => {
               </Row>
               <Text weight={500}>
                 {vm.totalClaimedReward != null ? (
-                  `$ ${totalClaimed}`
+                  `${totalClaimed}`
                 ) : (
                   <Skeleton height={16} width="50%" />
-                )}
+                )} xtn
               </Text>
             </Column>
           </Row>

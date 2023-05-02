@@ -59,7 +59,7 @@ const MyPoolBalance: React.FC<IProps> = () => {
           </Column>
           <Column>
             <Text textAlign="right" size="medium">
-              $ {vm.totalProvidedLiquidityByAddress.toFormat(2)}
+              $ {(vm.totalProvidedLiquidityByAddress).toFormat(2)}
             </Text>
             <Text textAlign="right" type="secondary" size="small">
               {vm.shareOfPool != null &&
