@@ -155,7 +155,7 @@ class SwapVM {
     });
     promise
       .then((v: any) => {
-        !invalidAmount && this._setAmount1(new BN(v.estimatedOut));
+        !invalidAmount && this._setAmount1(new BN(v.estimatedOut*0.9971));
         this._calculatePrice(
           invalidAmount ? defaultAmount0 : amount0,
           new BN(v.estimatedOut)
