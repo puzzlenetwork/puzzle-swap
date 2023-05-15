@@ -353,7 +353,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
 export const CONTRACT_ADDRESSES = {
   staking: "3PFTbywqxtFfukX3HyT881g4iW5K4QL3FAS",
   ultraStaking: "3PKUxbZaSYfsR7wu2HaAgiirHYwAMupDrYW",
-  aggregator: "3PGFHzVGT4NTigwCKP1NcwoXkodVZwvBuuU",
+  aggregator: "3PK1LcCBwbmBZrcDCJsDkXh4USKPxb68Tcw",
   nfts: "3PFQjjDMiZKQZdu5JqTHD7HwgSXyp9Rw9By",
   createArtefacts: "3PFkgvC9y6zHy64zEAscKKgaNY3yipiLqbW",
   boost: "3PAeY7RgwuNUZNscGqahqJxFTFDkh7fbNwJ",
