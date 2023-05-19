@@ -78,6 +78,7 @@ import USDCWXG from "@src/assets/tokens/USDCWXG.svg";
 import WBTCWXG from "@src/assets/tokens/WBTCWXG.svg";
 import BURNXTN from "@src/assets/tokens/BURNXTN.svg";
 import NEXT_WEEK_PEPE from "@src/assets/tokens/NEXTWEEKPEPE.png";
+import eastLogo from "@src/assets/tokens/EAST.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -161,6 +162,7 @@ const tokenLogos: Record<string, string> = {
   SWAVES: SWAVES,
   TND: tndLogo,
   NEXT_WEEK_PEPE: NEXT_WEEK_PEPE,
+  EAST: eastLogo,
   SPICE: "https://wavesducks.com/static/img/token/spice.svg",
 };
 
