@@ -79,6 +79,9 @@ import WBTCWXG from "@src/assets/tokens/WBTCWXG.svg";
 import BURNXTN from "@src/assets/tokens/BURNXTN.svg";
 import NEXT_WEEK_PEPE from "@src/assets/tokens/NEXTWEEKPEPE.png";
 import eastLogo from "@src/assets/tokens/EAST.svg";
+import wbtcErc20Logo from "@src/assets/tokens/WBTCERC20.svg";
+import usdtBscLogo from "@src/assets/tokens/USDTBEP20.svg";
+import orientLogo from "@src/assets/tokens/ORIENT.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -117,7 +120,7 @@ const tokenLogos: Record<string, string> = {
   WEST: westLogo,
   WCT: wctLogo,
   MUNA: munaLogo,
-  BNB: bnbLogo,
+  BNB_WXG: bnbLogo,
   SHEG: shegLogo,
   YFI: yfiLogo,
   MATIC: maticLogo,
@@ -163,7 +166,11 @@ const tokenLogos: Record<string, string> = {
   TND: tndLogo,
   NEXT_WEEK_PEPE: NEXT_WEEK_PEPE,
   EAST: eastLogo,
+  WBTC: wbtcErc20Logo,
+  USDT_BSC_PPT: usdtBscLogo,
+  ORIENT: orientLogo,
   SPICE: "https://wavesducks.com/static/img/token/spice.svg",
+  BNB: "https://wavescap.com/wp-content/uploads/asset-logo/66a1br3BrkoaJgP7yEar9hJcSTvJPoH6PYBLqscXcMGo.svg"
 };
 
 export default tokenLogos;
