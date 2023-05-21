@@ -167,7 +167,7 @@ const tokenLogos: Record<string, string> = {
   NEXT_WEEK_PEPE: NEXT_WEEK_PEPE,
   EAST: eastLogo,
   WBTC: wbtcErc20Logo,
-  USDT_BSC_PPT: usdtBscLogo,
+  USDT_BSC: usdtBscLogo,
   ORIENT: orientLogo,
   SPICE: "https://wavesducks.com/static/img/token/spice.svg",
   BNB: "https://wavescap.com/wp-content/uploads/asset-logo/66a1br3BrkoaJgP7yEar9hJcSTvJPoH6PYBLqscXcMGo.svg"
