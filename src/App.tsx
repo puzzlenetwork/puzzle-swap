@@ -24,6 +24,7 @@ import OldExplorer from "./screens/OldExplorer";
 import BoostApy from "./screens/BoostApy";
 import MobileNavBar from "./components/MobileNavBar";
 import Landing from "@screens/Landing";
+import Paper from "@screens/Paper";
 import LoginScreen from "./screens/LoginScreen";
 
 const Root = styled(Column)`
@@ -51,6 +52,8 @@ const App: React.FC = () => {
         <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
         {/* Stake */}
         <Route path={ROUTES.STAKE} element={<Staking />} />
+        {/* Paper */}
+        <Route path="/paper" element={<Paper />} />
 
         {/* Explore */}
         <Route path={ROUTES.OLD_EXPLORE} element={<OldExplorer />} />
