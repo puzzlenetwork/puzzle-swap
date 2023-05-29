@@ -353,12 +353,14 @@ export const POOL_CONFIG: IPoolConfig[] = [
 export const CONTRACT_ADDRESSES = {
   staking: "3PFTbywqxtFfukX3HyT881g4iW5K4QL3FAS",
   ultraStaking: "3PKUxbZaSYfsR7wu2HaAgiirHYwAMupDrYW",
-  aggregator: "3PGFHzVGT4NTigwCKP1NcwoXkodVZwvBuuU",
+  // aggregator: "3PGFHzVGT4NTigwCKP1NcwoXkodVZwvBuuU", // prod
+  aggregator: "3PK1LcCBwbmBZrcDCJsDkXh4USKPxb68Tcw",
   nfts: "3PFQjjDMiZKQZdu5JqTHD7HwgSXyp9Rw9By",
   createArtefacts: "3PFkgvC9y6zHy64zEAscKKgaNY3yipiLqbW",
   boost: "3PAeY7RgwuNUZNscGqahqJxFTFDkh7fbNwJ",
   calcReward: "3PAeY7RgwuNUZNscGqahqJxFTFDkh7fbNwJ",
-  limitOrders: "3PPrfNMnk8z8QhZcqMyJk69mF65s2Rbz3B6",
+  // limitOrders: "3PPrfNMnk8z8QhZcqMyJk69mF65s2Rbz3B6", // old
+  limitOrders: "3PFB6LJyShsCKEA1AU1U1WLbDazqyj6ZL9b",
   proxyLimitOrders: "3PM4Mn2iwQnUkeMxTJJAuriiVEGAcQwDU5H",
   priceOracle: "3PPXVKjN6nRMzXeegcYhfiic96pd2c98Ekm",
 };
