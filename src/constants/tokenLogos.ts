@@ -81,6 +81,8 @@ import NEXT_WEEK_PEPE from "@src/assets/tokens/NEXTWEEKPEPE.png";
 import eastLogo from "@src/assets/tokens/EAST.svg";
 import wbtcErc20Logo from "@src/assets/tokens/WBTCERC20.svg";
 import usdtBscLogo from "@src/assets/tokens/USDTBEP20.svg";
+import usdcBscLogo from "@src/assets/tokens/USDCBEP20.svg";
+import btcbLogo from "@src/assets/tokens/BTCB.svg";
 import orientLogo from "@src/assets/tokens/ORIENT.svg";
 
 const tokenLogos: Record<string, string> = {
@@ -168,6 +170,8 @@ const tokenLogos: Record<string, string> = {
   EAST: eastLogo,
   WBTC: wbtcErc20Logo,
   USDT_BSC: usdtBscLogo,
+  USDC_BSC: usdcBscLogo,
+  BTCB: btcbLogo,
   ORIENT: orientLogo,
   SPICE: "https://wavesducks.com/static/img/token/spice.svg",
   BNB: "https://wavescap.com/wp-content/uploads/asset-logo/66a1br3BrkoaJgP7yEar9hJcSTvJPoH6PYBLqscXcMGo.svg"
