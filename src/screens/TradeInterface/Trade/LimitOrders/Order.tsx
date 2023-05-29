@@ -63,7 +63,7 @@ const Order: React.FC<IProps> = ({
             </Text>
           </Row>
           <Text type="secondary" size="small">
-            Price: {price.toFormat(2)} {t0.symbol}
+            Price: 1 {t1.symbol} = {price.toFormat(6)} {t0.symbol}
           </Text>
         </Column>
       </Row>
