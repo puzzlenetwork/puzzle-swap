@@ -37,8 +37,8 @@ const wavesCapService = {
   getAssetRate: async (assetsId: string): Promise<BN | null> => {
     const url = `https://wavescap.com/api/asset/${assetsId}.json`;
     const { data: res } = await axios.get<IAssetResponse>(url);
-    return res.data && res.data["firstPrice_busd"]
-      ? new BN(res.data["lastPrice_busd"])
+    return res.data && res.data["firstPrice_usdt"]
+      ? new BN(res.data["firstPrice_usdt"])
       : null;
   },
 };
