@@ -101,7 +101,7 @@ const LoggedInRewardInfo: React.FC = () => {
                 "0.00 PUZZLE"
               ) : (
                 availableToClaim
-                  .toFormat(availableToClaim.gte(0.01) ? 2 : 6)
+                  .toFormat(availableToClaim.gte(0.01) ? 8 : 6)
                   .concat(" PUZZLE")
               )
             ) : (
