@@ -123,6 +123,7 @@ const TokensTable: React.FC<IProps> = () => {
           : 1;
       })
 
+      .filter((token) => !tokenStore.statisticsByAssetId[token.assetId].currentPrice.eq(0))
       .filter(({ name, symbol }) =>
         vm.tokenNameFilter
           ? [name, symbol]
