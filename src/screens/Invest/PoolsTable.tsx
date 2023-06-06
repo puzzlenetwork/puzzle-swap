@@ -133,7 +133,7 @@ const PoolsTable: React.FC = () => {
               : a.statistics?.apy;
           const apy1 =
             b.statistics?.boostedApy != null
-              ? a.statistics?.apy + b.statistics?.boostedApy
+              ? b.statistics?.apy + b.statistics?.boostedApy
               : b.statistics?.apy;
           if (apy0 != null && apy1 != null) {
             if (new BN(apy0).lt(apy1)) {
