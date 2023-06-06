@@ -13,8 +13,8 @@ interface IAssetResponse {
   data: {
     firstPrice_busd: number;
     lastPrice_busd: number;
-    firstPrice_usdt: number;
-    lastPrice_usdt: number;
+    "firstPrice_usdt-ppt": number;
+    "lastPrice_usdt-ppt": number;
   } | null;
 }
 
@@ -37,8 +37,8 @@ const wavesCapService = {
   getAssetRate: async (assetsId: string): Promise<BN | null> => {
     const url = `https://wavescap.com/api/asset/${assetsId}.json`;
     const { data: res } = await axios.get<IAssetResponse>(url);
-    return res.data && res.data["firstPrice_usdt"]
-      ? new BN(res.data["firstPrice_usdt"])
+    return res.data && res.data["firstPrice_usdt-ppt"]
+      ? new BN(res.data["firstPrice_usdt-ppt"])
       : null;
   },
 };
