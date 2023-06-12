@@ -395,11 +395,12 @@ class CreateCustomPoolsVm {
   };
 
   get puzzleNFTPrice() {
-    const { poolsStore, nftStore } = this.rootStore;
-    const rate = poolsStore.usdtRate(TOKENS_BY_SYMBOL.PUZZLE.assetId, 1);
-    if (nftStore.totalPuzzleNftsAmount == null || rate == null) return null;
-    const amount = new BN(400).plus(nftStore.totalPuzzleNftsAmount).div(rate);
-    return Math.ceil(amount.toNumber() + 1);
+    // const { poolsStore, nftStore } = this.rootStore;
+    // const rate = poolsStore.usdtRate(TOKENS_BY_SYMBOL.PUZZLE.assetId, 1);
+    // if (nftStore.totalPuzzleNftsAmount == null || rate == null) return null;
+    // const amount = new BN(400).plus(nftStore.totalPuzzleNftsAmount).div(rate);
+    // return Math.ceil(amount.toNumber() + 1);
+    return 20;
   }
 
   get canBuyNft() {
