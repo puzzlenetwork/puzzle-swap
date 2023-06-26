@@ -37,7 +37,7 @@ const Root = styled.div<{ red?: boolean }>`
 const CircularProgressbar: React.FC<IProps> = ({ percent, red }) => {
   return (
     <Root red={red}>
-      <Bar value={percent} text={`${percent}%`} />
+      <Bar value={percent} text={`${Math.floor(percent)}%`} />
     </Root>
   );
 };
