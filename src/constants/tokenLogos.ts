@@ -85,6 +85,7 @@ import usdcBscLogo from "@src/assets/tokens/USDCBEP20.svg";
 import btcbLogo from "@src/assets/tokens/BTCB.svg";
 import orientLogo from "@src/assets/tokens/ORIENT.svg";
 import anoteLogo from "@src/assets/tokens/ANOTE.svg";
+import wavesdlpLogo from "@src/assets/tokens/WAVESDLP.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -175,6 +176,7 @@ const tokenLogos: Record<string, string> = {
   BTCB: btcbLogo,
   ORIENT: orientLogo,
   ANOTE: anoteLogo,
+  WAVESDLP: wavesdlpLogo,
   SPICE: "https://wavesducks.com/static/img/token/spice.svg",
   BNB: "https://wavescap.com/wp-content/uploads/asset-logo/66a1br3BrkoaJgP7yEar9hJcSTvJPoH6PYBLqscXcMGo.svg"
 };
