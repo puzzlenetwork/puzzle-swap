@@ -85,7 +85,7 @@ import usdcBscLogo from "@src/assets/tokens/USDCBEP20.svg";
 import btcbLogo from "@src/assets/tokens/BTCB.svg";
 import orientLogo from "@src/assets/tokens/ORIENT.svg";
 import anoteLogo from "@src/assets/tokens/ANOTE.svg";
-import wavesdlpLogo from "@src/assets/tokens/WAVESDLP.svg";
+import wavesdlpLogo from "@src/assets/tokens/WAVSEDLP.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
