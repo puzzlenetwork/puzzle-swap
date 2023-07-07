@@ -76,7 +76,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const navigate = useNavigate();
   const handleSmartContractClick = () =>
-    window.open(`${EXPLORER_URL}/address/${vm.pool.contractAddress}`);
+    window.open(`https://wscan.io/${vm.pool.contractAddress}`);
   const completePoolInitialization = () => {
     vm.prepareCompletePoolInitialization();
     navigate(ROUTES.POOLS_CREATE);
@@ -105,48 +105,48 @@ const MainPoolInfo: React.FC<IProps> = () => {
             </Column>
           </Hat>
           <Links isCustom={vm.pool.isCustom}>
+            {/*{vm.pool.isCustom && (*/}
+            {/*  <Column*/}
+            {/*    onClick={() =>*/}
+            {/*      window.open(*/}
+            {/*        `${EXPLORER_URL}/tx/${vm.pool?.artefactOriginTransactionId}`*/}
+            {/*      )*/}
+            {/*    }*/}
+            {/*  >*/}
+            {/*    <Text type="purple300" size="medium" nowrap>*/}
+            {/*      Created via*/}
+            {/*    </Text>*/}
+            {/*    <TextButton prefix={link}>{vm.nftPaymentName}</TextButton>*/}
+            {/*    <SizedBox height={16} />*/}
+            {/*  </Column>*/}
+            {/*)}*/}
+            <Column>
+              <Text type="purple300" size="medium">
+                Smart Contract
+              </Text>
+              <TextButton prefix={link} onClick={handleSmartContractClick}>
+                {centerEllipsis(vm.pool?.contractAddress ?? "", 8)}
+              </TextButton>
+            </Column>
             <Column>
               <Text type="purple300" size="medium" nowrap>
-                Creator of the pool
+                Pool Owner
               </Text>
               <Text type="light" size="medium">
                 {vm.pool.isCustom ? (
                   <TextButton
                     prefix={link}
                     onClick={() =>
-                      window.open(`${EXPLORER_URL}/address/${vm.pool?.owner}`)
+                      window.open(`https://wscan.io/${vm.pool?.owner}`)
                     }
                   >
-                    {centerEllipsis(vm.pool?.owner ?? "", 6)}
+                    {centerEllipsis(vm.pool?.owner ?? "", 8)}
                   </TextButton>
                 ) : (
                   <TextButton prefix={puzzleIcon}>Puzzle Swap</TextButton>
                 )}
               </Text>
               <SizedBox height={16} />
-            </Column>
-            {vm.pool.isCustom && (
-              <Column
-                onClick={() =>
-                  window.open(
-                    `${EXPLORER_URL}/tx/${vm.pool?.artefactOriginTransactionId}`
-                  )
-                }
-              >
-                <Text type="purple300" size="medium" nowrap>
-                  Created via
-                </Text>
-                <TextButton prefix={link}>{vm.nftPaymentName}</TextButton>
-                <SizedBox height={16} />
-              </Column>
-            )}
-            <Column>
-              <Text type="purple300" size="medium">
-                Smart-contract
-              </Text>
-              <TextButton prefix={link} onClick={handleSmartContractClick}>
-                View on Explorer
-              </TextButton>
             </Column>
             <SizedBox height={16} />
             <Row>

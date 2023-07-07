@@ -162,7 +162,7 @@ class SwapVM {
         );
         this._setSynchronizing(false);
         !invalidAmount &&
-          this._setPriceImpact(new BN(v.priceImpact).times(100));
+          this._setPriceImpact((new BN(v.priceImpact).gt(0) ? new BN(v.priceImpact) : BN.ZERO).times(100));
         this._setParameters(!invalidAmount ? v.parameters : null);
         this._setRoute(v.routes);
         this._setAggregatedProfit(new BN(v.aggregatedProfit));

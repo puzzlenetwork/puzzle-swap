@@ -41,10 +41,10 @@ const DepositComposition: React.FC<IProps> = () => {
           type="warning"
           text={
             <Text size="medium">
-              Your to get all tokens to provide liquidity to the pool.
-              <Link to={ROUTES.TRADE}>
-                <TextButton kind="secondary">Go to trade.</TextButton>
-              </Link>
+              Please get all tokens to launch a pool.
+              {/*<Link to={ROUTES.TRADE}>*/}
+              {/*  <TextButton kind="secondary">Go to trade.</TextButton>*/}
+              {/*</Link>*/}
             </Text>
           }
         />
@@ -89,7 +89,7 @@ const DepositComposition: React.FC<IProps> = () => {
             {vm.maxToProvide
               .times(vm.providedPercentOfPool)
               .div(100)
-              .toFormat(2)}
+              .toFormat(4)}
           </Text>
         </AdaptiveRowWithPadding>
       </Card>

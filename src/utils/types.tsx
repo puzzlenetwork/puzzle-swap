@@ -48,6 +48,8 @@ export interface ITransaction {
     leaseCancels: [];
     invokes: [
       {
+        height: number;
+        id: string;
         dApp: string;
         call: {
           function: string;
@@ -97,6 +99,8 @@ export interface ITransaction {
           leaseCancels: [];
           invokes: [
             {
+              height: number;
+              id: string;
               dApp: string;
               call: {
                 function: string;
@@ -160,40 +164,10 @@ export interface ITransaction {
                     cancelTransactionId: string;
                   }
                 ];
-                invokes: [];
-              };
-            },
-            {
-              dApp: string;
-              call: {
-                function: string;
-                args: [
-                  {
-                    type: string;
-                    value: false;
-                  },
-                  {
-                    type: string;
-                    value: number;
-                  },
-                  {
-                    type: string;
-                    value: string;
-                  }
-                ];
-              };
-              payment: [];
-              stateChanges: {
-                data: [];
-                transfers: [];
-                issues: [];
-                reissues: [];
-                burns: [];
-                sponsorFees: [];
-                leases: [];
-                leaseCancels: [];
                 invokes: [
                   {
+                    height: number;
+                    id: string;
                     dApp: string;
                     call: {
                       function: string;
@@ -231,7 +205,217 @@ export interface ITransaction {
                       sponsorFees: [];
                       leases: [];
                       leaseCancels: [];
-                      invokes: [];
+                      invokes: [
+                        {
+                          height: number;
+                          id: string;
+                          dApp: string;
+                          call: {
+                            function: string;
+                            args: [
+                              {
+                                type: string;
+                                value: number;
+                              }
+                            ];
+                          };
+                          payment: [];
+                          stateChanges: {
+                            data: [
+                              {
+                                key: string;
+                                type: string;
+                                value: number;
+                              },
+                              {
+                                key: string;
+                                type: string;
+                                value: number;
+                              }
+                            ];
+                            transfers: [
+                              {
+                                address: string;
+                                asset: string;
+                                amount: number;
+                              }
+                            ];
+                            issues: [];
+                            reissues: [];
+                            burns: [];
+                            sponsorFees: [];
+                            leases: [];
+                            leaseCancels: [];
+                            invokes: [];
+                          };
+                        }
+                      ];
+                    };
+                  }
+                ];
+              };
+            },
+            {
+              height: number;
+              id: string;
+              dApp: string;
+              call: {
+                function: string;
+                args: [
+                  {
+                    type: string;
+                    value: false;
+                  },
+                  {
+                    type: string;
+                    value: number;
+                  },
+                  {
+                    type: string;
+                    value: string;
+                  }
+                ];
+              };
+              payment: [];
+              stateChanges: {
+                data: [];
+                transfers: [];
+                issues: [];
+                reissues: [];
+                burns: [];
+                sponsorFees: [];
+                leases: [];
+                leaseCancels: [];
+                invokes: [
+                  {
+                    height: number;
+                    id: string;
+                    dApp: string;
+                    call: {
+                      function: string;
+                      args: [
+                        {
+                          type: string;
+                          value: number;
+                        }
+                      ];
+                    };
+                    payment: [];
+                    stateChanges: {
+                      data: [
+                        {
+                          key: string;
+                          type: string;
+                          value: number;
+                        },
+                        {
+                          key: string;
+                          type: string;
+                          value: number;
+                        }
+                      ];
+                      transfers: [
+                        {
+                          address: string;
+                          asset: string;
+                          amount: number;
+                        }
+                      ];
+                      issues: [];
+                      reissues: [];
+                      burns: [];
+                      sponsorFees: [];
+                      leases: [];
+                      leaseCancels: [];
+                      invokes: [
+                        {
+                          height: number;
+                          id: string;
+                          dApp: string;
+                          call: {
+                            function: string;
+                            args: [
+                              {
+                                type: string;
+                                value: number;
+                              }
+                            ];
+                          };
+                          payment: [];
+                          stateChanges: {
+                            data: [
+                              {
+                                key: string;
+                                type: string;
+                                value: number;
+                              },
+                              {
+                                key: string;
+                                type: string;
+                                value: number;
+                              }
+                            ];
+                            transfers: [
+                              {
+                                address: string;
+                                asset: string;
+                                amount: number;
+                              }
+                            ];
+                            issues: [];
+                            reissues: [];
+                            burns: [];
+                            sponsorFees: [];
+                            leases: [];
+                            leaseCancels: [];
+                            invokes: [
+                              {
+                                height: number;
+                                id: string;
+                                dApp: string;
+                                call: {
+                                  function: string;
+                                  args: [
+                                    {
+                                      type: string;
+                                      value: number;
+                                    }
+                                  ];
+                                };
+                                payment: [];
+                                stateChanges: {
+                                  data: [
+                                    {
+                                      key: string;
+                                      type: string;
+                                      value: number;
+                                    },
+                                    {
+                                      key: string;
+                                      type: string;
+                                      value: number;
+                                    }
+                                  ];
+                                  transfers: [
+                                    {
+                                      address: string;
+                                      asset: string;
+                                      amount: number;
+                                    }
+                                  ];
+                                  issues: [];
+                                  reissues: [];
+                                  burns: [];
+                                  sponsorFees: [];
+                                  leases: [];
+                                  leaseCancels: [];
+                                  invokes: [];
+                                };
+                              }
+                            ];
+                          };
+                        }
+                      ];
                     };
                   }
                 ];
@@ -241,6 +425,8 @@ export interface ITransaction {
         };
       },
       {
+        height: number;
+        id: string;
         dApp: string;
         call: {
           function: string;
@@ -294,6 +480,8 @@ export interface ITransaction {
           leaseCancels: [];
           invokes: [
             {
+              height: number;
+              id: string;
               dApp: string;
               call: {
                 function: string;
@@ -335,13 +523,238 @@ export interface ITransaction {
                 sponsorFees: [];
                 leases: [];
                 leaseCancels: [];
-                invokes: [];
+                invokes: [
+                  {
+                    height: number;
+                    id: string;
+                    dApp: string;
+                    call: {
+                      function: string;
+                      args: [
+                        {
+                          type: string;
+                          value: number;
+                        }
+                      ];
+                    };
+                    payment: [];
+                    stateChanges: {
+                      data: [
+                        {
+                          key: string;
+                          type: string;
+                          value: number;
+                        },
+                        {
+                          key: string;
+                          type: string;
+                          value: number;
+                        }
+                      ];
+                      transfers: [
+                        {
+                          address: string;
+                          asset: string;
+                          amount: number;
+                        }
+                      ];
+                      issues: [];
+                      reissues: [];
+                      burns: [];
+                      sponsorFees: [];
+                      leases: [];
+                      leaseCancels: [];
+                      invokes: [
+                        {
+                          height: number;
+                          id: string;
+                          dApp: string;
+                          call: {
+                            function: string;
+                            args: [
+                              {
+                                type: string;
+                                value: number;
+                              }
+                            ];
+                          };
+                          payment: [];
+                          stateChanges: {
+                            data: [
+                              {
+                                key: string;
+                                type: string;
+                                value: number;
+                              },
+                              {
+                                key: string;
+                                type: string;
+                                value: number;
+                              }
+                            ];
+                            transfers: [
+                              {
+                                address: string;
+                                asset: string;
+                                amount: number;
+                              }
+                            ];
+                            issues: [];
+                            reissues: [];
+                            burns: [];
+                            sponsorFees: [];
+                            leases: [];
+                            leaseCancels: [];
+                            invokes: [];
+                          };
+                        }
+                      ];
+                    };
+                  }
+                ];
+              };
+            },
+            {
+              height: number;
+              id: string;
+              dApp: string;
+              call: {
+                function: string;
+                args: [];
+              };
+              payment: [
+                {
+                  assetId: string;
+                  amount: number;
+                }
+              ];
+              stateChanges: {
+                data: [
+                  {
+                    key: string;
+                    type: string;
+                    value: number;
+                  },
+                  {
+                    key: string;
+                    type: string;
+                    value: number;
+                  },
+                  {
+                    key: string;
+                    type: string;
+                    value: number;
+                  },
+                  {
+                    key: string;
+                    type: string;
+                    value: number;
+                  }
+                ];
+                transfers: [];
+                issues: [];
+                reissues: [];
+                burns: [];
+                sponsorFees: [];
+                leases: [];
+                leaseCancels: [];
+                invokes: [
+                  {
+                    height: number;
+                    id: string;
+                    dApp: string;
+                    call: {
+                      function: string;
+                      args: [
+                        {
+                          type: string;
+                          value: number;
+                        }
+                      ];
+                    };
+                    payment: [];
+                    stateChanges: {
+                      data: [
+                        {
+                          key: string;
+                          type: string;
+                          value: number;
+                        },
+                        {
+                          key: string;
+                          type: string;
+                          value: number;
+                        }
+                      ];
+                      transfers: [
+                        {
+                          address: string;
+                          asset: string;
+                          amount: number;
+                        }
+                      ];
+                      issues: [];
+                      reissues: [];
+                      burns: [];
+                      sponsorFees: [];
+                      leases: [];
+                      leaseCancels: [];
+                      invokes: [
+                        {
+                          height: number;
+                          id: string;
+                          dApp: string;
+                          call: {
+                            function: string;
+                            args: [
+                              {
+                                type: string;
+                                value: number;
+                              }
+                            ];
+                          };
+                          payment: [];
+                          stateChanges: {
+                            data: [
+                              {
+                                key: string;
+                                type: string;
+                                value: number;
+                              },
+                              {
+                                key: string;
+                                type: string;
+                                value: number;
+                              }
+                            ];
+                            transfers: [
+                              {
+                                address: string;
+                                asset: string;
+                                amount: number;
+                              }
+                            ];
+                            issues: [];
+                            reissues: [];
+                            burns: [];
+                            sponsorFees: [];
+                            leases: [];
+                            leaseCancels: [];
+                            invokes: [];
+                          };
+                        }
+                      ];
+                    };
+                  }
+                ];
               };
             }
           ];
         };
       },
       {
+        height: number;
+        id: string;
         dApp: string;
         call: {
           function: string;
@@ -391,6 +804,8 @@ export interface ITransaction {
           leaseCancels: [];
           invokes: [
             {
+              height: number;
+              id: string;
               dApp: string;
               call: {
                 function: string;
@@ -454,7 +869,95 @@ export interface ITransaction {
                     cancelTransactionId: string;
                   }
                 ];
-                invokes: [];
+                invokes: [
+                  {
+                    height: number;
+                    id: string;
+                    dApp: string;
+                    call: {
+                      function: string;
+                      args: [
+                        {
+                          type: string;
+                          value: number;
+                        }
+                      ];
+                    };
+                    payment: [];
+                    stateChanges: {
+                      data: [
+                        {
+                          key: string;
+                          type: string;
+                          value: number;
+                        },
+                        {
+                          key: string;
+                          type: string;
+                          value: number;
+                        }
+                      ];
+                      transfers: [
+                        {
+                          address: string;
+                          asset: string;
+                          amount: number;
+                        }
+                      ];
+                      issues: [];
+                      reissues: [];
+                      burns: [];
+                      sponsorFees: [];
+                      leases: [];
+                      leaseCancels: [];
+                      invokes: [
+                        {
+                          height: number;
+                          id: string;
+                          dApp: string;
+                          call: {
+                            function: string;
+                            args: [
+                              {
+                                type: string;
+                                value: number;
+                              }
+                            ];
+                          };
+                          payment: [];
+                          stateChanges: {
+                            data: [
+                              {
+                                key: string;
+                                type: string;
+                                value: number;
+                              },
+                              {
+                                key: string;
+                                type: string;
+                                value: number;
+                              }
+                            ];
+                            transfers: [
+                              {
+                                address: string;
+                                asset: string;
+                                amount: number;
+                              }
+                            ];
+                            issues: [];
+                            reissues: [];
+                            burns: [];
+                            sponsorFees: [];
+                            leases: [];
+                            leaseCancels: [];
+                            invokes: [];
+                          };
+                        }
+                      ];
+                    };
+                  }
+                ];
               };
             }
           ];

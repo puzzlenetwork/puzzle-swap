@@ -134,45 +134,36 @@ export default class PoolsStore {
     const usdn = TOKENS_BY_SYMBOL.XTN.assetId;
     const usdt = TOKENS_BY_SYMBOL.USDT_WXG.assetId;
     const puzzle = TOKENS_BY_SYMBOL.PUZZLE.assetId;
-    const pool = this.pools.find(({ tokens }) =>
-      tokens.some((t) => t.assetId === assetId)
+    const waves = TOKENS_BY_SYMBOL.WAVES.assetId;
+    const usdtppt = TOKENS_BY_SYMBOL.USDT.assetId;
+    const pool = this.pools.find((pool) =>
+      pool.tokens.some((t) => t.assetId === assetId) && pool.globalLiquidityByUSDT?.gt(20)
     );
 
     const startPrice = TOKENS_BY_ASSET_ID[assetId]?.startPrice;
-    //todo fix this !!!
-    if (pool == null && startPrice != null) {
-      return new BN(startPrice ?? 0);
-    }
-    if (pool == null) return null;
-    if (
-      pool.currentPrice(assetId, puzzle) == null &&
-      pool.tokens.some((t) => t.assetId === puzzle)
-    ) {
-      return new BN(startPrice ?? 0);
-    }
-    if (
-      pool.currentPrice(assetId, usdt) == null &&
-      pool.tokens.some((t) => t.assetId === usdt)
-    ) {
-      return new BN(startPrice ?? 0);
+    if (pool == null) {
+      if (startPrice != null) {return new BN(startPrice ?? 0);}
+      else {return new BN(1);}
     }
 
-    if (pool.tokens.some(({ assetId }) => assetId === usdt)) {
+    if (pool.tokens.some(({ assetId }) => assetId === usdtppt)) {
       const priceInUsdt = pool.currentPrice(assetId, usdt, coefficient);
-      return priceInUsdt != null ? priceInUsdt.times(pool._usdtRate) : null;
+      return priceInUsdt != null ? priceInUsdt : null;
+    } else if (pool.tokens.some(({ assetId }) => assetId === waves)) {
+      const priceInWaves = pool.currentPrice(assetId, waves, coefficient);
+      return priceInWaves != null ? priceInWaves.times(pool.wavesRate) : null;
     } else if (pool.tokens.some(({ assetId }) => assetId === puzzle)) {
-      const puzzleRate = pool.puzzleRate;
       const priceInPuzzle = pool.currentPrice(assetId, puzzle, coefficient);
-      return priceInPuzzle != null ? priceInPuzzle.times(puzzleRate) : null;
+      return priceInPuzzle != null ? priceInPuzzle.times(pool.puzzleRate) : null;
     } else if (pool.tokens.some(({ assetId }) => assetId === usdn)) {
-      const usdnRate = pool.usdnRate;
       const priceInUSDN = pool.currentPrice(assetId, usdn);
-      return priceInUSDN != null
-        ? priceInUSDN.times(usdnRate)
-        : new BN(startPrice ?? 0);
+      return priceInUSDN != null ? priceInUSDN.times(pool.usdnRate) : new BN(startPrice ?? 0);
+    } else if (pool.tokens.some(({ assetId }) => assetId === usdt)) {
+        const priceInUsdt = pool.currentPrice(assetId, usdt, coefficient);
+        return priceInUsdt != null ? priceInUsdt.times(pool._usdtRate) : null;
     } else {
       //todo check all tokens like this
-      return new BN(1);
+      return new BN(startPrice ?? 1);
     }
   };
 

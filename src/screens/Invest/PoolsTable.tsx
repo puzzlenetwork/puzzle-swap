@@ -19,7 +19,7 @@ import { useTheme } from "@emotion/react";
 
 const PoolsTable: React.FC = () => {
   const { poolsStore, accountStore } = useStores();
-  const [activeSort, setActiveSort] = useState<0 | 1 | 2>(1);
+  const [activeSort, setActiveSort] = useState<0 | 1 | 2>(0);
   const [showEmptyBalances, setShowEmptyBalances] = useState(true);
   const vm = useInvestVM();
   const navigate = useNavigate();

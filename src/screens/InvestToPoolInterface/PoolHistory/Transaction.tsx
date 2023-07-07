@@ -56,10 +56,7 @@ const Transaction: React.FC<IProps> = ({
         const amount0 = new BN(payment[0].amount);
         const token1 =
           TOKENS_BY_ASSET_ID[stateChanges.transfers[0]?.asset ?? ""];
-        const am1 =
-          call.args[1].type === "list"
-            ? stateChanges.transfers[0].amount
-            : call.args[1].value;
+        const am1 = stateChanges.transfers[0]?.amount;
         const amount1 = new BN(am1);
         amount = token1 != null ? BN.formatUnits(am1, token1?.decimals) : null;
         if (token1 != null) {
