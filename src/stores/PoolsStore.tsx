@@ -137,20 +137,31 @@ export default class PoolsStore {
     const waves = TOKENS_BY_SYMBOL.WAVES.assetId;
     const usdtppt = TOKENS_BY_SYMBOL.USDT.assetId;
     const pool = this.pools.find((pool) =>
-      pool.tokens.some((t) => t.assetId === assetId) && pool.globalLiquidityByUSDT?.gt(20)
+      pool.tokens.some((t) => t.assetId === assetId) && pool.globalLiquidityByUSDT?.gt(100)
     );
 
     const startPrice = TOKENS_BY_ASSET_ID[assetId]?.startPrice;
+
+
     if (pool == null) {
-      if (startPrice != null) {return new BN(startPrice ?? 0);}
+      if (startPrice != null) {
+        return new BN(startPrice ?? 0);
+      }
       else {return new BN(1);}
     }
+
 
     if (pool.tokens.some(({ assetId }) => assetId === usdtppt)) {
       const priceInUsdt = pool.currentPrice(assetId, usdt, coefficient);
       return priceInUsdt != null ? priceInUsdt : null;
     } else if (pool.tokens.some(({ assetId }) => assetId === waves)) {
       const priceInWaves = pool.currentPrice(assetId, waves, coefficient);
+
+      if (assetId === "2Fge5HEBRD3XTeg7Xg3FW5yiB9HVJFQtMXiWMQo72Up6") {
+        console.log(priceInWaves, "WBTC waves price");
+        if (pool != null) {console.log(pool.contractAddress, "WBTC POOL");}
+      }
+
       return priceInWaves != null ? priceInWaves.times(pool.wavesRate) : null;
     } else if (pool.tokens.some(({ assetId }) => assetId === puzzle)) {
       const priceInPuzzle = pool.currentPrice(assetId, puzzle, coefficient);

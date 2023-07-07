@@ -51,7 +51,7 @@ const PoolHistory: React.FC<IProps> = () => {
               {vm.transactionsHistory.map((tr) => (
                 <Transaction
                   {...tr}
-                  key={tr.id}
+                  key={tr ? tr.id : ""}
                   currentHeight={vm.currentBlockHeight}
                   usdtRate={poolsStore.usdtRate}
                 />
