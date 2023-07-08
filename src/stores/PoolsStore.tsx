@@ -142,8 +142,6 @@ export default class PoolsStore {
     );
 
     const startPrice = TOKENS_BY_ASSET_ID[assetId]?.startPrice;
-    console.log(assetId, "start price", startPrice)
-
 
     if (pool == null) {
       if (startPrice != null) {
@@ -152,14 +150,15 @@ export default class PoolsStore {
       else {return new BN(1);}
     }
 
-    console.log(assetId, "here23", pool.contractAddress)
-    console.log(pool);
+    // console.log(assetId, "POOL WITH PRICE", pool.contractAddress);
+    // console.log(pool.tokens);
+    // console.log("WAVES IN POOL???", (pool.tokens.some(({ assetId }) => assetId === waves)));
 
     if (pool.tokens.some(({ assetId }) => assetId === usdtppt)) {
-      const priceInUsdt = pool.currentPrice(assetId, usdt, coefficient);
+      const priceInUsdt = pool.currentPrice(assetId, usdtppt, coefficient);
       return priceInUsdt != null ? priceInUsdt : null;
     } else if (pool.tokens.some(({ assetId }) => assetId === waves)) {
-      const priceInWaves = pool.currentPrice(assetId, waves, coefficient);
+      const priceInWaves = pool.currentPrice(assetId, "WAVES", coefficient);
       return priceInWaves != null ? priceInWaves.times(pool.wavesRate) : null;
     } else if (pool.tokens.some(({ assetId }) => assetId === puzzle)) {
       const priceInPuzzle = pool.currentPrice(assetId, puzzle, coefficient);
