@@ -608,6 +608,8 @@ class CreateCustomPoolsVm {
   };
 
   get tokensToProvideInUsdnMap(): Record<string, BN> | null {
+    console.log("pool assets", this.poolsAssets)
+
     const { poolsStore, accountStore } = this.rootStore;
     const { assetBalances, findBalanceByAssetId, address } = accountStore;
     if (assetBalances == null || address == null) return null;
@@ -616,6 +618,7 @@ class CreateCustomPoolsVm {
         const { assetId, decimals } = asset;
         const tokenBalance = findBalanceByAssetId(assetId);
         const rate = poolsStore.usdtRate(assetId) ?? BN.ZERO;
+        console.log(assetId, rate.toFormat(4));
         if (tokenBalance?.balance == null) return acc;
         const balance = BN.formatUnits(tokenBalance.balance, decimals);
         const maxDollarValue = balance.times(rate).div(share.div(1000));
