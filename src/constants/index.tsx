@@ -66,7 +66,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     tokens: [
       { ...TOKENS_BY_SYMBOL.WAVES, share: 25, logo: tokenLogos.WAVES },
       { ...TOKENS_BY_SYMBOL.BTC_WXG, share: 25, logo: tokenLogos.BTC_WXG },
-      { ...TOKENS_BY_SYMBOL.ETH, share: 25, logo: tokenLogos.ETH },
+      { ...TOKENS_BY_SYMBOL.ETH_WXG, share: 25, logo: tokenLogos.ETH_WXG },
       { ...TOKENS_BY_SYMBOL.XTN, share: 25, logo: tokenLogos.XTN },
     ],
   },

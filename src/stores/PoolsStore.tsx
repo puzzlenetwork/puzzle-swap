@@ -138,7 +138,7 @@ export default class PoolsStore {
     const usdtppt = TOKENS_BY_SYMBOL.USDT.assetId;
 
     const pool = this.pools.find((pool) =>
-      pool.tokens.filter((t) => t.assetId === assetId) && pool.globalLiquidityByUSDT?.gt(100)
+      pool.tokens.some((t) => t.assetId === assetId) && pool.globalLiquidityByUSDT?.gt(100)
     );
 
     const startPrice = TOKENS_BY_ASSET_ID[assetId]?.startPrice;
