@@ -87,6 +87,7 @@ import orientLogo from "@src/assets/tokens/ORIENT.svg";
 import anoteLogo from "@src/assets/tokens/ANOTE.svg";
 import wavesdlpLogo from "@src/assets/tokens/WAVSEDLP.svg";
 import peteLogo from "@src/assets/tokens/PETE.svg";
+import l2mpLogo from "@src/assets/tokens/L2MP.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -145,6 +146,7 @@ const tokenLogos: Record<string, string> = {
   NGNT: ngntLogo,
   WXB: wxbLogo,
   PLUTO: plutoLogo,
+  L2MP: l2mpLogo,
   SNSBTTCI: snsbtTciLogo,
   VIRES_USDT_LP: usdtViresLogo,
   VIRES_USDC_LP: usdcViresLogo,
