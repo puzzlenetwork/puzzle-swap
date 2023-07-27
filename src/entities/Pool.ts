@@ -165,6 +165,9 @@ class Pool implements IPoolConfig {
     const wavesAsset = this.tokens.find(({ symbol }) => symbol === "WAVES")!;
     const wavesLiquidity = this.liquidity[wavesAsset?.assetId];
 
+    const usdtPptAsset = this.tokens.find(({ symbol }) => symbol === "9wc3LXNA4TEBsXyKtoLE9mrbDD7WMHXvXrCjZvabLAsi")!;
+    const usdtPptLiquidity = this.liquidity[usdtPptAsset?.assetId];
+
     let globalLiquidityByUSDT = null;
     if (usdtAsset && usdtLiquidity) {
       globalLiquidityByUSDT = new BN(usdtLiquidity)
@@ -190,6 +193,11 @@ class Pool implements IPoolConfig {
         .times(100)
         .times(this.wavesRate)
         .div(1e8);
+    } else if (usdtPptAsset && usdtPptLiquidity) {
+      globalLiquidityByUSDT = new BN(usdtPptLiquidity)
+        .div(usdtPptAsset.share)
+        .times(100)
+        .div(1e6);
     }
     this.setGlobalLiquidityByUSDT(globalLiquidityByUSDT);
   };
