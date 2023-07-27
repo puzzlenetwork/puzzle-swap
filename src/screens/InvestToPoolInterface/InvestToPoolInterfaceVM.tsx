@@ -327,7 +327,7 @@ class InvestToPoolInterfaceVM {
 
     const v = v0?.map(tx => {
       if (tx.dApp === this.pool.contractAddress || tx.dApp === this.pool.layer2Address) {return tx}
-      else {
+      else if (tx.stateChanges) {
         const localTx = tx.stateChanges.invokes.find(x => x.dApp === this.pool.contractAddress || x.dApp === this.pool.layer2Address);
         if (!localTx) {
           const localTx2 = tx.stateChanges.invokes[0].stateChanges.invokes.find(x => x.dApp === this.pool.contractAddress || x.dApp === this.pool.layer2Address);

@@ -165,7 +165,7 @@ class Pool implements IPoolConfig {
     const wavesAsset = this.tokens.find(({ symbol }) => symbol === "WAVES")!;
     const wavesLiquidity = this.liquidity[wavesAsset?.assetId];
 
-    const usdtPptAsset = this.tokens.find(({ symbol }) => symbol === "9wc3LXNA4TEBsXyKtoLE9mrbDD7WMHXvXrCjZvabLAsi")!;
+    const usdtPptAsset = this.tokens.find(({ assetId }) => assetId === "9wc3LXNA4TEBsXyKtoLE9mrbDD7WMHXvXrCjZvabLAsi")!;
     const usdtPptLiquidity = this.liquidity[usdtPptAsset?.assetId];
 
     let globalLiquidityByUSDT = null;

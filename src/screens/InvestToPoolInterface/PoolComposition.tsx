@@ -39,9 +39,7 @@ const PoolComposition: React.FC<IProps> = () => {
   const columns = React.useMemo(
     () => [
       { Header: "Asset", accessor: "asset" },
-      { Header: "Weight", accessor: "weight" },
-      { Header: "Balance", accessor: "balance" },
-      {
+      { Header: "Balance", accessor: "balance" },{
         accessor: "value",
         Header: () => (
           <Row style={{ cursor: "pointer" }}>
@@ -58,10 +56,14 @@ const PoolComposition: React.FC<IProps> = () => {
           </Row>
         ),
       },
+      { Header: "Target Share", accessor: "weight" },
+      { Header: "Current Share", accessor: "realWeight" },
     ],
     [valueSort, theme.images.icons.group]
   );
   useMemo(() => {
+    let totalValue = 0;
+    for (const b of vm.poolCompositionValues) { totalValue += b.value.toNumber(); }
     const data = vm.poolCompositionValues
       .sort((a, b) => {
         if (a.value.lt(b.value)) {
@@ -79,9 +81,10 @@ const PoolComposition: React.FC<IProps> = () => {
             <Text fitContent>{a.symbol}</Text>
           </Row>
         ),
-        weight: `${a.share} %`,
-        balance: `${a.parsedBalance.toFormat(2)}`,
+        weight: `${a.share}%`,
+        balance: `${a.parsedBalance.toFormat(4)}`,
         value: `$ ${a.value.toFormat(2)}`,
+        realWeight: `${a.value.div(totalValue).times(100).toFormat(2)}%`,
       }));
     setFilteredTokens(data);
   }, [valueSort, vm.poolCompositionValues]);
