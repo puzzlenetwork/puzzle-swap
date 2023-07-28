@@ -88,6 +88,7 @@ import anoteLogo from "@src/assets/tokens/ANOTE.svg";
 import wavesdlpLogo from "@src/assets/tokens/WAVSEDLP.svg";
 import peteLogo from "@src/assets/tokens/PETE.svg";
 import l2mpLogo from "@src/assets/tokens/L2MP.svg";
+import wlgoldLogo from "@src/assets/tokens/wlgold_.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -150,6 +151,7 @@ const tokenLogos: Record<string, string> = {
   SNSBTTCI: snsbtTciLogo,
   VIRES_USDT_LP: usdtViresLogo,
   VIRES_USDC_LP: usdcViresLogo,
+  WLGOLD: wlgoldLogo,
   WX_USDNWXLP: WXUSDNWXLP,
   wxWXUSDN_TCI: wxWXUSDN_TCI,
   USDTUSDNWXLP: usdtusdn,

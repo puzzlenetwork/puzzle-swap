@@ -211,13 +211,13 @@ const PoolsTable: React.FC = () => {
             ? `$${data.liquidityInUsdt.toFormat(2)}`
             : "—";
         })(),
-        liquidity: "$ " + new BN(pool.statistics?.liquidity ?? 0).toFormat(2),
+        liquidity: "$" + new BN(pool.statistics?.liquidity ?? 0).toFormat(2),
         volume: (() => {
           const volume =
             pool.statistics != null
               ? new BN(pool.statistics.monthlyVolume).toFormat(2)
               : null;
-          return volume != null ? `$ ${volume}` : "—";
+          return volume != null ? `$${volume}` : "—";
         })(),
         apy: (
           <Row>
