@@ -3,6 +3,7 @@ import axios from "axios";
 const testnetNodes = ["https://nodes-testnet.wavesnodes.com"];
 
 const mainnetNodes = [
+  "https://nodes.wx.network",
   "https://nodes-puzzle.wavesnodes.com",
   "https://wavesducks.wavesnodes.com",
   "https://nodes.swop.fi",
