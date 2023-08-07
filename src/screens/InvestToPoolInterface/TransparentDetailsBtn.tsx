@@ -94,21 +94,6 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
   ];
   const customPoolInformation = [
     {
-      title: "Pool creator",
-      value: (
-        <TextButton
-          size="medium"
-          prefix={linkIcon}
-          kind="secondary"
-          onClick={() =>
-            window.open(`${EXPLORER_URL}/address/${vm.pool?.owner}`)
-          }
-        >
-          {centerEllipsis(vm.pool?.owner ?? "", 6)}
-        </TextButton>
-      ),
-    },
-    {
       title: "Created via",
       value: (
         <TextButton
@@ -126,28 +111,13 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
       ),
     },
     {
-      title: "Smart-contract",
-      value: (
-        <TextButton
-          size="medium"
-          prefix={linkIcon}
-          kind="secondary"
-          onClick={() =>
-            window.open(`${EXPLORER_URL}/address/${vm.pool.contractAddress}`)
-          }
-        >
-          View on Explorer
-        </TextButton>
-      ),
-    },
-    {
       title: "Date of creation",
       value: dayjs(vm.pool.createdAt).format("MMM D, YYYY h:mm A"),
     },
-    {
-      title: "Total creator reward",
-      value: `$ ${vm.pool?.globalEarnedByOwner?.div(1e6).toFormat(2)}`,
-    },
+    // {
+    //   title: "Total creator reward",
+    //   value: `$ ${vm.pool?.globalEarnedByOwner?.div(1e6).toFormat(2)}`,
+    // },
     // {
     //   title: "Total fees earned",
     //   // value: `$ ${vm.pool.globalVolume?.times(0.02)?.toFormat(2) ?? "0.00"}`,
@@ -157,11 +127,29 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
     //   }`,
     // },
     {
-      title: "Fees earned (30 days)",
+      title: "Volume (7D)",
       value: vm.pool.statistics
-        ? `$ ${new BN(vm.pool.statistics.monthlyFees).toFormat(2)}`
+        ? `$${new BN(vm.pool.statistics.weeklyVolume).toFormat(2)}`
         : "–",
     },
+    {
+      title: "Liquidity Providers Fee (7D)",
+      value: vm.pool.statistics && vm.pool.statistics.weeklyFees
+        ? `$${new BN(vm.pool.statistics.weeklyFees).div(10).times(5).toFormat(2)}`
+        : "–",
+    },
+    {
+      title: "Owner Fee (7D)",
+      value: vm.pool.statistics && vm.pool.statistics.weeklyFees
+        ? `$${new BN(vm.pool.statistics.weeklyFees).div(10).times(1).toFormat(2)}`
+        : "–",
+    },
+    {
+      title: "Protocol Fee (7D)",
+      value: vm.pool.statistics && vm.pool.statistics.weeklyFees
+        ? `$${new BN(vm.pool.statistics.weeklyFees).div(10).times(4).toFormat(2)}`
+        : "–",
+    }
   ];
   const information = Array.from(
     vm.pool.isCustom ? customPoolInformation : puzzlePoolInformation

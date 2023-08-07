@@ -413,6 +413,7 @@ export interface IPoolConfigStatistics {
   monthlyVolume: string;
   weeklyVolume: string;
   monthlyFees: string;
+  weeklyFees?: string;
   fees: string;
   liquidity: string;
   volume: Array<{ date: number; volume: string }>;

@@ -66,7 +66,7 @@ const PoolsTable: React.FC = () => {
         ),
         accessor: "liquidity",
       },
-      { Header: "Volume (30d)", accessor: "volume" },
+      // { Header: "Volume (30d)", accessor: "volume" },
       {
         accessor: "apy",
         Header: () => (
@@ -209,16 +209,16 @@ const PoolsTable: React.FC = () => {
           );
           return data?.liquidityInUsdt != null && data.liquidityInUsdt.gt(0)
             ? `$${data.liquidityInUsdt.toFormat(2)}`
-            : "—";
+            : "";
         })(),
         liquidity: "$" + new BN(pool.statistics?.liquidity ?? 0).toFormat(2),
-        volume: (() => {
-          const volume =
-            pool.statistics != null
-              ? new BN(pool.statistics.monthlyVolume).toFormat(2)
-              : null;
-          return volume != null ? `$${volume}` : "—";
-        })(),
+        // volume: (() => {
+        //   const volume =
+        //     pool.statistics != null
+        //       ? new BN(pool.statistics.monthlyVolume).toFormat(2)
+        //       : null;
+        //   return volume != null ? `$${volume}` : "—";
+        // })(),
         apy: (
           <Row>
             {pool.statistics?.boostedApy != null ? (

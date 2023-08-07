@@ -22,9 +22,9 @@ const Root = styled(Row)`
   }
 `;
 const TokenTags: React.FC<IProps> = ({ tokens, findBalanceByAssetId }) => {
-  const needToHide = tokens.length > 3;
-  const tokensToDisplay = needToHide ? tokens.slice(0, 3) : tokens;
-  const moreHiddenAmount = tokens.length - 3;
+  const needToHide = tokens.length > 4;
+  const tokensToDisplay = needToHide ? tokens.slice(0, 4) : tokens;
+  const moreHiddenAmount = tokens.length - 4;
   const theme = useTheme();
   return (
     <Root>
@@ -35,7 +35,7 @@ const TokenTags: React.FC<IProps> = ({ tokens, findBalanceByAssetId }) => {
         return (
           <Tag
             key={assetId + String(i)}
-            background={isActive ? theme.colors.primary300 : undefined}
+            background={isActive ? undefined : undefined}
           >
             {symbol} {share} %
           </Tag>
