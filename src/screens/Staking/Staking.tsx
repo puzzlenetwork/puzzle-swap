@@ -72,7 +72,7 @@ const StakingImpl: React.FC = () => {
             <SizedBox height={8} />
             <AdaptiveText fitContent textAlign="left" type="secondary">
               For every swap on the exchange, 40% of the swap fees are
-              distributed as PUZZLE to your share of the staking balance.
+              used to buy PUZZLE and distribute it to the staking balances.
             </AdaptiveText>
             <Body>
               <MainBlock>

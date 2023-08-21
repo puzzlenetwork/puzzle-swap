@@ -8,6 +8,9 @@ import { observer } from "mobx-react-lite";
 import { useStakingVM } from "@screens/Staking/StakingVM";
 import Skeleton from "react-loading-skeleton";
 import { useStores } from "@stores";
+import { Line, LineChart, Tooltip, XAxis } from "recharts";
+import dayjs from "dayjs";
+import BN from "@src/utils/BN";
 
 const Root = styled.div`
   display: flex;
@@ -27,6 +30,9 @@ const Container = styled(Card)`
 const Overview: React.FC = () => {
   const vm = useStakingVM();
   const { stakeStore } = useStores();
+
+  const data = [{date: 123001230, value: 1000}, {date: 123005230, value: 1000}, {date: 123005230, value: 1000}]
+
   return (
     <Root>
       <Text weight={500} type="secondary">
@@ -63,6 +69,35 @@ const Overview: React.FC = () => {
           </Text>
         </Column>
       </Container>
+
+      {/*<LineChart width={480} height={240} data={data}>*/}
+      {/*  <XAxis*/}
+      {/*    tickLine={false}*/}
+      {/*    dataKey="date"*/}
+      {/*    tickFormatter={(date) => dayjs(date).format("MMM DD")}*/}
+      {/*    style={{ fill: "#8082c5" }}*/}
+      {/*  />*/}
+      {/*  <Tooltip*/}
+      {/*    labelFormatter={(date) => (*/}
+      {/*      <Text type="secondary" size="small">*/}
+      {/*        {dayjs(date).format("dddd, MMM DD")}*/}
+      {/*      </Text>*/}
+      {/*    )}*/}
+      {/*    formatter={(value) => "$ " + new BN(`${value}`).toFormat(2)}*/}
+      {/*    itemStyle={{ border: "none" }}*/}
+      {/*    contentStyle={{*/}
+      {/*      border: "none",*/}
+      {/*      filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))",*/}
+      {/*    }}*/}
+      {/*  />*/}
+      {/*  <Line*/}
+      {/*    dot={false}*/}
+      {/*    type="monotone"*/}
+      {/*    dataKey="volume"*/}
+      {/*    stroke="#7075E9"*/}
+      {/*    strokeWidth={2}*/}
+      {/*  />*/}
+      {/*</LineChart>*/}
     </Root>
   );
 };
