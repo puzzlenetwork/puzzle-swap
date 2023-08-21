@@ -19,7 +19,7 @@ import nsbtLogo from "@src/assets/tokens/nsbt-logo.svg";
 import ennoLogo from "@src/assets/tokens/enno-logo.svg";
 import signLogo from "@src/assets/tokens/sign-logo.svg";
 import duxplorerLogo from "@src/assets/tokens/duxplorer-logo.png";
-import usdtLogo from "@src/assets/tokens/USDT.svg";
+import usdtLogo from "@src/assets/tokens/USDTERC20PPT.svg";
 import puzzleLogo from "@src/assets/tokens/PUZZLE.svg";
 import wavesLogo from "@src/assets/tokens/waves-logo.svg";
 import usdnLogo from "@src/assets/tokens/usdn-logo.svg";
@@ -80,7 +80,6 @@ import BURNXTN from "@src/assets/tokens/BURNXTN.svg";
 import NEXT_WEEK_PEPE from "@src/assets/tokens/NEXTWEEKPEPE.png";
 import eastLogo from "@src/assets/tokens/EAST.svg";
 import wbtcErc20Logo from "@src/assets/tokens/WBTCERC20.svg";
-import usdtBscLogo from "@src/assets/tokens/USDTBEP20.svg";
 import usdcBscLogo from "@src/assets/tokens/USDCBEP20.svg";
 import btcbLogo from "@src/assets/tokens/BTCB.svg";
 import orientLogo from "@src/assets/tokens/ORIENT.svg";
@@ -89,6 +88,10 @@ import wavesdlpLogo from "@src/assets/tokens/WAVSEDLP.svg";
 import peteLogo from "@src/assets/tokens/PETE.svg";
 import l2mpLogo from "@src/assets/tokens/L2MP.svg";
 import wlgoldLogo from "@src/assets/tokens/wlgold_.svg";
+import usdtBscLogo from "@src/assets/tokens/USDTBEP20.svg";
+import usdtpptLogo from "@src/assets/tokens/USDTPPT.svg";
+import usdtpolyLogo from "@src/assets/tokens/USDTPOLYPPT.svg";
+import oldgoldLogo from "@src/assets/tokens/OLDGOLD.jpg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -183,6 +186,10 @@ const tokenLogos: Record<string, string> = {
   ANOTE: anoteLogo,
   WAVESDLP: wavesdlpLogo,
   PETE: peteLogo,
+  PZ_OLDGOLD: oldgoldLogo,
+  USDT_POLY: usdtpolyLogo,
+  USDT_PPT: usdtpptLogo,
+  USDT_TRC: "https://waves.exchange/static/icons/assets/DaErMEp76HtuvbbSYxDwLovRimaAwtEyQGFeHLQ3UWwh.svg",
   SPICE: "https://wavesducks.com/static/img/token/spice.svg",
   BNB: "https://wavescap.com/wp-content/uploads/asset-logo/66a1br3BrkoaJgP7yEar9hJcSTvJPoH6PYBLqscXcMGo.svg"
 };
