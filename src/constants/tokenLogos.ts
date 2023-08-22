@@ -92,6 +92,7 @@ import usdtBscLogo from "@src/assets/tokens/USDTBEP20.svg";
 import usdtpptLogo from "@src/assets/tokens/USDTPPT.svg";
 import usdtpolyLogo from "@src/assets/tokens/USDTPOLYPPT.svg";
 import oldgoldLogo from "@src/assets/tokens/OLDGOLD.jpg";
+import plwavesLogo from "@src/assets/tokens/PLWAVES.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -189,6 +190,7 @@ const tokenLogos: Record<string, string> = {
   PZ_OLDGOLD: oldgoldLogo,
   USDT_POLY: usdtpolyLogo,
   USDT_PPT: usdtpptLogo,
+  PL_WAVES: plwavesLogo,
   USDT_TRC: "https://waves.exchange/static/icons/assets/DaErMEp76HtuvbbSYxDwLovRimaAwtEyQGFeHLQ3UWwh.svg",
   SPICE: "https://wavesducks.com/static/img/token/spice.svg",
   BNB: "https://wavescap.com/wp-content/uploads/asset-logo/66a1br3BrkoaJgP7yEar9hJcSTvJPoH6PYBLqscXcMGo.svg"
