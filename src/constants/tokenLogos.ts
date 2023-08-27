@@ -191,6 +191,8 @@ const tokenLogos: Record<string, string> = {
   USDT_POLY: usdtpolyLogo,
   USDT_PPT: usdtpptLogo,
   PL_WAVES: plwavesLogo,
+  AXLY: "https://waves.exchange/static/icons/assets/DcAbWMXrfMeooG1BrZ9ipiseFSVm7zxTs1XZKRp6DVeZ.svg",
+  USDC_PPT: "https://waves.exchange/static/icons/assets/3ayH3PhWMkhFsySsUVcC8BvFf1QyxGB5BZuTPyVtmP4v.svg",
   USDT_TRC: "https://waves.exchange/static/icons/assets/DaErMEp76HtuvbbSYxDwLovRimaAwtEyQGFeHLQ3UWwh.svg",
   SPICE: "https://wavesducks.com/static/img/token/spice.svg",
   BNB: "https://wavescap.com/wp-content/uploads/asset-logo/66a1br3BrkoaJgP7yEar9hJcSTvJPoH6PYBLqscXcMGo.svg"
