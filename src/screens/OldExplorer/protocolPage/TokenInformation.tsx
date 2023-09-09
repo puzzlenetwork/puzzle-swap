@@ -49,12 +49,12 @@ const TokenInformation = () => {
         <Row>
           <Info
             title="Fully diluted MC"
-            value={`${vm.tokenDetails.fullyDilutedMC?.toFormat(2)}` ?? "-"}
+            value={`$${vm.tokenDetails.fullyDilutedMC?.toFormat(2)}` ?? "-"}
             loading={vm.tokenDetails.fullyDilutedMC == null}
           />
           <Info
             title="Market cap"
-            value={`${vm.tokenDetails.marketCap?.toFormat(2)}` ?? "-"}
+            value={`$${vm.tokenDetails.marketCap?.toFormat(2)}` ?? "-"}
             loading={vm.tokenDetails.marketCap == null}
           />
         </Row>

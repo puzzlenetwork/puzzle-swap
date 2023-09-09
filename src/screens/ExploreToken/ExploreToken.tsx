@@ -69,7 +69,7 @@ const ExploreTokenImpl: React.FC<IProps> = observer(() => {
         <SizedBox height={8} />
         <Row alignItems="end" mainAxisSize="fit-content">
           <PriceTitle size="large">
-            $ {vm.statistics?.currentPrice.toFormat(2) ?? ""}&nbsp;
+            $ {vm.statistics?.currentPrice.toFormat(4) ?? ""}&nbsp;
           </PriceTitle>
           <Text
             style={{ lineHeight: "16px", whiteSpace: "nowrap" }}

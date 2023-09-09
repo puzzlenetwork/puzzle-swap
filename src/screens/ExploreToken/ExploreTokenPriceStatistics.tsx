@@ -27,7 +27,7 @@ const ExploreTokenPriceStatistics = () => {
         data={[
           {
             title: `${vm.asset?.symbol} price`,
-            value: `$ ${vm.statistics?.currentPrice?.toFormat(2)}`,
+            value: `$${vm.statistics?.currentPrice?.toFormat(4)}`,
           },
           {
             title: "24h change",
@@ -36,7 +36,7 @@ const ExploreTokenPriceStatistics = () => {
           },
           {
             title: "24h Low / 24h High",
-            value: `$ ${low.toFormat(2)} / $ ${high.toFormat(2)}`,
+            value: `$${low.toFormat(4)} / $ ${high.toFormat(4)}`,
             loading: vm.chartLoading,
           },
         ]}
@@ -56,7 +56,7 @@ const ExploreTokenPriceStatistics = () => {
           ...(vm.asset.assetId === TOKENS_BY_SYMBOL.PUZZLE.assetId
             ? [
                 {
-                  title: "Total burned",
+                  title: "Out of market",
                   value: vm.statistics?.totalBurned?.toFormat(2),
                 },
               ]
@@ -69,11 +69,11 @@ const ExploreTokenPriceStatistics = () => {
         data={[
           {
             title: "Fully diluted MC",
-            value: vm.statistics?.fullyDilutedMC?.toFormat(2),
+            value: "$"+vm.statistics?.fullyDilutedMC?.toFormat(2),
           },
           {
             title: "Market cap",
-            value: vm.statistics?.marketCap?.toFormat(2),
+            value: "$"+vm.statistics?.marketCap?.toFormat(2),
           },
         ]}
       />

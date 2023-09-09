@@ -8,6 +8,8 @@ interface IAssetResponse {
   "24h_vol_usdt": number;
   "24h_vol_busd": number;
   "24h_vol_usdt-ppt": number;
+  "24h_vol_usdt-erc20-ppt": number;
+  "24h_vol_usd": number;
   precision: number;
   name: string;
   shortcode: string;
@@ -16,6 +18,8 @@ interface IAssetResponse {
     lastPrice_busd: number;
     "firstPrice_usdt-ppt": number;
     "lastPrice_usdt-ppt": number;
+    "firstPrice_usdt-erc20-ppt": number;
+    "lastPrice_usdt-erc20-ppt": number;
   } | null;
 }
 

@@ -65,9 +65,9 @@ class ExploreTokenVM {
     const descr = this.asset?.description ?? "";
     const change24H = this.statistics?.change24H
       ?.times(this.statistics?.change24H?.gte(0) ? 1 : -1)
-      .toFormat(2);
+      .toFormat(4);
     return [
-      `The live ${symbol} price today is $${currentPrice} USDN with a 24-hour trading volume of $${volume24} USDN. We update our ${symbol} to USDN price in real-time.`,
+      `The live ${symbol} price today is $${currentPrice} with a 24-hour trading volume of $${volume24}. We update our ${symbol} to USD price in real-time.`,
       `\n${symbol} is ${sign} ${change24H}% in the last 24 hours. Trade ${symbol} using puzzleswap.org aggregator to get the best price!\n${descr}`,
     ];
   }
@@ -108,7 +108,7 @@ class ExploreTokenVM {
   syncChart = async () => {
     if (this.chartData[this.selectedChartPeriod] != null) return;
     this.setChartLoading(true);
-    const req = `https://wavescap.com/api/chart/asset/${this.assetId}-busd-${this.selectedChartPeriod}.json`;
+    const req = `https://wavescap.com/api/chart/asset/${this.assetId}-usd-${this.selectedChartPeriod}.json`;
     const { data } = await axios.get(req);
     this.setChartData(this.selectedChartPeriod, {
       ...data,

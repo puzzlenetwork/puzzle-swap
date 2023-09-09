@@ -47,7 +47,7 @@ class ExploreVM {
   get top3Losers() {
     return this.rootStore.tokenStore.statistics
       .slice()
-      .sort((a, b) => (a.change24H.gt(b.change24H) ? 1 : -1))
+      .sort((a, b) => (a.change24H.lt(b.change24H) ? -1 : 1))
       .slice(0, 3);
   }
 

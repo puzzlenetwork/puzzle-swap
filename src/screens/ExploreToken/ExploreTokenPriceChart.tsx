@@ -134,7 +134,7 @@ const ExploreTokenPriceChart: React.FC<IProps> = () => {
                   {dayjs(date).format("MM:HH, MMM DD")}
                 </Text>
               )}
-              formatter={(value) => "$ " + new BN(`${value}`).toFormat(2)}
+              formatter={(value) => "$" + new BN(`${value}`).toFormat(4)}
               contentStyle={{
                 border: "none",
                 filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))",
