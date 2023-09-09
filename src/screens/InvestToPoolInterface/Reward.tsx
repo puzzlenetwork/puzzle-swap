@@ -94,7 +94,7 @@ const Reward: React.FC<IProps> = () => {
               <Title>Available to claim</Title>
               <Text weight={500}>
                 {vm.totalRewardToClaim != null ? (
-                  `$ ${vm.totalRewardToClaim.toFixed(2)}`
+                  `$${vm.totalRewardToClaim.toFixed(2)}`
                 ) : (
                   <Skeleton height={16} />
                 )}

@@ -14,6 +14,7 @@ import { ITransaction } from "@src/utils/types";
 import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
 import makeNodeRequest from "@src/utils/makeNodeRequest";
 import * as constants from "constants";
+import asset from "@screens/TradeInterface/Trade/Swap/RoutingModal/Asset";
 
 const ctx = React.createContext<InvestToPoolInterfaceVM | null>(null);
 
@@ -58,6 +59,10 @@ class InvestToPoolInterfaceVM {
   public totalRewardToClaim: BN | null = null;
   private setTotalRewardToClaim = (value: BN) =>
     (this.totalRewardToClaim = value);
+
+  public dicToClaim: any | null = null;
+  private setDicToClaim = (value: any) =>
+    (this.dicToClaim = value);
 
   public totalClaimedReward: BN | null = null;
   private setTotalClaimedReward = (value: BN) =>
@@ -176,6 +181,7 @@ class InvestToPoolInterfaceVM {
       .toString()
       .split("|")
       .filter((v) => v !== "");
+    const dicClaim = {};
     const totalRewardInDoll = tokens.reduce((acc, v) => {
       const details = v.split(",");
       const assetId = details[0];
@@ -183,12 +189,16 @@ class InvestToPoolInterfaceVM {
       if (new BN(amount).lt(0)) {
         return acc.plus(0);
       }
+      // @ts-ignore
+      dicClaim[assetId] = amount;
       const dollEquivalent = this.rootStore.poolsStore
         .usdtRate(assetId)
         ?.times(BN.formatUnits(amount, TOKENS_BY_ASSET_ID[assetId].decimals));
       return acc.plus(dollEquivalent ?? 0);
     }, BN.ZERO);
+
     this.setTotalRewardToClaim(totalRewardInDoll);
+    this.setDicToClaim(dicClaim);
   };
 
   get poolCompositionValues() {
@@ -220,7 +230,7 @@ class InvestToPoolInterfaceVM {
       return BN.ZERO;
     const liquidityInUsdt = this.pool.globalLiquidity
       .times(this.userIndexStaked)
-      .div(this.globalIndexStaked);
+      .div(this.pool.globalPoolTokenAmount);
     return liquidityInUsdt.isNaN() ? BN.ZERO : liquidityInUsdt;
   }
 
