@@ -94,6 +94,7 @@ import usdtpolyLogo from "@src/assets/tokens/USDTPOLYPPT.svg";
 import oldgoldLogo from "@src/assets/tokens/OLDGOLD.jpg";
 import whirlpoolLogo from "@src/assets/tokens/WHIRLPOOL.jpeg";
 import plwavesLogo from "@src/assets/tokens/PLWAVES.svg";
+import plethLogo from "@src/assets/tokens/PL-ETH.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -191,8 +192,9 @@ const tokenLogos: Record<string, string> = {
   PZ_OLDGOLD: oldgoldLogo,
   USDT_POLY: usdtpolyLogo,
   USDT_PPT: usdtpptLogo,
-  PL_WAVES: plwavesLogo,
   WHIRLPOOL: whirlpoolLogo,
+  "PL-ETH": plethLogo,
+  "PL-WAVES": plwavesLogo,
   AXLY: "https://waves.exchange/static/icons/assets/DcAbWMXrfMeooG1BrZ9ipiseFSVm7zxTs1XZKRp6DVeZ.svg",
   USDC_PPT: "https://waves.exchange/static/icons/assets/3ayH3PhWMkhFsySsUVcC8BvFf1QyxGB5BZuTPyVtmP4v.svg",
   USDT_TRC: "https://waves.exchange/static/icons/assets/DaErMEp76HtuvbbSYxDwLovRimaAwtEyQGFeHLQ3UWwh.svg",
