@@ -88,6 +88,7 @@ import wavesdlpLogo from "@src/assets/tokens/WAVSEDLP.svg";
 import peteLogo from "@src/assets/tokens/PETE.svg";
 import l2mpLogo from "@src/assets/tokens/L2MP.svg";
 import wlgoldLogo from "@src/assets/tokens/wlgold_.svg";
+import wlacresLogo from "@src/assets/tokens/ACRES.svg";
 import usdtBscLogo from "@src/assets/tokens/USDTBEP20.svg";
 import usdtpptLogo from "@src/assets/tokens/USDTPPT.svg";
 import usdtpolyLogo from "@src/assets/tokens/USDTPOLYPPT.svg";
@@ -159,6 +160,7 @@ const tokenLogos: Record<string, string> = {
   VIRES_USDT_LP: usdtViresLogo,
   VIRES_USDC_LP: usdcViresLogo,
   WLGOLD: wlgoldLogo,
+  ACRES: wlacresLogo,
   WX_USDNWXLP: WXUSDNWXLP,
   wxWXUSDN_TCI: wxWXUSDN_TCI,
   USDTUSDNWXLP: usdtusdn,
