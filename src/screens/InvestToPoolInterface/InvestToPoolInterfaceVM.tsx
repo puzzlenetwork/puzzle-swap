@@ -140,7 +140,7 @@ class InvestToPoolInterfaceVM {
       globalIndexStaked: "global_indexStaked",
       userIndexStaked: `${address}_indexStaked`,
       claimedReward: `${address}_claimedRewardValue`,
-      lastClaimDate: `${address}_lastClaim`,
+      lastClaimDate: `${address}_DG2xFkPdDwKUoBkzGAhQtLpSGzfXLiCYPEzeKH2Ad24p_lastClaim`,
     };
     const response = await this.pool.contractKeysRequest(
       Object.values(keysArray)
