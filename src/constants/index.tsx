@@ -360,8 +360,8 @@ export const CONTRACT_ADDRESSES = {
   // boost: "3PAeY7RgwuNUZNscGqahqJxFTFDkh7fbNwJ",
   boost: "3P8eeDzUnoDNbQjW617pAe76cEUDQsP1m1V",
   calcReward: "3PAeY7RgwuNUZNscGqahqJxFTFDkh7fbNwJ",
-  limitOrders: "3PPrfNMnk8z8QhZcqMyJk69mF65s2Rbz3B6", // old
-  // limitOrders: "3PFB6LJyShsCKEA1AU1U1WLbDazqyj6ZL9b", // new
+  // limitOrders: "3PPrfNMnk8z8QhZcqMyJk69mF65s2Rbz3B6", // old
+  limitOrders: "3PFB6LJyShsCKEA1AU1U1WLbDazqyj6ZL9b", // new
   proxyLimitOrders: "3PM4Mn2iwQnUkeMxTJJAuriiVEGAcQwDU5H",
   priceOracle: "3PPXVKjN6nRMzXeegcYhfiic96pd2c98Ekm",
 };
