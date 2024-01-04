@@ -118,18 +118,29 @@ const Header: React.FC<IProps> = () => {
     { name: "Stake", link: ROUTES.STAKE },
     { name: "NFT", link: "https://puzzlemarket.org/" },
     { name: "Lend", link: "https://lend.puzzleswap.org/" },
-    { name: "Lease 🔷", link: "https://lease.puzzleswap.org/" },
   ];
 
   const communityMenu = [
-    { name: "Telegram chat", link: "https://t.me/puzzle_network", outer: true },
-    { name: "Medium", link: "https://medium.com/@puzzlenetwork", outer: true },
     {
-      name: "Notifications bot",
-      link: "https://t.me/puzzle_swap",
-      outer: true,
+      name: "Lease WAVES",
+      link: "https://lease.puzzleswap.org/",
+      isExternalLink: true
     },
-    { name: "Alerts bot", link: "https://t.me/puzzle_alerts_bot", outer: true },
+    {
+      name: "Puzzle Network chat",
+      link: "https://t.me/puzzle_network",
+      isExternalLink: true
+    },
+    {
+      name: "Official Twitter",
+      link: "https://twitter.com/puzzle_network",
+      isExternalLink: true
+    },
+    {
+      name: "Official Medium",
+      link: "https://medium.com/@puzzlenetwork",
+      isExternalLink: true
+    }
   ];
   return (
     <Root>

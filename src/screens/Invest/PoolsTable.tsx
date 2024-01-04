@@ -66,7 +66,7 @@ const PoolsTable: React.FC = () => {
         ),
         accessor: "liquidity",
       },
-      // { Header: "Volume (30d)", accessor: "volume" },
+      { Header: "Volume (30d)", accessor: "volume" },
       {
         accessor: "apy",
         Header: () => (
@@ -183,7 +183,7 @@ const PoolsTable: React.FC = () => {
         poolName: (
           <Row>
             <SquareTokenIcon src={pool.logo} alt="logo" />
-            <SizedBox width={8} />
+            <SizedBox width={16} />
             <Column crossAxisSize="max">
               <Row alignItems="center">
                 <Text fitContent style={{ whiteSpace: "nowrap" }} weight={500}>
@@ -211,34 +211,38 @@ const PoolsTable: React.FC = () => {
             ? `$${data.liquidityInUsdt.toFormat(2)}`
             : "";
         })(),
-        liquidity: "$" + new BN(pool.statistics?.liquidity ?? 0).toFormat(2),
-        // volume: (() => {
-        //   const volume =
-        //     pool.statistics != null
-        //       ? new BN(pool.statistics.monthlyVolume).toFormat(2)
-        //       : null;
-        //   return volume != null ? `$${volume}` : "—";
-        // })(),
+        liquidity: "$" + new BN(pool.statistics?.liquidity ?? 0).toBigFormat(0),
+        volume: (() => {
+          const volume =
+            pool.statistics != null
+              ? new BN(pool.statistics.monthlyVolume).toBigFormat(0)
+              : null;
+          return volume != null ? `$${volume}` : "—";
+        })(),
         apy: (
           <Row>
             {pool.statistics?.boostedApy != null ? (
               <Row alignItems="center">
                 <Text fitContent type="secondary" crossed>
-                  {new BN(pool.statistics.apy).toFormat(2).concat(" %")}
+                  {new BN(pool.statistics.apy).toFormat(2).concat("%")}
                 </Text>
                 <SizedBox width={2} />
                 {new BN(pool.statistics.apy)
                   .plus(pool.statistics.boostedApy)
                   .toBigFormat(2)
-                  .concat(" %")}
+                  .concat("%")}
               </Row>
             ) : (
-              new BN(pool.statistics?.apy ?? 0).toFormat(2).concat(" %")
+                new BN(pool.statistics?.apy ?? 0)?.gt(20) ?
+                <Text fitContent type="success">
+                    {new BN(pool.statistics?.apy ?? 0).toFormat(2).concat("%")}
+                </Text> : new BN(pool.statistics?.apy ?? 0).toFormat(2).concat("%")
             )}
           </Row>
         ),
         owner: pool.owner,
       }));
+
     setFilteredPools(data);
   }, [
     theme.colors.blue500,

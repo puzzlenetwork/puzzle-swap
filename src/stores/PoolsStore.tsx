@@ -37,6 +37,17 @@ export default class PoolsStore {
     this.syncCustomPools().then(this.updatePoolsState);
     this.updateInvestedInPoolsInfo().then();
     this.syncPuzzleRate().then();
+
+    setTimeout(() => {
+      this.syncPoolsLiquidity();
+      Promise.all([
+        this.updateInvestedInPoolsInfo(),
+        this.updatePoolsState(),
+        this.syncPuzzleRate(),
+        this.syncCustomPools(),
+      ])
+    }, 1000)
+
     setInterval(() => {
       this.syncPoolsLiquidity();
       Promise.all([
