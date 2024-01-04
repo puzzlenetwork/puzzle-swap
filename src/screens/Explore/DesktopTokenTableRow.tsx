@@ -77,7 +77,7 @@ const DesktopTokenTableRow: React.FC<IProps> = ({
           </Text>
         </Row>
       </Row>
-      <Text>$ {rate?.gte(0.0001) ? rate?.toFormat(4) : rate?.toFormat(8)}</Text>
+      <Text>${rate?.gte(0.0001) ? rate?.toFormat(4) : rate?.toFormat(8)}</Text>
       {change != null ? (
         <Text type={change?.gt(0) ? "success" : "error"}>
           {change.toFormat(2)} %
@@ -85,7 +85,7 @@ const DesktopTokenTableRow: React.FC<IProps> = ({
       ) : (
         <Text>-</Text>
       )}
-      {vol24 != null ? <Text>$ {vol24.toFormat(2)}</Text> : <Text>-</Text>}
+      {vol24 != null ? <Text>${vol24.toFormat(2)}</Text> : <Text>-</Text>}
       <Button
         onClick={() => navigate(`/trade?asset1=${token.assetId}`)}
         size="medium"
