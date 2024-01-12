@@ -363,7 +363,7 @@ export const CONTRACT_ADDRESSES = {
   // limitOrders: "3PPrfNMnk8z8QhZcqMyJk69mF65s2Rbz3B6", // old
   limitOrders: "3PFB6LJyShsCKEA1AU1U1WLbDazqyj6ZL9b", // new
   proxyLimitOrders: "3PM4Mn2iwQnUkeMxTJJAuriiVEGAcQwDU5H",
-  priceOracle: "3PPXVKjN6nRMzXeegcYhfiic96pd2c98Ekm",
+  priceOracle: "3P8d1E1BLKoD52y3bQJ1bDTd2TD1gpaLn9t",
 };
 export const PUZZLE_NFTS = [
   {

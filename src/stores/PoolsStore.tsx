@@ -33,17 +33,18 @@ export default class PoolsStore {
     this.rootStore = rootStore;
     this.slippage = initialState?.slippage ?? 5;
     makeAutoObservable(this);
+
+    this.syncPuzzleRate().then();
     this.syncPools().then();
     this.syncCustomPools().then(this.updatePoolsState);
     this.updateInvestedInPoolsInfo().then();
-    this.syncPuzzleRate().then();
 
     setTimeout(() => {
       this.syncPoolsLiquidity();
       Promise.all([
+        this.syncPuzzleRate(),
         this.updateInvestedInPoolsInfo(),
         this.updatePoolsState(),
-        this.syncPuzzleRate(),
         this.syncCustomPools(),
       ])
     }, 1000)
@@ -262,18 +263,13 @@ export default class PoolsStore {
     });
 
   private syncPuzzleRate = async () => {
-    const res = await nodeService.nodeKeysRequest(
-      CONTRACT_ADDRESSES.priceOracle,
-      "lastUpdatedBlock"
-    );
-    const lastBlock = res[0].value;
     const priceResponse = await nodeService.nodeKeysRequest(
       CONTRACT_ADDRESSES.priceOracle,
       [
-        `block_${lastBlock}_${TOKENS_BY_SYMBOL.PUZZLE.assetId}`,
-        `block_${lastBlock}_${TOKENS_BY_SYMBOL.XTN.assetId}`,
-        `block_${lastBlock}_${TOKENS_BY_SYMBOL.WAVES.assetId}`,
-        `block_${lastBlock}_${TOKENS_BY_SYMBOL.USDT_WXG.assetId}`,
+        `${TOKENS_BY_SYMBOL.PUZZLE.assetId}_twap5B`,
+        `${TOKENS_BY_SYMBOL.XTN.assetId}_twap5B`,
+        `${TOKENS_BY_SYMBOL.WAVES.assetId}_twap5B`,
+        `${TOKENS_BY_SYMBOL.USDT_WXG.assetId}_twap5B`,
       ]
     );
 
