@@ -65,8 +65,9 @@ const categoriesOptions = [
     key: "global",
   },
   { title: "Stablecoins", key: "stable" },
-  { title: "Waves DeFi", key: "defi" },
-  { title: "Waves Ducks", key: "duck" },
+  { title: "PZ Indexes", key: "pz" },
+  // { title: "Waves DeFi", key: "defi" },
+  // { title: "Waves Ducks", key: "duck" },
 ];
 const createdByOptions = [
   { title: "All tokens", key: "all" },
