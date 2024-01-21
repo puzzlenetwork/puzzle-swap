@@ -98,6 +98,8 @@ import plwavesLogo from "@src/assets/tokens/PLWAVES.svg";
 import plethLogo from "@src/assets/tokens/PL-ETH.svg";
 import plusdtLogo from "@src/assets/tokens/PL-USDT.svg";
 import romeLogo from "@src/assets/tokens/ROME.svg";
+import pool5Logo from "@src/assets/tokens/5POOL.jpeg";
+import pzWebLogo from "@src/assets/tokens/WEBPOOL.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -193,7 +195,8 @@ const tokenLogos: Record<string, string> = {
   ANOTE: anoteLogo,
   WAVESDLP: wavesdlpLogo,
   PETE: peteLogo,
-  PZ_OLDGOLD: oldgoldLogo,
+  "PZ Old Gold": oldgoldLogo,
+  "PZ Mega Pete": "https://images.wavesducks.com/api/images/DUCK-GGGGAAAA-GG.svg",
   USDT_POLY: usdtpolyLogo,
   USDT_PPT: usdtpptLogo,
   WHIRLPOOL: whirlpoolLogo,
@@ -201,6 +204,9 @@ const tokenLogos: Record<string, string> = {
   "PL-USDT": plusdtLogo,
   "PL-ETH": plethLogo,
   ROME: romeLogo,
+  "PZ 5pool": pool5Logo,
+  "PZ WEB": pzWebLogo,
+  "WX-USDCUSDT-LP": "https://waves.exchange/static/icons/assets/rZMQ6g31Lr7sPAaAoYc4U2PHCVauTuKUSzUbJtUyPZN.svg",
   AXLY: "https://waves.exchange/static/icons/assets/DcAbWMXrfMeooG1BrZ9ipiseFSVm7zxTs1XZKRp6DVeZ.svg",
   USDC_PPT: "https://waves.exchange/static/icons/assets/3ayH3PhWMkhFsySsUVcC8BvFf1QyxGB5BZuTPyVtmP4v.svg",
   USDT_TRC: "https://waves.exchange/static/icons/assets/DaErMEp76HtuvbbSYxDwLovRimaAwtEyQGFeHLQ3UWwh.svg",
