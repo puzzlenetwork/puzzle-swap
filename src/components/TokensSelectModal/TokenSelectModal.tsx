@@ -22,18 +22,21 @@ interface IProps {
 
 const tokenCategories = [
   "All",
-  "Global",
+  // "Global",
   "Stablecoins",
-  "Waves DeFi",
-  "Waves Ducks",
+  "PZ LP",
+  // "Waves DeFi",
+  // "Waves Ducks",
 ];
 
 export enum tokenCategoriesEnum {
   all = 0,
-  global = 1,
-  stable = 2,
-  defi = 3,
-  ducks = 4,
+  // global = 1,
+  // stable = 2,
+  // defi = 3,
+  // ducks = 4,
+  stable = 1,
+  pz = 2,
 }
 
 const Scroll = styled.div`

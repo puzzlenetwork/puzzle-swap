@@ -60,10 +60,10 @@ const StyledRow = styled(Row)`
 `;
 const categoriesOptions = [
   { title: "All categories", key: "all" },
-  {
-    title: "Global coins",
-    key: "global",
-  },
+  // {
+  //   title: "Global coins",
+  //   key: "global",
+  // },
   { title: "Stablecoins", key: "stable" },
   { title: "PZ Indexes", key: "pz" },
   // { title: "Waves DeFi", key: "defi" },
