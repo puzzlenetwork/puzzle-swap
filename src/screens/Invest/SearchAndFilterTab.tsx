@@ -80,13 +80,14 @@ const StyledRow = styled(Row)`
 `;
 const categoriesOptions = [
   { title: "All categories", key: "all" },
-  {
-    title: "Global coins",
-    key: "global",
-  },
+  // {
+  //   title: "Global coins",
+  //   key: "global",
+  // },
   { title: "Stablecoins", key: "stable" },
-  { title: "Waves DeFi", key: "defi" },
-  { title: "Waves Ducks", key: "duck" },
+  { title: "PZ Indexes", key: "pz" },
+  // { title: "Waves DeFi", key: "defi" },
+  // { title: "Waves Ducks", key: "duck" },
 ];
 const createdByOptions = [
   { title: "Created by all", key: "all" },

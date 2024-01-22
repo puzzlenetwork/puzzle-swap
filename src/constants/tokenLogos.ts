@@ -98,6 +98,8 @@ import plwavesLogo from "@src/assets/tokens/PLWAVES.svg";
 import plethLogo from "@src/assets/tokens/PL-ETH.svg";
 import plusdtLogo from "@src/assets/tokens/PL-USDT.svg";
 import romeLogo from "@src/assets/tokens/ROME.svg";
+import pool5Logo from "@src/assets/tokens/5POOL.jpeg";
+import pzWebLogo from "@src/assets/tokens/WEBPOOL.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -127,7 +129,7 @@ const tokenLogos: Record<string, string> = {
   USDT: usdtLogo,
   RACE: raceLogo,
   BTC: btcLogo,
-  ETH: ethLogo,
+  "ETH-PPT": ethLogo,
   ETHWXG: ethLogo,
   LTC: ltcLogo,
   USDC: usdcLogo,
@@ -183,27 +185,31 @@ const tokenLogos: Record<string, string> = {
   VVUSDNLP: usdnViresVested,
   SWAVES: SWAVES,
   TND: tndLogo,
-  NEXT_WEEK_PEPE: NEXT_WEEK_PEPE,
+  "NEXT-WEEK-PEPE": NEXT_WEEK_PEPE,
   EAST: eastLogo,
   WBTC: wbtcErc20Logo,
-  USDT_BSC: usdtBscLogo,
-  USDC_BSC: usdcBscLogo,
+  "USDT-BSC": usdtBscLogo,
+  "USDC-BSC": usdcBscLogo,
   BTCB: btcbLogo,
   ORIENT: orientLogo,
   ANOTE: anoteLogo,
   WAVESDLP: wavesdlpLogo,
   PETE: peteLogo,
-  PZ_OLDGOLD: oldgoldLogo,
-  USDT_POLY: usdtpolyLogo,
-  USDT_PPT: usdtpptLogo,
+  "PZ-Old-Gold": oldgoldLogo,
+  "PZ-Mega-Pete": "https://images.wavesducks.com/api/images/DUCK-GGGGAAAA-GG.svg",
+  "USDT-POLY": usdtpolyLogo,
+  "USDT-PPT": usdtpptLogo,
   WHIRLPOOL: whirlpoolLogo,
   "PL-WAVES": plwavesLogo,
   "PL-USDT": plusdtLogo,
   "PL-ETH": plethLogo,
   ROME: romeLogo,
+  "PZ-5pool": pool5Logo,
+  "PZ-WEB": pzWebLogo,
+  "WX-USDCUSDT-LP": "https://waves.exchange/static/icons/assets/rZMQ6g31Lr7sPAaAoYc4U2PHCVauTuKUSzUbJtUyPZN.svg",
   AXLY: "https://waves.exchange/static/icons/assets/DcAbWMXrfMeooG1BrZ9ipiseFSVm7zxTs1XZKRp6DVeZ.svg",
-  USDC_PPT: "https://waves.exchange/static/icons/assets/3ayH3PhWMkhFsySsUVcC8BvFf1QyxGB5BZuTPyVtmP4v.svg",
-  USDT_TRC: "https://waves.exchange/static/icons/assets/DaErMEp76HtuvbbSYxDwLovRimaAwtEyQGFeHLQ3UWwh.svg",
+  "USDC-PPT": "https://waves.exchange/static/icons/assets/3ayH3PhWMkhFsySsUVcC8BvFf1QyxGB5BZuTPyVtmP4v.svg",
+  "USDT-TRC": "https://waves.exchange/static/icons/assets/DaErMEp76HtuvbbSYxDwLovRimaAwtEyQGFeHLQ3UWwh.svg",
   SPICE: "https://wavesducks.com/static/img/token/spice.svg",
   BNB: "https://wavescap.com/wp-content/uploads/asset-logo/66a1br3BrkoaJgP7yEar9hJcSTvJPoH6PYBLqscXcMGo.svg"
 };
