@@ -4,7 +4,7 @@ env:
   REACT_APP_API_BASE_DEV: https://puzzle-js-back.herokuapp.com
   REACT_APP_API_BASE_PROD: https://puzzle-js-back.herokuapp.com
   REACT_APP_AGG_API_DEV: http://5.189.170.5:8000
-  REACT_APP_AGG_API_PROD: https://waves.puzzle-aggr-api.com
+  REACT_APP_AGG_API_PROD: https://stage.wavescup.world
 
 on:
   push:
