@@ -23,7 +23,8 @@ interface IProps {
 const tokenCategories = [
   "All",
   // "Global",
-  "Stablecoins",
+  "Stables",
+  "Common",
   "PZ LP",
   // "Waves DeFi",
   // "Waves Ducks",
@@ -36,7 +37,8 @@ export enum tokenCategoriesEnum {
   // defi = 3,
   // ducks = 4,
   stable = 1,
-  pz = 2,
+  common = 2,
+  pz = 3,
 }
 
 const Scroll = styled.div`
