@@ -143,7 +143,7 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
             {vm.simpleRoute != null
               ? vm.simpleRoute.map((symbol, i) => (
                   <React.Fragment key={i}>
-                    <Text style={{ lineHeight: 0 }}>{symbol}&nbsp;</Text>
+                    <Text style={{ lineHeight: 0, whiteSpace: "nowrap" }}>{symbol}&nbsp;</Text>
                     {i !== vm.simpleRoute!.length - 1 && (
                       <ArrowIcon style={{ minWidth: 16 }} />
                     )}
