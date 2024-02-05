@@ -100,6 +100,10 @@ import plusdtLogo from "@src/assets/tokens/PL-USDT.svg";
 import romeLogo from "@src/assets/tokens/ROME.svg";
 import pool5Logo from "@src/assets/tokens/5POOL.jpeg";
 import pzWebLogo from "@src/assets/tokens/WEBPOOL.svg";
+import pzUnitsLogo from "@src/assets/tokens/UNITS.jpeg";
+import pzBurnXtnLogo from "@src/assets/tokens/PZ-BURN-XTN.jpg";
+import pzBbbLogo from "@src/assets/tokens/PZ-BBB.jpg";
+import pzBurnXtnXPptLogo from "@src/assets/tokens/PZ-BURN-XTN-x-PPT.jpg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -206,6 +210,10 @@ const tokenLogos: Record<string, string> = {
   ROME: romeLogo,
   "PZ-5pool": pool5Logo,
   "PZ-WEB": pzWebLogo,
+  "PZ-Units": pzUnitsLogo,
+  "PZ-BURN-XTN": pzBurnXtnLogo,
+  "PZ-BBB": pzBbbLogo,
+  "PZ-BURN-XTN-x-PPT": pzBurnXtnXPptLogo,
   "WX-USDCUSDT-LP": "https://waves.exchange/static/icons/assets/rZMQ6g31Lr7sPAaAoYc4U2PHCVauTuKUSzUbJtUyPZN.svg",
   AXLY: "https://waves.exchange/static/icons/assets/DcAbWMXrfMeooG1BrZ9ipiseFSVm7zxTs1XZKRp6DVeZ.svg",
   "USDC-PPT": "https://waves.exchange/static/icons/assets/3ayH3PhWMkhFsySsUVcC8BvFf1QyxGB5BZuTPyVtmP4v.svg",
