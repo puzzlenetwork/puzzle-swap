@@ -104,6 +104,7 @@ import pzUnitsLogo from "@src/assets/tokens/UNITS.jpeg";
 import pzBurnXtnLogo from "@src/assets/tokens/PZ-BURN-XTN.jpg";
 import pzBbbLogo from "@src/assets/tokens/PZ-BBB.jpg";
 import pzBurnXtnXPptLogo from "@src/assets/tokens/PZ-BURN-XTN-x-PPT.jpg";
+import windLogo from "@src/assets/tokens/WIND.png"
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -214,6 +215,7 @@ const tokenLogos: Record<string, string> = {
   "PZ-BURN-XTN": pzBurnXtnLogo,
   "PZ-BBB": pzBbbLogo,
   "PZ-BURN-XTN-x-PPT": pzBurnXtnXPptLogo,
+  "WIND": windLogo,
   "WX-USDCUSDT-LP": "https://waves.exchange/static/icons/assets/rZMQ6g31Lr7sPAaAoYc4U2PHCVauTuKUSzUbJtUyPZN.svg",
   AXLY: "https://waves.exchange/static/icons/assets/DcAbWMXrfMeooG1BrZ9ipiseFSVm7zxTs1XZKRp6DVeZ.svg",
   "USDC-PPT": "https://waves.exchange/static/icons/assets/3ayH3PhWMkhFsySsUVcC8BvFf1QyxGB5BZuTPyVtmP4v.svg",
