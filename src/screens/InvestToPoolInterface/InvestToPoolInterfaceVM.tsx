@@ -68,6 +68,10 @@ class InvestToPoolInterfaceVM {
   private setTotalClaimedReward = (value: BN) =>
     (this.totalClaimedReward = value);
 
+  public claimedRewardList: any | null = null;
+  private setClaimedRewardList = (value: any) =>
+      (this.claimedRewardList = value);
+
   public lastClaimDate: BN = BN.ZERO;
   private _setLastClaimDate = (v: BN) => (this.lastClaimDate = v);
 
@@ -159,12 +163,23 @@ class InvestToPoolInterfaceVM {
       {}
     );
 
+    console.log("HERE");
+    const res = await fetch(`https://puzzle-py-api-feaf3dd76a7a.herokuapp.com/api/claimedRewardsInPool?pool=${this.pool.contractAddress}&user=${address}`)
+    if (!res.ok) {
+      // This will activate the closest `error.js` Error Boundary
+      throw new Error('Failed to fetch data')
+    }
+    const resJson = await res.json();
+    console.log(resJson);
+
     const claimedReward = parsedNodeResponse["claimedReward"];
+    const claimedRewardList: {string: number} = resJson;
     const lastClaimDate = parsedNodeResponse["lastClaimDate"];
     const userIndexStaked = parsedNodeResponse["userIndexStaked"];
     const globalIndexStaked = parsedNodeResponse["globalIndexStaked"];
     lastClaimDate && this._setLastClaimDate(lastClaimDate);
     this.setTotalClaimedReward(claimedReward ?? BN.ZERO);
+    this.setClaimedRewardList(claimedRewardList ?? {});
     this.setUserIndexStaked(userIndexStaked);
     this._setGlobalIndexStaked(globalIndexStaked);
   };
