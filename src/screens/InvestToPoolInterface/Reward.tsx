@@ -14,7 +14,7 @@ import { useInvestToPoolInterfaceVM } from "./InvestToPoolInterfaceVM";
 import BN from "@src/utils/BN";
 import Skeleton from "react-loading-skeleton";
 import dayjs from "dayjs";
-import { TOKENS_BY_SYMBOL } from "@src/constants";
+import {TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL} from "@src/constants";
 
 interface IProps {}
 
@@ -80,11 +80,14 @@ const Reward: React.FC<IProps> = () => {
               </Row>
               <Text weight={500}>
                 {vm.totalClaimedReward != null ? (
-                  `${totalClaimed}`
+                    vm.claimedRewardList?.map((item: any) =>
+                        <Text textAlign="left" type="secondary" size="small">{new BN(item["amount"] / 10 ** TOKENS_BY_ASSET_ID[item["assetId"]].decimals).toFormat(2)} {TOKENS_BY_ASSET_ID[item["assetId"]].symbol}</Text>
+                    )
                 ) : (
                   <Skeleton height={16} width="50%" />
-                )} xtn
+                )}
               </Text>
+
             </Column>
           </Row>
           <AvailableToClaim>
