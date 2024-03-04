@@ -206,6 +206,7 @@ class Pool implements IPoolConfig {
     const keysArray = {
       addressIndexStaked: `${user}_indexStaked`,
       globalIndexStaked: `global_indexStaked`,
+      globalIndexAmount: `global_poolToken_amount`,
       globalPoolTokenAmount: "global_poolToken_amount",
       globalEarnedByOwner: "global_earnedByOwner",
     };
@@ -231,6 +232,7 @@ class Pool implements IPoolConfig {
     this.setGlobalEarnedByOwner(globalEarnedByOwner);
     const addressIndexStaked = parsedNodeResponse["addressIndexStaked"];
     const globalIndexStaked = parsedNodeResponse["globalIndexStaked"];
+    const globalIndexAmount = parsedNodeResponse["globalIndexAmount"];
     const globalPoolTokenAmount = parsedNodeResponse["globalPoolTokenAmount"];
     const indexTokenRate = this.globalLiquidity.div(
       BN.formatUnits(globalPoolTokenAmount, 8)
@@ -249,7 +251,7 @@ class Pool implements IPoolConfig {
 
     const liquidityInUsdt = this.globalLiquidity
       .times(addressIndexStaked)
-      .div(globalIndexStaked);
+      .div(globalIndexAmount);
     const percent = liquidityInUsdt
       .times(new BN(100))
       .div(this.globalLiquidity);
@@ -294,7 +296,7 @@ class Pool implements IPoolConfig {
 
     const liquidityInUsdt = this.globalLiquidity
       .times(addressIndexStaked)
-      .div(globalIndexStaked);
+      .div(globalPoolTokenAmount);
     const percent = liquidityInUsdt
       .times(new BN(100))
       .div(this.globalLiquidity);

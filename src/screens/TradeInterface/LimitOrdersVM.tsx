@@ -17,6 +17,7 @@ import {
 } from "@components/Dialog/DialogNotification";
 import aggregatorService from "@src/services/aggregatorService";
 import dayjs from "dayjs";
+import {slice} from "lodash";
 
 interface IProps {
   children: React.ReactNode;
@@ -201,10 +202,26 @@ class LimitOrdersVM {
     );
     const ordersData: INodeData[] = await makeNodeRequest(
       `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}`,
-      { postData: { keys } }
+      { postData: { keys: slice(keys, 0, 1000) } }
     )
-      .then(({ data }) => data)
+      .then(async ({ data }) => {
+        if (keys.length < 1000) {
+          console.log("less than 1000 data keys");
+          return data
+        } else {
+          console.log("more than 1000 data keys");
+          return await makeNodeRequest(
+              `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}`,
+              { postData: { keys: slice(keys, 1000, 2000) } }
+          ).then((resp => {
+            const res = data.concat(resp.data);
+            return res;
+          })
+          ).catch(() => data);
+        }
+      })
       .catch(() => []);
+
     const orders = orderIdList.map((id) => ({
       id,
       txId: getStateByKey(ordersData, `order_${id}_txId`) ?? "",
