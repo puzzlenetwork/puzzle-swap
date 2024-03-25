@@ -107,6 +107,9 @@ import pzBurnXtnXPptLogo from "@src/assets/tokens/PZ-BURN-XTN-x-PPT.jpg";
 import windLogo from "@src/assets/tokens/WIND.png";
 import sbtLogo from "@src/assets/tokens/SBT.svg";
 import fudtLogo from "@src/assets/tokens/FUDT.svg";
+import wbriacashLogo from "@src/assets/tokens/WBriacash.svg";
+import sashaxLogo from "@src/assets/tokens/Sasha-X.svg";
+import gxwxLogo from "@src/assets/tokens/gxWX.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -220,6 +223,9 @@ const tokenLogos: Record<string, string> = {
   "SBT": sbtLogo,
   "WIND": windLogo,
   "FUDT": fudtLogo,
+  "WBriacash": wbriacashLogo,
+  "Sasha-X": sashaxLogo,
+  "gxWX": gxwxLogo,
   "WX-USDCUSDT-LP": "https://waves.exchange/static/icons/assets/rZMQ6g31Lr7sPAaAoYc4U2PHCVauTuKUSzUbJtUyPZN.svg",
   AXLY: "https://waves.exchange/static/icons/assets/DcAbWMXrfMeooG1BrZ9ipiseFSVm7zxTs1XZKRp6DVeZ.svg",
   "USDC-PPT": "https://waves.exchange/static/icons/assets/3ayH3PhWMkhFsySsUVcC8BvFf1QyxGB5BZuTPyVtmP4v.svg",
