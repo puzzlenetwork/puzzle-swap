@@ -224,6 +224,7 @@ const tokenLogos: Record<string, string> = {
   "WIND": windLogo,
   "FUDT": fudtLogo,
   "WBriacash": wbriacashLogo,
+  "WBriacash-LP": wbriacashLogo,
   "Sasha-X": sashaxLogo,
   "gxWX": gxwxLogo,
   "WX-USDCUSDT-LP": "https://waves.exchange/static/icons/assets/rZMQ6g31Lr7sPAaAoYc4U2PHCVauTuKUSzUbJtUyPZN.svg",
