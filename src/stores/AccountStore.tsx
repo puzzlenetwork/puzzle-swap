@@ -75,6 +75,8 @@ class AccountStore {
       this.setEthAddress(initState.ethAddress);
     }
     Promise.all([this.checkScriptedAccount(), this.updateAccountAssets()]);
+    setInterval(this.updateAccountAssets, 2 * 1000);
+    setInterval(this.updateAccountAssets, 7 * 1000);
     setInterval(this.updateAccountAssets, 15 * 1000);
     reaction(
       () => this.address,
