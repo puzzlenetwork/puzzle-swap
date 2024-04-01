@@ -10,6 +10,7 @@ import {
 } from "@src/constants";
 import poolService from "@src/services/poolsService";
 import nodeService from "@src/services/nodeService";
+import asset from "@screens/TradeInterface/Trade/Swap/RoutingModal/Asset";
 
 export type TPoolState = {
   state: IData[];
@@ -34,6 +35,7 @@ export default class PoolsStore {
     this.slippage = initialState?.slippage ?? 5;
     makeAutoObservable(this);
 
+    this.syncTokensFromPy().then();
     this.syncPuzzleRate().then();
     this.syncPools().then();
     this.syncCustomPools().then(this.updatePoolsState);
@@ -42,6 +44,7 @@ export default class PoolsStore {
     setTimeout(() => {
       this.syncPoolsLiquidity();
       Promise.all([
+        this.syncTokensFromPy(),
         this.syncPuzzleRate(),
         this.updateInvestedInPoolsInfo(),
         this.updatePoolsState(),
@@ -52,6 +55,7 @@ export default class PoolsStore {
     setInterval(() => {
       this.syncPoolsLiquidity();
       Promise.all([
+        this.syncTokensFromPy(),
         this.updateInvestedInPoolsInfo(),
         this.updatePoolsState(),
         this.syncPuzzleRate(),
@@ -81,6 +85,9 @@ export default class PoolsStore {
 
   public _usdtRate: BN = BN.ZERO;
   public setUsdtRate = (value: BN) => (this._usdtRate = value);
+
+  public tokensList: any;
+  public setTokensList = (value: any) => (this.tokensList = value);
 
   get customPools() {
     return this.pools.filter(({ isCustom }) => isCustom);
@@ -143,6 +150,11 @@ export default class PoolsStore {
   }
 
   usdtRate = (assetId: string, coefficient = 1): BN | null => {
+    if (this.tokensList) {
+      const token = this.tokensList.filter((token: { assetId: string; }) => token.assetId === assetId)[0];
+      if (token.lastPrice) return new BN(token.lastPrice);
+    }
+
     const usdn = TOKENS_BY_SYMBOL.XTN.assetId;
     const usdt = TOKENS_BY_SYMBOL.USDT_WXG.assetId;
     const puzzle = TOKENS_BY_SYMBOL.PUZZLE.assetId;
@@ -261,6 +273,16 @@ export default class PoolsStore {
       const state = this.getStateByAddress(pool.contractAddress)?.state;
       state && pool.syncLiquidity(state);
     });
+
+  private syncTokensFromPy = async () => {
+    const res = await fetch(`https://puzzle-py-api-feaf3dd76a7a.herokuapp.com/api/tokensList`)
+    if (!res.ok) {
+      // This will activate the closest `error.js` Error Boundary
+      throw new Error('Failed to fetch data')
+    }
+    const resJson = await res.json();
+    this.setTokensList(resJson);
+  }
 
   private syncPuzzleRate = async () => {
     const priceResponse = await nodeService.nodeKeysRequest(
