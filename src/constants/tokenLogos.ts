@@ -108,6 +108,7 @@ import windLogo from "@src/assets/tokens/WIND.png";
 import sbtLogo from "@src/assets/tokens/SBT.svg";
 import fudtLogo from "@src/assets/tokens/FUDT.svg";
 import wbriacashLogo from "@src/assets/tokens/WBriacash.svg";
+import wbriacash2Logo from "@src/assets/tokens/WBRIACASH2.svg";
 import sashaxLogo from "@src/assets/tokens/Sasha-X.svg";
 import gxwxLogo from "@src/assets/tokens/gxWX.svg";
 
@@ -225,6 +226,7 @@ const tokenLogos: Record<string, string> = {
   "FUDT": fudtLogo,
   "WBriacash": wbriacashLogo,
   "WBriacash-LP": wbriacashLogo,
+  "WBriacash-Index-LP": wbriacash2Logo,
   "Sasha-X": sashaxLogo,
   "gxWX": gxwxLogo,
   "WX-USDCUSDT-LP": "https://waves.exchange/static/icons/assets/rZMQ6g31Lr7sPAaAoYc4U2PHCVauTuKUSzUbJtUyPZN.svg",
