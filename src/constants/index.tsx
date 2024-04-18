@@ -411,6 +411,7 @@ export interface IPoolConfigStatistics {
   apy: string;
   boostedApy?: string;
   boostedDate?: string;
+  boostings?: Array<{ assetId: string; perDay: number }>;
   monthlyVolume: string;
   weeklyVolume: string;
   monthlyFees: string;
