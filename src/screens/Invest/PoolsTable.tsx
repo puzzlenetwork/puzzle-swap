@@ -170,12 +170,16 @@ const PoolsTable: React.FC = () => {
         );
         return categories.length > 1;
       })
-      .filter(({ isCustom }) => {
-        if (vm.customPoolFilter === 0) return true;
-        if (vm.customPoolFilter === 1) return isCustom;
-        if (vm.customPoolFilter === 2) return !isCustom;
-        return false;
+      .filter((pool) => {
+        if (vm.versionFilter === 0) return true;
+        return (pool.version === vm.versionOptions[vm.versionFilter]["title"]);
       })
+      // .filter(({ isCustom }) => {
+      //   if (vm.customPoolFilter === 0) return true;
+      //   if (vm.customPoolFilter === 1) return isCustom;
+      //   if (vm.customPoolFilter === 2) return !isCustom;
+      //   return false;
+      // })
       .map((pool) => ({
         onClick: () => navigate(`/pools/${pool.domain}/invest`),
         disabled:

@@ -423,6 +423,7 @@ export interface IPoolConfigStatistics {
 
 export interface IPoolConfig {
   domain: string;
+  version?: string;
   isCustom?: boolean;
   contractAddress: string;
   layer2Address?: string;
@@ -438,4 +439,5 @@ export interface IPoolConfig {
   createdAt?: string;
   logo?: string;
   statistics?: IPoolConfigStatistics;
+  history?: Array<{ date: number; volume: string }>;
 }

@@ -34,11 +34,11 @@ export enum tokenCategoriesEnum {
   all = 0,
   // global = 1,
   // stable = 2,
-  // defi = 3,
   // ducks = 4,
   stable = 1,
   common = 2,
   pz = 3,
+  defi = 4,
 }
 
 const Scroll = styled.div`

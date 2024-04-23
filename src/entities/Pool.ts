@@ -31,11 +31,13 @@ class Pool implements IPoolConfig {
   public readonly artefactOriginTransactionId?: string;
   public readonly swapFee: number;
   public readonly createdAt: string;
+  public readonly version: string;
   public readonly defaultAssetId0: string;
   public readonly defaultAssetId1: string;
   public readonly tokens: Array<IToken & { share: number }> = [];
   private readonly _logo?: string;
 
+  public history?: Array<{ date: number; volume: string }>;
   public statistics?: IPoolConfigStatistics;
   public setStatistics = (statistics: IPoolConfigStatistics) =>
     (this.statistics = statistics);
@@ -98,9 +100,11 @@ class Pool implements IPoolConfig {
     this.isCustom = params.isCustom;
     this.artefactOriginTransactionId = params.artefactOriginTransactionId;
     this.owner = params.owner;
+    this.version = params.version ?? "PZ-1.0.0";
     this.swapFee = params.swapFee ?? 2;
     this.createdAt = params.createdAt ?? "";
     this.statistics = params.statistics;
+    this.history = params.history;
 
     makeAutoObservable(this);
   }
