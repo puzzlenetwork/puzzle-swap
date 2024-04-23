@@ -94,21 +94,8 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
   ];
   const customPoolInformation = [
     {
-      title: "Created via",
-      value: (
-        <TextButton
-          size="medium"
-          prefix={linkIcon}
-          kind="secondary"
-          onClick={() =>
-            window.open(
-              `${EXPLORER_URL}/tx/${vm.pool?.artefactOriginTransactionId}`
-            )
-          }
-        >
-          {vm.nftPaymentName}
-        </TextButton>
-      ),
+      title: "Smart Contract Version",
+      value: vm.pool.version,
     },
     {
       title: "Date of creation",
@@ -149,7 +136,24 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
       value: vm.pool.statistics && vm.pool.statistics.weeklyFees
         ? `$${new BN(vm.pool.statistics.weeklyFees).div(10).times(4).toFormat(2)}`
         : "–",
-    }
+    },
+    {
+      title: "Created via",
+      value: (
+          <TextButton
+              size="medium"
+              prefix={linkIcon}
+              kind="secondary"
+              onClick={() =>
+                  window.open(
+                      `${EXPLORER_URL}/tx/${vm.pool?.artefactOriginTransactionId}`
+                  )
+              }
+          >
+            {vm.nftPaymentName}
+          </TextButton>
+      ),
+    },
   ];
   const information = Array.from(
     vm.pool.isCustom ? customPoolInformation : puzzlePoolInformation

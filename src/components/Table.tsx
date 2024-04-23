@@ -3,6 +3,7 @@ import { TableProps, useTable } from "react-table";
 import styled from "@emotion/styled";
 import Text from "@components/Text";
 import Loading from "@components/Loading";
+import {position} from "polished";
 
 interface IProps extends TableProps {
   columns: any[];
@@ -43,6 +44,11 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
       }
     }
 
+    thead {
+      position: sticky;
+      top: 0;
+    }
+    
     th {
       font-weight: 400;
       font-size: 14px;
@@ -84,7 +90,7 @@ const Table: React.FC<IProps> = ({
   return (
     <Root {...rest} hovered={withHover} fitContent={fitContent}>
       <table {...getTableProps()}>
-        <thead>
+        <thead >
           {headerGroups.map((headerGroup, index) => (
             <tr
               {...headerGroup.getHeaderGroupProps()}

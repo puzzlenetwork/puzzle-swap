@@ -70,13 +70,11 @@ const InvestImpl: React.FC<IProps> = () => {
             balanceSort={vm.sortBalance}
           >
             <Text weight={500} size="large">
-              Invest in Puzzle Mega Pools
+              Puzzle Megapools
             </Text>
             <SizedBox height={4} />
-            <Subtitle size="medium" fitContent>
-              A liquidity pool is a collection of funds locked in a smart
-              contract. Liquidity pools are used to facilitate decentralized
-              trading, lending, and many more functions.
+            <Subtitle size="medium"fitContent>
+              Unlike the old school AMM pools, megapools enable liquidity provision in up to 10 tokens in order to maximize LP profit.
             </Subtitle>
             {accountStore.address != null && <AccountInvestBalance />}
             <SizedBox height={24} />

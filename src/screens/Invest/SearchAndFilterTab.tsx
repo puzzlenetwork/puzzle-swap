@@ -80,15 +80,17 @@ const StyledRow = styled(Row)`
 `;
 const categoriesOptions = [
   { title: "All categories", key: "all" },
-  // {
-  //   title: "Global coins",
-  //   key: "global",
-  // },
   { title: "Stablecoins", key: "stable" },
+    { title: "Common", key: "common" },
   { title: "PZ Indexes", key: "pz" },
-  // { title: "Waves DeFi", key: "defi" },
+  { title: "Waves DeFi", key: "defi" },
   // { title: "Waves Ducks", key: "duck" },
+    // {
+    //   title: "Global coins",
+    //   key: "global",
+    // },
 ];
+
 const createdByOptions = [
   { title: "Created by all", key: "all" },
   { title: "By community", key: "custom" },
@@ -154,15 +156,24 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
             }}
           />
           <SizedBox width={12} />
-          <Select
-            options={createdByOptions}
-            selected={createdByOptions[vm.customPoolFilter]}
-            onSelect={({ key }) => {
-              const index = createdByOptions.findIndex((o) => o.key === key);
-              vm.setCustomPoolFilter(index);
-            }}
-          />
-          <SizedBox width={12} />
+            <Select
+                options={vm.versionOptions}
+                selected={vm.versionOptions[vm.versionFilter]}
+                onSelect={({ key }) => {
+                    const index = vm.versionOptions.findIndex((o) => o.key === key);
+                    vm.setVersionFilter(index);
+                }}
+            />
+            <SizedBox width={12} />
+          {/*<Select*/}
+          {/*  options={createdByOptions}*/}
+          {/*  selected={createdByOptions[vm.customPoolFilter]}*/}
+          {/*  onSelect={({ key }) => {*/}
+          {/*    const index = createdByOptions.findIndex((o) => o.key === key);*/}
+          {/*    vm.setCustomPoolFilter(index);*/}
+          {/*  }}*/}
+          {/*/>*/}
+          {/*<SizedBox width={12} />*/}
         </StyledRow>
         {isFiltersChosen && (
           <ClearBtn
