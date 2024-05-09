@@ -97,6 +97,7 @@ import whirlpoolLogo from "@src/assets/tokens/WHIRLPOOL.jpeg";
 import plwavesLogo from "@src/assets/tokens/PLWAVES.svg";
 import plethLogo from "@src/assets/tokens/PL-ETH.svg";
 import plusdtLogo from "@src/assets/tokens/PL-USDT.svg";
+import plpuzzleLogo from "@src/assets/tokens/PL-PUZZLE.svg";
 import romeLogo from "@src/assets/tokens/ROME.svg";
 import pool5Logo from "@src/assets/tokens/5POOL.jpeg";
 import pzWebLogo from "@src/assets/tokens/WEBPOOL.svg";
@@ -214,6 +215,7 @@ const tokenLogos: Record<string, string> = {
   "PL-WAVES": plwavesLogo,
   "PL-USDT": plusdtLogo,
   "PL-ETH": plethLogo,
+  "PL-PUZZLE": plpuzzleLogo,
   ROME: romeLogo,
   "PZ-5pool": pool5Logo,
   "PZ-WEB": pzWebLogo,
