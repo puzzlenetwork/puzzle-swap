@@ -128,7 +128,7 @@ class CreateCustomPoolsVm {
   get isThereUsdnOrPuzzle() {
     return (
       this.poolsAssets.filter(({ asset }) =>
-        ["XTN", "PUZZLE", "USDT", "WAVES"].includes(asset.symbol)
+        ["XTN", "PUZZLE", "USDT", "WAVES", "ROME"].includes(asset.symbol)
       ).length > 0
     );
   }
