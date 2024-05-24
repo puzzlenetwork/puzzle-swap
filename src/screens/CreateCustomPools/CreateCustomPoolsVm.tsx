@@ -136,7 +136,7 @@ class CreateCustomPoolsVm {
   get requiredTokensCorrectShare() {
     return this.poolsAssets
       .filter(({ asset }) =>
-        ["XTN", "PUZZLE", "USDT", "WAVES"].includes(asset.symbol)
+        ["XTN", "PUZZLE", "USDT", "WAVES", "ROME"].includes(asset.symbol)
       )
       .some(({ share }) => share.gte(20));
   }
