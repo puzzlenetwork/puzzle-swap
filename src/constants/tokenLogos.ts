@@ -112,6 +112,7 @@ import wbriacashLogo from "@src/assets/tokens/WBriacash.svg";
 import wbriacash2Logo from "@src/assets/tokens/WBRIACASH2.svg";
 import sashaxLogo from "@src/assets/tokens/Sasha-X.svg";
 import gxwxLogo from "@src/assets/tokens/gxWX.svg";
+import baiLogo from "@src/assets/tokens/BAI.svg";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -207,6 +208,7 @@ const tokenLogos: Record<string, string> = {
   ANOTE: anoteLogo,
   WAVESDLP: wavesdlpLogo,
   PETE: peteLogo,
+  BAI: baiLogo,
   "PZ-Old-Gold": oldgoldLogo,
   "PZ-Mega-Pete": "https://images.wavesducks.com/api/images/DUCK-GGGGAAAA-GG.svg",
   "USDT-POLY": usdtpolyLogo,
