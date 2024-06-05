@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useState } from "react";
+import React from "react";
 import { observer } from "mobx-react-lite";
 import Card from "@components/Card";
 import { ReactComponent as Close } from "@src/assets/icons/darkClose.svg";
@@ -15,6 +15,7 @@ import Button from "@components/Button";
 import { useTheme } from "@emotion/react";
 import { useSwapVM } from "@screens/TradeInterface/SwapVM";
 import { useStores } from "@stores";
+import { useLocalStorage } from 'usehooks-ts';
 
 interface IProps {}
 
@@ -56,7 +57,7 @@ const Settings: React.FC<IProps> = () => {
   const theme = useTheme();
   const { poolsStore } = useStores();
   const initialSlippage = new BN(poolsStore.slippage).times(10);
-  const [slippage, setSlippage] = useState(initialSlippage);
+  const [slippage, setSlippage] = useLocalStorage("slippage", initialSlippage);
   const isSomethingChanged = slippage.eq(initialSlippage);
   const handleClose = () => vm.setOpenedSettings(false);
   const handleSave = () => {
