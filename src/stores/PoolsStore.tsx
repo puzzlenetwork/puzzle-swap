@@ -10,7 +10,6 @@ import {
 } from "@src/constants";
 import poolService from "@src/services/poolsService";
 import nodeService from "@src/services/nodeService";
-import asset from "@screens/TradeInterface/Trade/Swap/RoutingModal/Asset";
 
 export type TPoolState = {
   state: IData[];
@@ -22,17 +21,8 @@ export interface ISerializedPoolsStore {
 }
 
 export default class PoolsStore {
-  slippage: number;
-  setSlippage = (v: number) =>
-    !isNaN(v) && v > 1 && v < 100 && (v ^ 0) === v && (this.slippage = v);
-
-  serialize = (): ISerializedPoolsStore => ({
-    slippage: this.slippage,
-  });
-
   constructor(rootStore: RootStore, initialState?: ISerializedPoolsStore) {
     this.rootStore = rootStore;
-    this.slippage = initialState?.slippage ?? 5;
     makeAutoObservable(this);
 
     this.syncTokensFromPy().then();
