@@ -16,7 +16,11 @@ import { useTheme } from "@emotion/react";
 import { useSwapVM } from "@screens/TradeInterface/SwapVM";
 import { useStores } from "@stores";
 
-interface IProps {}
+interface IProps { }
+
+interface ISettingsStorageData {
+  slippage: number;
+}
 
 const Root = styled(Card)<{ expanded: boolean }>`
   ${({ expanded }) => (!expanded ? "display:none;" : "")}
@@ -54,13 +58,23 @@ const Tag = styled.div<{ active?: boolean }>`
 const Settings: React.FC<IProps> = () => {
   const vm = useSwapVM();
   const theme = useTheme();
-  const { poolsStore } = useStores();
-  const initialSlippage = new BN(poolsStore.slippage).times(10);
+  const storageData = localStorage.getItem("puzzle-user-settings");
+  const initData: ISettingsStorageData | null = storageData ? JSON.parse(storageData) : null;
+  const initialSlippage = new BN(initData ? initData.slippage : 5).times(10);
   const [slippage, setSlippage] = useState(initialSlippage);
   const isSomethingChanged = slippage.eq(initialSlippage);
   const handleClose = () => vm.setOpenedSettings(false);
+  const validateSlippage = (v: number) =>
+    // assuming that slippage is a number in [0,100] as required for percentage
+    !isNaN(v) && v > 0 ? Math.min(v, 100) : 0;
   const handleSave = () => {
-    poolsStore.setSlippage(slippage.div(10).toNumber());
+    localStorage.setItem(
+      "puzzle-user-settings",
+      JSON.stringify({
+        ...initData,
+        slippage: validateSlippage(slippage.div(10).toNumber()), 
+      })
+    )
     handleClose();
   };
   const handleReset = () => {

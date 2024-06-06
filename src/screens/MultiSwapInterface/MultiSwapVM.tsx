@@ -179,7 +179,7 @@ class MultiSwapVM {
   }
 
   get minimumToReceive(): BN {
-    const slippage = this.rootStore.poolsStore.slippage;
+    const slippage = JSON.parse(localStorage.getItem("puzzle-user-settings") || "{}")?.slippage;
     return this.amount1.times(new BN(100 - slippage).div(100));
   }
 

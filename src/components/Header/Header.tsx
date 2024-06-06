@@ -165,7 +165,7 @@ const Header: React.FC<IProps> = () => {
                 key={name}
                 selected={isRoutesEquals(link, location.pathname)}
                 href={link}
-                target={link !== "https://puzzlemarket.org/" ? "_self" : ""}
+                target={link[0] === "/" ? "_self" : ""}
               >
                 {name}
               </MenuItem>
