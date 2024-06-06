@@ -65,8 +65,8 @@ const Settings: React.FC<IProps> = () => {
   const isSomethingChanged = slippage.eq(initialSlippage);
   const handleClose = () => vm.setOpenedSettings(false);
   const validateSlippage = (v: number) =>
-    // assuming that slippage is an integer in [1,100] as required for percentage
-    !isNaN(v) && v >= 1 && (v ^ 0) === v ? Math.min(v, 100) : 1;
+    // assuming that slippage is a number in [0,100] as required for percentage
+    !isNaN(v) && v > 0 ? Math.min(v, 100) : 0;
   const handleSave = () => {
     localStorage.setItem(
       "puzzle-user-settings",
