@@ -71,7 +71,8 @@ const Settings: React.FC<IProps> = () => {
     localStorage.setItem(
       "puzzle-user-settings",
       JSON.stringify({
-        slippage: validateSlippage(slippage.div(10).toNumber()), ...initData
+        ...initData,
+        slippage: validateSlippage(slippage.div(10).toNumber()), 
       })
     )
     handleClose();
