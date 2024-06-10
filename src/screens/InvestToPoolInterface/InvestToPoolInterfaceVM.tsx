@@ -350,7 +350,6 @@ class InvestToPoolInterfaceVM {
 
     const parsedTransactions = transactions?.map(tx => {
       if (tx.dApp === this.pool.contractAddress || tx.dApp === this.pool.layer2Address) {
-        console.log("tx", tx);
         return tx;
       };
       if (tx.stateChanges) {
@@ -359,7 +358,6 @@ class InvestToPoolInterfaceVM {
         if(localTx) {
           localTx.height = tx.height;
           localTx.id = tx.id;
-          console.log("localTx", localTx);
           return localTx;
         }
 
@@ -373,6 +371,7 @@ class InvestToPoolInterfaceVM {
           }
         }
       }
+      return null;
     });
 
     parsedTransactions && this.setTransactionsHistory(parsedTransactions);
