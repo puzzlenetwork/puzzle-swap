@@ -13,8 +13,6 @@ import nodeService from "@src/services/nodeService";
 import { ITransaction } from "@src/utils/types";
 import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
 import makeNodeRequest from "@src/utils/makeNodeRequest";
-import * as constants from "constants";
-import asset from "@screens/TradeInterface/Trade/Swap/RoutingModal/Asset";
 
 const ctx = React.createContext<InvestToPoolInterfaceVM | null>(null);
 
@@ -348,9 +346,9 @@ class InvestToPoolInterfaceVM {
   };
 
   loadTransactionsHistory = async () => {
-    const v0 = await nodeService.transactions(this.pool.contractAddress, 20);
+    const transactions = await nodeService.transactions(this.pool.contractAddress, 20);
 
-    const v = v0?.map(tx => {
+    const parsedTransactions = transactions?.map(tx => {
       if (tx.dApp === this.pool.contractAddress || tx.dApp === this.pool.layer2Address) {
         console.log("tx", tx);
         return tx;
@@ -367,7 +365,6 @@ class InvestToPoolInterfaceVM {
 
         for (let i = 0; i < invokes.length; i++) {
           const localInvokes = invokes[i].stateChanges.invokes;
-          //@ts-ignore
           const localTx = localInvokes.find(x => x.dApp === this.pool.contractAddress || x.dApp === this.pool.layer2Address);
           if (localTx) {
             localTx.height = tx.height;
@@ -378,7 +375,7 @@ class InvestToPoolInterfaceVM {
       }
     });
 
-    v && this.setTransactionsHistory(v);
+    parsedTransactions && this.setTransactionsHistory(parsedTransactions);
   };
 
   loadMoreHistory = async () => {
