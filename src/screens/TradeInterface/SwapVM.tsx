@@ -225,7 +225,7 @@ class SwapVM {
     this.rootStore.accountStore.balances.find((b) => assetId === b.assetId);
 
   get minimumToReceive(): BN {
-    const slippage = JSON.parse(localStorage.getItem("puzzle-user-settings") || '{"slippage": 1}')?.slippage;
+    const slippage = JSON.parse(localStorage.getItem("puzzle-user-settings") || '{"slippage": 1}')?.slippage || 1;
     return this.amount1.times(new BN(100 - slippage).div(100));
   }
 
