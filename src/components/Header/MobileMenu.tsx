@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import React from "react";
 import SizedBox from "@components/SizedBox";
-import LinkGroup from "@components/LinkGroup";
 import Divider from "@components/Divider";
 import Wallet from "@components/Wallet/Wallet";
 import Scrollbar from "@components/Scrollbar";
@@ -49,7 +48,7 @@ const WalletWrapper = styled.div`
 const MenuItem = styled(Anchor) <{ selected?: boolean }>`
   font-size: 16px;
   line-height: 24px;
-  color: #FFFFFF;
+  color: ${({ theme }) => theme.colors.primary800};
   text-decoration: none;
   margin-bottom: 8px;
 `;
