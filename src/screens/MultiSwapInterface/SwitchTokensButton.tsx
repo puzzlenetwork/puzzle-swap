@@ -5,6 +5,7 @@ import Text from "@components/Text";
 import { useMultiSwapVM } from "@screens/MultiSwapInterface/MultiSwapVM";
 import { useTheme } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
+import BN from "@src/utils/BN";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -29,7 +30,7 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
   const [switched, setSwitched] = useState(false);
   const vm = useMultiSwapVM();
   const theme = useTheme();
-  const { token0, token1, rate } = vm;
+  const { token0, token1, amount0, amount1, rate } = vm;
   const navigate = useNavigate();
   const handleSwitch = () => {
     vm.switchTokens();
@@ -43,10 +44,14 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
     setSwitched((v) => !v);
   };
 
+  const price = BN.formatUnits(amount1, token1?.decimals).div(
+      BN.formatUnits(amount0, token0?.decimals)
+    ); // TODO: Needs `.times(1 - commision)` if there is a commission
+
   const rateStr = buildRateStr(
     token0?.symbol,
     token1?.symbol,
-    rate != null && rate.gt(0) ? rate?.toFormat(4) : undefined
+    price != null && price.gt(0) ? price?.toFormat(4) : (rate.gt(0) ? rate.toFormat(4) : undefined)
   );
   return (
     <Root {...rest} onClick={handleSwitch}>
