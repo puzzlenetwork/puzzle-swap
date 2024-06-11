@@ -27,7 +27,7 @@ export const SwapVMProvider: React.FC<IProps> = ({ children }) => {
 
 export const useSwapVM = () => useVM(ctx);
 
-class SwapVM {
+export class SwapVM {
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
     this.setActiveAction(window.location.pathname === ROUTES.TRADE ? 0 : 1);
@@ -65,7 +65,7 @@ class SwapVM {
   ) {
     const price = BN.formatUnits(amount1, this.token1.decimals).div(
       BN.formatUnits(amount0, this.token0.decimals)
-    );
+    ).times(0.9971);
     this._setPrice(!price.isNaN() ? price : BN.ZERO);
   }
 
