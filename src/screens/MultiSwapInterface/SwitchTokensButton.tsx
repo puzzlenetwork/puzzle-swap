@@ -19,9 +19,17 @@ const Root = styled.div`
   }
 `;
 
+const buildRateStr = (
+  symbol0: string | undefined,
+  symbol1: string | undefined,
+  price1?: string | number | undefined
+) => `1 ${symbol0} = ${price1 != null ? `~ ${price1}` : "–"} ${symbol1}`;
+
 const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
   const [switched, setSwitched] = useState(false);
   const vm = useMultiSwapVM();
+  const theme = useTheme();
+  const { token0, token1, rate } = vm;
   const navigate = useNavigate();
   const handleSwitch = () => {
     vm.switchTokens();
@@ -34,7 +42,12 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
     });
     setSwitched((v) => !v);
   };
-  const theme = useTheme();
+
+  const rateStr = buildRateStr(
+    token0?.symbol,
+    token1?.symbol,
+    rate != null && rate.gt(0) ? rate?.toFormat(4) : undefined
+  );
   return (
     <Root {...rest} onClick={handleSwitch}>
       <img
@@ -47,10 +60,7 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
         }}
       />
       <SizedBox width={8} />
-      <Text>
-        1 {vm.token0?.symbol} = ~ {vm.rate?.toFormat(4) ?? "—"}{" "}
-        {vm.token1?.symbol}
-      </Text>
+      <Text>{rateStr}</Text>
       <SizedBox width={16} />
     </Root>
   );
