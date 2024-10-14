@@ -27,7 +27,7 @@ export const SwapVMProvider: React.FC<IProps> = ({ children }) => {
 
 export const useSwapVM = () => useVM(ctx);
 
-class SwapVM {
+export class SwapVM {
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
     this.setActiveAction(window.location.pathname === ROUTES.TRADE ? 0 : 1);
@@ -65,7 +65,7 @@ class SwapVM {
   ) {
     const price = BN.formatUnits(amount1, this.token1.decimals).div(
       BN.formatUnits(amount0, this.token0.decimals)
-    );
+    ).times(0.9971);
     this._setPrice(!price.isNaN() ? price : BN.ZERO);
   }
 
@@ -225,7 +225,7 @@ class SwapVM {
     this.rootStore.accountStore.balances.find((b) => assetId === b.assetId);
 
   get minimumToReceive(): BN {
-    const slippage = JSON.parse(localStorage.getItem("puzzle-user-settings") || "{}")?.slippage;
+    const slippage = JSON.parse(localStorage.getItem("puzzle-user-settings") || '{"slippage": 1}')?.slippage || 1;
     return this.amount1.times(new BN(100 - slippage).div(100));
   }
 

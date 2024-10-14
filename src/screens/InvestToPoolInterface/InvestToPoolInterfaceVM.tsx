@@ -13,8 +13,6 @@ import nodeService from "@src/services/nodeService";
 import { ITransaction } from "@src/utils/types";
 import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
 import makeNodeRequest from "@src/utils/makeNodeRequest";
-import * as constants from "constants";
-import asset from "@screens/TradeInterface/Trade/Swap/RoutingModal/Asset";
 
 const ctx = React.createContext<InvestToPoolInterfaceVM | null>(null);
 
@@ -348,47 +346,35 @@ class InvestToPoolInterfaceVM {
   };
 
   loadTransactionsHistory = async () => {
-    const v0 = await nodeService.transactions(this.pool.contractAddress, 20);
+    const transactions = await nodeService.transactions(this.pool.contractAddress, 20);
 
-    const v = v0?.map(tx => {
-      if (tx.dApp === this.pool.contractAddress || tx.dApp === this.pool.layer2Address) {return tx}
-      else if (tx.stateChanges) {
-        const localTx = tx.stateChanges.invokes.find(x => x.dApp === this.pool.contractAddress || x.dApp === this.pool.layer2Address);
-        if (!localTx) {
-          const localTx2 = tx.stateChanges.invokes[0].stateChanges.invokes.find(x => x.dApp === this.pool.contractAddress || x.dApp === this.pool.layer2Address);
-          if (!localTx2) {
-            const localTx3 = tx.stateChanges.invokes[1].stateChanges.invokes.find(x => x.dApp === this.pool.contractAddress || x.dApp === this.pool.layer2Address);
-            if (!localTx3) {
-              const localTx4 = tx.stateChanges.invokes[2].stateChanges.invokes.find(x => x.dApp === this.pool.contractAddress || x.dApp === this.pool.layer2Address);
-              if (!localTx4) {
-                return localTx;
-              }
-              else {
-                localTx4.height = tx.height;
-                localTx4.id = tx.id;
-                return localTx4;
-              }
-            }
-            else {
-              localTx3.height = tx.height;
-              localTx3.id = tx.id;
-              return localTx3;
-            }
-          } else {
-            localTx2.height = tx.height;
-            localTx2.id = tx.id;
-            return localTx2;
-          }
+    const parsedTransactions = transactions?.map(tx => {
+      if (tx.dApp === this.pool.contractAddress || tx.dApp === this.pool.layer2Address) {
+        return tx;
+      };
+      if (tx.stateChanges) {
+        const invokes = tx.stateChanges.invokes;
+        const localTx = invokes.find(x => x.dApp === this.pool.contractAddress || x.dApp === this.pool.layer2Address);
+        if(localTx) {
+          localTx.height = tx.height;
+          localTx.id = tx.id;
+          return localTx;
         }
-        else {
+
+        for (let i = 0; i < invokes.length; i++) {
+          const localInvokes = invokes[i].stateChanges.invokes;
+          const localTx = localInvokes.find(x => x.dApp === this.pool.contractAddress || x.dApp === this.pool.layer2Address);
+          if (localTx) {
             localTx.height = tx.height;
             localTx.id = tx.id;
             return localTx;
+          }
         }
       }
-    })
+      return null;
+    });
 
-    v && this.setTransactionsHistory(v);
+    parsedTransactions && this.setTransactionsHistory(parsedTransactions);
   };
 
   loadMoreHistory = async () => {

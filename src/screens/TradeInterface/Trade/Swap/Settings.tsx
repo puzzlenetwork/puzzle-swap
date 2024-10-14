@@ -60,7 +60,7 @@ const Settings: React.FC<IProps> = () => {
   const theme = useTheme();
   const storageData = localStorage.getItem("puzzle-user-settings");
   const initData: ISettingsStorageData | null = storageData ? JSON.parse(storageData) : null;
-  const initialSlippage = new BN(initData ? initData.slippage : 5).times(10);
+  const initialSlippage = new BN(initData ? initData.slippage : 1).times(10);
   const [slippage, setSlippage] = useState(initialSlippage);
   const isSomethingChanged = slippage.eq(initialSlippage);
   const handleClose = () => vm.setOpenedSettings(false);
