@@ -54,7 +54,7 @@ const TradesVolume: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
   const { width: screenWidth } = useWindowSize();
   const chartWidth = screenWidth ? calcChartWidth(screenWidth) : 0;
-  const stats = vm.pool.history ? vm.pool.history : vm.pool.statistics?.volume!;
+  const stats = vm.pool.history || (vm.pool.statistics?.volume || []);
   const data = stats
     .map((v) => ({ ...v, volume: Number(v.volume) }))
     .sort((a, b) => (a.date < b.date ? -1 : 1));

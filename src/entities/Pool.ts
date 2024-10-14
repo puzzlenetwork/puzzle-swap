@@ -40,7 +40,7 @@ class Pool implements IPoolConfig {
   public history?: Array<{ date: number; volume: string }>;
   public statistics?: IPoolConfigStatistics;
   public setStatistics = (statistics: IPoolConfigStatistics) =>
-    (this.statistics = statistics);
+    new BN(statistics.liquidity).gt(0) && (this.statistics = statistics);
 
   public get logo() {
     return this._logo ?? tokenLogos.UNKNOWN;
@@ -103,7 +103,8 @@ class Pool implements IPoolConfig {
     this.version = params.version ?? "PZ-1.0.0";
     this.swapFee = params.swapFee ?? 2;
     this.createdAt = params.createdAt ?? "";
-    this.statistics = params.statistics;
+    if (new BN(params.statistics?.liquidity || 0).gt(0))
+      this.statistics = params.statistics;
     this.history = params.history;
 
     makeAutoObservable(this);
