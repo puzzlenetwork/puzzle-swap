@@ -142,7 +142,7 @@ export default class PoolsStore {
   usdtRate = (assetId: string, coefficient = 1): BN | null => {
     if (this.tokensList) {
       const token = this.tokensList.filter((token: { assetId: string; }) => token.assetId === assetId)[0];
-      if (token.lastPrice) return new BN(token.lastPrice);
+      if (token?.lastPrice) return new BN(token.lastPrice);
     }
 
     const usdn = TOKENS_BY_SYMBOL.XTN.assetId;
