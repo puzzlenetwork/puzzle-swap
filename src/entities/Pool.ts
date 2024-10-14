@@ -40,7 +40,7 @@ class Pool implements IPoolConfig {
   public history?: Array<{ date: number; volume: string }>;
   public statistics?: IPoolConfigStatistics;
   public setStatistics = (statistics: IPoolConfigStatistics) =>
-    (this.statistics = statistics);
+    (new BN(statistics.liquidity).gt(0) && (this.statistics = statistics));
 
   public get logo() {
     return this._logo ?? tokenLogos.UNKNOWN;

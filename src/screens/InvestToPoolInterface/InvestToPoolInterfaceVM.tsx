@@ -206,7 +206,7 @@ class InvestToPoolInterfaceVM {
       dicClaim[assetId] = amount;
       const dollEquivalent = this.rootStore.poolsStore
         .usdtRate(assetId)
-        ?.times(BN.formatUnits(amount, TOKENS_BY_ASSET_ID[assetId].decimals));
+        ?.times(BN.formatUnits(amount, TOKENS_BY_ASSET_ID[assetId]?.decimals));
       return acc.plus(dollEquivalent ?? 0);
     }, BN.ZERO);
 

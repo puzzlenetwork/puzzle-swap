@@ -142,7 +142,7 @@ export default class PoolsStore {
   usdtRate = (assetId: string, coefficient = 1): BN | null => {
     if (this.tokensList) {
       const token = this.tokensList.filter((token: { assetId: string; }) => token.assetId === assetId)[0];
-      if (token.lastPrice) return new BN(token.lastPrice);
+      if (token?.lastPrice) return new BN(token.lastPrice);
     }
 
     const usdn = TOKENS_BY_SYMBOL.XTN.assetId;
@@ -202,7 +202,7 @@ export default class PoolsStore {
     const newPools: Array<Pool> = [];
     configs.forEach((config) => {
       const pool = this.getPoolByDomain(config.domain);
-      if (pool != null && config.statistics != null) {
+      if (pool != null && config.statistics != null && new BN(config.statistics.liquidity).gt(0)) {
         pool.setStatistics(config.statistics);
       }
       if (config.isCustom && pool == null) {
@@ -210,7 +210,7 @@ export default class PoolsStore {
           ...TOKENS_BY_ASSET_ID[assetId],
           share,
         }));
-        newPools.push(new Pool({ ...config, tokens }));
+        newPools.push(new Pool({ ...config, statistics: new BN(config.statistics?.liquidity || "0").gt(0) ? config.statistics : undefined, tokens }));
       }
     });
     this.setPools([...this.pools, ...newPools]);
