@@ -37,6 +37,14 @@ jobs:
           echo "REACT_APP_AGG_API=${REACT_APP_AGG_API_PROD}" >> $GITHUB_ENV
       - name: Run chekout
         uses: actions/checkout@v2
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
+          echo 'export PATH="/usr/local/heroku/bin:$PATH"' >> $GITHUB_ENV
+      - name: Set env
+        run: heroku config:set REACT_APP_API_BASE=${{env.REACT_APP_API_BASE}} -a ${{ env.HEROKU_APP_NAME }}
+      - run: heroku config:set REACT_APP_AGGREGATOR_KEY="${{env.REACT_APP_AGGREGATOR_KEY}}" -a ${{ env.HEROKU_APP_NAME }}
+      - run: heroku config:set REACT_APP_AGG_API="${{env.REACT_APP_AGG_API}}" -a ${{ env.HEROKU_APP_NAME }}
       - name: Deploy to ${{ env.HEROKU_APP_NAME }}
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
