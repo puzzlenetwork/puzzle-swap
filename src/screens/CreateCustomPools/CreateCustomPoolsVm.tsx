@@ -128,7 +128,7 @@ class CreateCustomPoolsVm {
   get isThereUsdnOrPuzzle() {
     return (
       this.poolsAssets.filter(({ asset }) =>
-        ["XTN", "PUZZLE", "USDT", "WAVES", "ROME"].includes(asset.symbol)
+        ["XTN", "PUZZLE", "USDT", "WAVES", "ROME"].includes(asset?.symbol)
       ).length > 0
     );
   }
@@ -136,7 +136,7 @@ class CreateCustomPoolsVm {
   get requiredTokensCorrectShare() {
     return this.poolsAssets
       .filter(({ asset }) =>
-        ["XTN", "PUZZLE", "USDT", "WAVES", "ROME"].includes(asset.symbol)
+        ["XTN", "PUZZLE", "USDT", "WAVES", "ROME"].includes(asset?.symbol)
       )
       .some(({ share }) => share.gte(20));
   }
@@ -423,7 +423,7 @@ class CreateCustomPoolsVm {
 
   saveSettings = () => {
     const assets = this.poolsAssets.map((t) => ({
-      assetId: t.asset.assetId,
+      assetId: t.asset?.assetId,
       locked: t.locked,
       share: t.share.div(10).toNumber(),
     }));
@@ -613,6 +613,7 @@ class CreateCustomPoolsVm {
     if (assetBalances == null || address == null) return null;
     return this.poolsAssets.reduce<Record<string, BN>>(
       (acc, { asset, share }) => {
+        if (!asset) return acc;
         const { assetId, decimals } = asset;
         const tokenBalance = findBalanceByAssetId(assetId);
         const rate = poolsStore.usdtRate(assetId) ?? BN.ZERO;
