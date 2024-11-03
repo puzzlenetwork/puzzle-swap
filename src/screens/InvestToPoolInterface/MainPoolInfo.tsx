@@ -150,8 +150,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
             </Column>
             <SizedBox height={16} />
             <Row>
-              {vm.pool.statistics == null &&
-              accountStore.address === vm.pool.owner ? (
+              {vm.pool.statistics == null  ? (
                 <Button
                   fixed
                   size="medium"

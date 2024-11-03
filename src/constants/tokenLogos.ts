@@ -113,6 +113,7 @@ import wbriacash2Logo from "@src/assets/tokens/WBRIACASH2.svg";
 import sashaxLogo from "@src/assets/tokens/Sasha-X.svg";
 import gxwxLogo from "@src/assets/tokens/gxWX.svg";
 import baiLogo from "@src/assets/tokens/BAI.svg";
+import unit0Logo from "@src/assets/tokens/UNIT0.jpg";
 import romekeeperLogo from "@src/assets/tokens/ROMEKEEPER.svg";
 
 const tokenLogos: Record<string, string> = {
@@ -220,6 +221,7 @@ const tokenLogos: Record<string, string> = {
   "PL-ETH": plethLogo,
   "PL-PUZZLE": plpuzzleLogo,
   ROME: romeLogo,
+  UNIT0: unit0Logo,
   "PZ-5pool": pool5Logo,
   "PZ-WEB": pzWebLogo,
   "PZ-Units": pzUnitsLogo,
