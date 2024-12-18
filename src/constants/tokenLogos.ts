@@ -43,7 +43,6 @@ import uniLogo from "@src/assets/tokens/UNI.svg";
 import daiLogo from "@src/assets/tokens/DAI.svg";
 import tnLogo from "@src/assets/tokens/TN.svg";
 import maticLogo from "@src/assets/tokens/MATIC.svg";
-import shibLogo from "@src/assets/tokens/SHIB.svg";
 import crvLogo from "@src/assets/tokens/CRV.png";
 import snsbtLogo from "@src/assets/tokens/SNSBT.png";
 import vladLogo from "@src/assets/tokens/VLAD.png";
