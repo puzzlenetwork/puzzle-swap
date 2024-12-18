@@ -115,6 +115,18 @@ import gxwxLogo from "@src/assets/tokens/gxWX.svg";
 import baiLogo from "@src/assets/tokens/BAI.svg";
 import unit0Logo from "@src/assets/tokens/UNIT0.jpg";
 import romekeeperLogo from "@src/assets/tokens/ROMEKEEPER.svg";
+import bomeLogo from "@src/assets/tokens/BOME.png";
+import apeLogo from "@src/assets/tokens/APE.png";
+import bonkLogo from "@src/assets/tokens/BONK.png";
+import chillguyLogo from "@src/assets/tokens/CHILLGUY.png";
+import dogeLogo from "@src/assets/tokens/DOGE.png";
+import goatLogo from "@src/assets/tokens/GOAT.png";
+import neiroLogo from "@src/assets/tokens/NEIRO.png";
+import pepeLogo from "@src/assets/tokens/PEPE.png";
+import popcatLogo from "@src/assets/tokens/POPCAT.png";
+import shibLogo from "@src/assets/tokens/SHIB.png";
+import spxLogo from "@src/assets/tokens/SPX6900.png";
+import wifLogo from "@src/assets/tokens/WIF.png";
 
 const tokenLogos: Record<string, string> = {
   DUXPLORER: duxplorerLogo,
@@ -237,6 +249,20 @@ const tokenLogos: Record<string, string> = {
   "Sasha-X": sashaxLogo,
   "gxWX": gxwxLogo,
   "ROME-KEEPER": romekeeperLogo,
+
+  "APE": apeLogo,
+  "BONK": bonkLogo,
+  "CHILLGUY": chillguyLogo,
+  "DOGE": dogeLogo,
+  "GOAT": goatLogo,
+  "NEIRO": neiroLogo,
+  "PEPE": pepeLogo,
+  "POPCAT": popcatLogo,
+  "SHIB": shibLogo,
+  "SPX": spxLogo,
+  "BOME": bomeLogo,
+  "WIF": wifLogo,
+  
   "WX-USDCUSDT-LP": "https://waves.exchange/static/icons/assets/rZMQ6g31Lr7sPAaAoYc4U2PHCVauTuKUSzUbJtUyPZN.svg",
   AXLY: "https://waves.exchange/static/icons/assets/DcAbWMXrfMeooG1BrZ9ipiseFSVm7zxTs1XZKRp6DVeZ.svg",
   "USDC-PPT": "https://waves.exchange/static/icons/assets/3ayH3PhWMkhFsySsUVcC8BvFf1QyxGB5BZuTPyVtmP4v.svg",
