@@ -26,6 +26,7 @@ const tokenCategories = [
   "Stables",
   "Common",
   "PZ LP",
+  "Memes",
   // "Waves DeFi",
   // "Waves Ducks",
 ];
@@ -38,7 +39,8 @@ export enum tokenCategoriesEnum {
   stable = 1,
   common = 2,
   pz = 3,
-  defi = 4,
+  // defi = 4,
+  meme = 4
 }
 
 const Scroll = styled.div`
