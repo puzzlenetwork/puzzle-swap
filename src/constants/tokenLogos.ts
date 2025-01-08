@@ -262,6 +262,7 @@ const tokenLogos: Record<string, string> = {
   "BOME": bomeLogo,
   "WIF": wifLogo,
   "2PETE": "https://i.meme/_next/image?url=https%3A%2F%2Fi.meme%2Fstatic%2F9sgdTJZuFxnGHhBz3fdqwcmKVxQkcMXtNEwvLx7nAbZd_img.jpg&w=640&q=75",
+  "TITS": "https://i.meme/_next/image?url=https%3A%2F%2Fi.meme%2Fstatic%2F4kedYPas1UEswFS5982TVVYshQeffyKiBQadJkd3inAJ_img.webp&w=640&q=75",
   
   "WX-USDCUSDT-LP": "https://waves.exchange/static/icons/assets/rZMQ6g31Lr7sPAaAoYc4U2PHCVauTuKUSzUbJtUyPZN.svg",
   AXLY: "https://waves.exchange/static/icons/assets/DcAbWMXrfMeooG1BrZ9ipiseFSVm7zxTs1XZKRp6DVeZ.svg",
