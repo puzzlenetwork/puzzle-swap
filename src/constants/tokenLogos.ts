@@ -276,6 +276,9 @@ const tokenLogos: Record<string, string> = {
   USDCu: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
   WBTCu: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599/logo.png",
   ETHu: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png",
+
+  TRUMP: "https://s2.coinmarketcap.com/static/img/coins/64x64/35336.png",
+  MELANIA: "https://s2.coinmarketcap.com/static/img/coins/64x64/35347.png",
 };
 
 export default tokenLogos;
