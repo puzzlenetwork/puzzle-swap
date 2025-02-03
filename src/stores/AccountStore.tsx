@@ -201,7 +201,7 @@ class AccountStore {
     const { address } = this;
     if (address == null) return;
     const res = await nodeInteraction.scriptInfo(address, NODE_URL);
-    this.setIsAccScripted(res.script != null);
+    this.setIsAccScripted(res.extraFee > 0);
   };
 
   login = async (loginType: LOGIN_TYPE) => {
