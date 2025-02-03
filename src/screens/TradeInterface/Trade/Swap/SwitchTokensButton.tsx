@@ -8,6 +8,7 @@ import Loading from "@components/Loading";
 import { TOKENS_BY_SYMBOL } from "@src/constants";
 import { useTheme } from "@emotion/react";
 import { useSwapVM } from "@screens/TradeInterface/SwapVM";
+import BN from "@src/utils/BN";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   new?: boolean;
@@ -27,8 +28,13 @@ const Root = styled.div`
 const buildRateStr = (
   symbol0: string | undefined,
   symbol1: string | undefined,
-  price1?: string | number | undefined
-) => `1 ${symbol0} = ${price1 != null ? `~ ${price1}` : "–"} ${symbol1}`;
+  price1?: undefined | BN
+) => {
+  let priceDisplay = price1?.toFormat(4);
+  if (priceDisplay === "0.0000") {priceDisplay = price1?.toFormat(8)}
+  const val = price1 != null ? `~ ${priceDisplay}` : "–";
+  return `1 ${symbol0} = ${val} ${symbol1}`;
+}
 
 const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
   const vm = useSwapVM();
@@ -56,12 +62,12 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
     ? buildRateStr(
         token1?.symbol,
         token0?.symbol,
-        price != null && price.gt(0) ? price.pow(-1)?.toFormat(4) : undefined
+        price != null && price.gt(0) ? price.pow(-1) : undefined
       )
     : buildRateStr(
         token0?.symbol,
         token1?.symbol,
-        price != null && price.gt(0) ? price?.toFormat(4) : undefined
+        price != null && price.gt(0) ? price : undefined
       );
   return (
     <Root {...rest} onClick={handleSwitch}>
