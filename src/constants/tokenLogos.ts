@@ -235,6 +235,7 @@ const tokenLogos: Record<string, string> = {
   UNIT0: unit0Logo,
   "PZ-5pool": pool5Logo,
   "PZ-WEB": pzWebLogo,
+  "PZ-WEBU": "https://puzzleswop.s3.amazonaws.com/f63b754d-8dd8-40c4-83aa-3dd1429a4e18",
   "PZ-Units": pzUnitsLogo,
   "PZ-BURN-XTN": pzBurnXtnLogo,
   "PZ-BBB": pzBbbLogo,
