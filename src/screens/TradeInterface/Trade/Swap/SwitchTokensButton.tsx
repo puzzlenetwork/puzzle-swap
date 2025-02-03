@@ -56,6 +56,9 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
   const stablesIds = [
     TOKENS_BY_SYMBOL.XTN.assetId,
     TOKENS_BY_SYMBOL.USDT.assetId,
+    TOKENS_BY_SYMBOL.USDTu.assetId,
+    TOKENS_BY_SYMBOL.USDCu.assetId,
+    TOKENS_BY_SYMBOL.ROME.assetId,
   ];
 
   const rate = stablesIds.some((assetId) => assetId === token0?.assetId)
