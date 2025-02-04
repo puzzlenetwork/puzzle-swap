@@ -280,6 +280,8 @@ const tokenLogos: Record<string, string> = {
 
   TRUMP: "https://s2.coinmarketcap.com/static/img/coins/64x64/35336.png",
   MELANIA: "https://s2.coinmarketcap.com/static/img/coins/64x64/35347.png",
+
+  MEGAMEME: "https://megameme-249514940b30.herokuapp.com/static/media/megameme.49817f851dcdada62613bf2e1f70f56d.svg"
 };
 
 export default tokenLogos;
