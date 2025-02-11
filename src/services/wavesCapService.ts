@@ -25,12 +25,14 @@ interface IAssetResponse {
 
 const wavesCapService = {
   getAssetsStats: async (assetsId: string[]): Promise<IAssetResponse[]> => {
-    const params = new URLSearchParams();
+    const data = new FormData();
     for (let i = 0; i < assetsId.length - 1; i++) {
-      params.append("assetIds[]=", assetsId[i]);
+      data.append("assetIds[]", assetsId[i]);
     }
-    const url = `https://wavescap.com/api/assets-info.php?${params.toString()}`;
-    const response = await axios.get(url);
+    const url = `https://wavescap.com/api/assets-info.php`;
+    const response = await axios.post(url, data, {
+      headers: { "Content-type": "multipart/form-data" },
+    });
     return response.data.assets != null
       ? response.data.assets.filter((v: any) => v != null)
       : [];
