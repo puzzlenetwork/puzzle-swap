@@ -77,6 +77,10 @@ const poolService = {
     const { data } = await axios.get(
       `${process.env.REACT_APP_API_BASE}/api/v1/pools`
     );
+    // TODO: switch to the new API link
+    // const data = Array(await axios.get(
+    //     'https://swapapi.puzzleswap.org/stats/v1/statistics/pools/?amount=500&sort=LIQ&timeRange=7d&minLiquidity=20'
+    // ));
     return data;
   },
   getStats: async (): Promise<IStakingStatsResponse> => {
