@@ -92,6 +92,18 @@ export default class PoolsStore {
   getPoolByDomain = (domain: string) =>
     this.pools.find((pool) => pool.domain === domain);
 
+
+  volumeByTimestamp = [
+    { title: "Volume all time", key: "all" },
+    { title: "Volume 1 year", key: "1y" },
+    { title: "Volume 30 days", key: "30d" },
+    { title: "Volume 7 days", key: "7d" },
+    { title: "Volume 24 hours", key: "1d" },
+  ];
+
+  volumeByTimeFilter: number = 0;
+  setVolumeByTimeFilter = (v: number) => (this.volumeByTimeFilter = v);
+
   public poolsState: TPoolState[] | null = null;
   private setPoolState = (value: TPoolState[]) => (this.poolsState = value);
   private getStateByAddress = (contractAddress: string) =>
@@ -198,7 +210,7 @@ export default class PoolsStore {
   };
 
   syncCustomPools = async () => {
-    const configs = await poolService.getPools();
+    const configs = await poolService.getPools({timeRange: this.volumeByTimestamp[this.volumeByTimeFilter].key});
     const newPools: Array<Pool> = [];
     configs.forEach((config) => {
       const pool = this.getPoolByDomain(config.domain);
@@ -206,8 +218,8 @@ export default class PoolsStore {
         pool.setStatistics(config.statistics);
       }
       if (config.isCustom && pool == null) {
-        const tokens = config.assets.map(({ assetId, share }) => ({
-          ...TOKENS_BY_ASSET_ID[assetId],
+        const tokens = config.assets.map(({ asset_id, share }) => ({
+          ...TOKENS_BY_ASSET_ID[asset_id],
           share,
         }));
         newPools.push(new Pool({ ...config, tokens }));

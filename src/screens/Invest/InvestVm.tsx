@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import { RootStore, useStores } from "@stores";
 import Pool from "@src/entities/Pool";
 import BN from "@src/utils/BN";
@@ -47,23 +47,39 @@ class InvestVM {
     { title: "PZ-1.2.1", key: "PZ-1.2.1" },
     { title: "PZ-1.2.3", key: "PZ-1.2.3" },
   ];
+
   versionFilter: number = 0;
   setVersionFilter = (v: number) => (this.versionFilter = v);
 
   customPoolFilter: number = 0;
   setCustomPoolFilter = (v: number) => (this.customPoolFilter = v);
 
+
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     this.syncCustomPools();
     makeAutoObservable(this);
+    reaction(
+      () => this.rootStore.poolsStore.volumeByTimeFilter,
+      async () => {
+        const rawPools = await poolService.getPools({timeRange: this.rootStore.poolsStore.volumeByTimestamp[this.rootStore.poolsStore.volumeByTimeFilter].key});
+        const pools = rawPools.map((p) => {
+          const tokens = p.assets.map(({ asset_id, share }) => ({
+            ...TOKENS_BY_ASSET_ID[asset_id],
+            share,
+          }));
+          return new Pool({ ...p, tokens });
+        });
+        this.rootStore.poolsStore.setPools(pools);
+      }
+    );
   }
 
   syncCustomPools = async () => {
-    const rawPools = await poolService.getPools();
+    const rawPools = await poolService.getPools({timeRange: this.rootStore.poolsStore.volumeByTimestamp[this.rootStore.poolsStore.volumeByTimeFilter].key});
     const pools = rawPools.map((p) => {
-      const tokens = p.assets.map(({ assetId, share }) => ({
-        ...TOKENS_BY_ASSET_ID[assetId],
+      const tokens = p.assets.map(({ asset_id, share }) => ({
+        ...TOKENS_BY_ASSET_ID[asset_id],
         share,
       }));
       return new Pool({ ...p, tokens });

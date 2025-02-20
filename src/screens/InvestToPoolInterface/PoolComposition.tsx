@@ -64,6 +64,7 @@ const PoolComposition: React.FC<IProps> = () => {
   useMemo(() => {
     let totalValue = 0;
     for (const b of vm.poolCompositionValues) { totalValue += b.value.toNumber(); }
+    
     const data = vm.poolCompositionValues
       .sort((a, b) => {
         if (a.value.lt(b.value)) {

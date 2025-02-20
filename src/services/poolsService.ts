@@ -1,6 +1,7 @@
 import axios from "axios";
 import { TPoolState } from "@stores/PoolsStore";
-import { IPoolConfigStatistics } from "@src/constants";
+import { IPoolConfigStatistics, IPoolStats } from "@src/constants";
+import { IAssetsPoolInfo } from "@src/entities/Pool";
 
 interface IAssetConfig {
   assetId: string;
@@ -30,10 +31,14 @@ interface IPoolSettings {
   layer2Address?: string;
   baseTokenId: string;
   title: string;
-  assets: Array<IAssetConfig>;
+  assets: Array<IAssetsPoolInfo>;
   logo: string;
   artefactOriginTransactionId?: string;
   owner: string;
+}
+
+interface IGetPools {
+  timeRange?: string
 }
 
 const poolService = {
@@ -71,17 +76,33 @@ const poolService = {
     );
     return true;
   },
-  getPools: async (): Promise<
-    Array<IPoolSettings & { statistics?: IPoolConfigStatistics }>
+
+  getPools: async (data: IGetPools): Promise<
+    Array<IPoolSettings & { statistics?: IPoolConfigStatistics, stats: IPoolStats, assets?: IAssetsPoolInfo[]; }>
   > => {
-    const { data } = await axios.get(
+    const { data: poolsData } = await axios.get(
       `${process.env.REACT_APP_API_BASE}/api/v1/pools`
     );
-    // TODO: switch to the new API link
-    // const data = Array(await axios.get(
-    //     'https://swapapi.puzzleswap.org/stats/v1/statistics/pools/?amount=500&sort=LIQ&timeRange=7d&minLiquidity=20'
-    // ));
-    return data;
+  
+    const params = new URLSearchParams({ amount: '500' });
+    if (data?.timeRange) {
+      params.append('timeRange', data?.timeRange);
+    }
+  
+    const { data: statsData } = await axios.get(
+      `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/?${params.toString()}`
+    );
+  
+    const poolsMap = Object.fromEntries(
+      poolsData.map((item: IPoolSettings) => [item.contractAddress, item])
+    );
+  
+    const mergedData = statsData.map((stat: any) => ({
+      ...(poolsMap[stat.address] || {}),
+      ...stat,
+    }));
+  
+    return mergedData;
   },
   getStats: async (): Promise<IStakingStatsResponse> => {
     const { data } = await axios.get(
