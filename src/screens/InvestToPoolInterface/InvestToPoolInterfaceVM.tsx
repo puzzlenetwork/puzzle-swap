@@ -218,17 +218,17 @@ class InvestToPoolInterfaceVM {
     if (this.pool.tokens == null) return [];
     if (this.pool.liquidity == null) return [];
     return this.pool.tokens.reduce<any[]>((acc, token) => {
-      const balance = BN.formatUnits(
-        this.pool.liquidity[token.assetId] ?? BN.ZERO,
-        token.decimals
-      );
+      const pool = this.rootStore.poolsStore.pools.find((el) => el.contractAddress === this.pool.contractAddress)
+      if (!pool?.assets) return []
+      const asset = pool?.assets.find((el: any) => el.asset_id === token.assetId)
+      const balance = new BN(asset?.balance ?? BN.ZERO)
       const rate = this.rootStore.poolsStore.usdtRate(token.assetId);
       return [
         ...acc,
         {
           ...token,
           share: token.share,
-          value: balance.times(rate ?? 0),
+          value: new BN(balance ?? 0).times(rate ?? 0),
           parsedBalance: balance,
         },
       ];

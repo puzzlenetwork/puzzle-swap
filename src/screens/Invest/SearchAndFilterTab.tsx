@@ -16,6 +16,7 @@ import { ROUTES } from "@src/constants";
 import { useNavigate } from "react-router-dom";
 import Img from "@components/Img";
 import { useTheme } from "@emotion/react";
+import { useStores } from "@src/stores";
 
 interface IProps {}
 
@@ -37,7 +38,7 @@ const Filters = styled.div`
   flex-direction: column;
   padding: 16px;
   @media (min-width: 1080px) {
-    padding: 24px;
+    padding: 24px 18px;
   }
 `;
 const Btn = styled.div`
@@ -57,7 +58,7 @@ const Selects = styled.div`
   align-items: center;
   box-sizing: border-box;
   @media (min-width: 1080px) {
-    padding: 0 24px;
+    padding: 0 0px;
     flex-wrap: nowrap;
     width: 100%;
   }
@@ -91,11 +92,6 @@ const categoriesOptions = [
     // },
 ];
 
-const createdByOptions = [
-  { title: "Created by all", key: "all" },
-  { title: "By community", key: "custom" },
-  { title: "By Puzzle Swap", key: "puzzle" },
-];
 const ClearBtn = styled(Text)`
   margin: 12px 12px 0 12px;
   cursor: pointer;
@@ -122,6 +118,7 @@ const InputWrapper = styled.div`
 `;
 const SearchAndFilterTab: React.FC<IProps> = () => {
   const vm = useInvestVM();
+  const { poolsStore } = useStores();
   const navigate = useNavigate();
   const isFiltersChosen =
     vm.poolCategoryFilter !== 0 || vm.customPoolFilter !== 0;
@@ -164,16 +161,16 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
                     vm.setVersionFilter(index);
                 }}
             />
-            <SizedBox width={12} />
-          {/*<Select*/}
-          {/*  options={createdByOptions}*/}
-          {/*  selected={createdByOptions[vm.customPoolFilter]}*/}
-          {/*  onSelect={({ key }) => {*/}
-          {/*    const index = createdByOptions.findIndex((o) => o.key === key);*/}
-          {/*    vm.setCustomPoolFilter(index);*/}
-          {/*  }}*/}
-          {/*/>*/}
-          {/*<SizedBox width={12} />*/}
+          <SizedBox width={12} />
+          <Select
+            options={poolsStore.volumeByTimestamp}
+            selected={poolsStore.volumeByTimestamp[poolsStore.volumeByTimeFilter]}
+            onSelect={({ key }) => {
+              const index = poolsStore.volumeByTimestamp.findIndex((o) => o.key === key);
+              poolsStore.setVolumeByTimeFilter(index);
+              }}
+            />
+          <SizedBox width={12} />
         </StyledRow>
         {isFiltersChosen && (
           <ClearBtn

@@ -1,4 +1,4 @@
-import { IPoolConfig, IPoolConfigStatistics, IToken } from "@src/constants";
+import { IPoolConfig, IPoolConfigStatistics, IPoolStats, IToken } from "@src/constants";
 import { makeAutoObservable } from "mobx";
 import BN from "@src/utils/BN";
 import tokenLogos from "@src/constants/tokenLogos";
@@ -20,6 +20,14 @@ export interface IShortPoolInfo {
   indexTokenName: string;
 }
 
+export interface IAssetsPoolInfo {
+  asset_id: string,
+  share: number,
+  balance: number,
+  real_balance: number,
+  name: string
+}
+
 class Pool implements IPoolConfig {
   public readonly owner?: string;
   public readonly domain: string;
@@ -36,6 +44,8 @@ class Pool implements IPoolConfig {
   public readonly defaultAssetId1: string;
   public readonly tokens: Array<IToken & { share: number }> = [];
   private readonly _logo?: string;
+  public readonly stats?: IPoolStats;
+  public readonly assets?: IAssetsPoolInfo[];
 
   public history?: Array<{ date: number; volume: string }>;
   public statistics?: IPoolConfigStatistics;
@@ -106,7 +116,8 @@ class Pool implements IPoolConfig {
     if (new BN(params.statistics?.liquidity || 0).gt(0))
       this.statistics = params.statistics;
     this.history = params.history;
-
+    this.stats = params.stats;
+    this.assets = params.assets;
     makeAutoObservable(this);
   }
 

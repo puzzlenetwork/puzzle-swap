@@ -76,7 +76,7 @@ const PoolsWithToken: React.FC<IProps> = () => {
                   </Text>
                 </Row>
                 <TokenTags
-                  tokens={pool.tokens}
+                  tokens={pool.assets ?? []}
                   findBalanceByAssetId={accountStore.findBalanceByAssetId}
                 />
               </Column>

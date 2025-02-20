@@ -2,6 +2,7 @@ import tokens from "./tokens.json";
 import tokensDetails from "./tokenDetails.json";
 import nftsPics from "@src/constants/nftsPics";
 import tokenLogos from "@src/constants/tokenLogos";
+import { IAssetsPoolInfo } from "@src/entities/Pool";
 
 export const ROUTES = {
   ROOT: "/",
@@ -421,6 +422,19 @@ export interface IPoolConfigStatistics {
   volume: Array<{ date: number; volume: string }>;
 }
 
+export interface IPoolStats {
+  time_range: string,
+  time_frame: string,
+  apr: number,
+  average_liquidity: number,
+  lp_price: number,
+  claimed: number,
+  pool_fees: number,
+  owner_fees: number,
+  protocol_fees: number,
+  volume: number
+}
+
 export interface IPoolConfig {
   domain: string;
   version?: string;
@@ -439,5 +453,7 @@ export interface IPoolConfig {
   createdAt?: string;
   logo?: string;
   statistics?: IPoolConfigStatistics;
+  stats?: IPoolStats;
+  assets?: IAssetsPoolInfo[];
   history?: Array<{ date: number; volume: string }>;
 }

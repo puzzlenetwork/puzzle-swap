@@ -6,9 +6,10 @@ import { IAssetBalance } from "@src/entities/Balance";
 import { IToken } from "@src/constants";
 import { Row } from "@components/Flex";
 import { useTheme } from "@emotion/react";
+import { IAssetsPoolInfo } from "@src/entities/Pool";
 
 interface IProps {
-  tokens: ({ share: number } & IToken)[];
+  tokens: IAssetsPoolInfo[];
   findBalanceByAssetId: (assetId: string) => IAssetBalance | null | undefined;
 }
 
@@ -25,19 +26,19 @@ const TokenTags: React.FC<IProps> = ({ tokens, findBalanceByAssetId }) => {
   const needToHide = tokens.length > 4;
   const tokensToDisplay = needToHide ? tokens.slice(0, 4) : tokens;
   const moreHiddenAmount = tokens.length - 4;
-  const theme = useTheme();
+ 
   return (
     <Root>
-      {tokensToDisplay.map(({ symbol, assetId, share }, i) => {
-        const assetBalance = findBalanceByAssetId(assetId);
+      {tokensToDisplay.map(({ name, asset_id, share }, i) => {
+        const assetBalance = findBalanceByAssetId(asset_id);
         const isActive =
           assetBalance && assetBalance.balance && assetBalance.balance.gt(0);
         return (
           <Tag
-            key={assetId + String(i)}
+            key={asset_id + String(i)}
             background={isActive ? undefined : undefined}
           >
-            {symbol} {share} %
+            {name} {share} %
           </Tag>
         );
       })}
