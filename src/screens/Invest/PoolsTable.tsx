@@ -242,22 +242,22 @@ const PoolsTable: React.FC = () => {
         })(),
         apy: (
           <Row>
-            {pool.statistics?.boostedApy != null ? (
+            {pool.stats?.apr != null ? (
               <Row alignItems="center">
                 <Text fitContent type="secondary" crossed>
-                  {new BN(pool.statistics.apy).toFormat(2).concat("%")}
+                  {new BN(pool.stats.apr).toFormat(2).concat("%")}
                 </Text>
                 <SizedBox width={2} />
-                {new BN(pool.statistics.apy)
-                  .plus(pool.statistics.boostedApy)
+                {new BN(pool.stats.apr)
+                  .plus(pool.stats.apr)
                   .toBigFormat(2)
                   .concat("%")}
               </Row>
             ) : (
-                new BN(pool.statistics?.apy ?? 0)?.gt(20) ?
+                new BN(pool?.stats?.apr ?? 0)?.gt(20) ?
                 <Text fitContent type="success">
-                    {new BN(pool.statistics?.apy ?? 0).toFormat(2).concat("%")}
-                </Text> : new BN(pool.statistics?.apy ?? 0).toFormat(2).concat("%")
+                    {new BN(pool?.stats?.apr ?? 0).toFormat(2).concat("%")}
+                </Text> : new BN(pool?.stats?.apr ?? 0).toFormat(2).concat("%")
             )}
           </Row>
         ),
