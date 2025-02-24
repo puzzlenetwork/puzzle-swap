@@ -10,9 +10,10 @@ import {
   TOKENS_BY_ASSET_ID,
 } from "@src/constants";
 import nodeService from "@src/services/nodeService";
-import { ITransaction } from "@src/utils/types";
+import { IHistory, ITransaction } from "@src/utils/types";
 import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
 import makeNodeRequest from "@src/utils/makeNodeRequest";
+import poolsService from "@src/services/poolsService";
 
 const ctx = React.createContext<InvestToPoolInterfaceVM | null>(null);
 
@@ -90,6 +91,9 @@ class InvestToPoolInterfaceVM {
   nftPaymentName: string = "";
   setNFTPaymentName = (v: string) => (this.nftPaymentName = v);
 
+  history: IHistory[] = []
+  setHistory = (v: IHistory[]) => (this.history = v);
+
   public get pool() {
     return this.rootStore.poolsStore.getPoolByDomain(this.poolDomain)!;
   }
@@ -109,6 +113,7 @@ class InvestToPoolInterfaceVM {
           this.loadTransactionsHistory(),
           this.calcRewards(),
           this.syncIndexTokenInfo(),
+          this.updatePoolChartByDomain(),
         ]);
       }
     );
@@ -118,6 +123,7 @@ class InvestToPoolInterfaceVM {
         this.pool != null && this.getAddressActivityInfo();
         this.pool != null && this.calcRewards();
         this.pool != null && this.updatePoolTokenBalances();
+        this.pool != null && this.updatePoolChartByDomain();
       }
     );
   }
@@ -279,7 +285,6 @@ class InvestToPoolInterfaceVM {
       return { ...token, usdnEquivalent: usdnEquivalent, value: parserAmount };
     });
   }
-
   claimRewards = async () => {
     if (this.totalRewardToClaim == null || this.totalRewardToClaim.eq(0))
       return;
@@ -334,6 +339,10 @@ class InvestToPoolInterfaceVM {
     });
     this.setPoolAssetBalances(value);
   };
+  updatePoolChartByDomain = async () => {
+   const data = await poolsService.getPoolChartByDomain(this.pool.address);
+   this.setHistory(data)
+  }
 
   loadNFTPaymentInfo = async () => {
     const { isCustom, artefactOriginTransactionId } = this.pool;

@@ -92,7 +92,7 @@ class Pool implements IPoolConfig {
 
   constructor(params: IPoolConfig) {
     this.address = params.address;
-    this.layer2Address = params.layer2Address;
+    this.layer2Address = params.layer_2_address;
     this.base_token_id = params.base_token_id;
     this.title = params.title;
     this._logo = params.logo;
@@ -101,12 +101,11 @@ class Pool implements IPoolConfig {
     this.defaultAssetId1 = params.defaultAssetId1 ?? params.tokens[1].assetId;
     this.domain = params.domain;
     this.isCustom = params.isCustom;
-    this.artefactOriginTransactionId = ""; // TODO: нет бекенда
+    this.artefactOriginTransactionId = params.artefact_origin_transaction_id;
     this.owner = params.owner;
     this.version = params.version ?? "PZ-1.0.0";
     this.swapFee = params.swap_fee ?? 2;
     this.createdAt = params.created_at?.toString() ?? "";
-    this.history = [] // TODO: нет бекенда
     this.stats = params.stats;
     this.assets = params.assets;
     makeAutoObservable(this);

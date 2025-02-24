@@ -53,17 +53,19 @@ export default class PoolsStore {
       ]);
     }, 15 * 1000);
     reaction(
-      () => [this.volumeByTimeFilter, this.filter, this.pagination],
+      () => [this.volumeByTimeFilter, this.filter, this.pagination, this.versionFilter],
       async () => {
         this.setPools([])
+        this.syncPoolsLiquidity();
         Promise.all([
           this.syncTokensFromPy(),
           this.updateInvestedInPoolsInfo(),
           this.updatePoolsState(),
           this.syncPuzzleRate(),
-          this.syncPools().then(),
           this.syncCustomPools(),
         ]);
+
+        this.syncCustomPools()
       }
     );
     reaction(
@@ -108,12 +110,23 @@ export default class PoolsStore {
 
 
   volumeByTimestamp = [
-    { title: "Volume all time", key: "all" },
-    { title: "Volume 1 year", key: "1y" },
-    { title: "Volume 30 days", key: "30d" },
-    { title: "Volume 7 days", key: "7d" },
-    { title: "Volume 24 hours", key: "1d" },
+    { title: "Stats all time", key: "all" },
+    { title: "Stats 1 year", key: "1y" },
+    { title: "Stats 30 days", key: "30d" },
+    { title: "Stats 7 days", key: "7d" },
+    { title: "Stats 1 day", key: "1d" },
   ];
+
+  versionOptions = [
+    { title: "All versions", key: "all" },
+    { title: "PZ-1.0.0", key: "PZ-1.0.0" },
+    { title: "PZ-1.2.1", key: "PZ-1.2.1" },
+    { title: "PZ-1.2.3", key: "PZ-1.2.3" },
+  ];
+
+  versionFilter: number = 0;
+  setVersionFilter = (v: number) => (this.versionFilter = v);
+
 
   filter: {sortBy: IGetPools["sortBy"], order: IGetPools["order"]} = {
     sortBy: "apr",
@@ -129,6 +142,11 @@ export default class PoolsStore {
   }
   setPagination = (pagination: { page: number; size: number }) => {
     this.pagination = pagination;
+  };
+
+  searchPool = ""
+  setSearchPool = (pool: string) => {
+    this.searchPool = pool;
   };
 
   totalItems = 0
@@ -188,6 +206,8 @@ export default class PoolsStore {
       ...this.filter,
       ...this.pagination,
       timeRange: this.volumeByTimestamp[this.volumeByTimeFilter].key as IGetPools["timeRange"],
+      title: this?.searchPool ?? "",
+      version: this?.versionFilter === 0 ? "" : this?.versionOptions[this.versionFilter].key
     }
   }
 
@@ -256,7 +276,7 @@ export default class PoolsStore {
     configs.forEach((config) => {
       const pool = this.getPoolByDomain(config.domain);
       if (pool != null && config.stats != null) {
-        pool.setStatistics({...config.stats, liquidity: config.liquidity, boostedApy: config.boosted_apr ?? 0} );
+        pool.setStatistics({...config.stats, totals: config?.totals, liquidity: config.liquidity, boostedApy: config.boosted_apr ?? 0} );
       }
       if (config.isCustom && pool == null) {
         const tokens = config.assets.map(({ asset_id, share }) => ({

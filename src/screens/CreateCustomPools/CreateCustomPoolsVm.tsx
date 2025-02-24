@@ -586,7 +586,6 @@ class CreateCustomPoolsVm {
         asset_id: asset.assetId,
         share: share.div(10).toNumber(),
       }));
-      console.log('assets', assets)
 
       await poolsService.createPool({
         domain: this.domain,

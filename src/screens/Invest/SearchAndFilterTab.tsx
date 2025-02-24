@@ -144,21 +144,21 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
       </Filters>
       <Selects>
         <StyledRow mainAxisSize="fit-content">
-          <Select
+          {/* <Select
             options={categoriesOptions}
             selected={categoriesOptions[vm.poolCategoryFilter]}
             onSelect={({ key }) => {
               const index = categoriesOptions.findIndex((o) => o.key === key);
               vm.setPoolCategoryFilter(index);
             }}
-          />
+          /> */}
           <SizedBox width={12} />
             <Select
-                options={vm.versionOptions}
-                selected={vm.versionOptions[vm.versionFilter]}
+                options={poolsStore.versionOptions}
+                selected={poolsStore.versionOptions[poolsStore.versionFilter]}
                 onSelect={({ key }) => {
-                    const index = vm.versionOptions.findIndex((o) => o.key === key);
-                    vm.setVersionFilter(index);
+                    const index = poolsStore.versionOptions.findIndex((o) => o.key === key);
+                    poolsStore.setVersionFilter(index);
                 }}
             />
           <SizedBox width={12} />

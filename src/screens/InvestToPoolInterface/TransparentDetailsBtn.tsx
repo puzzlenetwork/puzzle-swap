@@ -51,7 +51,6 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
   const [isOpenedDetails, setOpenedDetails] = useState(false);
   const [isOpenedShare, setOpenedShare] = useState(false);
-
   const puzzlePoolInformation = [
     {
       title: "Pool creator",
@@ -87,8 +86,8 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
     // },
     {
       title: "Fees earned (30 days)",
-      value: vm.pool.statistics
-        ? `$ ${new BN(vm.pool.statistics.owner_fees).toFormat(2)}` // TODO: monthlyFees должно быть
+      value: vm.pool.statistics?.totals?.pool_fees_30d
+        ? `$ ${new BN(vm.pool.statistics.totals.pool_fees_30d).toFormat(2)}`
         : "–",
     },
   ];
@@ -115,26 +114,26 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
     // },
     {
       title: "Volume (7D)",
-      value: vm.pool.statistics
-        ? `$${new BN(vm.pool.statistics.volume).toFormat(2)}` // TODO: weeklyVolume
+      value: vm.pool.statistics?.totals?.volume_7d
+        ? `$${new BN(vm.pool.statistics.totals.volume_7d).toFormat(2)}`
         : "–",
     },
     {
       title: "Liquidity Providers Fee (7D)",
-      value: vm.pool.statistics && vm.pool.statistics.pool_fees
-        ? `$${new BN(vm.pool.statistics.pool_fees).div(10).times(5).toFormat(2)}` // TODO: weeklyFees
+      value: vm.pool.statistics && vm.pool.statistics?.totals?.protocol_fees_7d
+        ? `$${new BN(vm.pool.statistics?.totals?.protocol_fees_7d).div(10).times(5).toFormat(2)}`
         : "–",
     },
     {
       title: "Owner Fee (7D)",
-      value: vm.pool.statistics && vm.pool.statistics.pool_fees
-        ? `$${new BN(vm.pool.statistics.pool_fees).div(10).times(1).toFormat(2)}` // TODO: weeklyFees
+      value: vm.pool.statistics && vm.pool.statistics?.totals?.protocol_fees_7d
+        ? `$${new BN(vm.pool.statistics?.totals?.protocol_fees_7d).div(10).times(1).toFormat(2)}`
         : "–",
     },
     {
       title: "Protocol Fee (7D)",
-      value: vm.pool.statistics && vm.pool.statistics.pool_fees
-        ? `$${new BN(vm.pool.statistics.pool_fees).div(10).times(4).toFormat(2)}` // TODO: weeklyFees
+      value: vm.pool.statistics && vm.pool.statistics?.totals?.protocol_fees_7d
+        ? `$${new BN(vm.pool.statistics?.totals?.protocol_fees_7d).div(10).times(4).toFormat(2)}`
         : "–",
     },
     {

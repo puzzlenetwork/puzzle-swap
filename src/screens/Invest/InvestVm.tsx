@@ -24,7 +24,10 @@ export const useInvestVM = () => useVM(ctx);
 class InvestVM {
   public rootStore: RootStore;
   searchValue = "";
-  setSearchValue = (v: string) => (this.searchValue = v);
+  setSearchValue = (v: string) => {
+    this.searchValue = v
+    this.rootStore.poolsStore.setSearchPool(v)
+  }
 
   sortApy = true;
   setSortApy = (v: boolean) => {
@@ -52,16 +55,6 @@ class InvestVM {
 
   poolCategoryFilter: number = 0;
   setPoolCategoryFilter = (v: number) => (this.poolCategoryFilter = v);
-
-  versionOptions = [
-    { title: "All versions", key: "all" },
-    { title: "PZ-1.0.0", key: "PZ-1.0.0" },
-    { title: "PZ-1.2.1", key: "PZ-1.2.1" },
-    { title: "PZ-1.2.3", key: "PZ-1.2.3" },
-  ];
-
-  versionFilter: number = 0;
-  setVersionFilter = (v: number) => (this.versionFilter = v);
 
   customPoolFilter: number = 0;
   setCustomPoolFilter = (v: number) => (this.customPoolFilter = v);

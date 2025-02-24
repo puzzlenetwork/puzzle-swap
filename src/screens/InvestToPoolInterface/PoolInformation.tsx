@@ -39,14 +39,14 @@ const PoolInformation: React.FC<IProps> = () => {
     },
     {
       title: "Monthly Volume", // TODO должно быть monthlyVolume
-      value: data?.volume
-        ? "$" + new BN(data.volume).toFormat(2)
+      value: data?.totals?.volume_30d
+        ? "$" + new BN(data.totals.volume_30d).toFormat(2)
         : null,
     },
     {
       title: "Monthly Fees (LP + Owner)",
-      // value: data?.fees ? "$" + new BN(data.fees).div(6).times(5).toFormat(2) + " + $" + new BN(data.fees).div(6).times(1).toFormat(2) : null,
-      value: new BN(data?.pool_fees ?? 0).plus(data?.owner_fees ?? 0).toFormat(2)
+      value: data?.totals?.pool_fees_30d ? "$" + new BN(data?.totals?.pool_fees_30d).toFormat(2) + " + $" + new BN(data?.totals?.owner_fees_30d).toFormat(2) : null,
+      // value: new BN(data?.pool_fees ?? 0).plus(data?.owner_fees ?? 0).toFormat(2)
     },
     {
       title: "LP APY",

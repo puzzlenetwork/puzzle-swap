@@ -198,10 +198,7 @@ const PoolsTable: React.FC = () => {
         if (vm.customPoolFilter === 2) return !isCustom;
         return false;
       })
-
       const data = filteredSortedData
-      // .slice((page - 1) * inPageItem, inPageItem * page)
-      // .slice((poolsStore.pagination.page - 1) * poolsStore.pagination.size, poolsStore.pagination.size * poolsStore.pagination.page)
       .map((pool) => ({
         onClick: () => navigate(`/pools/${pool.domain}/invest`),
         disabled:

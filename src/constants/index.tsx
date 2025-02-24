@@ -45,7 +45,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
   {
     domain: "tsunami",
     address: "3PN1eJpdhJyRptcN9iLTarsJBtR2Kb3NXSU",
-    layer2Address: "3P9nxQiTo73ZASrxaVCA7o95gymQbSp7GXf",
+    layer_2_address: "3P9nxQiTo73ZASrxaVCA7o95gymQbSp7GXf",
     base_token_id: TOKENS_BY_SYMBOL.TSN.assetId,
     title: "Tsunami ILO Pool",
     logo: tokenLogos.TSN,
@@ -71,7 +71,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
   {
     domain: "pool10",
     address: "3PLiXyywNThdvf3vVEUxwc7TJTucjZvuegh",
-    layer2Address: "3P4oa7KAvocZhPXQ1B6ncAopzLEZUtMwbHF",
+    layer_2_address: "3P4oa7KAvocZhPXQ1B6ncAopzLEZUtMwbHF",
     base_token_id: TOKENS_BY_SYMBOL.BTC_WXG.assetId,
     title: "Pool10",
     logo: tokenLogos.BTC_WXG,
@@ -99,7 +99,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
   {
     domain: "nsbt",
     address: "3PEStCRPQuW3phthTtQ5upGeb4WZ47kssyM",
-    layer2Address: "3PD7yAzyCEMNBnXzE8AuSsqogHUpSLjwAYA",
+    layer_2_address: "3PD7yAzyCEMNBnXzE8AuSsqogHUpSLjwAYA",
     base_token_id: TOKENS_BY_SYMBOL.NSBT.assetId,
     title: "sNSBT/NSBT pool",
     logo: tokenLogos.SNSBT,
@@ -140,7 +140,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
   {
     domain: "vusd",
     address: "3PCq2VqxGMmEyB8gLoUi8KuV9tYSD3VMC74",
-    layer2Address: "3P6oobNcfLt69HMzQC37JAAGBWtrygU4amc",
+    layer_2_address: "3P6oobNcfLt69HMzQC37JAAGBWtrygU4amc",
     base_token_id: TOKENS_BY_SYMBOL.XTN.assetId,
     title: "Vires USD Pool",
     logo: tokenLogos.XTN,
@@ -175,7 +175,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
   {
     domain: "www",
     address: "3PAviuHPCX8fD7M5fGpFTQZb4HchWCJb3ct",
-    layer2Address: "3PFF8UuNfvAGk6KvgyeD4HfZ4TRmHgtgt5W",
+    layer_2_address: "3PFF8UuNfvAGk6KvgyeD4HfZ4TRmHgtgt5W",
     base_token_id: TOKENS_BY_SYMBOL.WX.assetId,
     title: "WWW Pool 🔥",
     logo: tokenLogos.WX,
@@ -203,7 +203,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
   {
     domain: "snsbttci",
     address: "3PPrsyW3VuxU15FuBKfbVh5JdmAkmU3ApPv",
-    layer2Address: "3P44Y7if4hZAgUn9K3R7buzb3TQn6NzTcu7",
+    layer_2_address: "3P44Y7if4hZAgUn9K3R7buzb3TQn6NzTcu7",
     base_token_id: TOKENS_BY_SYMBOL.XTN.assetId,
     title: "sNSBT_TCI pool",
     logo: tokenLogos.SNSBTTCI,
@@ -231,7 +231,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
   {
     domain: "sheg",
     address: "3PC87Z4vUzet6tTrTQmzJmW1UtouKjLhBJi",
-    layer2Address: "3PJvGRBaL5FrK5tHax6cJvkZWrHtDUmiDdF",
+    layer_2_address: "3PJvGRBaL5FrK5tHax6cJvkZWrHtDUmiDdF",
     base_token_id: TOKENS_BY_SYMBOL.SHEG.assetId,
     title: "Ducklization IDO Pool",
     logo: tokenLogos.SHEG,
@@ -259,7 +259,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
   {
     domain: "muna",
     address: "3P9EydokbUM5XFrHgEUT9bNVgfF7fGmtxLk",
-    layer2Address: "3PLAM86Pm7jR3RTe7JSit2FDf8DnhF8ogG6",
+    layer_2_address: "3PLAM86Pm7jR3RTe7JSit2FDf8DnhF8ogG6",
     base_token_id: TOKENS_BY_SYMBOL.MUNA.assetId,
     title: "Muna BNB Pool",
     logo: tokenLogos.MUNA,
@@ -286,7 +286,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
   {
     domain: "winter",
     address: "3PEZe3Z2FqaVbMTjWJUpnQGxhWh2JRptujM",
-    layer2Address: "3PNBamg45irg9R58gMBM6UvBaUhX5bVys2r",
+    layer_2_address: "3PNBamg45irg9R58gMBM6UvBaUhX5bVys2r",
     base_token_id: TOKENS_BY_SYMBOL.XTN.assetId,
     title: "Warm Winter Pool ❄️",
     logo: tokenLogos.USDC,
@@ -316,7 +316,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
   {
     domain: "defi",
     address: "3PDrYPF6izza2sXWffzTPF7e2Fcir2CMpki",
-    layer2Address: "3PJAg4A4gPQXtSLKQNAf5VxbXV2QVM9wPei",
+    layer_2_address: "3PJAg4A4gPQXtSLKQNAf5VxbXV2QVM9wPei",
     base_token_id: TOKENS_BY_SYMBOL.XTN.assetId,
     title: "Waves DeFi Pool 🔹",
     logo: tokenLogos.WAVES,
@@ -372,7 +372,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
   {
     domain: "farms",
     address: "3PPRHHF9JKvDLkAc3aHD3Kd5tRZp1CoqAJa",
-    layer2Address: "3PDVDYZiwJzK3pu8vcknuLiKCYBPx6XZntG",
+    layer_2_address: "3PDVDYZiwJzK3pu8vcknuLiKCYBPx6XZntG",
     base_token_id: TOKENS_BY_SYMBOL.EGG.assetId,
     title: "Pool Farms 1",
     logo: tokenLogos.EGG,
@@ -422,7 +422,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
   {
     domain: "farms2",
     address: "3PKYPKJPHZENAAwH9e7TF5edDgukNxxBt3M",
-    layer2Address: "3PLNxoMJYKzcA8qQ7hQidGDaUJNvM4w36nj",
+    layer_2_address: "3PLNxoMJYKzcA8qQ7hQidGDaUJNvM4w36nj",
     base_token_id: TOKENS_BY_SYMBOL.EGG.assetId,
     title: "Pool Farms 2",
     logo: tokenLogos.EGG,
@@ -455,7 +455,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
   {
     domain: "race",
     address: "3PNK5ypnPJioLmLUzfK6ezpaePHLxZd6QLj",
-    layer2Address: "3PQSAdwsdyPVVpfBwjtgXboVXUZgeYHycWM",
+    layer_2_address: "3PQSAdwsdyPVVpfBwjtgXboVXUZgeYHycWM",
     base_token_id: TOKENS_BY_SYMBOL.XTN.assetId,
     title: "Race Mega Pool 🚜",
     logo: tokenLogos.RACE,
@@ -482,7 +482,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
   {
     domain: "egg",
     address: "3PMHkdVCzeLAYuCh92FPtusuxdLk5xMB51y",
-    layer2Address: "3P84BhX5dCVs1TCgYnGa57kCHrMz4mUBXyE",
+    layer_2_address: "3P84BhX5dCVs1TCgYnGa57kCHrMz4mUBXyE",
     base_token_id: TOKENS_BY_SYMBOL.EGG.assetId,
     title: "Egg Uneven Pool 🥚",
     logo: tokenLogos.EGG,
@@ -611,8 +611,9 @@ export interface IPoolConfigStatistics {
   protocol_fees: number,
   volume: number,
   boostedApy: number
-  boostings?: IBoostings[]
-}
+  boostings?: IBoostings[],
+  totals?: ITotals
+} 
 
 export interface IPoolStats {
   time_range: string,
@@ -628,9 +629,35 @@ export interface IPoolStats {
 }
 
 
+export interface ITotals {
+  volume_all: number,
+  pool_fees_all: number,
+  owner_fees_all: number,
+  protocol_fees_all: number,
+  volume_1y: number,
+  pool_fees_1y: number,
+  owner_fees_1y: number,
+  protocol_fees_1y: number,
+  volume_90d: number,
+  pool_fees_90d: number,
+  owner_fees_90d: number,
+  protocol_fees_90d: number,
+  volume_30d: number,
+  pool_fees_30d: number,
+  owner_fees_30d: number,
+  protocol_fees_30d: number,
+  volume_7d: number,
+  pool_fees_7d: number,
+  owner_fees_7d: number,
+  protocol_fees_7d: number,
+  volume_1d: number,
+  pool_fees_1d: number,
+  owner_fees_1d: number,
+  protocol_fees_1d: number,
+}
 export interface IPoolConfig {
   address: string,
-  layer2Address?: string,
+  layer_2_address?: string,
   created_at?: number,
   domain: string,
   fee_token_id?: string,
@@ -653,4 +680,6 @@ export interface IPoolConfig {
   defaultAssetId1?: string;
   tokens: Array<IToken & { share: number }>;
   boosted_apr?: number;
+  artefact_origin_transaction_id?: string;
+  totals?: ITotals
 }

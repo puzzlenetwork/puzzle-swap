@@ -2,6 +2,7 @@ import axios from "axios";
 import { TPoolState } from "@stores/PoolsStore";
 import { IBoostings, IPoolConfig, IPoolConfigStatistics, IPoolStats } from "@src/constants";
 import { stat } from "fs";
+import { IHistory } from "@src/utils/types";
 
 export interface IAssetConfig {
   asset_id: string,
@@ -46,11 +47,21 @@ export interface IGetPools {
   order?: "asc" | "desc";
   page: number;
   size: number;
+  title: string;
+  version: string
 }
 
 const poolService = {
   getPoolByDomain: async (domain: string): Promise<IPoolSettings> => {
     const req = `${process.env.REACT_APP_API_BASE}/api/v1/pools/${domain}`;
+    const { data } = await axios.get(req);
+    return data;
+  },
+  getPoolChartByDomain: async (address: string): Promise<IHistory[]> => {
+    const params = new URLSearchParams({ 
+      timeRange: "all",
+    });
+    const req = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/${address}/charts?${params.toString()}`;
     const { data } = await axios.get(req);
     return data;
   },
@@ -84,23 +95,13 @@ const poolService = {
     return true;
   },
   getPools: async (data: IGetPools): Promise<{ pools: Array<IPoolConfig & { stats: IPoolStats, assets: IAssetConfig[], liquidity: number, boostings: IBoostings }>, totalItems: number }> => {
-    const params = new URLSearchParams({ 
-      size: data.size.toString(),
-      page: data.page.toString(),
+    const params = new URLSearchParams();
+    Object.entries(data).forEach(([key, value]) => {
+      params.append(key, value);
     });
-    if (data?.timeRange) {
-      params.append('timeRange', data.timeRange);
-    }
-    if (data?.sortBy) {
-      params.append('sortBy', data.sortBy)
-    }
-    if (data?.order) {
-      params.append('order', data.order)
-    }
     const { data: statsData } = await axios.get(
       `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/all?${params.toString()}`
     );
-    
     return {pools: statsData.pools, totalItems: statsData.total};
   },
   getStats: async (): Promise<IStakingStatsResponse> => {

@@ -9,6 +9,7 @@ import { Line, LineChart, Tooltip, XAxis } from "recharts";
 import useWindowSize from "@src/hooks/useWindowSize";
 import dayjs from "dayjs";
 import BN from "@src/utils/BN";
+import poolsService from "@src/services/poolsService";
 
 interface IProps {}
 
@@ -54,56 +55,54 @@ const TradesVolume: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
   const { width: screenWidth } = useWindowSize();
   const chartWidth = screenWidth ? calcChartWidth(screenWidth) : 0;
-  const stats = vm.pool.history || (vm.pool.statistics?.volume || []);
-  // TODO: нужно volume []
-  return <></>
-  // const data = stats
-  //   .map((v) => ({ ...v, volume: Number(v.volume) }))
-  //   .sort((a, b) => (a.date < b.date ? -1 : 1));
-  // return (
-  //   <Root
-  //     disabled={
-  //       data == null ||
-  //       data.length < 2 ||
-  //       data.every(({ volume }) => volume === 0)
-  //     }
-  //   >
-  //     <Text weight={500} type="secondary">
-  //       Trades volume
-  //     </Text>
-  //     <SizedBox height={8} />
-  //     <Card style={{ height: 288 }}>
-  //       <LineChart width={chartWidth} height={240} data={data}>
-  //         <XAxis
-  //           tickLine={false}
-  //           dataKey="date"
-  //           tickFormatter={(date) => dayjs(date).format("MMM DD")}
-  //           style={{ fill: "#8082c5" }}
-  //         />
-  //         <Tooltip
-  //           labelFormatter={(date) => (
-  //             <Text type="secondary" size="small">
-  //               {dayjs(date).format("dddd, MMM DD")}
-  //             </Text>
-  //           )}
-  //           formatter={(value) => "$ " + new BN(`${value}`).toFormat(2)}
-  //           itemStyle={{ border: "none" }}
-  //           contentStyle={{
-  //             border: "none",
-  //             filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))",
-  //           }}
-  //         />
-  //         <Line
-  //           dot={false}
-  //           type="monotone"
-  //           dataKey="volume"
-  //           stroke="#7075E9"
-  //           strokeWidth={2}
-  //         />
-  //       </LineChart>
-  //     </Card>
-  //   </Root>
-  // );
+  const stats = vm.history
+  const data = stats
+    .map((v) => ({ ...v, volume: Number(v.volume), date: v.time * 100 }))
+    .sort((a, b) => (a.time < b.time ? -1 : 1));
+  return (
+    <Root
+      disabled={
+        data == null ||
+        data.length < 2 ||
+        data.every(({ volume }) => volume === 0)
+      }
+    >
+      <Text weight={500} type="secondary">
+        Trades volume
+      </Text>
+      <SizedBox height={8} />
+      <Card style={{ height: 288 }}>
+        <LineChart width={chartWidth} height={240} data={data}>
+          <XAxis
+            tickLine={false}
+            dataKey="date"
+            tickFormatter={(date) => dayjs(date).format("MMM DD")}
+            style={{ fill: "#8082c5" }}
+          />
+          <Tooltip
+            labelFormatter={(date) => (
+              <Text type="secondary" size="small">
+                {dayjs(date).format("dddd, MMM DD")}
+              </Text>
+            )}
+            formatter={(value) => "$ " + new BN(`${value}`).toFormat(2)}
+            itemStyle={{ border: "none" }}
+            contentStyle={{
+              border: "none",
+              filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))",
+            }}
+          />
+          <Line
+            dot={false}
+            type="monotone"
+            dataKey="volume"
+            stroke="#7075E9"
+            strokeWidth={2}
+          />
+        </LineChart>
+      </Card>
+    </Root>
+  );
 };
 
 export default observer(TradesVolume);
