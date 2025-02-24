@@ -27,10 +27,22 @@ class InvestVM {
   setSearchValue = (v: string) => (this.searchValue = v);
 
   sortApy = true;
-  setSortApy = (v: boolean) => (this.sortApy = v);
+  setSortApy = (v: boolean) => {
+    this.sortApy = v
+    this.rootStore.poolsStore.setFilter({
+      sortBy: "apr",
+      order: v ? "asc" : "desc"
+    })
+  }
 
   sortLiquidity = true;
-  setSortLiquidity = (v: boolean) => (this.sortLiquidity = v);
+  setSortLiquidity = (v: boolean) => {
+    this.sortLiquidity = v
+    this.rootStore.poolsStore.setFilter({
+      sortBy: "liquidity",
+      order: v ? "asc" : "desc"
+    })
+  }
 
   sortBalance = true;
   setSortBalance = (v: boolean) => (this.sortBalance = v);
@@ -59,25 +71,12 @@ class InvestVM {
     this.rootStore = rootStore;
     this.syncCustomPools();
     makeAutoObservable(this);
-    reaction(
-      () => this.rootStore.poolsStore.volumeByTimeFilter,
-      async () => {
-        const rawPools = await poolService.getPools({timeRange: this.rootStore.poolsStore.volumeByTimestamp[this.rootStore.poolsStore.volumeByTimeFilter].key});
-        const pools = rawPools.map((p) => {
-          const tokens = p.assets.map(({ asset_id, share }) => ({
-            ...TOKENS_BY_ASSET_ID[asset_id],
-            share,
-          }));
-          return new Pool({ ...p, tokens });
-        });
-        this.rootStore.poolsStore.setPools(pools);
-      }
-    );
   }
 
   syncCustomPools = async () => {
-    const rawPools = await poolService.getPools({timeRange: this.rootStore.poolsStore.volumeByTimestamp[this.rootStore.poolsStore.volumeByTimeFilter].key});
-    const pools = rawPools.map((p) => {
+    const {pools: poolsData, totalItems} = await poolService.getPools(this.rootStore.poolsStore.paramsAllPools);
+    this.rootStore.poolsStore.setTotalItems(totalItems)
+    const pools = poolsData.map((p) => {
       const tokens = p.assets.map(({ asset_id, share }) => ({
         ...TOKENS_BY_ASSET_ID[asset_id],
         share,

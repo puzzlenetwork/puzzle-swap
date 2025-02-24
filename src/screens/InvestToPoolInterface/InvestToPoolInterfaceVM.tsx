@@ -162,7 +162,7 @@ class InvestToPoolInterfaceVM {
     );
 
     console.log("HERE");
-    const res = await fetch(`https://puzzle-py-api-feaf3dd76a7a.herokuapp.com/api/claimedRewardsInPool?pool=${this.pool.contractAddress}&user=${address}`)
+    const res = await fetch(`https://puzzle-py-api-feaf3dd76a7a.herokuapp.com/api/claimedRewardsInPool?pool=${this.pool.address}&user=${address}`)
     if (!res.ok) {
       // This will activate the closest `error.js` Error Boundary
       throw new Error('Failed to fetch data')
@@ -184,10 +184,10 @@ class InvestToPoolInterfaceVM {
 
   calcRewards = async () => {
     const { address } = this.rootStore.accountStore;
-    if (address == null || this.pool?.contractAddress == null) return;
+    if (address == null || this.pool?.address == null) return;
     const data = await nodeService.evaluate(
       CONTRACT_ADDRESSES.calcReward,
-      `calcRewardToClaim(false, "${this.pool?.contractAddress}", "${address}")`
+      `calcRewardToClaim(false, "${this.pool?.address}", "${address}")`
     );
     const tokensStr = data.result.value["_2"].value;
     const tokens = tokensStr
@@ -218,7 +218,7 @@ class InvestToPoolInterfaceVM {
     if (this.pool.tokens == null) return [];
     if (this.pool.liquidity == null) return [];
     return this.pool.tokens.reduce<any[]>((acc, token) => {
-      const pool = this.rootStore.poolsStore.pools.find((el) => el.contractAddress === this.pool.contractAddress)
+      const pool = this.rootStore.poolsStore.pools.find((el) => el.address === this.pool.address)
       if (!pool?.assets) return []
       const asset = pool?.assets.find((el: any) => el.asset_id === token.assetId)
       const balance = new BN(asset?.balance ?? BN.ZERO)
@@ -288,7 +288,7 @@ class InvestToPoolInterfaceVM {
     const { accountStore, notificationStore } = this.rootStore;
     accountStore
       .invoke({
-        dApp: this.pool.contractAddress,
+        dApp: this.pool.address,
         payment: [],
         call: {
           function: "claimIndexRewards",
@@ -328,7 +328,7 @@ class InvestToPoolInterfaceVM {
   updatePoolTokenBalances = async () => {
     const { pool } = this;
     const { data }: { data: TContractAssetBalancesResponse } =
-      await makeNodeRequest(`/assets/balance/${pool.contractAddress}`);
+      await makeNodeRequest(`/assets/balance/${pool.address}`);
     const value = data.balances.map((token) => {
       return { assetId: token.assetId, balance: new BN(token.balance) };
     });
@@ -346,15 +346,15 @@ class InvestToPoolInterfaceVM {
   };
 
   loadTransactionsHistory = async () => {
-    const transactions = await nodeService.transactions(this.pool.contractAddress, 20);
+    const transactions = await nodeService.transactions(this.pool.address, 20);
 
     const parsedTransactions = transactions?.map(tx => {
-      if (tx.dApp === this.pool.contractAddress || tx.dApp === this.pool.layer2Address) {
+      if (tx.dApp === this.pool.address|| tx.dApp === this.pool.layer2Address) {
         return tx;
       };
       if (tx.stateChanges) {
         const invokes = tx.stateChanges.invokes;
-        const localTx = invokes.find(x => x.dApp === this.pool.contractAddress || x.dApp === this.pool.layer2Address);
+        const localTx = invokes.find(x => x.dApp === this.pool.address || x.dApp === this.pool.layer2Address);
         if(localTx) {
           localTx.height = tx.height;
           localTx.id = tx.id;
@@ -363,7 +363,7 @@ class InvestToPoolInterfaceVM {
 
         for (let i = 0; i < invokes.length; i++) {
           const localInvokes = invokes[i].stateChanges.invokes;
-          const localTx = localInvokes.find(x => x.dApp === this.pool.contractAddress || x.dApp === this.pool.layer2Address);
+          const localTx = localInvokes.find(x => x.dApp === this.pool.address || x.dApp === this.pool.layer2Address);
           if (localTx) {
             localTx.height = tx.height;
             localTx.id = tx.id;
@@ -384,14 +384,14 @@ class InvestToPoolInterfaceVM {
     const after = transactionsHistory.slice(-1).pop();
     if (after == null) return;
     const v0 = await nodeService.transactions(
-      pool.contractAddress,
+      pool.address,
       20,
       after.id
     );
     const v = v0?.map(tx => {
-      if (tx.dApp === this.pool.contractAddress || tx.dApp === this.pool.layer2Address) {return tx}
+      if (tx.dApp === this.pool.address || tx.dApp === this.pool.layer2Address) {return tx}
       else {
-        const localTx = tx.stateChanges.invokes.find(x => x.dApp === this.pool.contractAddress || x.dApp === this.pool.layer2Address);
+        const localTx = tx.stateChanges.invokes.find(x => x.dApp === this.pool.address || x.dApp === this.pool.layer2Address);
         console.log(localTx);
         if (!localTx) {return tx}
         else {
@@ -412,7 +412,7 @@ class InvestToPoolInterfaceVM {
     const { accountStore, notificationStore } = this.rootStore;
     accountStore
       .invoke({
-        dApp: this.pool.contractAddress,
+        dApp: this.pool.address,
         payment: [],
         call: {
           function: "unstakeIndex",
@@ -453,7 +453,7 @@ class InvestToPoolInterfaceVM {
     if (this.indexTokenId == null) return;
     accountStore
       .invoke({
-        dApp: this.pool.contractAddress,
+        dApp: this.pool.address,
         payment: [
           {
             assetId: this.indexTokenId === "WAVES" ? null : this.indexTokenId,

@@ -8,7 +8,7 @@ import {
   TOKENS_BY_ASSET_ID,
   TOKENS_BY_SYMBOL,
 } from "@src/constants";
-import poolService from "@src/services/poolsService";
+import poolService, { IGetPools } from "@src/services/poolsService";
 import nodeService from "@src/services/nodeService";
 
 export type TPoolState = {
@@ -52,6 +52,20 @@ export default class PoolsStore {
         this.syncCustomPools(),
       ]);
     }, 15 * 1000);
+    reaction(
+      () => [this.volumeByTimeFilter, this.filter, this.pagination],
+      async () => {
+        this.setPools([])
+        Promise.all([
+          this.syncTokensFromPy(),
+          this.updateInvestedInPoolsInfo(),
+          this.updatePoolsState(),
+          this.syncPuzzleRate(),
+          this.syncPools().then(),
+          this.syncCustomPools(),
+        ]);
+      }
+    );
     reaction(
       () => this.rootStore.accountStore.address,
       () =>
@@ -101,8 +115,27 @@ export default class PoolsStore {
     { title: "Volume 24 hours", key: "1d" },
   ];
 
+  filter: {sortBy: IGetPools["sortBy"], order: IGetPools["order"]} = {
+    sortBy: "apr",
+    order: "desc"
+  };
+  setFilter = (filter: { sortBy: IGetPools["sortBy"], order: IGetPools["order"] }) => {
+    this.filter = filter;
+  };
+
+  pagination = {
+    page: 1,
+    size: 20
+  }
+  setPagination = (pagination: { page: number; size: number }) => {
+    this.pagination = pagination;
+  };
+
+  totalItems = 0
+  setTotalItems = (items: number) => {this.totalItems = items}
+
   volumeByTimeFilter: number = 0;
-  setVolumeByTimeFilter = (v: number) => (this.volumeByTimeFilter = v);
+  setVolumeByTimeFilter = (v: number) => {this.volumeByTimeFilter = v}
 
   public poolsState: TPoolState[] | null = null;
   private setPoolState = (value: TPoolState[]) => (this.poolsState = value);
@@ -149,6 +182,13 @@ export default class PoolsStore {
       (acc, pool) => acc.plus(pool.globalVolume ?? BN.ZERO),
       BN.ZERO
     );
+  }
+  get paramsAllPools(): IGetPools {
+    return {
+      ...this.filter,
+      ...this.pagination,
+      timeRange: this.volumeByTimestamp[this.volumeByTimeFilter].key as IGetPools["timeRange"],
+    }
   }
 
   usdtRate = (assetId: string, coefficient = 1): BN | null => {
@@ -210,12 +250,13 @@ export default class PoolsStore {
   };
 
   syncCustomPools = async () => {
-    const configs = await poolService.getPools({timeRange: this.volumeByTimestamp[this.volumeByTimeFilter].key});
+    const {pools: configs, totalItems} = await poolService.getPools(this.paramsAllPools);
+    this.rootStore.poolsStore.setTotalItems(totalItems)
     const newPools: Array<Pool> = [];
     configs.forEach((config) => {
       const pool = this.getPoolByDomain(config.domain);
-      if (pool != null && config.statistics != null) {
-        pool.setStatistics(config.statistics);
+      if (pool != null && config.stats != null) {
+        pool.setStatistics({...config.stats, liquidity: config.liquidity, boostedApy: config.boosted_apr ?? 0} );
       }
       if (config.isCustom && pool == null) {
         const tokens = config.assets.map(({ asset_id, share }) => ({
@@ -243,7 +284,7 @@ export default class PoolsStore {
 
   private updateAccountCustomPoolsLiquidityInfo = (address: string) => {
     const customPoolsInfo = this.customPools.reduce((acc, pool) => {
-      const state = this.getStateByAddress(pool.contractAddress)?.state;
+      const state = this.getStateByAddress(pool.address)?.state;
       return state
         ? [...acc, pool.getAccountLiquidityInfoByState(address, state)]
         : acc;
@@ -272,7 +313,7 @@ export default class PoolsStore {
 
   syncPoolsLiquidity = () =>
     this.pools.forEach((pool) => {
-      const state = this.getStateByAddress(pool.contractAddress)?.state;
+      const state = this.getStateByAddress(pool.address)?.state;
       state && pool.syncLiquidity(state);
     });
 

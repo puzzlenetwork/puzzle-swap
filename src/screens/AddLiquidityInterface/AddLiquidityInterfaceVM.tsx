@@ -97,7 +97,7 @@ class AddLiquidityInterfaceVM {
   }
 
   public get baseToken() {
-    return this.pool!.getAssetById(this.pool!.baseTokenId)!;
+    return this.pool!.getAssetById(this.pool!.base_token_id)!;
   }
 
   get minPIssued() {
@@ -203,7 +203,7 @@ class AddLiquidityInterfaceVM {
 
   depositMultiply = async () => {
     const { accountStore } = this.rootStore;
-    if (this.pool?.contractAddress == null) return;
+    if (this.pool?.address == null) return;
     if (this.tokensToDepositAmounts == null || this.pool.layer2Address == null)
       return;
     this._setLoading(true);
@@ -226,7 +226,7 @@ class AddLiquidityInterfaceVM {
         call: {
           function: "generateIndexAndStake",
           args: this.pool.isCustom
-            ? [{ type: "string", value: this.pool.contractAddress }]
+            ? [{ type: "string", value: this.pool.address }]
             : [],
         },
       })
@@ -290,7 +290,7 @@ class AddLiquidityInterfaceVM {
 
   depositBaseToken = async () => {
     if (
-      this.pool?.contractAddress == null ||
+      this.pool?.address == null ||
       this.pool.layer2Address == null ||
       !this.canDepositBaseToken
     ) {
@@ -312,7 +312,7 @@ class AddLiquidityInterfaceVM {
         call: {
           function: "generateIndexWithOneTokenAndStake",
           args: this.pool.isCustom
-            ? [{ type: "string", value: this.pool.contractAddress }]
+            ? [{ type: "string", value: this.pool.address }]
             : [],
         },
       })

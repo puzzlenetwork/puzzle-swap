@@ -42,17 +42,17 @@ const PoolsWithToken: React.FC<IProps> = () => {
           tokens.map((t) => t.assetId).includes(vm.asset.assetId)
         )
         .sort((a, b) => {
-          if (a.statistics?.apy != null && b.statistics?.apy != null) {
-            if (new BN(a.statistics.apy).lt(b.statistics.apy)) {
+          if (a.statistics?.apr != null && b.statistics?.apr != null) {
+            if (new BN(a.statistics.apr).lt(b.statistics.apr)) {
               return sortApy ? 1 : -1;
-            } else if (new BN(a.statistics.apy).eq(b.statistics.apy)) {
+            } else if (new BN(a.statistics.apr).eq(b.statistics.apr)) {
               return 0;
             } else {
               return sortApy ? -1 : 1;
             }
-          } else if (a.statistics?.apy != null) {
+          } else if (a.statistics?.apr != null) {
             return -1;
-          } else if (b.statistics?.apy != null) {
+          } else if (b.statistics?.apr != null) {
             return 1;
           }
           return 1;
@@ -82,7 +82,7 @@ const PoolsWithToken: React.FC<IProps> = () => {
               </Column>
             </Row>
           ),
-          apy: new BN(pool.statistics?.apy ?? 0).toFormat(2) + " %",
+          apy: new BN(pool.statistics?.apr ?? 0).toFormat(2) + " %",
           value: "$ " + pool.globalLiquidity.toFormat(2),
         }))
     );

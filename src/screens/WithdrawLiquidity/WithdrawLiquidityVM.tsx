@@ -157,7 +157,7 @@ class WithdrawLiquidityVM {
     const args = this.pool.isCustom
       ? [
           { type: "integer", value },
-          { type: "string", value: this.pool.contractAddress },
+          { type: "string", value: this.pool.address },
         ]
       : [{ type: "integer", value }];
 

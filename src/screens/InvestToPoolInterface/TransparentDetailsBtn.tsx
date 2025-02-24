@@ -69,7 +69,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
           prefix={linkIcon}
           kind="secondary"
           onClick={() =>
-            window.open(`${EXPLORER_URL}/address/${vm.pool.contractAddress}`)
+            window.open(`${EXPLORER_URL}/address/${vm.pool.address}`)
           }
         >
           View on Explorer
@@ -88,7 +88,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
     {
       title: "Fees earned (30 days)",
       value: vm.pool.statistics
-        ? `$ ${new BN(vm.pool.statistics.monthlyFees).toFormat(2)}`
+        ? `$ ${new BN(vm.pool.statistics.owner_fees).toFormat(2)}` // TODO: monthlyFees должно быть
         : "–",
     },
   ];
@@ -116,25 +116,25 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
     {
       title: "Volume (7D)",
       value: vm.pool.statistics
-        ? `$${new BN(vm.pool.statistics.weeklyVolume).toFormat(2)}`
+        ? `$${new BN(vm.pool.statistics.volume).toFormat(2)}` // TODO: weeklyVolume
         : "–",
     },
     {
       title: "Liquidity Providers Fee (7D)",
-      value: vm.pool.statistics && vm.pool.statistics.weeklyFees
-        ? `$${new BN(vm.pool.statistics.weeklyFees).div(10).times(5).toFormat(2)}`
+      value: vm.pool.statistics && vm.pool.statistics.pool_fees
+        ? `$${new BN(vm.pool.statistics.pool_fees).div(10).times(5).toFormat(2)}` // TODO: weeklyFees
         : "–",
     },
     {
       title: "Owner Fee (7D)",
-      value: vm.pool.statistics && vm.pool.statistics.weeklyFees
-        ? `$${new BN(vm.pool.statistics.weeklyFees).div(10).times(1).toFormat(2)}`
+      value: vm.pool.statistics && vm.pool.statistics.pool_fees
+        ? `$${new BN(vm.pool.statistics.pool_fees).div(10).times(1).toFormat(2)}` // TODO: weeklyFees
         : "–",
     },
     {
       title: "Protocol Fee (7D)",
-      value: vm.pool.statistics && vm.pool.statistics.weeklyFees
-        ? `$${new BN(vm.pool.statistics.weeklyFees).div(10).times(4).toFormat(2)}`
+      value: vm.pool.statistics && vm.pool.statistics.pool_fees
+        ? `$${new BN(vm.pool.statistics.pool_fees).div(10).times(4).toFormat(2)}` // TODO: weeklyFees
         : "–",
     },
     {

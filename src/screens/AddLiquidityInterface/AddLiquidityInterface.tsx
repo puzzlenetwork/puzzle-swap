@@ -72,11 +72,10 @@ const AddLiquidityInterfaceImpl = observer(() => {
         <SizedBox height={24} />
         <ShortPoolInfoCard
           title="To"
-          poolLogo={pool && pool.logo}
-          poolName={pool && pool.title}
+          poolLogo={pool?.logo}
+          poolName={pool?.title}
           apy={
-            pool?.statistics?.apy &&
-            new BN(pool?.statistics?.apy).toFormat(2) + " %"
+            pool?.statistics?.apr ? `${new BN(pool?.statistics?.apr).toFormat(2)} %` : undefined
           }
           onChangePool={() => vm.setChangePoolModalOpen(true)}
         />
