@@ -1,11 +1,15 @@
 import axios from "axios";
 import { TPoolState } from "@stores/PoolsStore";
-import { IPoolConfigStatistics, IPoolStats } from "@src/constants";
-import { IAssetsPoolInfo } from "@src/entities/Pool";
+import { IBoostings, IPoolConfig, IPoolConfigStatistics, IPoolStats } from "@src/constants";
+import { stat } from "fs";
+import { IHistory } from "@src/utils/types";
 
-interface IAssetConfig {
-  assetId: string;
-  share: number;
+export interface IAssetConfig {
+  asset_id: string,
+  share: number,
+  balance?: number,
+  real_balance?: number,
+  name?: string
 }
 
 export interface IStakingStatsResponse {
@@ -27,23 +31,37 @@ interface ICreatePoolData {
 interface IPoolSettings {
   domain: string;
   isCustom?: boolean;
-  contractAddress: string;
+  address: string;
   layer2Address?: string;
   baseTokenId: string;
   title: string;
-  assets: Array<IAssetsPoolInfo>;
+  assets: Array<IAssetConfig>;
   logo: string;
   artefactOriginTransactionId?: string;
   owner: string;
 }
 
-interface IGetPools {
-  timeRange?: string
+export interface IGetPools {
+  timeRange?: "1d" | "7d" | "30d" | "90d" | "1y" | "all";
+  sortBy?: "apr" | "liquidity" | "volume";
+  order?: "asc" | "desc";
+  page: number;
+  size: number;
+  title: string;
+  version: string
 }
 
 const poolService = {
   getPoolByDomain: async (domain: string): Promise<IPoolSettings> => {
     const req = `${process.env.REACT_APP_API_BASE}/api/v1/pools/${domain}`;
+    const { data } = await axios.get(req);
+    return data;
+  },
+  getPoolChartByDomain: async (address: string): Promise<IHistory[]> => {
+    const params = new URLSearchParams({ 
+      timeRange: "all",
+    });
+    const req = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/${address}/charts?${params.toString()}`;
     const { data } = await axios.get(req);
     return data;
   },
@@ -76,33 +94,15 @@ const poolService = {
     );
     return true;
   },
-
-  getPools: async (data: IGetPools): Promise<
-    Array<IPoolSettings & { statistics?: IPoolConfigStatistics, stats: IPoolStats, assets?: IAssetsPoolInfo[]; }>
-  > => {
-    const { data: poolsData } = await axios.get(
-      `${process.env.REACT_APP_API_BASE}/api/v1/pools`
-    );
-  
-    const params = new URLSearchParams({ amount: '500' });
-    if (data?.timeRange) {
-      params.append('timeRange', data?.timeRange);
-    }
-  
+  getPools: async (data: IGetPools): Promise<{ pools: Array<IPoolConfig & { stats: IPoolStats, assets: IAssetConfig[], liquidity: number, boostings: IBoostings }>, totalItems: number }> => {
+    const params = new URLSearchParams();
+    Object.entries(data).forEach(([key, value]) => {
+      params.append(key, value);
+    });
     const { data: statsData } = await axios.get(
-      `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/?${params.toString()}`
+      `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/all?${params.toString()}`
     );
-  
-    const poolsMap = Object.fromEntries(
-      poolsData.map((item: IPoolSettings) => [item.contractAddress, item])
-    );
-  
-    const mergedData = statsData.map((stat: any) => ({
-      ...(poolsMap[stat.address] || {}),
-      ...stat,
-    }));
-  
-    return mergedData;
+    return {pools: statsData.pools, totalItems: statsData.total};
   },
   getStats: async (): Promise<IStakingStatsResponse> => {
     const { data } = await axios.get(

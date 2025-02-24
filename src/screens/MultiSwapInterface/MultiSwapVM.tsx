@@ -185,13 +185,13 @@ class MultiSwapVM {
 
   swap = async () => {
     const { notificationStore } = this.rootStore;
-    if (this.pool?.contractAddress == null) return;
+    if (this.pool?.address == null) return;
     if (this.token0 == null || this.amount0.eq(0)) return;
     if (!this.token1 || !this.amount1.gt(0) || !this.minimumToReceive) return;
     this._setLoading(true);
     this.rootStore.accountStore
       .invoke({
-        dApp: this.pool.contractAddress,
+        dApp: this.pool.address,
         payment: [
           {
             assetId:

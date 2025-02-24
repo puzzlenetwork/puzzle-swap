@@ -6,10 +6,10 @@ import { IAssetBalance } from "@src/entities/Balance";
 import { IToken } from "@src/constants";
 import { Row } from "@components/Flex";
 import { useTheme } from "@emotion/react";
-import { IAssetsPoolInfo } from "@src/entities/Pool";
+import { IAssetConfig } from "@src/services/poolsService";
 
 interface IProps {
-  tokens: IAssetsPoolInfo[];
+  tokens: IAssetConfig[];
   findBalanceByAssetId: (assetId: string) => IAssetBalance | null | undefined;
 }
 

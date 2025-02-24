@@ -4,6 +4,7 @@ import BN from "@src/utils/BN";
 import tokenLogos from "@src/constants/tokenLogos";
 import nodeService from "@src/services/nodeService";
 import { getStateByKey } from "@src/utils/getStateByKey";
+import { IAssetConfig } from "@src/services/poolsService";
 
 export interface IData {
   key: string;
@@ -20,20 +21,12 @@ export interface IShortPoolInfo {
   indexTokenName: string;
 }
 
-export interface IAssetsPoolInfo {
-  asset_id: string,
-  share: number,
-  balance: number,
-  real_balance: number,
-  name: string
-}
-
 class Pool implements IPoolConfig {
   public readonly owner?: string;
   public readonly domain: string;
-  public readonly contractAddress: string;
+  public readonly address: string;
   public readonly layer2Address?: string;
-  public readonly baseTokenId: string;
+  public readonly base_token_id: string;
   public readonly title: string;
   public readonly isCustom?: boolean;
   public readonly artefactOriginTransactionId?: string;
@@ -45,7 +38,7 @@ class Pool implements IPoolConfig {
   public readonly tokens: Array<IToken & { share: number }> = [];
   private readonly _logo?: string;
   public readonly stats?: IPoolStats;
-  public readonly assets?: IAssetsPoolInfo[];
+  public readonly assets?: IAssetConfig[];
 
   public history?: Array<{ date: number; volume: string }>;
   public statistics?: IPoolConfigStatistics;
@@ -98,9 +91,9 @@ class Pool implements IPoolConfig {
 
 
   constructor(params: IPoolConfig) {
-    this.contractAddress = params.contractAddress;
-    this.layer2Address = params.layer2Address;
-    this.baseTokenId = params.baseTokenId;
+    this.address = params.address;
+    this.layer2Address = params.layer_2_address;
+    this.base_token_id = params.base_token_id;
     this.title = params.title;
     this._logo = params.logo;
     this.tokens = params.tokens;
@@ -108,14 +101,11 @@ class Pool implements IPoolConfig {
     this.defaultAssetId1 = params.defaultAssetId1 ?? params.tokens[1].assetId;
     this.domain = params.domain;
     this.isCustom = params.isCustom;
-    this.artefactOriginTransactionId = params.artefactOriginTransactionId;
+    this.artefactOriginTransactionId = params.artefact_origin_transaction_id;
     this.owner = params.owner;
     this.version = params.version ?? "PZ-1.0.0";
-    this.swapFee = params.swapFee ?? 2;
-    this.createdAt = params.createdAt ?? "";
-    if (new BN(params.statistics?.liquidity || 0).gt(0))
-      this.statistics = params.statistics;
-    this.history = params.history;
+    this.swapFee = params.swap_fee ?? 2;
+    this.createdAt = params.created_at?.toString() ?? "";
     this.stats = params.stats;
     this.assets = params.assets;
     makeAutoObservable(this);
@@ -327,7 +317,7 @@ class Pool implements IPoolConfig {
   };
 
   contractKeysRequest = (keys: string[] | string) =>
-    nodeService.nodeKeysRequest(this.contractAddress, keys);
+    nodeService.nodeKeysRequest(this.address, keys);
 }
 
 export default Pool;

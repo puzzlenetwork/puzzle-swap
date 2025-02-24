@@ -76,7 +76,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const navigate = useNavigate();
   const handleSmartContractClick = () =>
-    window.open(`https://wscan.io/${vm.pool.contractAddress}`);
+    window.open(`https://wscan.io/${vm.pool.address}`);
   const completePoolInitialization = () => {
     vm.prepareCompletePoolInitialization();
     navigate(ROUTES.POOLS_CREATE);
@@ -125,7 +125,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
                 Smart Contract
               </Text>
               <TextButton prefix={link} onClick={handleSmartContractClick}>
-                {centerEllipsis(vm.pool?.contractAddress ?? "", 8)}
+                {centerEllipsis(vm.pool?.address ?? "", 8)}
               </TextButton>
             </Column>
             <Column>

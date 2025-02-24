@@ -464,7 +464,7 @@ class CreateCustomPoolsVm {
     const accountStore = this.rootStore.accountStore;
     return accountStore
       .invoke({
-        dApp: pool.contractAddress,
+        dApp: pool.address,
         payment: this.assetsForInitFunction,
         fee: 100500000,
         call: { function: "init", args: [] },
@@ -583,7 +583,7 @@ class CreateCustomPoolsVm {
       await this.spendArtefact();
 
       const assets = this.poolsAssets.map(({ asset, share }) => ({
-        assetId: asset.assetId,
+        asset_id: asset.assetId,
         share: share.div(10).toNumber(),
       }));
 

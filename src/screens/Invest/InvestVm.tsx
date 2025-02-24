@@ -24,13 +24,28 @@ export const useInvestVM = () => useVM(ctx);
 class InvestVM {
   public rootStore: RootStore;
   searchValue = "";
-  setSearchValue = (v: string) => (this.searchValue = v);
+  setSearchValue = (v: string) => {
+    this.searchValue = v
+    this.rootStore.poolsStore.setSearchPool(v)
+  }
 
   sortApy = true;
-  setSortApy = (v: boolean) => (this.sortApy = v);
+  setSortApy = (v: boolean) => {
+    this.sortApy = v
+    this.rootStore.poolsStore.setFilter({
+      sortBy: "apr",
+      order: v ? "asc" : "desc"
+    })
+  }
 
   sortLiquidity = true;
-  setSortLiquidity = (v: boolean) => (this.sortLiquidity = v);
+  setSortLiquidity = (v: boolean) => {
+    this.sortLiquidity = v
+    this.rootStore.poolsStore.setFilter({
+      sortBy: "liquidity",
+      order: v ? "asc" : "desc"
+    })
+  }
 
   sortBalance = true;
   setSortBalance = (v: boolean) => (this.sortBalance = v);
@@ -41,16 +56,6 @@ class InvestVM {
   poolCategoryFilter: number = 0;
   setPoolCategoryFilter = (v: number) => (this.poolCategoryFilter = v);
 
-  versionOptions = [
-    { title: "All versions", key: "all" },
-    { title: "PZ-1.0.0", key: "PZ-1.0.0" },
-    { title: "PZ-1.2.1", key: "PZ-1.2.1" },
-    { title: "PZ-1.2.3", key: "PZ-1.2.3" },
-  ];
-
-  versionFilter: number = 0;
-  setVersionFilter = (v: number) => (this.versionFilter = v);
-
   customPoolFilter: number = 0;
   setCustomPoolFilter = (v: number) => (this.customPoolFilter = v);
 
@@ -59,25 +64,12 @@ class InvestVM {
     this.rootStore = rootStore;
     this.syncCustomPools();
     makeAutoObservable(this);
-    reaction(
-      () => this.rootStore.poolsStore.volumeByTimeFilter,
-      async () => {
-        const rawPools = await poolService.getPools({timeRange: this.rootStore.poolsStore.volumeByTimestamp[this.rootStore.poolsStore.volumeByTimeFilter].key});
-        const pools = rawPools.map((p) => {
-          const tokens = p.assets.map(({ asset_id, share }) => ({
-            ...TOKENS_BY_ASSET_ID[asset_id],
-            share,
-          }));
-          return new Pool({ ...p, tokens });
-        });
-        this.rootStore.poolsStore.setPools(pools);
-      }
-    );
   }
 
   syncCustomPools = async () => {
-    const rawPools = await poolService.getPools({timeRange: this.rootStore.poolsStore.volumeByTimestamp[this.rootStore.poolsStore.volumeByTimeFilter].key});
-    const pools = rawPools.map((p) => {
+    const {pools: poolsData, totalItems} = await poolService.getPools(this.rootStore.poolsStore.paramsAllPools);
+    this.rootStore.poolsStore.setTotalItems(totalItems)
+    const pools = poolsData.map((p) => {
       const tokens = p.assets.map(({ asset_id, share }) => ({
         ...TOKENS_BY_ASSET_ID[asset_id],
         share,
