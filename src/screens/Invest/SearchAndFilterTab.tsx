@@ -136,9 +136,9 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
             style={{ height: 40 }}
             icon="search"
             placeholder="Search by title or asset…"
-            value={vm.searchValue}
-            onChange={(e) => vm.setSearchValue(e.target.value)}
-            suffixCondition={vm.searchValue.length > 1}
+            value={poolsStore.searchValue}
+            onChange={(e) => poolsStore.setSearchValue(e.target.value)}
+            suffixCondition={poolsStore.searchValue.length > 1}
           />
         </InputWrapper>
       </Filters>

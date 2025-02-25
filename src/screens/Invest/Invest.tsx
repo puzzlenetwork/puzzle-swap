@@ -58,16 +58,15 @@ const Subtitle = styled(Text)`
   }
 `;
 const InvestImpl: React.FC<IProps> = () => {
-  const vm = useInvestVM();
-  const { accountStore } = useStores();
+  const { accountStore, poolsStore } = useStores();
   return (
     <Layout>
       <Observer>
         {() => (
           <Root
-            apySort={vm.sortApy}
-            liquiditySort={vm.sortLiquidity}
-            balanceSort={vm.sortBalance}
+            apySort={poolsStore.sortApy}
+            liquiditySort={poolsStore.sortLiquidity}
+            balanceSort={poolsStore.sortBalance}
           >
             <Text weight={500} size="large">
               Puzzle Megapools
