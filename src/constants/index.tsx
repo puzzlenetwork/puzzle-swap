@@ -610,7 +610,7 @@ export interface IPoolConfigStatistics {
   owner_fees: number,
   protocol_fees: number,
   volume: number,
-  boostedApy: number
+  boostedApy: number | null,
   boostings?: IBoostings[],
   totals?: ITotals
 } 
