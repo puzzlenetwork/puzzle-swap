@@ -144,7 +144,7 @@ class BoostApyVm {
   }
 
   boost = async () => {
-    if (this.pool?.contractAddress == null) return;
+    if (this.pool?.address == null) return;
     if (this.token == null) return;
     if (this.amount.eq(0)) return;
     this._setLoading(true);
@@ -162,7 +162,7 @@ class BoostApyVm {
         call: {
           function: "addBoosting",
           args: [
-            { type: "string", value: this.pool.contractAddress },
+            { type: "string", value: this.pool.address },
             { type: "integer", value: this.days.toString() },
           ],
         },

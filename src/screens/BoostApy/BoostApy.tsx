@@ -72,7 +72,7 @@ const BoostApyImpl: React.FC<IProps> = () => {
                     size="small"
                     ellipsis={150}
                   >
-                    {new BN(vm.pool?.statistics?.apy ?? 0).toFormat(2) + " %"}
+                    {new BN(vm.pool?.statistics?.apr ?? 0).toFormat(2) + " %"}
                   </Text>
                   <SizedBox width={2} />
                   <Text

@@ -1,10 +1,14 @@
 import axios from "axios";
 import { TPoolState } from "@stores/PoolsStore";
-import { IPoolConfigStatistics } from "@src/constants";
+import { IBoostings, IPoolConfig, IPoolStats } from "@src/constants";
+import { IHistory } from "@src/utils/types";
 
-interface IAssetConfig {
-  assetId: string;
-  share: number;
+export interface IAssetConfig {
+  asset_id: string,
+  share: number,
+  balance?: number,
+  real_balance?: number,
+  name?: string
 }
 
 export interface IStakingStatsResponse {
@@ -26,7 +30,7 @@ interface ICreatePoolData {
 interface IPoolSettings {
   domain: string;
   isCustom?: boolean;
-  contractAddress: string;
+  address: string;
   layer2Address?: string;
   baseTokenId: string;
   title: string;
@@ -36,9 +40,27 @@ interface IPoolSettings {
   owner: string;
 }
 
+export interface IGetPools {
+  timeRange?: "1d" | "7d" | "30d" | "90d" | "1y" | "all";
+  sortBy?: "apr" | "liquidity" | "volume";
+  order?: "asc" | "desc";
+  page: number;
+  size: number;
+  title?: string;
+  version?: string
+}
+
 const poolService = {
   getPoolByDomain: async (domain: string): Promise<IPoolSettings> => {
     const req = `${process.env.REACT_APP_API_BASE}/api/v1/pools/${domain}`;
+    const { data } = await axios.get(req);
+    return data;
+  },
+  getPoolChartByDomain: async (address: string): Promise<IHistory[]> => {
+    const params = new URLSearchParams({ 
+      timeRange: "all",
+    });
+    const req = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/${address}/charts?${params.toString()}`;
     const { data } = await axios.get(req);
     return data;
   },
@@ -71,17 +93,15 @@ const poolService = {
     );
     return true;
   },
-  getPools: async (): Promise<
-    Array<IPoolSettings & { statistics?: IPoolConfigStatistics }>
-  > => {
-    const { data } = await axios.get(
-      `${process.env.REACT_APP_API_BASE}/api/v1/pools`
+  getPools: async (data: IGetPools): Promise<{ pools: Array<IPoolConfig & { stats: IPoolStats, assets: IAssetConfig[], liquidity: number, boostings: IBoostings }>, totalItems: number }> => {
+    const params = new URLSearchParams();
+    Object.entries(data).forEach(([key, value]) => {
+      params.append(key, value);
+    });
+    const { data: statsData } = await axios.get(
+      `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/all?${params.toString()}`
     );
-    // TODO: switch to the new API link
-    // const data = Array(await axios.get(
-    //     'https://swapapi.puzzleswap.org/stats/v1/statistics/pools/?amount=500&sort=LIQ&timeRange=7d&minLiquidity=20'
-    // ));
-    return data;
+    return {pools: statsData.pools, totalItems: statsData.total};
   },
   getStats: async (): Promise<IStakingStatsResponse> => {
     const { data } = await axios.get(

@@ -102,8 +102,8 @@ const ChangePoolModal: React.FC<IProps> = ({
                 </Row>
                 <Column>
                   <Text>
-                    {(pool.statistics?.apy &&
-                      new BN(pool.statistics?.apy).toFormat(2)) ??
+                    {(pool.statistics?.apr &&
+                      new BN(pool.statistics?.apr).toFormat(2)) ??
                       "--"}
                     %
                   </Text>

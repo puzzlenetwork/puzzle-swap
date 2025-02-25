@@ -9,6 +9,7 @@ import { Line, LineChart, Tooltip, XAxis } from "recharts";
 import useWindowSize from "@src/hooks/useWindowSize";
 import dayjs from "dayjs";
 import BN from "@src/utils/BN";
+import poolsService from "@src/services/poolsService";
 
 interface IProps {}
 
@@ -54,10 +55,10 @@ const TradesVolume: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
   const { width: screenWidth } = useWindowSize();
   const chartWidth = screenWidth ? calcChartWidth(screenWidth) : 0;
-  const stats = vm.pool.history || (vm.pool.statistics?.volume || []);
+  const stats = vm.history
   const data = stats
-    .map((v) => ({ ...v, volume: Number(v.volume) }))
-    .sort((a, b) => (a.date < b.date ? -1 : 1));
+    .map((v) => ({ ...v, volume: Number(v.volume), date: v.time * 1000 }))
+    .sort((a, b) => (a.time < b.time ? -1 : 1));
   return (
     <Root
       disabled={

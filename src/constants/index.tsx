@@ -2,6 +2,7 @@ import tokens from "./tokens.json";
 import tokensDetails from "./tokenDetails.json";
 import nftsPics from "@src/constants/nftsPics";
 import tokenLogos from "@src/constants/tokenLogos";
+import { IAssetConfig } from "@src/services/poolsService";
 
 export const ROUTES = {
   ROOT: "/",
@@ -39,12 +40,13 @@ export const TOKENS_BY_ASSET_ID: Record<string, IToken> = TOKENS_LIST.reduce(
   (acc, t) => ({ ...acc, [t.assetId]: t }),
   {}
 );
+console.log('TOKENS_BY_SYMBOL.TSN.assetId', TOKENS_BY_SYMBOL.TSN)
 export const POOL_CONFIG: IPoolConfig[] = [
   {
     domain: "tsunami",
-    contractAddress: "3PN1eJpdhJyRptcN9iLTarsJBtR2Kb3NXSU",
-    layer2Address: "3P9nxQiTo73ZASrxaVCA7o95gymQbSp7GXf",
-    baseTokenId: TOKENS_BY_SYMBOL.TSN.assetId,
+    address: "3PN1eJpdhJyRptcN9iLTarsJBtR2Kb3NXSU",
+    layer_2_address: "3P9nxQiTo73ZASrxaVCA7o95gymQbSp7GXf",
+    base_token_id: TOKENS_BY_SYMBOL.TSN.assetId,
     title: "Tsunami ILO Pool",
     logo: tokenLogos.TSN,
     defaultAssetId0: TOKENS_BY_SYMBOL.TSN.assetId,
@@ -53,12 +55,24 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.TSN, share: 90, logo: tokenLogos.TSN },
       { ...TOKENS_BY_SYMBOL.XTN, share: 10, logo: tokenLogos.XTN },
     ],
+    created_at: 0,
+    fee_token_id: "",
+    isCustom: false,
+    last_historical_txId: "",
+    last_processed_txId: "",
+    last_saved_time: 0,
+    lp_token_amount: 0,
+    lp_token_id: "",
+    owner: "",
+    rebalances: [],
+    swap_fee: 0,
+    version: ""
   },
   {
     domain: "pool10",
-    contractAddress: "3PLiXyywNThdvf3vVEUxwc7TJTucjZvuegh",
-    layer2Address: "3P4oa7KAvocZhPXQ1B6ncAopzLEZUtMwbHF",
-    baseTokenId: TOKENS_BY_SYMBOL.BTC_WXG.assetId,
+    address: "3PLiXyywNThdvf3vVEUxwc7TJTucjZvuegh",
+    layer_2_address: "3P4oa7KAvocZhPXQ1B6ncAopzLEZUtMwbHF",
+    base_token_id: TOKENS_BY_SYMBOL.BTC_WXG.assetId,
     title: "Pool10",
     logo: tokenLogos.BTC_WXG,
     defaultAssetId0: TOKENS_BY_SYMBOL.BTC_WXG.assetId,
@@ -69,12 +83,24 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.ETH_WXG, share: 25, logo: tokenLogos.ETH_WXG },
       { ...TOKENS_BY_SYMBOL.XTN, share: 25, logo: tokenLogos.XTN },
     ],
+    created_at: 0,
+    fee_token_id: "",
+    isCustom: false,
+    last_historical_txId: "",
+    last_processed_txId: "",
+    last_saved_time: 0,
+    lp_token_amount: 0,
+    lp_token_id: "",
+    owner: "",
+    rebalances: [],
+    swap_fee: 0,
+    version: ""
   },
   {
     domain: "nsbt",
-    contractAddress: "3PEStCRPQuW3phthTtQ5upGeb4WZ47kssyM",
-    layer2Address: "3PD7yAzyCEMNBnXzE8AuSsqogHUpSLjwAYA",
-    baseTokenId: TOKENS_BY_SYMBOL.NSBT.assetId,
+    address: "3PEStCRPQuW3phthTtQ5upGeb4WZ47kssyM",
+    layer_2_address: "3PD7yAzyCEMNBnXzE8AuSsqogHUpSLjwAYA",
+    base_token_id: TOKENS_BY_SYMBOL.NSBT.assetId,
     title: "sNSBT/NSBT pool",
     logo: tokenLogos.SNSBT,
     defaultAssetId0: TOKENS_BY_SYMBOL.SNSBT.assetId,
@@ -84,6 +110,18 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.NSBT, share: 20, logo: tokenLogos.NSBT },
       { ...TOKENS_BY_SYMBOL.XTN, share: 5, logo: tokenLogos.XTN },
     ],
+    created_at: 0,
+    fee_token_id: "",
+    isCustom: false,
+    last_historical_txId: "",
+    last_processed_txId: "",
+    last_saved_time: 0,
+    lp_token_amount: 0,
+    lp_token_id: "",
+    owner: "",
+    rebalances: [],
+    swap_fee: 0,
+    version: ""
   },
   // {
   //   domain: "vlad",
@@ -101,9 +139,9 @@ export const POOL_CONFIG: IPoolConfig[] = [
   // },
   {
     domain: "vusd",
-    contractAddress: "3PCq2VqxGMmEyB8gLoUi8KuV9tYSD3VMC74",
-    layer2Address: "3P6oobNcfLt69HMzQC37JAAGBWtrygU4amc",
-    baseTokenId: TOKENS_BY_SYMBOL.XTN.assetId,
+    address: "3PCq2VqxGMmEyB8gLoUi8KuV9tYSD3VMC74",
+    layer_2_address: "3P6oobNcfLt69HMzQC37JAAGBWtrygU4amc",
+    base_token_id: TOKENS_BY_SYMBOL.XTN.assetId,
     title: "Vires USD Pool",
     logo: tokenLogos.XTN,
     defaultAssetId0: TOKENS_BY_SYMBOL.VIRES_USDC_LP.assetId,
@@ -121,12 +159,24 @@ export const POOL_CONFIG: IPoolConfig[] = [
       },
       { ...TOKENS_BY_SYMBOL.XTN, share: 40, logo: tokenLogos.XTN },
     ],
+    created_at: 0,
+    fee_token_id: "",
+    isCustom: false,
+    last_historical_txId: "",
+    last_processed_txId: "",
+    last_saved_time: 0,
+    lp_token_amount: 0,
+    lp_token_id: "",
+    owner: "",
+    rebalances: [],
+    swap_fee: 0,
+    version: ""
   },
   {
     domain: "www",
-    contractAddress: "3PAviuHPCX8fD7M5fGpFTQZb4HchWCJb3ct",
-    layer2Address: "3PFF8UuNfvAGk6KvgyeD4HfZ4TRmHgtgt5W",
-    baseTokenId: TOKENS_BY_SYMBOL.WX.assetId,
+    address: "3PAviuHPCX8fD7M5fGpFTQZb4HchWCJb3ct",
+    layer_2_address: "3PFF8UuNfvAGk6KvgyeD4HfZ4TRmHgtgt5W",
+    base_token_id: TOKENS_BY_SYMBOL.WX.assetId,
     title: "WWW Pool 🔥",
     logo: tokenLogos.WX,
     defaultAssetId0: TOKENS_BY_SYMBOL.WX.assetId,
@@ -137,12 +187,24 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.WEST, share: 10, logo: tokenLogos.WEST },
       { ...TOKENS_BY_SYMBOL.XTN, share: 20, logo: tokenLogos.XTN },
     ],
+    created_at: 0,
+    fee_token_id: "",
+    isCustom: false,
+    last_historical_txId: "",
+    last_processed_txId: "",
+    last_saved_time: 0,
+    lp_token_amount: 0,
+    lp_token_id: "",
+    owner: "",
+    rebalances: [],
+    swap_fee: 0,
+    version: ""
   },
   {
     domain: "snsbttci",
-    contractAddress: "3PPrsyW3VuxU15FuBKfbVh5JdmAkmU3ApPv",
-    layer2Address: "3P44Y7if4hZAgUn9K3R7buzb3TQn6NzTcu7",
-    baseTokenId: TOKENS_BY_SYMBOL.XTN.assetId,
+    address: "3PPrsyW3VuxU15FuBKfbVh5JdmAkmU3ApPv",
+    layer_2_address: "3P44Y7if4hZAgUn9K3R7buzb3TQn6NzTcu7",
+    base_token_id: TOKENS_BY_SYMBOL.XTN.assetId,
     title: "sNSBT_TCI pool",
     logo: tokenLogos.SNSBTTCI,
     defaultAssetId0: TOKENS_BY_SYMBOL.SNSBTTCI.assetId,
@@ -153,12 +215,24 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.WAVES, share: 10, logo: tokenLogos.WAVES },
       { ...TOKENS_BY_SYMBOL.XTN, share: 5, logo: tokenLogos.XTN },
     ],
+    created_at: 0,
+    fee_token_id: "",
+    isCustom: false,
+    last_historical_txId: "",
+    last_processed_txId: "",
+    last_saved_time: 0,
+    lp_token_amount: 0,
+    lp_token_id: "",
+    owner: "",
+    rebalances: [],
+    swap_fee: 0,
+    version: ""
   },
   {
     domain: "sheg",
-    contractAddress: "3PC87Z4vUzet6tTrTQmzJmW1UtouKjLhBJi",
-    layer2Address: "3PJvGRBaL5FrK5tHax6cJvkZWrHtDUmiDdF",
-    baseTokenId: TOKENS_BY_SYMBOL.SHEG.assetId,
+    address: "3PC87Z4vUzet6tTrTQmzJmW1UtouKjLhBJi",
+    layer_2_address: "3PJvGRBaL5FrK5tHax6cJvkZWrHtDUmiDdF",
+    base_token_id: TOKENS_BY_SYMBOL.SHEG.assetId,
     title: "Ducklization IDO Pool",
     logo: tokenLogos.SHEG,
     defaultAssetId0: TOKENS_BY_SYMBOL.SHEG.assetId,
@@ -169,12 +243,24 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.WAVES, share: 13, logo: tokenLogos.WAVES },
       { ...TOKENS_BY_SYMBOL.EGG, share: 12, logo: tokenLogos.EGG },
     ],
+    created_at: 0,
+    fee_token_id: "",
+    isCustom: false,
+    last_historical_txId: "",
+    last_processed_txId: "",
+    last_saved_time: 0,
+    lp_token_amount: 0,
+    lp_token_id: "",
+    owner: "",
+    rebalances: [],
+    swap_fee: 0,
+    version: ""
   },
   {
     domain: "muna",
-    contractAddress: "3P9EydokbUM5XFrHgEUT9bNVgfF7fGmtxLk",
-    layer2Address: "3PLAM86Pm7jR3RTe7JSit2FDf8DnhF8ogG6",
-    baseTokenId: TOKENS_BY_SYMBOL.MUNA.assetId,
+    address: "3P9EydokbUM5XFrHgEUT9bNVgfF7fGmtxLk",
+    layer_2_address: "3PLAM86Pm7jR3RTe7JSit2FDf8DnhF8ogG6",
+    base_token_id: TOKENS_BY_SYMBOL.MUNA.assetId,
     title: "Muna BNB Pool",
     logo: tokenLogos.MUNA,
     defaultAssetId0: TOKENS_BY_SYMBOL.MUNA.assetId,
@@ -184,12 +270,24 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.BNB_WXG, share: 25, logo: tokenLogos.BNB_WXG },
       { ...TOKENS_BY_SYMBOL.XTN, share: 25, logo: tokenLogos.XTN },
     ],
+    created_at: 0,
+    fee_token_id: "",
+    isCustom: false,
+    last_historical_txId: "",
+    last_processed_txId: "",
+    last_saved_time: 0,
+    lp_token_amount: 0,
+    lp_token_id: "",
+    owner: "",
+    rebalances: [],
+    swap_fee: 0,
+    version: ""
   },
   {
     domain: "winter",
-    contractAddress: "3PEZe3Z2FqaVbMTjWJUpnQGxhWh2JRptujM",
-    layer2Address: "3PNBamg45irg9R58gMBM6UvBaUhX5bVys2r",
-    baseTokenId: TOKENS_BY_SYMBOL.XTN.assetId,
+    address: "3PEZe3Z2FqaVbMTjWJUpnQGxhWh2JRptujM",
+    layer_2_address: "3PNBamg45irg9R58gMBM6UvBaUhX5bVys2r",
+    base_token_id: TOKENS_BY_SYMBOL.XTN.assetId,
     title: "Warm Winter Pool ❄️",
     logo: tokenLogos.USDC,
     defaultAssetId0: TOKENS_BY_SYMBOL.EURN.assetId,
@@ -202,12 +300,24 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.VIRES, share: 8, logo: tokenLogos.VIRES },
       { ...TOKENS_BY_SYMBOL.EURN, share: 10, logo: tokenLogos.EURN },
     ],
+    created_at: 0,
+    fee_token_id: "",
+    isCustom: false,
+    last_historical_txId: "",
+    last_processed_txId: "",
+    last_saved_time: 0,
+    lp_token_amount: 0,
+    lp_token_id: "",
+    owner: "",
+    rebalances: [],
+    swap_fee: 0,
+    version: ""
   },
   {
     domain: "defi",
-    contractAddress: "3PDrYPF6izza2sXWffzTPF7e2Fcir2CMpki",
-    layer2Address: "3PJAg4A4gPQXtSLKQNAf5VxbXV2QVM9wPei",
-    baseTokenId: TOKENS_BY_SYMBOL.XTN.assetId,
+    address: "3PDrYPF6izza2sXWffzTPF7e2Fcir2CMpki",
+    layer_2_address: "3PJAg4A4gPQXtSLKQNAf5VxbXV2QVM9wPei",
+    base_token_id: TOKENS_BY_SYMBOL.XTN.assetId,
     title: "Waves DeFi Pool 🔹",
     logo: tokenLogos.WAVES,
     defaultAssetId0: TOKENS_BY_SYMBOL.EGG.assetId,
@@ -224,6 +334,18 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.USDT_WXG, share: 10, logo: tokenLogos.USDT_WXG },
       { ...TOKENS_BY_SYMBOL.XTN, share: 15, logo: tokenLogos.XTN },
     ],
+    created_at: 0,
+    fee_token_id: "",
+    isCustom: false,
+    last_historical_txId: "",
+    last_processed_txId: "",
+    last_saved_time: 0,
+    lp_token_amount: 0,
+    lp_token_id: "",
+    owner: "",
+    rebalances: [],
+    swap_fee: 0,
+    version: ""
   },
   // {
   //   domain: "megapool",
@@ -249,9 +371,9 @@ export const POOL_CONFIG: IPoolConfig[] = [
   // },
   {
     domain: "farms",
-    contractAddress: "3PPRHHF9JKvDLkAc3aHD3Kd5tRZp1CoqAJa",
-    layer2Address: "3PDVDYZiwJzK3pu8vcknuLiKCYBPx6XZntG",
-    baseTokenId: TOKENS_BY_SYMBOL.EGG.assetId,
+    address: "3PPRHHF9JKvDLkAc3aHD3Kd5tRZp1CoqAJa",
+    layer_2_address: "3PDVDYZiwJzK3pu8vcknuLiKCYBPx6XZntG",
+    base_token_id: TOKENS_BY_SYMBOL.EGG.assetId,
     title: "Pool Farms 1",
     logo: tokenLogos.EGG,
     defaultAssetId0: TOKENS_BY_SYMBOL.MATH.assetId,
@@ -284,12 +406,24 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.EGG, share: 10, logo: tokenLogos.EGG },
       { ...TOKENS_BY_SYMBOL.XTN, share: 10, logo: tokenLogos.XTN },
     ],
+    created_at: 0,
+    fee_token_id: "",
+    isCustom: false,
+    last_historical_txId: "",
+    last_processed_txId: "",
+    last_saved_time: 0,
+    lp_token_amount: 0,
+    lp_token_id: "",
+    owner: "",
+    rebalances: [],
+    swap_fee: 0,
+    version: ""
   },
   {
     domain: "farms2",
-    contractAddress: "3PKYPKJPHZENAAwH9e7TF5edDgukNxxBt3M",
-    layer2Address: "3PLNxoMJYKzcA8qQ7hQidGDaUJNvM4w36nj",
-    baseTokenId: TOKENS_BY_SYMBOL.EGG.assetId,
+    address: "3PKYPKJPHZENAAwH9e7TF5edDgukNxxBt3M",
+    layer_2_address: "3PLNxoMJYKzcA8qQ7hQidGDaUJNvM4w36nj",
+    base_token_id: TOKENS_BY_SYMBOL.EGG.assetId,
     title: "Pool Farms 2",
     logo: tokenLogos.EGG,
     defaultAssetId0: TOKENS_BY_SYMBOL.MARVIN.assetId,
@@ -305,12 +439,24 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.EGG, share: 20, logo: tokenLogos.EGG },
       { ...TOKENS_BY_SYMBOL.XTN, share: 10, logo: tokenLogos.XTN },
     ],
+    created_at: 0,
+    fee_token_id: "",
+    isCustom: false,
+    last_historical_txId: "",
+    last_processed_txId: "",
+    last_saved_time: 0,
+    lp_token_amount: 0,
+    lp_token_id: "",
+    owner: "",
+    rebalances: [],
+    swap_fee: 0,
+    version: ""
   },
   {
     domain: "race",
-    contractAddress: "3PNK5ypnPJioLmLUzfK6ezpaePHLxZd6QLj",
-    layer2Address: "3PQSAdwsdyPVVpfBwjtgXboVXUZgeYHycWM",
-    baseTokenId: TOKENS_BY_SYMBOL.XTN.assetId,
+    address: "3PNK5ypnPJioLmLUzfK6ezpaePHLxZd6QLj",
+    layer_2_address: "3PQSAdwsdyPVVpfBwjtgXboVXUZgeYHycWM",
+    base_token_id: TOKENS_BY_SYMBOL.XTN.assetId,
     title: "Race Mega Pool 🚜",
     logo: tokenLogos.RACE,
     defaultAssetId0: TOKENS_BY_SYMBOL.RACE.assetId,
@@ -320,12 +466,24 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.RACE, share: 40, logo: tokenLogos.RACE },
       { ...TOKENS_BY_SYMBOL.XTN, share: 20, logo: tokenLogos.XTN },
     ],
+    created_at: 0,
+    fee_token_id: "",
+    isCustom: false,
+    last_historical_txId: "",
+    last_processed_txId: "",
+    last_saved_time: 0,
+    lp_token_amount: 0,
+    lp_token_id: "",
+    owner: "",
+    rebalances: [],
+    swap_fee: 0,
+    version: ""
   },
   {
     domain: "egg",
-    contractAddress: "3PMHkdVCzeLAYuCh92FPtusuxdLk5xMB51y",
-    layer2Address: "3P84BhX5dCVs1TCgYnGa57kCHrMz4mUBXyE",
-    baseTokenId: TOKENS_BY_SYMBOL.EGG.assetId,
+    address: "3PMHkdVCzeLAYuCh92FPtusuxdLk5xMB51y",
+    layer_2_address: "3P84BhX5dCVs1TCgYnGa57kCHrMz4mUBXyE",
+    base_token_id: TOKENS_BY_SYMBOL.EGG.assetId,
     title: "Egg Uneven Pool 🥚",
     logo: tokenLogos.EGG,
     defaultAssetId0: TOKENS_BY_SYMBOL.XTN.assetId,
@@ -334,11 +492,23 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.EGG, share: 80, logo: tokenLogos.EGG },
       { ...TOKENS_BY_SYMBOL.XTN, share: 20, logo: tokenLogos.XTN },
     ],
+    created_at: 0,
+    fee_token_id: "",
+    isCustom: false,
+    last_historical_txId: "",
+    last_processed_txId: "",
+    last_saved_time: 0,
+    lp_token_amount: 0,
+    lp_token_id: "",
+    owner: "",
+    rebalances: [],
+    swap_fee: 0,
+    version: ""
   },
   {
     domain: "puzzle",
-    contractAddress: "3PFDgzu1UtswAkCMxqqQjbTeHaX4cMab8Kh",
-    baseTokenId: TOKENS_BY_SYMBOL.XTN.assetId,
+    address: "3PFDgzu1UtswAkCMxqqQjbTeHaX4cMab8Kh",
+    base_token_id: TOKENS_BY_SYMBOL.XTN.assetId,
     title: "Puzzle Pool",
     logo: tokenLogos.PUZZLE,
     defaultAssetId0: TOKENS_BY_SYMBOL.PUZZLE.assetId,
@@ -348,6 +518,18 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.PUZZLE, share: 80, logo: tokenLogos.PUZZLE },
       { ...TOKENS_BY_SYMBOL.XTN, share: 10, logo: tokenLogos.XTN },
     ],
+    created_at: 0,
+    fee_token_id: "",
+    isCustom: false,
+    last_historical_txId: "",
+    last_processed_txId: "",
+    last_saved_time: 0,
+    lp_token_amount: 0,
+    lp_token_id: "",
+    owner: "",
+    rebalances: [],
+    swap_fee: 0,
+    version: ""
   },
 ];
 export const CONTRACT_ADDRESSES = {
@@ -407,37 +589,97 @@ export interface IToken {
   category?: string[];
 }
 
-export interface IPoolConfigStatistics {
-  apy: string;
-  boostedApy?: string;
-  boostedDate?: string;
-  boostings?: Array<{ assetId: string; perDay: number }>;
-  monthlyVolume: string;
-  weeklyVolume: string;
-  monthlyFees: string;
-  weeklyFees?: string;
-  fees: string;
-  liquidity: string;
-  volume: Array<{ date: number; volume: string }>;
+export interface IBoostings {
+  boost_id: string,
+  asset_id: string,
+  per_day: number,
+  days: number,
+  finish_timestamp: number,
+  per_day_usd: number,
 }
 
+export interface IPoolConfigStatistics {
+  time_range: string,
+  time_frame: string,
+  apr: number,
+  average_liquidity: number,
+  liquidity: number,
+  lp_price: number,
+  claimed: number,
+  pool_fees: number,
+  owner_fees: number,
+  protocol_fees: number,
+  volume: number,
+  boostedApy: number | null,
+  boostings?: IBoostings[],
+  totals?: ITotals
+} 
+
+export interface IPoolStats {
+  time_range: string,
+  time_frame: string,
+  apr: number,
+  average_liquidity: number,
+  lp_price: number,
+  claimed: number,
+  pool_fees: number,
+  owner_fees: number,
+  protocol_fees: number,
+  volume: number
+}
+
+
+export interface ITotals {
+  volume_all: number,
+  pool_fees_all: number,
+  owner_fees_all: number,
+  protocol_fees_all: number,
+  volume_1y: number,
+  pool_fees_1y: number,
+  owner_fees_1y: number,
+  protocol_fees_1y: number,
+  volume_90d: number,
+  pool_fees_90d: number,
+  owner_fees_90d: number,
+  protocol_fees_90d: number,
+  volume_30d: number,
+  pool_fees_30d: number,
+  owner_fees_30d: number,
+  protocol_fees_30d: number,
+  volume_7d: number,
+  pool_fees_7d: number,
+  owner_fees_7d: number,
+  protocol_fees_7d: number,
+  volume_1d: number,
+  pool_fees_1d: number,
+  owner_fees_1d: number,
+  protocol_fees_1d: number,
+}
 export interface IPoolConfig {
-  domain: string;
-  version?: string;
-  isCustom?: boolean;
-  contractAddress: string;
-  layer2Address?: string;
-  baseTokenId: string;
-  title: string;
+  address: string,
+  layer_2_address?: string,
+  created_at?: number,
+  domain: string,
+  fee_token_id?: string,
+  isCustom?: boolean,
+  last_historical_txId?: string,
+  last_processed_txId?: string,
+  last_saved_time?: number,
+  logo?: string,
+  lp_token_amount?: number,
+  lp_token_id?: string,
+  owner?: string,
+  rebalances?: [],
+  swap_fee?: number,
+  title: string,
+  version?: string,
+  base_token_id: string,
+  stats?: IPoolStats;
+  assets?: IAssetConfig[];
   defaultAssetId0?: string;
   defaultAssetId1?: string;
   tokens: Array<IToken & { share: number }>;
-  poolTokenName?: string;
-  owner?: string;
-  artefactOriginTransactionId?: string;
-  swapFee?: number;
-  createdAt?: string;
-  logo?: string;
-  statistics?: IPoolConfigStatistics;
-  history?: Array<{ date: number; volume: string }>;
+  boosted_apr?: number;
+  artefact_origin_transaction_id?: string;
+  totals?: ITotals
 }

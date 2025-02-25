@@ -12,6 +12,12 @@ export interface ISerializedRootStore {
   poolsStore?: ISerializedPoolsStore;
 }
 
+export interface ISerializedRootFilterStore {
+  page?: number;
+  activeSort?: number;
+  showEmptyBalances?: boolean;
+}
+
 export default class RootStore {
   public accountStore: AccountStore;
   public poolsStore: PoolsStore;

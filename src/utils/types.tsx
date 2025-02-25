@@ -101,3 +101,15 @@ export interface IEvaluateScript {
   expr: string;
   address: string;
 }
+
+export interface IHistory {
+  claimed: number;
+  liquidity: number;
+  lpamount: number;
+  owner_fees: number;
+  pool_fees: number;
+  pool_token_price: number;
+  protocol_fees: number;
+  time: number;
+  volume: number;
+}

@@ -16,15 +16,19 @@ import BN from "@src/utils/BN";
 import Checkbox from "@components/Checkbox";
 import Tag from "@src/components/Tag";
 import { useTheme } from "@emotion/react";
+import { Pagination } from "@src/components/Pagination/Pagination";
+import { useEffect } from "react";
 
 const PoolsTable: React.FC = () => {
+  const [page, setPage] = useState(0)
+  const [lengthData, setLengthData] = useState(0);
   const { poolsStore, accountStore } = useStores();
-  const [activeSort, setActiveSort] = useState<0 | 1 | 2>(0);
-  const [showEmptyBalances, setShowEmptyBalances] = useState(true);
+  const [activeSort, setActiveSort] = useState<number>(0);
+  const [showEmptyBalances, setShowEmptyBalances] = useState<boolean>(true);
   const vm = useInvestVM();
   const navigate = useNavigate();
   const theme = useTheme();
-
+  const timeRange = poolsStore.volumeByTimestamp[poolsStore.volumeByTimeFilter].key
   const columns = React.useMemo(
     () => [
       { Header: "Pool name", accessor: "poolName" },
@@ -66,7 +70,7 @@ const PoolsTable: React.FC = () => {
         ),
         accessor: "liquidity",
       },
-      { Header: "Volume (30d)", accessor: "volume" },
+      { Header: `Volume (${timeRange})`, accessor: "volume" },
       {
         accessor: "apy",
         Header: () => (
@@ -87,12 +91,24 @@ const PoolsTable: React.FC = () => {
         ),
       },
     ],
-    [vm, theme.images.icons.group]
+    [vm, theme.images.icons.group, timeRange]
   );
   const [filteredPools, setFilteredPools] = useState<any[]>([]);
+
+  useEffect(() => {
+    setPage(1)
+  }, [
+    accountStore.address,
+    accountStore.findBalanceByAssetId,
+    vm.searchValue,
+    vm.poolCategoryFilter
+  ]);
+  const changePage = (el: number) => {
+    setPage(el);
+  };
   useMemo(() => {
-    const data = vm.pools
-      .filter(({ domain }) => domain !== "puzzle")
+    const filteredSortedData = vm.pools
+      .filter(({ domain }: { domain: string }) => domain !== "puzzle")
       .filter(({ globalLiquidity }) => globalLiquidity.gt(new BN(20)))
       .filter((pool) => {
         if (!showEmptyBalances) {
@@ -105,13 +121,13 @@ const PoolsTable: React.FC = () => {
       })
       .sort((a, b) => {
         if (activeSort === 0) {
-          if (a.statistics?.liquidity != null && b.statistics?.liquidity != null) {
-            if (Number(a.statistics?.liquidity) < Number(b.statistics?.liquidity)) {
+          const aLiquidity = a.statistics?.liquidity ?? 0
+          const bLiquidity = b.statistics?.liquidity ?? 0
+            if (Number(aLiquidity) < Number(bLiquidity)) {
               return vm.sortLiquidity ? 1 : -1;
             } else {
               return vm.sortLiquidity ? -1 : 1;
             }
-          }
         } else if (activeSort === 2) {
           if (accountStore.address == null) return 1;
           const balanceA = poolsStore.investedInPools?.find(
@@ -129,12 +145,12 @@ const PoolsTable: React.FC = () => {
         } else if (activeSort === 1) {
           const apy0 =
             a.statistics?.boostedApy != null
-              ? a.statistics?.boostedApy
-              : a.statistics?.apy;
+              ? new BN(a.statistics?.boostedApy).plus(a.statistics?.apr)
+              : a.statistics?.apr;
           const apy1 =
             b.statistics?.boostedApy != null
-              ? b.statistics?.boostedApy
-              : b.statistics?.apy;
+              ? new BN(b.statistics?.boostedApy).plus(b.statistics?.apr)
+              : b.statistics?.apr;
           if (apy0 != null && apy1 != null) {
             if (new BN(apy0).lt(apy1)) {
               return vm.sortApy ? 1 : -1;
@@ -171,15 +187,21 @@ const PoolsTable: React.FC = () => {
         return categories.length > 1;
       })
       .filter((pool) => {
-        if (vm.versionFilter === 0) return true;
-        return (pool.version === vm.versionOptions[vm.versionFilter]["title"]);
+        if (poolsStore.versionFilter === 0) return true;
+        return (pool.version === poolsStore.versionOptions[poolsStore.versionFilter]["title"]);
       })
-      // .filter(({ isCustom }) => {
-      //   if (vm.customPoolFilter === 0) return true;
-      //   if (vm.customPoolFilter === 1) return isCustom;
-      //   if (vm.customPoolFilter === 2) return !isCustom;
-      //   return false;
+      // .filter(({}) => {
+
       // })
+      .filter(({ isCustom }) => {
+        if (vm.customPoolFilter === 0) return true;
+        if (vm.customPoolFilter === 1) return isCustom;
+        if (vm.customPoolFilter === 2) return !isCustom;
+        return false;
+      })
+      setLengthData(filteredSortedData.length)
+      const data = filteredSortedData
+      .slice((page - 1) * 20, 20 * page)
       .map((pool) => ({
         onClick: () => navigate(`/pools/${pool.domain}/invest`),
         disabled:
@@ -194,14 +216,14 @@ const PoolsTable: React.FC = () => {
                   {pool.title}
                 </Text>
                 <SizedBox width={4} />
-                {pool.statistics?.boostedApy != null && (
+                {pool.statistics?.boostedApy != null && new BN(pool.statistics.boostedApy).gt(0) && (
                   <Tag background={theme.colors.blue500} type="primary">
                     Boosted APY 🚀
                   </Tag>
                 )}
               </Row>
               <TokenTags
-                tokens={pool.tokens}
+                tokens={pool.assets ?? []}
                 findBalanceByAssetId={accountStore.findBalanceByAssetId}
               />
             </Column>
@@ -218,35 +240,37 @@ const PoolsTable: React.FC = () => {
         liquidity: "$" + new BN(pool.statistics?.liquidity ?? 0).toBigFormat(0),
         volume: (() => {
           const volume =
-            pool.statistics != null
-              ? new BN(pool.statistics.monthlyVolume).toBigFormat(0)
+            pool.stats != null
+              ? new BN(pool.stats.volume).toBigFormat(0)
               : null;
           return volume != null ? `$${volume}` : "—";
         })(),
         apy: (
           <Row>
-            {pool.statistics?.boostedApy != null ? (
+            {pool.statistics?.boostedApy != null && new BN(pool.statistics.boostedApy).gt(0) ? (
               <Row alignItems="center">
                 <Text fitContent type="secondary" crossed>
-                  {new BN(pool.statistics.apy).toFormat(2).concat("%")}
+                  {new BN(pool.statistics?.apr ?? 0).toFormat(2).concat("%")}
                 </Text>
                 <SizedBox width={2} />
-                {new BN(pool.statistics.apy)
+                {new BN(pool.statistics?.apr ?? 0)
                   .plus(pool.statistics.boostedApy)
                   .toBigFormat(2)
                   .concat("%")}
               </Row>
             ) : (
-                new BN(pool.statistics?.apy ?? 0)?.gt(20) ?
+              <>
+                {new BN(pool?.statistics?.apr ?? 0)?.gt(20) ?
                 <Text fitContent type="success">
-                    {new BN(pool.statistics?.apy ?? 0).toFormat(2).concat("%")}
-                </Text> : new BN(pool.statistics?.apy ?? 0).toFormat(2).concat("%")
+                    {new BN(pool?.statistics?.apr ?? 0).toFormat(2).concat("%")}
+                </Text> : new BN(pool?.statistics?.apr ?? 0).toFormat(2).concat("%")}
+              </>
             )}
           </Row>
         ),
         owner: pool.owner,
-      }));
-
+      })
+    );
     setFilteredPools(data);
   }, [
     theme.colors.blue500,
@@ -259,14 +283,18 @@ const PoolsTable: React.FC = () => {
     vm.customPoolFilter,
     showEmptyBalances,
     poolsStore.investedInPools,
+    poolsStore.versionFilter,
     activeSort,
     accountStore.address,
     accountStore.findBalanceByAssetId,
     navigate,
+    page
   ]);
+
   const myPools = filteredPools.filter(
     ({ owner }) => owner != null && accountStore.address === owner
   );
+
   return (
     <>
       {myPools.length > 0 && (
@@ -303,14 +331,22 @@ const PoolsTable: React.FC = () => {
       </Row>
       <SizedBox height={8} />
       {filteredPools.length > 0 ? (
-        <Scrollbar style={{ maxWidth: "calc(100vw - 32px)", borderRadius: 16 }}>
-          <Table
-            style={{ minWidth: 900 }}
-            columns={columns}
-            data={filteredPools}
-            withHover
+        <>
+          <Scrollbar style={{ maxWidth: "calc(100vw - 32px)", borderRadius: 16 }}>
+            <Table
+              style={{ minWidth: 900 }}
+              columns={columns}
+              data={filteredPools}
+              withHover
+            />
+          </Scrollbar>
+          <Pagination 
+            currentPage={page}
+            lengthData={lengthData}
+            limit={20}
+            onChange={changePage}
           />
-        </Scrollbar>
+        </>
       ) : (
         <PoolNotFound
           onClear={() => vm.setSearchValue("")}

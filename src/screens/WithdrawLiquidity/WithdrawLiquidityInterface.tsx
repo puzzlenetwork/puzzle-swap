@@ -65,8 +65,7 @@ const WithdrawLiquidityInterfaceImpl = observer(() => {
           poolLogo={vm.pool.logo}
           poolName={vm.pool.title}
           apy={
-            vm.pool.statistics?.apy &&
-            new BN(vm.pool.statistics.apy).toFormat(2) + " %"
+            vm.pool.statistics?.apr ? `${new BN(vm.pool.statistics.apr).toFormat(2)} %` : undefined
           }
           onChangePool={() => vm.setChangePoolModalOpen(true)}
         />
