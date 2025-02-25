@@ -146,10 +146,44 @@ export default class PoolsStore {
     this.filter = filter;
   };
 
+  showEmptyBalances: boolean = true;
+  setShowEmptyBalances = (v: boolean) => (this.showEmptyBalances = v);
+
   pagination = {
     page: 1,
-    size: 500
+    size: 20
   }
+  setPagination = (pagination: {page: number, size: number}) => {
+    this.pagination = pagination;
+  };
+
+  searchValue = "";
+  setSearchValue = (v: string) => {
+    this.searchValue = v
+  }
+
+  activeSort = 0
+  setActiveSort = (v: number) => (this.activeSort = v);
+
+  sortApy = true;
+  setSortApy = (v: boolean) => {
+    this.sortApy = v
+    this.rootStore.poolsStore.setFilter({
+      sortBy: "apr",
+      order: v ? "asc" : "desc"
+    })
+  }
+
+  sortLiquidity = true;
+  setSortLiquidity = (v: boolean) => {
+    this.sortLiquidity = v
+    this.rootStore.poolsStore.setFilter({
+      sortBy: "liquidity",
+      order: v ? "asc" : "desc"
+    })
+  }
+  sortBalance = true;
+  setSortBalance = (v: boolean) => (this.sortBalance = v);
 
   searchPool = ""
   setSearchPool = (pool: string) => {
@@ -211,7 +245,8 @@ export default class PoolsStore {
   get paramsAllPools(): IGetPools {
     return {
       // ...this.filter,
-      ...this.pagination,
+      page: 1,
+      size: 500,
       timeRange: this.volumeByTimestamp[this.volumeByTimeFilter].key as IGetPools["timeRange"],
       // title: this?.searchPool ?? "",
       // version: this?.versionFilter === 0 ? "" : this?.versionOptions[this.versionFilter].key
