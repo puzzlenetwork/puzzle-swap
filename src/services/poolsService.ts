@@ -1,7 +1,6 @@
 import axios from "axios";
 import { TPoolState } from "@stores/PoolsStore";
-import { IBoostings, IPoolConfig, IPoolConfigStatistics, IPoolStats } from "@src/constants";
-import { stat } from "fs";
+import { IBoostings, IPoolConfig, IPoolStats } from "@src/constants";
 import { IHistory } from "@src/utils/types";
 
 export interface IAssetConfig {
