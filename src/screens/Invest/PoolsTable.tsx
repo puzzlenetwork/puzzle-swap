@@ -186,10 +186,10 @@ const PoolsTable: React.FC = () => {
         );
         return categories.length > 1;
       })
-      // .filter((pool) => {
-      //   if (vm.versionFilter === 0) return true;
-      //   return (pool.version === vm.versionOptions[vm.versionFilter]["title"]);
-      // })
+      .filter((pool) => {
+        if (poolsStore.versionFilter === 0) return true;
+        return (pool.version === poolsStore.versionOptions[poolsStore.versionFilter]["title"]);
+      })
       // .filter(({}) => {
 
       // })
@@ -283,6 +283,7 @@ const PoolsTable: React.FC = () => {
     vm.customPoolFilter,
     showEmptyBalances,
     poolsStore.investedInPools,
+    poolsStore.versionFilter,
     activeSort,
     accountStore.address,
     accountStore.findBalanceByAssetId,
