@@ -53,11 +53,12 @@ export default class PoolsStore {
       ]);
     }, 15 * 1000);
     reaction(
-      () => [this.volumeByTimeFilter, this.filter, this.pagination, this.versionFilter],
+      () => [this.volumeByTimeFilter],
       async () => {
         this.setPools([])
         this.syncPoolsLiquidity();
         Promise.all([
+          this.syncPools().then(),
           this.syncTokensFromPy(),
           this.updateInvestedInPoolsInfo(),
           this.updatePoolsState(),
@@ -65,7 +66,16 @@ export default class PoolsStore {
           this.syncCustomPools(),
         ]);
 
-        this.syncCustomPools()
+        setTimeout(() => {
+          this.syncPoolsLiquidity();
+          Promise.all([
+            this.syncTokensFromPy(),
+            this.syncPuzzleRate(),
+            this.updateInvestedInPoolsInfo(),
+            this.updatePoolsState(),
+            this.syncCustomPools(),
+          ])
+        }, 500)
       }
     );
     reaction(
@@ -129,7 +139,7 @@ export default class PoolsStore {
 
 
   filter: {sortBy: IGetPools["sortBy"], order: IGetPools["order"]} = {
-    sortBy: "apr",
+    sortBy: "liquidity",
     order: "desc"
   };
   setFilter = (filter: { sortBy: IGetPools["sortBy"], order: IGetPools["order"] }) => {
@@ -138,11 +148,8 @@ export default class PoolsStore {
 
   pagination = {
     page: 1,
-    size: 20
+    size: 500
   }
-  setPagination = (pagination: { page: number; size: number }) => {
-    this.pagination = pagination;
-  };
 
   searchPool = ""
   setSearchPool = (pool: string) => {
@@ -203,11 +210,11 @@ export default class PoolsStore {
   }
   get paramsAllPools(): IGetPools {
     return {
-      ...this.filter,
+      // ...this.filter,
       ...this.pagination,
       timeRange: this.volumeByTimestamp[this.volumeByTimeFilter].key as IGetPools["timeRange"],
-      title: this?.searchPool ?? "",
-      version: this?.versionFilter === 0 ? "" : this?.versionOptions[this.versionFilter].key
+      // title: this?.searchPool ?? "",
+      // version: this?.versionFilter === 0 ? "" : this?.versionOptions[this.versionFilter].key
     }
   }
 
@@ -276,7 +283,7 @@ export default class PoolsStore {
     configs.forEach((config) => {
       const pool = this.getPoolByDomain(config.domain);
       if (pool != null && config.stats != null) {
-        pool.setStatistics({...config.stats, totals: config?.totals, liquidity: config.liquidity, boostedApy: config.boosted_apr ?? 0} );
+        pool.setStatistics({...config.stats, totals: config?.totals, liquidity: config.liquidity, boostedApy: config.boosted_apr ?? null} );
       }
       if (config.isCustom && pool == null) {
         const tokens = config.assets.map(({ asset_id, share }) => ({

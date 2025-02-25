@@ -47,8 +47,8 @@ export interface IGetPools {
   order?: "asc" | "desc";
   page: number;
   size: number;
-  title: string;
-  version: string
+  title?: string;
+  version?: string
 }
 
 const poolService = {

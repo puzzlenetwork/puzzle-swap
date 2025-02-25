@@ -20,9 +20,11 @@ import { Pagination } from "@src/components/Pagination/Pagination";
 import { useEffect } from "react";
 
 const PoolsTable: React.FC = () => {
+  const [page, setPage] = useState(0)
+  const [lengthData, setLengthData] = useState(0);
   const { poolsStore, accountStore } = useStores();
-  const [activeSort, setActiveSort] = useState<0 | 1 | 2>(0);
-  const [showEmptyBalances, setShowEmptyBalances] = useState(true);
+  const [activeSort, setActiveSort] = useState<number>(0);
+  const [showEmptyBalances, setShowEmptyBalances] = useState<boolean>(true);
   const vm = useInvestVM();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -94,7 +96,7 @@ const PoolsTable: React.FC = () => {
   const [filteredPools, setFilteredPools] = useState<any[]>([]);
 
   useEffect(() => {
-    changePage(1)
+    setPage(1)
   }, [
     accountStore.address,
     accountStore.findBalanceByAssetId,
@@ -102,88 +104,88 @@ const PoolsTable: React.FC = () => {
     vm.poolCategoryFilter
   ]);
   const changePage = (el: number) => {
-    poolsStore.setPagination({...poolsStore.pagination, page: el})
-  }
+    setPage(el);
+  };
   useMemo(() => {
     const filteredSortedData = vm.pools
-      // .filter(({ domain }) => domain !== "puzzle")
-      // .filter(({ globalLiquidity }) => globalLiquidity.gt(new BN(20)))
-      // .filter((pool) => {
-      //   if (!showEmptyBalances) {
-      //     const data = poolsStore.investedInPools?.find(
-      //       (v) => pool.domain === v.pool.domain
-      //     );
-      //     return data?.liquidityInUsdt != null && data.liquidityInUsdt.gt(0);
-      //   }
-      //   return true;
-      // })
-      // .sort((a, b) => {
-      //   if (activeSort === 0) {
-      //     const aLiquidity = a.statistics?.liquidity ?? 0
-      //     const bLiquidity = b.statistics?.liquidity ?? 0
-      //       if (Number(aLiquidity) < Number(bLiquidity)) {
-      //         return vm.sortLiquidity ? 1 : -1;
-      //       } else {
-      //         return vm.sortLiquidity ? -1 : 1;
-      //       }
-      //   } else if (activeSort === 2) {
-      //     if (accountStore.address == null) return 1;
-      //     const balanceA = poolsStore.investedInPools?.find(
-      //       (v) => a.domain === v.pool.domain
-      //     );
-      //     const balanceB = poolsStore.investedInPools?.find(
-      //       (v) => b.domain === v.pool.domain
-      //     );
-      //     if (balanceA == null || balanceB == null) return 1;
-      //     if (balanceA.liquidityInUsdt.lt(balanceB.liquidityInUsdt)) {
-      //       return vm.sortBalance ? 1 : -1;
-      //     } else {
-      //       return vm.sortBalance ? -1 : 1;
-      //     }
-      //   } else if (activeSort === 1) {
-      //     const apy0 =
-      //       a.statistics?.boostedApy != null
-      //         ? a.statistics?.boostedApy
-      //         : a.statistics?.apr;
-      //     const apy1 =
-      //       b.statistics?.boostedApy != null
-      //         ? b.statistics?.boostedApy
-      //         : b.statistics?.apr;
-      //     if (apy0 != null && apy1 != null) {
-      //       if (new BN(apy0).lt(apy1)) {
-      //         return vm.sortApy ? 1 : -1;
-      //       } else if (new BN(apy0).eq(apy1)) {
-      //         return 0;
-      //       } else {
-      //         return vm.sortApy ? -1 : 1;
-      //       }
-      //     } else if (apy0 != null) {
-      //       return -1;
-      //     } else if (apy1 != null) {
-      //       return 1;
-      //     }
-      //   }
-      //   return 1;
-      // })
-      // .filter(({ title, tokens }) =>
-      //   vm.searchValue
-      //     ? [title, ...tokens.map(({ symbol }) => symbol)]
-      //         .map((v) => v?.toLowerCase())
-      //         .some((v) => v?.includes(vm.searchValue?.toLowerCase()))
-      //     : true
-      // )
-      // .filter((pool) => {
-      //   if (vm.poolCategoryFilter === 0) return true;
-      //   const poolsCategories = pool.tokens.reduce(
-      //     (acc, { category }) =>
-      //       category != null ? [...acc, ...category] : [...acc],
-      //     [] as string[]
-      //   );
-      //   const categories = poolsCategories.filter(
-      //     (category) => tokenCategoriesEnum[vm.poolCategoryFilter] === category
-      //   );
-      //   return categories.length > 1;
-      // })
+      .filter(({ domain }: { domain: string }) => domain !== "puzzle")
+      .filter(({ globalLiquidity }) => globalLiquidity.gt(new BN(20)))
+      .filter((pool) => {
+        if (!showEmptyBalances) {
+          const data = poolsStore.investedInPools?.find(
+            (v) => pool.domain === v.pool.domain
+          );
+          return data?.liquidityInUsdt != null && data.liquidityInUsdt.gt(0);
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        if (activeSort === 0) {
+          const aLiquidity = a.statistics?.liquidity ?? 0
+          const bLiquidity = b.statistics?.liquidity ?? 0
+            if (Number(aLiquidity) < Number(bLiquidity)) {
+              return vm.sortLiquidity ? 1 : -1;
+            } else {
+              return vm.sortLiquidity ? -1 : 1;
+            }
+        } else if (activeSort === 2) {
+          if (accountStore.address == null) return 1;
+          const balanceA = poolsStore.investedInPools?.find(
+            (v) => a.domain === v.pool.domain
+          );
+          const balanceB = poolsStore.investedInPools?.find(
+            (v) => b.domain === v.pool.domain
+          );
+          if (balanceA == null || balanceB == null) return 1;
+          if (balanceA.liquidityInUsdt.lt(balanceB.liquidityInUsdt)) {
+            return vm.sortBalance ? 1 : -1;
+          } else {
+            return vm.sortBalance ? -1 : 1;
+          }
+        } else if (activeSort === 1) {
+          const apy0 =
+            a.statistics?.boostedApy != null
+              ? new BN(a.statistics?.boostedApy).plus(a.statistics?.apr)
+              : a.statistics?.apr;
+          const apy1 =
+            b.statistics?.boostedApy != null
+              ? new BN(b.statistics?.boostedApy).plus(b.statistics?.apr)
+              : b.statistics?.apr;
+          if (apy0 != null && apy1 != null) {
+            if (new BN(apy0).lt(apy1)) {
+              return vm.sortApy ? 1 : -1;
+            } else if (new BN(apy0).eq(apy1)) {
+              return 0;
+            } else {
+              return vm.sortApy ? -1 : 1;
+            }
+          } else if (apy0 != null) {
+            return -1;
+          } else if (apy1 != null) {
+            return 1;
+          }
+        }
+        return 1;
+      })
+      .filter(({ title, tokens }) =>
+        vm.searchValue
+          ? [title, ...tokens.map(({ symbol }) => symbol)]
+              .map((v) => v?.toLowerCase())
+              .some((v) => v?.includes(vm.searchValue?.toLowerCase()))
+          : true
+      )
+      .filter((pool) => {
+        if (vm.poolCategoryFilter === 0) return true;
+        const poolsCategories = pool.tokens.reduce(
+          (acc, { category }) =>
+            category != null ? [...acc, ...category] : [...acc],
+          [] as string[]
+        );
+        const categories = poolsCategories.filter(
+          (category) => tokenCategoriesEnum[vm.poolCategoryFilter] === category
+        );
+        return categories.length > 1;
+      })
       // .filter((pool) => {
       //   if (vm.versionFilter === 0) return true;
       //   return (pool.version === vm.versionOptions[vm.versionFilter]["title"]);
@@ -192,13 +194,14 @@ const PoolsTable: React.FC = () => {
 
       // })
       .filter(({ isCustom }) => {
-        if (!isCustom) return false
         if (vm.customPoolFilter === 0) return true;
         if (vm.customPoolFilter === 1) return isCustom;
         if (vm.customPoolFilter === 2) return !isCustom;
         return false;
       })
+      setLengthData(filteredSortedData.length)
       const data = filteredSortedData
+      .slice((page - 1) * 20, 20 * page)
       .map((pool) => ({
         onClick: () => navigate(`/pools/${pool.domain}/invest`),
         disabled:
@@ -247,20 +250,20 @@ const PoolsTable: React.FC = () => {
             {pool.statistics?.boostedApy != null && new BN(pool.statistics.boostedApy).gt(0) ? (
               <Row alignItems="center">
                 <Text fitContent type="secondary" crossed>
-                  {new BN(pool.stats?.apr ?? 0).toFormat(2).concat("%")}
+                  {new BN(pool.statistics?.apr ?? 0).toFormat(2).concat("%")}
                 </Text>
                 <SizedBox width={2} />
-                {new BN(pool.stats?.apr ?? 0)
+                {new BN(pool.statistics?.apr ?? 0)
                   .plus(pool.statistics.boostedApy)
                   .toBigFormat(2)
                   .concat("%")}
               </Row>
             ) : (
               <>
-                {new BN(pool?.stats?.apr ?? 0)?.gt(20) ?
+                {new BN(pool?.statistics?.apr ?? 0)?.gt(20) ?
                 <Text fitContent type="success">
-                    {new BN(pool?.stats?.apr ?? 0).toFormat(2).concat("%")}
-                </Text> : new BN(pool?.stats?.apr ?? 0).toFormat(2).concat("%")}
+                    {new BN(pool?.statistics?.apr ?? 0).toFormat(2).concat("%")}
+                </Text> : new BN(pool?.statistics?.apr ?? 0).toFormat(2).concat("%")}
               </>
             )}
           </Row>
@@ -284,7 +287,7 @@ const PoolsTable: React.FC = () => {
     accountStore.address,
     accountStore.findBalanceByAssetId,
     navigate,
-    poolsStore.pagination
+    page
   ]);
 
   const myPools = filteredPools.filter(
@@ -337,9 +340,9 @@ const PoolsTable: React.FC = () => {
             />
           </Scrollbar>
           <Pagination 
-            currentPage={poolsStore.pagination.page}
-            lengthData={poolsStore.totalItems}
-            limit={poolsStore.pagination.size}
+            currentPage={page}
+            lengthData={lengthData}
+            limit={20}
             onChange={changePage}
           />
         </>

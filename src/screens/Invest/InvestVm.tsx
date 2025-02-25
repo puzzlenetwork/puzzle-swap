@@ -6,6 +6,7 @@ import Pool from "@src/entities/Pool";
 import BN from "@src/utils/BN";
 import poolService from "@src/services/poolsService";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
+import { useDebouncedCallback } from 'use-debounce';
 
 interface IProps {
   children: React.ReactNode;
@@ -23,10 +24,19 @@ export const useInvestVM = () => useVM(ctx);
 
 class InvestVM {
   public rootStore: RootStore;
+
+  debounced = useDebouncedCallback(
+    (value) => {
+      console.log('dev')
+      this.rootStore.poolsStore.setSearchPool(value)
+    },
+    1000
+  );
+
   searchValue = "";
   setSearchValue = (v: string) => {
     this.searchValue = v
-    this.rootStore.poolsStore.setSearchPool(v)
+    this.debounced(v)
   }
 
   sortApy = true;
