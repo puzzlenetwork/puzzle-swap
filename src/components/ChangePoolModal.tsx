@@ -53,7 +53,7 @@ const ChangePoolModal: React.FC<IProps> = ({
     .slice()
     //TODO
     // .filter(({ id }) =>
-    //   Object.keys(ROUTES.invest).some((key) => key === id)
+    //   Object.keys(ROUTES.POOLS).some((key) => key === id)
     // )
     .filter(({ title, tokens }) =>
       searchValue

@@ -1,13 +1,13 @@
 import React, { useMemo, useState } from "react";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
-import PoolNotFound from "@screens/Invest/PoolNotFound";
+import PoolNotFound from "@screens/Pools/PoolNotFound";
 import { useStores } from "@src/stores";
-import { useInvestVM } from "@screens/Invest/InvestVm";
+import { useInvestVM } from "@screens/Pools/InvestVm";
 import SizedBox from "@components/SizedBox";
 import { tokenCategoriesEnum } from "@components/TokensSelectModal/TokenSelectModal";
 import Table from "@src/components/Table";
-import TokenTags from "@screens/Invest/TokenTags";
+import TokenTags from "@screens/Pools/TokenTags";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import Scrollbar from "@components/Scrollbar";
 import { observer } from "mobx-react-lite";
@@ -328,7 +328,7 @@ const PoolsTable: React.FC = () => {
               withHover
             />
           </Scrollbar>
-          <Pagination 
+          <Pagination
             currentPage={poolsStore.pagination.page}
             lengthData={lengthData}
             limit={20}

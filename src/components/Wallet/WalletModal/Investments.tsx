@@ -70,14 +70,14 @@ const Investments: React.FC = () => {
             textAlign="center"
             style={{ whiteSpace: "pre-wrap" }}
           >
-            {`You didn’t invest yet.Go to Invest page\nto provide liquidity and get rewards,\n or stake puzzle on the Stake page.`}
+            {`You didn’t invest yet.Go to Pools page\nto provide liquidity and get rewards,\n or stake puzzle on the Stake page.`}
           </Text>
           <SizedBox height={16} />
           <Button
             size="medium"
             kind="secondary"
             onClick={() => {
-              window.open(ROUTES.INVEST);
+              window.open(ROUTES.POOLS);
               accountStore.setWalletModalOpened(false);
             }}
           >

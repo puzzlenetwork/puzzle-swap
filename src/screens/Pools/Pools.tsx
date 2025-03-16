@@ -3,11 +3,11 @@ import React from "react";
 import Layout from "@components/Layout";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import SearchAndFilterTab from "@screens/Invest/SearchAndFilterTab";
-import { InvestVMProvider, useInvestVM } from "./InvestVm";
+import SearchAndFilterTab from "@screens/Pools/SearchAndFilterTab";
+import { InvestVMProvider } from "./InvestVm";
 import { Observer } from "mobx-react-lite";
 import { useStores } from "@stores";
-import AccountInvestBalance from "@screens/Invest/AccountInvestBalance";
+import AccountInvestBalance from "@screens/Pools/AccountInvestBalance";
 import PoolsTable from "./PoolsTable";
 
 interface IProps {}
@@ -87,9 +87,9 @@ const InvestImpl: React.FC<IProps> = () => {
   );
 };
 
-const Invest: React.FC<IProps> = () => (
+const Pools: React.FC<IProps> = () => (
   <InvestVMProvider>
     <InvestImpl />
   </InvestVMProvider>
 );
-export default Invest;
+export default Pools;

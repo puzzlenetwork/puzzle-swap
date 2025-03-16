@@ -6,6 +6,7 @@ import {
   CONTRACT_ADDRESSES,
   IToken,
   PUZZLE_NFTS,
+  ROUTES,
   TOKENS_BY_ASSET_ID,
   TOKENS_BY_SYMBOL,
   TOKENS_LIST,
@@ -494,16 +495,16 @@ class CreateCustomPoolsVm {
               ),
               () => (
                 <Button
-                  key="Back to Invest"
+                  key="Back to Pools"
                   size="medium"
                   fixed
                   onClick={() => {
                     this.initialize(null);
                     localStorage.removeItem("puzzle-custom-pool");
-                    window.open("/invest");
+                    window.open(ROUTES.POOLS);
                   }}
                 >
-                  Back to Invest
+                  Back to Pools
                 </Button>
               ),
             ],
