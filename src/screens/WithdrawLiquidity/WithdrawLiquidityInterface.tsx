@@ -50,7 +50,7 @@ const WithdrawLiquidityInterfaceImpl = observer(() => {
   return (
     <Layout>
       <Root>
-        <GoBack link="/invest" text="Back to Pools list" />
+        <GoBack link={ROUTES.POOLS} text="Back to Pools list" />
         <SizedBox height={24} />
         <Text weight={500} size="large">
           Withdraw liquidity

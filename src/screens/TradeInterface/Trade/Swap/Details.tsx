@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
 import { useSwapVM } from "@screens/TradeInterface/SwapVM";
+import { ROUTES } from '@src/constants';
 
 const Root = styled(Card)`
   display: flex;
@@ -50,9 +51,9 @@ const Details: React.FC = () => {
           <Text>$ {poolsStore.globalVolume.toFormat(2)}</Text>
         </Column>
       </Row>
-      <Link to="/invest">
+      <Link to={ROUTES.POOLS}>
         <Button className="button" kind="secondary">
-          Invest
+          Pools
         </Button>
       </Link>
     </Root>

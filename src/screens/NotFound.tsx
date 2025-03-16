@@ -25,7 +25,7 @@ const Img = styled.img`
 const paths = [
   { title: "Explore", link: ROUTES.EXPLORE },
   { title: "Trade", link: ROUTES.TRADE },
-  { title: "Pools", link: ROUTES.INVEST },
+  { title: "Pools", link: ROUTES.POOLS },
   { title: "Stake", link: ROUTES.STAKE },
 ];
 const Path = styled(Link)`
