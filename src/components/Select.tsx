@@ -6,7 +6,7 @@ import check from "@src/assets/icons/checkMark.svg";
 import SizedBox from "@components/SizedBox";
 import { Column } from "./Flex";
 
-interface IOption {
+export interface IOption {
   key: string;
   title: string;
 }

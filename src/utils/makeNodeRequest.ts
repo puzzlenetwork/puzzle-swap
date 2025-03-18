@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const testnetNodes = ["https://nodes-testnet.wavesnodes.com"];
+// const testnetNodes = ["https://nodes-testnet.wavesnodes.com"];
 
-const mainnetNodes = [
+export const mainnetNodes = [
   "https://nodes.wx.network",
   "https://nodes-puzzle.wavesnodes.com",
   "https://wavesducks.wavesnodes.com",
@@ -11,7 +11,6 @@ const mainnetNodes = [
 ];
 
 interface IParams {
-  chainId?: "T" | "W";
   postData?: any;
 }
 
@@ -19,10 +18,11 @@ const makeNodeRequest = async (
   request: string,
   params?: IParams
 ): Promise<any> => {
-  const nodes =
-    params?.chainId == null || params.chainId === "W"
-      ? mainnetNodes
-      : testnetNodes;
+  const defaultNode = localStorage.getItem("puzzle-node-settings");
+  const nodes = defaultNode && mainnetNodes.includes(defaultNode)
+    ? Array.from(new Set([defaultNode, ...mainnetNodes]))
+    : mainnetNodes;
+
   return new Promise(async (resolve, reject) => {
     let nodeIndex = 0;
     let success = false;

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Card from "@components/Card";
 import { ReactComponent as Close } from "@src/assets/icons/darkClose.svg";
@@ -14,7 +14,9 @@ import TextButton from "@components/TextButton";
 import Button from "@components/Button";
 import { useTheme } from "@emotion/react";
 import { useSwapVM } from "@screens/TradeInterface/SwapVM";
-import { useStores } from "@stores";
+import Select, { IOption } from '@components/Select';
+import { mainnetNodes } from '@src/utils/makeNodeRequest';
+import { getDomain } from '@src/utils/url';
 
 interface IProps { }
 
@@ -55,14 +57,35 @@ const Tag = styled.div<{ active?: boolean }>`
     padding: 8px 20px;
   }
 `;
+
 const Settings: React.FC<IProps> = () => {
+  const [selectedNode, setSelectedNode] = useState("");
+  const [initialNode, setInitialNode] = useState("");
+  const nodeOptions = useMemo(() => mainnetNodes.map(node => ({
+    key: node,
+    title: getDomain(node),
+  })),[]);
   const vm = useSwapVM();
   const theme = useTheme();
+
+  useEffect(() => {
+    if (nodeOptions.length) {
+      const node = localStorage.getItem("puzzle-node-settings");
+      const nodeOption = node || nodeOptions[0].key;
+      setSelectedNode(nodeOption);
+      setInitialNode(nodeOption);
+    }
+  }, [nodeOptions, vm.openedSettings]);
   const storageData = localStorage.getItem("puzzle-user-settings");
   const initData: ISettingsStorageData | null = storageData ? JSON.parse(storageData) : null;
   const initialSlippage = new BN(initData ? initData.slippage : 1).times(10);
   const [slippage, setSlippage] = useState(initialSlippage);
-  const isSomethingChanged = slippage.eq(initialSlippage);
+  const isSomethingChanged = !slippage.eq(initialSlippage);
+  const isNodeChanged = useMemo(
+    () => initialNode !== selectedNode,
+    [selectedNode, initialNode]
+  );
+
   const handleClose = () => vm.setOpenedSettings(false);
   const validateSlippage = (v: number) =>
     // assuming that slippage is a number in [0,100] as required for percentage
@@ -72,15 +95,21 @@ const Settings: React.FC<IProps> = () => {
       "puzzle-user-settings",
       JSON.stringify({
         ...initData,
-        slippage: validateSlippage(slippage.div(10).toNumber()), 
+        slippage: validateSlippage(slippage.div(10).toNumber()),
       })
     )
+    localStorage.setItem("puzzle-node-settings", selectedNode);
     handleClose();
   };
   const handleReset = () => {
     setSlippage(initialSlippage);
+    setSelectedNode(initialNode);
     handleClose();
   };
+  const handleSelectNode = (option: IOption) => {
+    setSelectedNode(option.key);
+  };
+
   return (
     <Root
       expanded={vm.openedSettings}
@@ -140,6 +169,19 @@ const Settings: React.FC<IProps> = () => {
               error={slippage.gt(1000)}
             />
           </Row>
+
+          <Row style={{ paddingTop: 16 }}>
+            <Text fitContent weight={500}>
+              Net Node
+            </Text>
+          </Row>
+          <Row>
+            <Select
+              options={nodeOptions}
+              onSelect={handleSelectNode}
+              selected={{ key: selectedNode, title: getDomain(selectedNode) }}
+            />
+          </Row>
         </Column>
         <SizedBox height={24} />
       </Column>
@@ -158,7 +200,7 @@ const Settings: React.FC<IProps> = () => {
         <Button
           size="medium"
           onClick={handleSave}
-          disabled={isSomethingChanged || slippage.gt(1000)}
+          disabled={(!isSomethingChanged && !isNodeChanged) || slippage.gt(1000)}
         >
           Save
         </Button>
