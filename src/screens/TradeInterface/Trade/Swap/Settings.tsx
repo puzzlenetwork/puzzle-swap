@@ -172,7 +172,7 @@ const Settings: React.FC<IProps> = () => {
 
           <Row style={{ paddingTop: 16 }}>
             <Text fitContent weight={500}>
-              Net Node
+              Node url
             </Text>
           </Row>
           <Row>
