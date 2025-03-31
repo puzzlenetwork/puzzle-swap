@@ -34,6 +34,8 @@ const Order: React.FC<IProps> = ({
   const theme = useTheme();
   const t0 = TOKENS_BY_ASSET_ID[token0];
   const t1 = TOKENS_BY_ASSET_ID[token1];
+  if (!t0 || !t1) return <></>;
+
   const am0 = BN.formatUnits(amount0, t0.decimals);
   const am1 = BN.formatUnits(amount1, t1.decimals);
   const percent = fulfilled0.times(100).div(amount0);
