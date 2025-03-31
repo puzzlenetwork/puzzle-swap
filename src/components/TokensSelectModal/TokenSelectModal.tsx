@@ -1,4 +1,4 @@
-import React, { createRef, useState } from "react";
+import React, { createRef, useRef, useState } from "react";
 import useOnClickOutside from "@src/hooks/useOnClickOutside";
 import Dialog from "@components/Dialog";
 import Scrollbar from "@src/components/Scrollbar";
@@ -69,7 +69,7 @@ const TokenSelectModal: React.FC<IProps> = ({
   const handleSearch = (event: any) => {
     setSearchValue(event.target.value);
   };
-  const ref = createRef<HTMLDivElement>();
+  const ref = useRef(null!);
   useOnClickOutside(ref, onClose);
 
   const handleTokenSelect = (assetId: string) => {

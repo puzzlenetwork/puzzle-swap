@@ -117,8 +117,8 @@ const Invest: React.FC<IProps> = () => {
             </Subtitle>
           </Row>
           <BtnContainer>
-            <Link to={ROUTES.INVEST}>
-              <Button style={{ marginRight: 8, width: 167 }}>Invest</Button>
+            <Link to={ROUTES.POOLS}>
+              <Button style={{ marginRight: 8, width: 167 }}>Pools</Button>
             </Link>
           </BtnContainer>
         </TitleWrapper>

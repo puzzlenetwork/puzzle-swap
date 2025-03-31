@@ -68,7 +68,7 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
   const mainFunctional = [
     { name: "Explore", link: ROUTES.EXPLORE, outer: false },
     { name: "Trade", link: ROUTES.TRADE, outer: false },
-    { name: "Invest", link: ROUTES.INVEST, outer: false },
+    { name: "Pools", link: ROUTES.POOLS, outer: false },
     { name: "Stake", link: ROUTES.STAKE, outer: false },
     { name: "NFT", link: "https://puzzlemarket.org/", outer: true },
     { name: "Lend", link: "https://lend.puzzleswap.org/", outer: true },

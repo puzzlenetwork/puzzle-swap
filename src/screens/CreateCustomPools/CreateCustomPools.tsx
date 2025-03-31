@@ -10,6 +10,7 @@ import PoolSettingsCard from "@screens/CreateCustomPools/PoolSettingsCard";
 import SummaryCard from "@screens/CreateCustomPools/SummaryCard";
 import CreatePoolsStepper from "@screens/CreateCustomPools/CreatePoolsStepper";
 import ContinueBtn from "@screens/CreateCustomPools/ContinueBtn";
+import { ROUTES } from '@src/constants';
 
 const Root = styled.div`
   display: flex;
@@ -51,7 +52,7 @@ const CreateCustomPoolsImpl: React.FC = () => {
       <Observer>
         {() => (
           <Root>
-            <GoBack link="/invest" text="Back to Invest" />
+            <GoBack link={ROUTES.POOLS} text="Back to Pools" />
             <SizedBox height={24} />
             <Text weight={500} size="large">
               Create pool

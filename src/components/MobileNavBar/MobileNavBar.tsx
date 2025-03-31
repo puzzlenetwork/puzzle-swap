@@ -58,10 +58,10 @@ const MobileNavBar: React.FC<IProps> = () => {
       big: false,
     },
     {
-      name: "Invest",
-      link: ROUTES.INVEST,
+      name: "Pools",
+      link: ROUTES.POOLS,
       icon: (
-        <Invest active={isRoutesEquals(ROUTES.INVEST, location.pathname)} />
+        <Invest active={isRoutesEquals(ROUTES.POOLS, location.pathname)} />
       ),
       big: false,
     },

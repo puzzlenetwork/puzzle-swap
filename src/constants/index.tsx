@@ -13,7 +13,7 @@ export const ROUTES = {
   OLD_EXPLORE: "/classic-explore",
   EXPLORE: "/explore",
   EXPLORE_TOKEN: "/explore/token/:assetId",
-  INVEST: "/invest",
+  POOLS: "/pools",
   ULTRASTAKE: "/ultrastake",
   WALLET: "/wallet",
   TRANSFER: "/transfer",
@@ -613,7 +613,7 @@ export interface IPoolConfigStatistics {
   boostedApy: number | null,
   boostings?: IBoostings[],
   totals?: ITotals
-} 
+}
 
 export interface IPoolStats {
   time_range: string,

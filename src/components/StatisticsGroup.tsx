@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { Column, Row } from "@components/Flex";
-import React from "react";
+import React, { JSX } from "react";
 import Text from "@components/Text";
 import Skeleton from "react-loading-skeleton";
 

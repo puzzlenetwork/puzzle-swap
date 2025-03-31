@@ -9,7 +9,7 @@ import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { useStores } from "@stores";
 import SquareTokenIcon from "@components/SquareTokenIcon";
-import TokenTags from "@screens/Invest/TokenTags";
+import TokenTags from "@screens/Pools/TokenTags";
 import { useNavigate } from "react-router-dom";
 import BN from "@src/utils/BN";
 import { useTheme } from "@emotion/react";

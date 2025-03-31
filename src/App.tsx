@@ -8,7 +8,7 @@ import Header from "@components/Header";
 import { Column } from "@components/Flex";
 import NotFound from "@screens/NotFound";
 import { useStores } from "@stores";
-import Invest from "@screens/Invest";
+import Pools from "@screens/Pools";
 import WithdrawLiquidityInterface from "@screens/WithdrawLiquidity";
 import TradeInterface from "@screens/TradeInterface";
 import Staking from "@screens/Staking";
@@ -67,8 +67,8 @@ const App: React.FC = () => {
         <Route path={ROUTES.TRADE} element={<TradeInterface />} />
         <Route path={ROUTES.LIMIT_ORDER} element={<TradeInterface />} />
 
-        {/* Invest table routes */}
-        <Route path={ROUTES.INVEST} element={<Invest />} />
+        {/* Pools table routes */}
+        <Route path={ROUTES.POOLS} element={<Pools />} />
 
         {/* Invest pool info routes */}
         <Route path={ROUTES.POOLS_INVEST} element={<InvestToPoolInterface />} />
