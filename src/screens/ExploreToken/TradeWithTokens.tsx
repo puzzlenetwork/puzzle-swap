@@ -34,7 +34,8 @@ const TradeWithTokens: React.FC<IProps> = () => {
     TOKENS_BY_SYMBOL.ETH,
     TOKENS_BY_SYMBOL.USDC,
     TOKENS_BY_SYMBOL.BNB,
-  ];
+  ].filter(Boolean);
+
   return (
     <Root>
       <SizedBox height={40} />

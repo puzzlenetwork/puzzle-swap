@@ -1,4 +1,4 @@
-import React from "react";
+import React, { JSX } from "react";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 import Dialog from "@components/Dialog/Dialog";
 import { Column } from "../Flex";

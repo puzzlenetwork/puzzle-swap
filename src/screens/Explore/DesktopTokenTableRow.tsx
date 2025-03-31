@@ -43,7 +43,7 @@ const DesktopTokenTableRow: React.FC<IProps> = ({
   vol24,
 }) => {
   const navigate = useNavigate();
-  const hoverRef = useRef(null);
+  const hoverRef = useRef(null!);
   const isHover = useHover(hoverRef);
   return (
     <Root className="gridRow">

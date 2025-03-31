@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, JSX } from "react";
 import { usePopperTooltip } from "react-popper-tooltip";
 import { Config } from "react-popper-tooltip/dist/types";
 

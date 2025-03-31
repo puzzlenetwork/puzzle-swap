@@ -1,6 +1,6 @@
 import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
-import React, { HTMLAttributes } from "react";
+import React, { HTMLAttributes, JSX } from "react";
 import useWindowSize from "@src/hooks/useWindowSize";
 import styled from "@emotion/styled";
 
