@@ -167,7 +167,7 @@ class StakingVM {
         notificationStore.notify(`Your rewards was claimed`, {
           type: "success",
           title: `Success`,
-          link: `${EXPLORER_URL}/tx/${txId}`,
+          link: `${EXPLORER_URL}/transactions/${txId}`,
           linkTitle: "View on Explorer",
         });
       })
@@ -212,7 +212,7 @@ class StakingVM {
           {
             type: "success",
             title: `${puzzleAmount} PUZZLE successfully staked`,
-            link: `${EXPLORER_URL}/tx/${txId}`,
+            link: `${EXPLORER_URL}/transactions/${txId}`,
             linkTitle: "View on Explorer",
           }
         );
@@ -261,7 +261,7 @@ class StakingVM {
             {
               type: "success",
               title: `${puzzleAmount} PUZZLE successfully unstaked`,
-              link: `${EXPLORER_URL}/tx/${txId}`,
+              link: `${EXPLORER_URL}/transactions/${txId}`,
               linkTitle: "View on Explorer",
             }
           );

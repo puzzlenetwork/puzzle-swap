@@ -64,9 +64,9 @@ const IconContainer = styled.div<{ state: TStep }>`
   transition: 0.4s;
   position: relative;
   background: ${({ state }) => (state === "current" ? "#7075E9" : "#F1F2FE")};
-
+ 
   ${({ state }) => (state === "previous" ? "background: #c6c9f4;" : "")}
-  & > div {
+  & > p {
     color: ${({ state }) => (state === "current" ? "#ffffff" : "#7075E9")};
     ${({ state }) => (state === "previous" ? "color: #C6C9F4;" : "")}
   }

@@ -177,7 +177,7 @@ class WithdrawLiquidityVM {
             {
               type: "success",
               title: "Successfully withdrawn",
-              link: `${EXPLORER_URL}/tx/${txId}`,
+              link: `${EXPLORER_URL}/transactions/${txId}`,
               linkTitle: "View on Explorer",
             }
           );

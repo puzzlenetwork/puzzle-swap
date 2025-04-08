@@ -64,7 +64,7 @@ const SettingsHeader: React.FC<IProps> = ({ withSetting }) => {
         )}
         <SizedBox width={8} />
         <Icon
-          src={vm.openedChart ? chart : nochart}
+          src={!vm.openedChart ? chart : nochart}
           alt="pic"
           onClick={() => vm.setOpenedChart(!vm.openedChart)}
         />

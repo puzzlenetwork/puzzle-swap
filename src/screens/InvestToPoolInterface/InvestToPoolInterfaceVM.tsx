@@ -304,7 +304,7 @@ class InvestToPoolInterfaceVM {
         notificationStore.notify(`Your rewards was claimed`, {
           type: "success",
           title: `Success`,
-          link: `${EXPLORER_URL}/tx/${txId}`,
+          link: `${EXPLORER_URL}/transactions/${txId}`,
           linkTitle: "View on Explorer",
         });
       })
@@ -437,7 +437,7 @@ class InvestToPoolInterfaceVM {
         notificationStore.notify(`Your have unstaked index tokem`, {
           type: "success",
           title: `Success`,
-          link: `${EXPLORER_URL}/tx/${txId}`,
+          link: `${EXPLORER_URL}/transactions/${txId}`,
           linkTitle: "View on Explorer",
         });
       })
@@ -481,7 +481,7 @@ class InvestToPoolInterfaceVM {
         notificationStore.notify(`Your have staked index token`, {
           type: "success",
           title: `Success`,
-          link: `${EXPLORER_URL}/tx/${txId}`,
+          link: `${EXPLORER_URL}/transactions/${txId}`,
           linkTitle: "View on Explorer",
         });
       })

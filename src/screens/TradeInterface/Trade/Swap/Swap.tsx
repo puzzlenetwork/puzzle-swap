@@ -166,6 +166,7 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
             )}
             {vm.token0 && !vm.amount0.isNaN() && (
               <Tooltip
+                containerStyles={{display: "flex", alignItems: 'center'}}
                 content={<TooltipFeeInfo />}
                 config={{ placement: "top", trigger: "click" }}
               >
