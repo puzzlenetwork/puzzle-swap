@@ -115,6 +115,7 @@ const InputWrapper = styled.div`
     min-width: 340px;
   }
 `;
+
 const SearchAndFilterTab: React.FC<IProps> = () => {
   const vm = useInvestVM();
   const { poolsStore } = useStores();
@@ -151,15 +152,14 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
               vm.setPoolCategoryFilter(index);
             }}
           /> */}
-          <SizedBox width={12} />
-            <Select
-                options={poolsStore.versionOptions}
-                selected={poolsStore.versionOptions[poolsStore.versionFilter]}
-                onSelect={({ key }) => {
-                    const index = poolsStore.versionOptions.findIndex((o) => o.key === key);
-                    poolsStore.setVersionFilter(index);
-                }}
-            />
+          <Select
+              options={poolsStore.versionOptions}
+              selected={poolsStore.versionOptions[poolsStore.versionFilter]}
+              onSelect={({ key }) => {
+                  const index = poolsStore.versionOptions.findIndex((o) => o.key === key);
+                  poolsStore.setVersionFilter(index);
+              }}
+          />
           <SizedBox width={12} />
           <Select
             options={poolsStore.volumeByTimestamp}

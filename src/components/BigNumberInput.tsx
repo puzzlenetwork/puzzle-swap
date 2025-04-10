@@ -9,7 +9,7 @@ export interface IBigNumberInputProps {
   onChange: (value: BN) => void;
   renderInput?: (
     props: React.HTMLProps<HTMLInputElement>,
-    ref: React.RefObject<HTMLInputElement>
+    ref: React.RefObject<HTMLInputElement | null>
   ) => React.ReactElement;
   autofocus?: boolean;
   placeholder?: string;

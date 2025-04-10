@@ -42,7 +42,7 @@ export default function useCollapse({
     defaultExpanded
   );
   const uniqueId = useUniqueId();
-  const el = useRef<HTMLElement | null>(null);
+  const el = useRef<HTMLElement>(null!);
   usePaddingWarning(el);
   const collapsedHeight = `${initialConfig.collapsedHeight || 0}px`;
   const collapsedStyles = {

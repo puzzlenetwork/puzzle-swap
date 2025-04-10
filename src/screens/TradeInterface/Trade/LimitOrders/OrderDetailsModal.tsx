@@ -152,7 +152,7 @@ const OrderDetailsModal: React.FC<IProps> = ({ ...rest }) => {
           {order?.txId && (
             <Anchor
               style={{ paddingTop: 12, width: "100%" }}
-              href={`${EXPLORER_URL}/tx/${order.txId}`}
+              href={`${EXPLORER_URL}/transactions/${order.txId}`}
             >
               <Text weight={500} textAlign="center" type="blue500">
                 View in Waves Explorer

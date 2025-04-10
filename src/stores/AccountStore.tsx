@@ -161,7 +161,7 @@ class AccountStore {
           clearInterval(interval);
         }
 
-        const result = await window.WavesKeeper.initialPromise
+        const result = await window?.WavesKeeper?.initialPromise
           .then((keeperApi: any) => keeperApi.publicState())
           .then(() => this.subscribeToKeeperUpdate())
           .catch(

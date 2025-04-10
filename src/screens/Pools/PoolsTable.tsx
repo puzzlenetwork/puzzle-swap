@@ -30,7 +30,7 @@ const PoolsTable: React.FC = () => {
       { Header: "Pool name", accessor: "poolName" },
       {
         Header: () => (
-          <Row style={{ cursor: "pointer" }}>
+          <Row style={{ cursor: "pointer", alignItems: 'center'}}>
             <Text size="medium" fitContent>
               My balance
             </Text>
@@ -313,7 +313,7 @@ const PoolsTable: React.FC = () => {
               onChange={(e) => poolsStore.setShowEmptyBalances(e)}
             />
             <SizedBox width={12} />
-            <Text>Show my empty balances</Text>
+            <Text style={{width: 'auto'}}>Show my empty balances</Text>
           </>
         )}
       </Row>

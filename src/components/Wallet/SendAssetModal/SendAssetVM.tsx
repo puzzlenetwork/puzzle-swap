@@ -119,7 +119,7 @@ class SendAssetVM {
             {
               type: "success",
               title: `Success`,
-              link: `${EXPLORER_URL}/tx/${txId}`,
+              link: `${EXPLORER_URL}/transactions/${txId}`,
               linkTitle: "View on Explorer",
             }
           );

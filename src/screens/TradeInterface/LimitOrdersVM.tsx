@@ -284,11 +284,11 @@ class LimitOrdersVM {
         (txId) =>
           txId &&
           this.rootStore.notificationStore.notify(
-            `You can find your active orders in orders history`,
+            `You can find your active order in the open orders section`,
             {
               type: "success",
               title: `Order has been placed`,
-              link: `${EXPLORER_URL}/tx/${txId}`,
+              link: `${EXPLORER_URL}/transactions/${txId}`,
               linkTitle: "View on Explorer",
             }
           )
@@ -330,7 +330,7 @@ class LimitOrdersVM {
             {
               type: "success",
               title: `Order has been cancelled`,
-              link: `${EXPLORER_URL}/tx/${txId}`,
+              link: `${EXPLORER_URL}/transactions/${txId}`,
               linkTitle: "View on Explorer",
             }
           )
@@ -369,7 +369,7 @@ class LimitOrdersVM {
             {
               type: "success",
               title: `Orders has been cancelled`,
-              link: `${EXPLORER_URL}/tx/${txId}`,
+              link: `${EXPLORER_URL}/transactions/${txId}`,
               linkTitle: "View on Explorer",
             }
           )

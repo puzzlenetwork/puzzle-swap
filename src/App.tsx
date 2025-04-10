@@ -26,6 +26,7 @@ import MobileNavBar from "./components/MobileNavBar";
 import Landing from "@screens/Landing";
 import Paper from "@screens/Paper";
 import LoginScreen from "./screens/LoginScreen";
+import { usePageTitle } from "./usePageTitle";
 
 const Root = styled(Column)`
   width: 100%;
@@ -41,6 +42,7 @@ const MobileSpace = styled.div`
 `;
 const App: React.FC = () => {
   const { accountStore } = useStores();
+  usePageTitle()
   return (
     <Root>
       <LoginScreen />
@@ -113,3 +115,4 @@ const App: React.FC = () => {
 };
 
 export default observer(App);
+

@@ -270,7 +270,7 @@ export class SwapVM {
             {
               type: "success",
               title: "Transaction is completed",
-              link: `${EXPLORER_URL}/tx/${txId}`,
+              link: `${EXPLORER_URL}/transactions/${txId}`,
               linkTitle: "View on Explorer",
             }
           );

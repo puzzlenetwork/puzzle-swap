@@ -1,4 +1,4 @@
-import React from "react";
+import React, { JSX } from "react";
 import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
 import Dialog from "@components/Dialog/Dialog";
 import { Column } from "../Flex";
@@ -101,7 +101,7 @@ export const buildSuccessLiquidityDialogParams = ({
   txId,
   poolDomain,
 }: TBuildSuccessLiquidityDialogParamsProps): IDialogNotificationProps => {
-  const txLink = `${EXPLORER_URL}/tx/${txId}`;
+  const txLink = `${EXPLORER_URL}/transactions/${txId}`;
   const poolLink = `/pools/${poolDomain}/invest`;
   const pool = accountStore.rootStore.poolsStore.pools.find(
     ({ domain }) => domain === poolDomain

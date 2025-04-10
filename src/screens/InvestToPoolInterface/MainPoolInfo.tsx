@@ -109,7 +109,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
             {/*  <Column*/}
             {/*    onClick={() =>*/}
             {/*      window.open(*/}
-            {/*        `${EXPLORER_URL}/tx/${vm.pool?.artefactOriginTransactionId}`*/}
+            {/*        `${EXPLORER_URL}/transactions/${vm.pool?.artefactOriginTransactionId}`*/}
             {/*      )*/}
             {/*    }*/}
             {/*  >*/}

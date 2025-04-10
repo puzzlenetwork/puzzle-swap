@@ -39,7 +39,7 @@ const AggregatorHistory: React.FC<IProps> = () => {
     setTr(
       vm.operations.map((v) => {
         return {
-          onClick: () => window.open(`${EXPLORER_URL}/tx/${v.id}`),
+          onClick: () => window.open(`${EXPLORER_URL}/transactions/${v.id}`),
           details: (() => {
             switch (v.call?.function) {
               case "swap":

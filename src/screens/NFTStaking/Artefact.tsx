@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { JSX } from "react";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import { Column, Row } from "@src/components/Flex";

@@ -145,7 +145,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
               kind="secondary"
               onClick={() =>
                   window.open(
-                      `${EXPLORER_URL}/tx/${vm.pool?.artefactOriginTransactionId}`
+                      `${EXPLORER_URL}/transactions/${vm.pool?.artefactOriginTransactionId}`
                   )
               }
           >
