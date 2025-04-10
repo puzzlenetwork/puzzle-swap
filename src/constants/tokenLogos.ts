@@ -268,6 +268,7 @@ const tokenLogos: Record<string, string> = {
   "TITS": "https://i.meme/_next/image?url=https%3A%2F%2Fi.meme%2Fstatic%2F4kedYPas1UEswFS5982TVVYshQeffyKiBQadJkd3inAJ_img.webp&w=640&q=75",
   "PERFECT": "https://i.meme/_next/image?url=https%3A%2F%2Fi.meme%2Fstatic%2F31LrfAmRPURMhkXAA2kkMpy1j2DULVr3KyKnQ95cEzVW_img.jpg&w=640&q=75",
   "23": "https://i.meme/_next/image?url=https%3A%2F%2Fi.meme%2Fstatic%2F6rE88UixaXYv8kKjjhGKoAm3Vycv9wLz2Esd5gv3sWuw_img.jpg&w=640&q=75",
+  "SANCHO": "https://s3.eu-central-1.amazonaws.com/memecity-prod/meme-city/bf7ee3ff-1805-4ec7-9398-daf06841c535.png?t=1744303065718",
   
   "WX-USDCUSDT-LP": "https://waves.exchange/static/icons/assets/rZMQ6g31Lr7sPAaAoYc4U2PHCVauTuKUSzUbJtUyPZN.svg",
   AXLY: "https://waves.exchange/static/icons/assets/DcAbWMXrfMeooG1BrZ9ipiseFSVm7zxTs1XZKRp6DVeZ.svg",
