@@ -187,6 +187,7 @@ const PoolsTable: React.FC = () => {
         if (vm.customPoolFilter === 2) return !isCustom;
         return false;
       })
+      console.log('filteredSortedData', filteredSortedData)
       setLengthData(filteredSortedData.length)
       const data = filteredSortedData
       .slice((poolsStore.pagination.page - 1) * poolsStore.pagination.size, poolsStore.pagination.size * poolsStore.pagination.page)
@@ -337,7 +338,11 @@ const PoolsTable: React.FC = () => {
         </>
       ) : (
         <PoolNotFound
-          onClear={() => poolsStore.setSearchValue("")}
+          onClear={() =>{
+            poolsStore.setSearchValue("");
+            poolsStore.setVolumeByTimeFilter(0);
+            poolsStore.setVersionFilter(0);
+          }}
           searchValue={poolsStore.searchValue}
         />
       )}

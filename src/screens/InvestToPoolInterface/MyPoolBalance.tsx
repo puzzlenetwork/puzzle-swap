@@ -15,6 +15,7 @@ import useWindowSize from "@src/hooks/useWindowSize";
 import { Link } from "react-router-dom";
 import { useStores } from "@stores";
 import Skeleton from "react-loading-skeleton";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -46,6 +47,7 @@ const MyPoolBalance: React.FC<IProps> = () => {
   const { address, setLoginModalOpened } = accountStore;
   const vm = useInvestToPoolInterfaceVM();
   const { width: screenWidth } = useWindowSize();
+  
   return (
     <Root>
       <Text weight={500} type="secondary">
@@ -59,12 +61,12 @@ const MyPoolBalance: React.FC<IProps> = () => {
           </Column>
           <Column>
             <Text textAlign="right" size="medium">
-              $ {(vm.totalProvidedLiquidityByAddress).toFormat(2)}
+              $ {vm.totalProvidedLiquidityByAddress.toFormat(2)}
             </Text>
             <Text textAlign="right" type="secondary" size="small">
               {vm.shareOfPool != null &&
                 !vm.shareOfPool.isNaN() &&
-                `Share of pool ${vm.shareOfPool?.toFormat(2)}%`}
+                `Share of pool ${vm.shareOfPool?.toFormat(6).replace(/0+$/, '')}%`}
             </Text>
           </Column>
         </Header>

@@ -18,6 +18,7 @@ import { ReactComponent as NotFoundIcon } from "@src/assets/notFound.svg";
 import { ReactComponent as SortDownIcon } from "@src/assets/icons/sortDown.svg";
 import { TTokenStatistics } from "@stores/TokenStore";
 import BN from "@src/utils/BN";
+import { Pagination } from "@src/components/Pagination/Pagination";
 
 interface IProps {}
 
@@ -54,7 +55,10 @@ const TableTitle: React.FC<{
 const TokensTable: React.FC<IProps> = () => {
   const { tokenStore, accountStore, notificationStore } = useStores();
   const { width } = useWindowSize();
+  const [lengthData, setLengthData] = useState(0);
+  const [pagination, setPagination] = useState(1);
   const vm = useExploreVM();
+  
   const [sort, setSort] = useState<"price" | "change" | "volume">("change");
   const [sortMode, setSortMode] = useState<"descending" | "ascending">(
     "descending"
@@ -67,6 +71,10 @@ const TokensTable: React.FC<IProps> = () => {
       setSort(v);
       setSortMode("descending");
     }
+  };
+
+  const changePage = (el: number) => {
+    setPagination(el)
   };
 
   const handleWatchListChange = (assetId: string) => {
@@ -91,7 +99,7 @@ const TokensTable: React.FC<IProps> = () => {
 
   const [filteredTokens, setFilteredTokens] = useState<IToken[]>([]);
   useMemo(() => {
-    const data = vm.assetsWithStats
+    const filteredSortedData = vm.assetsWithStats
       // .slice(
       //   0,
       //   !isFiltersChosen ? displayedTokens : vm.assetsWithStats.length - 1
@@ -148,6 +156,9 @@ const TokensTable: React.FC<IProps> = () => {
         }
         return true;
       });
+      const data = filteredSortedData
+      .slice((pagination - 1) * 20, 20 * pagination)
+    setLengthData(filteredSortedData.length)
     setFilteredTokens(data);
   }, [
     accountStore.assetBalances,
@@ -236,8 +247,7 @@ const TokensTable: React.FC<IProps> = () => {
                 rate={stats.currentPrice}
                 handleWatchListChange={handleWatchListChange}
               />
-            );
-          })}
+          )})}
           {/*{!isFiltersChosen && displayedTokens !== vm.assetsWithStats.length && (*/}
           {/*  <>*/}
           {/*    <SizedBox height={16} />*/}
@@ -259,6 +269,12 @@ const TokensTable: React.FC<IProps> = () => {
           {/*)}*/}
         </GridTable>
       </Card>
+      <Pagination
+          currentPage={pagination}
+          lengthData={lengthData}
+          limit={20}
+          onChange={changePage}
+        />
     </Root>
   );
 };

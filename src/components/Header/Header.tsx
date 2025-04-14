@@ -1,13 +1,14 @@
 import styled from "@emotion/styled";
 import React, { useState } from "react";
-import mobileMenuIcon from "@src/assets/icons/mobileMenu.svg";
+import MenuIcon from "@src/assets/icons/menu.svg";
 import closeIcon from "@src/assets/icons/close.svg";
 import { Column, Row } from "@components/Flex";
 import MobileMenu from "@components/Header/MobileMenu";
+import mobileMenuIcon from "@src/assets/icons/mobileMenu.svg";
 import SizedBox from "@components/SizedBox";
 import Wallet from "@components/Wallet/Wallet";
 import { observer } from "mobx-react-lite";
-import { ROUTES } from "@src/constants";
+import { PRODUCTS, ROUTES } from "@src/constants";
 import { useLocation } from "react-router-dom";
 import { Anchor } from "@components/Anchor";
 import { useTheme } from "@emotion/react";
@@ -15,6 +16,17 @@ import Tooltip from "@components/Tooltip";
 import LinkGroup from "@components/LinkGroup";
 import DarkMode from "@components/Header/DarkMode";
 import isRoutesEquals from "@src/utils/isRoutesEquals";
+import PuzzleIcon from "@src/assets/links/puzzle.svg";
+import XIcon from "@src/assets/links/x.svg";
+import MediumIcon from "@src/assets/links/medium.svg";
+import TelegramIcon from "@src/assets/links/telegram.svg";
+import RobotIcon from "@src/assets/links/robot.svg";
+import ProductList from "../ProductList";
+import SwapIcon from "@src/assets/links/swap.svg";
+import NodeIcon from "@src/assets/links/node.svg";
+import LendIcon from "@src/assets/links/lend.svg";
+import MarketIcon from "@src/assets/links/market.svg";
+import { ReactComponent as Arrow } from "@src/assets/icons/arrowDownTransparent.svg";
 
 interface IProps {}
 
@@ -89,6 +101,7 @@ const Mobile = styled.div`
 `;
 
 const Desktop = styled.div`
+  gap: 15px;
   display: none;
   min-width: fit-content;
   @media (min-width: 880px) {
@@ -100,9 +113,41 @@ const Desktop = styled.div`
   }
 `;
 
+
+const BurgerMenu = styled.div<{ expanded: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 8px;
+  box-sizing: border-box;
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
+  border-radius: 10px;
+  cursor: pointer;
+  background: ${({ expanded, theme }) =>
+    expanded ? theme.colors.primary100 : theme.colors.white};
+
+  :hover {
+    background: ${({ theme }) => theme.colors.primary100};
+  }
+
+`;
+
+const RowLinks = styled(Row)`
+  margin-top: 15px;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  cursor: pointer;
+  :hover {
+    cursor: pointer;
+  }
+`
+
 const Header: React.FC<IProps> = () => {
   const [mobileMenuOpened, setMobileMenuOpened] = useState(false);
   const [bannerClosed /*, setBannerClosed*/] = useState(false);
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const location = useLocation();
   const theme = useTheme();
   const toggleMenu = (state: boolean) => {
@@ -120,25 +165,42 @@ const Header: React.FC<IProps> = () => {
     { name: "Lend", link: "https://lend.puzzleswap.org/" },
   ];
 
-  const communityMenu = [
+  const products = [
+    { name: "Puzzle Swap", link: PRODUCTS.SWAP, icon: SwapIcon, isActive: true},
+    { name: "Puzzle Lend", link: PRODUCTS.LEND, icon: LendIcon },
+    { name: "Puzzle Market", link: PRODUCTS.MARKET, icon: MarketIcon },
+    { name: "Puzzle Node", link: PRODUCTS.NODE, icon: NodeIcon },
+  ];
+
+  const communityLinks = [
     {
-      name: "Lease WAVES",
-      link: "https://lease.puzzleswap.org/",
-      isExternalLink: true
-    },
-    {
-      name: "Puzzle Network chat",
+      icon: TelegramIcon,
       link: "https://t.me/puzzle_network",
       isExternalLink: true
     },
     {
-      name: "Official Twitter",
+      icon: XIcon,
       link: "https://twitter.com/puzzle_network",
       isExternalLink: true
     },
     {
-      name: "Official Medium",
+      icon: MediumIcon,
       link: "https://medium.com/@puzzlenetwork",
+      isExternalLink: true
+    }
+  ]
+
+  const communityMenu = [
+    {
+      icon: RobotIcon,
+      name: "Notifications bot",
+      link: "https://t.me/puzzle_swap",
+      isExternalLink: true
+    },
+    {
+      icon: RobotIcon,
+      name: "Alerts bot",
+      link: "https://t.me/puzzle_alerts_bot",
       isExternalLink: true
     }
   ];
@@ -155,9 +217,31 @@ const Header: React.FC<IProps> = () => {
 
       <TopMenu>
         <Row alignItems="center" crossAxisSize="max">
-          <a href="https://puzzleswap.org">
+        <Tooltip
+            config={{
+              placement: "bottom-start",
+              trigger: "click",
+              onVisibleChange: setIsTooltipOpen
+            }}
+            content={
+              <Column crossAxisSize="max">
+                <ProductList title="" links={products} />
+                <SizedBox height={1} style={{width: "100%", background: "#F1F2FE"}} />
+                <RowLinks>
+                  {communityLinks.map((el) => (
+                    <a key={el.link} href={el.link} target="_blank">
+                      <img src={el.icon} />
+                    </a>
+                  ))}
+                </RowLinks>
+              </Column>
+            }
+          >
+          <Row alignItems="center">
             <img className="logo" src={theme.images.icons.logo} alt="logo" />
-          </a>
+            <Arrow style={{ cursor: "pointer", transform: isTooltipOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s ease" }} />
+          </Row>
+          </Tooltip>
           <Desktop>
             <SizedBox width={54} />
             {menuItems.map(({ name, link }) => (
@@ -182,7 +266,6 @@ const Header: React.FC<IProps> = () => {
         </Mobile>
         <Desktop>
           <Wallet />
-          <SizedBox width={24} />
           <Tooltip
             config={{
               placement: "bottom-start",
@@ -192,16 +275,17 @@ const Header: React.FC<IProps> = () => {
               <Column crossAxisSize="max">
                 <LinkGroup title="" links={communityMenu} />
                 <SizedBox height={8} />
-                <DarkMode />
               </Column>
             }
           >
-            <img
-              onClick={() => toggleMenu(!mobileMenuOpened)}
-              className="icon"
-              src={mobileMenuIcon}
-              alt="menuControl"
-            />
+            <BurgerMenu expanded={false}>
+              <img
+                onClick={() => toggleMenu(!mobileMenuOpened)}
+                className="icon"
+                src={MenuIcon}
+                alt="menuControl"
+              />
+            </BurgerMenu>
           </Tooltip>
         </Desktop>
       </TopMenu>

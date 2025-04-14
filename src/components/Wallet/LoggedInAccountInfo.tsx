@@ -10,6 +10,7 @@ import { useStores } from "@stores";
 import Tooltip from "@components/Tooltip";
 import { observer } from "mobx-react-lite";
 import WalletActionsTooltip from "../WalletActionsTooltip";
+import DarkMode from "../Header/DarkMode";
 
 interface IProps {}
 
@@ -67,10 +68,13 @@ const LoggedInAccountInfo: React.FC<IProps> = () => {
   const [accountOpened, setAccountOpened] = useState<boolean>(false);
   return (
     <Root>
-      <WalletIcon
-        onClick={() => accountStore.setWalletModalOpened(true)}
-        style={{ cursor: "pointer" }}
-      />
+      <Row alignItems="center" style={{gap: 10}}>
+        <DarkMode />
+        <WalletIcon
+          onClick={() => accountStore.setWalletModalOpened(true)}
+          style={{ cursor: "pointer" }}
+        />
+      </Row>
       <SizedBox width={24} />
       <Tooltip
         config={{

@@ -12,6 +12,10 @@ import DarkMode from "@components/Header/DarkMode";
 import { Anchor } from "../Anchor";
 import isRoutesEquals from "@src/utils/isRoutesEquals";
 import { useLocation } from "react-router-dom";
+import XIcon from "@src/assets/links/x.svg";
+import MediumIcon from "@src/assets/links/medium.svg";
+import TelegramIcon from "@src/assets/links/telegram.svg";
+import RobotIcon from "@src/assets/links/robot.svg";
 
 interface IProps {
   onClose: () => void;
@@ -21,19 +25,18 @@ interface IProps {
 
 const Root = styled.div<{ bannerClosed: boolean; opened: boolean }>`
   z-index: 100;
-  background: rgba(0, 0, 0, 0.4);
   position: absolute;
   // top: ${({ bannerClosed }) => (bannerClosed ? 64 : 144)}px;
   top: 64px;
   left: 0;
   right: 0;
-  //height: calc(100vh - ${({ bannerClosed }) => (bannerClosed ? 64 : 144)}px);
-  height: calc(100vh - 64px);
   transition: 0.2s;
   overflow: hidden;
 
   ${({ opened }) => (!opened ? `height: 0px;` : "")}
   .menu-body {
+    justify-content: space-between;
+    height: calc(100vh - 64px);
     display: flex;
     flex-direction: column;
     background: ${({ theme }) => theme.colors.white};
@@ -41,26 +44,36 @@ const Root = styled.div<{ bannerClosed: boolean; opened: boolean }>`
 `;
 
 const WalletWrapper = styled.div`
-  padding: 24px;
+  padding: 14px;
   border-top: 1px solid ${({ theme }) => theme.colors.primary100};
 `;
 
 const MenuItem = styled(Anchor) <{ selected?: boolean }>`
+  display: flex;
   font-size: 16px;
   line-height: 24px;
+  font-weight: 500;
+  gap: 10px;
   color: ${({ theme }) => theme.colors.primary800};
   text-decoration: none;
   margin-bottom: 8px;
 `;
 
+const MenuContainer = styled(Column)`
+  padding: 24px;
+  width: 100%:
+  margin: 24px;
+  margin-bottom: 0px;
+`;
+
 const toolsMenu = [
-  { name: "Notifications bot", link: "https://t.me/puzzle_swap", outer: true },
-  { name: "Alerts bot", link: "https://t.me/puzzle_alerts_bot", outer: true },
+  { name: "Notifications bot", link: "https://t.me/puzzle_swap", outer: true, icon: RobotIcon },
+  { name: "Alerts bot", link: "https://t.me/puzzle_alerts_bot", outer: true, icon: RobotIcon },
 ];
 const communityMenu = [
-  { name: "Telegram", link: "https://t.me/puzzle_network", outer: true },
-  { name: "Twitter", link: "https://twitter.com/puzzle_swap", outer: true },
-  { name: "Medium", link: "https://medium.com/@puzzlenetwork", outer: true },
+  { name: "Telegram", link: "https://t.me/puzzle_network", outer: true, icon: TelegramIcon },
+  { name: "(X) Twitter", link: "https://twitter.com/puzzle_swap", outer: true, icon: XIcon },
+  { name: "Medium", link: "https://medium.com/@puzzlenetwork", outer: true, icon: MediumIcon },
 ];
 
 
@@ -78,9 +91,8 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
   return (
     <Root {...{ bannerClosed, opened }}>
       <div className="menu-body">
-        <Divider />
-        <Scrollbar style={{ margin: 24, marginBottom: 0 }}>
-          <Column crossAxisSize="max" style={{ maxHeight: "50vh" }}>
+        <MenuContainer>
+          <Column crossAxisSize="max">
             {mainFunctional.map(({ name, link }) => (
               <MenuItem
                 key={name}
@@ -94,36 +106,35 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
 
             <SizedBox height={24} />
 
-            <Text type="secondary">Tools</Text>
-            {toolsMenu.map(({ name, link }) => (
+            <Text type="secondary" style={{marginBottom: 10}}>Tools</Text>
+            {toolsMenu.map(({ icon, name, link }) => (
               <MenuItem
                 key={name}
                 selected={isRoutesEquals(link, location.pathname)}
                 href={link}
                 target={""}
               >
+                <img src={icon} alt="robot" width={20} height={20} />
                 {name}
               </MenuItem>
             ))}
 
             <SizedBox height={24} />
 
-            <Text type="secondary">Community</Text>
-            {communityMenu.map(({ name, link }) => (
+            <Text type="secondary" style={{marginBottom: 10}}>Community</Text>
+            {communityMenu.map(({ icon, name, link }) => (
               <MenuItem
                 key={name}
                 selected={isRoutesEquals(link, location.pathname)}
                 href={link}
                 target={""}
               >
+                <img src={icon} alt="robot" width={20} height={20} />
                 {name}
               </MenuItem>
             ))}
-
-            <SizedBox height={24} width={1} />
           </Column>
-        </Scrollbar>
-        <DarkMode style={{ margin: 16 }} />
+        </MenuContainer>
         <WalletWrapper>
           <Wallet />
         </WalletWrapper>
