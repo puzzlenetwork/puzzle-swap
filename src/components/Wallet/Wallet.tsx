@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import Button from "@components/Button";
 import LoggedInAccountInfo from "@components/Wallet/LoggedInAccountInfo";
 import DarkMode from "@components/Header/DarkMode";
-import {Row} from "@components/Flex";
+import { Row } from "@components/Flex";
 import { ReactComponent as WalletIcon } from "@src/assets/icons/pink-wallet.svg";
 
 interface IProps {}
@@ -23,12 +23,16 @@ const Wallet: React.FC<IProps> = () => {
 
   return (
     <Root>
-      <Row alignItems="center" style={{gap: 20, marginRight: 20}}>
-        <DarkMode />
-        <WalletIcon
-            onClick={() => accountStore.setWalletModalOpened(true)}
-            style={{ cursor: "pointer" }}
-        />
+      <Row alignItems="center" style={{ gap: 20, marginRight: 20 }}>
+        <>
+          <DarkMode />
+          {accountStore.address != null && (
+            <WalletIcon
+              onClick={() => accountStore.setWalletModalOpened(true)}
+              style={{ cursor: "pointer" }}
+            />
+          )}
+        </>
       </Row>
       {address == null ? (
         <Button

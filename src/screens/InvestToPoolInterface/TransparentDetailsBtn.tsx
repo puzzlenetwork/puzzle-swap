@@ -120,37 +120,49 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
     },
     {
       title: "Liquidity Providers Fee (7D)",
-      value: vm.pool.statistics && vm.pool.statistics?.totals?.protocol_fees_7d
-        ? `$${new BN(vm.pool.statistics?.totals?.protocol_fees_7d).div(10).times(5).toFormat(2)}`
-        : "–",
+      value:
+        vm.pool.statistics && vm.pool.statistics?.totals?.protocol_fees_7d
+          ? `$${new BN(vm.pool.statistics?.totals?.protocol_fees_7d)
+              .div(10)
+              .times(5)
+              .toFormat(2)}`
+          : "–",
     },
     {
       title: "Owner Fee (7D)",
-      value: vm.pool.statistics && vm.pool.statistics?.totals?.protocol_fees_7d
-        ? `$${new BN(vm.pool.statistics?.totals?.protocol_fees_7d).div(10).times(1).toFormat(2)}`
-        : "–",
+      value:
+        vm.pool.statistics && vm.pool.statistics?.totals?.protocol_fees_7d
+          ? `$${new BN(vm.pool.statistics?.totals?.protocol_fees_7d)
+              .div(10)
+              .times(1)
+              .toFormat(2)}`
+          : "–",
     },
     {
       title: "Protocol Fee (7D)",
-      value: vm.pool.statistics && vm.pool.statistics?.totals?.protocol_fees_7d
-        ? `$${new BN(vm.pool.statistics?.totals?.protocol_fees_7d).div(10).times(4).toFormat(2)}`
-        : "–",
+      value:
+        vm.pool.statistics && vm.pool.statistics?.totals?.protocol_fees_7d
+          ? `$${new BN(vm.pool.statistics?.totals?.protocol_fees_7d)
+              .div(10)
+              .times(4)
+              .toFormat(2)}`
+          : "–",
     },
     {
       title: "Created via",
       value: (
-          <TextButton
-              size="medium"
-              prefix={linkIcon}
-              kind="secondary"
-              onClick={() =>
-                  window.open(
-                      `${EXPLORER_URL}/transactions/${vm.pool?.artefactOriginTransactionId}`
-                  )
-              }
-          >
-            {vm.nftPaymentName}
-          </TextButton>
+        <TextButton
+          size="medium"
+          prefix={linkIcon}
+          kind="secondary"
+          onClick={() =>
+            window.open(
+              `${EXPLORER_URL}/transactions/${vm.pool?.artefactOriginTransactionId}`
+            )
+          }
+        >
+          {vm.nftPaymentName}
+        </TextButton>
       ),
     },
   ];

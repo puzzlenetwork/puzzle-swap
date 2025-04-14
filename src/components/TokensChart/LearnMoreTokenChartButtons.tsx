@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 const Link = styled.img`
   width: 24px;
   height: 24px;
-  cursor: pointer; ;
+  cursor: pointer;
 `;
 
 const Root = styled.div`

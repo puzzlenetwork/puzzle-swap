@@ -78,7 +78,7 @@ const Investments: React.FC = () => {
             size="medium"
             kind="secondary"
             onClick={() => {
-              navigate(ROUTES.POOLS)
+              navigate(ROUTES.POOLS);
               accountStore.setWalletModalOpened(false);
             }}
           >

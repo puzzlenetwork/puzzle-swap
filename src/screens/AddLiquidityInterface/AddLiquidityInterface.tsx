@@ -75,7 +75,9 @@ const AddLiquidityInterfaceImpl = observer(() => {
           poolLogo={pool?.logo}
           poolName={pool?.title}
           apy={
-            pool?.statistics?.apr ? `${new BN(pool?.statistics?.apr).toFormat(2)} %` : undefined
+            pool?.statistics?.apr
+              ? `${new BN(pool?.statistics?.apr).toFormat(2)} %`
+              : undefined
           }
           onChangePool={() => vm.setChangePoolModalOpen(true)}
         />

@@ -1,4 +1,9 @@
-import { IPoolConfig, IPoolConfigStatistics, IPoolStats, IToken } from "@src/constants";
+import {
+  IPoolConfig,
+  IPoolConfigStatistics,
+  IPoolStats,
+  IToken,
+} from "@src/constants";
 import { makeAutoObservable } from "mobx";
 import BN from "@src/utils/BN";
 import tokenLogos from "@src/constants/tokenLogos";
@@ -85,10 +90,9 @@ class Pool implements IPoolConfig {
 
   public wavesRate: BN = BN.ZERO;
   public setWavesRate = (value: BN) => (this.wavesRate = value);
-  
+
   public _usdtRate: BN = BN.ZERO;
   public setUsdtRate = (value: BN) => (this._usdtRate = value);
-
 
   constructor(params: IPoolConfig) {
     this.address = params.address;
@@ -159,7 +163,10 @@ class Pool implements IPoolConfig {
       const globalVolume = new BN(globalVolumeValue.value).div(1e6);
       this.setGlobalVolume(globalVolume);
     }
-    const usdtAsset = this.tokens.find(({ assetId }) => assetId === "34N9YcEETLWn93qYQ64EsP1x89tSruJU44RrEMSXXEPJ")!;
+    const usdtAsset = this.tokens.find(
+      ({ assetId }) =>
+        assetId === "34N9YcEETLWn93qYQ64EsP1x89tSruJU44RrEMSXXEPJ"
+    )!;
     const usdtLiquidity = this.liquidity[usdtAsset?.assetId];
 
     const usdnAsset = this.tokens.find(({ symbol }) => symbol === "XTN")!;
@@ -171,7 +178,10 @@ class Pool implements IPoolConfig {
     const wavesAsset = this.tokens.find(({ symbol }) => symbol === "WAVES")!;
     const wavesLiquidity = this.liquidity[wavesAsset?.assetId];
 
-    const usdtPptAsset = this.tokens.find(({ assetId }) => assetId === "9wc3LXNA4TEBsXyKtoLE9mrbDD7WMHXvXrCjZvabLAsi")!;
+    const usdtPptAsset = this.tokens.find(
+      ({ assetId }) =>
+        assetId === "9wc3LXNA4TEBsXyKtoLE9mrbDD7WMHXvXrCjZvabLAsi"
+    )!;
     const usdtPptLiquidity = this.liquidity[usdtPptAsset?.assetId];
 
     let globalLiquidityByUSDT = null;
@@ -289,7 +299,7 @@ class Pool implements IPoolConfig {
       globalPoolTokenAmount && globalPoolTokenAmount.gt(0)
         ? this.globalLiquidity.div(BN.formatUnits(globalPoolTokenAmount, 8))
         : BN.ZERO;
-        console.log("!", globalIndexStaked.toString())
+    console.log("!", globalIndexStaked.toString());
     if (addressIndexStaked == null || addressIndexStaked.eq(0)) {
       return {
         addressStaked: BN.ZERO,

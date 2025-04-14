@@ -35,7 +35,7 @@ const SizedBoxStyled = styled(SizedBox)`
     width: calc(100% + 34px);
     margin: 24px 0 24px -17px;
   }
-`
+`;
 const SelectsAssets: React.FC<IProps> = () => {
   const [addAssetModal, openAssetModal] = useState(false);
   const vm = useCreateCustomPoolsVM();
@@ -100,7 +100,7 @@ const SelectsAssets: React.FC<IProps> = () => {
         <SizedBoxStyled
           height={1}
           style={{
-            background: theme.colors.primary100
+            background: theme.colors.primary100,
           }}
         />
         <Text style={{ width: "fit-content" }} weight={500}>

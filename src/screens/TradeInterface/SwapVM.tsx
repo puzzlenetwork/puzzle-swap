@@ -63,9 +63,9 @@ export class SwapVM {
     amount0: BN = this.amount0,
     amount1: BN = this.amount1
   ) {
-    const price = BN.formatUnits(amount1, this.token1.decimals).div(
-      BN.formatUnits(amount0, this.token0.decimals)
-    ).times(0.9971);
+    const price = BN.formatUnits(amount1, this.token1.decimals)
+      .div(BN.formatUnits(amount0, this.token0.decimals))
+      .times(0.9971);
     this._setPrice(!price.isNaN() ? price : BN.ZERO);
   }
 
@@ -155,14 +155,19 @@ export class SwapVM {
     });
     promise
       .then((v: any) => {
-        !invalidAmount && this._setAmount1(new BN(v.estimatedOut*0.9971));
+        !invalidAmount && this._setAmount1(new BN(v.estimatedOut * 0.9971));
         this._calculatePrice(
           invalidAmount ? defaultAmount0 : amount0,
           new BN(v.estimatedOut)
         );
         this._setSynchronizing(false);
         !invalidAmount &&
-          this._setPriceImpact((new BN(v.priceImpact).gt(0) ? new BN(v.priceImpact) : BN.ZERO).times(100));
+          this._setPriceImpact(
+            (new BN(v.priceImpact).gt(0)
+              ? new BN(v.priceImpact)
+              : BN.ZERO
+            ).times(100)
+          );
         this._setParameters(!invalidAmount ? v.parameters : null);
         this._setRoute(v.routes);
         this._setAggregatedProfit(new BN(v.aggregatedProfit));
@@ -225,7 +230,10 @@ export class SwapVM {
     this.rootStore.accountStore.balances.find((b) => assetId === b.assetId);
 
   get minimumToReceive(): BN {
-    const slippage = JSON.parse(localStorage.getItem("puzzle-user-settings") || '{"slippage": 1}')?.slippage || 1;
+    const slippage =
+      JSON.parse(
+        localStorage.getItem("puzzle-user-settings") || '{"slippage": 1}'
+      )?.slippage || 1;
     return this.amount1.times(new BN(100 - slippage).div(100));
   }
 

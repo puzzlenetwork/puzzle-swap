@@ -150,7 +150,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
             </Column>
             <SizedBox height={16} />
             <Row>
-              {vm.pool.statistics == null  ? (
+              {vm.pool.statistics == null ? (
                 <Button
                   fixed
                   size="medium"

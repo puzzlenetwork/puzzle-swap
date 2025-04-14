@@ -6,7 +6,7 @@ export const usePageTitle = () => {
   const location = useLocation();
 
   useEffect(() => {
-    console.log('location.pathname', location.pathname)
+    console.log("location.pathname", location.pathname);
     switch (location.pathname) {
       case ROUTES.STAKE:
         document.title = "Puzzle Swap | STAKE";
