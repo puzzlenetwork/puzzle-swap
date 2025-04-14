@@ -137,6 +137,7 @@ const tokenLogos: Record<string, string> = {
   MUNDO: mundoLogo,
   EGGPOINT: eggPointLogo,
   EGG: eggLogo,
+  OLDEGG: eggLogo,
   XTN: usdnLogo,
   ENDO: endoLogo,
   MARVIN: marvinLogo,
