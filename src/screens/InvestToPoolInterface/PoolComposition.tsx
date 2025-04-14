@@ -2,13 +2,15 @@ import styled from "@emotion/styled";
 import React, { useMemo, useState } from "react";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import { Row } from "@components/Flex";
+import { Column, Row } from "@components/Flex";
 import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
 import { observer } from "mobx-react-lite";
 import Table from "@components/Table";
 import Scrollbar from "@src/components/Scrollbar";
 import useWindowSize from "@src/hooks/useWindowSize";
 import { useTheme } from "@emotion/react";
+import Tooltip from "@src/components/Tooltip";
+import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 
 interface IProps {}
 
@@ -56,8 +58,33 @@ const PoolComposition: React.FC<IProps> = () => {
           </Row>
         ),
       },
-      { Header: "Target Share", accessor: "weight" },
-      { Header: "Current Share", accessor: "realWeight" },
+      { Header: <Tooltip
+        config={{
+          trigger: "hover",
+        }}
+        content={(
+          <Column>
+          <Text size="small">Target Share is the set percentage of each token </Text>
+          <Text size="small">defined when the pool was created.</Text>
+        </Column>
+  )}
+      >
+        <Row>Target Share  <InfoIcon style={{ marginLeft: 4 }} /></Row>
+      </Tooltip>, accessor: "weight" },
+      { Header: <Tooltip
+        config={{
+          trigger: "hover",
+        }}
+        content={(
+          <Column>
+          <Text size="small">Current Share is the actual percentage of the token</Text>
+          <Text size="small"> in the pool right now. It may slightly differ if prices</Text>
+          <Text size="small"> have not yet been balanced by arbitrage.</Text>
+        </Column>
+  )}
+      >
+        <Row>Current Share  <InfoIcon style={{ marginLeft: 4 }} /></Row>
+      </Tooltip>, accessor: "realWeight" },
     ],
     [valueSort, theme.images.icons.group]
   );

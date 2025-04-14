@@ -61,6 +61,7 @@ const LPStaking: React.FC<IProps> = () => {
     vm.indexTokenBalance.times(vm.pool.indexTokenRate),
     8
   );
+
   return (
     <Root onClick={() => setExpanded(!expanded)}>
       <Title weight={500} expanded={expanded}>

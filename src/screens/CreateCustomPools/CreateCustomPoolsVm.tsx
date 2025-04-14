@@ -524,7 +524,6 @@ class CreateCustomPoolsVm {
             onTryAgain: () => this.provideLiquidityToPool,
           })
         );
-        console.log(e);
       })
       .finally(() => this._setLoading(false));
   };

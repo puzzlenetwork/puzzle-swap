@@ -12,23 +12,26 @@ interface IProps extends HTMLAttributes<HTMLDivElement> {}
 
 const Root = styled.div`
   display: flex;
-  background: ${({ theme }) => theme.colors.primary50};
+  // background: ${({ theme }) => theme.colors.primary50};
   border-radius: 12px;
-  padding: 12px;
+  margin: 12px;
   gap: 11px;
   align-items: center;
+  :hover {
+    cursor: pointer
+  }
 `;
 
 const DarkMode: React.FC<IProps> = ({ ...rest }) => {
   const { accountStore } = useStores();
   return (
     <Root {...rest}>
-      <Img src={moon} />
-      <Text>Dark mode</Text>
-      <Switch
+      <Img src={moon} onClick={() => accountStore.toggleTheme()}/>
+      {/* <Text>Dark mode</Text> */}
+      {/* <Switch
         onChange={() => accountStore.toggleTheme()}
         value={accountStore.selectedTheme === THEME_TYPE.DARK_THEME}
-      />
+      /> */}
     </Root>
   );
 };
