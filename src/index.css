@@ -16,6 +16,10 @@ a {
     flex: 1 1 auto;
 }
 
+.theme_icon path {
+    stroke: #ffffff !important;
+}
+
 @font-face {
     font-family: 'Roboto';
     font-weight: normal;

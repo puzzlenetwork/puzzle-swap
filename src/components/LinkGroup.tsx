@@ -6,7 +6,7 @@ import { Anchor } from "@components/Anchor";
 import { Row } from "./Flex";
 
 interface ILinkGroupItem {
-  icon: string;
+  icon: React.ReactNode;
   name: string;
   link: string;
   isExternalLink?: boolean;
@@ -16,6 +16,7 @@ interface IProps extends HTMLAttributes<HTMLDivElement> {
   title: string;
   links: ILinkGroupItem[];
 }
+
 
 const Root = styled.div`
   display: flex;
@@ -47,13 +48,15 @@ const RowLinks = styled(Row)`
   align-items: center;
   gap: 5px;
 `
+
 const LinkGroup: React.FC<IProps> = ({ title, links, ...rest }) => {
+
   return (
     <Root {...rest}>
       <Text type="secondary">{title}</Text>
       {links.map(({ icon, name, link, isExternalLink }, key) => (
         <RowLinks>
-          <img src={icon} width={20} height={20}/>
+          {icon}
           {isExternalLink ? (
             <StyledAnchor href={link} key={key}>
               {name}
