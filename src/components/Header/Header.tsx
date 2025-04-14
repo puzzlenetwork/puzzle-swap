@@ -168,8 +168,8 @@ const Header: React.FC<IProps> = () => {
   const products = [
     { name: "Puzzle Swap", link: PRODUCTS.SWAP, icon: SwapIcon, isActive: true},
     { name: "Puzzle Lend", link: PRODUCTS.LEND, icon: LendIcon },
-    // { name: "Puzzle Market", link: PRODUCTS.MARKET, icon: MarketIcon },
-    // { name: "Puzzle Node", link: PRODUCTS.NODE, icon: NodeIcon },
+    { name: "Puzzle Market", link: PRODUCTS.MARKET, icon: MarketIcon },
+    { name: "Puzzle Node", link: PRODUCTS.NODE, icon: NodeIcon },
   ];
 
   const communityLinks = [
