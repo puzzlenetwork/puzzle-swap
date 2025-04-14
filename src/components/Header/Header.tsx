@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import MenuIcon from "@src/assets/icons/menu.svg";
 import closeIcon from "@src/assets/icons/close.svg";
 import { Column, Row } from "@components/Flex";
@@ -158,11 +158,17 @@ const Header: React.FC<IProps> = () => {
   const location = useLocation();
   const theme = useTheme();
   const toggleMenu = (state: boolean) => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    document.body.classList.toggle("noscroll", state);
     setMobileMenuOpened(state);
   };
   const isDarkTheme = accountStore.selectedTheme === THEME_TYPE.DARK_THEME
+
+  useEffect(() => {
+    if (mobileMenuOpened) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }, [mobileMenuOpened]);
 
   const menuItems = [
     { name: "Explore", link: ROUTES.EXPLORE },
