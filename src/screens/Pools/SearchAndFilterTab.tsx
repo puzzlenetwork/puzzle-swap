@@ -81,14 +81,14 @@ const StyledRow = styled(Row)`
 const categoriesOptions = [
   { title: "All categories", key: "all" },
   { title: "Stablecoins", key: "stable" },
-    { title: "Common", key: "common" },
+  { title: "Common", key: "common" },
   { title: "PZ Indexes", key: "pz" },
   { title: "Waves DeFi", key: "defi" },
   // { title: "Waves Ducks", key: "duck" },
-    // {
-    //   title: "Global coins",
-    //   key: "global",
-    // },
+  // {
+  //   title: "Global coins",
+  //   key: "global",
+  // },
 ];
 
 const ClearBtn = styled(Text)`
@@ -153,22 +153,28 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
             }}
           /> */}
           <Select
-              options={poolsStore.versionOptions}
-              selected={poolsStore.versionOptions[poolsStore.versionFilter]}
-              onSelect={({ key }) => {
-                  const index = poolsStore.versionOptions.findIndex((o) => o.key === key);
-                  poolsStore.setVersionFilter(index);
-              }}
+            options={poolsStore.versionOptions}
+            selected={poolsStore.versionOptions[poolsStore.versionFilter]}
+            onSelect={({ key }) => {
+              const index = poolsStore.versionOptions.findIndex(
+                (o) => o.key === key
+              );
+              poolsStore.setVersionFilter(index);
+            }}
           />
           <SizedBox width={12} />
           <Select
             options={poolsStore.volumeByTimestamp}
-            selected={poolsStore.volumeByTimestamp[poolsStore.volumeByTimeFilter]}
+            selected={
+              poolsStore.volumeByTimestamp[poolsStore.volumeByTimeFilter]
+            }
             onSelect={({ key }) => {
-              const index = poolsStore.volumeByTimestamp.findIndex((o) => o.key === key);
+              const index = poolsStore.volumeByTimestamp.findIndex(
+                (o) => o.key === key
+              );
               poolsStore.setVolumeByTimeFilter(index);
-              }}
-            />
+            }}
+          />
           <SizedBox width={12} />
         </StyledRow>
         {isFiltersChosen && (

@@ -71,8 +71,8 @@ const StakingImpl: React.FC = () => {
             </Text>
             <SizedBox height={8} />
             <AdaptiveText fitContent textAlign="left" type="secondary">
-              For every swap on the exchange, 40% of the swap fees are
-              used to buy PUZZLE and distribute it to the staking balances.
+              For every swap on the exchange, 40% of the swap fees are used to
+              buy PUZZLE and distribute it to the staking balances.
             </AdaptiveText>
             <Body>
               <MainBlock>

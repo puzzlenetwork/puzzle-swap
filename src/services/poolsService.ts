@@ -4,11 +4,11 @@ import { IBoostings, IPoolConfig, IPoolStats } from "@src/constants";
 import { IHistory } from "@src/utils/types";
 
 export interface IAssetConfig {
-  asset_id: string,
-  share: number,
-  balance?: number,
-  real_balance?: number,
-  name?: string
+  asset_id: string;
+  share: number;
+  balance?: number;
+  real_balance?: number;
+  name?: string;
 }
 
 export interface IStakingStatsResponse {
@@ -47,7 +47,7 @@ export interface IGetPools {
   page: number;
   size: number;
   title?: string;
-  version?: string
+  version?: string;
 }
 
 const poolService = {
@@ -57,10 +57,12 @@ const poolService = {
     return data;
   },
   getPoolChartByDomain: async (address: string): Promise<IHistory[]> => {
-    const params = new URLSearchParams({ 
+    const params = new URLSearchParams({
       timeRange: "all",
     });
-    const req = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/${address}/charts?${params.toString()}`;
+    const req = `${
+      process.env.REACT_APP_AGG_API
+    }/stats/v1/statistics/pools/${address}/charts?${params.toString()}`;
     const { data } = await axios.get(req);
     return data;
   },
@@ -93,15 +95,29 @@ const poolService = {
     );
     return true;
   },
-  getPools: async (data: IGetPools): Promise<{ pools: Array<IPoolConfig & { stats: IPoolStats, assets: IAssetConfig[], liquidity: number, boostings: IBoostings }>, totalItems: number }> => {
+  getPools: async (
+    data: IGetPools
+  ): Promise<{
+    pools: Array<
+      IPoolConfig & {
+        stats: IPoolStats;
+        assets: IAssetConfig[];
+        liquidity: number;
+        boostings: IBoostings;
+      }
+    >;
+    totalItems: number;
+  }> => {
     const params = new URLSearchParams();
     Object.entries(data).forEach(([key, value]) => {
       params.append(key, value);
     });
     const { data: statsData } = await axios.get(
-      `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/all?${params.toString()}`
+      `${
+        process.env.REACT_APP_AGG_API
+      }/stats/v1/statistics/pools/all?${params.toString()}`
     );
-    return {pools: statsData.pools, totalItems: statsData.total};
+    return { pools: statsData.pools, totalItems: statsData.total };
   },
   getStats: async (): Promise<IStakingStatsResponse> => {
     const { data } = await axios.get(

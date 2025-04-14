@@ -17,7 +17,7 @@ interface IProps {}
 const Root = styled(Row)`
   align-items: center;
   height: fit-content;
-  justify-content: space-between;
+  justify-content: right;
   @media (min-width: 880px) {
     justify-content: flex-end;
   }

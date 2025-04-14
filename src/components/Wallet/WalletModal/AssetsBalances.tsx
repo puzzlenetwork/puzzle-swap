@@ -67,9 +67,14 @@ const AssetsBalances: React.FC<IProps> = () => {
             Buy WAVES on Waves Exchange to start trading.
           </Text>
           <SizedBox height={16} />
-          <Button size="medium" onClick={() => {
-            navigate(ROUTES.TRADE)
-          }}>Buy WAVES</Button>
+          <Button
+            size="medium"
+            onClick={() => {
+              navigate(ROUTES.TRADE);
+            }}
+          >
+            Buy WAVES
+          </Button>
           <SizedBox height={100} />
         </Column>
       )}

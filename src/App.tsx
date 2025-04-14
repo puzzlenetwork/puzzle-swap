@@ -42,7 +42,7 @@ const MobileSpace = styled.div`
 `;
 const App: React.FC = () => {
   const { accountStore } = useStores();
-  usePageTitle()
+  usePageTitle();
   return (
     <Root>
       <LoginScreen />
@@ -115,4 +115,3 @@ const App: React.FC = () => {
 };
 
 export default observer(App);
-

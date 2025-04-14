@@ -1,4 +1,7 @@
-import { ISerializedRootFilterStore, ISerializedRootStore } from "@stores/RootStore";
+import {
+  ISerializedRootFilterStore,
+  ISerializedRootStore,
+} from "@stores/RootStore";
 
 export const loadState = (): ISerializedRootStore | undefined => {
   try {
@@ -15,12 +18,9 @@ export const saveState = (state: ISerializedRootStore): void => {
   localStorage.setItem("puzzle-surf-store", JSON.stringify(state));
 };
 
-
 export const loadStateFilters = (): ISerializedRootFilterStore | undefined => {
   try {
-    const state = JSON.parse(
-      localStorage.getItem("puzzle-filters") as string
-    );
+    const state = JSON.parse(localStorage.getItem("puzzle-filters") as string);
     return state || undefined;
   } catch (error) {
     console.dir(error);

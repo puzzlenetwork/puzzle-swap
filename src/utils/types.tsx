@@ -1,7 +1,7 @@
 interface IPayment {
   amount: number;
   assetId: null | string;
-};
+}
 
 interface ITransfer {
   address: string;
@@ -33,14 +33,13 @@ interface IInvoked extends IBaseTransaction {
   };
 }
 
-
 interface ITransactionStateChanges {
   data: [
     {
       key: string;
       type: string;
       value: number;
-    },
+    }
   ];
   transfers: ITransfer[];
   issues: [];
@@ -50,7 +49,7 @@ interface ITransactionStateChanges {
   leases: ILeased[];
   leaseCancels: ILeased[];
   invokes: IInvoked[];
-};
+}
 
 interface IBaseTransaction {
   height: number;
@@ -58,7 +57,7 @@ interface IBaseTransaction {
   dApp: string;
   payment: IPayment[];
   stateChanges: ITransactionStateChanges;
-};
+}
 
 export interface ITransaction extends IBaseTransaction {
   type: number;

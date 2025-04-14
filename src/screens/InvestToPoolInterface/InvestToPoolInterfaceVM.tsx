@@ -60,8 +60,7 @@ class InvestToPoolInterfaceVM {
     (this.totalRewardToClaim = value);
 
   public dicToClaim: any | null = null;
-  private setDicToClaim = (value: any) =>
-    (this.dicToClaim = value);
+  private setDicToClaim = (value: any) => (this.dicToClaim = value);
 
   public totalClaimedReward: BN | null = null;
   private setTotalClaimedReward = (value: BN) =>
@@ -69,7 +68,7 @@ class InvestToPoolInterfaceVM {
 
   public claimedRewardList: any | null = null;
   private setClaimedRewardList = (value: any) =>
-      (this.claimedRewardList = value);
+    (this.claimedRewardList = value);
 
   public lastClaimDate: BN = BN.ZERO;
   private _setLastClaimDate = (v: BN) => (this.lastClaimDate = v);
@@ -91,7 +90,7 @@ class InvestToPoolInterfaceVM {
   nftPaymentName: string = "";
   setNFTPaymentName = (v: string) => (this.nftPaymentName = v);
 
-  history: IHistory[] = []
+  history: IHistory[] = [];
   setHistory = (v: IHistory[]) => (this.history = v);
 
   public get pool() {
@@ -167,15 +166,17 @@ class InvestToPoolInterfaceVM {
       {}
     );
 
-    const res = await fetch(`https://puzzle-py-api-feaf3dd76a7a.herokuapp.com/api/claimedRewardsInPool?pool=${this.pool.address}&user=${address}`)
+    const res = await fetch(
+      `https://puzzle-py-api-feaf3dd76a7a.herokuapp.com/api/claimedRewardsInPool?pool=${this.pool.address}&user=${address}`
+    );
     if (!res.ok) {
       // This will activate the closest `error.js` Error Boundary
-      throw new Error('Failed to fetch data')
+      throw new Error("Failed to fetch data");
     }
     const resJson = await res.json();
 
     const claimedReward = parsedNodeResponse["claimedReward"];
-    const claimedRewardList: {string: number} = resJson;
+    const claimedRewardList: { string: number } = resJson;
     const lastClaimDate = parsedNodeResponse["lastClaimDate"];
     const userIndexStaked = parsedNodeResponse["userIndexStaked"];
     const globalIndexStaked = parsedNodeResponse["globalIndexStaked"];
@@ -222,10 +223,14 @@ class InvestToPoolInterfaceVM {
     if (this.pool.tokens == null) return [];
     if (this.pool.liquidity == null) return [];
     return this.pool.tokens.reduce<any[]>((acc, token) => {
-      const pool = this.rootStore.poolsStore.pools.find((el) => el.address === this.pool.address)
-      if (!pool?.assets) return []
-      const asset = pool?.assets.find((el: any) => el.asset_id === token.assetId)
-      const balance = new BN(asset?.balance ?? BN.ZERO)
+      const pool = this.rootStore.poolsStore.pools.find(
+        (el) => el.address === this.pool.address
+      );
+      if (!pool?.assets) return [];
+      const asset = pool?.assets.find(
+        (el: any) => el.asset_id === token.assetId
+      );
+      const balance = new BN(asset?.balance ?? BN.ZERO);
       const rate = this.rootStore.poolsStore.usdtRate(token.assetId);
       return [
         ...acc,
@@ -255,7 +260,7 @@ class InvestToPoolInterfaceVM {
     if (this.rootStore.accountStore.address == null) return BN.ZERO;
     return this.totalProvidedLiquidityByAddress
       .times(new BN(100))
-      .div(this.pool.globalLiquidity)
+      .div(this.pool.globalLiquidity);
   }
 
   get poolBalancesTable() {
@@ -338,9 +343,9 @@ class InvestToPoolInterfaceVM {
     this.setPoolAssetBalances(value);
   };
   updatePoolChartByDomain = async () => {
-   const data = await poolsService.getPoolChartByDomain(this.pool.address);
-   this.setHistory(data)
-  }
+    const data = await poolsService.getPoolChartByDomain(this.pool.address);
+    this.setHistory(data);
+  };
 
   loadNFTPaymentInfo = async () => {
     const { isCustom, artefactOriginTransactionId } = this.pool;
@@ -355,14 +360,20 @@ class InvestToPoolInterfaceVM {
   loadTransactionsHistory = async () => {
     const transactions = await nodeService.transactions(this.pool.address, 20);
 
-    const parsedTransactions = transactions?.map(tx => {
-      if (tx.dApp === this.pool.address|| tx.dApp === this.pool.layer2Address) {
+    const parsedTransactions = transactions?.map((tx) => {
+      if (
+        tx.dApp === this.pool.address ||
+        tx.dApp === this.pool.layer2Address
+      ) {
         return tx;
-      };
+      }
       if (tx.stateChanges) {
         const invokes = tx.stateChanges.invokes;
-        const localTx = invokes.find(x => x.dApp === this.pool.address || x.dApp === this.pool.layer2Address);
-        if(localTx) {
+        const localTx = invokes.find(
+          (x) =>
+            x.dApp === this.pool.address || x.dApp === this.pool.layer2Address
+        );
+        if (localTx) {
           localTx.height = tx.height;
           localTx.id = tx.id;
           return localTx;
@@ -370,7 +381,10 @@ class InvestToPoolInterfaceVM {
 
         for (let i = 0; i < invokes.length; i++) {
           const localInvokes = invokes[i].stateChanges.invokes;
-          const localTx = localInvokes.find(x => x.dApp === this.pool.address || x.dApp === this.pool.layer2Address);
+          const localTx = localInvokes.find(
+            (x) =>
+              x.dApp === this.pool.address || x.dApp === this.pool.layer2Address
+          );
           if (localTx) {
             localTx.height = tx.height;
             localTx.id = tx.id;
@@ -390,24 +404,28 @@ class InvestToPoolInterfaceVM {
     if (transactionsHistory == null) return;
     const after = transactionsHistory.slice(-1).pop();
     if (after == null) return;
-    const v0 = await nodeService.transactions(
-      pool.address,
-      20,
-      after.id
-    );
-    const v = v0?.map(tx => {
-      if (tx.dApp === this.pool.address || tx.dApp === this.pool.layer2Address) {return tx}
-      else {
-        const localTx = tx.stateChanges.invokes.find(x => x.dApp === this.pool.address || x.dApp === this.pool.layer2Address);
+    const v0 = await nodeService.transactions(pool.address, 20, after.id);
+    const v = v0?.map((tx) => {
+      if (
+        tx.dApp === this.pool.address ||
+        tx.dApp === this.pool.layer2Address
+      ) {
+        return tx;
+      } else {
+        const localTx = tx.stateChanges.invokes.find(
+          (x) =>
+            x.dApp === this.pool.address || x.dApp === this.pool.layer2Address
+        );
         console.log(localTx);
-        if (!localTx) {return tx}
-        else {
+        if (!localTx) {
+          return tx;
+        } else {
           localTx.height = tx.height;
           localTx.id = tx.id;
           return localTx;
         }
       }
-    })
+    });
     this._setLoadingHistory(false);
     v && this.setTransactionsHistory([...transactionsHistory, ...v]);
   };
@@ -484,8 +502,8 @@ class InvestToPoolInterfaceVM {
           link: `${EXPLORER_URL}/transactions/${txId}`,
           linkTitle: "View on Explorer",
         });
-        this.getAddressActivityInfo()
-        this.syncIndexTokenInfo()
+        this.getAddressActivityInfo();
+        this.syncIndexTokenInfo();
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {

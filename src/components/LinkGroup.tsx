@@ -17,7 +17,6 @@ interface IProps extends HTMLAttributes<HTMLDivElement> {
   links: ILinkGroupItem[];
 }
 
-
 const Root = styled.div`
   display: flex;
   flex-direction: column;
@@ -47,10 +46,9 @@ const StyledAnchor = styled(Anchor)`
 const RowLinks = styled(Row)`
   align-items: center;
   gap: 5px;
-`
+`;
 
 const LinkGroup: React.FC<IProps> = ({ title, links, ...rest }) => {
-
   return (
     <Root {...rest}>
       <Text type="secondary">{title}</Text>
@@ -66,9 +64,8 @@ const LinkGroup: React.FC<IProps> = ({ title, links, ...rest }) => {
               {name}
             </StyledLink>
           )}
-          </RowLinks>
-        )
-      )}
+        </RowLinks>
+      ))}
     </Root>
   );
 };

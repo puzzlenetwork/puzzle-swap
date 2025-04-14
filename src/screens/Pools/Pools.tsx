@@ -72,8 +72,9 @@ const InvestImpl: React.FC<IProps> = () => {
               Puzzle Megapools
             </Text>
             <SizedBox height={4} />
-            <Subtitle size="medium"fitContent>
-              Unlike the old school AMM pools, megapools enable liquidity provision in up to 10 tokens in order to maximize LP profit.
+            <Subtitle size="medium" fitContent>
+              Unlike the old school AMM pools, megapools enable liquidity
+              provision in up to 10 tokens in order to maximize LP profit.
             </Subtitle>
             {accountStore.address != null && <AccountInvestBalance />}
             <SizedBox height={24} />

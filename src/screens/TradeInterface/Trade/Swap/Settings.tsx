@@ -16,7 +16,7 @@ import { useTheme } from "@emotion/react";
 import { useSwapVM } from "@screens/TradeInterface/SwapVM";
 import { useStores } from "@stores";
 
-interface IProps { }
+interface IProps {}
 
 interface ISettingsStorageData {
   slippage: number;
@@ -59,7 +59,9 @@ const Settings: React.FC<IProps> = () => {
   const vm = useSwapVM();
   const theme = useTheme();
   const storageData = localStorage.getItem("puzzle-user-settings");
-  const initData: ISettingsStorageData | null = storageData ? JSON.parse(storageData) : null;
+  const initData: ISettingsStorageData | null = storageData
+    ? JSON.parse(storageData)
+    : null;
   const initialSlippage = new BN(initData ? initData.slippage : 1).times(10);
   const [slippage, setSlippage] = useState(initialSlippage);
   const isSomethingChanged = slippage.eq(initialSlippage);
@@ -72,9 +74,9 @@ const Settings: React.FC<IProps> = () => {
       "puzzle-user-settings",
       JSON.stringify({
         ...initData,
-        slippage: validateSlippage(slippage.div(10).toNumber()), 
+        slippage: validateSlippage(slippage.div(10).toNumber()),
       })
-    )
+    );
     handleClose();
   };
   const handleReset = () => {
