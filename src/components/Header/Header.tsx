@@ -197,7 +197,7 @@ const Header: React.FC<IProps> = () => {
     ,
     {
       icon: <GithubIcon />,
-      link: "https://github.com/puzzlenetwork/puzzle-swap",
+      link: "https://github.com/puzzlenetwork",
       isExternalLink: true
     }
   ]
