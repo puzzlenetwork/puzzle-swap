@@ -38,7 +38,10 @@ const Root = styled.div<{ bannerClosed: boolean; opened: boolean }>`
   ${({ opened }) => (!opened ? `height: 0px;` : "")}
   .menu-body {
     justify-content: space-between;
-    height: calc(100vh - 64px);
+    height: calc(100dvh - 64px);
+    touch-action: none;
+    overflow: hidden;
+    overscroll-behavior: contain;
     display: flex;
     flex-direction: column;
     background: ${({ theme }) => theme.colors.white};
@@ -62,8 +65,8 @@ const MenuItem = styled(Anchor) <{ selected?: boolean }>`
 `;
 
 const MenuContainer = styled(Column)`
-  padding: 24px;
-  width: 100%:
+  height: 80%;
+  width: 100%;
   margin: 24px;
   margin-bottom: 0px;
 `;
