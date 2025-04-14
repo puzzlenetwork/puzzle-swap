@@ -203,6 +203,7 @@ const tokenLogos: Record<string, string> = {
   USDT_WXG: USDTWXG,
   USDC_WXG: USDCWXG,
   BTC_WXG: WBTCWXG,
+  ETH_WXG: ethLogo,
   BURN_XTN: BURNXTN,
   WW: WW,
   MINI: MINI,

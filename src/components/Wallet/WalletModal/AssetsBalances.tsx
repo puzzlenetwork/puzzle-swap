@@ -11,6 +11,8 @@ import styled from "@emotion/styled";
 import { useStores } from "@stores";
 import Skeleton from "react-loading-skeleton";
 import BN from "@src/utils/BN";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@src/constants";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -22,6 +24,7 @@ const Root = styled.div`
 
 const AssetsBalances: React.FC<IProps> = () => {
   const vm = useWalletVM();
+  const navigate = useNavigate();
   const { accountStore, poolsStore, tokenStore } = useStores();
   if (accountStore.assetBalances === null)
     return (
@@ -64,7 +67,9 @@ const AssetsBalances: React.FC<IProps> = () => {
             Buy WAVES on Waves Exchange to start trading.
           </Text>
           <SizedBox height={16} />
-          <Button size="medium">Buy WAVES</Button>
+          <Button size="medium" onClick={() => {
+            navigate(ROUTES.TRADE)
+          }}>Buy WAVES</Button>
           <SizedBox height={100} />
         </Column>
       )}

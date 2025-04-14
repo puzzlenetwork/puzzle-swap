@@ -4,12 +4,14 @@ import { Link } from "react-router-dom";
 import Text from "@components/Text";
 import { Anchor } from "@components/Anchor";
 import { Row } from "./Flex";
+import CheckIcon from "@src/assets/links/check.svg"
 
 interface ILinkGroupItem {
-  icon: React.ReactNode;
+  icon: string;
   name: string;
   link: string;
   isExternalLink?: boolean;
+  isActive?: boolean
 }
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
@@ -17,8 +19,9 @@ interface IProps extends HTMLAttributes<HTMLDivElement> {
   links: ILinkGroupItem[];
 }
 
-
 const Root = styled.div`
+  width: 160px;
+  padding: 10px 10px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -40,36 +43,30 @@ const StyledLink = styled(Link)`
 
 const StyledAnchor = styled(Anchor)`
   font-size: 16px;
+  width: 120px;
   line-height: 24px;
   color: ${({ theme }) => theme.colors.primary800};
 `;
 
 const RowLinks = styled(Row)`
   align-items: center;
-  gap: 5px;
+  gap: 10px;
+  padding: 8px 0px;
+  justify-content: space-between;
 `
-
-const LinkGroup: React.FC<IProps> = ({ title, links, ...rest }) => {
-
+const ProductList: React.FC<IProps> = ({ title, links, ...rest }) => {
   return (
     <Root {...rest}>
-      <Text type="secondary">{title}</Text>
-      {links.map(({ icon, name, link, isExternalLink }, key) => (
-        <RowLinks>
-          {icon}
-          {isExternalLink ? (
-            <StyledAnchor href={link} key={key}>
-              {name}
-            </StyledAnchor>
-          ) : (
-            <StyledLink to={link} key={key}>
-              {name}
-            </StyledLink>
-          )}
-          </RowLinks>
-        )
-      )}
+      {links.map(({ icon, name, link, isExternalLink, isActive }, key) => (
+        <RowLinks key={key}>
+          <img src={icon} width={24} height={24} style={{opacity: isActive ? 0.4 : 1}}/>
+          <StyledAnchor href={link} style={{opacity: isActive ? 0.4 : 1}}>
+            {name}
+          </StyledAnchor>
+          {isActive ? <img src={CheckIcon} /> : <div></div>}
+        </RowLinks>
+      ))}
     </Root>
   );
 };
-export default LinkGroup;
+export default ProductList;

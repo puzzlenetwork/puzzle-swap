@@ -9,7 +9,7 @@ import Text from "@components/Text";
 import Button from "@components/Button";
 import { Column } from "@components/Flex";
 import { useStores } from "@stores";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import { ROUTES } from "@src/constants";
 
@@ -21,6 +21,7 @@ const Root = styled.div`
 
 const Investments: React.FC = () => {
   const { accountStore, poolsStore, stakeStore } = useStores();
+  const navigate = useNavigate();
   const vm = useWalletVM();
   if (
     poolsStore.investedInPools == null ||
@@ -77,7 +78,7 @@ const Investments: React.FC = () => {
             size="medium"
             kind="secondary"
             onClick={() => {
-              window.open(ROUTES.POOLS);
+              navigate(ROUTES.POOLS)
               accountStore.setWalletModalOpened(false);
             }}
           >

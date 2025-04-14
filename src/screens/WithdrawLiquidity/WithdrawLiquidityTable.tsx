@@ -35,6 +35,7 @@ const HideDesktop = styled.div`
   }
 `;
 const FixedMobileBlock = styled.div`
+  z-index: 999;
   display: flex;
   position: fixed;
   bottom: 64px;

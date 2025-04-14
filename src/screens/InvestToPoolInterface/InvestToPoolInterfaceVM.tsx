@@ -167,14 +167,12 @@ class InvestToPoolInterfaceVM {
       {}
     );
 
-    console.log("HERE");
     const res = await fetch(`https://puzzle-py-api-feaf3dd76a7a.herokuapp.com/api/claimedRewardsInPool?pool=${this.pool.address}&user=${address}`)
     if (!res.ok) {
       // This will activate the closest `error.js` Error Boundary
       throw new Error('Failed to fetch data')
     }
     const resJson = await res.json();
-    console.log(resJson);
 
     const claimedReward = parsedNodeResponse["claimedReward"];
     const claimedRewardList: {string: number} = resJson;
@@ -257,7 +255,7 @@ class InvestToPoolInterfaceVM {
     if (this.rootStore.accountStore.address == null) return BN.ZERO;
     return this.totalProvidedLiquidityByAddress
       .times(new BN(100))
-      .div(this.pool.globalLiquidity);
+      .div(this.pool.globalLiquidity)
   }
 
   get poolBalancesTable() {
@@ -440,6 +438,8 @@ class InvestToPoolInterfaceVM {
           link: `${EXPLORER_URL}/transactions/${txId}`,
           linkTitle: "View on Explorer",
         });
+        this.getAddressActivityInfo();
+        this.syncIndexTokenInfo();
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
@@ -484,6 +484,8 @@ class InvestToPoolInterfaceVM {
           link: `${EXPLORER_URL}/transactions/${txId}`,
           linkTitle: "View on Explorer",
         });
+        this.getAddressActivityInfo()
+        this.syncIndexTokenInfo()
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {

@@ -26,6 +26,14 @@ export const ROUTES = {
   POOL_BOOST: "/pools/:poolDomain/boost",
 };
 
+
+export const PRODUCTS = {
+  SWAP: "https://puzzleswap.org/",
+  LEND: "https://lend.puzzleswap.org/",
+  MARKET: "https://puzzlemarket.org/",
+  NODE: "https://lease.puzzleswap.org/"
+};
+
 export const TOKEN_DETAILS_BY_SYMBOL: Record<string, string> = tokensDetails;
 
 export const TOKENS_LIST: Array<IToken> = Object.values(tokens).map((t) => ({
@@ -40,7 +48,6 @@ export const TOKENS_BY_ASSET_ID: Record<string, IToken> = TOKENS_LIST.reduce(
   (acc, t) => ({ ...acc, [t.assetId]: t }),
   {}
 );
-console.log('TOKENS_BY_SYMBOL.TSN.assetId', TOKENS_BY_SYMBOL.TSN)
 export const POOL_CONFIG: IPoolConfig[] = [
   {
     domain: "tsunami",

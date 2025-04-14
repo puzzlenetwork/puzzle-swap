@@ -337,7 +337,11 @@ const PoolsTable: React.FC = () => {
         </>
       ) : (
         <PoolNotFound
-          onClear={() => poolsStore.setSearchValue("")}
+          onClear={() =>{
+            poolsStore.setSearchValue("");
+            poolsStore.setVolumeByTimeFilter(0);
+            poolsStore.setVersionFilter(0);
+          }}
           searchValue={poolsStore.searchValue}
         />
       )}
