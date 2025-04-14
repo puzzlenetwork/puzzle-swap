@@ -15,7 +15,6 @@ const Root = styled.div`
   display: flex;
   // background: ${({ theme }) => theme.colors.primary50};
   border-radius: 12px;
-  margin: 12px;
   gap: 11px;
   align-items: center;
   :hover {

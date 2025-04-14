@@ -9,7 +9,7 @@ import SizedBox from "@components/SizedBox";
 import Wallet from "@components/Wallet/Wallet";
 import { observer } from "mobx-react-lite";
 import { PRODUCTS, ROUTES } from "@src/constants";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Anchor } from "@components/Anchor";
 import { useTheme } from "@emotion/react";
 import Tooltip from "@components/Tooltip";
@@ -19,6 +19,7 @@ import { ReactComponent as MediumIcon } from "@src/assets/links/medium.svg";
 import { ReactComponent as XIcon } from "@src/assets/links/x.svg";
 import { ReactComponent as TelegramIcon } from "@src/assets/links/telegram.svg";
 import { ReactComponent as RobotIcon } from "@src/assets/links/robot.svg";
+import { ReactComponent as GithubIcon } from "@src/assets/links/github.svg";
 import ProductList from "../ProductList";
 import SwapIcon from "@src/assets/links/swap.svg";
 import NodeIcon from "@src/assets/links/node.svg";
@@ -50,6 +51,7 @@ const TopMenu = styled.header`
   width: 100%;
   height: 64px;
   padding: 0 16px;
+  padding-right: 24px;
   max-width: 1440px;
   z-index: 102;
   @media (min-width: 880px) {
@@ -70,25 +72,29 @@ const TopMenu = styled.header`
   }
 `;
 
-const MenuItem = styled(Anchor)<{ selected?: boolean }>`
+const MenuItem = styled.div<{ selected?: boolean }>`
   display: flex;
   align-items: center;
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
-  color: ${({ selected, theme }) =>
-    selected ? theme.colors.primary800 : theme.colors.primary650};
   box-sizing: border-box;
   border-bottom: 4px solid
     ${({ selected, theme }) =>
       selected ? theme.colors.blue500 : "transparent"};
   height: 100%;
-  margin: 0 12px;
-  transition: 0.4s;
+  margin: 0 9px;
+
+  a {
+    color: ${({ selected, theme }) =>
+      selected ? theme.colors.primary800 : theme.colors.primary650};
+  }
 
   &:hover {
     border-bottom: 4px solid ${({ theme }) => theme.colors.primary300};
-    color: ${({ theme }) => theme.colors.blue500};
+    a {
+      color: ${({ theme }) => theme.colors.blue500};
+    }
   }
 `;
 
@@ -188,6 +194,12 @@ const Header: React.FC<IProps> = () => {
       link: "https://medium.com/@puzzlenetwork",
       isExternalLink: true
     }
+    ,
+    {
+      icon: <GithubIcon />,
+      link: "https://github.com/puzzlenetwork",
+      isExternalLink: true
+    }
   ]
 
   const communityMenu = [
@@ -243,16 +255,18 @@ const Header: React.FC<IProps> = () => {
           </Row>
           </Tooltip>
           <Desktop>
-            <SizedBox width={54} />
+            <SizedBox width={2} />
             {menuItems.map(({ name, link }) => (
               <MenuItem
-                key={name}
-                selected={isRoutesEquals(link, location.pathname)}
-                href={link}
-                target={link[0] === "/" ? "_self" : ""}
-              >
-                {name}
-              </MenuItem>
+              key={name}
+              selected={isRoutesEquals(link, location.pathname)}
+            >
+              <Link to={link} target={link[0] === "/" ? "_self" : "_blank"}>
+                <Row style={{gap: 8}}>
+                  {name}
+                </Row>
+              </Link>
+            </MenuItem>
             ))}
           </Desktop>
         </Row>
