@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import useWindowSize from "@src/hooks/useWindowSize";
 import dayjs from "dayjs";
 import { themes } from "@src/themes/ThemeProvider";
-import {TOKENS_BY_ASSET_ID} from "@src/constants";
+import { TOKENS_BY_ASSET_ID } from "@src/constants";
 
 interface IProps {}
 
@@ -55,15 +55,20 @@ const Boosting: React.FC<IProps> = () => {
         <SizedBox width={24} />
         <Column crossAxisSize="max">
           <Text weight={500} style={whiteText}>
-              Pool is boosted!
-              Get&nbsp;{new BN(data.apr).plus(data.boostedApy ?? 0).toBigFormat(2)}%&nbsp;APY
-              until {dayjs().format("MMM DD, YYYY")} 
-               {/* TODO: Добавить boostedDate */}
+            Pool is boosted! Get&nbsp;
+            {new BN(data.apr).plus(data.boostedApy ?? 0).toBigFormat(2)}
+            %&nbsp;APY until {dayjs().format("MMM DD, YYYY")}
+            {/* TODO: Добавить boostedDate */}
           </Text>
           <Text style={whiteText}>
-            {data.boostings?.map(boosting =>
-              <div>{new BN(boosting.per_day).toFormat(4) + " " + TOKENS_BY_ASSET_ID[boosting.asset_id].name + " per day"}</div>
-            )}
+            {data.boostings?.map((boosting) => (
+              <div>
+                {new BN(boosting.per_day).toFormat(4) +
+                  " " +
+                  TOKENS_BY_ASSET_ID[boosting.asset_id].name +
+                  " per day"}
+              </div>
+            ))}
           </Text>
         </Column>
       </Block>

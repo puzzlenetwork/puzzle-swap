@@ -53,7 +53,7 @@ const WalletWrapper = styled.div`
   border-top: 1px solid ${({ theme }) => theme.colors.primary100};
 `;
 
-const MenuItem = styled(Anchor) <{ selected?: boolean }>`
+const MenuItem = styled(Anchor)<{ selected?: boolean }>`
   display: flex;
   font-size: 16px;
   line-height: 24px;
@@ -71,10 +71,9 @@ const MenuContainer = styled(Column)`
   margin-bottom: 0px;
 `;
 
-
 const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
   const { accountStore } = useStores();
-  const isDarkTheme = accountStore.selectedTheme === THEME_TYPE.DARK_THEME
+  const isDarkTheme = accountStore.selectedTheme === THEME_TYPE.DARK_THEME;
   const mainFunctional = [
     { name: "Explore", link: ROUTES.EXPLORE, outer: false },
     { name: "Trade", link: ROUTES.TRADE, outer: false },
@@ -83,14 +82,39 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
   ];
 
   const toolsMenu = [
-    { name: "Notifications bot", link: "https://t.me/puzzle_swap", outer: true, icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""} /> },
-    { name: "Alerts bot", link: "https://t.me/puzzle_alerts_bot", outer: true, icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""} /> },
+    {
+      name: "Notifications bot",
+      link: "https://t.me/puzzle_swap",
+      outer: true,
+      icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""} />,
+    },
+    {
+      name: "Alerts bot",
+      link: "https://t.me/puzzle_alerts_bot",
+      outer: true,
+      icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""} />,
+    },
   ];
-  
+
   const communityMenu = [
-    { name: "Telegram", link: "https://t.me/puzzle_network", outer: true, icon: <TelegramIcon className={isDarkTheme ? "theme_icon" : ""} /> },
-    { name: "(X) Twitter", link: "https://twitter.com/puzzle_swap", outer: true, icon: <XIcon className={isDarkTheme ? "theme_icon" : ""} /> },
-    { name: "Medium", link: "https://medium.com/@puzzlenetwork", outer: true, icon: <MediumIcon className={isDarkTheme ? "theme_icon" : ""} /> },
+    {
+      name: "Telegram",
+      link: "https://t.me/puzzle_network",
+      outer: true,
+      icon: <TelegramIcon className={isDarkTheme ? "theme_icon" : ""} />,
+    },
+    {
+      name: "(X) Twitter",
+      link: "https://twitter.com/puzzle_swap",
+      outer: true,
+      icon: <XIcon className={isDarkTheme ? "theme_icon" : ""} />,
+    },
+    {
+      name: "Medium",
+      link: "https://medium.com/@puzzlenetwork",
+      outer: true,
+      icon: <MediumIcon className={isDarkTheme ? "theme_icon" : ""} />,
+    },
   ];
 
   const location = useLocation();
@@ -113,7 +137,9 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
 
             <SizedBox height={24} />
 
-            <Text type="secondary" style={{marginBottom: 10}}>Tools</Text>
+            <Text type="secondary" style={{ marginBottom: 10 }}>
+              Tools
+            </Text>
             {toolsMenu.map(({ icon, name, link }) => (
               <MenuItem
                 key={name}
@@ -128,7 +154,9 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
 
             <SizedBox height={24} />
 
-            <Text type="secondary" style={{marginBottom: 10}}>Community</Text>
+            <Text type="secondary" style={{ marginBottom: 10 }}>
+              Community
+            </Text>
             {communityMenu.map(({ icon, name, link }) => (
               <MenuItem
                 key={name}

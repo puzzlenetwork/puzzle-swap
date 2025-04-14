@@ -4,11 +4,16 @@ import styled from "@emotion/styled";
 
 import Button from "@components/Button";
 
-export interface PaginationButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface PaginationButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement> {
   selected?: boolean;
 }
 
-export const PaginationEntity = ({ selected, disabled, ...props }: PaginationButtonProps) => {
+export const PaginationEntity = ({
+  selected,
+  disabled,
+  ...props
+}: PaginationButtonProps) => {
   return <ButtonStyled {...props} disabled={disabled || selected} />;
 };
 

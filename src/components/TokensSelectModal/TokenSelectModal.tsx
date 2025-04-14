@@ -40,7 +40,7 @@ export enum tokenCategoriesEnum {
   common = 2,
   pz = 3,
   // defi = 4,
-  meme = 4
+  meme = 4,
 }
 
 const Scroll = styled.div`

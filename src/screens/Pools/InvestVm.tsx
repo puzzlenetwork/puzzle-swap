@@ -32,7 +32,6 @@ class InvestVM {
   customPoolFilter: number = 0;
   setCustomPoolFilter = (v: number) => (this.customPoolFilter = v);
 
-
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     this.syncCustomPools();
@@ -40,8 +39,10 @@ class InvestVM {
   }
 
   syncCustomPools = async () => {
-    const {pools: poolsData, totalItems} = await poolService.getPools(this.rootStore.poolsStore.paramsAllPools);
-    this.rootStore.poolsStore.setTotalItems(totalItems)
+    const { pools: poolsData, totalItems } = await poolService.getPools(
+      this.rootStore.poolsStore.paramsAllPools
+    );
+    this.rootStore.poolsStore.setTotalItems(totalItems);
     const pools = poolsData.map((p) => {
       const tokens = p.assets.map(({ asset_id, share }) => ({
         ...TOKENS_BY_ASSET_ID[asset_id],

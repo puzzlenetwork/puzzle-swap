@@ -10,7 +10,7 @@ import PoolSettingsCard from "@screens/CreateCustomPools/PoolSettingsCard";
 import SummaryCard from "@screens/CreateCustomPools/SummaryCard";
 import CreatePoolsStepper from "@screens/CreateCustomPools/CreatePoolsStepper";
 import ContinueBtn from "@screens/CreateCustomPools/ContinueBtn";
-import { ROUTES } from '@src/constants';
+import { ROUTES } from "@src/constants";
 
 const Root = styled.div`
   display: flex;

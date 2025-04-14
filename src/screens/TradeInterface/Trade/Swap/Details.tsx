@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
 import { useSwapVM } from "@screens/TradeInterface/SwapVM";
-import { ROUTES } from '@src/constants';
+import { ROUTES } from "@src/constants";
 
 const Root = styled(Card)`
   display: flex;

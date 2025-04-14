@@ -3,7 +3,8 @@ import styled from "@emotion/styled";
 
 import Button from "@components/Button";
 
-export interface PaginationButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
+export interface PaginationButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
 export const PaginationButton = ({ ...props }: PaginationButtonProps) => {
   return <ButtonStyled {...props} />;
@@ -24,6 +25,6 @@ const ButtonStyled = styled(Button)`
   }
 
   &:hover {
-    border: none
+    border: none;
   }
 `;
