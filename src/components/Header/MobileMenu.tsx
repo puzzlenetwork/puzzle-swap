@@ -46,7 +46,7 @@ const Root = styled.div<{ bannerClosed: boolean; opened: boolean }>`
 `;
 
 const WalletWrapper = styled.div`
-  padding: 24px;
+  padding: 14px;
   border-top: 1px solid ${({ theme }) => theme.colors.primary100};
 `;
 
