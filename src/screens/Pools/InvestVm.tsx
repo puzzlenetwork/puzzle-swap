@@ -64,7 +64,7 @@ class InvestVM {
       (acc, v) => acc.plus(v.liquidityInUsdt),
       BN.ZERO
     );
-    console.log("investment calc finished");
+    console.log("investment calc finished", value.toString());
     return "$" + value?.toFormat(2);
   }
 }

@@ -14,19 +14,19 @@ import { Anchor } from "@components/Anchor";
 import { useTheme } from "@emotion/react";
 import Tooltip from "@components/Tooltip";
 import LinkGroup from "@components/LinkGroup";
-import DarkMode from "@components/Header/DarkMode";
 import isRoutesEquals from "@src/utils/isRoutesEquals";
-import PuzzleIcon from "@src/assets/links/puzzle.svg";
-import XIcon from "@src/assets/links/x.svg";
-import MediumIcon from "@src/assets/links/medium.svg";
-import TelegramIcon from "@src/assets/links/telegram.svg";
-import RobotIcon from "@src/assets/links/robot.svg";
+import { ReactComponent as MediumIcon } from "@src/assets/links/medium.svg";
+import { ReactComponent as XIcon } from "@src/assets/links/x.svg";
+import { ReactComponent as TelegramIcon } from "@src/assets/links/telegram.svg";
+import { ReactComponent as RobotIcon } from "@src/assets/links/robot.svg";
 import ProductList from "../ProductList";
 import SwapIcon from "@src/assets/links/swap.svg";
 import NodeIcon from "@src/assets/links/node.svg";
 import LendIcon from "@src/assets/links/lend.svg";
 import MarketIcon from "@src/assets/links/market.svg";
 import { ReactComponent as Arrow } from "@src/assets/icons/arrowDownTransparent.svg";
+import { useStores } from "@src/stores";
+import { THEME_TYPE } from "@src/themes/ThemeProvider";
 
 interface IProps {}
 
@@ -148,6 +148,7 @@ const Header: React.FC<IProps> = () => {
   const [mobileMenuOpened, setMobileMenuOpened] = useState(false);
   const [bannerClosed /*, setBannerClosed*/] = useState(false);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+  const { accountStore } = useStores();
   const location = useLocation();
   const theme = useTheme();
   const toggleMenu = (state: boolean) => {
@@ -155,14 +156,13 @@ const Header: React.FC<IProps> = () => {
     document.body.classList.toggle("noscroll", state);
     setMobileMenuOpened(state);
   };
+  const isDarkTheme = accountStore.selectedTheme === THEME_TYPE.DARK_THEME
 
   const menuItems = [
     { name: "Explore", link: ROUTES.EXPLORE },
     { name: "Trade", link: ROUTES.TRADE },
     { name: "Pools", link: ROUTES.POOLS },
     { name: "Stake", link: ROUTES.STAKE },
-    { name: "NFT", link: "https://puzzlemarket.org/" },
-    { name: "Lend", link: "https://lend.puzzleswap.org/" },
   ];
 
   const products = [
@@ -174,17 +174,17 @@ const Header: React.FC<IProps> = () => {
 
   const communityLinks = [
     {
-      icon: TelegramIcon,
+      icon: <TelegramIcon className={isDarkTheme ? "theme_icon" : ""} />,
       link: "https://t.me/puzzle_network",
       isExternalLink: true
     },
     {
-      icon: XIcon,
+      icon: <XIcon className={isDarkTheme ? "theme_icon" : ""} />,
       link: "https://twitter.com/puzzle_network",
       isExternalLink: true
     },
     {
-      icon: MediumIcon,
+      icon: <MediumIcon />,
       link: "https://medium.com/@puzzlenetwork",
       isExternalLink: true
     }
@@ -192,13 +192,13 @@ const Header: React.FC<IProps> = () => {
 
   const communityMenu = [
     {
-      icon: RobotIcon,
+      icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""} />,
       name: "Notifications bot",
       link: "https://t.me/puzzle_swap",
       isExternalLink: true
     },
     {
-      icon: RobotIcon,
+      icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""}  />,
       name: "Alerts bot",
       link: "https://t.me/puzzle_alerts_bot",
       isExternalLink: true
@@ -229,8 +229,8 @@ const Header: React.FC<IProps> = () => {
                 <SizedBox height={1} style={{width: "100%", background: "#F1F2FE"}} />
                 <RowLinks>
                   {communityLinks.map((el) => (
-                    <a key={el.link} href={el.link} target="_blank">
-                      <img src={el.icon} />
+                    <a key={el.link} href={el.link} target="_blank" rel="noreferrer">
+                      {el.icon}
                     </a>
                   ))}
                 </RowLinks>

@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import React, { HTMLAttributes } from "react";
 import moon from "@src/assets/icons/moon.svg";
+import sun from "@src/assets/icons/sun.svg"
 import Img from "@components/Img";
 import Text from "@components/Text";
 import Switch from "@components/Switch";
@@ -26,7 +27,7 @@ const DarkMode: React.FC<IProps> = ({ ...rest }) => {
   const { accountStore } = useStores();
   return (
     <Root {...rest}>
-      <Img src={moon} onClick={() => accountStore.toggleTheme()}/>
+      <Img src={accountStore.selectedTheme === THEME_TYPE.DARK_THEME ? sun : moon} onClick={() => accountStore.toggleTheme()}/>
       {/* <Text>Dark mode</Text> */}
       {/* <Switch
         onChange={() => accountStore.toggleTheme()}

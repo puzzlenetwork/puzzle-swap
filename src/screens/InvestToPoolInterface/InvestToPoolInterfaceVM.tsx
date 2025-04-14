@@ -259,7 +259,6 @@ class InvestToPoolInterfaceVM {
   }
 
   get poolBalancesTable() {
-    console.log('tok', this.pool.tokens)
     if (this.pool.tokens == null) return null;
     return this.pool?.tokens.map((token) => {
       if (
