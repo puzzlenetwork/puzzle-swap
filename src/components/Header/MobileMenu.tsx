@@ -12,10 +12,12 @@ import DarkMode from "@components/Header/DarkMode";
 import { Anchor } from "../Anchor";
 import isRoutesEquals from "@src/utils/isRoutesEquals";
 import { useLocation } from "react-router-dom";
-import XIcon from "@src/assets/links/x.svg";
-import MediumIcon from "@src/assets/links/medium.svg";
-import TelegramIcon from "@src/assets/links/telegram.svg";
-import RobotIcon from "@src/assets/links/robot.svg";
+import { ReactComponent as MediumIcon } from "@src/assets/links/medium.svg";
+import { ReactComponent as XIcon } from "@src/assets/links/x.svg";
+import { ReactComponent as TelegramIcon } from "@src/assets/links/telegram.svg";
+import { ReactComponent as RobotIcon } from "@src/assets/links/robot.svg";
+import { THEME_TYPE } from "@src/themes/ThemeProvider";
+import { useStores } from "@src/stores";
 
 interface IProps {
   onClose: () => void;
@@ -66,26 +68,28 @@ const MenuContainer = styled(Column)`
   margin-bottom: 0px;
 `;
 
-const toolsMenu = [
-  { name: "Notifications bot", link: "https://t.me/puzzle_swap", outer: true, icon: RobotIcon },
-  { name: "Alerts bot", link: "https://t.me/puzzle_alerts_bot", outer: true, icon: RobotIcon },
-];
-const communityMenu = [
-  { name: "Telegram", link: "https://t.me/puzzle_network", outer: true, icon: TelegramIcon },
-  { name: "(X) Twitter", link: "https://twitter.com/puzzle_swap", outer: true, icon: XIcon },
-  { name: "Medium", link: "https://medium.com/@puzzlenetwork", outer: true, icon: MediumIcon },
-];
-
 
 const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
+  const { accountStore } = useStores();
+  const isDarkTheme = accountStore.selectedTheme === THEME_TYPE.DARK_THEME
   const mainFunctional = [
     { name: "Explore", link: ROUTES.EXPLORE, outer: false },
     { name: "Trade", link: ROUTES.TRADE, outer: false },
     { name: "Pools", link: ROUTES.POOLS, outer: false },
     { name: "Stake", link: ROUTES.STAKE, outer: false },
-    { name: "NFT", link: "https://puzzlemarket.org/", outer: true },
-    { name: "Lend", link: "https://lend.puzzleswap.org/", outer: true },
   ];
+
+  const toolsMenu = [
+    { name: "Notifications bot", link: "https://t.me/puzzle_swap", outer: true, icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""} /> },
+    { name: "Alerts bot", link: "https://t.me/puzzle_alerts_bot", outer: true, icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""} /> },
+  ];
+  
+  const communityMenu = [
+    { name: "Telegram", link: "https://t.me/puzzle_network", outer: true, icon: <TelegramIcon className={isDarkTheme ? "theme_icon" : ""} /> },
+    { name: "(X) Twitter", link: "https://twitter.com/puzzle_swap", outer: true, icon: <XIcon className={isDarkTheme ? "theme_icon" : ""} /> },
+    { name: "Medium", link: "https://medium.com/@puzzlenetwork", outer: true, icon: <MediumIcon className={isDarkTheme ? "theme_icon" : ""} /> },
+  ];
+
   const location = useLocation();
 
   return (
@@ -114,7 +118,7 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
                 href={link}
                 target={""}
               >
-                <img src={icon} alt="robot" width={20} height={20} />
+                {icon}
                 {name}
               </MenuItem>
             ))}
@@ -129,7 +133,7 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
                 href={link}
                 target={""}
               >
-                <img src={icon} alt="robot" width={20} height={20} />
+                {icon}
                 {name}
               </MenuItem>
             ))}
