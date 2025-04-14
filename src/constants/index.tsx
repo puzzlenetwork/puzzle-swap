@@ -489,7 +489,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     domain: "egg",
     address: "3PMHkdVCzeLAYuCh92FPtusuxdLk5xMB51y",
     layer_2_address: "3P84BhX5dCVs1TCgYnGa57kCHrMz4mUBXyE",
-    base_token_id: TOKENS_BY_SYMBOL.EGG.assetId,
+    base_token_id: TOKENS_BY_SYMBOL.OLDEGG.assetId,
     title: "Egg Uneven Pool 🥚",
     logo: tokenLogos.OLDEGG,
     defaultAssetId0: TOKENS_BY_SYMBOL.XTN.assetId,
