@@ -68,7 +68,7 @@ const LoggedInAccountInfo: React.FC<IProps> = () => {
   const [accountOpened, setAccountOpened] = useState<boolean>(false);
   return (
     <Root>
-      <Row alignItems="center" style={{gap: 10}}>
+      <Row alignItems="center" style={{gap: 20}}>
         <DarkMode />
         <WalletIcon
           onClick={() => accountStore.setWalletModalOpened(true)}
