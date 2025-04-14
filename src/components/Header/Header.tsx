@@ -51,6 +51,7 @@ const TopMenu = styled.header`
   width: 100%;
   height: 64px;
   padding: 0 16px;
+  padding-right: 24px;
   max-width: 1440px;
   z-index: 102;
   @media (min-width: 880px) {
