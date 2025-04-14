@@ -4,14 +4,14 @@ import { Link } from "react-router-dom";
 import Text from "@components/Text";
 import { Anchor } from "@components/Anchor";
 import { Row } from "./Flex";
-import CheckIcon from "@src/assets/links/check.svg"
+import CheckIcon from "@src/assets/links/check.svg";
 
 interface ILinkGroupItem {
   icon: string;
   name: string;
   link: string;
   isExternalLink?: boolean;
-  isActive?: boolean
+  isActive?: boolean;
 }
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
@@ -53,14 +53,19 @@ const RowLinks = styled(Row)`
   gap: 10px;
   padding: 8px 0px;
   justify-content: space-between;
-`
+`;
 const ProductList: React.FC<IProps> = ({ title, links, ...rest }) => {
   return (
     <Root {...rest}>
       {links.map(({ icon, name, link, isExternalLink, isActive }, key) => (
         <RowLinks key={key}>
-          <img src={icon} width={24} height={24} style={{opacity: isActive ? 0.4 : 1}}/>
-          <StyledAnchor href={link} style={{opacity: isActive ? 0.4 : 1}}>
+          <img
+            src={icon}
+            width={24}
+            height={24}
+            style={{ opacity: isActive ? 0.4 : 1 }}
+          />
+          <StyledAnchor href={link} style={{ opacity: isActive ? 0.4 : 1 }}>
             {name}
           </StyledAnchor>
           {isActive ? <img src={CheckIcon} /> : <div></div>}

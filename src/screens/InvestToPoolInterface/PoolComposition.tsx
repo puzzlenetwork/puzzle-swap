@@ -41,7 +41,8 @@ const PoolComposition: React.FC<IProps> = () => {
   const columns = React.useMemo(
     () => [
       { Header: "Asset", accessor: "asset" },
-      { Header: "Balance", accessor: "balance" },{
+      { Header: "Balance", accessor: "balance" },
+      {
         accessor: "value",
         Header: () => (
           <Row style={{ cursor: "pointer" }}>
@@ -58,40 +59,66 @@ const PoolComposition: React.FC<IProps> = () => {
           </Row>
         ),
       },
-      { Header: <Tooltip
-        config={{
-          trigger: "hover",
-        }}
-        content={(
-          <Column>
-          <Text size="small">Target Share is the set percentage of each token </Text>
-          <Text size="small">defined when the pool was created.</Text>
-        </Column>
-  )}
-      >
-        <Row>Target Share  <InfoIcon style={{ marginLeft: 4 }} /></Row>
-      </Tooltip>, accessor: "weight" },
-      { Header: <Tooltip
-        config={{
-          trigger: "hover",
-        }}
-        content={(
-          <Column>
-          <Text size="small">Current Share is the actual percentage of the token</Text>
-          <Text size="small"> in the pool right now. It may slightly differ if prices</Text>
-          <Text size="small"> have not yet been balanced by arbitrage.</Text>
-        </Column>
-  )}
-      >
-        <Row>Current Share  <InfoIcon style={{ marginLeft: 4 }} /></Row>
-      </Tooltip>, accessor: "realWeight" },
+      {
+        Header: (
+          <Tooltip
+            config={{
+              trigger: "hover",
+            }}
+            content={
+              <Column>
+                <Text size="small">
+                  Target Share is the set percentage of each token{" "}
+                </Text>
+                <Text size="small">defined when the pool was created.</Text>
+              </Column>
+            }
+          >
+            <Row>
+              Target Share <InfoIcon style={{ marginLeft: 4 }} />
+            </Row>
+          </Tooltip>
+        ),
+        accessor: "weight",
+      },
+      {
+        Header: (
+          <Tooltip
+            config={{
+              trigger: "hover",
+            }}
+            content={
+              <Column>
+                <Text size="small">
+                  Current Share is the actual percentage of the token
+                </Text>
+                <Text size="small">
+                  {" "}
+                  in the pool right now. It may slightly differ if prices
+                </Text>
+                <Text size="small">
+                  {" "}
+                  have not yet been balanced by arbitrage.
+                </Text>
+              </Column>
+            }
+          >
+            <Row>
+              Current Share <InfoIcon style={{ marginLeft: 4 }} />
+            </Row>
+          </Tooltip>
+        ),
+        accessor: "realWeight",
+      },
     ],
     [valueSort, theme.images.icons.group]
   );
   useMemo(() => {
     let totalValue = 0;
-    for (const b of vm.poolCompositionValues) { totalValue += b.value.toNumber(); }
-    
+    for (const b of vm.poolCompositionValues) {
+      totalValue += b.value.toNumber();
+    }
+
     const data = vm.poolCompositionValues
       .sort((a, b) => {
         if (a.value.lt(b.value)) {

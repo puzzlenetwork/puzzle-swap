@@ -38,13 +38,15 @@ if (!rootElement) {
 
 const root = createRoot(rootElement);
 
-root.render(<React.StrictMode>
-  <storesContext.Provider value={mobxStore}>
-    <ThemeWrapper>
-      <Router>
-        <App />
-      </Router>
-      <GlobalStyles />
-    </ThemeWrapper>
-  </storesContext.Provider>
-</React.StrictMode>);
+root.render(
+  <React.StrictMode>
+    <storesContext.Provider value={mobxStore}>
+      <ThemeWrapper>
+        <Router>
+          <App />
+        </Router>
+        <GlobalStyles />
+      </ThemeWrapper>
+    </storesContext.Provider>
+  </React.StrictMode>
+);

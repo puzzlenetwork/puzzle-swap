@@ -224,7 +224,8 @@ const tokenLogos: Record<string, string> = {
   PETE: peteLogo,
   BAI: baiLogo,
   "PZ-Old-Gold": oldgoldLogo,
-  "PZ-Mega-Pete": "https://images.wavesducks.com/api/images/DUCK-GGGGAAAA-GG.svg",
+  "PZ-Mega-Pete":
+    "https://images.wavesducks.com/api/images/DUCK-GGGGAAAA-GG.svg",
   "USDT-POLY": usdtpolyLogo,
   "USDT-PPT": usdtpptLogo,
   WHIRLPOOL: whirlpoolLogo,
@@ -236,58 +237,70 @@ const tokenLogos: Record<string, string> = {
   UNIT0: unit0Logo,
   "PZ-5pool": pool5Logo,
   "PZ-WEB": pzWebLogo,
-  "PZ-WEBU": "https://puzzleswop.s3.amazonaws.com/f63b754d-8dd8-40c4-83aa-3dd1429a4e18",
-  "PZ-REWIND": "https://puzzleswop.s3.amazonaws.com/fcf39537-9ead-4e17-bfd9-1330eb3f05ce",
+  "PZ-WEBU":
+    "https://puzzleswop.s3.amazonaws.com/f63b754d-8dd8-40c4-83aa-3dd1429a4e18",
+  "PZ-REWIND":
+    "https://puzzleswop.s3.amazonaws.com/fcf39537-9ead-4e17-bfd9-1330eb3f05ce",
   "PZ-Units": pzUnitsLogo,
   "PZ-BURN-XTN": pzBurnXtnLogo,
   "PZ-BBB": pzBbbLogo,
   "PZ-BURN-XTN-x-PPT": pzBurnXtnXPptLogo,
-  "SBT": sbtLogo,
-  "WIND": windLogo,
-  "FUDT": fudtLogo,
-  "WBriacash": wbriacashLogo,
+  SBT: sbtLogo,
+  WIND: windLogo,
+  FUDT: fudtLogo,
+  WBriacash: wbriacashLogo,
   "WBriacash-LP": wbriacashLogo,
   "WBriacash-Index-LP": wbriacash2Logo,
   "Sasha-X": sashaxLogo,
-  "gxWX": gxwxLogo,
+  gxWX: gxwxLogo,
   "ROME-KEEPER": romekeeperLogo,
 
-  "APE": apeLogo,
-  "BONK": bonkLogo,
-  "CHILLGUY": chillguyLogo,
-  "DOGE": dogeLogo,
-  "GOAT": goatLogo,
-  "NEIRO": neiroLogo,
-  "PEPE": pepeLogo,
-  "POPCAT": popcatLogo,
-  "SHIB": shibLogo,
-  "SPX": spxLogo,
-  "BOME": bomeLogo,
-  "WIF": wifLogo,
-  "GORC": "data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3QgeD0iMCIgeT0iMCIgcng9IjYiIHJ5PSI2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiMyMTIxMjEiLz48cGF0aCBmaWxsPSIjZmZmIiBkPSJNNyA0aDJ2MWgxdjFoM1Y1aDFWNGg0djFoMXYxaDNWNWgxVjRoMnYxaDF2MTloMXYxaDF2M0g0di0zaDF2LTFoMVY1aDF6Ii8+PGcgZmlsbD0iI2I0NCI+PHBhdGggZD0iTTIzIDRoMnYxaC0yek0xOCA3VjZoLTF2MWgtMlY2aC0xdjFoLTF2MmgxVjdoMXY0aDJWN3pNMTggN2gxdjJoLTF6TTEyIDloLTFWOGgxek0yMCA5aDFWOGgtMXpNMTggMTloLTR2MWg0eiIvPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTIzIDlWNWgtMXYxaC0zVjVoLTFWNGgtNHYxaC0xdjFoLTNWNUg5VjRIN3YxSDZ2MTlINXYxSDR2M2gxdi0zaDF2M2gxVjE3aDF2MTFoMTZWMTdoMXYxMWgxdi0zaDF2M2gxdi0zaC0xdi0xaC0xVjVoLTF2NmgtMVY5em0tMyAwdjFoM1Y5aC0xVjhoLTFWN2gtMlY2aC0xVjVoLTF2MWgtMlY1aC0xdjFoLTF2MWgtMnYxaC0xdjFIOVY1SDd2NmgxVjloMXYxaDNWOWgxdjFoMXYxaDF2Mmgydi0yaDF2LTFoMVY5em0yIDRoLTN2MWgtMXYxaDF2LTFoM3pNNyAxMnYyaDF2MWgxdjJoMXYxaDN2LTFoMXYyaC0xdjFoLTF2MWgtMXY1aDF2MWgxdi01aDF2LTFoNHYxaDF2NWgxdi0xaDF2LTVoLTF2LTFoLTF2LTFoLTF2LTJoMXYxaDN2LTFoMXYtM2gydi0yaC0xdjNoLTJ2MWgtNHYxaC0xdi0yaC0ydjJoLTF2LTFoLTR2LTFIOXYtMUg4di0yem0zIDJ2LTFoM3Yxem0zIDBoMXYxaC0xem0xIDl2MWg0di0xem0wIDRoNHYtMmgtNHptNy03aDF2M2gxdi0zaC0xdi0xaC0xem0tMTAgMHYtMWgtMXYxSDl2M2gxdi0zeiIvPjwvZz48L3N2Zz4=",
-  "2PETE": "https://i.meme/_next/image?url=https%3A%2F%2Fi.meme%2Fstatic%2F9sgdTJZuFxnGHhBz3fdqwcmKVxQkcMXtNEwvLx7nAbZd_img.jpg&w=640&q=75",
-  "TITS": "https://i.meme/_next/image?url=https%3A%2F%2Fi.meme%2Fstatic%2F4kedYPas1UEswFS5982TVVYshQeffyKiBQadJkd3inAJ_img.webp&w=640&q=75",
-  "PERFECT": "https://i.meme/_next/image?url=https%3A%2F%2Fi.meme%2Fstatic%2F31LrfAmRPURMhkXAA2kkMpy1j2DULVr3KyKnQ95cEzVW_img.jpg&w=640&q=75",
+  APE: apeLogo,
+  BONK: bonkLogo,
+  CHILLGUY: chillguyLogo,
+  DOGE: dogeLogo,
+  GOAT: goatLogo,
+  NEIRO: neiroLogo,
+  PEPE: pepeLogo,
+  POPCAT: popcatLogo,
+  SHIB: shibLogo,
+  SPX: spxLogo,
+  BOME: bomeLogo,
+  WIF: wifLogo,
+  GORC: "data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3QgeD0iMCIgeT0iMCIgcng9IjYiIHJ5PSI2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiMyMTIxMjEiLz48cGF0aCBmaWxsPSIjZmZmIiBkPSJNNyA0aDJ2MWgxdjFoM1Y1aDFWNGg0djFoMXYxaDNWNWgxVjRoMnYxaDF2MTloMXYxaDF2M0g0di0zaDF2LTFoMVY1aDF6Ii8+PGcgZmlsbD0iI2I0NCI+PHBhdGggZD0iTTIzIDRoMnYxaC0yek0xOCA3VjZoLTF2MWgtMlY2aC0xdjFoLTF2MmgxVjdoMXY0aDJWN3pNMTggN2gxdjJoLTF6TTEyIDloLTFWOGgxek0yMCA5aDFWOGgtMXpNMTggMTloLTR2MWg0eiIvPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTIzIDlWNWgtMXYxaC0zVjVoLTFWNGgtNHYxaC0xdjFoLTNWNUg5VjRIN3YxSDZ2MTlINXYxSDR2M2gxdi0zaDF2M2gxVjE3aDF2MTFoMTZWMTdoMXYxMWgxdi0zaDF2M2gxdi0zaC0xdi0xaC0xVjVoLTF2NmgtMVY5em0tMyAwdjFoM1Y5aC0xVjhoLTFWN2gtMlY2aC0xVjVoLTF2MWgtMlY1aC0xdjFoLTF2MWgtMnYxaC0xdjFIOVY1SDd2NmgxVjloMXYxaDNWOWgxdjFoMXYxaDF2Mmgydi0yaDF2LTFoMVY5em0yIDRoLTN2MWgtMXYxaDF2LTFoM3pNNyAxMnYyaDF2MWgxdjJoMXYxaDN2LTFoMXYyaC0xdjFoLTF2MWgtMXY1aDF2MWgxdi01aDF2LTFoNHYxaDF2NWgxdi0xaDF2LTVoLTF2LTFoLTF2LTFoLTF2LTJoMXYxaDN2LTFoMXYtM2gydi0yaC0xdjNoLTJ2MWgtNHYxaC0xdi0yaC0ydjJoLTF2LTFoLTR2LTFIOXYtMUg4di0yem0zIDJ2LTFoM3Yxem0zIDBoMXYxaC0xem0xIDl2MWg0di0xem0wIDRoNHYtMmgtNHptNy03aDF2M2gxdi0zaC0xdi0xaC0xem0tMTAgMHYtMWgtMXYxSDl2M2gxdi0zeiIvPjwvZz48L3N2Zz4=",
+  "2PETE":
+    "https://i.meme/_next/image?url=https%3A%2F%2Fi.meme%2Fstatic%2F9sgdTJZuFxnGHhBz3fdqwcmKVxQkcMXtNEwvLx7nAbZd_img.jpg&w=640&q=75",
+  TITS: "https://i.meme/_next/image?url=https%3A%2F%2Fi.meme%2Fstatic%2F4kedYPas1UEswFS5982TVVYshQeffyKiBQadJkd3inAJ_img.webp&w=640&q=75",
+  PERFECT:
+    "https://i.meme/_next/image?url=https%3A%2F%2Fi.meme%2Fstatic%2F31LrfAmRPURMhkXAA2kkMpy1j2DULVr3KyKnQ95cEzVW_img.jpg&w=640&q=75",
   "23": "https://i.meme/_next/image?url=https%3A%2F%2Fi.meme%2Fstatic%2F6rE88UixaXYv8kKjjhGKoAm3Vycv9wLz2Esd5gv3sWuw_img.jpg&w=640&q=75",
-  "SANCHO": "https://s3.eu-central-1.amazonaws.com/memecity-prod/meme-city/bf7ee3ff-1805-4ec7-9398-daf06841c535.png?t=1744303065718",
-  
-  "WX-USDCUSDT-LP": "https://waves.exchange/static/icons/assets/rZMQ6g31Lr7sPAaAoYc4U2PHCVauTuKUSzUbJtUyPZN.svg",
+  SANCHO:
+    "https://s3.eu-central-1.amazonaws.com/memecity-prod/meme-city/bf7ee3ff-1805-4ec7-9398-daf06841c535.png?t=1744303065718",
+
+  "WX-USDCUSDT-LP":
+    "https://waves.exchange/static/icons/assets/rZMQ6g31Lr7sPAaAoYc4U2PHCVauTuKUSzUbJtUyPZN.svg",
   AXLY: "https://waves.exchange/static/icons/assets/DcAbWMXrfMeooG1BrZ9ipiseFSVm7zxTs1XZKRp6DVeZ.svg",
-  "USDC-PPT": "https://waves.exchange/static/icons/assets/3ayH3PhWMkhFsySsUVcC8BvFf1QyxGB5BZuTPyVtmP4v.svg",
-  "USDT-TRC": "https://waves.exchange/static/icons/assets/DaErMEp76HtuvbbSYxDwLovRimaAwtEyQGFeHLQ3UWwh.svg",
+  "USDC-PPT":
+    "https://waves.exchange/static/icons/assets/3ayH3PhWMkhFsySsUVcC8BvFf1QyxGB5BZuTPyVtmP4v.svg",
+  "USDT-TRC":
+    "https://waves.exchange/static/icons/assets/DaErMEp76HtuvbbSYxDwLovRimaAwtEyQGFeHLQ3UWwh.svg",
   SPICE: "https://wavesducks.com/static/img/token/spice.svg",
   BNB: "https://wavescap.com/wp-content/uploads/asset-logo/66a1br3BrkoaJgP7yEar9hJcSTvJPoH6PYBLqscXcMGo.svg",
 
-  USDTu: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png",
-  USDCu: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
-  WBTCu: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599/logo.png",
+  USDTu:
+    "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png",
+  USDCu:
+    "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
+  WBTCu:
+    "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599/logo.png",
   ETHu: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png",
   WSOL: "https://waves-bridge-assets.web.app/logo/SOL/So11111111111111111111111111111111111111112.png",
-  
+
   TRUMP: "https://s2.coinmarketcap.com/static/img/coins/64x64/35336.png",
   MELANIA: "https://s2.coinmarketcap.com/static/img/coins/64x64/35347.png",
 
-  MEGAMEME: "https://megameme-249514940b30.herokuapp.com/static/media/megameme.49817f851dcdada62613bf2e1f70f56d.svg"
+  MEGAMEME:
+    "https://megameme-249514940b30.herokuapp.com/static/media/megameme.49817f851dcdada62613bf2e1f70f56d.svg",
 };
 
 export default tokenLogos;

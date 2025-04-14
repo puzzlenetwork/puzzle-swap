@@ -69,11 +69,11 @@ const ExploreTokenPriceStatistics = () => {
         data={[
           {
             title: "Fully diluted MC",
-            value: "$"+vm.statistics?.fullyDilutedMC?.toFormat(2),
+            value: "$" + vm.statistics?.fullyDilutedMC?.toFormat(2),
           },
           {
             title: "Market cap",
-            value: "$"+vm.statistics?.marketCap?.toFormat(2),
+            value: "$" + vm.statistics?.marketCap?.toFormat(2),
           },
         ]}
       />

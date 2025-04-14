@@ -28,6 +28,7 @@ import MarketIcon from "@src/assets/links/market.svg";
 import { ReactComponent as Arrow } from "@src/assets/icons/arrowDownTransparent.svg";
 import { useStores } from "@src/stores";
 import { THEME_TYPE } from "@src/themes/ThemeProvider";
+import { ReactComponent as WalletIcon } from "@src/assets/icons/pink-wallet.svg";
 
 interface IProps {}
 
@@ -119,7 +120,6 @@ const Desktop = styled.div`
   }
 `;
 
-
 const BurgerMenu = styled.div<{ expanded: boolean }>`
   display: flex;
   align-items: center;
@@ -136,7 +136,6 @@ const BurgerMenu = styled.div<{ expanded: boolean }>`
   :hover {
     background: ${({ theme }) => theme.colors.primary100};
   }
-
 `;
 
 const RowLinks = styled(Row)`
@@ -148,7 +147,7 @@ const RowLinks = styled(Row)`
   :hover {
     cursor: pointer;
   }
-`
+`;
 
 const Header: React.FC<IProps> = () => {
   const [mobileMenuOpened, setMobileMenuOpened] = useState(false);
@@ -162,7 +161,7 @@ const Header: React.FC<IProps> = () => {
     document.body.classList.toggle("noscroll", state);
     setMobileMenuOpened(state);
   };
-  const isDarkTheme = accountStore.selectedTheme === THEME_TYPE.DARK_THEME
+  const isDarkTheme = accountStore.selectedTheme === THEME_TYPE.DARK_THEME;
 
   const menuItems = [
     { name: "Explore", link: ROUTES.EXPLORE },
@@ -172,7 +171,12 @@ const Header: React.FC<IProps> = () => {
   ];
 
   const products = [
-    { name: "Puzzle Swap", link: PRODUCTS.SWAP, icon: SwapIcon, isActive: true},
+    {
+      name: "Puzzle Swap",
+      link: PRODUCTS.SWAP,
+      icon: SwapIcon,
+      isActive: true,
+    },
     { name: "Puzzle Lend", link: PRODUCTS.LEND, icon: LendIcon },
     { name: "Puzzle Market", link: PRODUCTS.MARKET, icon: MarketIcon },
     { name: "Puzzle Node", link: PRODUCTS.NODE, icon: NodeIcon },
@@ -182,39 +186,38 @@ const Header: React.FC<IProps> = () => {
     {
       icon: <TelegramIcon className={isDarkTheme ? "theme_icon" : ""} />,
       link: "https://t.me/puzzle_network",
-      isExternalLink: true
+      isExternalLink: true,
     },
     {
       icon: <XIcon className={isDarkTheme ? "theme_icon" : ""} />,
       link: "https://twitter.com/puzzle_network",
-      isExternalLink: true
+      isExternalLink: true,
     },
     {
       icon: <MediumIcon />,
       link: "https://medium.com/@puzzlenetwork",
-      isExternalLink: true
-    }
-    ,
+      isExternalLink: true,
+    },
     {
       icon: <GithubIcon />,
       link: "https://github.com/puzzlenetwork",
-      isExternalLink: true
-    }
-  ]
+      isExternalLink: true,
+    },
+  ];
 
   const communityMenu = [
     {
       icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""} />,
       name: "Notifications bot",
       link: "https://t.me/puzzle_swap",
-      isExternalLink: true
+      isExternalLink: true,
     },
     {
-      icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""}  />,
+      icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""} />,
       name: "Alerts bot",
       link: "https://t.me/puzzle_alerts_bot",
-      isExternalLink: true
-    }
+      isExternalLink: true,
+    },
   ];
   return (
     <Root>
@@ -229,19 +232,27 @@ const Header: React.FC<IProps> = () => {
 
       <TopMenu>
         <Row alignItems="center" crossAxisSize="max">
-        <Tooltip
+          <Tooltip
             config={{
               placement: "bottom-start",
               trigger: "click",
-              onVisibleChange: setIsTooltipOpen
+              onVisibleChange: setIsTooltipOpen,
             }}
             content={
               <Column crossAxisSize="max">
                 <ProductList title="" links={products} />
-                <SizedBox height={1} style={{width: "100%", background: "#F1F2FE"}} />
+                <SizedBox
+                  height={1}
+                  style={{ width: "100%", background: "#F1F2FE" }}
+                />
                 <RowLinks>
                   {communityLinks.map((el) => (
-                    <a key={el.link} href={el.link} target="_blank" rel="noreferrer">
+                    <a
+                      key={el.link}
+                      href={el.link}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
                       {el.icon}
                     </a>
                   ))}
@@ -249,28 +260,39 @@ const Header: React.FC<IProps> = () => {
               </Column>
             }
           >
-          <Row alignItems="center">
-            <img className="logo" src={theme.images.icons.logo} alt="logo" />
-            <Arrow style={{ cursor: "pointer", transform: isTooltipOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s ease" }} />
-          </Row>
+            <Row alignItems="center">
+              <img className="logo" src={theme.images.icons.logo} alt="logo" />
+              <Arrow
+                style={{
+                  cursor: "pointer",
+                  transform: isTooltipOpen ? "rotate(180deg)" : "none",
+                  transition: "transform 0.3s ease",
+                }}
+              />
+            </Row>
           </Tooltip>
           <Desktop>
             <SizedBox width={2} />
             {menuItems.map(({ name, link }) => (
               <MenuItem
-              key={name}
-              selected={isRoutesEquals(link, location.pathname)}
-            >
-              <Link to={link} target={link[0] === "/" ? "_self" : "_blank"}>
-                <Row style={{gap: 8}}>
-                  {name}
-                </Row>
-              </Link>
-            </MenuItem>
+                key={name}
+                selected={isRoutesEquals(link, location.pathname)}
+              >
+                <Link to={link} target={link[0] === "/" ? "_self" : "_blank"}>
+                  <Row style={{ gap: 8 }}>{name}</Row>
+                </Link>
+              </MenuItem>
             ))}
           </Desktop>
         </Row>
         <Mobile>
+          {accountStore.address != null && !mobileMenuOpened && (
+            <WalletIcon
+              onClick={() => accountStore.setWalletModalOpened(true)}
+              style={{ cursor: "pointer" }}
+            />
+          )}
+          <SizedBox width={16} />
           <img
             onClick={() => toggleMenu(!mobileMenuOpened)}
             className="icon"

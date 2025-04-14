@@ -58,7 +58,7 @@ const TokensTable: React.FC<IProps> = () => {
   const [lengthData, setLengthData] = useState(0);
   const [pagination, setPagination] = useState(1);
   const vm = useExploreVM();
-  
+
   const [sort, setSort] = useState<"price" | "change" | "volume">("change");
   const [sortMode, setSortMode] = useState<"descending" | "ascending">(
     "descending"
@@ -74,7 +74,7 @@ const TokensTable: React.FC<IProps> = () => {
   };
 
   const changePage = (el: number) => {
-    setPagination(el)
+    setPagination(el);
   };
 
   const handleWatchListChange = (assetId: string) => {
@@ -131,7 +131,10 @@ const TokensTable: React.FC<IProps> = () => {
           : 1;
       })
 
-      .filter((token) => !tokenStore.statisticsByAssetId[token.assetId].currentPrice.eq(0))
+      .filter(
+        (token) =>
+          !tokenStore.statisticsByAssetId[token.assetId].currentPrice.eq(0)
+      )
       .filter(({ name, symbol }) =>
         vm.tokenNameFilter
           ? [name, symbol]
@@ -156,9 +159,11 @@ const TokensTable: React.FC<IProps> = () => {
         }
         return true;
       });
-      const data = filteredSortedData
-      .slice((pagination - 1) * 20, 20 * pagination)
-    setLengthData(filteredSortedData.length)
+    const data = filteredSortedData.slice(
+      (pagination - 1) * 20,
+      20 * pagination
+    );
+    setLengthData(filteredSortedData.length);
     setFilteredTokens(data);
   }, [
     accountStore.assetBalances,
@@ -247,7 +252,8 @@ const TokensTable: React.FC<IProps> = () => {
                 rate={stats.currentPrice}
                 handleWatchListChange={handleWatchListChange}
               />
-          )})}
+            );
+          })}
           {/*{!isFiltersChosen && displayedTokens !== vm.assetsWithStats.length && (*/}
           {/*  <>*/}
           {/*    <SizedBox height={16} />*/}
@@ -270,11 +276,11 @@ const TokensTable: React.FC<IProps> = () => {
         </GridTable>
       </Card>
       <Pagination
-          currentPage={pagination}
-          lengthData={lengthData}
-          limit={20}
-          onChange={changePage}
-        />
+        currentPage={pagination}
+        lengthData={lengthData}
+        limit={20}
+        onChange={changePage}
+      />
     </Root>
   );
 };

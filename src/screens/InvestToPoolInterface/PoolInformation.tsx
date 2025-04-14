@@ -35,7 +35,9 @@ const PoolInformation: React.FC<IProps> = () => {
   const valuesArray = [
     {
       title: "Liquidity",
-      value: data?.liquidity ? "$" + new BN(vm.pool.globalLiquidity).toFormat(2) : null,
+      value: data?.liquidity
+        ? "$" + new BN(vm.pool.globalLiquidity).toFormat(2)
+        : null,
     },
     {
       title: "Monthly Volume", // TODO должно быть monthlyVolume
@@ -45,7 +47,12 @@ const PoolInformation: React.FC<IProps> = () => {
     },
     {
       title: "Monthly Fees (LP + Owner)",
-      value: data?.totals?.pool_fees_30d ? "$" + new BN(data?.totals?.pool_fees_30d).toFormat(2) + " + $" + new BN(data?.totals?.owner_fees_30d).toFormat(2) : null,
+      value: data?.totals?.pool_fees_30d
+        ? "$" +
+          new BN(data?.totals?.pool_fees_30d).toFormat(2) +
+          " + $" +
+          new BN(data?.totals?.owner_fees_30d).toFormat(2)
+        : null,
       // value: new BN(data?.pool_fees ?? 0).plus(data?.owner_fees ?? 0).toFormat(2)
     },
     {
@@ -54,7 +61,7 @@ const PoolInformation: React.FC<IProps> = () => {
       newValue: data?.boostedApy
         ? new BN(data.boostedApy).plus(data.apr).toBigFormat(2) + " %"
         : null,
-    }
+    },
   ];
   return (
     <Root>

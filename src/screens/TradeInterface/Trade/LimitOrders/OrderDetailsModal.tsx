@@ -65,7 +65,7 @@ const OrderDetailsModal: React.FC<IProps> = ({ ...rest }) => {
     { key: "To", value: `${am1.toFormat(2)} ${token1?.symbol}` },
     { key: "Transaction fee", value: "0.005 WAVES" },
   ];
-  
+
   return (
     <Dialog style={{ maxWidth: 360 }} title="Order details" {...rest}>
       <SizedBox height={24} />

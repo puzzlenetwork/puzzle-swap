@@ -45,13 +45,17 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
   };
 
   const price = BN.formatUnits(amount1, token1?.decimals).div(
-      BN.formatUnits(amount0, token0?.decimals)
-    ); // TODO: Needs `.times(1 - commision)` if there is a commission
+    BN.formatUnits(amount0, token0?.decimals)
+  ); // TODO: Needs `.times(1 - commision)` if there is a commission
 
   const rateStr = buildRateStr(
     token0?.symbol,
     token1?.symbol,
-    price != null && price.gt(0) ? price?.toFormat(4) : (rate.gt(0) ? rate.toFormat(4) : undefined)
+    price != null && price.gt(0)
+      ? price?.toFormat(4)
+      : rate.gt(0)
+      ? rate.toFormat(4)
+      : undefined
   );
   return (
     <Root {...rest} onClick={handleSwitch}>

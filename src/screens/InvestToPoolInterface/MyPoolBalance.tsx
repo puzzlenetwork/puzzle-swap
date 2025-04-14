@@ -47,7 +47,7 @@ const MyPoolBalance: React.FC<IProps> = () => {
   const { address, setLoginModalOpened } = accountStore;
   const vm = useInvestToPoolInterfaceVM();
   const { width: screenWidth } = useWindowSize();
-  
+
   return (
     <Root>
       <Text weight={500} type="secondary">
@@ -66,7 +66,9 @@ const MyPoolBalance: React.FC<IProps> = () => {
             <Text textAlign="right" type="secondary" size="small">
               {vm.shareOfPool != null &&
                 !vm.shareOfPool.isNaN() &&
-                `Share of pool ${vm.shareOfPool?.toFormat(6).replace(/0+$/, '')}%`}
+                `Share of pool ${vm.shareOfPool
+                  ?.toFormat(6)
+                  .replace(/0+$/, "")}%`}
             </Text>
           </Column>
         </Header>

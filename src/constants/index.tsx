@@ -26,12 +26,11 @@ export const ROUTES = {
   POOL_BOOST: "/pools/:poolDomain/boost",
 };
 
-
 export const PRODUCTS = {
   SWAP: "https://puzzleswap.org/",
   LEND: "https://lend.puzzleswap.org/",
   MARKET: "https://puzzlemarket.org/",
-  NODE: "https://lease.puzzleswap.org/"
+  NODE: "https://lease.puzzleswap.org/",
 };
 
 export const TOKEN_DETAILS_BY_SYMBOL: Record<string, string> = tokensDetails;
@@ -73,7 +72,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: ""
+    version: "",
   },
   {
     domain: "pool10",
@@ -101,7 +100,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: ""
+    version: "",
   },
   {
     domain: "nsbt",
@@ -128,7 +127,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: ""
+    version: "",
   },
   // {
   //   domain: "vlad",
@@ -177,7 +176,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: ""
+    version: "",
   },
   {
     domain: "www",
@@ -205,7 +204,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: ""
+    version: "",
   },
   {
     domain: "snsbttci",
@@ -233,7 +232,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: ""
+    version: "",
   },
   {
     domain: "sheg",
@@ -261,7 +260,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: ""
+    version: "",
   },
   {
     domain: "muna",
@@ -288,7 +287,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: ""
+    version: "",
   },
   {
     domain: "winter",
@@ -318,7 +317,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: ""
+    version: "",
   },
   {
     domain: "defi",
@@ -352,7 +351,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: ""
+    version: "",
   },
   // {
   //   domain: "megapool",
@@ -424,7 +423,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: ""
+    version: "",
   },
   {
     domain: "farms2",
@@ -457,7 +456,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: ""
+    version: "",
   },
   {
     domain: "race",
@@ -484,7 +483,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: ""
+    version: "",
   },
   {
     domain: "egg",
@@ -510,7 +509,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: ""
+    version: "",
   },
   {
     domain: "puzzle",
@@ -536,7 +535,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: ""
+    version: "",
   },
 ];
 export const CONTRACT_ADDRESSES = {
@@ -597,90 +596,89 @@ export interface IToken {
 }
 
 export interface IBoostings {
-  boost_id: string,
-  asset_id: string,
-  per_day: number,
-  days: number,
-  finish_timestamp: number,
-  per_day_usd: number,
+  boost_id: string;
+  asset_id: string;
+  per_day: number;
+  days: number;
+  finish_timestamp: number;
+  per_day_usd: number;
 }
 
 export interface IPoolConfigStatistics {
-  time_range: string,
-  time_frame: string,
-  apr: number,
-  average_liquidity: number,
-  liquidity: number,
-  lp_price: number,
-  claimed: number,
-  pool_fees: number,
-  owner_fees: number,
-  protocol_fees: number,
-  volume: number,
-  boostedApy: number | null,
-  boostings?: IBoostings[],
-  totals?: ITotals
+  time_range: string;
+  time_frame: string;
+  apr: number;
+  average_liquidity: number;
+  liquidity: number;
+  lp_price: number;
+  claimed: number;
+  pool_fees: number;
+  owner_fees: number;
+  protocol_fees: number;
+  volume: number;
+  boostedApy: number | null;
+  boostings?: IBoostings[];
+  totals?: ITotals;
 }
 
 export interface IPoolStats {
-  time_range: string,
-  time_frame: string,
-  apr: number,
-  average_liquidity: number,
-  lp_price: number,
-  claimed: number,
-  pool_fees: number,
-  owner_fees: number,
-  protocol_fees: number,
-  volume: number
+  time_range: string;
+  time_frame: string;
+  apr: number;
+  average_liquidity: number;
+  lp_price: number;
+  claimed: number;
+  pool_fees: number;
+  owner_fees: number;
+  protocol_fees: number;
+  volume: number;
 }
-
 
 export interface ITotals {
-  volume_all: number,
-  pool_fees_all: number,
-  owner_fees_all: number,
-  protocol_fees_all: number,
-  volume_1y: number,
-  pool_fees_1y: number,
-  owner_fees_1y: number,
-  protocol_fees_1y: number,
-  volume_90d: number,
-  pool_fees_90d: number,
-  owner_fees_90d: number,
-  protocol_fees_90d: number,
-  volume_30d: number,
-  pool_fees_30d: number,
-  owner_fees_30d: number,
-  protocol_fees_30d: number,
-  volume_7d: number,
-  pool_fees_7d: number,
-  owner_fees_7d: number,
-  protocol_fees_7d: number,
-  volume_1d: number,
-  pool_fees_1d: number,
-  owner_fees_1d: number,
-  protocol_fees_1d: number,
+  volume_all: number;
+  pool_fees_all: number;
+  owner_fees_all: number;
+  protocol_fees_all: number;
+  volume_1y: number;
+  pool_fees_1y: number;
+  owner_fees_1y: number;
+  protocol_fees_1y: number;
+  volume_90d: number;
+  pool_fees_90d: number;
+  owner_fees_90d: number;
+  protocol_fees_90d: number;
+  volume_30d: number;
+  pool_fees_30d: number;
+  owner_fees_30d: number;
+  protocol_fees_30d: number;
+  volume_7d: number;
+  pool_fees_7d: number;
+  owner_fees_7d: number;
+  protocol_fees_7d: number;
+  volume_1d: number;
+  pool_fees_1d: number;
+  owner_fees_1d: number;
+  protocol_fees_1d: number;
 }
 export interface IPoolConfig {
-  address: string,
-  layer_2_address?: string,
-  created_at?: number,
-  domain: string,
-  fee_token_id?: string,
-  isCustom?: boolean,
-  last_historical_txId?: string,
-  last_processed_txId?: string,
-  last_saved_time?: number,
-  logo?: string,
-  lp_token_amount?: number,
-  lp_token_id?: string,
-  owner?: string,
-  rebalances?: [],
-  swap_fee?: number,
-  title: string,
-  version?: string,
-  base_token_id: string,
+  address: string;
+  layer_2_address?: string;
+  created_at?: number;
+  domain: string;
+  fee_token_id?: string;
+  isCustom?: boolean;
+  last_historical_txId?: string;
+  last_processed_txId?: string;
+  last_saved_time?: number;
+  logo?: string;
+  lp_token_amount?: number;
+  lp_token_id?: string;
+  owner?: string;
+  rebalances?: [];
+  swap_fee?: number;
+  title: string;
+  version?: string;
+  base_token_id: string;
   stats?: IPoolStats;
   assets?: IAssetConfig[];
   defaultAssetId0?: string;
@@ -688,5 +686,5 @@ export interface IPoolConfig {
   tokens: Array<IToken & { share: number }>;
   boosted_apr?: number;
   artefact_origin_transaction_id?: string;
-  totals?: ITotals
+  totals?: ITotals;
 }

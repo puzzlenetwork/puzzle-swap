@@ -31,10 +31,12 @@ const buildRateStr = (
   price1?: undefined | BN
 ) => {
   let priceDisplay = price1?.toFormat(4);
-  if (priceDisplay === "0.0000") {priceDisplay = price1?.toFormat(8)}
+  if (priceDisplay === "0.0000") {
+    priceDisplay = price1?.toFormat(8);
+  }
   const val = price1 != null ? `~ ${priceDisplay}` : "–";
   return `1 ${symbol0} = ${val} ${symbol1}`;
-}
+};
 
 const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
   const vm = useSwapVM();
