@@ -138,7 +138,7 @@ const tokenLogos: Record<string, string> = {
   EGGPOINT: eggPointLogo,
   EGG: eggLogo,
   NEWEGG: eggLogo,
-  OLDEGG: eggLogo,
+  OLDEGG: "https://raw.githubusercontent.com/puzzlenetwork/static/6b602561e02c0eb62bcdbb18ea4fefe3751d7a3b/EGG.8babd6c1fe27f3854782a2dbf47f91d1%201.svg",
   XTN: usdnLogo,
   ENDO: endoLogo,
   MARVIN: marvinLogo,
