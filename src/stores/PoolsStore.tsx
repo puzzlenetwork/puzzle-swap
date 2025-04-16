@@ -254,6 +254,7 @@ export default class PoolsStore {
       size: 500,
       timeRange: this.volumeByTimestamp[this.volumeByTimeFilter]
         .key as IGetPools["timeRange"],
+      minLiquidity: 0
       // title: this?.searchPool ?? "",
       // version: this?.versionFilter === 0 ? "" : this?.versionOptions[this.versionFilter].key
     };

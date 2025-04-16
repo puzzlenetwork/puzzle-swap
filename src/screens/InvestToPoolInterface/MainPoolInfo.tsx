@@ -71,6 +71,13 @@ const Title = styled(Text)`
     line-height: 40px;
   }
 `;
+
+const AdaptiveButton = styled(Button)`
+    width: fit-content;
+    @media (max-width: 880px) {
+      width: 100%;
+    }
+`
 const MainPoolInfo: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
   const { accountStore } = useStores();
@@ -149,35 +156,35 @@ const MainPoolInfo: React.FC<IProps> = () => {
               <SizedBox height={16} />
             </Column>
             <SizedBox height={16} />
-            <Row>
+            <Row justifyContent="flex-end">
               {vm.pool.statistics == null ? (
-                <Button
+                <AdaptiveButton
                   fixed
                   size="medium"
                   style={{ marginRight: 8 }}
                   onClick={completePoolInitialization}
                 >
                   Complete pool initialization
-                </Button>
+                </AdaptiveButton>
               ) : (
-                <Button
+                <AdaptiveButton
                   fixed
                   size="medium"
                   style={{ marginRight: 8 }}
                   onClick={() => navigate(`/pools/${vm.pool.domain}`)}
                 >
                   Trade
-                </Button>
+                </AdaptiveButton>
               )}
               {accountStore.address === vm.pool.owner && (
-                <Button
+                <AdaptiveButton
                   fixed
                   size="medium"
                   style={{ marginRight: 8 }}
                   onClick={() => navigate(`/pools/${vm.pool.domain}/boost`)}
                 >
                   Boost APY
-                </Button>
+                </AdaptiveButton>
               )}
               <TransparentDetailsBtn />
             </Row>
