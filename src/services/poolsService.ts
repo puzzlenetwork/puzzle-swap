@@ -48,6 +48,7 @@ export interface IGetPools {
   size: number;
   title?: string;
   version?: string;
+  minLiquidity: number;
 }
 
 const poolService = {

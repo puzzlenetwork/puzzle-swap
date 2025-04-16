@@ -21,7 +21,7 @@ const requiredNfts = [
     typeId: "DxJAxqQhWAojdnzmcZpHAE3Hbm39JPAaCq9rEMJqNn61",
     floorPrice: 7777000000,
     marketLink:
-      "https://mainnet.sign-art.app/user/3PFTZA987iHHbP6UWVTbbrquNetcFSULqUP/artwork/DxJAxqQhWAojdnzmcZpHAE3Hbm39JPAaCq9rEMJqNn61",
+      "https://puzzlemarket.org/",
     imageLink: nftsPics["EAGLE"],
   },
   {
@@ -30,7 +30,7 @@ const requiredNfts = [
     marketLink:
       "https://puzzlemarket.org/collection/3PMki5sHBsQb4KgDknbUwsL3YgxaCzaZnCJ/ania",
     imageLink:
-      "https://ipfs.io/ipfs/QmUH9fyeRGNv366GhxWRfQxZ1Aoh5QXX6bBnTRcnheTwz4",
+      "https://magenta-official-dragon-804.mypinata.cloud/ipfs/bafybeiggsbub45lwsjxlc2ltqf6ngyqorocpg6gtjjfbqn2ytappocfgs4/display0.jpg",
   },
   {
     name: "Puzzle Surf",
