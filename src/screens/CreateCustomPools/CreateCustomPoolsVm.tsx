@@ -550,7 +550,7 @@ class CreateCustomPoolsVm {
     if (address === null || this.logo == null) return;
     try {
       this._setLoading(true);
-      const image = await bucketService.upload(toFile(this.logo));
+      const image = await gbucketService.upload(toFile(this.logo));
       const artefactDetails = this.rootStore.nftStore.accountNFTs?.find(
         ({ assetId }) => assetId === this.artefactToSpend?.assetId
       );
