@@ -53,7 +53,7 @@ export interface IGetPools {
 
 const poolService = {
   getPoolByDomain: async (domain: string): Promise<IPoolSettings> => {
-    const req = `${process.env.REACT_APP_API_BASE}/api/v1/pools/${domain}`;
+    const req = `https://puzzle-js-back-dev-bba0bd77a60c.herokuapp.com/api/v1/pools/${domain}`;
     const { data } = await axios.get(req);
     return data;
   },
@@ -69,7 +69,7 @@ const poolService = {
   },
   updateStats: async (domain: string): Promise<void> => {
     await axios(
-      `${process.env.REACT_APP_API_BASE}/api/v1/pools/update-stats/${domain}`,
+      `https://puzzle-js-back-dev-bba0bd77a60c.herokuapp.com/api/v1/pools/update-stats/${domain}`,
       {
         method: "POST",
         headers: { "Content-type": "application/json" },
@@ -78,7 +78,7 @@ const poolService = {
     );
   },
   checkDomain: async (domain: string): Promise<boolean> => {
-    await axios(`${process.env.REACT_APP_API_BASE}/api/v1/pools/check-domain`, {
+    await axios(`https://puzzle-js-back-dev-bba0bd77a60c.herokuapp.com/api/v1/pools/check-domain`, {
       method: "POST",
       headers: { "Content-type": "application/json" },
       data: { domain },
@@ -87,7 +87,7 @@ const poolService = {
   },
   createPool: async (data: ICreatePoolData): Promise<boolean> => {
     await axios(
-      `${process.env.REACT_APP_API_BASE}/api/v1/pools/pool/${data.domain}`,
+      `https://puzzle-js-back-dev-bba0bd77a60c.herokuapp.com/api/v1/pools/pool/${data.domain}`,
       {
         method: "POST",
         headers: { "Content-type": "application/json" },
@@ -122,7 +122,7 @@ const poolService = {
   },
   getStats: async (): Promise<IStakingStatsResponse> => {
     const { data } = await axios.get(
-      `${process.env.REACT_APP_API_BASE}/api/v1/stats`
+      `https://puzzle-js-back-dev-bba0bd77a60c.herokuapp.com/api/v1/stats`
     );
     return data;
   },
@@ -134,7 +134,7 @@ const poolService = {
     return data;
   },
   checkCustomPoolLimit: async (): Promise<boolean> => {
-    const req = `${process.env.REACT_APP_API_BASE}/api/v1/pools/limit`;
+    const req = `https://puzzle-js-back-dev-bba0bd77a60c.herokuapp.com/api/v1/pools/limit`;
     const { data } = await axios.get(req);
     return data.isLimited;
   },

@@ -177,7 +177,7 @@ class BoostApyVm {
           );
       })
       .then(async () => {
-        await poolsService.updateStats(this.pool.domain);
+        // await poolsService.updateStats(this.pool.domain);
       })
       .catch((e) => {
         console.error(e);
