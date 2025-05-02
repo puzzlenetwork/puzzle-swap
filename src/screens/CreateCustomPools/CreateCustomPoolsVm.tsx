@@ -512,7 +512,7 @@ class CreateCustomPoolsVm {
         )
       )
       .then(async () => {
-        await poolsService.updateStats(this.domain);
+        // await poolsService.updateStats(this.domain);
         await this.rootStore.poolsStore.syncCustomPools();
         await this.rootStore.poolsStore.updatePoolsState();
       })
@@ -550,7 +550,8 @@ class CreateCustomPoolsVm {
     if (address === null || this.logo == null) return;
     try {
       this._setLoading(true);
-      const image = await bucketService.upload(toFile(this.logo));
+      // const image = await bucketService.upload(toFile(this.logo));
+      const image = "https://puzzleswap.org/static/media/darkLogo.baab39d818ddc9bbb90fd63b0de912f4.svg"
       const artefactDetails = this.rootStore.nftStore.accountNFTs?.find(
         ({ assetId }) => assetId === this.artefactToSpend?.assetId
       );

@@ -5,7 +5,7 @@ const bucketService = {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("type", file.type);
-    const url = `${process.env.REACT_APP_API_BASE}/api/v1/bucket/upload`;
+    const url = `https://puzzle-js-back-dev-bba0bd77a60c.herokuapp.com/api/v1/bucket/upload`;
     const headers = { "Content-Type": "multipart/form-data" };
     const { data } = await axios.post(url, formData, { headers });
     return data;
