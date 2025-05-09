@@ -31,15 +31,15 @@ interface ISyncTokensFromPyResponse {
 }
 
 interface ISyncFromResponse {
-    "asset_id": string,
-    "name": string,
-    "allowed": boolean,
-    "symbol": string,
-    "decimals": number,
-    "description": string,
-    "price": number,
-    "start_price": number,
-    "category": string[]
+  "asset_id": string,
+  "name": string,
+  "allowed": boolean,
+  "symbol": string,
+  "decimals": number,
+  "description": string,
+  "price": number,
+  "start_price": number,
+  "category": string[]
 }
 
 export default class PoolsStore {
@@ -426,7 +426,7 @@ export default class PoolsStore {
 
   private syncTokensFromPy = async () => {
     const res = await fetch(
-        `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/tokens?allowed=true`
+      `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/tokens?allowed=true`
     );
     if (!res.ok) {
       throw new Error("Failed to fetch data");
@@ -467,7 +467,10 @@ export default class PoolsStore {
       priceResponse != null
         ? BN.formatUnits(priceResponse[2].value, 6)
         : BN.ZERO;
-    const _usdtRate = BN.ZERO;
+    const _usdtRate =
+      priceResponse != null
+        ? BN.formatUnits(priceResponse[3].value, 6)
+        : BN.ZERO;
     this.setPuzzleRate(puzzleRate);
     this.setUsdnRate(usdnRate);
     this.setWavesRate(wavesRate);
