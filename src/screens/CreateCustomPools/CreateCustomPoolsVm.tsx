@@ -83,13 +83,13 @@ class CreateCustomPoolsVm {
   initialize = (initData: IInitData | null) => {
     if (initData != null) {
       if (initData.assets != null) {
-        this.poolsAssets = initData.assets?.map(
-          ({ assetId, share, locked }) => ({
-            share: new BN(share).times(10),
-            locked,
-            asset: TOKENS_BY_ASSET_ID[assetId],
-          })
-        );
+        // this.poolsAssets = initData.assets?.map(
+        //   ({ assetId, share, locked }) => ({
+        //     share: new BN(share).times(10),
+        //     locked,
+        //     asset: TOKENS_BY_ASSET_ID[assetId],
+        //   })
+        // );
       }
     } else {
       this.setDefaultPoolsAssets();
@@ -335,7 +335,7 @@ class CreateCustomPoolsVm {
     return nftForPoolCreation?.length !== 0;
   }
 
-  buyRandomArtefact = async () => {
+  buyRandomArtefact = async () => {    
     const { accountStore } = this.rootStore;
     if (!this.canBuyNft) return;
     if (this.puzzleNFTPrice == null) return;
@@ -365,20 +365,6 @@ class CreateCustomPoolsVm {
         const picture = PUZZLE_NFTS.find(
           ({ name }) => name === details.name
         )?.image;
-        this.setNotificationParams(
-          buildSuccessNFTSaleDialogParams({
-            name: details.name,
-            picture: picture ?? "",
-            onContinue: () => {
-              this.setArtefactToSpend({
-                name: details.name,
-                assetId: nftId,
-                picture: picture ?? "",
-              });
-              this.setNotificationParams(null);
-            },
-          })
-        );
         await this.rootStore.nftStore.syncAccountNFTs();
       })
       .catch((e) => {
@@ -387,7 +373,7 @@ class CreateCustomPoolsVm {
           buildErrorDialogParams({
             title: "Woops! Couldn't buy NFT",
             description: `Something went wrong while buying a NFT. Check if you have ${this.puzzleNFTPrice} PUZZLE and 0.005 WAVES (transaction fee) in your wallet to buy one.`,
-            onTryAgain: () => this.buyRandomArtefact,
+            onTryAgain: () => this.buyRandomArtefact(),
           })
         );
       })
@@ -465,7 +451,7 @@ class CreateCustomPoolsVm {
     const accountStore = this.rootStore.accountStore;
     return accountStore
       .invoke({
-        dApp: pool.address,
+        dApp: pool.contractAddress,
         payment: this.assetsForInitFunction,
         fee: 100500000,
         call: { function: "init", args: [] },
@@ -550,8 +536,7 @@ class CreateCustomPoolsVm {
     if (address === null || this.logo == null) return;
     try {
       this._setLoading(true);
-      // const image = await bucketService.upload(toFile(this.logo));
-      const image = "https://puzzleswap.org/static/media/darkLogo.baab39d818ddc9bbb90fd63b0de912f4.svg"
+      const image = await bucketService.upload(toFile(this.logo));
       const artefactDetails = this.rootStore.nftStore.accountNFTs?.find(
         ({ assetId }) => assetId === this.artefactToSpend?.assetId
       );
@@ -649,7 +634,7 @@ class CreateCustomPoolsVm {
   get assetsForInitFunction(): { assetId: string | null; amount: string }[] {
     if (this.tokensToProvideInUsdnMap == null) return [];
     const { poolsStore } = this.rootStore;
-
+    console.log('poolsAssets', this.poolsAssets)
     return this.poolsAssets.map(({ asset, share }) => {
       const { assetId, decimals } = asset;
       const rate = poolsStore.usdtRate(assetId, 1) ?? BN.ZERO;

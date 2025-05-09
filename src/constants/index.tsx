@@ -544,7 +544,7 @@ export const CONTRACT_ADDRESSES = {
   aggregator: "3PGFHzVGT4NTigwCKP1NcwoXkodVZwvBuuU", // prod
   // aggregator: "3PK1LcCBwbmBZrcDCJsDkXh4USKPxb68Tcw", // Roman's
   nfts: "3PFQjjDMiZKQZdu5JqTHD7HwgSXyp9Rw9By",
-  createArtefacts: "3PFkgvC9y6zHy64zEAscKKgaNY3yipiLqbW",
+  createArtefacts: "3P3bkaN3mrGgMxaH9fHYirQ2kEM1JFq3WyT",
   // boost: "3PAeY7RgwuNUZNscGqahqJxFTFDkh7fbNwJ",
   boost: "3P8eeDzUnoDNbQjW617pAe76cEUDQsP1m1V",
   calcReward: "3PAeY7RgwuNUZNscGqahqJxFTFDkh7fbNwJ",

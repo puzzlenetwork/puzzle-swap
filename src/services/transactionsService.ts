@@ -9,7 +9,7 @@ const transactionsService = {
         ? `?${params.map(([k, v]) => `${k}=${String(v)}`).join("&")}`
         : "";
     const url =
-      `https://puzzle-js-back-dev-bba0bd77a60c.herokuapp.com/api/v1/transactions` + search;
+      `${process.env.REACT_APP_API_BASE}/api/v1/transactions` + search;
     const { data } = await axios.get(url);
     return data;
   },

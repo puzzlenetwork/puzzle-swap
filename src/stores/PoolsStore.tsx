@@ -467,10 +467,7 @@ export default class PoolsStore {
       priceResponse != null
         ? BN.formatUnits(priceResponse[2].value, 6)
         : BN.ZERO;
-    const _usdtRate =
-      priceResponse != null
-        ? BN.formatUnits(priceResponse[3].value, 6)
-        : BN.ZERO;
+    const _usdtRate = BN.ZERO;
     this.setPuzzleRate(puzzleRate);
     this.setUsdnRate(usdnRate);
     this.setWavesRate(wavesRate);
