@@ -299,7 +299,6 @@ class Pool implements IPoolConfig {
       globalPoolTokenAmount && globalPoolTokenAmount.gt(0)
         ? this.globalLiquidity.div(BN.formatUnits(globalPoolTokenAmount, 8))
         : BN.ZERO;
-    console.log("!", globalIndexStaked.toString());
     if (addressIndexStaked == null || addressIndexStaked.eq(0)) {
       return {
         addressStaked: BN.ZERO,

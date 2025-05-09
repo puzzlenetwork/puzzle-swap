@@ -177,7 +177,8 @@ class BoostApyVm {
           );
       })
       .then(async () => {
-        await poolsService.updateStats(this.pool.domain);
+        //todo replace to new stats backend
+        // await poolsService.updateStats(this.pool.domain);
       })
       .catch((e) => {
         console.error(e);

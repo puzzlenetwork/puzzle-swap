@@ -30,7 +30,7 @@ interface ICreatePoolData {
 interface IPoolSettings {
   domain: string;
   isCustom?: boolean;
-  address: string;
+  contractAddress: string;
   layer2Address?: string;
   baseTokenId: string;
   title: string;

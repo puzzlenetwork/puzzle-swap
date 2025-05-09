@@ -335,7 +335,7 @@ class CreateCustomPoolsVm {
     return nftForPoolCreation?.length !== 0;
   }
 
-  buyRandomArtefact = async () => {
+  buyRandomArtefact = async () => {    
     const { accountStore } = this.rootStore;
     if (!this.canBuyNft) return;
     if (this.puzzleNFTPrice == null) return;
@@ -387,7 +387,7 @@ class CreateCustomPoolsVm {
           buildErrorDialogParams({
             title: "Woops! Couldn't buy NFT",
             description: `Something went wrong while buying a NFT. Check if you have ${this.puzzleNFTPrice} PUZZLE and 0.005 WAVES (transaction fee) in your wallet to buy one.`,
-            onTryAgain: () => this.buyRandomArtefact,
+            onTryAgain: () => this.buyRandomArtefact(),
           })
         );
       })
@@ -465,7 +465,7 @@ class CreateCustomPoolsVm {
     const accountStore = this.rootStore.accountStore;
     return accountStore
       .invoke({
-        dApp: pool.address,
+        dApp: pool.contractAddress,
         payment: this.assetsForInitFunction,
         fee: 100500000,
         call: { function: "init", args: [] },
@@ -512,7 +512,8 @@ class CreateCustomPoolsVm {
         )
       )
       .then(async () => {
-        await poolsService.updateStats(this.domain);
+        //todo replace to new stats backend
+        // await poolsService.updateStats(this.domain);
         await this.rootStore.poolsStore.syncCustomPools();
         await this.rootStore.poolsStore.updatePoolsState();
       })
@@ -648,7 +649,6 @@ class CreateCustomPoolsVm {
   get assetsForInitFunction(): { assetId: string | null; amount: string }[] {
     if (this.tokensToProvideInUsdnMap == null) return [];
     const { poolsStore } = this.rootStore;
-
     return this.poolsAssets.map(({ asset, share }) => {
       const { assetId, decimals } = asset;
       const rate = poolsStore.usdtRate(assetId, 1) ?? BN.ZERO;

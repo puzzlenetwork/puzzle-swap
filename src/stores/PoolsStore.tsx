@@ -20,6 +20,28 @@ export interface ISerializedPoolsStore {
   slippage: number;
 }
 
+interface ISyncTokensFromPyResponse {
+  assetId: string;
+  category: string[];
+  decimals: number;
+  lastPrice: number;
+  name: string;
+  startPrice: number;
+  symbol: string;
+}
+
+interface ISyncFromResponse {
+  "asset_id": string,
+  "name": string,
+  "allowed": boolean,
+  "symbol": string,
+  "decimals": number,
+  "description": string,
+  "price": number,
+  "start_price": number,
+  "category": string[]
+}
+
 export default class PoolsStore {
   constructor(rootStore: RootStore, initialState?: ISerializedPoolsStore) {
     this.rootStore = rootStore;
@@ -404,14 +426,22 @@ export default class PoolsStore {
 
   private syncTokensFromPy = async () => {
     const res = await fetch(
-      `https://puzzle-py-api-feaf3dd76a7a.herokuapp.com/api/tokensList`
+      `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/tokens?allowed=true`
     );
     if (!res.ok) {
-      // This will activate the closest `error.js` Error Boundary
       throw new Error("Failed to fetch data");
     }
     const resJson = await res.json();
-    this.setTokensList(resJson);
+    const mappedData: ISyncTokensFromPyResponse[] = resJson.map((el: ISyncFromResponse) => ({
+      assetId: el.asset_id,
+      category: el.category,
+      decimals: el.decimals,
+      lastPrice: el.price,
+      name: el.name,
+      startPrice: el.start_price,
+      symbol: el.symbol,
+    }));
+    this.setTokensList(mappedData);
   };
 
   private syncPuzzleRate = async () => {
