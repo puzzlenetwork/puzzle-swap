@@ -83,13 +83,13 @@ class CreateCustomPoolsVm {
   initialize = (initData: IInitData | null) => {
     if (initData != null) {
       if (initData.assets != null) {
-        // this.poolsAssets = initData.assets?.map(
-        //   ({ assetId, share, locked }) => ({
-        //     share: new BN(share).times(10),
-        //     locked,
-        //     asset: TOKENS_BY_ASSET_ID[assetId],
-        //   })
-        // );
+        this.poolsAssets = initData.assets?.map(
+          ({ assetId, share, locked }) => ({
+            share: new BN(share).times(10),
+            locked,
+            asset: TOKENS_BY_ASSET_ID[assetId],
+          })
+        );
       }
     } else {
       this.setDefaultPoolsAssets();
@@ -365,6 +365,20 @@ class CreateCustomPoolsVm {
         const picture = PUZZLE_NFTS.find(
           ({ name }) => name === details.name
         )?.image;
+        this.setNotificationParams(
+          buildSuccessNFTSaleDialogParams({
+            name: details.name,
+            picture: picture ?? "",
+            onContinue: () => {
+              this.setArtefactToSpend({
+                name: details.name,
+                assetId: nftId,
+                picture: picture ?? "",
+              });
+              this.setNotificationParams(null);
+            },
+          })
+        );
         await this.rootStore.nftStore.syncAccountNFTs();
       })
       .catch((e) => {
@@ -498,6 +512,7 @@ class CreateCustomPoolsVm {
         )
       )
       .then(async () => {
+        //todo replace to new stats backend
         // await poolsService.updateStats(this.domain);
         await this.rootStore.poolsStore.syncCustomPools();
         await this.rootStore.poolsStore.updatePoolsState();
@@ -634,7 +649,6 @@ class CreateCustomPoolsVm {
   get assetsForInitFunction(): { assetId: string | null; amount: string }[] {
     if (this.tokensToProvideInUsdnMap == null) return [];
     const { poolsStore } = this.rootStore;
-    console.log('poolsAssets', this.poolsAssets)
     return this.poolsAssets.map(({ asset, share }) => {
       const { assetId, decimals } = asset;
       const rate = poolsStore.usdtRate(assetId, 1) ?? BN.ZERO;
