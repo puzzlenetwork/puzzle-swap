@@ -8,12 +8,14 @@ import {
   EXPLORER_URL,
   NODE_URL,
   TOKENS_BY_ASSET_ID,
+  ROUTES,
 } from "@src/constants";
 import nodeService from "@src/services/nodeService";
 import { IHistory, ITransaction } from "@src/utils/types";
 import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
 import makeNodeRequest from "@src/utils/makeNodeRequest";
 import poolsService from "@src/services/poolsService";
+import Pool from "@src/entities/Pool";
 
 const ctx = React.createContext<InvestToPoolInterfaceVM | null>(null);
 
@@ -101,7 +103,24 @@ class InvestToPoolInterfaceVM {
     this.poolDomain = poolDomain;
     this.rootStore = rootStore;
     makeAutoObservable(this);
-    when(() => this.pool?.isCustom === true, this.loadNFTPaymentInfo);
+    
+    poolsService.getPoolByDomain(poolDomain)
+      .then((poolData) => {
+        if (!poolData) return;
+        const newPool = new Pool({
+          ...poolData,
+          isCustom: true,
+          address: poolData.contractAddress,
+          base_token_id: poolData.baseTokenId,
+          tokens: poolData.assets.map(asset => ({
+            ...TOKENS_BY_ASSET_ID[asset.asset_id],
+            share: asset.share
+          }))
+        });
+        this.rootStore.poolsStore.setPools([...this.rootStore.poolsStore.pools, newPool]);
+      });
+
+    when(() => this.pool.isCustom === true, this.loadNFTPaymentInfo);
     when(
       () => this.pool != null,
       async () => {
