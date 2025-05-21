@@ -169,7 +169,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
   const information = Array.from(
     vm.pool.isCustom ? customPoolInformation : puzzlePoolInformation
   );
-  const link = `https://app.puzzleswap.org/pools/${vm.pool.domain}/invest`;
+  const link = `https://swap.puzzle.network/pools/${vm.pool.domain}/invest`;
   const text = `Invest to ${vm.pool.title} Puzzle Swap megapool`;
   const shareInfo = [
     {
