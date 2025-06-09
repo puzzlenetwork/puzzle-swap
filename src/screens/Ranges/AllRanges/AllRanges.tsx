@@ -165,6 +165,7 @@ const AllRangesImpl: React.FC<IProps> = () => {
             </Stats>
             <SizedBox height={32} />
             <SearchAndFilterTab />
+            <SizedBox height={32} />
             <RangesTable />
             {/*<PoolsTable />*/}
           </Root>
