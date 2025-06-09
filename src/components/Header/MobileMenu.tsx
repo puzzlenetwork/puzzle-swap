@@ -78,6 +78,7 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
     { name: "Explore", link: ROUTES.EXPLORE, outer: false },
     { name: "Trade", link: ROUTES.TRADE, outer: false },
     { name: "Pools", link: ROUTES.POOLS, outer: false },
+    { name: "Ranges", link: ROUTES.RANGES, outer: false },
     { name: "Stake", link: ROUTES.STAKE, outer: false },
   ];
 

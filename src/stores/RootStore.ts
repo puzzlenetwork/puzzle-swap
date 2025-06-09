@@ -5,6 +5,7 @@ import NotificationStore from "@stores/NotificationStore";
 import NftStore from "@stores/NFTStore";
 import StakeStore from "@stores/StakeStore";
 import TokenStore, { ISerializedTokenStore } from "@stores/TokenStore";
+import RangesStore from "@stores/RangesStore";
 
 export interface ISerializedRootStore {
   accountStore?: ISerializedAccountStore;
@@ -20,6 +21,7 @@ export interface ISerializedRootFilterStore {
 
 export default class RootStore {
   public accountStore: AccountStore;
+  public rangesStore: RangesStore;
   public poolsStore: PoolsStore;
   public notificationStore: NotificationStore;
   public nftStore: NftStore;
@@ -31,6 +33,7 @@ export default class RootStore {
     this.notificationStore = new NotificationStore(this);
     this.accountStore = new AccountStore(this, initState?.accountStore);
     this.poolsStore = new PoolsStore(this, initState?.poolsStore);
+    this.rangesStore = new RangesStore(this);
     this.nftStore = new NftStore(this);
     this.stakeStore = new StakeStore(this);
     makeAutoObservable(this);

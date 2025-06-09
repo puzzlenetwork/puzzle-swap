@@ -27,6 +27,7 @@ import Landing from "@screens/Landing";
 import Paper from "@screens/Paper";
 import LoginScreen from "./screens/LoginScreen";
 import { usePageTitle } from "./usePageTitle";
+import AllRanges from "@screens/Ranges/AllRanges";
 
 const Root = styled(Column)`
   width: 100%;
@@ -69,7 +70,7 @@ const App: React.FC = () => {
         <Route path={ROUTES.TRADE} element={<TradeInterface />} />
         <Route path={ROUTES.LIMIT_ORDER} element={<TradeInterface />} />
 
-        {/* Pools table routes */}
+        {/* AllRanges table routes */}
         <Route path={ROUTES.POOLS} element={<Pools />} />
 
         {/* Invest pool info routes */}
@@ -99,6 +100,11 @@ const App: React.FC = () => {
         <Route path={ROUTES.POOLS_CREATE} element={<CreateCustomPools />} />
 
         <Route path="*" element={<NotFound />} />
+
+        {/*Ranges block*/}
+        <Route path={ROUTES.RANGES} element={<AllRanges />} />
+        <Route path={ROUTES.RANGES_CREATE} element={<div>RANGES_CREATE</div>} />
+        <Route path={ROUTES.USER_RANGES} element={<div>USER_RANGES</div>} />
       </Routes>
       <WalletModal
         onClose={() => accountStore.setWalletModalOpened(false)}

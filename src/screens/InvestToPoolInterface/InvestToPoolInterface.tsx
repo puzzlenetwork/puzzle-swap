@@ -76,7 +76,7 @@ const InvestToPoolInterfaceImpl: React.FC = observer(() => {
   return (
     <Layout>
       <Root>
-        <GoBack link={ROUTES.POOLS} text="Back to Pools list" />
+        <GoBack link={ROUTES.POOLS} text="Back to AllRanges list" />
         <SizedBox height={24} />
         <MainPoolInfo />
         <Boosting />

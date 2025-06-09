@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import rangesBalanceBackground from "@src/assets/rangesBalanceBackground.svg";
 
 const Card = styled.div<{
   maxWidth?: number;
@@ -20,8 +21,9 @@ const Card = styled.div<{
     | "flex-start"
     | "baseline";
   flexDirection?: "column" | "row";
-  type?: "white" | "dark";
+  type?: "white" | "dark" | "image";
   bordered?: boolean;
+  paddingSize?: "default" | "small";
 }>`
   display: flex;
   flex-direction: ${({ flexDirection }) => flexDirection ?? "column"};
@@ -42,6 +44,8 @@ const Card = styled.div<{
           return `background: ${theme.colors.card.background};`;
         case "dark":
           return `background: ${theme.colors.blue500};`;
+        case "image":
+          return `background: url(${rangesBalanceBackground}) center no-repeat; background-size: cover;`;
         default:
           return `background: ${theme.colors.card.background};`;
       }

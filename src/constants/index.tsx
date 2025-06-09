@@ -24,6 +24,10 @@ export const ROUTES = {
   POOLS_CREATE: "/pools/create",
   POOL_SWAP: "/pools/:poolDomain",
   POOL_BOOST: "/pools/:poolDomain/boost",
+  //ranges block
+  RANGES: "/ranges",
+  RANGES_CREATE: "/ranges/create",
+  USER_RANGES: "/ranges/my",
 };
 
 export const PRODUCTS = {

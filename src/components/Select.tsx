@@ -34,6 +34,8 @@ const Root = styled.div<{ focused?: boolean }>`
   align-items: center;
   white-space: nowrap;
 
+  width: 100%;
+
   .menu-arrow {
     transition: 0.4s;
     transform: ${({ focused }) =>
