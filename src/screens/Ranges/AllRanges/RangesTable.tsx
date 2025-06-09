@@ -9,15 +9,17 @@ import { Pagination } from "@src/components/Pagination/Pagination";
 import { ReactComponent as NotFoundIcon } from "@src/assets/notFound.svg";
 import Button from "@components/Button";
 import Loading from "@components/Loading";
+import TokenTags from "@screens/Pools/TokenTags";
+import { TOKENS_BY_ASSET_ID } from "@src/constants";
 
 const RangesTable: React.FC = () => {
   const { rangesStore } = useStores();
-  
+
   const columns = React.useMemo(
     () => [
-      { Header: "Range", accessor: "picture" },
-      { Header: "Fact / Virtual Liquidity", accessor: "poolName" },
-      { Header: "Earned by LP", accessor: "earnedByLP" },
+      { Header: "Range", accessor: "range" },
+      { Header: "Fact / Virtual Liquidity", accessor: "liquidity" },
+      { Header: "Earned by LP", accessor: "periodFees" },
     ],
     []
   );
@@ -26,10 +28,21 @@ const RangesTable: React.FC = () => {
     rangesStore.setPagination({ page: el, size: 20 });
   };
 
-  const tableData = rangesStore.ranges.map(range => ({
-    picture: range.id, // You might want to add a proper picture/icon here
-    poolName: `${range.factLiquidity} / ${range.virtualLiquidity}`,
-    earnedByLP: range.earned,
+  const tableData = rangesStore.ranges.map((range) => ({
+    range: range.logo,
+    liquidity: `$${range.liquidity} / $${range.virtualLiquidity}`,
+    periodFees: (() => {
+      const tokens = Object.entries(range.periodFees).map(([asset_id, { fees_earned }]: [string, { fees_earned: number }]) => {
+        const token = TOKENS_BY_ASSET_ID[asset_id] || {};
+        return {
+          asset_id,
+          name: token.symbol,
+          logo: token.logo,
+          share: fees_earned,
+        };
+      });
+      return <TokenTags tokens={tokens} findBalanceByAssetId={() => null} />;
+    }),
   }));
 
   return (
@@ -39,10 +52,10 @@ const RangesTable: React.FC = () => {
           <Scrollbar
             style={{ maxWidth: "calc(100vw - 32px)", borderRadius: 16 }}
           >
-            <Table 
-              columns={columns} 
-              data={tableData} 
-              withHover 
+            <Table
+              columns={columns}
+              data={tableData}
+              withHover
               loading={rangesStore.loading}
             />
           </Scrollbar>
@@ -64,7 +77,7 @@ const RangesTable: React.FC = () => {
               "No ranges found. Try adjusting your filters or create a new range."
             )}
           </Text>
-          <Button onClick={() => {}}>Cancel the search</Button>
+          <Button onClick={() => { }}>Cancel the search</Button>
           <SizedBox height={24} />
         </>
       )}

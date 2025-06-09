@@ -1,6 +1,7 @@
 import { RootStore } from "./index";
 import { makeAutoObservable } from "mobx";
-import rangesService, { IRange } from "@src/services/rangesService";
+import rangesService from "@src/services/rangesService";
+import { Range } from "@src/entities/Range";
 
 export default class RangesStore {
   constructor(rootStore: RootStore) {
@@ -13,7 +14,7 @@ export default class RangesStore {
   public rootStore: RootStore;
 
   // Ranges data
-  ranges: IRange[] = [];
+  ranges: Range[] = [];
   loading: boolean = false;
 
   // Pagination state
@@ -76,7 +77,7 @@ export default class RangesStore {
       console.log("syncRanges");
       const { ranges, totalItems } = await rangesService.getRanges(this.paginationParams);
       console.log("ranges", ranges);
-      this.ranges = ranges;
+      this.ranges = ranges.map((range) => new Range(range));
       this.setTotalItems(totalItems);
     } catch (error) {
       console.error("Error fetching ranges:", error);

@@ -1,3 +1,4 @@
+import { IRangeParams } from "@src/entities/Range";
 import axios from "axios";
 
 export interface IGetRanges {
@@ -8,17 +9,9 @@ export interface IGetRanges {
   search?: string;
 }
 
-export interface IRange {
-  id: string;
-  poolName: string;
-  factLiquidity: number;
-  virtualLiquidity: number;
-  earned: number;
-  // Add other fields as needed
-}
 
 export interface IGetRangesResponse {
-  ranges: IRange[];
+  ranges: IRangeParams[];
   totalItems: number;
 }
 
