@@ -16,6 +16,7 @@ import { ROUTES } from "@src/constants";
 import { useStores } from "@stores";
 import RangeInformation from "./RangeInformation";
 import TradesVolume from "./TradesVolume";
+import RangeComposition from "./RangeComposition";
 
 const Root = styled.div`
   display: flex;
@@ -82,7 +83,7 @@ const InvestToRangeInterfaceImpl: React.FC = observer(() => {
               <LPStaking />
             </RightBlockMobile> */}
             <TradesVolume />
-            {/* <PoolComposition /> */}
+            <RangeComposition />
           </MainBlock>
           <RightBlock>
             {/* <Reward />
