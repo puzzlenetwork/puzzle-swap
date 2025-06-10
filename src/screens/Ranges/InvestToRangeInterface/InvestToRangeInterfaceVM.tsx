@@ -5,6 +5,7 @@ import { makeAutoObservable } from "mobx";
 import rangesService from "@src/services/rangesService";
 import { Range } from "@src/entities/Range";
 import BN from "@src/utils/BN";
+import { IHistory } from "@src/utils/types";
 
 const ctx = React.createContext<InvestToRangeInterfaceVM | null>(null);
 
@@ -34,17 +35,21 @@ class InvestToRangeInterfaceVM {
   public get range() {
     return this.rootStore.rangesStore.getRangeByAddress(this.rangeAddress);
   }
+  
+  history: IHistory[] = [];
+  setHistory = (v: IHistory[]) => (this.history = v);
 
   constructor(rootStore: RootStore, rangeAddress: string) {
     this.rootStore = rootStore;
     this.rangeAddress = rangeAddress;
     makeAutoObservable(this);
     
-    rangesService.getRangeByAddress(rangeAddress)
+    rangesService.getRangeByAddress(rangeAddress, { charts: true })
       .then((rangeData) => {
         if (!rangeData) return;
         const newRange = new Range(rangeData);
         this.rootStore.rangesStore.setRanges([...this.rootStore.rangesStore.ranges, newRange]);
+        this.setHistory(rangeData.charts || []);
       });
   }
 

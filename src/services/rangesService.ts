@@ -9,6 +9,14 @@ export interface IGetRanges {
   search?: string;
 }
 
+export interface IGetRange {
+  startTime?: number;
+  endTime?: number;
+  nominatePriceIn?: string;
+  user?: string;
+  charts?: boolean;
+}
+
 
 export interface IGetRangesResponse {
   ranges: IRangeParams[];
@@ -27,8 +35,8 @@ const rangesService = {
     console.log("data", data);
     return { ranges: data.pools, totalItems: data.total };
   },
-  getRangeByAddress: async (address: string): Promise<IRangeParams> => {
-    const url = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged/${address}/data`;
+  getRangeByAddress: async (address: string, params?: IGetRange): Promise<IRangeParams> => {
+    const url = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged/${address}/data` + (params ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : "");
     const { data } = await axios.get(url);
     return data;
   },

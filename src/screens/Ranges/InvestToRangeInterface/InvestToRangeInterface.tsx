@@ -14,6 +14,8 @@ import { Navigate, useParams } from "react-router-dom";
 import Loading from "@components/Loading";
 import { ROUTES } from "@src/constants";
 import { useStores } from "@stores";
+import RangeInformation from "./RangeInformation";
+import TradesVolume from "./TradesVolume";
 
 const Root = styled.div`
   display: flex;
@@ -71,25 +73,23 @@ const InvestToRangeInterfaceImpl: React.FC = observer(() => {
         <GoBack link={ROUTES.POOLS} text="Back to AllRanges list" />
         <SizedBox height={24} />
         <MainRangeInfo />
-        {/* <Boosting />
-        <PoolInformation />
+        <RangeInformation />
         <Body>
           <MainBlock>
-            <RightBlockMobile>
+            {/* <RightBlockMobile>
               <Reward />
               <MyPoolBalance />
               <LPStaking />
-            </RightBlockMobile>
+            </RightBlockMobile> */}
             <TradesVolume />
-            <PoolComposition />
-            <PoolHistory />
+            {/* <PoolComposition /> */}
           </MainBlock>
           <RightBlock>
-            <Reward />
+            {/* <Reward />
             <MyPoolBalance />
-            <LPStaking />
+            <LPStaking /> */}
           </RightBlock>
-        </Body> */}
+        </Body>
       </Root>
     </Layout>
   );

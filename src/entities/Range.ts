@@ -1,4 +1,5 @@
 import nodeService from "@src/services/nodeService";
+import { IHistory } from "@src/utils/types";
 import { makeAutoObservable } from "mobx";
 
 export interface IRangeAsset {
@@ -87,11 +88,12 @@ export interface IRangeParams {
   nominal_asset: string;
   static_KMult: number;
   virtual_liquidity: number;
-  extra_earned: any[];
+  extra_earned: IReward[];
   staked_providers: IStakedProviders;
   stats: IStats;
   period_fees: IPeriodFees;
   totals: Record<string, any>;
+  charts?: IHistory[];
 }
 
 export class Range {
@@ -121,11 +123,12 @@ export class Range {
   nominalAsset: string;
   staticKMult: number;
   virtualLiquidity: number;
-  extraEarned: any[];
+  extraEarned: IReward[];
   stakedProviders: IStakedProviders;
   stats: IStats;
   periodFees: IPeriodFees;
   totals: Record<string, any>;
+  charts?: IHistory[];
 
   constructor(params: IRangeParams) {
     this.address = params.address;
@@ -159,6 +162,7 @@ export class Range {
     this.stats = params.stats;
     this.periodFees = params.period_fees;
     this.totals = params.totals;
+    this.charts = params.charts;
     makeAutoObservable(this);
   }
 
