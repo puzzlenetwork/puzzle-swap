@@ -11,8 +11,11 @@ import Button from "@components/Button";
 import Loading from "@components/Loading";
 import TokenTags from "@screens/Pools/TokenTags";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
+import { useNavigate } from "react-router-dom";
+import rangesService from "@src/services/rangesService";
 
 const RangesTable: React.FC = () => {
+  const navigate = useNavigate();
   const { rangesStore } = useStores();
 
   const columns = React.useMemo(
@@ -29,6 +32,7 @@ const RangesTable: React.FC = () => {
   };
 
   const tableData = rangesStore.ranges.map((range) => ({
+    onClick: () => navigate(`/ranges/${range.address}/invest`),
     range: range.logo,
     liquidity: `$${range.liquidity} / $${range.virtualLiquidity}`,
     periodFees: (() => {

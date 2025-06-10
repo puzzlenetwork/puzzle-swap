@@ -15,6 +15,9 @@ export default class RangesStore {
 
   // Ranges data
   ranges: Range[] = [];
+  setRanges = (ranges: Range[]) => (this.ranges = ranges);
+  getRangeByAddress = (address: string) => this.ranges.find((range) => range.address === address);
+
   loading: boolean = false;
 
   // Pagination state

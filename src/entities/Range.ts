@@ -1,4 +1,21 @@
+import nodeService from "@src/services/nodeService";
 import { makeAutoObservable } from "mobx";
+
+export interface IRangeAsset {
+  asset_id: string,
+  balance: number,
+  balance_usd: number,
+  current_price: number,
+  extra_earned: number,
+  fact_balance: number,
+  fact_balance_usd: number,
+  fees_earned: number,
+  max_price: number,
+  min_price: number,
+  name: string,
+  real_balance: number,
+  share: number
+}
 
 export interface IReward {
   asset_id: string;
@@ -46,7 +63,7 @@ export interface IPeriodFees {
 export interface IRangeParams {
   address: string;
   artefact_origin_transaction_id: string;
-  assets: any[];
+  assets: IRangeAsset[];
   created_at: number;
   domain: string;
   fee_token_id: string;
@@ -80,7 +97,7 @@ export interface IRangeParams {
 export class Range {
   address: string;
   artefactOriginTransactionId: string;
-  assets: any[];
+  assets: IRangeAsset[];
   createdAt: number;
   domain: string;
   feeTokenId: string;
@@ -155,4 +172,7 @@ export class Range {
   }
 
   // Добавляйте методы по необходимости
+
+  contractKeysRequest = (keys: string[] | string) =>
+    nodeService.nodeKeysRequest(this.address, keys);
 } 

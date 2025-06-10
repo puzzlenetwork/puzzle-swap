@@ -27,6 +27,11 @@ const rangesService = {
     console.log("data", data);
     return { ranges: data.pools, totalItems: data.total };
   },
+  getRangeByAddress: async (address: string): Promise<IRangeParams> => {
+    const url = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged/${address}/data`;
+    const { data } = await axios.get(url);
+    return data;
+  },
 };
 
 export default rangesService; 
