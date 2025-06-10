@@ -19,8 +19,8 @@ jobs:
       HEROKU_EMAIL: izhur27@gmail.com
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to DEVELOP
-        if: endsWith(github.ref, '/develop')
+      - name: Deploy to RANGES
+        if: endsWith(github.ref, '/ranges')
         run: |
           echo "REACT_APP_API_BASE=${REACT_APP_API_BASE_DEV}" >> $GITHUB_ENV
           echo "REACT_APP_AGG_API=${REACT_APP_AGG_API_DEV}" >> $GITHUB_ENV
