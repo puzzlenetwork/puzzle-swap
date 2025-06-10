@@ -48,7 +48,7 @@ class InvestToRangeInterfaceVM {
       .then((rangeData) => {
         if (!rangeData) return;
         const newRange = new Range(rangeData);
-        this.rootStore.rangesStore.setRanges([...this.rootStore.rangesStore.ranges, newRange]);
+        this.rootStore.rangesStore.updateRange(newRange);
         this.setHistory(rangeData.charts || []);
       });
   }

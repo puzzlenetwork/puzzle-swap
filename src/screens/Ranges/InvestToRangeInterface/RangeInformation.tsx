@@ -50,7 +50,7 @@ const PoolInformation: React.FC<IProps> = () => {
       title: "Earned by LP",
       value: data.extraEarned
         ? (
-          <Row>
+          <Row style={{ gap: "8px" }}>
             {data.assets.filter(({ fees_earned, extra_earned }) => new BN(fees_earned + extra_earned).gt(0)).map((item, index) => (
               <TokenTag token={TOKENS_BY_ASSET_ID[item.asset_id]} amount={new BN(item.fees_earned + item.extra_earned)} key={index} />
             ))}  
