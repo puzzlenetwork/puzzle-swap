@@ -10,7 +10,7 @@ on:
   push:
     branches:
       - master
-      - develop
+      - ranges
 
 jobs:
   deploy_to_Heroku:
