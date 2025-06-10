@@ -14,6 +14,8 @@ import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import { useStores } from "@src/stores";
 import BN from "@src/utils/BN";
+import Checkbox from "@src/components/Checkbox";
+import { set } from "lodash";
 
 interface IProps {}
 
@@ -37,11 +39,11 @@ const Icon = styled.img`
 `;
 
 const RangeComposition: React.FC<IProps> = () => {
-  const { poolsStore } = useStores();
   const theme = useTheme();
   const vm = useInvestToRangeInterfaceVM();
   const [filteredTokens, setFilteredTokens] = useState<any[]>([]);
   const [balanceSort, setValueSort] = useState(true);
+  const [showSellOff, setShowSellOff] = useState(false);
   const columns = React.useMemo(
     () => [
       { Header: "Asset", accessor: "asset" },
@@ -80,9 +82,10 @@ const RangeComposition: React.FC<IProps> = () => {
           </Tooltip>
         ),
         accessor: "selloff",
+        columnVisibility: showSellOff,
       },
     ],
-    [balanceSort, theme.images.icons.group]
+    [balanceSort, theme.images.icons.group, showSellOff]
   );
   useMemo(() => {
     const tokens = vm.range!.assets
@@ -123,11 +126,11 @@ const RangeComposition: React.FC<IProps> = () => {
         ),
         price: (a.assetId === vm.range!.baseTokenId) ? ("$" + new BN(a.balance_usd).toFormat(2)) : (
           <Row alignItems="center">
-            <Text fitContent type="secondary" size="small">${a.min_price}</Text>
+            <Text fitContent type="secondary" size="small">${new BN(a.min_price).toFormat(a.current_price < 0.1 ? 4 : 2)}</Text>
             <SizedBox width={4} />
-            <Text fitContent> ← ${a.current_price} → </Text>
+            <Text fitContent> ← ${new BN(a.current_price).toFormat(a.current_price < 0.1 ? 4 : 2)} → </Text>
             <SizedBox width={4} />
-            <Text fitContent type="secondary" size="small">${a.max_price}</Text>
+            <Text fitContent type="secondary" size="small">${new BN(a.max_price).toFormat(a.current_price < 0.1 ? 4 : 2)}</Text>
           </Row>
         ),
         balance: (
@@ -158,9 +161,14 @@ const RangeComposition: React.FC<IProps> = () => {
   const { width } = useWindowSize();
   return (
     <Root balanceSort={balanceSort}>
-      <Text weight={500} type="secondary">
-        Pool composition
-      </Text>
+      <Row alignItems="center">
+        <Text weight={500} type="secondary">
+          Range composition
+        </Text>
+        <Text fitContent nowrap>Show Sell-Off</Text>
+        <SizedBox width={8} />
+        <Checkbox onChange={() => setShowSellOff(!showSellOff)} checked={showSellOff} />
+      </Row>
       <SizedBox height={8} />
       <Scrollbar
         style={{
@@ -174,6 +182,9 @@ const RangeComposition: React.FC<IProps> = () => {
             columns={columns}
             data={filteredTokens}
             style={{ whiteSpace: "nowrap" }}
+            initialState={{
+              hiddenColumns: [!showSellOff && "selloff"],
+            }}
           />
         )}
       </Scrollbar>
