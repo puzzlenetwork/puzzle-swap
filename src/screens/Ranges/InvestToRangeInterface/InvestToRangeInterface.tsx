@@ -74,7 +74,7 @@ const InvestToRangeInterfaceImpl: React.FC = observer(() => {
   return (
     <Layout>
       <Root>
-        <GoBack link={ROUTES.POOLS} text="Back to AllRanges list" />
+        <GoBack link={ROUTES.RANGES} text="Back to Range list" />
         <SizedBox height={24} />
         <MainRangeInfo />
         <RangeInformation />

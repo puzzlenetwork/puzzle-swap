@@ -16,6 +16,7 @@ import { useStores } from "@src/stores";
 import BN from "@src/utils/BN";
 import Checkbox from "@src/components/Checkbox";
 import { set } from "lodash";
+import Select from "@src/components/Select";
 
 interface IProps {}
 
@@ -181,6 +182,28 @@ const RangeComposition: React.FC<IProps> = () => {
         <Text fitContent nowrap>Show Sell-Off</Text>
         <SizedBox width={8} />
         <Checkbox onChange={() => setShowSellOff(!showSellOff)} checked={showSellOff} />
+        <SizedBox width={20} />
+        <Text fitContent nowrap>Show Asset Prices in</Text>
+        <SizedBox width={8} />
+        <Select
+          kind="text"
+          textSize="medium"
+          options={[
+            {
+              key: "usd",
+              title: "USD",
+            },
+            ...vm.range!.assets.map((asset) => ({
+              key: asset.asset_id,
+              title: asset.name,
+            }))
+          ]}
+          onSelect={({ key }) => { }}
+          selected={{
+            key: "usd",
+            title: "USD",
+          }}
+        />
       </Row>
       <SizedBox height={8} />
       <Scrollbar

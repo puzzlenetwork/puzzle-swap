@@ -3,7 +3,7 @@ import { useVM } from "@src/hooks/useVM";
 import { RootStore, useStores } from "@stores";
 import { makeAutoObservable, when } from "mobx";
 import rangesService from "@src/services/rangesService";
-import { IStakedProviders, Range } from "@src/entities/Range";
+import { IRangeAsset, IStakedProviders, Range } from "@src/entities/Range";
 import BN from "@src/utils/BN";
 import { IHistory } from "@src/utils/types";
 import nodeService from "@src/services/nodeService";
@@ -70,8 +70,53 @@ class InvestToRangeInterfaceVM {
     return userInfo ? new BN(userInfo.unclaimed_usd) : BN.ZERO;
   };
 
-  public dicToClaim: any | null = null;
-  private setDicToClaim = (value: any) => (this.dicToClaim = value);
+  public rewardsDisplayMode: ("all" | "fees" | "extra") = "all";
+  public setRewardsDisplayMode = (value: "all" | "fees" | "extra") => (this.rewardsDisplayMode = value);
+
+  public timeRangeToDisplayRewards: ("1d" | "7d" | "1m" | "3m" | "1y" | "all") = "all";
+  public setTimeRangeToDisplayRewards = (value: ("1d" | "7d" | "1m" | "3m" | "1y" | "all")) => (this.timeRangeToDisplayRewards = value);
+
+  public get LPRewardsToDisplay(): {assetId: string, amount: BN}[] {
+    switch (this.rewardsDisplayMode) {
+      case "all":
+        return this.range!.assets.map(({ asset_id, fees_earned, extra_earned }) => ({ assetId: asset_id, amount: new BN(fees_earned + extra_earned) })).filter(({ amount }) => amount.gt(0));
+      case "fees":
+        return this.range!.assets.map(({ asset_id, fees_earned }) => ({ assetId: asset_id, amount: new BN(fees_earned) })).filter(({ amount }) => amount.gt(0));
+      case "extra":
+        return this.range!.assets.map(({ asset_id, extra_earned }) => ({ assetId: asset_id, amount: new BN(extra_earned) })).filter(({ amount }) => amount.gt(0));
+      default:
+        return [];
+    }
+  }
+
+  public chartDataKey: ("volume" | "fees" | "liquidity") = "volume";
+  public setChartDataKey = (value: "volume" | "fees" | "liquidity") => (this.chartDataKey = value);
+
+  public get chartData() {
+    return this.range?.charts?.map(({ owner_fees, protocol_fees, time, ...rest }) => ({
+      fees: owner_fees + protocol_fees,
+      time: time * 1000,
+      ...rest
+    })).sort((a, b) => (a.time < b.time ? -1 : 1)) || [];
+  }
+
+  public get chartTotal(): BN {
+    switch (this.chartDataKey) {
+      case "volume":
+        return new BN(this.range!.totals["volume_all"] ?? 0);
+      case "fees":
+        return new BN((this.range!.totals["pool_fees_all"] ?? 0) + (this.range!.totals["owner_fees_all"] ?? 0) + (this.range!.totals["protocol_fees_all"] ?? 0));
+      case "liquidity":
+        return new BN(this.range!.liquidity ?? 0);
+    }
+    return new BN(this.range!.totals[this.chartDataKey] ?? 0)
+  }
+
+  public useMaxStakeUnstakeAmount: boolean = false;
+  public setUseMaxStakeUnstakeAmount = (value: boolean) => (this.useMaxStakeUnstakeAmount = value);
+
+  public stakeUnstakeAmount: BN = BN.ZERO;
+  public setStakeUnstakeAmount = (value: BN) => (this.stakeUnstakeAmount = value);
 
   constructor(rootStore: RootStore, rangeAddress: string) {
     this.rootStore = rootStore;
@@ -90,7 +135,6 @@ class InvestToRangeInterfaceVM {
       () => this.range != null,
       () => {
         this.getAddressActivityInfo();
-        this.calcRewards();
       })
   }
 
@@ -160,37 +204,6 @@ class InvestToRangeInterfaceVM {
     this._setGlobalIndexStaked(globalIndexStaked);
   };
 
-  calcRewards = async () => {
-    const { address } = this.rootStore.accountStore;
-    if (address == null || this.range?.address == null) return;
-    const data = await nodeService.evaluate(
-      CONTRACT_ADDRESSES.calcReward,
-      `calcRewardToClaim(false, "${this.range?.address}", "${address}")`
-    );
-    const tokensStr = data.result.value["_2"].value;
-    const tokens = tokensStr
-      .toString()
-      .split("|")
-      .filter((v) => v !== "");
-    const dicClaim = {};
-    const totalRewardInDoll = tokens.reduce((acc, v) => {
-      const details = v.split(",");
-      const assetId = details[0];
-      const amount = details[1];
-      if (new BN(amount).lt(0)) {
-        return acc.plus(0);
-      }
-      // @ts-ignore
-      dicClaim[assetId] = amount;
-      const dollEquivalent = this.rootStore.poolsStore
-        .usdtRate(assetId)
-        ?.times(BN.formatUnits(amount, TOKENS_BY_ASSET_ID[assetId]?.decimals));
-      return acc.plus(dollEquivalent ?? 0);
-    }, BN.ZERO);
-
-    this.setDicToClaim(dicClaim);
-  };
-
   get totalProvidedLiquidityByAddress() {
     const userInfo = this.range?.stakedProviders.providers_staked.find((p) => p.address === this.rootStore.accountStore.address);
     return userInfo?.index_staked ? new BN(userInfo.index_staked).times(this.range!.indexTokenRate ?? BN.ZERO) : BN.ZERO;
@@ -253,7 +266,6 @@ class InvestToRangeInterfaceVM {
           title: "Transaction is not completed",
         });
       })
-      .then(this.calcRewards)
       .finally(() => this._setLoading(false));
   };
 
@@ -279,7 +291,7 @@ class InvestToRangeInterfaceVM {
           args: [
             {
               type: "integer",
-              value: this.userIndexStaked?.toString(),
+              value: this.useMaxStakeUnstakeAmount ? this.userIndexStaked?.toString() : this.stakeUnstakeAmount.toString(),
             },
           ],
         },
@@ -300,12 +312,11 @@ class InvestToRangeInterfaceVM {
           title: "Transaction is not completed",
         });
       })
-      .then(this.calcRewards)
       .finally(() => this._setLoading(false));
   };
 
   get canStakeIndex() {
-    return !this.indexTokenBalance.eq(0);
+    return (!this.indexTokenBalance.eq(0) && (this.useMaxStakeUnstakeAmount && !(this.stakeUnstakeAmount.eq(0) || this.stakeUnstakeAmount.gt(this.indexTokenBalance))));
   }
 
   stakeIndex = async () => {
@@ -319,7 +330,7 @@ class InvestToRangeInterfaceVM {
         payment: [
           {
             assetId: this.indexTokenId === "WAVES" ? null : this.indexTokenId,
-            amount: this.indexTokenBalance.toString(),
+            amount: this.useMaxStakeUnstakeAmount ? this.indexTokenBalance.toString() : this.stakeUnstakeAmount.toString(),
           },
         ],
         call: {
@@ -328,7 +339,6 @@ class InvestToRangeInterfaceVM {
         },
       })
       .then(this.syncIndexTokenInfo)
-      .then(this.calcRewards)
       .then((txId) => {
         notificationStore.notify(`Your have staked index token`, {
           type: "success",

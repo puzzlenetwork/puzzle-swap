@@ -10,6 +10,7 @@ import BN from "@src/utils/BN";
 import { Row } from "@src/components/Flex";
 import TokenTag from "./TokenTag";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
+import Select from "@src/components/Select";
 
 interface IProps {}
 
@@ -34,6 +35,48 @@ const CCard = styled(Card)`
 const PoolInformation: React.FC<IProps> = () => {
   const vm = useInvestToRangeInterfaceVM();
   const data = vm.range!;
+  const displayModes = [
+    {
+      key: "all",
+      title: "All Rewards",
+    },
+    {
+      key: "fees",
+      title: "Earned Fees",
+    },
+    {
+      key: "extra",
+      title: "Extra Rewards",
+    },
+  ]
+
+  const timeRanges = [
+    {
+      key: "1d",
+      title: "Last Day",
+    },
+    {
+      key: "7d",
+      title: "Last Week",
+    },
+    {
+      key: "1m",
+      title: "Last Month",
+    },
+    {
+      key: "3m",
+      title: "Last 3 Months",
+    },
+    {
+      key: "1y",
+      title: "Last Year",
+    },
+    {
+      key: "all",
+      title: "All Time",
+    },
+  ]
+
   const valuesArray = [
     {
       title: "Fact / Virtual Liquidity",
@@ -47,16 +90,37 @@ const PoolInformation: React.FC<IProps> = () => {
         : null,
     },
     {
-      title: "Earned by LP",
-      value: data.extraEarned
-        ? (
-          <Row style={{ gap: "8px" }}>
-            {data.assets.filter(({ fees_earned, extra_earned }) => new BN(fees_earned + extra_earned).gt(0)).map((item, index) => (
-              <TokenTag token={TOKENS_BY_ASSET_ID[item.asset_id]} amount={new BN(item.fees_earned + item.extra_earned)} key={index} />
-            ))}  
-          </Row>
-        )
-        : null,
+      title: (
+        <Row alignItems="center">
+          <Text type="secondary" size="medium">Earned by LP</Text>
+          <Select
+            kind="text"
+            textSize="medium"
+            options={displayModes}
+            onSelect={({ key }) => {
+              vm.setRewardsDisplayMode(key as ("all" | "fees" | "extra"));
+            }}
+            selected={displayModes.find((o) => o.key === vm.rewardsDisplayMode) || displayModes[0]}
+          />
+          <SizedBox width={20} />
+          <Select
+            kind="text"
+            textSize="medium"
+            options={timeRanges}
+            onSelect={({ key }) => {
+              vm.setTimeRangeToDisplayRewards(key as ("1d" | "7d" | "1m" | "3m" | "1y" | "all"));
+            }}
+            selected={timeRanges.find((o) => o.key === vm.timeRangeToDisplayRewards) || timeRanges[0]}
+          />
+        </Row>
+      ),
+      value: (
+        <Row style={{ gap: "8px" }}>
+          {vm.LPRewardsToDisplay.map((item, index) => (
+            <TokenTag token={TOKENS_BY_ASSET_ID[item.assetId]} amount={new BN(item.amount)} key={index} />
+          ))}  
+        </Row>
+      ),
     }
   ];
   return (
@@ -66,7 +130,7 @@ const PoolInformation: React.FC<IProps> = () => {
           <Text type="secondary" size="medium">
             {title}
           </Text>
-          <SizedBox height={4} />
+          <SizedBox height={12} />
           {value != null ? (
               <Text style={{ fontSize: "20px", lineHeight: "24px" }}>
                 {value}

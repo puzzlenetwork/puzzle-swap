@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useMemo } from "react";
 import Text from "@components/Text";
 import Card from "@components/Card";
 import SizedBox from "@components/SizedBox";
@@ -10,6 +10,9 @@ import useWindowSize from "@src/hooks/useWindowSize";
 import dayjs from "dayjs";
 import BN from "@src/utils/BN";
 import poolsService from "@src/services/poolsService";
+import { Row } from "@src/components/Flex";
+import Tabs from "@src/components/Tabs";
+import Select from "@src/components/Select";
 
 interface IProps {}
 
@@ -55,27 +58,88 @@ const TradesVolume: React.FC<IProps> = () => {
   const vm = useInvestToRangeInterfaceVM();
   const { width: screenWidth } = useWindowSize();
   const chartWidth = screenWidth ? calcChartWidth(screenWidth) : 0;
-  const stats = vm.history;
-  const data = stats
-    .map((v) => ({ ...v, volume: Number(v.volume), date: v.time * 1000 }))
-    .sort((a, b) => (a.time < b.time ? -1 : 1));
+
+  const activeTab = useMemo(() => {
+    switch (vm.chartDataKey) {
+      case "volume":
+        return 0;
+      case "fees":
+        return 1;
+      case "liquidity":
+        return 2;
+    }
+  }, [vm.chartDataKey]);
+
+  const handleChangeTab = (index: number) => {
+    vm.setChartDataKey(["volume", "fees", "liquidity"][index] as ("volume" | "fees" | "liquidity"));
+  }
+
+  const timeRanges = [
+    {
+      key: "1d",
+      title: "Last Day",
+    },
+    {
+      key: "7d",
+      title: "Last Week",
+    },
+    {
+      key: "1m",
+      title: "Last Month",
+    },
+    {
+      key: "3m",
+      title: "Last 3 Months",
+    },
+    {
+      key: "1y",
+      title: "Last Year",
+    },
+    {
+      key: "all",
+      title: "All Time",
+    },
+  ]
+
   return (
     <Root
       disabled={
-        data == null ||
-        data.length < 2 ||
-        data.every(({ volume }) => volume === 0)
+        vm.chartData == null ||
+        vm.chartData.length < 2
       }
     >
-      <Text weight={500} type="secondary">
-        Trades volume
-      </Text>
+      <Row>
+        <Tabs
+          tabs={[
+            { name: "Trades volume" },
+            { name: "Fees Earned" },
+            { name: "Total Liquidity" },
+          ]}
+          activeTab={activeTab}
+          setActive={handleChangeTab}
+          style={{ borderBottom: "none" }}
+        />
+        <Select
+          kind="text"
+          textSize="medium"
+          options={timeRanges}
+          selected={timeRanges.find((v) => v.key === "all")}
+          onSelect={(v) => {
+            
+          }}
+        />
+      </Row>
       <SizedBox height={8} />
       <Card style={{ height: 288 }}>
-        <LineChart width={chartWidth} height={240} data={data}>
+        <Row>
+          <Text type="secondary" size="medium" fitContent>Total for period:</Text>
+          <SizedBox width={8} />
+          <Text size="medium" fitContent>${ vm.chartTotal.toFormat(2) }</Text>
+        </Row>
+        <LineChart width={chartWidth} height={240} data={vm.chartData}>
           <XAxis
             tickLine={false}
-            dataKey="date"
+            dataKey="time"
             tickFormatter={(date) => dayjs(date).format("MMM DD")}
             style={{ fill: "#8082c5" }}
           />
@@ -95,7 +159,7 @@ const TradesVolume: React.FC<IProps> = () => {
           <Line
             dot={false}
             type="monotone"
-            dataKey="volume"
+            dataKey={vm.chartDataKey}
             stroke="#7075E9"
             strokeWidth={2}
           />

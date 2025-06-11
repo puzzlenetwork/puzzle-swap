@@ -12,19 +12,23 @@ import Tooltip from "@components/Tooltip";
 import SizedBox from "@components/SizedBox";
 import { Column, Row } from "@components/Flex";
 import Button from "@components/Button";
+import Divider from "@src/components/Divider";
+import Switch from "@src/components/Switch";
+import StakeUnstakeInput from "./StakeUnstakeInput";
 
 interface IProps {}
 
 const Root = styled(Card)`
   width: 100%;
   margin-top: 24px;
-  padding: 16px 24px !important;
+  padding: 0 !important;
 `;
 
-const Title = styled(Text)<{ expanded?: boolean }>`
+const Title = styled(Text) <{ expanded?: boolean }>`
   display: flex;
   align-items: center;
-  width: 100%;
+  width: calc(100% - 48px);
+  margin: 16px 24px;
   transition: 0.4s;
   position: relative;
   :after {
@@ -49,7 +53,18 @@ const Body = styled(Column)<{ expanded?: boolean }>`
   transition: 0.4s;
   overflow: hidden;
   width: 100%;
-  height: ${({ expanded }) => (expanded ? 116 : 0)}px;
+  height: ${({ expanded }) => (expanded ? "auto" : 0)};
+`;
+
+const Information = styled(Row)`
+  width: calc(100% - 48px);
+  padding: 16px 24px;
+  padding-top: 0;
+`;
+
+const Actions = styled(Column)`
+  padding: 16px 24px;
+  width: calc(100% - 48px);
 `;
 
 const LPStaking: React.FC<IProps> = () => {
@@ -63,8 +78,8 @@ const LPStaking: React.FC<IProps> = () => {
   );
 
   return (
-    <Root onClick={() => setExpanded(!expanded)}>
-      <Title weight={500} expanded={expanded}>
+    <Root>
+      <Title weight={500} expanded={expanded} onClick={() => setExpanded(!expanded)}>
         LP Staking
         <Tooltip
           containerStyles={{ display: "flex", alignItems: "center" }}
@@ -79,8 +94,7 @@ const LPStaking: React.FC<IProps> = () => {
         </Tooltip>
       </Title>
       <Body expanded={expanded}>
-        <SizedBox height={16} />
-        <Row>
+        <Information>
           <Column crossAxisSize="max">
             <Text type="secondary" size="medium">
               Staked balance
@@ -91,24 +105,42 @@ const LPStaking: React.FC<IProps> = () => {
                 ? "0.00"
                 : vm.totalProvidedLiquidityByAddress?.toFormat(2)}
             </Text>
-            <SizedBox height={16} />
-            <Button
-              fixed
-              kind="secondary"
-              size="medium"
-              disabled={vm.userIndexStaked == null || vm.userIndexStaked?.eq(0)}
-              onClick={vm.unstakeIndex}
-            >
-              Unstake
-            </Button>
           </Column>
           <SizedBox width={8} />
-          <Column crossAxisSize="max">
+          <Column>
             <Text nowrap type="secondary" size="medium">
               Available to stake
             </Text>
             <Text>${availableToStake.toFormat(2)}</Text>
-            <SizedBox height={16} />
+          </Column>
+        </Information>
+
+        <Divider />
+
+        <Actions crossAxisSize="max">
+          <Row>
+            <Text size="medium" type="secondary">Use MAX</Text>
+            <SizedBox width={16} />
+            <Switch value={vm.useMaxStakeUnstakeAmount} onChange={() => {vm.setUseMaxStakeUnstakeAmount(!vm.useMaxStakeUnstakeAmount)}} />
+          </Row>
+          <SizedBox height={16} />
+          {!vm.useMaxStakeUnstakeAmount && (
+            <>
+              <StakeUnstakeInput amount={vm.stakeUnstakeAmount} setAmount={vm.setStakeUnstakeAmount} />
+              <SizedBox height={16} />
+            </>
+          )}
+          <Row>
+            <Button
+              fixed
+              kind="secondary"
+              size="medium"
+              disabled={vm.userIndexStaked == null || vm.userIndexStaked?.eq(0) || (vm.useMaxStakeUnstakeAmount && (vm.stakeUnstakeAmount.eq(0) || vm.stakeUnstakeAmount.gt(vm.indexTokenBalance)))}
+              onClick={vm.unstakeIndex}
+            >
+              Unstake
+            </Button>
+            <SizedBox width={8} />
             <Button
               fixed
               size="medium"
@@ -117,8 +149,8 @@ const LPStaking: React.FC<IProps> = () => {
             >
               Stake
             </Button>
-          </Column>
-        </Row>
+          </Row>
+        </Actions>
       </Body>
     </Root>
   );
