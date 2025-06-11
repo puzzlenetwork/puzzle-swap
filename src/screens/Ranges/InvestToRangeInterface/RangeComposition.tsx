@@ -41,17 +41,23 @@ const Icon = styled.img`
 const RangeComposition: React.FC<IProps> = () => {
   const theme = useTheme();
   const vm = useInvestToRangeInterfaceVM();
+  const { width: screenWidth } = useWindowSize();
   const [filteredTokens, setFilteredTokens] = useState<any[]>([]);
   const [balanceSort, setValueSort] = useState(true);
   const [showSellOff, setShowSellOff] = useState(false);
   const columns = React.useMemo(
     () => [
       { Header: "Asset", accessor: "asset" },
-      { Header: "Min ← Current → Max", accessor: "price" },
+      {
+        accessor: "price",
+        Header: () => (
+          <Row alignItems="center" justifyContent="center">Min ← Current → Max</Row>
+        ),
+      },
       {
         accessor: "balance",
         Header: () => (
-          <Row style={{ cursor: "pointer" }}>
+          <Row style={{ cursor: "pointer" }} justifyContent="center">
             <Text size="medium" fitContent>
               Fact / Virtual Balance
             </Text>
@@ -65,7 +71,12 @@ const RangeComposition: React.FC<IProps> = () => {
           </Row>
         ),
       },
-      { Header: "Fact / Target Share", accessor: "share" },
+      {
+        accessor: "share",
+        Header: () => (
+          <Row alignItems="center" justifyContent="flex-end">Fact / Target Share</Row>
+        ),
+      },
       {
         Header: (
           <Tooltip
@@ -124,8 +135,10 @@ const RangeComposition: React.FC<IProps> = () => {
             <Text fitContent>{a.symbol}</Text>
           </Row>
         ),
-        price: (a.assetId === vm.range!.baseTokenId) ? ("$" + new BN(a.balance_usd).toFormat(2)) : (
-          <Row alignItems="center">
+        price: (a.assetId === vm.range!.baseTokenId) ? (
+          <Row alignItems="center" justifyContent="flex-end">{"$" + new BN(a.balance_usd).toFormat(2)}</Row>
+        ) : (
+          <Row alignItems="center" justifyContent="flex-end">
             <Text fitContent type="secondary" size="small">${new BN(a.min_price).toFormat(a.current_price < 0.1 ? 4 : 2)}</Text>
             <SizedBox width={4} />
             <Text fitContent> ← ${new BN(a.current_price).toFormat(a.current_price < 0.1 ? 4 : 2)} → </Text>
@@ -134,18 +147,18 @@ const RangeComposition: React.FC<IProps> = () => {
           </Row>
         ),
         balance: (
-          <Row alignItems="center">
+          <Row alignItems="center" justifyContent="center">
             <Text fitContent>
-              {new BN(a.fact_balance).toFormat(2)} /
+              {new BN(a.fact_balance).toFormat(a.fact_balance < 0.1 ? 4 : 2)} /
             </Text>
             <SizedBox width={4} />
             <Text fitContent type="secondary">
-              {new BN(a.real_balance).toFormat(2)}
+              {new BN(a.real_balance).toFormat(a.real_balance < 0.1 ? 4 : 2)}
             </Text>
           </Row>
         ),
         share: (
-          <Row alignItems="center">
+          <Row alignItems="center" justifyContent="flex-end">
             <Text fitContent>
               {new BN(a.balance_usd).div(totalValue).times(100).toFormat(2)}% /
             </Text>
@@ -172,7 +185,7 @@ const RangeComposition: React.FC<IProps> = () => {
       <SizedBox height={8} />
       <Scrollbar
         style={{
-          maxWidth: "calc(100vw - 32px)",
+          maxWidth: screenWidth && screenWidth > 1160 ? "750px" : (screenWidth && screenWidth > 880 ? "calc(((100vw - 32px - 40px) / 3) * 2)" : "calc(100vw - 32px)"),
           borderRadius: 16,
         }}
       >

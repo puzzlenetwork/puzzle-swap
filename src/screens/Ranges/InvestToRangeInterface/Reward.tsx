@@ -80,21 +80,9 @@ const Reward: React.FC<IProps> = () => {
               </Row>
               <Text weight={500}>
                 {vm.totalClaimedReward != null ? (
-                  vm.claimedRewardList?.length > 0 ? (
-                    vm.claimedRewardList?.map((item: any) => (
-                      <Text textAlign="left" type="secondary" size="small">
-                        {new BN(
-                          item["amount"] /
-                            10 ** TOKENS_BY_ASSET_ID[item["assetId"]].decimals
-                        ).toFormat(2)}{" "}
-                        {TOKENS_BY_ASSET_ID[item["assetId"]].symbol}
-                      </Text>
-                    ))
-                  ) : (
-                    <div>$0.00</div>
-                  )
+                  `$${totalClaimed}`
                 ) : (
-                  <Skeleton height={16} width="50%" />
+                  "$0.00" 
                 )}
               </Text>
             </Column>
@@ -108,7 +96,7 @@ const Reward: React.FC<IProps> = () => {
                 {vm.totalRewardToClaim != null ? (
                   `$${vm.totalRewardToClaim.toFixed(2)}`
                 ) : (
-                  <Skeleton height={16} />
+                  "$0.00"
                 )}
               </Text>
             </Column>

@@ -1,4 +1,5 @@
 import nodeService from "@src/services/nodeService";
+import BN from "@src/utils/BN";
 import { IHistory } from "@src/utils/types";
 import { makeAutoObservable } from "mobx";
 
@@ -176,6 +177,12 @@ export class Range {
   }
 
   // Добавляйте методы по необходимости
+
+  get indexTokenRate(): BN | null {
+    if (!this.lpTokenAmount)
+      return null;
+    return new BN(this.liquidity).div(this.lpTokenAmount);
+  }
 
   contractKeysRequest = (keys: string[] | string) =>
     nodeService.nodeKeysRequest(this.address, keys);

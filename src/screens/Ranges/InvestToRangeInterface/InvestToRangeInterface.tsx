@@ -18,6 +18,8 @@ import RangeInformation from "./RangeInformation";
 import TradesVolume from "./TradesVolume";
 import RangeComposition from "./RangeComposition";
 import Reward from "./Reward";
+import MyRangeBalance from "./MyRangeBalance";
+import LPStaking from "./LPStaking";
 
 const Root = styled.div`
   display: flex;
@@ -88,8 +90,8 @@ const InvestToRangeInterfaceImpl: React.FC = observer(() => {
           </MainBlock>
           <RightBlock>
             <Reward />
-            {/* <MyPoolBalance />
-            <LPStaking /> */}
+            <MyRangeBalance />
+            <LPStaking />
           </RightBlock>
         </Body>
       </Root>

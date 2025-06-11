@@ -43,7 +43,7 @@ const Root = styled.div<{ disabled?: boolean }>`
 const calcChartWidth = (screenWidth: number) => {
   switch (true) {
     case screenWidth > 1160 + 32:
-      return 928;
+      return 700;
     case screenWidth <= 1160 + 32 && screenWidth >= 880:
       return ((screenWidth - 32 - 40) / 3) * 2 - 50;
     case screenWidth < 880:
