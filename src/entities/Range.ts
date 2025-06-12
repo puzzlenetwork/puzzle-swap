@@ -184,6 +184,23 @@ export class Range {
     return new BN(this.liquidity).div(this.lpTokenAmount);
   }
 
+  get assetsWithLeverage() {
+    const withLeverage = this.assets.map(({ balance, fact_balance, ...rest }) => ({
+      ...rest,
+      leverage: new BN(fact_balance).div(balance),
+      balance,
+      fact_balance,
+    }));
+
+    const maxLeverage = withLeverage.reduce((acc, { leverage }) => BN.max(acc, leverage), BN.ZERO);
+
+    return withLeverage.map((asset) => ({
+      ...asset,
+      leverage: asset.leverage.times(100).toNumber(),
+      relativeLeverage: asset.leverage.div(maxLeverage).times(100).toNumber(),
+    }));
+  }
+
   contractKeysRequest = (keys: string[] | string) =>
     nodeService.nodeKeysRequest(this.address, keys);
 } 

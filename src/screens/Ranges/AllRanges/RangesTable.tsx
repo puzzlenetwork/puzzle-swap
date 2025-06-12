@@ -12,7 +12,8 @@ import Loading from "@components/Loading";
 import TokenTags from "@screens/Pools/TokenTags";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import { useNavigate } from "react-router-dom";
-import rangesService from "@src/services/rangesService";
+import RangeChart from "@components/RangeChart";
+
 
 const RangesTable: React.FC = () => {
   const navigate = useNavigate();
@@ -31,9 +32,12 @@ const RangesTable: React.FC = () => {
     rangesStore.setPagination({ page: el, size: 20 });
   };
 
-  const tableData = rangesStore.ranges.map((range) => ({
+  const tableData = rangesStore.ranges.map((range, index) => ({
     onClick: () => navigate(`/ranges/${range.address}/invest`),
-    range: range.logo,
+    range: (
+      // <Text>{range.assetsWithLeverage.map(({ leverage }) => `${leverage}`).join(", ")}</Text>
+      <RangeChart range={range} size={120} index={index} />
+    ),
     liquidity: `$${range.liquidity} / $${range.virtualLiquidity}`,
     periodFees: (() => {
       const tokens = Object.entries(range.periodFees).map(([asset_id, { fees_earned }]: [string, { fees_earned: number }]) => {

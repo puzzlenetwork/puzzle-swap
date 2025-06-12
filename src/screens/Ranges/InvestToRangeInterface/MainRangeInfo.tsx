@@ -19,17 +19,15 @@ import { useStores } from "@stores";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import useWindowSize from "@src/hooks/useWindowSize";
 import { themes } from "@src/themes/ThemeProvider";
+import RangeChart from "@src/components/RangeChart";
+import Card from "@src/components/Card";
 
-interface IProps {}
+interface IProps { }
 
-const Root = styled.div`
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-`;
 const ShortInfo = styled.div<{ pic: string }>`
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
   ${({ pic }) => pic && `background: url(${pic});`};
   background-position: center;
   border-radius: 16px;
@@ -91,7 +89,7 @@ const MainRangeInfo: React.FC<IProps> = () => {
   const { width } = useWindowSize();
   const whiteText = { color: themes.lightTheme.colors.white };
   return (
-    <Root>
+    <Row>
       <ShortInfo pic={bg}>
         <Column crossAxisSize="max">
           <Hat>
@@ -170,7 +168,11 @@ const MainRangeInfo: React.FC<IProps> = () => {
           </Links>
         </Column>
       </ShortInfo>
-    </Root>
+      <SizedBox width={20} />
+      <Card style={{ width: "auto", padding: "16px" }}>
+        <RangeChart range={vm.range!} size={182} />
+      </Card>
+    </Row>
   );
 };
 export default observer(MainRangeInfo);
