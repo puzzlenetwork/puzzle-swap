@@ -1,3 +1,5 @@
+import BN from "./BN";
+
 interface IPayment {
   amount: number;
   assetId: null | string;

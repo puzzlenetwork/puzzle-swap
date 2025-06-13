@@ -6,7 +6,7 @@ import SizedBox from "@components/SizedBox";
 import { IToken, ROUTES } from "@src/constants";
 import BN from "@src/utils/BN";
 import Img from "@src/components/Img";
-import TokenTag from "@screens/InvestToPoolInterface/PoolHistory/TokenTag";
+import TokenTag from "@components/TokenTag";
 import { Link } from "react-router-dom";
 
 interface IProps {

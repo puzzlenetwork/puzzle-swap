@@ -13,9 +13,9 @@ import Button from "@components/Button";
 import { useTheme } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
 import Card from "@components/Card";
-import Input from "@components/Input";
 import SearchAndFilterTab from "@screens/Ranges/AllRanges/SearchAndFilterTab";
 import RangesTable from "./RangesTable";
+import { themes } from "@src/themes/ThemeProvider";
 
 interface IProps { }
 
@@ -98,6 +98,7 @@ const AllRangesImpl: React.FC<IProps> = () => {
       value: "$999,999.99 / $999,999.99 ",
     },
   ];
+  const whiteText = { color: themes.lightTheme.colors.white };
   return (
     <Layout>
       <Observer>
@@ -143,7 +144,7 @@ const AllRangesImpl: React.FC<IProps> = () => {
                   <Column>
                     <Text type="secondary">My Investment Balance</Text>
                     <SizedBox height={4} />
-                    <Text size="big" type="light">
+                    <Text size="big" style={whiteText}>
                       $3167.23
                     </Text>
                   </Column>

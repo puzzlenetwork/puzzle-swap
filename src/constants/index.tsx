@@ -28,6 +28,7 @@ export const ROUTES = {
   RANGES: "/ranges",
   RANGES_CREATE: "/ranges/create",
   USER_RANGES: "/ranges/my",
+  RANGES_INVEST: "/ranges/:rangeAddress/invest",
 };
 
 export const PRODUCTS = {

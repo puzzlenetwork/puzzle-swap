@@ -11,8 +11,12 @@ import Button from "@components/Button";
 import Loading from "@components/Loading";
 import TokenTags from "@screens/Pools/TokenTags";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
+import { useNavigate } from "react-router-dom";
+import RangeChart from "@components/RangeChart";
+
 
 const RangesTable: React.FC = () => {
+  const navigate = useNavigate();
   const { rangesStore } = useStores();
 
   const columns = React.useMemo(
@@ -28,17 +32,21 @@ const RangesTable: React.FC = () => {
     rangesStore.setPagination({ page: el, size: 20 });
   };
 
-  const tableData = rangesStore.ranges.map((range) => ({
-    range: range.logo,
+  const tableData = rangesStore.ranges.map((range, index) => ({
+    onClick: () => navigate(`/ranges/${range.address}/invest`),
+    range: (
+      // <Text>{range.assetsWithLeverage.map(({ leverage }) => `${leverage}`).join(", ")}</Text>
+      <RangeChart range={range} size={120} index={index} />
+    ),
     liquidity: `$${range.liquidity} / $${range.virtualLiquidity}`,
     periodFees: (() => {
-      const tokens = Object.entries(range.periodFees).map(([asset_id, { fees_earned }]: [string, { fees_earned: number }]) => {
+      const tokens = Object.entries(range.periodFees).map(([asset_id, { feesEarned }]: [string, { feesEarned: number }]) => {
         const token = TOKENS_BY_ASSET_ID[asset_id] || {};
         return {
           asset_id,
           name: token.symbol,
           logo: token.logo,
-          share: fees_earned,
+          share: feesEarned,
         };
       });
       return <TokenTags tokens={tokens} findBalanceByAssetId={() => null} />;
