@@ -101,8 +101,8 @@ class Pool implements IPoolConfig {
     this.title = params.title;
     this._logo = params.logo;
     this.tokens = params.tokens;
-    this.defaultAssetId0 = params.defaultAssetId0 ?? params.tokens[0].assetId;
-    this.defaultAssetId1 = params.defaultAssetId1 ?? params.tokens[1].assetId;
+    this.defaultAssetId0 = params.defaultAssetId0 ?? params?.assets?.[0]?.asset_id ?? "";
+    this.defaultAssetId1 = params.defaultAssetId1 ?? params?.assets?.[1]?.asset_id ?? "";
     this.domain = params.domain;
     this.isCustom = params.isCustom;
     this.artefactOriginTransactionId = params.artefact_origin_transaction_id;
