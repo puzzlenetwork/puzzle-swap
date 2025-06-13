@@ -40,13 +40,13 @@ const RangesTable: React.FC = () => {
     ),
     liquidity: `$${range.liquidity} / $${range.virtualLiquidity}`,
     periodFees: (() => {
-      const tokens = Object.entries(range.periodFees).map(([asset_id, { fees_earned }]: [string, { fees_earned: number }]) => {
+      const tokens = Object.entries(range.periodFees).map(([asset_id, { feesEarned }]: [string, { feesEarned: number }]) => {
         const token = TOKENS_BY_ASSET_ID[asset_id] || {};
         return {
           asset_id,
           name: token.symbol,
           logo: token.logo,
-          share: fees_earned,
+          share: feesEarned,
         };
       });
       return <TokenTags tokens={tokens} findBalanceByAssetId={() => null} />;

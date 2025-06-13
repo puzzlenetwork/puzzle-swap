@@ -10,7 +10,7 @@ import { observer } from "mobx-react-lite";
 import { useInvestToRangeInterfaceVM } from "./InvestToRangeInterfaceVM";
 import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
-import TransparentDetailsBtn from "./TransparentDetailsBtn";
+import TransparentDetailsBtn from "./RangeDetailsBtn";
 import { useNavigate } from "react-router-dom";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import TextButton from "@components/TextButton";
@@ -99,7 +99,7 @@ const MainRangeInfo: React.FC<IProps> = () => {
               </Title>
               <SizedBox height={4} />
               <Text type="purple300" size="medium">
-                Trade fees: {vm.range!.swapFee}%
+                Trade fees: {vm.range!.swapFee.toFormat(2)}%
               </Text>
             </Column>
           </Hat>

@@ -52,7 +52,7 @@ const RangeComposition: React.FC<IProps> = () => {
       {
         accessor: "price",
         Header: () => (
-          <Row alignItems="center" justifyContent="center">Min ← Current → Max</Row>
+          <Row alignItems="center" justifyContent="flex-end">Min ← Current → Max Price</Row>
         ),
       },
       {
@@ -110,7 +110,7 @@ const RangeComposition: React.FC<IProps> = () => {
         // if (b.asset_id === vm.range!.baseTokenId) {
         //   return 1;
         // }
-        if (a.fact_balance <= b.fact_balance) {
+        if (a.factBalance.lte(b.factBalance)) {
           return balanceSort ? 1 : -1;
         } else {
           return balanceSort ? -1 : 1;
@@ -118,12 +118,12 @@ const RangeComposition: React.FC<IProps> = () => {
       })
       .map((a) => ({
         ...a,
-        ...TOKENS_BY_ASSET_ID[a.asset_id],
+        ...TOKENS_BY_ASSET_ID[a.assetId],
       }));
 
-    let totalValue = new BN(0);
+    let totalValue = BN.ZERO;
     tokens.forEach((a) => {
-      totalValue = totalValue.plus(a.balance_usd);
+      totalValue = totalValue.plus(a.balanceUsd);
     })
 
     const data = tokens
@@ -137,35 +137,35 @@ const RangeComposition: React.FC<IProps> = () => {
           </Row>
         ),
         price: (a.assetId === vm.range!.baseTokenId) ? (
-          <Row alignItems="center" justifyContent="flex-end">{"$" + new BN(a.balance_usd).toFormat(2)}</Row>
+          <Row alignItems="center" justifyContent="flex-end">{"$" + a.balanceUsd.toFormat(2)}</Row>
         ) : (
           <Row alignItems="center" justifyContent="flex-end">
-            <Text fitContent type="secondary" size="small">${new BN(a.min_price).toFormat(a.current_price < 0.1 ? 4 : 2)}</Text>
+            <Text fitContent type="secondary" size="small">${a.minPrice.toSmallFormat()}</Text>
             <SizedBox width={4} />
-            <Text fitContent> ← ${new BN(a.current_price).toFormat(a.current_price < 0.1 ? 4 : 2)} → </Text>
+            <Text fitContent> ← ${a.currentPrice.toSmallFormat()} → </Text>
             <SizedBox width={4} />
-            <Text fitContent type="secondary" size="small">${new BN(a.max_price).toFormat(a.current_price < 0.1 ? 4 : 2)}</Text>
+            <Text fitContent type="secondary" size="small">${a.maxPrice.toSmallFormat()}</Text>
           </Row>
         ),
         balance: (
           <Row alignItems="center" justifyContent="center">
             <Text fitContent>
-              {new BN(a.fact_balance).toFormat(a.fact_balance < 0.1 ? 4 : 2)} /
+              {a.factBalance.toSmallFormat()} /
             </Text>
             <SizedBox width={4} />
             <Text fitContent type="secondary">
-              {new BN(a.real_balance).toFormat(a.real_balance < 0.1 ? 4 : 2)}
+              {a.balance.toSmallFormat()}
             </Text>
           </Row>
         ),
         share: (
           <Row alignItems="center" justifyContent="flex-end">
             <Text fitContent>
-              {new BN(a.balance_usd).div(totalValue).times(100).toFormat(2)}% /
+              {a.balanceUsd.div(totalValue).times(100).toFormat(2)}% /
             </Text>
             <SizedBox width={4} />
             <Text fitContent type="secondary">
-              {new BN(a.share).toFormat(2)}%
+              {a.share.toFormat(2)}%
             </Text>
           </Row>
         )
@@ -179,31 +179,33 @@ const RangeComposition: React.FC<IProps> = () => {
         <Text weight={500} type="secondary">
           Range composition
         </Text>
-        <Text fitContent nowrap>Show Sell-Off</Text>
-        <SizedBox width={8} />
-        <Checkbox onChange={() => setShowSellOff(!showSellOff)} checked={showSellOff} />
-        <SizedBox width={20} />
-        <Text fitContent nowrap>Show Asset Prices in</Text>
-        <SizedBox width={8} />
-        <Select
-          kind="text"
-          textSize="medium"
-          options={[
-            {
+        <Row alignItems="center" mainAxisSize="fit-content">
+          <Text fitContent nowrap>Show Sell-Off</Text>
+          <SizedBox width={8} />
+          <Checkbox onChange={() => setShowSellOff(!showSellOff)} checked={showSellOff} />
+          <SizedBox width={20} />
+          <Text fitContent nowrap>Show Asset Prices in</Text>
+          <SizedBox width={8} />
+          <Select
+            kind="text"
+            textSize="medium"
+            options={[
+              {
+                key: "usd",
+                title: "USD",
+              },
+              ...vm.range!.assets.map((asset) => ({
+                key: asset.assetId,
+                title: asset.name,
+              }))
+            ]}
+            onSelect={({ key }) => { }}
+            selected={{
               key: "usd",
               title: "USD",
-            },
-            ...vm.range!.assets.map((asset) => ({
-              key: asset.asset_id,
-              title: asset.name,
-            }))
-          ]}
-          onSelect={({ key }) => { }}
-          selected={{
-            key: "usd",
-            title: "USD",
-          }}
-        />
+            }}
+          />
+        </Row>
       </Row>
       <SizedBox height={8} />
       <Scrollbar

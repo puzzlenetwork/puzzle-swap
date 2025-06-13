@@ -3,12 +3,12 @@ import { useVM } from "@src/hooks/useVM";
 import { RootStore, useStores } from "@stores";
 import { makeAutoObservable, when } from "mobx";
 import rangesService from "@src/services/rangesService";
-import { IRangeAsset, IStakedProviders, Range } from "@src/entities/Range";
+import { IRangeParamsResponse, Range } from "@src/entities/Range";
 import BN from "@src/utils/BN";
 import { IHistory } from "@src/utils/types";
-import nodeService from "@src/services/nodeService";
-import { CONTRACT_ADDRESSES, EXPLORER_URL, NODE_URL, TOKENS_BY_ASSET_ID } from "@src/constants";
+import { EXPLORER_URL, NODE_URL, TOKENS_BY_ASSET_ID } from "@src/constants";
 import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
+import dayjs, { ManipulateType } from "dayjs";
 
 const ctx = React.createContext<InvestToRangeInterfaceVM | null>(null);
 
@@ -45,9 +45,6 @@ class InvestToRangeInterfaceVM {
   history: IHistory[] = [];
   setHistory = (v: IHistory[]) => (this.history = v);
 
-  public indexTokenId: string | null = null;
-  private setIndexTokenId = (value: string) => (this.indexTokenId = value);
-
   public indexTokenBalance: BN = BN.ZERO;
   private setIndexBalance = (value: BN) => (this.indexTokenBalance = value);
 
@@ -60,30 +57,37 @@ class InvestToRangeInterfaceVM {
   public userIndexStaked: BN | null = null;
   private setUserIndexStaked = (value: BN) => (this.userIndexStaked = value);
 
-  public get totalClaimedReward(): BN | null {
-    const userInfo = this.range?.stakedProviders.providers_staked.find((p) => p.address === this.rootStore.accountStore.address);
-    return userInfo ? new BN(userInfo.claimed_usd) : BN.ZERO;
+  public get totalClaimedReward(): BN {
+    const userInfo = this.range!.stakedProviders.providersStaked.find((p) => p.address === this.rootStore.accountStore.address);
+    return userInfo ? userInfo.claimedUsd : BN.ZERO;
   }
 
-  public get totalRewardToClaim(): BN | null {
-    const userInfo = this.range?.stakedProviders.providers_staked.find((p) => p.address === this.rootStore.accountStore.address);
-    return userInfo ? new BN(userInfo.unclaimed_usd) : BN.ZERO;
+  public get totalRewardToClaim(): BN {
+    const userInfo = this.range!.stakedProviders.providersStaked.find((p) => p.address === this.rootStore.accountStore.address);
+    return userInfo ? userInfo.unclaimedUsd : BN.ZERO;
   };
 
   public rewardsDisplayMode: ("all" | "fees" | "extra") = "all";
   public setRewardsDisplayMode = (value: "all" | "fees" | "extra") => (this.rewardsDisplayMode = value);
 
   public timeRangeToDisplayRewards: ("1d" | "7d" | "1m" | "3m" | "1y" | "all") = "all";
-  public setTimeRangeToDisplayRewards = (value: ("1d" | "7d" | "1m" | "3m" | "1y" | "all")) => (this.timeRangeToDisplayRewards = value);
+  private _setTimeRangeToDisplayRewards = (value: ("1d" | "7d" | "1m" | "3m" | "1y" | "all")) => (this.timeRangeToDisplayRewards = value);
+  public setTimeRangeToDisplayRewards = (value: ("1d" | "7d" | "1m" | "3m" | "1y" | "all")) => {
+    this._setTimeRangeToDisplayRewards(value);
+    this.syncLPRewards(value);
+  };
+
+  public LPRewardsByTime: Record<("1d" | "7d" | "1m" | "3m" | "1y" | "all"), { assetId: string, feesEarned: BN, extraEarned: BN }[]> = {} as Record<("1d" | "7d" | "1m" | "3m" | "1y" | "all"), { assetId: string, feesEarned: BN, extraEarned: BN }[]>;
+  public updateLPRewardsByTime = (key: ("1d" | "7d" | "1m" | "3m" | "1y" | "all"), value: { assetId: string, feesEarned: BN, extraEarned: BN }[]) => (this.LPRewardsByTime[key] = value);
 
   public get LPRewardsToDisplay(): {assetId: string, amount: BN}[] {
     switch (this.rewardsDisplayMode) {
       case "all":
-        return this.range!.assets.map(({ asset_id, fees_earned, extra_earned }) => ({ assetId: asset_id, amount: new BN(fees_earned + extra_earned) })).filter(({ amount }) => amount.gt(0));
+        return this.LPRewardsByTime[this.timeRangeToDisplayRewards]?.map(({ assetId, feesEarned, extraEarned }) => ({ assetId, amount: feesEarned.plus(extraEarned) })).filter(({ amount }) => amount.gt(0)) ?? [];
       case "fees":
-        return this.range!.assets.map(({ asset_id, fees_earned }) => ({ assetId: asset_id, amount: new BN(fees_earned) })).filter(({ amount }) => amount.gt(0));
+        return this.LPRewardsByTime[this.timeRangeToDisplayRewards]?.map(({ assetId, feesEarned }) => ({ assetId, amount: feesEarned })).filter(({ amount }) => amount.gt(0)) ?? [];
       case "extra":
-        return this.range!.assets.map(({ asset_id, extra_earned }) => ({ assetId: asset_id, amount: new BN(extra_earned) })).filter(({ amount }) => amount.gt(0));
+        return this.LPRewardsByTime[this.timeRangeToDisplayRewards]?.map(({ assetId, extraEarned }) => ({ assetId, amount: extraEarned })).filter(({ amount }) => amount.gt(0)) ?? [];
       default:
         return [];
     }
@@ -135,13 +139,14 @@ class InvestToRangeInterfaceVM {
       () => this.range != null,
       () => {
         this.getAddressActivityInfo();
+        this.updateLPRewardsByTime("all", this.range!.assets.map(({ assetId, feesEarned, extraEarned }) => ({ assetId, feesEarned: feesEarned, extraEarned: extraEarned })));
       })
   }
 
   prepareCompleteRangeInitialization = () => {
     const assets = this.range!.assets.map((t) => ({
-      assetId: t.asset_id,
-      share: new BN(t.share),
+      assetId: t.assetId,
+      share: t.share,
     }));
     const state = {
       assets,
@@ -159,16 +164,9 @@ class InvestToRangeInterfaceVM {
 
   syncIndexTokenInfo = async () => {
     const { address } = this.rootStore.accountStore;
-    const indexTokenIdResponse = await this.range!.contractKeysRequest(
-      "static_poolToken_idStr"
-    );
     if (address == null) return;
-    if (indexTokenIdResponse != null && indexTokenIdResponse.length === 1) {
-      const indexTokenId = indexTokenIdResponse[0].value.toString();
-      this.setIndexTokenId(indexTokenId);
-      const balance = await assetBalance(indexTokenId, address, NODE_URL);
-      this.setIndexBalance(new BN(balance ?? 0));
-    }
+    const balance = await assetBalance(this.range!.lpTokenId, address, NODE_URL);
+    this.setIndexBalance(new BN(balance ?? 0));
   };
 
   getAddressActivityInfo = async () => {
@@ -204,31 +202,52 @@ class InvestToRangeInterfaceVM {
     this._setGlobalIndexStaked(globalIndexStaked);
   };
 
-  get totalProvidedLiquidityByAddress() {
-    const userInfo = this.range?.stakedProviders.providers_staked.find((p) => p.address === this.rootStore.accountStore.address);
-    return userInfo?.index_staked ? new BN(userInfo.index_staked).times(this.range!.indexTokenRate ?? BN.ZERO) : BN.ZERO;
+  public syncLPRewards = async (period: ("1d" | "7d" | "1m" | "3m" | "1y" | "all")) => {
+    if (period === "all") {
+      rangesService.getRangeByAddress(this.rangeAddress).then((rangeData: IRangeParamsResponse) => {
+        if (!rangeData) return;
+        this.updateLPRewardsByTime(period, Object.entries(rangeData.period_fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
+      })
+      return;
+    };
+    const periods = {
+      "1d": [1, "days"],
+      "7d": [7, "days"],
+      "1m": [1, "months"],
+      "3m": [3, "months"],
+      "1y": [1, "years"],
+    };
+    const startTime = dayjs().subtract(Number(periods[period][0]), periods[period][1] as ManipulateType).unix();
+    rangesService.getRangeByAddress(this.rangeAddress, { startTime, endTime: dayjs().unix() }).then((rangeData: IRangeParamsResponse) => {
+      if (!rangeData) return;
+      this.updateLPRewardsByTime(period, Object.entries(rangeData.period_fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
+    })
   }
 
-  get shareOfPool() {
-    const userInfo = this.range?.stakedProviders.providers_staked.find((p) => p.address === this.rootStore.accountStore.address);
-    return userInfo ? new BN(userInfo.share) : BN.ZERO;
+  get totalProvidedLiquidityByAddress(): BN {
+    const userInfo = this.range?.stakedProviders.providersStaked.find((p) => p.address === this.rootStore.accountStore.address);
+    return userInfo?.indexStaked ? userInfo.indexStaked.times(this.range!.indexTokenRate) : BN.ZERO;
+  }
+
+  get shareOfPool(): BN {
+    const userInfo = this.range!.stakedProviders.providersStaked.find((p) => p.address === this.rootStore.accountStore.address);
+    return userInfo ? userInfo.share : BN.ZERO;
   }
 
   get poolBalancesTable() {
     if (this.range?.assets == null) return null;
 
     return this.range.assets
-      .map((a) => ({ ...a, ...TOKENS_BY_ASSET_ID[a.asset_id] }))
+      .map((a) => ({ ...a, ...TOKENS_BY_ASSET_ID[a.assetId] }))
       .map((token) => {
       if (
         this.userIndexStaked == null ||
-        this.userIndexStaked?.eq(0) ||
-        this.range!.liquidity == null
+        this.userIndexStaked?.eq(0)
       ) {
         return { ...token, usdnEquivalent: BN.ZERO, value: BN.ZERO };
       }
-      const userAmount = this.shareOfPool.times(token.fact_balance);
-      const userUsdnEquivalent = this.shareOfPool.times(token.fact_balance_usd);
+      const userAmount = this.shareOfPool.times(token.factBalance);
+      const userUsdnEquivalent = this.shareOfPool.times(token.factBalanceUsd);
       return {
         ...token,
         usdnEquivalent: userUsdnEquivalent,
@@ -282,6 +301,7 @@ class InvestToRangeInterfaceVM {
     if (this.range!.layer2Address == null) return;
     this._setLoading(true);
     const { accountStore, notificationStore } = this.rootStore;
+    const unstakeAmount = this.useMaxStakeUnstakeAmount ? this.userIndexStaked?.toString() : this.stakeUnstakeAmount.toString();
     accountStore
       .invoke({
         dApp: this.range!.address,
@@ -291,13 +311,13 @@ class InvestToRangeInterfaceVM {
           args: [
             {
               type: "integer",
-              value: this.useMaxStakeUnstakeAmount ? this.userIndexStaked?.toString() : this.stakeUnstakeAmount.toString(),
+              value: unstakeAmount,
             },
           ],
         },
       })
       .then((txId) => {
-        notificationStore.notify(`Your have unstaked index tokem`, {
+        notificationStore.notify(`You have unstaked index token`, {
           type: "success",
           title: `Success`,
           link: `${EXPLORER_URL}/transactions/${txId}`,
@@ -323,13 +343,12 @@ class InvestToRangeInterfaceVM {
     if (!this.canStakeIndex) return;
     this._setLoading(true);
     const { accountStore, notificationStore } = this.rootStore;
-    if (this.indexTokenId == null) return;
     accountStore
       .invoke({
         dApp: this.range!.address,
         payment: [
           {
-            assetId: this.indexTokenId === "WAVES" ? null : this.indexTokenId,
+            assetId: this.range!.lpTokenId === "WAVES" ? null : this.range!.lpTokenId,
             amount: this.useMaxStakeUnstakeAmount ? this.indexTokenBalance.toString() : this.stakeUnstakeAmount.toString(),
           },
         ],

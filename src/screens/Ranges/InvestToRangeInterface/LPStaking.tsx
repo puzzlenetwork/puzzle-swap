@@ -57,14 +57,14 @@ const Body = styled(Column)<{ expanded?: boolean }>`
 `;
 
 const Information = styled(Row)`
-  width: calc(100% - 48px);
+  // width: calc(100% - 48px);
   padding: 16px 24px;
   padding-top: 0;
 `;
 
 const Actions = styled(Column)`
   padding: 16px 24px;
-  width: calc(100% - 48px);
+  // width: calc(100% - 48px);
 `;
 
 const LPStaking: React.FC<IProps> = () => {
@@ -73,7 +73,7 @@ const LPStaking: React.FC<IProps> = () => {
   const [expanded, setExpanded] = useState(false);
   if (accountStore.address == null) return null;
   const availableToStake = BN.formatUnits(
-    vm.indexTokenBalance.times(vm.range!.indexTokenRate ?? BN.ZERO),
+    vm.indexTokenBalance.times(vm.range!.indexTokenRate),
     8
   );
 
@@ -100,10 +100,7 @@ const LPStaking: React.FC<IProps> = () => {
               Staked balance
             </Text>
             <Text nowrap>
-              $
-              {vm.totalProvidedLiquidityByAddress == null
-                ? "0.00"
-                : vm.totalProvidedLiquidityByAddress?.toFormat(2)}
+              ${vm.totalProvidedLiquidityByAddress.toFormat(2)}
             </Text>
           </Column>
           <SizedBox width={8} />

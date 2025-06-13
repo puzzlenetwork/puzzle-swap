@@ -39,12 +39,12 @@ const RangeChart = ({ range, size, index }: IParams) => {
         <SizedBox height={10} />
         <AssetsList>{
           range.assetsWithLeverage
-            .map((asset) => ({ ...TOKENS_BY_ASSET_ID[asset.asset_id], ...asset }))
-            .map(({ logo, symbol, leverage }) => <Row crossAxisSize="max"><TokenIcon src={logo} /><SizedBox width={6} /><Text size="medium">{symbol} - {leverage.toFixed(2)}%</Text></Row>)
+            .map((asset) => ({ ...TOKENS_BY_ASSET_ID[asset.assetId], ...asset }))
+            .map(({ logo, symbol, leverage }, index) => <Row crossAxisSize="max" key={index}><TokenIcon src={logo} /><SizedBox width={6} /><Text size="medium">{symbol} - {leverage.toFixed(2)}%</Text></Row>)
         }</AssetsList>
       </Column>
     }>
-      <RadarChart width={size} height={size} data={range.assetsWithLeverage}>
+      <RadarChart width={size} height={size} data={range.assetsWithLeverage} style={{ transform: range.assetsWithLeverage.length < 3 ? "rotate(-90deg)" : "" }}>
         <PolarGrid />
         <Radar
           dataKey="relativeLeverage"
@@ -57,15 +57,12 @@ const RangeChart = ({ range, size, index }: IParams) => {
           }
         />
         <PolarAngleAxis
-          dataKey="asset_id"
-          tick={(props) => {
-            console.log(props);
-            return (
-              <foreignObject width={iconSize} height={iconSize} x={props.x - halfIcon} y={props.y - halfIcon}>
-                <Img src={TOKENS_BY_ASSET_ID[props.payload.value].logo} style={{ width: iconSize, height: iconSize, borderRadius: halfIcon }} />
-              </foreignObject>
-            );
-          }}
+          dataKey="assetId"
+          tick={(props) => (
+            <foreignObject width={iconSize} height={iconSize} x={props.x - halfIcon} y={props.y - halfIcon}>
+              <Img src={TOKENS_BY_ASSET_ID[props.payload.value].logo} style={{ width: iconSize, height: iconSize, borderRadius: halfIcon, transform: range.assetsWithLeverage.length < 3 ? "rotate(90deg)" : "" }} />
+            </foreignObject>
+          )}
         />
       </RadarChart>
     </Tooltip>

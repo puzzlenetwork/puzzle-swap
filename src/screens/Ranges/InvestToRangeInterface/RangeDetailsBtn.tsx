@@ -20,7 +20,6 @@ import { ReactComponent as TelegramIcon } from "@src/assets/icons/telegram.svg";
 import { ReactComponent as FacebookIcon } from "@src/assets/icons/facebook.svg";
 import { EXPLORER_URL } from "@src/constants";
 import dayjs from "dayjs";
-import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -76,9 +75,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
     },
     {
       title: "Total fees earned",
-      value: vm.range!.stats?.pool_fees
-        ? `$ ${new BN(vm.range!.stats.pool_fees)?.toFormat(2)}`
-        : "–",
+      value: `$ ${vm.range!.stats.poolFees?.toFormat(2)}`,
     },
   ];
   const customRangeInformation = [
@@ -92,12 +89,12 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
     },
     {
       title: "Total creator reward",
-      value: `$ ${new BN(vm.range!.stats.owner_fees).div(1e6).toFormat(2)}`,
+      value: `$ ${vm.range!.stats.ownerFees.div(1e6).toFormat(2)}`,
     },
     {
       title: "Total fees earned",
       value: `$ ${
-        new BN(vm.range!.stats.volume).times(vm.range!.swapFee).div(100)?.toFormat(2) ??
+        vm.range!.stats.volume.times(vm.range!.swapFee).div(100)?.toFormat(2) ??
         "0.00"
       }`,
     },

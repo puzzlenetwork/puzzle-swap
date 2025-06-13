@@ -1,4 +1,4 @@
-import { IRangeParams } from "@src/entities/Range";
+import { IRangeParamsResponse } from "@src/entities/Range";
 import axios from "axios";
 
 export interface IGetRanges {
@@ -19,7 +19,7 @@ export interface IGetRange {
 
 
 export interface IGetRangesResponse {
-  ranges: IRangeParams[];
+  ranges: IRangeParamsResponse[];
   totalItems: number;
 }
 
@@ -29,14 +29,16 @@ const rangesService = {
     Object.entries(params).forEach(([key, value]) => {
       paramsString.append(key, value.toString());
     });
-    const url = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged?${paramsString.toString()}`;
-    console.log("url", url);
+    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged`;
+    const url = `${baseUrl}?${paramsString.toString()}`;
     const { data } = await axios.get(url);
-    console.log("data", data);
     return { ranges: data.pools, totalItems: data.total };
   },
-  getRangeByAddress: async (address: string, params?: IGetRange): Promise<IRangeParams> => {
-    const url = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged/${address}/data` + (params ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : "");
+  getRangeByAddress: async (address: string, params?: IGetRange): Promise<IRangeParamsResponse> => {
+    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged`;
+    const rangeUrl = `${baseUrl}/${address}/data`;
+    const paramsString = params ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : "";
+    const url = `${rangeUrl}${paramsString}`;
     const { data } = await axios.get(url);
     return data;
   },

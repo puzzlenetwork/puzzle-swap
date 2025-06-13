@@ -8,7 +8,7 @@ import SizedBox from "@components/SizedBox";
 import Skeleton from "react-loading-skeleton";
 import BN from "@src/utils/BN";
 import { Row } from "@src/components/Flex";
-import TokenTag from "./TokenTag";
+import TokenTag from "@components/TokenTag";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import Select from "@src/components/Select";
 
@@ -26,12 +26,6 @@ const Root = styled.div`
   }
 `;
 
-const CCard = styled(Card)`
-  padding: 12px 16px;
-  @media (min-width: 880px) {
-    padding: 16px 24px;
-  }
-`;
 const PoolInformation: React.FC<IProps> = () => {
   const vm = useInvestToRangeInterfaceVM();
   const data = vm.range!;
@@ -80,14 +74,15 @@ const PoolInformation: React.FC<IProps> = () => {
   const valuesArray = [
     {
       title: "Fact / Virtual Liquidity",
-      value: data.liquidity && data.virtualLiquidity
-        ? (
-          <>
-            <Text fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px" }}>${new BN(data.liquidity).toFormat(2)} /</Text>
-            <Text type="secondary" fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px" }}> ${new BN(data.virtualLiquidity).toFormat(2)}</Text>
-          </>
-        )
-        : null,
+      value: (
+        <Text fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px" }}>
+          ${
+            data.liquidity.toFormat(2)
+          } /<Text type="secondary" fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px" }}>
+            ${" " + data.virtualLiquidity.toFormat(2)}
+          </Text>
+        </Text>
+      ),
     },
     {
       title: (
@@ -126,7 +121,7 @@ const PoolInformation: React.FC<IProps> = () => {
   return (
     <Root>
       {valuesArray.map(({ title, value }, index) => (
-        <CCard key={index}>
+        <Card key={index} paddingDesktop="16px 24px" paddingMobile="12px 16px">
           <Text type="secondary" size="medium">
             {title}
           </Text>
@@ -138,7 +133,7 @@ const PoolInformation: React.FC<IProps> = () => {
             ) : (
             <Skeleton height={24} />
           )}
-        </CCard>
+        </Card>
       ))}
     </Root>
   );

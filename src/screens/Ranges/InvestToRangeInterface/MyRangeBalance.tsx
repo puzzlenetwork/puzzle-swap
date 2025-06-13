@@ -64,11 +64,7 @@ const MyRangeBalance: React.FC<IProps> = () => {
               $ {vm.totalProvidedLiquidityByAddress.toFormat(2)}
             </Text>
             <Text textAlign="right" type="secondary" size="small">
-              {vm.shareOfPool != null &&
-                !vm.shareOfPool.isNaN() &&
-                `Share of pool ${vm.shareOfPool
-                  ?.toFormat(6)
-                  .replace(/0+$/, "")}%`}
+              {`Share of pool ${vm.shareOfPool.toSmallFormat()}%`}
             </Text>
           </Column>
         </Header>
@@ -82,16 +78,8 @@ const MyRangeBalance: React.FC<IProps> = () => {
             />
           ) : (
             vm.poolBalancesTable.map((token, i) => {
-              const value = token.value.isNaN()
-                ? "0.00"
-                : token.value.gte(0.01)
-                ? token.value.toFormat(2)
-                : token.value.toFormat(6);
-              const usdn = token.usdnEquivalent.isNaN()
-                ? "0.00"
-                : token.usdnEquivalent.gte(0.01)
-                ? token.usdnEquivalent.toFormat(2)
-                : token.usdnEquivalent.toFormat(6);
+              const value = token.value.toSmallFormat();
+              const usdn = token.usdnEquivalent.toSmallFormat();
               return (
                 <div
                   className="gridRow"
@@ -125,12 +113,12 @@ const MyRangeBalance: React.FC<IProps> = () => {
                     >
                       <Text size="medium">
                         <span>
-                          {address !== null && !token.value.isNaN()
+                          {address !== null
                             ? value
                             : "-"}
                         </span>
                         <span style={{ color: "#8082C5" }}>
-                          {address !== null && !token.usdnEquivalent.isNaN()
+                          {address !== null
                             ? `($ ${usdn})`
                             : "-"}
                         </span>

@@ -15,6 +15,7 @@ import BN from "@src/utils/BN";
 import Skeleton from "react-loading-skeleton";
 import dayjs from "dayjs";
 import { TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL } from "@src/constants";
+import Divider from "@src/components/Divider";
 
 interface IProps {}
 
@@ -35,19 +36,6 @@ const Icon = styled.img`
   height: 40px;
   width: 40px;
 `;
-const AvailableToClaim = styled(Row)`
-  border-top: 1px solid ${({ theme }) => theme.colors.primary100};
-  padding-top: 18px;
-`;
-
-const Title = styled(Text)`
-  font-size: 14px;
-  line-height: 20px;
-
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-`;
 
 const Reward: React.FC<IProps> = () => {
   const vm = useInvestToRangeInterfaceVM();
@@ -56,10 +44,6 @@ const Reward: React.FC<IProps> = () => {
   if (address == null) return null;
   const date = dayjs(vm.lastClaimDate?.toNumber() ?? 0);
   const format = date.format("D MMM YYYY");
-  const totalClaimed = BN.formatUnits(
-    vm.totalClaimedReward ?? BN.ZERO,
-    TOKENS_BY_SYMBOL.XTN.decimals
-  ).toFormat(2);
   return (
     <Root>
       <Text weight={500} type="secondary">
@@ -73,34 +57,27 @@ const Reward: React.FC<IProps> = () => {
             <SizedBox width={8} />
             <Column crossAxisSize="max">
               <Row justifyContent="space-between">
-                <Title style={{ flex: 1 }}>Claimed</Title>
-                <Title style={{ flex: 2, textAlign: "right" }}>
+                <Text size="medium" style={{ flex: 1 }}>Claimed</Text>
+                <Text size="medium" style={{ flex: 2, textAlign: "right" }}>
                   {!vm.lastClaimDate.eq(0) && "Last claim " + format}
-                </Title>
+                </Text>
               </Row>
               <Text weight={500}>
-                {vm.totalClaimedReward != null ? (
-                  `$${totalClaimed}`
-                ) : (
-                  "$0.00" 
-                )}
+                {`$${vm.totalClaimedReward}`}
               </Text>
             </Column>
           </Row>
-          <AvailableToClaim>
+          <Divider />
+          <Row>
             <Icon src={wallet} alt="wallet" />
             <SizedBox width={8} />
             <Column>
-              <Title>Available to claim</Title>
+              <Text size="medium" nowrap>Available to claim</Text>
               <Text weight={500}>
-                {vm.totalRewardToClaim != null ? (
-                  `$${vm.totalRewardToClaim.toFixed(2)}`
-                ) : (
-                  "$0.00"
-                )}
+                {`$${vm.totalRewardToClaim.toFixed(2)}`}
               </Text>
             </Column>
-          </AvailableToClaim>
+          </Row>
           {vm.loading ? (
             <Button fixed size="medium" disabled>
               In progress
