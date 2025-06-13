@@ -5,7 +5,7 @@ import Layout from "@components/Layout";
 import {
   InvestToRangeInterfaceVMProvider,
   useInvestToRangeInterfaceVM,
-} from "./InvestToRangeInterfaceVM";
+} from "./RangeDetailsVM";
 import SizedBox from "@components/SizedBox";
 import { Column } from "@src/components/Flex";
 import GoBack from "@components/GoBack";

@@ -21,13 +21,13 @@ const Root = styled.div`
 
 const TokenTag: React.FC<IProps> = ({ token, amount }) => {
   const value =
-    amount == null ? BN.ZERO : BN.formatUnits(amount, 0);
+    amount == null ? BN.ZERO : BN.formatUnits(amount, token.decimals);
   return (
     <Root>
       <Img src={token.logo} alt="token" radius="50%" />
       {amount && (
         <Text style={{ marginLeft: 8 }} size="medium">
-          {value.isNaN() ? "0.00" : value.toFormat(value.gte(0.01) ? 2 : 4)}
+          {value.toSmallFormat()}
         </Text>
       )}
     </Root>

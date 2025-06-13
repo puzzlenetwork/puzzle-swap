@@ -3,7 +3,7 @@ import React, { useMemo, useState } from "react";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { Column, Row } from "@components/Flex";
-import { useInvestToRangeInterfaceVM } from "./InvestToRangeInterfaceVM";
+import { useInvestToRangeInterfaceVM } from "./RangeDetailsVM";
 import { observer } from "mobx-react-lite";
 import Table from "@components/Table";
 import Scrollbar from "@src/components/Scrollbar";

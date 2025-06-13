@@ -7,7 +7,7 @@ import link from "@src/assets/icons/whiteLink.svg";
 import Text from "@components/Text";
 import { Column, Row } from "@src/components/Flex";
 import { observer } from "mobx-react-lite";
-import { useInvestToRangeInterfaceVM } from "./InvestToRangeInterfaceVM";
+import { useInvestToRangeInterfaceVM } from "./RangeDetailsVM";
 import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
 import TransparentDetailsBtn from "./RangeDetailsBtn";
@@ -76,17 +76,19 @@ const AdaptiveButton = styled(Button)`
       width: 100%;
     }
 `
+
+const WSCAN_EXPLORER_URL = "https://wscan.io/";
+
 const MainRangeInfo: React.FC<IProps> = () => {
   const vm = useInvestToRangeInterfaceVM();
   const { accountStore } = useStores();
   const navigate = useNavigate();
   const handleSmartContractClick = () =>
-    window.open(`https://wscan.io/${vm.range!.address}`);
+    window.open(`${WSCAN_EXPLORER_URL}${vm.range!.address}`);
   const completeRangeInitialization = () => {
     vm.prepareCompleteRangeInitialization();
     navigate(ROUTES.RANGES_CREATE);
   };
-  const { width } = useWindowSize();
   const whiteText = { color: themes.lightTheme.colors.white };
   return (
     <Row>
@@ -117,52 +119,27 @@ const MainRangeInfo: React.FC<IProps> = () => {
                 Range Owner
               </Text>
               <Text type="light" size="medium">
-                {vm.range!.isCustom ? (
-                  <TextButton
-                    prefix={link}
-                    onClick={() =>
-                      window.open(`https://wscan.io/${vm.range?.owner}`)
-                    }
-                  >
-                    {centerEllipsis(vm.range?.owner ?? "", 8)}
-                  </TextButton>
-                ) : (
-                  <TextButton prefix={puzzleIcon}>Puzzle Swap</TextButton>
-                )}
+                <TextButton
+                  prefix={link}
+                  onClick={() =>
+                    window.open(`${WSCAN_EXPLORER_URL}${vm.range?.owner}`)
+                  }
+                >
+                  {centerEllipsis(vm.range?.owner ?? "", 8)}
+                </TextButton>
               </Text>
               <SizedBox height={16} />
             </Column>
             <SizedBox height={16} />
             <Row justifyContent="flex-end">
-              {vm.range?.stats == null ? (
-                <AdaptiveButton
-                  fixed
-                  size="medium"
-                  style={{ marginRight: 8 }}
-                  onClick={completeRangeInitialization}
-                >
-                  Complete range initialization
-                </AdaptiveButton>
-              ) : (
-                <AdaptiveButton
-                  fixed
-                  size="medium"
-                  style={{ marginRight: 8 }}
-                  onClick={() => navigate(`/range/${vm.range!.address}`)}
-                >
-                  Trade
-                </AdaptiveButton>
-              )}
-              {accountStore.address === vm.range!.owner && (
-                <AdaptiveButton
-                  fixed
-                  size="medium"
-                  style={{ marginRight: 8 }}
-                  onClick={() => navigate(`/ranges/${vm.range!.address}/boost`)}
-                >
-                  Boost APY
-                </AdaptiveButton>
-              )}
+              <AdaptiveButton
+                fixed
+                size="medium"
+                style={{ marginRight: 8 }}
+                onClick={() => navigate(`/range/${vm.range!.address}`)}
+              >
+                Trade
+              </AdaptiveButton>
               <TransparentDetailsBtn />
             </Row>
           </Links>

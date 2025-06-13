@@ -8,7 +8,7 @@ import { AdaptiveColumn, AdaptiveRow, Column, Row } from "@src/components/Flex";
 import Divider from "@src/components/Divider";
 import { observer } from "mobx-react-lite";
 import GridTable from "@components/GridTable";
-import { useInvestToRangeInterfaceVM } from "./InvestToRangeInterfaceVM";
+import { useInvestToRangeInterfaceVM } from "./RangeDetailsVM";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import RoundTokenIcon from "@components/RoundTokenIcon";
 import useWindowSize from "@src/hooks/useWindowSize";

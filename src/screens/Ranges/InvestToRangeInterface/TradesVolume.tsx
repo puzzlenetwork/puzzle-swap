@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import Text from "@components/Text";
 import Card from "@components/Card";
 import SizedBox from "@components/SizedBox";
-import { useInvestToRangeInterfaceVM } from "./InvestToRangeInterfaceVM";
+import { useInvestToRangeInterfaceVM } from "./RangeDetailsVM";
 import { observer } from "mobx-react-lite";
 import { Line, LineChart, Tooltip, XAxis } from "recharts";
 import useWindowSize from "@src/hooks/useWindowSize";

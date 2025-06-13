@@ -77,17 +77,17 @@ class InvestToRangeInterfaceVM {
     this.syncLPRewards(value);
   };
 
-  public LPRewardsByTime: Record<("1d" | "7d" | "1m" | "3m" | "1y" | "all"), { assetId: string, feesEarned: BN, extraEarned: BN }[]> = {} as Record<("1d" | "7d" | "1m" | "3m" | "1y" | "all"), { assetId: string, feesEarned: BN, extraEarned: BN }[]>;
-  public updateLPRewardsByTime = (key: ("1d" | "7d" | "1m" | "3m" | "1y" | "all"), value: { assetId: string, feesEarned: BN, extraEarned: BN }[]) => (this.LPRewardsByTime[key] = value);
+  public lpRewardsByTime: Record<("1d" | "7d" | "1m" | "3m" | "1y" | "all"), { assetId: string, feesEarned: BN, extraEarned: BN }[]> = {} as Record<("1d" | "7d" | "1m" | "3m" | "1y" | "all"), { assetId: string, feesEarned: BN, extraEarned: BN }[]>;
+  public updatelpRewardsByTime = (key: ("1d" | "7d" | "1m" | "3m" | "1y" | "all"), value: { assetId: string, feesEarned: BN, extraEarned: BN }[]) => (this.lpRewardsByTime[key] = value);
 
   public get LPRewardsToDisplay(): {assetId: string, amount: BN}[] {
     switch (this.rewardsDisplayMode) {
       case "all":
-        return this.LPRewardsByTime[this.timeRangeToDisplayRewards]?.map(({ assetId, feesEarned, extraEarned }) => ({ assetId, amount: feesEarned.plus(extraEarned) })).filter(({ amount }) => amount.gt(0)) ?? [];
+        return this.lpRewardsByTime[this.timeRangeToDisplayRewards]?.map(({ assetId, feesEarned, extraEarned }) => ({ assetId, amount: feesEarned.plus(extraEarned) })).filter(({ amount }) => amount.gt(0)) ?? [];
       case "fees":
-        return this.LPRewardsByTime[this.timeRangeToDisplayRewards]?.map(({ assetId, feesEarned }) => ({ assetId, amount: feesEarned })).filter(({ amount }) => amount.gt(0)) ?? [];
+        return this.lpRewardsByTime[this.timeRangeToDisplayRewards]?.map(({ assetId, feesEarned }) => ({ assetId, amount: feesEarned })).filter(({ amount }) => amount.gt(0)) ?? [];
       case "extra":
-        return this.LPRewardsByTime[this.timeRangeToDisplayRewards]?.map(({ assetId, extraEarned }) => ({ assetId, amount: extraEarned })).filter(({ amount }) => amount.gt(0)) ?? [];
+        return this.lpRewardsByTime[this.timeRangeToDisplayRewards]?.map(({ assetId, extraEarned }) => ({ assetId, amount: extraEarned })).filter(({ amount }) => amount.gt(0)) ?? [];
       default:
         return [];
     }
@@ -139,7 +139,7 @@ class InvestToRangeInterfaceVM {
       () => this.range != null,
       () => {
         this.getAddressActivityInfo();
-        this.updateLPRewardsByTime("all", this.range!.assets.map(({ assetId, feesEarned, extraEarned }) => ({ assetId, feesEarned: feesEarned, extraEarned: extraEarned })));
+        this.updatelpRewardsByTime("all", this.range!.assets.map(({ assetId, feesEarned, extraEarned }) => ({ assetId, feesEarned: feesEarned, extraEarned: extraEarned })));
       })
   }
 
@@ -206,7 +206,7 @@ class InvestToRangeInterfaceVM {
     if (period === "all") {
       rangesService.getRangeByAddress(this.rangeAddress).then((rangeData: IRangeParamsResponse) => {
         if (!rangeData) return;
-        this.updateLPRewardsByTime(period, Object.entries(rangeData.period_fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
+        this.updatelpRewardsByTime(period, Object.entries(rangeData.period_fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
       })
       return;
     };
@@ -220,7 +220,7 @@ class InvestToRangeInterfaceVM {
     const startTime = dayjs().subtract(Number(periods[period][0]), periods[period][1] as ManipulateType).unix();
     rangesService.getRangeByAddress(this.rangeAddress, { startTime, endTime: dayjs().unix() }).then((rangeData: IRangeParamsResponse) => {
       if (!rangeData) return;
-      this.updateLPRewardsByTime(period, Object.entries(rangeData.period_fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
+      this.updatelpRewardsByTime(period, Object.entries(rangeData.period_fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
     })
   }
 

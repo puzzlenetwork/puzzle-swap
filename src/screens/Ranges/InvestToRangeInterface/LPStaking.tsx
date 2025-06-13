@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import Text from "@components/Text";
-import { useInvestToRangeInterfaceVM } from "./InvestToRangeInterfaceVM";
+import { useInvestToRangeInterfaceVM } from "./RangeDetailsVM";
 import Card from "@src/components/Card";
 import { useStores } from "@stores";
 import BN from "@src/utils/BN";

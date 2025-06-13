@@ -10,12 +10,12 @@ import Divider from "@components/Divider";
 import Button from "@components/Button";
 import SizedBox from "@components/SizedBox";
 import { useStores } from "@stores";
-import { useInvestToRangeInterfaceVM } from "./InvestToRangeInterfaceVM";
+import { useInvestToRangeInterfaceVM } from "./RangeDetailsVM";
 import TextButton from "@components/TextButton";
 import linkIcon from "@src/assets/icons/link.svg";
 import copy from "copy-to-clipboard";
 import { ReactComponent as CopyIcon } from "@src/assets/icons/darkCopy.svg";
-import { ReactComponent as TwitterIcon } from "@src/assets/icons/twitter.svg";
+import { ReactComponent as XIcon } from "@src/assets/links/x.svg";
 import { ReactComponent as TelegramIcon } from "@src/assets/icons/telegram.svg";
 import { ReactComponent as FacebookIcon } from "@src/assets/icons/facebook.svg";
 import { EXPLORER_URL } from "@src/constants";
@@ -125,12 +125,12 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
   const text = `Invest to ${vm.range!.title} Puzzle Swap range`;
   const shareInfo = [
     {
-      title: "Twitter",
+      title: "X",
       onClick: () =>
         window.open(
-          `https://twitter.com/intent/tweet?url=${link}&text=${text}`
+          `https://x.com/intent/tweet?url=${link}&text=${text}`
         ),
-      icon: <TwitterIcon />,
+      icon: <XIcon />,
     },
     {
       title: "Telegram",

@@ -1,3 +1,3 @@
-import InvestToRangeInterface from "./InvestToRangeInterface";
+import InvestToRangeInterface from "./RangeDetails";
 
 export default InvestToRangeInterface;

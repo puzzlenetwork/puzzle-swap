@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { useInvestToRangeInterfaceVM } from "./InvestToRangeInterfaceVM";
+import { useInvestToRangeInterfaceVM } from "./RangeDetailsVM";
 import Card from "@src/components/Card";
 import Text from "@src/components/Text";
 import SizedBox from "@components/SizedBox";
@@ -112,7 +112,7 @@ const PoolInformation: React.FC<IProps> = () => {
       value: (
         <Row style={{ gap: "8px" }}>
           {vm.LPRewardsToDisplay.map((item, index) => (
-            <TokenTag token={TOKENS_BY_ASSET_ID[item.assetId]} amount={new BN(item.amount)} key={index} />
+            <TokenTag token={{ ...TOKENS_BY_ASSET_ID[item.assetId], decimals: 0 }} amount={new BN(item.amount)} key={index} />
           ))}  
         </Row>
       ),

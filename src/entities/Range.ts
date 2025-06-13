@@ -173,7 +173,7 @@ export class StakedProviders {
   }
 }
 
-export class Stats {
+export class RangeStats {
   timeRange: string;
   timeFrame: string;
   apr: BN;
@@ -237,7 +237,7 @@ export class Range {
   virtualLiquidity: BN;
   extraEarned: Reward[];
   stakedProviders: StakedProviders;
-  stats: Stats;
+  stats: RangeStats;
   periodFees: PeriodFees;
   totals: Record<string, any>;
   charts?: IHistory[];
@@ -271,7 +271,7 @@ export class Range {
     this.virtualLiquidity = new BN(params.virtual_liquidity);
     this.extraEarned = params.extra_earned.map((reward) => new Reward(reward));
     this.stakedProviders = new StakedProviders(params.staked_providers);
-    this.stats = new Stats(params.stats);
+    this.stats = new RangeStats(params.stats);
     this.periodFees = Object.entries(params.period_fees).reduce((acc, [assetId, { fees_earned, extra_earned }]) => {
       acc[assetId] = { feesEarned: fees_earned, extraEarned: extra_earned };
       return acc;

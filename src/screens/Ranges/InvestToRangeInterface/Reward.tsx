@@ -10,7 +10,7 @@ import income from "@src/assets/icons/income.svg";
 import wallet from "@src/assets/icons/wallet.svg";
 import Button from "@components/Button";
 import Loading from "@components/Loading";
-import { useInvestToRangeInterfaceVM } from "./InvestToRangeInterfaceVM";
+import { useInvestToRangeInterfaceVM } from "./RangeDetailsVM";
 import BN from "@src/utils/BN";
 import Skeleton from "react-loading-skeleton";
 import dayjs from "dayjs";
