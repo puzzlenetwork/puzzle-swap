@@ -78,8 +78,8 @@ const PoolInformation: React.FC<IProps> = () => {
         <Text fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px" }}>
           ${
             data.liquidity.toFormat(2)
-          } /<Text type="secondary" fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px" }}>
-            ${" " + data.virtualLiquidity.toFormat(2)}
+          } / <Text type="secondary" fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px" }}>
+            ${data.virtualLiquidity.toFormat(2)}
           </Text>
         </Text>
       ),

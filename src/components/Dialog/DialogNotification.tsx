@@ -188,6 +188,43 @@ export const buildWarningLiquidityDialogParams = ({
   };
 };
 
+type TBuildSuccessDepositToRangeDialogParamsProps = {
+  accountStore: AccountStore;
+  txId: string;
+  rangeAddress: string;
+};
+
+export const buildSuccessDepositToRangeDialogParams = ({
+  accountStore,
+  txId,
+  rangeAddress,
+}: TBuildSuccessDepositToRangeDialogParamsProps): IDialogNotificationProps => {
+  const txLink = `${EXPLORER_URL}/transactions/${txId}`;
+  const rangeLink = `/ranges/${rangeAddress}/invest`;
+  const range = accountStore.rootStore.rangesStore.getRangeByAddress(rangeAddress);
+  return {
+    title: "Successfully deposited",
+    description: `Liquidity successfully provided to the range ${range?.title}. You can track your reward on the range page.`,
+    type: "success",
+    buttons: [
+      () => (
+        <Link to={rangeLink} style={{ width: "100%" }}>
+          <Button size="medium" fixed>
+            Go to the range page
+          </Button>
+        </Link>
+      ),
+      () => (
+        <Anchor href={txLink} style={{ width: "100%" }}>
+          <Button key="explorer" size="medium" kind="secondary" fixed>
+            View on Waves Explorer
+          </Button>
+        </Anchor>
+      ),
+    ],
+  };
+};
+
 type TBuildParamsProps = {
   title: string;
   description: string;

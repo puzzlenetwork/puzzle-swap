@@ -58,12 +58,12 @@ class InvestToRangeInterfaceVM {
   private setUserIndexStaked = (value: BN) => (this.userIndexStaked = value);
 
   public get totalClaimedReward(): BN {
-    const userInfo = this.range!.stakedProviders.providersStaked.find((p) => p.address === this.rootStore.accountStore.address);
+    const userInfo = this.range!.stakedProviders?.providersStaked.find((p) => p.address === this.rootStore.accountStore.address);
     return userInfo ? userInfo.claimedUsd : BN.ZERO;
   }
 
   public get totalRewardToClaim(): BN {
-    const userInfo = this.range!.stakedProviders.providersStaked.find((p) => p.address === this.rootStore.accountStore.address);
+    const userInfo = this.range!.stakedProviders?.providersStaked.find((p) => p.address === this.rootStore.accountStore.address);
     return userInfo ? userInfo.unclaimedUsd : BN.ZERO;
   };
 
@@ -225,12 +225,12 @@ class InvestToRangeInterfaceVM {
   }
 
   get totalProvidedLiquidityByAddress(): BN {
-    const userInfo = this.range?.stakedProviders.providersStaked.find((p) => p.address === this.rootStore.accountStore.address);
+    const userInfo = this.range!.stakedProviders?.providersStaked.find((p) => p.address === this.rootStore.accountStore.address);
     return userInfo?.indexStaked ? userInfo.indexStaked.times(this.range!.indexTokenRate) : BN.ZERO;
   }
 
   get shareOfPool(): BN {
-    const userInfo = this.range!.stakedProviders.providersStaked.find((p) => p.address === this.rootStore.accountStore.address);
+    const userInfo = this.range!.stakedProviders?.providersStaked.find((p) => p.address === this.rootStore.accountStore.address);
     return userInfo ? userInfo.share : BN.ZERO;
   }
 

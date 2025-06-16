@@ -89,8 +89,7 @@ export interface IRangeParamsResponse {
   nominal_asset: string;
   static_KMult: number;
   virtual_liquidity: number;
-  extra_earned: IRewardResponse[];
-  staked_providers: IStakedProvidersResponse;
+  staked_providers?: IStakedProvidersResponse;
   stats: IStatsResponse;
   period_fees: IPeriodFeesResponse;
   totals: Record<string, any>;
@@ -235,8 +234,7 @@ export class Range {
   nominalAsset: string;
   staticKMult: BN;
   virtualLiquidity: BN;
-  extraEarned: Reward[];
-  stakedProviders: StakedProviders;
+  stakedProviders?: StakedProviders;
   stats: RangeStats;
   periodFees: PeriodFees;
   totals: Record<string, any>;
@@ -269,13 +267,12 @@ export class Range {
     this.nominalAsset = params.nominal_asset;
     this.staticKMult = new BN(params.static_KMult);
     this.virtualLiquidity = new BN(params.virtual_liquidity);
-    this.extraEarned = params.extra_earned.map((reward) => new Reward(reward));
-    this.stakedProviders = new StakedProviders(params.staked_providers);
+    this.stakedProviders = params?.staked_providers ? new StakedProviders(params.staked_providers) : undefined;
     this.stats = new RangeStats(params.stats);
-    this.periodFees = Object.entries(params.period_fees).reduce((acc, [assetId, { fees_earned, extra_earned }]) => {
+    this.periodFees = params.period_fees? Object.entries(params.period_fees).reduce((acc, [assetId, { fees_earned, extra_earned }]) => {
       acc[assetId] = { feesEarned: fees_earned, extraEarned: extra_earned };
       return acc;
-    }, {} as PeriodFees);
+    }, {} as PeriodFees) : {};
     this.totals = params.totals;
     this.charts = params.charts;
     makeAutoObservable(this);

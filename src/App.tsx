@@ -28,7 +28,8 @@ import Paper from "@screens/Paper";
 import LoginScreen from "./screens/LoginScreen";
 import { usePageTitle } from "./usePageTitle";
 import AllRanges from "@screens/Ranges/AllRanges";
-import InvestToRangeInterface from "@screens/Ranges/InvestToRangeInterface";
+import InvestToRangeInterface from "@src/screens/Ranges/RangeDetails";
+import DepositToRange from "./screens/Ranges/DepositToRange";
 
 const Root = styled(Column)`
   width: 100%;
@@ -105,6 +106,8 @@ const App: React.FC = () => {
         {/*Ranges block*/}
         <Route path={ROUTES.RANGES} element={<AllRanges />} />
         <Route path={ROUTES.RANGES_INVEST} element={<InvestToRangeInterface />} />
+        <Route path={ROUTES.RANGES_DEPOSIT} element={<DepositToRange />} />
+        <Route path={ROUTES.RANGES_DEPOSIT_ONE_TOKEN} element={<DepositToRange />} />
         <Route path={ROUTES.RANGES_CREATE} element={<div>RANGES_CREATE</div>} />
         <Route path={ROUTES.USER_RANGES} element={<div>USER_RANGES</div>} />
       </Routes>

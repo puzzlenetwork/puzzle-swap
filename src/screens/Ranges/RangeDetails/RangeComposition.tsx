@@ -46,6 +46,17 @@ const RangeComposition: React.FC<IProps> = () => {
   const [filteredTokens, setFilteredTokens] = useState<any[]>([]);
   const [balanceSort, setValueSort] = useState(true);
   const [showSellOff, setShowSellOff] = useState(false);
+  const [relativeTokenAssetId, setRelativeTokenAssetId] = useState<string>(vm.range!.baseTokenId);
+  const [rateToRelativeToken, setRateToRelativeToken] = useState(new BN(1));
+
+  const handleChangeRelativeToken = (relativeAssetId: string) => {
+    setRelativeTokenAssetId(relativeAssetId);
+    const baseTokenPrice = vm.range!.assets.find((a) => a.assetId === vm.range!.baseTokenId)?.currentPrice;
+    const relativePrice = relativeAssetId === "USD" ? new BN(1) : vm.range!.assets.find((a) => a.assetId === relativeAssetId)?.currentPrice;
+    if (!!baseTokenPrice && !!relativePrice)
+      setRateToRelativeToken(baseTokenPrice.div(relativePrice));
+  }
+
   const columns = React.useMemo(
     () => [
       { Header: "Asset", accessor: "asset" },
@@ -137,14 +148,14 @@ const RangeComposition: React.FC<IProps> = () => {
           </Row>
         ),
         price: (a.assetId === vm.range!.baseTokenId) ? (
-          <Row alignItems="center" justifyContent="flex-end">{"$" + a.balanceUsd.toFormat(2)}</Row>
+          <Row alignItems="center" justifyContent="flex-end">{ relativeTokenAssetId === "USD" && "$" }{a.currentPrice.times(rateToRelativeToken).toSmallFormat()}</Row>
         ) : (
           <Row alignItems="center" justifyContent="flex-end">
-            <Text fitContent type="secondary" size="small">${a.minPrice.toSmallFormat()}</Text>
+            <Text fitContent type="secondary" size="small">{ relativeTokenAssetId === "USD" && "$" }{a.minPrice.times(rateToRelativeToken).toSmallFormat()}</Text>
             <SizedBox width={4} />
-            <Text fitContent> ← ${a.currentPrice.toSmallFormat()} → </Text>
+            <Text fitContent> ← { relativeTokenAssetId === "USD" && "$" }{a.currentPrice.times(rateToRelativeToken).toSmallFormat()} → </Text>
             <SizedBox width={4} />
-            <Text fitContent type="secondary" size="small">${a.maxPrice.toSmallFormat()}</Text>
+            <Text fitContent type="secondary" size="small">{ relativeTokenAssetId === "USD" && "$" }{a.maxPrice.times(rateToRelativeToken).toSmallFormat()}</Text>
           </Row>
         ),
         balance: (
@@ -171,7 +182,7 @@ const RangeComposition: React.FC<IProps> = () => {
         )
       }));
     setFilteredTokens(data);
-  }, [balanceSort, vm.range]);
+  }, [balanceSort, vm.range, rateToRelativeToken]);
   const { width } = useWindowSize();
   return (
     <Root balanceSort={balanceSort}>
@@ -189,20 +200,22 @@ const RangeComposition: React.FC<IProps> = () => {
           <Select
             kind="text"
             textSize="medium"
-            options={[
-              {
-                key: "usd",
-                title: "USD",
-              },
-              ...vm.range!.assets.map((asset) => ({
-                key: asset.assetId,
-                title: asset.name,
-              }))
-            ]}
-            onSelect={({ key }) => { }}
+            options={
+              [
+                {
+                  key: "USD",
+                  title: "USD",
+                },
+                ...vm.range!.assets.map((asset) => ({
+                  key: asset.assetId,
+                  title: asset.name,
+                }))
+              ]
+            }
+            onSelect={({ key }) => handleChangeRelativeToken(key)}
             selected={{
-              key: "usd",
-              title: "USD",
+              key: relativeTokenAssetId,
+              title: relativeTokenAssetId === "USD" ? "USD" : TOKENS_BY_ASSET_ID[relativeTokenAssetId].name,
             }}
           />
         </Row>

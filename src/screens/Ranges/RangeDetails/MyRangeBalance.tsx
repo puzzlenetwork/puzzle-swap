@@ -153,7 +153,7 @@ const MyRangeBalance: React.FC<IProps> = () => {
                 </Button>
               </Link>
               <SizedBox width={8} />
-              <Link to={`/ranges/${vm.range!.address}/addLiquidity`}>
+              <Link to={`/ranges/${vm.range!.address}/depositOneToken`}>
                 <Button fixed size="medium">
                   Deposit
                 </Button>
