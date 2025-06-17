@@ -172,7 +172,8 @@ class InvestToRangeInterfaceVM {
     if (!this.rootStore.accountStore.address) return;
     rangesService.getLPData(this.rangeAddress, this.rootStore.accountStore.address)
       .then((data) => {
-        console.log("LPData", data);
+        if (!data) return;
+        console.log("LPData", data)
         const newLPData = new LPData(data);
         this.setLPData(newLPData);
       })

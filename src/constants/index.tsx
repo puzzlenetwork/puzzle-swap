@@ -31,6 +31,7 @@ export const ROUTES = {
   RANGES_INVEST: "/ranges/:rangeAddress/invest",
   RANGES_DEPOSIT: "/ranges/:rangeAddress/deposit",
   RANGES_DEPOSIT_ONE_TOKEN: "/ranges/:rangeAddress/depositOneToken",
+  RANGES_WITHDRAW: "/ranges/:rangeAddress/withdraw",
 };
 
 export const PRODUCTS = {
