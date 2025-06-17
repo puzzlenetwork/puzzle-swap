@@ -1,4 +1,4 @@
-import { IRangeParamsResponse } from "@src/entities/Range";
+import { ILPDataResponse, IRangeParamsResponse } from "@src/entities/Range";
 import axios from "axios";
 
 export interface IGetRanges {
@@ -42,6 +42,19 @@ const rangesService = {
     const { data } = await axios.get(url);
     return data;
   },
+  getLPData: async (address: string, userAddress: string): Promise<ILPDataResponse> => {
+    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/provided_data`;
+    const paramsString = new URLSearchParams({
+      poolAddress: address,
+      userAddress: userAddress,
+      poolMode: "ranged",
+      page: "1",
+      size: "1",
+    })
+    const url = `${baseUrl}?${paramsString.toString()}`;
+    const { data } = await axios.get(url);
+    return data.data[0];
+  }
 };
 
 export default rangesService; 

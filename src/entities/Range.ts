@@ -321,4 +321,66 @@ export class Range {
 
   contractKeysRequest = (keys: string[] | string) =>
     nodeService.nodeKeysRequest(this.address, keys);
-} 
+}
+
+export interface ILPDataAssetResponse {
+  asset_id: string;
+  name: string;
+  earned_amount: number;
+  earned_amount_usd: number;
+  provided_amount: number;
+  provided_amount_usd: number;
+}
+
+export interface ILPDataResponse {
+  provider_address: string;
+  pool_address: string;
+  pool_mode: string;
+  index_staked: number;
+  share: number;
+  provided_usd: number;
+  claimed_usd: number;
+  unclaimed_usd: number;
+  assets_data: ILPDataAssetResponse[];
+}
+
+export class LPDataAsset {
+  assetId: string;
+  name: string;
+  earnedAmount: BN;
+  earnedAmountUsd: BN;
+  providedAmount: BN;
+  providedAmountUsd: BN;
+  constructor(params: ILPDataAssetResponse) {
+    this.assetId = params.asset_id;
+    this.name = params.name;
+    this.earnedAmount = new BN(params.earned_amount);
+    this.earnedAmountUsd = new BN(params.earned_amount_usd);
+    this.providedAmount = new BN(params.provided_amount);
+    this.providedAmountUsd = new BN(params.provided_amount_usd);
+  }
+}
+
+export class LPData {
+  providerAddress: string;
+  poolAddress: string;
+  poolMode: string;
+  indexStaked: BN;
+  share: BN;
+  providedUsd: BN;
+  claimedUsd: BN;
+  unclaimedUsd: BN;
+  assetsData: LPDataAsset[];
+  constructor(params: ILPDataResponse) {
+    this.providerAddress = params.provider_address;
+    this.poolAddress = params.pool_address;
+    this.poolMode = params.pool_mode;
+    this.indexStaked = new BN(params.index_staked);
+    this.share = new BN(params.share);
+    this.providedUsd = new BN(params.provided_usd);
+    this.claimedUsd = new BN(params.claimed_usd);
+    this.unclaimedUsd = new BN(params.unclaimed_usd);
+    this.assetsData = params.assets_data.map((asset) => new LPDataAsset(asset));
+  }
+}
+

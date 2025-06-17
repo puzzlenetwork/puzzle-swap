@@ -10,6 +10,8 @@ interface IProps {
   amount: BN;
   setAmount?: (amount: BN) => void;
 
+  decimals?: number;
+
   onMaxClick?: () => void;
 }
 
@@ -96,7 +98,7 @@ const StakeUnstakeInput: React.FC<IProps> = (props) => {
             />
           )}
           autofocus={focused}
-          decimals={0}
+          decimals={props.decimals ?? 8}
           value={amount}
           onChange={handleChangeAmount}
           placeholder="Enter the amount"

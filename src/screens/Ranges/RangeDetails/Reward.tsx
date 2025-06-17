@@ -11,8 +11,8 @@ import wallet from "@src/assets/icons/wallet.svg";
 import Button from "@components/Button";
 import Loading from "@components/Loading";
 import { useInvestToRangeInterfaceVM } from "./RangeDetailsVM";
-import dayjs from "dayjs";
 import Divider from "@src/components/Divider";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -39,8 +39,7 @@ const Reward: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const { address } = accountStore;
   if (address == null) return null;
-  const date = dayjs(vm.lastClaimDate?.toNumber() ?? 0);
-  const format = date.format("D MMM YYYY");
+
   return (
     <Root>
       <Text weight={500} type="secondary">
@@ -55,12 +54,9 @@ const Reward: React.FC<IProps> = () => {
             <Column crossAxisSize="max">
               <Row justifyContent="space-between">
                 <Text size="medium" style={{ flex: 1 }}>Claimed</Text>
-                <Text size="medium" style={{ flex: 2, textAlign: "right" }}>
-                  {!vm.lastClaimDate.eq(0) && "Last claim " + format}
-                </Text>
               </Row>
               <Text weight={500}>
-                {`$${vm.totalClaimedReward}`}
+                {`$${(vm.lpData?.claimedUsd ?? BN.ZERO).toSmallFormat()}`}
               </Text>
             </Column>
           </Row>
@@ -71,7 +67,7 @@ const Reward: React.FC<IProps> = () => {
             <Column>
               <Text size="medium" nowrap>Available to claim</Text>
               <Text weight={500}>
-                {`$${vm.totalRewardToClaim.toSmallFormat()}`}
+                {`$${(vm.lpData?.unclaimedUsd ?? BN.ZERO).toSmallFormat()}`}
               </Text>
             </Column>
           </Row>

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Text from "@components/Text";
 import { useInvestToRangeInterfaceVM } from "./RangeDetailsVM";
@@ -15,6 +15,8 @@ import Button from "@components/Button";
 import Divider from "@src/components/Divider";
 import Switch from "@src/components/Switch";
 import StakeUnstakeInput from "./StakeUnstakeInput";
+import SwitchButtons from "@src/components/SwitchButtons";
+import { TOKENS_BY_ASSET_ID } from "@src/constants";
 
 interface IProps {}
 
@@ -56,7 +58,7 @@ const Body = styled(Column)<{ expanded?: boolean }>`
   height: ${({ expanded }) => (expanded ? "auto" : 0)};
 `;
 
-const Information = styled(Row)`
+const Information = styled(Column)`
   width: calc(100% - 48px);
   padding: 16px 24px;
   padding-top: 0;
@@ -71,10 +73,18 @@ const LPStaking: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const vm = useInvestToRangeInterfaceVM();
   const [expanded, setExpanded] = useState(false);
+  const activeTab = useMemo(
+    () => vm.stakeUnstakeAction === "stake",
+    [vm.stakeUnstakeAction]
+  )
+  const handleChangeActiveTab = (value: number) => {
+    vm.setStakeUnstakeAction(value === 0 ? "stake" : "unstake");
+  };
+
   if (accountStore.address == null) return null;
   const availableToStake = BN.formatUnits(
     vm.indexTokenBalance.times(vm.range!.indexTokenRate),
-    8
+    vm.indexTokenDecimals
   );
 
   return (
@@ -95,21 +105,30 @@ const LPStaking: React.FC<IProps> = () => {
       </Title>
       <Body expanded={expanded}>
         <Information>
-          <Column crossAxisSize="max">
+          <SwitchButtons
+            values={["Stake", "Unstake"]}
+            active={activeTab ? 0 : 1}
+            onActivate={handleChangeActiveTab}
+          />
+          <SizedBox height={16} />
+          {vm.stakeUnstakeAction === "unstake" && <Column>
             <Text type="secondary" size="medium">
               Staked balance
             </Text>
-            <Text nowrap>
-              ${vm.totalProvidedLiquidityByAddress.toFormat(2)}
+            <Text>
+              {(vm.lpData?.indexStaked ?? BN.ZERO).toFormat(2)} LP
+              <Text type="secondary" size="small" style={{ display: "inline" }}> / ${(vm.lpData?.providedUsd ?? BN.ZERO).toFormat(2)}</Text>
             </Text>
-          </Column>
-          <SizedBox width={8} />
-          <Column>
+          </Column>}
+          {vm.stakeUnstakeAction === "stake" && <Column>
             <Text nowrap type="secondary" size="medium">
               Available to stake
             </Text>
-            <Text>${availableToStake.toFormat(2)}</Text>
-          </Column>
+            <Text>
+              {availableToStake.toFormat(2)} LP
+              <Text type="secondary" size="small" style={{ display: "inline" }}> / ${BN.formatUnits(vm.indexTokenBalance, vm.indexTokenDecimals).toFormat(2)}</Text>
+            </Text>
+          </Column>}
         </Information>
 
         <Divider />
@@ -123,21 +142,22 @@ const LPStaking: React.FC<IProps> = () => {
           <SizedBox height={16} />
           {!vm.useMaxStakeUnstakeAmount && (
             <>
-              <StakeUnstakeInput amount={vm.stakeUnstakeAmount} setAmount={vm.setStakeUnstakeAmount} />
+              <StakeUnstakeInput amount={vm.stakeUnstakeAmount} decimals={vm.indexTokenDecimals} setAmount={vm.setStakeUnstakeAmount} />
               <SizedBox height={16} />
             </>
           )}
-          <Row>
+          {vm.stakeUnstakeAction === "unstake" && (
             <Button
               fixed
               kind="secondary"
               size="medium"
-              disabled={vm.userIndexStaked == null || vm.userIndexStaked?.eq(0) || (vm.useMaxStakeUnstakeAmount && (vm.stakeUnstakeAmount.eq(0) || vm.stakeUnstakeAmount.gt(vm.indexTokenBalance)))}
+              disabled={!vm.canUnstakeIndex}
               onClick={vm.unstakeIndex}
             >
               Unstake
             </Button>
-            <SizedBox width={8} />
+          )}
+          {vm.stakeUnstakeAction === "stake" && (
             <Button
               fixed
               size="medium"
@@ -146,7 +166,7 @@ const LPStaking: React.FC<IProps> = () => {
             >
               Stake
             </Button>
-          </Row>
+          )}
         </Actions>
       </Body>
     </Root>

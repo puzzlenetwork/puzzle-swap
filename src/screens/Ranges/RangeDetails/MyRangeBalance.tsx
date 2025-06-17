@@ -61,10 +61,10 @@ const MyRangeBalance: React.FC<IProps> = () => {
           </Column>
           <Column>
             <Text textAlign="right" size="medium">
-              $ {vm.totalProvidedLiquidityByAddress.toFormat(2)}
+              ${(vm.lpData?.providedUsd ?? BN.ZERO).toFormat(2)}
             </Text>
             <Text textAlign="right" type="secondary" size="small">
-              {`Share of pool ${vm.userShareOfPool.toSmallFormat()}%`}
+              {`Share of pool ${(vm.lpData?.share ?? BN.ZERO).toSmallFormat()}%`}
             </Text>
           </Column>
         </Header>
