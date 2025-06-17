@@ -57,14 +57,14 @@ const Body = styled(Column)<{ expanded?: boolean }>`
 `;
 
 const Information = styled(Row)`
-  // width: calc(100% - 48px);
+  width: calc(100% - 48px);
   padding: 16px 24px;
   padding-top: 0;
 `;
 
 const Actions = styled(Column)`
   padding: 16px 24px;
-  // width: calc(100% - 48px);
+  width: calc(100% - 48px);
 `;
 
 const LPStaking: React.FC<IProps> = () => {

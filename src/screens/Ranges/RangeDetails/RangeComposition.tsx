@@ -52,7 +52,7 @@ const RangeComposition: React.FC<IProps> = () => {
   const handleChangeRelativeToken = (relativeAssetId: string) => {
     setRelativeTokenAssetId(relativeAssetId);
     const baseTokenPrice = vm.range!.assets.find((a) => a.assetId === vm.range!.baseTokenId)?.currentPrice;
-    const relativePrice = relativeAssetId === "USD" ? new BN(1) : vm.range!.assets.find((a) => a.assetId === relativeAssetId)?.currentPrice;
+    const relativePrice = relativeAssetId === "USD" ? vm.range!.baseTokenPrice : vm.range!.assets.find((a) => a.assetId === relativeAssetId)?.currentPrice;
     if (!!baseTokenPrice && !!relativePrice)
       setRateToRelativeToken(baseTokenPrice.div(relativePrice));
   }

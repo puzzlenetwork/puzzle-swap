@@ -90,6 +90,7 @@ export interface IRangeParamsResponse {
   static_KMult: number;
   virtual_liquidity: number;
   staked_providers?: IStakedProvidersResponse;
+  base_token_price: number;
   stats: IStatsResponse;
   period_fees: IPeriodFeesResponse;
   totals: Record<string, any>;
@@ -156,7 +157,7 @@ export class ProviderStaked {
     this.share = new BN(params.share);
     this.claimedUsd = new BN(params.claimed_usd);
     this.unclaimedUsd = new BN(params.unclaimed_usd);
-    this.rewards = params.rewards.map((reward) => new Reward(reward));
+    this.rewards = params.rewards?.map((reward) => new Reward(reward)) ?? [];
   }
 }
 
@@ -167,7 +168,7 @@ export class StakedProviders {
 
   constructor(params: IStakedProvidersResponse) {
     this.totalIndexStaked = new BN(params.total_index_staked);
-    this.providersStaked = params.providers_staked.map((provider) => new ProviderStaked(provider));
+    this.providersStaked = params.providers_staked?.map((provider) => new ProviderStaked(provider)) ?? [];
     this.totalStakedProviders = new BN(params.total_staked_providers);
   }
 }
@@ -235,6 +236,7 @@ export class Range {
   staticKMult: BN;
   virtualLiquidity: BN;
   stakedProviders?: StakedProviders;
+  baseTokenPrice: BN;
   stats: RangeStats;
   periodFees: PeriodFees;
   totals: Record<string, any>;
@@ -268,6 +270,7 @@ export class Range {
     this.staticKMult = new BN(params.static_KMult);
     this.virtualLiquidity = new BN(params.virtual_liquidity);
     this.stakedProviders = params?.staked_providers ? new StakedProviders(params.staked_providers) : undefined;
+    this.baseTokenPrice = new BN(params.base_token_price);
     this.stats = new RangeStats(params.stats);
     this.periodFees = params.period_fees? Object.entries(params.period_fees).reduce((acc, [assetId, { fees_earned, extra_earned }]) => {
       acc[assetId] = { feesEarned: fees_earned, extraEarned: extra_earned };
@@ -310,6 +313,10 @@ export class Range {
       leverage: asset.leverage.times(100).toNumber(),
       relativeLeverage: asset.leverage.div(maxLeverage).times(100).toNumber(),
     }));
+  }
+
+  get totalAssetsInRange() {
+    return this.assets.reduce((acc, { balance }) => acc.plus(balance), BN.ZERO);
   }
 
   contractKeysRequest = (keys: string[] | string) =>

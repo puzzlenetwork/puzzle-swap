@@ -106,6 +106,7 @@ class AddLiquidityInterfaceVM {
     return BN.min(
       ...this.pool.tokens.map(({ assetId }) => {
         const asset = this.rootStore.accountStore.findBalanceByAssetId(assetId);
+        // allTokensSum * (balanceOnWallet / balanceInPool)
         return this.pool!.globalPoolTokenAmount.times(
           asset?.balance ?? BN.ZERO
         ).div(this.pool!.liquidity[assetId]);
@@ -147,6 +148,8 @@ class AddLiquidityInterfaceVM {
     return this.pool.tokens.reduce<Record<string, BN>>((acc, { assetId }) => {
       const tokenBalance =
         (this.pool && this.pool.liquidity[assetId]) ?? BN.ZERO;
+      // minPIssued = allTokensSum * min(balanceOnWallet / balanceInPool)
+      // (minPIssued / allTokensSum) * (tokenBalanceInPool * (providedPercentOfPool / (100%)))
       const dk = this.pool!.globalPoolTokenAmount.plus(
         this.minPIssued ?? BN.ZERO
       )

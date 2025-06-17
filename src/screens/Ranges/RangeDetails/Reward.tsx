@@ -11,10 +11,7 @@ import wallet from "@src/assets/icons/wallet.svg";
 import Button from "@components/Button";
 import Loading from "@components/Loading";
 import { useInvestToRangeInterfaceVM } from "./RangeDetailsVM";
-import BN from "@src/utils/BN";
-import Skeleton from "react-loading-skeleton";
 import dayjs from "dayjs";
-import { TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL } from "@src/constants";
 import Divider from "@src/components/Divider";
 
 interface IProps {}
@@ -74,7 +71,7 @@ const Reward: React.FC<IProps> = () => {
             <Column>
               <Text size="medium" nowrap>Available to claim</Text>
               <Text weight={500}>
-                {`$${vm.totalRewardToClaim.toFixed(2)}`}
+                {`$${vm.totalRewardToClaim.toSmallFormat()}`}
               </Text>
             </Column>
           </Row>

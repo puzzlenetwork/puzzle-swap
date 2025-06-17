@@ -15,6 +15,7 @@ import SwitchButtons from "@components/SwitchButtons";
 import { useNavigate, useParams } from "react-router-dom";
 import Loading from "@components/Loading";
 import DepositSingleToken from "./DepositSingleToken";
+import DepositMultipleTokens from "./DepositMultipleTokens";
 
 const Root = styled.div`
   display: flex;
@@ -37,9 +38,9 @@ const DepositToRangeImpl = observer(() => {
   const vm = useDepositToRangeVM();
   const range = vm.range;
   const depositRoute = `/ranges/${vm.rangeAddress}/deposit`;
-  const depositOneTokenRoute = `/ranges/${vm.rangeAddress}/depositOneToken`;
+  const depositOneTokenRoute = `/ranges/${vm.rangeAddress}/depositonetoken`;
   const navigate = useNavigate();
-  const activeTab = depositOneTokenRoute.includes(window.location.pathname) ? 1 : 0;
+  const activeTab = window.location.pathname.includes(depositOneTokenRoute) ? 1 : 0;
 
   if (range == null) {
     return <Loading />;
@@ -76,10 +77,13 @@ const DepositToRangeImpl = observer(() => {
           />
         </Card>
         <SizedBox height={24} />
-        {window.location.pathname.includes(depositRoute) && (
-          // <DepositMultipleTokens />
-          <></>
-        )}
+        {
+          window.location.pathname.includes(depositRoute)
+          && !window.location.pathname.includes(depositOneTokenRoute)
+          && (
+            <DepositMultipleTokens />
+          )
+        }
         {window.location.pathname.includes(depositOneTokenRoute) && (
           <DepositSingleToken />
         )}

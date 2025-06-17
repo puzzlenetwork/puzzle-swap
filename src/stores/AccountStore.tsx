@@ -33,7 +33,7 @@ export interface IInvokeTxParams {
   payment: Array<{ assetId: string | null; amount: string }>;
   call: {
     function: string;
-    args: Array<{ type: "integer" | "string"; value: string }>;
+    args: Array<{ type: "integer" | "string"; value: string } | { type: "boolean"; value: boolean }>;
   };
 }
 

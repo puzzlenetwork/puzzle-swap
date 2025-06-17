@@ -130,6 +130,7 @@ class InvestToRangeInterfaceVM {
     rangesService.getRangeByAddress(rangeAddress, { charts: true })
       .then((rangeData) => {
         if (!rangeData) return;
+        console.log("rangeData", rangeData);
         const newRange = new Range(rangeData);
         this.rootStore.rangesStore.updateRange(newRange);
         this.setHistory(rangeData.charts || []);
@@ -229,12 +230,12 @@ class InvestToRangeInterfaceVM {
     return userInfo?.indexStaked ? userInfo.indexStaked.times(this.range!.indexTokenRate) : BN.ZERO;
   }
 
-  get shareOfPool(): BN {
+  get userShareOfPool(): BN {
     const userInfo = this.range!.stakedProviders?.providersStaked.find((p) => p.address === this.rootStore.accountStore.address);
-    return userInfo ? userInfo.share : BN.ZERO;
+    return userInfo ? userInfo.share.div(100) : BN.ZERO;
   }
 
-  get poolBalancesTable() {
+  get rangeBalancesTable() {
     if (this.range?.assets == null) return null;
 
     return this.range.assets
@@ -246,8 +247,8 @@ class InvestToRangeInterfaceVM {
       ) {
         return { ...token, usdnEquivalent: BN.ZERO, value: BN.ZERO };
       }
-      const userAmount = this.shareOfPool.times(token.factBalance);
-      const userUsdnEquivalent = this.shareOfPool.times(token.factBalanceUsd);
+      const userAmount = this.userShareOfPool.times(token.factBalance);
+      const userUsdnEquivalent = this.userShareOfPool.times(token.factBalanceUsd);
       return {
         ...token,
         usdnEquivalent: userUsdnEquivalent,
@@ -259,7 +260,6 @@ class InvestToRangeInterfaceVM {
   claimRewards = async () => {
     if (this.totalRewardToClaim == null || this.totalRewardToClaim.eq(0))
       return;
-    if (this.range!.layer2Address == null) return;
     this._setLoading(true);
     const { accountStore, notificationStore } = this.rootStore;
     accountStore
@@ -298,7 +298,6 @@ class InvestToRangeInterfaceVM {
   
   unstakeIndex = async () => {
     if (this.userIndexStaked == null || this.userIndexStaked?.eq(0)) return;
-    if (this.range!.layer2Address == null) return;
     this._setLoading(true);
     const { accountStore, notificationStore } = this.rootStore;
     const unstakeAmount = this.useMaxStakeUnstakeAmount ? this.userIndexStaked?.toString() : this.stakeUnstakeAmount.toString();

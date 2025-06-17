@@ -64,20 +64,20 @@ const MyRangeBalance: React.FC<IProps> = () => {
               $ {vm.totalProvidedLiquidityByAddress.toFormat(2)}
             </Text>
             <Text textAlign="right" type="secondary" size="small">
-              {`Share of pool ${vm.shareOfPool.toSmallFormat()}%`}
+              {`Share of pool ${vm.userShareOfPool.toSmallFormat()}%`}
             </Text>
           </Column>
         </Header>
         <Divider style={{ margin: "16px 0" }} />
         <GridTable desktopTemplate="1fr 1fr" mobileTemplate="1fr 1fr">
-          {vm.poolBalancesTable == null ? (
+          {vm.rangeBalancesTable == null ? (
             <Skeleton
               height={48}
               count={3}
               style={{ margin: "4px 24px", width: "calc(100% - 48px)" }}
             />
           ) : (
-            vm.poolBalancesTable.map((token, i) => {
+            vm.rangeBalancesTable.map((token, i) => {
               const value = token.value.toSmallFormat();
               const usdn = token.usdnEquivalent.toSmallFormat();
               return (
