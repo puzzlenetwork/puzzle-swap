@@ -291,7 +291,7 @@ export default class PoolsStore {
     }
 
     const usdn = TOKENS_BY_SYMBOL.XTN.assetId;
-    const usdt = TOKENS_BY_SYMBOL.USDT_WXG.assetId;
+    const usdt = TOKENS_BY_SYMBOL["USDT-WXG"]assetId;
     const puzzle = TOKENS_BY_SYMBOL.PUZZLE.assetId;
     const waves = TOKENS_BY_SYMBOL.WAVES.assetId;
     const usdtppt = TOKENS_BY_SYMBOL.USDT.assetId;
@@ -451,7 +451,7 @@ export default class PoolsStore {
         `${TOKENS_BY_SYMBOL.PUZZLE.assetId}_twap5B`,
         `${TOKENS_BY_SYMBOL.XTN.assetId}_twap5B`,
         `${TOKENS_BY_SYMBOL.WAVES.assetId}_twap5B`,
-        `${TOKENS_BY_SYMBOL.USDT_WXG.assetId}_twap5B`,
+        `${TOKENS_BY_SYMBOL["USDT-WXG"]assetId}_twap5B`,
       ]
     );
 
