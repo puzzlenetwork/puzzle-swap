@@ -43,7 +43,7 @@ import uniLogo from "@src/assets/tokens/UNI.svg";
 import daiLogo from "@src/assets/tokens/DAI.svg";
 import tnLogo from "@src/assets/tokens/TN.svg";
 import maticLogo from "@src/assets/tokens/MATIC.svg";
-import crvLogo from "@src/assets/tokens/CRV.png";
+// import crvLogo from "@src/assets/tokens/CRV.png";
 import snsbtLogo from "@src/assets/tokens/SNSBT.png";
 import vladLogo from "@src/assets/tokens/VLAD.png";
 import usdtViresLogo from "@src/assets/tokens/USDT_VIRES.svg";
@@ -158,7 +158,7 @@ const tokenLogos: Record<string, string> = {
   RACE: raceLogo,
   BTC: btcLogo,
   "ETH-PPT": ethLogo,
-  ETHWXG: ethLogo,
+  // ETHWXG: ethLogo,
   LTC: ltcLogo,
   USDC: usdcLogo,
   EURN: eurn,
@@ -166,15 +166,15 @@ const tokenLogos: Record<string, string> = {
   WEST: westLogo,
   WCT: wctLogo,
   MUNA: munaLogo,
-  BNB_WXG: bnbLogo,
+  // BNB_WXG: bnbLogo,
   SHEG: shegLogo,
   YFI: yfiLogo,
   MATIC: maticLogo,
   DAI: daiLogo,
   FTM: ftmLogo,
-  CRV: crvLogo,
+  // CRV: crvLogo,
   TN: tnLogo,
-  "SHIB-WXG": shibLogo,
+  // "SHIB-WXG": shibLogo,
   UNI: uniLogo,
   LINK: linkLogo,
   SNSBT: snsbtLogo,
@@ -303,6 +303,23 @@ const tokenLogos: Record<string, string> = {
 
   MEGAMEME:
     "https://megameme-249514940b30.herokuapp.com/static/media/megameme.49817f851dcdada62613bf2e1f70f56d.svg",
+
+  "CRV-WXG":
+    "https://r.wavesexplorer.com/assets/site/img/assets_logo/3KhNcHo4We1G5EWps7b1e5DTdLgWDzctc8S6ynu37KAb.svg",
+  "ETH-WXG":
+    "https://r.wavesexplorer.com/assets/site/img/assets_logo/474jTeYx2r2Va35794tCScAXWJG9hU2HcgxzMowaZUnu.svg",
+  "SHIB-WXG":
+    "https://r.wavesexplorer.com/assets/site/img/assets_logo/GVxGPBtgVWMW1wHiFnfaCakbJ6sKgZgowJgW5Dqrd7JH.svg",
+  "DAI-WXG":
+    "https://r.wavesexplorer.com/assets/site/img/assets_logo/8zUYbdB8Q6mDhpcXYv52ji8ycfj4SDX4gJXS7YY3dA4R.svg",
+  "BTC-WXG":
+    "https://r.wavesexplorer.com/assets/site/img/assets_logo/8LQW8f7P5d5PZM7GtZEBgaqRPGSzS3DfPuiXrURJ4AJS.svg",
+  "BNB-WXG":
+    "https://r.wavesexplorer.com/assets/site/img/assets_logo/5UYBPpq4WoU5n4MwpFkgJnW3Fq4B1u3ukpK33ik4QerR.svg",
+  "USDC-WXG":
+    "https://r.wavesexplorer.com/assets/site/img/assets_logo/6XtHjpXbs9RRJP2Sr9GUyVqzACcby9TkThHXnjVC5CDJ.svg",
+  "USDT-WXG":
+    "https://r.wavesexplorer.com/assets/site/img/assets_logo/34N9YcEETLWn93qYQ64EsP1x89tSruJU44RrEMSXXEPJ.svg",
 };
 
 export default tokenLogos;
