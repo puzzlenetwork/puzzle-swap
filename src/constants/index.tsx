@@ -81,7 +81,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     base_token_id: TOKENS_BY_SYMBOL["BTC-WXG"].assetId,
     title: "Pool10",
     logo: tokenLogos["BTC-WXG"],
-    defaultAssetId0: TOKENS_BY_SYMBOL.["BTC-WXG"].assetId,
+    defaultAssetId0: TOKENS_BY_SYMBOL["BTC-WXG"].assetId,
     defaultAssetId1: TOKENS_BY_SYMBOL.XTN.assetId,
     tokens: [
       { ...TOKENS_BY_SYMBOL.WAVES, share: 25, logo: tokenLogos.WAVES },
