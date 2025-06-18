@@ -384,3 +384,28 @@ export class LPData {
   }
 }
 
+export interface IGlobalRangesInfoResponse {
+  pool_mode: string;
+  total_pools: number;
+  total_volume: number;
+  total_liquidity: number;
+  total_virtual_liquidity: number;
+  total_pool_fees: number;
+}
+
+export class GlobalRangesInfo {
+  poolMode: string;
+  totalPools: number;
+  totalVolume: BN;
+  totalLiquidity: BN;
+  totalVirtualLiquidity: BN;
+  totalPoolFees: BN;
+  constructor(params: IGlobalRangesInfoResponse) {
+    this.poolMode = params.pool_mode;
+    this.totalPools = params.total_pools;
+    this.totalVolume = new BN(params.total_volume);
+    this.totalLiquidity = new BN(params.total_liquidity);
+    this.totalVirtualLiquidity = new BN(params.total_virtual_liquidity);
+    this.totalPoolFees = new BN(params.total_pool_fees);
+  }
+}

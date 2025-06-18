@@ -13,7 +13,23 @@ import TokenTags from "@screens/Pools/TokenTags";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import { useNavigate } from "react-router-dom";
 import RangeChart from "@components/RangeChart";
+import { Column, Row } from "@src/components/Flex";
+import Card from "@src/components/Card";
+import styled from "@emotion/styled";
+import ArrowWithSuperText from "./ArrowWithSuperText";
 
+
+const GrayCard = styled(Card)`
+  background: ${({ theme }) => theme.colors.primary50};
+  border: none;
+  width: fit-content;
+`;
+
+const RedCard = styled(Card)`
+  background: ${({ theme }) => theme.colors.error100};
+  border: none;
+  width: fit-content;
+`;
 
 const RangesTable: React.FC = () => {
   const navigate = useNavigate();
@@ -36,7 +52,63 @@ const RangesTable: React.FC = () => {
     onClick: () => navigate(`/ranges/${range.address}/invest`),
     range: (
       // <Text>{range.assetsWithLeverage.map(({ leverage }) => `${leverage}`).join(", ")}</Text>
-      <RangeChart range={range} size={120} index={index} />
+      <Row>
+        <GrayCard paddingDesktop="4px" paddingMobile="4px">
+          <RangeChart range={range} size={120} index={index} />
+        </GrayCard>
+        <SizedBox width={16} />
+        <Column crossAxisSize="max" justifyContent="space-between">
+          <SizedBox height={20} />
+          <Text weight={500}>
+            Range {range.title}
+          </Text>
+          <SizedBox height={8} />
+          <Row>
+            {range.assets.map((asset, index) => (
+              asset.assetId === range.baseTokenId
+                ? (
+                  <GrayCard paddingDesktop="12px 8px" paddingMobile="12px 8px" style={{ borderRadius: "6px", marginRight: "4px" }} key={index}>
+                    <Text>{asset.name}</Text>
+                    <SizedBox height={12} />
+                      <Text type="secondary" size="small" weight={500}>Base</Text>
+                  </GrayCard>
+                )
+                : (asset.currentPrice.lte(asset.maxPrice) && asset.currentPrice.gte(asset.minPrice))
+                  ? (
+                    <GrayCard paddingDesktop="12px 8px" paddingMobile="12px 8px" style={{ borderRadius: "6px", marginRight: "4px" }} key={index}>
+                      <Text>{asset.name}</Text>
+                      <SizedBox height={12} />
+                        <Row alignItems="center">
+                          <Text type="secondary" size="small" weight={500}>{asset.minPrice.toSmallFormat()}</Text>
+                          <SizedBox width={4} />
+                          <ArrowWithSuperText>
+                            <Text type="secondary" size="small" weight={500}>{asset.currentPrice.toSmallFormat()}</Text>
+                          </ArrowWithSuperText>
+                          <SizedBox width={4} />
+                          <Text type="secondary" size="small" weight={500}>{asset.maxPrice.toSmallFormat()}</Text>
+                        </Row>
+                    </GrayCard>
+                  )
+                  : (
+                    <RedCard paddingDesktop="12px 8px" paddingMobile="12px 8px" style={{ borderRadius: "6px", marginRight: "4px" }} key={index}>
+                      <Text>{asset.name}</Text>
+                      <SizedBox height={12} />
+                        <Row alignItems="center">
+                          <Text type="secondary" size="small" weight={500}>{asset.minPrice.toSmallFormat()}</Text>
+                          <SizedBox width={4} />
+                          <ArrowWithSuperText>
+                            <Text type="secondary" size="small" weight={500}>{asset.currentPrice.toSmallFormat()}</Text>
+                          </ArrowWithSuperText>
+                          <SizedBox width={4} />
+                          <Text type="secondary" size="small" weight={500}>{asset.maxPrice.toSmallFormat()}</Text>
+                        </Row>
+                    </RedCard>
+                  )
+            ))}
+          </Row>
+          <SizedBox height={20} />
+        </Column>
+      </Row>
     ),
     liquidity: `$${range.liquidity} / $${range.virtualLiquidity}`,
     periodFees: (() => {

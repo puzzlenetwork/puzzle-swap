@@ -5,7 +5,7 @@ import Text from "@components/Text";
 import { observer } from "mobx-react-lite";
 import Select from "@components/Select";
 import { useStores } from "@src/stores";
-import { useAllRanges } from "@screens/Ranges/AllRanges/AllRangesVm";
+import { useAllRangesVm } from "@screens/Ranges/AllRanges/AllRangesVm";
 import Card from "@components/Card";
 import SizedBox from "@components/SizedBox";
 import { Row } from "@components/Flex";
@@ -20,7 +20,7 @@ const Root = styled(Card)`
 `;
 
 const SearchAndFilterTab: React.FC<IProps> = () => {
-  const vm = useAllRanges();
+  const vm = useAllRangesVm();
   const { poolsStore } = useStores();
   return (
     <Root>

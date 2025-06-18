@@ -78,6 +78,7 @@ export default class RangesStore {
       sortBy: this.filter.sortBy,
       order: this.filter.order,
       search: this.searchValue,
+      minLiquidity: 0,
     };
   }
 

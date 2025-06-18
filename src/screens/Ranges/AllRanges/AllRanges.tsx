@@ -5,7 +5,7 @@ import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { Observer } from "mobx-react-lite";
 import { useStores } from "@stores";
-import { AllRangesProvider } from "@screens/Ranges/AllRanges/AllRangesVm";
+import { AllRangesProvider, useAllRangesVm } from "@screens/Ranges/AllRanges/AllRangesVm";
 import { Column, Row } from "@src/components/Flex";
 import { ROUTES } from "@src/constants";
 import Img from "@components/Img";
@@ -16,6 +16,7 @@ import Card from "@components/Card";
 import SearchAndFilterTab from "@screens/Ranges/AllRanges/SearchAndFilterTab";
 import RangesTable from "./RangesTable";
 import { themes } from "@src/themes/ThemeProvider";
+import Skeleton from "react-loading-skeleton";
 
 interface IProps { }
 
@@ -85,19 +86,10 @@ const Filters = styled.div<{ loggedIn?: boolean }>`
   }
 `;
 const AllRangesImpl: React.FC<IProps> = () => {
+  const vm = useAllRangesVm();
   const { poolsStore, accountStore } = useStores();
   const theme = useTheme();
   const navigate = useNavigate();
-  const stats = [
-    {
-      title: "Number Of Ranges",
-      value: "1000",
-    },
-    {
-      title: "Total Fact / Virtual Liquidity",
-      value: "$999,999.99 / $999,999.99 ",
-    },
-  ];
   const whiteText = { color: themes.lightTheme.colors.white };
   return (
     <Layout>
@@ -156,13 +148,26 @@ const AllRangesImpl: React.FC<IProps> = () => {
                   </Button>
                 </Card>
               )}
-              {stats.map(({ title, value }) => (
-                <Card paddingDesktop="16px 20px">
-                  <Text type="secondary">{title}</Text>
-                  <SizedBox height={4} />
-                  <Text size="big">{value}</Text>
-                </Card>
-              ))}
+              <Card paddingDesktop="16px 20px">
+                <Text type="secondary">Number Of Ranges</Text>
+                <SizedBox height={4} />
+                {vm.rangesInfo ? (
+                  <Text size="big">{vm.rangesInfo?.totalPools}</Text>
+                ) : (
+                  <Skeleton width={34} />
+                )}
+              </Card>
+              <Card paddingDesktop="16px 20px">
+                <Text type="secondary">Total Fact / Virtual Liquidity</Text>
+                <SizedBox height={4} />
+                {vm.rangesInfo ? (
+                  <Text size="big">
+                    ${ vm.rangesInfo?.totalLiquidity.toFormat(2) } / <Text type="secondary" size="big" style={{ display: "inline" }}>${ vm.rangesInfo?.totalVirtualLiquidity.toFormat(2) }</Text>
+                  </Text>
+                ) : (
+                  <Skeleton width={240} />
+                )}
+              </Card>
             </Stats>
             <SizedBox height={32} />
             <SearchAndFilterTab />
