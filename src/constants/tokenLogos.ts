@@ -174,7 +174,7 @@ const tokenLogos: Record<string, string> = {
   FTM: ftmLogo,
   CRV: crvLogo,
   TN: tnLogo,
-  "SHIB-WXG": shibLogo,
+  // "SHIB-WXG": shibLogo,
   UNI: uniLogo,
   LINK: linkLogo,
   SNSBT: snsbtLogo,
