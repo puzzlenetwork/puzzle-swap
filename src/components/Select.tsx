@@ -19,11 +19,13 @@ interface IProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
   selected?: IOption;
   kind?: TSelectKind;
   textSize?: TSelectTextSize;
+  fullWidth?: boolean;
   onSelect: (key: IOption) => void;
 }
 
-const Root = styled.div<{ focused?: boolean, kind?: TSelectKind, textSize?: TSelectTextSize }>`
+const Root = styled.div<{ focused?: boolean, kind?: TSelectKind, textSize?: TSelectTextSize, fullWidth?: boolean }>`
   display: flex;
+  box-sizing: border-box;
   ${({ kind, focused, theme }) => kind !== "text" && `
     padding: 8px 8px 8px 12px;
     border-radius: 10px;
@@ -32,8 +34,13 @@ const Root = styled.div<{ focused?: boolean, kind?: TSelectKind, textSize?: TSel
       ${focused ? theme.colors.blue500 : theme.colors.primary100};
   `}
 
+  ${({ fullWidth }) => fullWidth && `
+    width: 100%;
+    justify-content: space-between;
+  `}
+
   outline: none;
-  font-weight: 400;
+  font-weight: ${({ kind }) => (kind === "text" ? 500 : 400)};
   ${({ textSize }) => {
     switch (textSize) {
       case "medium":
@@ -43,7 +50,7 @@ const Root = styled.div<{ focused?: boolean, kind?: TSelectKind, textSize?: TSel
     }
   }};
   line-height: 24px;
-  color: ${({ kind, theme }) => kind === "text" ? theme.colors.blue500 : theme.colors.primary800};
+  color: ${({ kind, theme }) => kind === "text" ? theme.colors.primary650 : theme.colors.primary800};
   align-items: center;
   white-space: nowrap;
 
@@ -88,7 +95,7 @@ const Select: React.FC<IProps> = ({ options, selected, onSelect, ...rest }) => {
   return (
     <Tooltip
       config={{
-        placement: "bottom-start",
+        placement: "bottom-end",
         trigger: "click",
         onVisibleChange: setFocused,
       }}
@@ -110,6 +117,7 @@ const Select: React.FC<IProps> = ({ options, selected, onSelect, ...rest }) => {
           })}
         </Column>
       }
+      style={rest.fullWidth ? { width: "100%" } : {}}
     >
       <Root
         focused={focused}

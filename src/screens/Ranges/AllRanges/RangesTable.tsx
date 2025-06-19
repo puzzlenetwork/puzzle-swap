@@ -15,21 +15,15 @@ import RangeChart from "@components/RangeChart";
 import { Column, Row } from "@src/components/Flex";
 import Card from "@src/components/Card";
 import styled from "@emotion/styled";
-import ArrowWithSuperText from "./ArrowWithSuperText";
 import TokenTag from "@src/components/TokenTag";
 import BN from "@src/utils/BN";
 import Tooltip from "@components/Tooltip";
 import Img from "@src/components/Img";
+import TokenInRangePreview from "./TokenInRangePreview";
 
 
 const GrayCard = styled(Card)`
   background: ${({ theme }) => theme.colors.primary50};
-  border: none;
-  width: fit-content;
-`;
-
-const RedCard = styled(Card)`
-  background: ${({ theme }) => theme.colors.error100};
   border: none;
   width: fit-content;
 `;
@@ -68,67 +62,12 @@ const RangesTable: React.FC = () => {
           <SizedBox height={8} />
           <Row>
             {range.assets.map((asset, index) => (
-              <Tooltip key={index} config={{ placement: "top" }} content={(
-                <Column>
-                  <Row alignItems="center">
-                    <Img src={TOKENS_BY_ASSET_ID[asset.assetId]?.logo} alt={asset.name} width="20px" height="20px" style={{ borderRadius: "10px" }} />
-                    <SizedBox width={6} />
-                    <Text>{asset.name}</Text>
-                  </Row>
-                  <SizedBox height={8} />
-                  <Row>
-                    <Text type="secondary" size="small" weight={500} nowrap>Current Price:</Text>
-                    <SizedBox width={4} />
-                    <Text size="small" fitContent weight={500} nowrap>{asset.currentPrice.toSmallFormat()} {range.baseToken?.name}</Text>
-                  </Row>
-                  <Row alignItems="center">
-                    <Text type="secondary" size="small" weight={500} nowrap>Range:</Text>
-                    <SizedBox width={40} />
-                    <Text size="small" weight={500} nowrap>{asset.minPrice.toSmallFormat()} {range.baseToken?.name} <div style={{ display: "inline", fontSize: "1.4rem" }}>⟷</div> {asset.maxPrice.toSmallFormat()} {range.baseToken?.name}</Text>
-                  </Row>
-                </Column>
-              )}>
-                {asset.assetId === range.baseTokenId
-                  ? (
-                    <GrayCard paddingDesktop="12px 8px" paddingMobile="12px 8px" style={{ borderRadius: "6px", marginRight: "4px" }} key={index}>
-                      <Text>{asset.name}</Text>
-                      <SizedBox height={12} />
-                      <Text type="secondary" size="small" weight={500}>Base</Text>
-                    </GrayCard>
-                  )
-                  : (asset.currentPrice.lte(asset.maxPrice) && asset.currentPrice.gte(asset.minPrice))
-                    ? (
-                      <GrayCard paddingDesktop="12px 8px" paddingMobile="12px 8px" style={{ borderRadius: "6px", marginRight: "4px" }} key={index}>
-                        <Text>{asset.name}</Text>
-                        <SizedBox height={12} />
-                        <Row alignItems="center">
-                          <Text type="secondary" size="small" weight={500}>{asset.minPrice.toSmallFormat()}</Text>
-                          <SizedBox width={4} />
-                          <ArrowWithSuperText>
-                            <Text type="secondary" size="small" weight={500}>{asset.currentPrice.toSmallFormat()}</Text>
-                          </ArrowWithSuperText>
-                          <SizedBox width={4} />
-                          <Text type="secondary" size="small" weight={500}>{asset.maxPrice.toSmallFormat()}</Text>
-                        </Row>
-                      </GrayCard>
-                    )
-                    : (
-                      <RedCard paddingDesktop="12px 8px" paddingMobile="12px 8px" style={{ borderRadius: "6px", marginRight: "4px" }} key={index}>
-                        <Text>{asset.name}</Text>
-                        <SizedBox height={12} />
-                        <Row alignItems="center">
-                          <Text type="secondary" size="small" weight={500}>{asset.minPrice.toSmallFormat()}</Text>
-                          <SizedBox width={4} />
-                          <ArrowWithSuperText>
-                            <Text type="secondary" size="small" weight={500}>{asset.currentPrice.toSmallFormat()}</Text>
-                          </ArrowWithSuperText>
-                          <SizedBox width={4} />
-                          <Text type="secondary" size="small" weight={500}>{asset.maxPrice.toSmallFormat()}</Text>
-                        </Row>
-                      </RedCard>
-                    )
-                }
-            </Tooltip>
+              <TokenInRangePreview
+                key={index}
+                asset={asset}
+                baseToken={range.baseToken}
+                style={{ marginRight: 4 }}
+              />
             ))}
           </Row>
           <SizedBox height={20} />

@@ -10,6 +10,7 @@ import NFT from "./NFT";
 import Swap from "./Swap";
 import Invest from "./Invest";
 import Stake from "@components/MobileNavBar/Stake";
+import Ranges from "@components/MobileNavBar/Ranges";
 
 interface IProps {}
 
@@ -75,9 +76,9 @@ const MobileNavBar: React.FC<IProps> = () => {
       big: false,
     },
     {
-      name: "NFT",
-      link: "https://puzzlemarket.org/",
-      icon: <NFT />,
+      name: "Ranges",
+      link: ROUTES.RANGES,
+      icon: <Ranges active={isRoutesEquals(ROUTES.RANGES, location.pathname)} />,
       big: false,
     },
   ];
