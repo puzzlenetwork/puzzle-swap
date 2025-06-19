@@ -21,7 +21,6 @@ const Root = styled(Row)`
   }
 `;
 const TokenTags: React.FC<IProps> = ({ tokens, findBalanceByAssetId }) => {
-  console.log("TokenTags", tokens);
   const needToHide = tokens.length > 4;
   const tokensToDisplay = needToHide ? tokens.slice(0, 4) : tokens;
   const moreHiddenAmount = tokens.length - 4;

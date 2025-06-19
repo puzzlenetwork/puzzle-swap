@@ -45,6 +45,11 @@ const DepositToRangeImpl = observer(() => {
   if (range == null) {
     return <Loading />;
   }
+
+  const pathname = window.location.pathname;
+  const isDepositSingle = pathname.includes(depositOneTokenRoute);
+  const isDepositMultiple = pathname.includes(depositRoute) && !isDepositSingle;
+
   return (
     <Layout>
       <Root>
@@ -77,14 +82,11 @@ const DepositToRangeImpl = observer(() => {
           />
         </Card>
         <SizedBox height={24} />
-        {
-          window.location.pathname.includes(depositRoute)
-          && !window.location.pathname.includes(depositOneTokenRoute)
-          && (
+        {isDepositMultiple && (
             <DepositMultipleTokens />
           )
         }
-        {window.location.pathname.includes(depositOneTokenRoute) && (
+        {isDepositSingle && (
           <DepositSingleToken />
         )}
         <DialogNotification

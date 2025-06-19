@@ -98,23 +98,6 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
         "0.00"
       }`,
     },
-    // {
-    //   title: "Created via",
-    //   value: (
-    //     <TextButton
-    //       size="medium"
-    //       prefix={linkIcon}
-    //       kind="secondary"
-    //       onClick={() =>
-    //         window.open(
-    //           `${EXPLORER_URL}/transactions/${vm.range?.artefactOriginTransactionId}`
-    //         )
-    //       }
-    //     >
-    //       {vm.nftPaymentName}
-    //     </TextButton>
-    //   ),
-    // },
   ];
   const information = Array.from(
     vm.range?.isCustom

@@ -28,7 +28,7 @@ import Paper from "@screens/Paper";
 import LoginScreen from "./screens/LoginScreen";
 import { usePageTitle } from "./usePageTitle";
 import AllRanges from "@screens/Ranges/AllRanges";
-import InvestToRangeInterface from "@src/screens/Ranges/RangeDetails";
+import RangeDetails from "@src/screens/Ranges/RangeDetails";
 import DepositToRange from "./screens/Ranges/DepositToRange";
 import WithdrawFromRange from "./screens/Ranges/WithdrawFromRange";
 
@@ -106,7 +106,7 @@ const App: React.FC = () => {
 
         {/*Ranges block*/}
         <Route path={ROUTES.RANGES} element={<AllRanges />} />
-        <Route path={ROUTES.RANGES_INVEST} element={<InvestToRangeInterface />} />
+        <Route path={ROUTES.RANGES_INVEST} element={<RangeDetails />} />
         <Route path={ROUTES.RANGES_DEPOSIT} element={<DepositToRange />} />
         <Route path={ROUTES.RANGES_DEPOSIT_ONE_TOKEN} element={<DepositToRange />} />
         <Route path={ROUTES.RANGES_WITHDRAW} element={<WithdrawFromRange />} />

@@ -80,11 +80,11 @@ const InvestToRangeInterfaceImpl: React.FC = observer(() => {
         <RangeInformation />
         <Body>
           <MainBlock>
-            {/* <RightBlockMobile>
+            <RightBlockMobile>
               <Reward />
-              <MyPoolBalance />
+              <MyRangeBalance />
               <LPStaking />
-            </RightBlockMobile> */}
+            </RightBlockMobile>
             <TradesVolume />
             <RangeComposition />
           </MainBlock>

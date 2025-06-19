@@ -113,14 +113,10 @@ const MyRangeBalance: React.FC<IProps> = () => {
                     >
                       <Text size="medium">
                         <span>
-                          {address !== null
-                            ? value
-                            : "-"}
+                          {value}
                         </span>
                         <span style={{ color: "#8082C5" }}>
-                          {address !== null
-                            ? `($ ${usdn})`
-                            : "-"}
+                          (${usdn})
                         </span>
                       </Text>
                     </Row>

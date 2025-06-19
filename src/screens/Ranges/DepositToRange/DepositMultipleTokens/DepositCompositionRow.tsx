@@ -9,7 +9,7 @@ import styled from "@emotion/styled";
 
 interface IProps {
   availableAmount?: BN | null;
-  depositAmount: BN | null;
+  depositAmount: BN;
   share: BN;
   name: string;
   logo: string;
@@ -28,11 +28,7 @@ const DepositCompositionRow: React.FC<IProps> = ({
   logo,
 }) => {
   const available = availableAmount ? availableAmount.toFormat(4) : "-";
-  const deposit = depositAmount
-    ? depositAmount.isNaN()
-      ? "-"
-      : depositAmount.toFormat(4)
-    : "-";
+  const deposit = depositAmount.toFormat(4);
   const isLowMoney = availableAmount != null && availableAmount.eq(0);
   return (
     <Root className="gridRow" warning={isLowMoney}>

@@ -84,9 +84,10 @@ const MultipleTokensAddLiquidity: React.FC<IProps> = () => {
               balance.balance &&
               BN.formatUnits(balance?.balance, TOKENS_BY_ASSET_ID[token.assetId].decimals);
 
-            const depositAmount =
-              vm.tokensToDepositAmounts &&
-              vm.tokensToDepositAmounts[token.assetId];
+            const depositAmount = (
+              vm.tokensToDepositAmounts
+              && vm.tokensToDepositAmounts[token.assetId]
+            ) ?? BN.ZERO;
             return (
               <DepositCompositionRow
                 key={i}
