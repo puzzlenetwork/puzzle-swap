@@ -112,7 +112,7 @@ const PoolInformation: React.FC<IProps> = () => {
       value: (
         <Row style={{ gap: "8px" }}>
           {vm.LPRewardsToDisplay.map((item, index) => (
-            <TokenTag token={{ ...TOKENS_BY_ASSET_ID[item.assetId], decimals: 0 }} amount={new BN(item.amount)} key={index} />
+            <TokenTag token={{ ...TOKENS_BY_ASSET_ID[item.assetId], decimals: 0 }} amount={new BN(item.amount)} iconRight key={index} />
           ))}  
         </Row>
       ),

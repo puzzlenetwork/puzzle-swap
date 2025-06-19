@@ -242,6 +242,8 @@ export class Range {
   totals: Record<string, any>;
   charts?: IHistory[];
 
+  baseToken: RangeAsset | undefined;
+
   constructor(params: IRangeParamsResponse) {
     this.address = params.address;
     this.artefactOriginTransactionId = params.artefact_origin_transaction_id;
@@ -278,6 +280,8 @@ export class Range {
     }, {} as PeriodFees) : {};
     this.totals = params.totals;
     this.charts = params.charts;
+
+    this.baseToken = this.assets.find((asset) => asset.assetId === this.baseTokenId);
     makeAutoObservable(this);
   }
 

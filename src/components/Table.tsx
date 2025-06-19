@@ -32,6 +32,7 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
       color: ${({ theme }) => `${theme.colors.primary650}`};
       width: 100%;
       transition: 0.4s;
+      background: ${({ theme }) => `${theme.colors.white}`};
 
       :hover {
         ${({ hovered }) => hovered && "cursor: pointer;"};
