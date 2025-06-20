@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useMemo } from "react";
 import Layout from "@components/Layout";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { Observer } from "mobx-react-lite";
 import { useStores } from "@stores";
-import { AllRangesProvider } from "@screens/Ranges/AllRanges/AllRangesVm";
+import { AllRangesProvider, useAllRangesVm } from "@screens/Ranges/AllRanges/AllRangesVm";
 import { Column, Row } from "@src/components/Flex";
 import { ROUTES } from "@src/constants";
 import Img from "@components/Img";
@@ -13,9 +13,11 @@ import Button from "@components/Button";
 import { useTheme } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
 import Card from "@components/Card";
-import Input from "@components/Input";
 import SearchAndFilterTab from "@screens/Ranges/AllRanges/SearchAndFilterTab";
 import RangesTable from "./RangesTable";
+import { themes } from "@src/themes/ThemeProvider";
+import Skeleton from "react-loading-skeleton";
+import useWindowSize from "@src/hooks/useWindowSize";
 
 interface IProps { }
 
@@ -59,6 +61,16 @@ const Root = styled.div<{
     liquiditySort ? "scale(1)" : "scale(1, -1)"};
   }
 `;
+const AboutRanges = styled(Column)`
+  width: 100%;
+
+  align-items: center;
+  justify-content: space-between;
+
+  @media (min-width: 880px) {
+    flex-direction: row;
+  }
+`;
 const Subtitle = styled(Text)`
   @media (min-width: 880px) {
     max-width: 560px;
@@ -74,30 +86,14 @@ const Stats = styled.div<{ loggedIn?: boolean }>`
     loggedIn ? "1fr 1fr 1fr" : "1fr 1fr"};
   }
 `;
-const Filters = styled.div<{ loggedIn?: boolean }>`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-
-  @media (min-width: 880px) {
-    grid-template-columns: ${({ loggedIn }) =>
-    loggedIn ? "1fr 1fr 1fr" : "1fr 1fr"};
-  }
-`;
 const AllRangesImpl: React.FC<IProps> = () => {
+  const vm = useAllRangesVm();
   const { poolsStore, accountStore } = useStores();
   const theme = useTheme();
   const navigate = useNavigate();
-  const stats = [
-    {
-      title: "Number Of Ranges",
-      value: "1000",
-    },
-    {
-      title: "Total Fact / Virtual Liquidity",
-      value: "$999,999.99 / $999,999.99 ",
-    },
-  ];
+  const { width } = useWindowSize();
+  const isMobile = useMemo(() => !!(width && width < 880), [width]);
+  const whiteText = { color: themes.lightTheme.colors.white };
   return (
     <Layout>
       <Observer>
@@ -107,14 +103,17 @@ const AllRangesImpl: React.FC<IProps> = () => {
             liquiditySort={poolsStore.sortLiquidity}
             balanceSort={poolsStore.sortBalance}
           >
-            <Row justifyContent="space-between" alignItems="center">
+            <AboutRanges>
               <Column>
-                <Text weight={500} size="large">
-                  Explore and Manage
-                  <a style={{ color: "#7075E9", paddingLeft: 4 }}>
+                <Row style={{ flexWrap: "wrap" }}>
+                  <Text weight={500} size="large" fitContent>
+                    Explore and Manage
+                  </Text>
+                  <SizedBox width={4} />
+                  <Text weight={500} size="large" fitContent style={{ color: "#7075E9" }}>
                     Puzzle Ranges
-                  </a>
-                </Text>
+                  </Text>
+                </Row>
                 <SizedBox height={4} />
                 <Subtitle size="medium" fitContent>
                   View your active liquidity ranges or discover opportunities
@@ -124,12 +123,13 @@ const AllRangesImpl: React.FC<IProps> = () => {
                   provide concentrated liquidity in the Puzzle ecosystem.
                 </Subtitle>
               </Column>
-              <Button onClick={() => navigate(`${ROUTES.RANGES_CREATE}`)}>
+              <SizedBox height={24} />
+              <Button fixed={ isMobile } onClick={() => navigate(`${ROUTES.RANGES_CREATE}`)}>
                 <Img src={theme.images.icons.add} alt="add" />
                 <SizedBox width={12} />
                 Create a range
               </Button>
-            </Row>
+            </AboutRanges>
             <SizedBox height={32} />
             <Stats loggedIn={accountStore.address != null}>
               {accountStore.address != null && (
@@ -143,7 +143,7 @@ const AllRangesImpl: React.FC<IProps> = () => {
                   <Column>
                     <Text type="secondary">My Investment Balance</Text>
                     <SizedBox height={4} />
-                    <Text size="big" type="light">
+                    <Text size="big" style={whiteText}>
                       $3167.23
                     </Text>
                   </Column>
@@ -155,13 +155,26 @@ const AllRangesImpl: React.FC<IProps> = () => {
                   </Button>
                 </Card>
               )}
-              {stats.map(({ title, value }) => (
-                <Card paddingDesktop="16px 20px">
-                  <Text type="secondary">{title}</Text>
-                  <SizedBox height={4} />
-                  <Text size="big">{value}</Text>
-                </Card>
-              ))}
+              <Card paddingDesktop="16px 20px">
+                <Text type="secondary">Number Of Ranges</Text>
+                <SizedBox height={4} />
+                {vm.rangesInfo ? (
+                  <Text size="big">{vm.rangesInfo?.totalPools}</Text>
+                ) : (
+                  <Skeleton width={34} />
+                )}
+              </Card>
+              <Card paddingDesktop="16px 20px">
+                <Text type="secondary">Total Fact / Virtual Liquidity</Text>
+                <SizedBox height={4} />
+                {vm.rangesInfo ? (
+                  <Text size="big">
+                    ${ vm.rangesInfo?.totalLiquidity.toFormat(2) } / <Text type="secondary" size="big" style={{ display: "inline" }}>${ vm.rangesInfo?.totalVirtualLiquidity.toFormat(2) }</Text>
+                  </Text>
+                ) : (
+                  <Skeleton width={240} />
+                )}
+              </Card>
             </Stats>
             <SizedBox height={32} />
             <SearchAndFilterTab />

@@ -469,7 +469,7 @@ class InvestToPoolInterfaceVM {
         },
       })
       .then((txId) => {
-        notificationStore.notify(`Your have unstaked index tokem`, {
+        notificationStore.notify(`You have unstaked index token`, {
           type: "success",
           title: `Success`,
           link: `${EXPLORER_URL}/transactions/${txId}`,

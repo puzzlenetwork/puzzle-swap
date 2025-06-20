@@ -3,6 +3,8 @@ import rangesBalanceBackground from "@src/assets/rangesBalanceBackground.svg";
 
 const Card = styled.div<{
   maxWidth?: number;
+  fitContent?: boolean;
+  flexGrow?: number;
   paddingDesktop?: string;
   paddingMobile?: string;
   justifyContent?:
@@ -27,12 +29,13 @@ const Card = styled.div<{
 }>`
   display: flex;
   flex-direction: ${({ flexDirection }) => flexDirection ?? "column"};
+  flex-grow: ${({ flexGrow }) => flexGrow ?? 0};
   justify-content: ${({ justifyContent }) => justifyContent ?? "default"};
   align-items: ${({ alignItems }) => alignItems ?? "default"};
-  max-width: ${({ maxWidth }) => `${maxWidth}px` ?? "100%"};
+  max-width: ${({ maxWidth }) => maxWidth ? `${maxWidth}px` : "100%"};
   ${({ bordered, theme }) =>
     bordered && `border: 1px solid ${theme.colors.primary100};`};
-  width: 100%;
+  width: ${({ fitContent }) => (fitContent ? "fit-content" : "100%")};
   border: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
   border-radius: 16px;
   box-sizing: border-box;

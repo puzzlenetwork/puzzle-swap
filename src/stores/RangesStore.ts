@@ -15,6 +15,17 @@ export default class RangesStore {
 
   // Ranges data
   ranges: Range[] = [];
+  setRanges = (ranges: Range[]) => (this.ranges = ranges);
+  updateRange = (range: Range) => {
+    const index = this.ranges.findIndex((r) => r.address === range.address);
+    if (index !== -1) {
+      this.ranges[index] = range;
+    } else {
+      this.ranges.push(range);
+    }
+  }
+  getRangeByAddress = (address: string) => this.ranges.find((range) => range.address === address);
+
   loading: boolean = false;
 
   // Pagination state
@@ -67,6 +78,7 @@ export default class RangesStore {
       sortBy: this.filter.sortBy,
       order: this.filter.order,
       search: this.searchValue,
+      minLiquidity: 0,
     };
   }
 

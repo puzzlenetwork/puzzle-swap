@@ -1,28 +1,47 @@
+import nodeService from "@src/services/nodeService";
+import BN from "@src/utils/BN";
+import { IHistory } from "@src/utils/types";
 import { makeAutoObservable } from "mobx";
 
-export interface IReward {
+export interface IRangeAssetResponse {
+  asset_id: string,
+  balance: number,
+  balance_usd: number,
+  current_price: number,
+  extra_earned: number,
+  fact_balance: number,
+  fact_balance_usd: number,
+  fees_earned: number,
+  max_price: number,
+  min_price: number,
+  name: string,
+  real_balance: number,
+  share: number
+}
+
+export interface IRewardResponse {
   asset_id: string;
   name: string;
   amount: number;
   amount_usd: number;
 }
 
-export interface IProviderStaked {
+export interface IProviderStakedResponse {
   address: string;
   index_staked: number;
   share: number;
   claimed_usd: number;
   unclaimed_usd: number;
-  rewards: IReward[];
+  rewards: IRewardResponse[];
 }
 
-export interface IStakedProviders {
+export interface IStakedProvidersResponse {
   total_index_staked: number;
-  providers_staked: IProviderStaked[];
+  providers_staked: IProviderStakedResponse[];
   total_staked_providers: number;
 }
 
-export interface IStats {
+export interface IStatsResponse {
   time_range: string;
   time_frame: string;
   apr: number;
@@ -36,17 +55,17 @@ export interface IStats {
   volume: number;
 }
 
-export interface IPeriodFees {
+export interface IPeriodFeesResponse {
   [assetId: string]: {
     fees_earned: number;
     extra_earned: number;
   };
 }
 
-export interface IRangeParams {
+export interface IRangeParamsResponse {
   address: string;
   artefact_origin_transaction_id: string;
-  assets: any[];
+  assets: IRangeAssetResponse[];
   created_at: number;
   domain: string;
   fee_token_id: string;
@@ -70,17 +89,129 @@ export interface IRangeParams {
   nominal_asset: string;
   static_KMult: number;
   virtual_liquidity: number;
-  extra_earned: any[];
-  staked_providers: IStakedProviders;
-  stats: IStats;
-  period_fees: IPeriodFees;
+  staked_providers?: IStakedProvidersResponse;
+  base_token_price: number;
+  stats: IStatsResponse;
+  period_fees: IPeriodFeesResponse;
   totals: Record<string, any>;
+  charts?: IHistory[];
+}
+
+export class RangeAsset {
+  assetId: string;
+  balance: BN;
+  balanceUsd: BN;
+  currentPrice: BN;
+  extraEarned: BN;
+  factBalance: BN;
+  factBalanceUsd: BN;
+  feesEarned: BN;
+  maxPrice: BN;
+  minPrice: BN;
+  name: string;
+  realBalance: BN;
+  share: BN;
+
+  constructor(params: IRangeAssetResponse) {
+    this.assetId = params.asset_id;
+    this.balance = new BN(params.balance);
+    this.balanceUsd = new BN(params.balance_usd);
+    this.currentPrice = new BN(params.current_price);
+    this.extraEarned = new BN(params.extra_earned);
+    this.factBalance = new BN(params.fact_balance);
+    this.factBalanceUsd = new BN(params.fact_balance_usd);
+    this.feesEarned = new BN(params.fees_earned);
+    this.maxPrice = new BN(params.max_price);
+    this.minPrice = new BN(params.min_price);
+    this.name = params.name;
+    this.realBalance = new BN(params.real_balance);
+    this.share = new BN(params.share);
+  }
+}
+
+export class Reward {
+  assetId: string;
+  name: string;
+  amount: BN;
+  amountUsd: BN;
+
+  constructor(params: IRewardResponse) {
+    this.assetId = params.asset_id;
+    this.name = params.name;
+    this.amount = new BN(params.amount);
+    this.amountUsd = new BN(params.amount_usd);
+  }
+}
+
+export class ProviderStaked {
+  address: string;
+  indexStaked: BN;
+  share: BN;
+  claimedUsd: BN;
+  unclaimedUsd: BN;
+  rewards: Reward[];
+
+  constructor(params: IProviderStakedResponse) {
+    this.address = params.address;
+    this.indexStaked = new BN(params.index_staked);
+    this.share = new BN(params.share);
+    this.claimedUsd = new BN(params.claimed_usd);
+    this.unclaimedUsd = new BN(params.unclaimed_usd);
+    this.rewards = params.rewards?.map((reward) => new Reward(reward)) ?? [];
+  }
+}
+
+export class StakedProviders {
+  totalIndexStaked: BN;
+  providersStaked: ProviderStaked[];
+  totalStakedProviders: BN;
+
+  constructor(params: IStakedProvidersResponse) {
+    this.totalIndexStaked = new BN(params.total_index_staked);
+    this.providersStaked = params.providers_staked?.map((provider) => new ProviderStaked(provider)) ?? [];
+    this.totalStakedProviders = new BN(params.total_staked_providers);
+  }
+}
+
+export class RangeStats {
+  timeRange: string;
+  timeFrame: string;
+  apr: BN;
+  averageLiquidity: BN;
+  average_virtualLiquidity: BN;
+  lpPrice: BN;
+  claimed: BN;
+  poolFees: BN;
+  ownerFees: BN;
+  protocolFees: BN;
+  volume: BN;
+
+  constructor(params: IStatsResponse) {
+    this.timeRange = params.time_range;
+    this.timeFrame = params.time_frame;
+    this.apr = new BN(params.apr);
+    this.averageLiquidity = new BN(params.average_liquidity);
+    this.average_virtualLiquidity = new BN(params.average_virtual_liquidity);
+    this.lpPrice = new BN(params.lp_price);
+    this.claimed = new BN(params.claimed);
+    this.poolFees = new BN(params.pool_fees);
+    this.ownerFees = new BN(params.owner_fees);
+    this.protocolFees = new BN(params.protocol_fees);
+    this.volume = new BN(params.volume);
+  }
+}
+
+export class PeriodFees {
+  [assetId: string]: {
+    feesEarned: number;
+    extraEarned: number;
+  };
 }
 
 export class Range {
   address: string;
   artefactOriginTransactionId: string;
-  assets: any[];
+  assets: RangeAsset[];
   createdAt: number;
   domain: string;
   feeTokenId: string;
@@ -89,31 +220,34 @@ export class Range {
   lastProcessedTxId: string;
   lastSavedTime: number;
   layer2Address: string;
-  liquidity: number;
+  liquidity: BN;
   logo: string;
-  lpTokenAmount: number;
+  lpTokenAmount: BN;
   lpTokenId: string;
   mode: string;
   owner: string;
   rebalances: any[];
-  swapFee: number;
+  swapFee: BN;
   title: string;
   version: string;
   baseTokenId: string;
   datastorage: Record<string, number | string>;
   nominalAsset: string;
-  staticKMult: number;
-  virtualLiquidity: number;
-  extraEarned: any[];
-  stakedProviders: IStakedProviders;
-  stats: IStats;
-  periodFees: IPeriodFees;
+  staticKMult: BN;
+  virtualLiquidity: BN;
+  stakedProviders?: StakedProviders;
+  baseTokenPrice: BN;
+  stats: RangeStats;
+  periodFees: PeriodFees;
   totals: Record<string, any>;
+  charts?: IHistory[];
 
-  constructor(params: IRangeParams) {
+  baseToken: RangeAsset | undefined;
+
+  constructor(params: IRangeParamsResponse) {
     this.address = params.address;
     this.artefactOriginTransactionId = params.artefact_origin_transaction_id;
-    this.assets = params.assets;
+    this.assets = params.assets.map((asset) => new RangeAsset(asset));
     this.createdAt = params.created_at;
     this.domain = params.domain;
     this.feeTokenId = params.fee_token_id;
@@ -122,26 +256,32 @@ export class Range {
     this.lastProcessedTxId = params.last_processed_txId;
     this.lastSavedTime = params.last_saved_time;
     this.layer2Address = params.layer_2_address;
-    this.liquidity = params.liquidity;
+    this.liquidity = new BN(params.liquidity);
     this.logo = params.logo;
-    this.lpTokenAmount = params.lp_token_amount;
+    this.lpTokenAmount = new BN(params.lp_token_amount);
     this.lpTokenId = params.lp_token_id;
     this.mode = params.mode;
     this.owner = params.owner;
     this.rebalances = params.rebalances;
-    this.swapFee = params.swap_fee;
+    this.swapFee = new BN(params.swap_fee);
     this.title = params.title;
     this.version = params.version;
     this.baseTokenId = params.base_token_id;
     this.datastorage = params.datastorage;
     this.nominalAsset = params.nominal_asset;
-    this.staticKMult = params.static_KMult;
-    this.virtualLiquidity = params.virtual_liquidity;
-    this.extraEarned = params.extra_earned;
-    this.stakedProviders = params.staked_providers;
-    this.stats = params.stats;
-    this.periodFees = params.period_fees;
+    this.staticKMult = new BN(params.static_KMult);
+    this.virtualLiquidity = new BN(params.virtual_liquidity);
+    this.stakedProviders = params?.staked_providers ? new StakedProviders(params.staked_providers) : undefined;
+    this.baseTokenPrice = new BN(params.base_token_price);
+    this.stats = new RangeStats(params.stats);
+    this.periodFees = params.period_fees? Object.entries(params.period_fees).reduce((acc, [assetId, { fees_earned, extra_earned }]) => {
+      acc[assetId] = { feesEarned: fees_earned, extraEarned: extra_earned };
+      return acc;
+    }, {} as PeriodFees) : {};
     this.totals = params.totals;
+    this.charts = params.charts;
+
+    this.baseToken = this.assets.find((asset) => asset.assetId === this.baseTokenId);
     makeAutoObservable(this);
   }
 
@@ -155,4 +295,121 @@ export class Range {
   }
 
   // Добавляйте методы по необходимости
-} 
+
+  get indexTokenRate(): BN {
+    if (!this.lpTokenAmount)
+      return BN.ZERO;
+    return new BN(this.liquidity).div(this.lpTokenAmount);
+  }
+
+  get assetsWithLeverage() {
+    const withLeverage = this.assets.map(({ balance, factBalance, ...rest }) => ({
+      ...rest,
+      leverage: factBalance.div(balance),
+      balance,
+      factBalance,
+    }));
+
+    const maxLeverage = withLeverage.reduce((acc, { leverage }) => BN.max(acc, leverage), BN.ZERO);
+
+    return withLeverage.map((asset) => ({
+      ...asset,
+      leverage: asset.leverage.times(100).toNumber(),
+      relativeLeverage: asset.leverage.div(maxLeverage).times(100).toNumber(),
+    }));
+  }
+
+  get totalAssetsInRange() {
+    return this.assets.reduce((acc, { balance }) => acc.plus(balance), BN.ZERO);
+  }
+
+  contractKeysRequest = (keys: string[] | string) =>
+    nodeService.nodeKeysRequest(this.address, keys);
+}
+
+export interface ILPDataAssetResponse {
+  asset_id: string;
+  name: string;
+  earned_amount: number;
+  earned_amount_usd: number;
+  provided_amount: number;
+  provided_amount_usd: number;
+}
+
+export interface ILPDataResponse {
+  provider_address: string;
+  pool_address: string;
+  pool_mode: string;
+  index_staked: number;
+  share: number;
+  provided_usd: number;
+  claimed_usd: number;
+  unclaimed_usd: number;
+  assets_data: ILPDataAssetResponse[];
+}
+
+export class LPDataAsset {
+  assetId: string;
+  name: string;
+  earnedAmount: BN;
+  earnedAmountUsd: BN;
+  providedAmount: BN;
+  providedAmountUsd: BN;
+  constructor(params: ILPDataAssetResponse) {
+    this.assetId = params.asset_id;
+    this.name = params.name;
+    this.earnedAmount = new BN(params.earned_amount);
+    this.earnedAmountUsd = new BN(params.earned_amount_usd);
+    this.providedAmount = new BN(params.provided_amount);
+    this.providedAmountUsd = new BN(params.provided_amount_usd);
+  }
+}
+
+export class LPData {
+  providerAddress: string;
+  poolAddress: string;
+  poolMode: string;
+  indexStaked: BN;
+  share: BN;
+  providedUsd: BN;
+  claimedUsd: BN;
+  unclaimedUsd: BN;
+  assetsData: LPDataAsset[];
+  constructor(params: ILPDataResponse) {
+    this.providerAddress = params.provider_address;
+    this.poolAddress = params.pool_address;
+    this.poolMode = params.pool_mode;
+    this.indexStaked = new BN(params.index_staked);
+    this.share = new BN(params.share);
+    this.providedUsd = new BN(params.provided_usd);
+    this.claimedUsd = new BN(params.claimed_usd);
+    this.unclaimedUsd = new BN(params.unclaimed_usd);
+    this.assetsData = params.assets_data.map((asset) => new LPDataAsset(asset));
+  }
+}
+
+export interface IGlobalRangesInfoResponse {
+  pool_mode: string;
+  total_pools: number;
+  total_volume: number;
+  total_liquidity: number;
+  total_virtual_liquidity: number;
+  total_pool_fees: number;
+}
+
+export class GlobalRangesInfo {
+  poolMode: string;
+  totalPools: number;
+  totalVolume: BN;
+  totalLiquidity: BN;
+  totalVirtualLiquidity: BN;
+  totalPoolFees: BN;
+  constructor(params: IGlobalRangesInfoResponse) {
+    this.poolMode = params.pool_mode;
+    this.totalPools = params.total_pools;
+    this.totalVolume = new BN(params.total_volume);
+    this.totalLiquidity = new BN(params.total_liquidity);
+    this.totalVirtualLiquidity = new BN(params.total_virtual_liquidity);
+    this.totalPoolFees = new BN(params.total_pool_fees);
+  }
+}
