@@ -10,7 +10,7 @@ import Divider from "@components/Divider";
 import Button from "@components/Button";
 import SizedBox from "@components/SizedBox";
 import { useStores } from "@stores";
-import { useInvestToRangeInterfaceVM } from "./RangeDetailsVM";
+import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
 import TextButton from "@components/TextButton";
 import linkIcon from "@src/assets/icons/link.svg";
 import copy from "copy-to-clipboard";
@@ -46,7 +46,7 @@ const StyledMoreIcon = styled(MoreIcon)`
 
 const TransparentDetailsBtn: React.FC<IProps> = () => {
   const { notificationStore } = useStores();
-  const vm = useInvestToRangeInterfaceVM();
+  const vm = useRangeDetailsInterfaceVM();
   const [isOpenedDetails, setOpenedDetails] = useState(false);
   const [isOpenedShare, setOpenedShare] = useState(false);
   const puzzleRangeInformation = [

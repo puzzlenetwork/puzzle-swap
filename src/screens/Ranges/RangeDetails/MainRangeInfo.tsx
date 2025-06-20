@@ -5,25 +5,24 @@ import link from "@src/assets/icons/whiteLink.svg";
 import Text from "@components/Text";
 import { Column, Row } from "@src/components/Flex";
 import { observer } from "mobx-react-lite";
-import { useInvestToRangeInterfaceVM } from "./RangeDetailsVM";
+import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
 import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
 import TransparentDetailsBtn from "./RangeDetailsBtn";
 import { useNavigate } from "react-router-dom";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import TextButton from "@components/TextButton";
-import { ROUTES } from "@src/constants";
-import { useStores } from "@stores";
 import { themes } from "@src/themes/ThemeProvider";
-import RangeChart from "@src/components/RangeChart";
-import Card from "@src/components/Card";
 
-interface IProps { }
+interface IProps {
+  isMobile?: boolean;
+}
 
 const ShortInfo = styled.div<{ pic: string }>`
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  width: 100%;
+  box-sizing: border-box;
   ${({ pic }) => pic && `background: url(${pic});`};
   background-position: center;
   border-radius: 16px;
@@ -47,7 +46,6 @@ const Links = styled.div<{ isCustom?: boolean }>`
 `;
 const Hat = styled.div`
   display: flex;
-  flex-direction: row-reverse;
   width: 100%;
   justify-content: space-between;
   @media (min-width: 880px) {
@@ -66,86 +64,68 @@ const Title = styled(Text)`
   }
 `;
 
-const AdaptiveButton = styled(Button)`
-    width: fit-content;
-    @media (max-width: 880px) {
-      width: 100%;
-    }
-`
-
 const WSCAN_EXPLORER_URL = "https://wscan.io/";
 
-const MainRangeInfo: React.FC<IProps> = () => {
-  const vm = useInvestToRangeInterfaceVM();
-  const { accountStore } = useStores();
+const MainRangeInfo: React.FC<IProps> = ({ isMobile }) => {
+  const vm = useRangeDetailsInterfaceVM();
   const navigate = useNavigate();
   const handleSmartContractClick = () =>
     window.open(`${WSCAN_EXPLORER_URL}${vm.range!.address}`);
-  const completeRangeInitialization = () => {
-    vm.prepareCompleteRangeInitialization();
-    navigate(ROUTES.RANGES_CREATE);
-  };
   const whiteText = { color: themes.lightTheme.colors.white };
   return (
-    <Row>
-      <ShortInfo pic={bg}>
-        <Column crossAxisSize="max">
-          <Hat>
-            <Column>
-              <Title size="large" weight={500} style={whiteText}>
-                Range {vm.range!.title}
-              </Title>
-              <SizedBox height={4} />
-              <Text type="purple300" size="medium">
-                Trade fees: {vm.range!.swapFee.toFormat(2)}%
-              </Text>
-            </Column>
-          </Hat>
-          <Links isCustom={vm.range!.isCustom}>
-            <Column>
-              <Text type="purple300" size="medium">
-                Smart Contract
-              </Text>
-              <TextButton prefix={link} onClick={handleSmartContractClick}>
-                {centerEllipsis(vm.range?.address ?? "", 8)}
-              </TextButton>
-            </Column>
-            <Column>
-              <Text type="purple300" size="medium" nowrap>
-                Range Owner
-              </Text>
-              <Text type="light" size="medium">
-                <TextButton
-                  prefix={link}
-                  onClick={() =>
-                    window.open(`${WSCAN_EXPLORER_URL}${vm.range?.owner}`)
-                  }
-                >
-                  {centerEllipsis(vm.range?.owner ?? "", 8)}
-                </TextButton>
-              </Text>
-              <SizedBox height={16} />
-            </Column>
-            <SizedBox height={16} />
-            <Row justifyContent="flex-end">
-              <AdaptiveButton
-                fixed
-                size="medium"
-                style={{ marginRight: 8 }}
-                onClick={() => navigate(`/range/${vm.range!.address}`)}
+    <ShortInfo pic={bg}>
+      <Column crossAxisSize="max">
+        <Hat>
+          <Column>
+            <Title size="large" weight={500} style={whiteText}>
+              Range {vm.range!.title}
+            </Title>
+            <SizedBox height={4} />
+            <Text type="purple300" size="medium">
+              Trade fees: {vm.range!.swapFee.toFormat(2)}%
+            </Text>
+          </Column>
+        </Hat>
+        <Links isCustom={vm.range!.isCustom}>
+          <Column>
+            <Text type="purple300" size="medium">
+              Smart Contract
+            </Text>
+            <TextButton prefix={link} onClick={handleSmartContractClick}>
+              {centerEllipsis(vm.range?.address ?? "", 8)}
+            </TextButton>
+          </Column>
+          <SizedBox height={16} />
+          <Column>
+            <Text type="purple300" size="medium" nowrap>
+              Range Owner
+            </Text>
+            <Text type="light" size="medium">
+              <TextButton
+                prefix={link}
+                onClick={() =>
+                  window.open(`${WSCAN_EXPLORER_URL}${vm.range?.owner}`)
+                }
               >
-                Trade
-              </AdaptiveButton>
-              <TransparentDetailsBtn />
-            </Row>
-          </Links>
-        </Column>
-      </ShortInfo>
-      <SizedBox width={20} />
-      <Card style={{ width: "auto", padding: "16px" }}>
-        <RangeChart range={vm.range!} size={182} />
-      </Card>
-    </Row>
+                {centerEllipsis(vm.range?.owner ?? "", 8)}
+              </TextButton>
+            </Text>
+          </Column>
+          <SizedBox height={20} />
+          <Row justifyContent="flex-end">
+            <Button
+              fixed={isMobile}
+              size="medium"
+              style={{ marginRight: 8 }}
+              onClick={() => navigate(`/range/${vm.range!.address}`)}
+            >
+              Trade
+            </Button>
+            <TransparentDetailsBtn />
+          </Row>
+        </Links>
+      </Column>
+    </ShortInfo>
   );
 };
 export default observer(MainRangeInfo);

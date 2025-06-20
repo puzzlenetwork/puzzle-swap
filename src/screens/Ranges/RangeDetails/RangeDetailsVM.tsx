@@ -10,28 +10,28 @@ import { EXPLORER_URL, NODE_URL, TOKENS_BY_ASSET_ID } from "@src/constants";
 import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
 import dayjs, { ManipulateType } from "dayjs";
 
-const ctx = React.createContext<InvestToRangeInterfaceVM | null>(null);
+const ctx = React.createContext<RangeDetailsInterfaceVM | null>(null);
 
 interface IProps {
   children: React.ReactNode;
   rangeAddress: string;
 }
 
-export const InvestToRangeInterfaceVMProvider: React.FC<IProps> = ({
+export const RangeDetailsInterfaceVMProvider: React.FC<IProps> = ({
   rangeAddress,
   children,
 }) => {
   const rootStore = useStores();
   const store = useMemo(
-    () => new InvestToRangeInterfaceVM(rootStore, rangeAddress),
+    () => new RangeDetailsInterfaceVM(rootStore, rangeAddress),
     [rootStore, rangeAddress]
   );
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
 
-export const useInvestToRangeInterfaceVM = () => useVM(ctx);
+export const useRangeDetailsInterfaceVM = () => useVM(ctx);
 
-class InvestToRangeInterfaceVM {
+class RangeDetailsInterfaceVM {
   private rootStore: RootStore;
 
   private rangeAddress: string;
@@ -139,25 +139,6 @@ class InvestToRangeInterfaceVM {
       }
     )
   }
-
-  prepareCompleteRangeInitialization = () => {
-    const assets = this.range!.assets.map((t) => ({
-      assetId: t.assetId,
-      share: t.share,
-    }));
-    const state = {
-      assets,
-      logo: this.range!.logo,
-      title: this.range!.title,
-      domain: this.range!.domain,
-      step: 3,
-      fileName: "–",
-      fileSize: "–",
-      maxStep: 3,
-      swapFee: this.range!.swapFee,
-    };
-    localStorage.setItem("puzzle-custom-range", JSON.stringify(state));
-  };
 
   syncIndexTokenInfo = async () => {
     const { address } = this.rootStore.accountStore;

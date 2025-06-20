@@ -3,13 +3,12 @@ import React, { useMemo } from "react";
 import Text from "@components/Text";
 import Card from "@components/Card";
 import SizedBox from "@components/SizedBox";
-import { useInvestToRangeInterfaceVM } from "./RangeDetailsVM";
+import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
 import { observer } from "mobx-react-lite";
 import { Line, LineChart, Tooltip, XAxis } from "recharts";
 import useWindowSize from "@src/hooks/useWindowSize";
 import dayjs from "dayjs";
 import BN from "@src/utils/BN";
-import poolsService from "@src/services/poolsService";
 import { Row } from "@src/components/Flex";
 import Tabs from "@src/components/Tabs";
 import Select from "@src/components/Select";
@@ -21,7 +20,7 @@ const Root = styled.div<{ disabled?: boolean }>`
   flex-direction: column;
   padding-top: 24px;
   transition: 0.4s;
-  height: ${({ disabled }) => (disabled ? 0 : 320)}px;
+  height: ${({ disabled }) => (disabled ? 0 : "auto")};
   overflow: hidden;
 
   .recharts-tooltip-item-name,
@@ -50,14 +49,15 @@ const calcChartWidth = (screenWidth: number) => {
     case screenWidth <= 1160 + 32 && screenWidth >= 880:
       return ((screenWidth - 32 - 40) / 3) * 2 - 50;
     case screenWidth < 880:
-      return screenWidth - 82;
+      return screenWidth - 66; // 16 * 4 + 2 ((padding) + 2 (border))
   }
 };
 
-const TradesVolume: React.FC<IProps> = () => {
-  const vm = useInvestToRangeInterfaceVM();
+const RangeCharts: React.FC<IProps> = () => {
+  const vm = useRangeDetailsInterfaceVM();
   const { width: screenWidth } = useWindowSize();
   const chartWidth = screenWidth ? calcChartWidth(screenWidth) : 0;
+  const isMobile = !!(screenWidth && screenWidth < 880);
 
   const activeTab = useMemo(() => {
     switch (vm.chartDataKey) {
@@ -108,29 +108,45 @@ const TradesVolume: React.FC<IProps> = () => {
         vm.chartData.length < 2
       }
     >
-      <Row>
+      <Row style={isMobile ? { flexDirection: "column", gap: 12 } : { }}>
         <Tabs
           tabs={[
             { name: "Trades volume" },
             { name: "Fees Earned" },
             { name: "Total Liquidity" },
           ]}
+          textStyle={{ textWrap: "nowrap" }}
           activeTab={activeTab}
           setActive={handleChangeTab}
           style={{ borderBottom: "none" }}
         />
-        <Select
-          kind="text"
-          textSize="medium"
-          options={timeRanges}
-          selected={timeRanges.find((v) => v.key === "all")}
-          onSelect={(v) => {
-            
-          }}
-        />
+        {isMobile ? (
+          <Card flexDirection="row" alignItems="center" paddingMobile="8px 12px" flexGrow={1} style={{ borderRadius: "8px" }}>
+            <Select
+              kind="text"
+              textSize="medium"
+              options={timeRanges}
+              selected={timeRanges.find((v) => v.key === "all")}
+              onSelect={(v) => {
+                
+              }}
+              fullWidth
+            />
+          </Card>
+        ) : (
+          <Select
+              kind="text"
+              textSize="medium"
+              options={timeRanges}
+              selected={timeRanges.find((v) => v.key === "all")}
+              onSelect={(v) => {
+                
+              }}
+            />
+        )}
       </Row>
       <SizedBox height={8} />
-      <Card style={{ height: 288 }}>
+      <Card>
         <Row>
           <Text type="secondary" size="medium" fitContent>Total for period:</Text>
           <SizedBox width={8} />
@@ -169,4 +185,4 @@ const TradesVolume: React.FC<IProps> = () => {
   );
 };
 
-export default observer(TradesVolume);
+export default observer(RangeCharts);

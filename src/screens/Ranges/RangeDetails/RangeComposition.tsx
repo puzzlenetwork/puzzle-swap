@@ -2,8 +2,8 @@ import styled from "@emotion/styled";
 import React, { useMemo, useState } from "react";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import { Column, Row } from "@components/Flex";
-import { useInvestToRangeInterfaceVM } from "./RangeDetailsVM";
+import { Row } from "@components/Flex";
+import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
 import { observer } from "mobx-react-lite";
 import Table from "@components/Table";
 import Scrollbar from "@src/components/Scrollbar";
@@ -12,13 +12,13 @@ import { useTheme } from "@emotion/react";
 import Tooltip from "@src/components/Tooltip";
 import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
-import { useStores } from "@src/stores";
 import BN from "@src/utils/BN";
 import Checkbox from "@src/components/Checkbox";
-import { set } from "lodash";
 import Select from "@src/components/Select";
 
-interface IProps {}
+interface IProps {
+  isMobile?: boolean;
+}
 
 const Root = styled.div<{ balanceSort?: boolean }>`
   display: flex;
@@ -39,13 +39,13 @@ const Icon = styled.img`
   border: 1px solid #f1f2fe;
 `;
 
-const RangeComposition: React.FC<IProps> = () => {
+const RangeComposition: React.FC<IProps> = (props) => {
   const theme = useTheme();
-  const vm = useInvestToRangeInterfaceVM();
+  const vm = useRangeDetailsInterfaceVM();
   const { width: screenWidth } = useWindowSize();
   const [filteredTokens, setFilteredTokens] = useState<any[]>([]);
   const [balanceSort, setValueSort] = useState(true);
-  const [showSellOff, setShowSellOff] = useState(false);
+  const [showSellOff, setShowSellOff] = useState(props.isMobile ?? false);
   const [relativeTokenAssetId, setRelativeTokenAssetId] = useState<string>(vm.range!.baseTokenId);
   const [rateToRelativeToken, setRateToRelativeToken] = useState(new BN(1));
 
@@ -191,12 +191,16 @@ const RangeComposition: React.FC<IProps> = () => {
           Range composition
         </Text>
         <Row alignItems="center" mainAxisSize="fit-content">
-          <Text fitContent nowrap>Show Sell-Off</Text>
-          <SizedBox width={8} />
-          <Checkbox onChange={() => setShowSellOff(!showSellOff)} checked={showSellOff} />
-          <SizedBox width={20} />
-          <Text fitContent nowrap>Show Asset Prices in</Text>
-          <SizedBox width={8} />
+          {!props.isMobile && (
+            <Row alignItems="center" mainAxisSize="fit-content">
+              <Text fitContent nowrap>Show Sell-Off</Text>
+              <SizedBox width={8} />
+              <Checkbox onChange={() => setShowSellOff(!showSellOff)} checked={showSellOff} />
+              <SizedBox width={20} />
+            </Row>
+          )}
+          <Text size={ props.isMobile ? "small" : undefined } fitContent nowrap>Show Asset Prices in</Text>
+          <SizedBox width={props.isMobile ? 4 : 8} />
           <Select
             kind="text"
             textSize="medium"

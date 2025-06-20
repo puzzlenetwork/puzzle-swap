@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Text from "@components/Text";
-import { useInvestToRangeInterfaceVM } from "./RangeDetailsVM";
+import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
 import Card from "@src/components/Card";
 import { useStores } from "@stores";
 import BN from "@src/utils/BN";
@@ -16,7 +16,6 @@ import Divider from "@src/components/Divider";
 import Switch from "@src/components/Switch";
 import StakeUnstakeInput from "./StakeUnstakeInput";
 import SwitchButtons from "@src/components/SwitchButtons";
-import { TOKENS_BY_ASSET_ID } from "@src/constants";
 
 interface IProps {}
 
@@ -59,19 +58,21 @@ const Body = styled(Column)<{ expanded?: boolean }>`
 `;
 
 const Information = styled(Column)`
-  width: calc(100% - 48px);
+  width: 100%;
   padding: 16px 24px;
   padding-top: 0;
+  box-sizing: border-box;
 `;
 
 const Actions = styled(Column)`
   padding: 16px 24px;
-  width: calc(100% - 48px);
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 const LPStaking: React.FC<IProps> = () => {
   const { accountStore } = useStores();
-  const vm = useInvestToRangeInterfaceVM();
+  const vm = useRangeDetailsInterfaceVM();
   const [expanded, setExpanded] = useState(false);
   const activeTab = useMemo(
     () => vm.stakeUnstakeAction === "stake",

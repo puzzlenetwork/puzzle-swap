@@ -25,9 +25,9 @@ const LocalCard = styled(Card)<{ kind?: TCardType }>`
   background: ${({ theme, kind }) => {
     switch (kind) {
       case "primary":
-        return theme.colors.primary100;
+        return theme.colors.primary200;
       case "secondary":
-        return theme.colors.primary50;
+        return theme.colors.primary100;
       case "error":
         return theme.colors.error100;
       default:

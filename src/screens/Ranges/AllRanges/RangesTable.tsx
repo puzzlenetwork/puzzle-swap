@@ -17,13 +17,11 @@ import Card from "@src/components/Card";
 import styled from "@emotion/styled";
 import TokenTag from "@src/components/TokenTag";
 import BN from "@src/utils/BN";
-import Tooltip from "@components/Tooltip";
-import Img from "@src/components/Img";
 import TokenInRangePreview from "./TokenInRangePreview";
 
 
 const GrayCard = styled(Card)`
-  background: ${({ theme }) => theme.colors.primary50};
+  background: ${({ theme }) => theme.colors.primary100};
   border: none;
   width: fit-content;
 `;

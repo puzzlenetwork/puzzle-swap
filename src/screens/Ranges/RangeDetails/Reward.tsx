@@ -10,7 +10,7 @@ import income from "@src/assets/icons/income.svg";
 import wallet from "@src/assets/icons/wallet.svg";
 import Button from "@components/Button";
 import Loading from "@components/Loading";
-import { useInvestToRangeInterfaceVM } from "./RangeDetailsVM";
+import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
 import Divider from "@src/components/Divider";
 import BN from "@src/utils/BN";
 
@@ -35,7 +35,7 @@ const Icon = styled.img`
 `;
 
 const Reward: React.FC<IProps> = () => {
-  const vm = useInvestToRangeInterfaceVM();
+  const vm = useRangeDetailsInterfaceVM();
   const { accountStore } = useStores();
   const { address } = accountStore;
   if (address == null) return null;
