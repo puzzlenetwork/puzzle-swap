@@ -208,6 +208,7 @@ class LimitOrdersVM {
       chunks.push(keys.slice(i, i + chunkSize));
     }
 
+    
     const allData = await Promise.all(
       chunks.map(chunk =>
         makeNodeRequest(
