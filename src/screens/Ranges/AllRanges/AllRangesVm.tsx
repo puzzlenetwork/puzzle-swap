@@ -34,16 +34,32 @@ class AllRangesVm {
     makeAutoObservable(this);
   }
 
-  rangesFilters = [
-    { title: "Fact liquidity", key: "factLiqAsc" },
-    { title: "Fact liquidity", key: "factLiqDesc" },
-    { title: "Virtual liquidity", key: "virtLiqAsc" },
-    { title: "Virtual liquidity", key: "virtLiqDesc" },
-    { title: "Earned", key: "earnedAsc" },
-    { title: "Earned", key: "earnedDesc" },
+  searchValue: string = "";
+  setSearchValue = (v: string) => (this.searchValue = v);
+
+  rangesSortings = [
+    { title: "Fact Liquidity ↑", key: "factLiqAsc" },
+    { title: "Fact Liquidity ↓", key: "factLiqDesc" },
+    { title: "Virtual Liquidity ↑", key: "virtLiqAsc" },
+    { title: "Virtual Liquidity ↓", key: "virtLiqDesc" },
+    { title: "Earned ↑", key: "earnedAsc" },
+    { title: "Earned ↓", key: "earnedDesc" },
   ];
-  rangesFilter: number = 0;
-  setRangesFilter = (v: number) => (this.rangesFilter = v);
+  rangesSorting: number = 0;
+  setRangesSorting = (v: number) => (this.rangesSorting = v);
+
+  statsRanges = [
+    { title: "Stats All Time", key: "all" },
+    { title: "Stats Last Day", key: "1d" },
+    { title: "Stats Last Week", key: "7d" },
+    { title: "Stats Last Month", key: "1m" },
+    { title: "Stats Last 3 Months", key: "3m" },
+    { title: "Stats Last Year", key: "1y" },
+  ]
+  selectedStatsRange: number = 0;
+  setSelectedStatsRange = (v: number) => {
+    this.selectedStatsRange = v;
+  }
 
   syncRanges = async () => {
     rangesService.getGlobalRangesInfo().then((data) => {

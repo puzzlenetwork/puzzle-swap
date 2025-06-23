@@ -93,7 +93,7 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
               <EarnedByLP />
             </Column>
           ) : (
-            <Column>
+            <Column crossAxisSize="max">
               <Row>
                 <MainRangeInfo />
                 <SizedBox width={20} />

@@ -35,11 +35,10 @@ const ShortInfo = styled.div<{ pic: string }>`
 const Links = styled.div<{ isCustom?: boolean }>`
   width: 100%;
   padding-top: 32px;
-  display: grid;
-  column-gap: 8px;
+  display: flex;
+  flex-direction: column;
   @media (min-width: 880px) {
-    grid-template-columns: ${({ isCustom }) =>
-      isCustom ? "1fr 1fr 1fr 3fr" : "1fr 1fr 4fr 1fr"};
+    flex-direction: row;
     grid-template-rows: 1fr;
     padding-top: 44px;
   }
@@ -95,10 +94,10 @@ const MainRangeInfo: React.FC<IProps> = ({ isMobile }) => {
               {centerEllipsis(vm.range?.address ?? "", 8)}
             </TextButton>
           </Column>
-          <SizedBox height={16} />
+          <SizedBox width={24} height={16} />
           <Column>
             <Text type="purple300" size="medium" nowrap>
-              Range Owner
+              Range Creator
             </Text>
             <Text type="light" size="medium">
               <TextButton
