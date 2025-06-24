@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useState } from "react";
+import React, { JSX, useState } from "react";
 import Card from "@components/Card";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
@@ -14,6 +14,12 @@ import Tooltip from "@components/Tooltip";
 import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import { Row } from "@src/components/Flex";
 import { useTheme } from "@emotion/react";
+import AssetSelector from "./AssetSelector";
+import RangeSelector from "./RangeSelector";
+import Table from "@src/components/Table";
+import BN from "@src/utils/BN";
+import ShareTokenInput from "./ShareTokenInput";
+import Switch from "@src/components/Switch";
 
 interface IProps {}
 
@@ -36,12 +42,16 @@ const SizedBoxStyled = styled(SizedBox)`
     margin: 24px 0 24px -17px;
   }
 `;
+
 const SelectsAssets: React.FC<IProps> = () => {
   const [addAssetModal, openAssetModal] = useState(false);
   const vm = useCreateRangeVM();
   const theme = useTheme();
   const minShareNotification =
     "Please note that minimal share of token should be 5 %";
+  const validRangeNotification =
+    "Please note that ranges for all assets should be set and valid, i.e. min price should be less than max price";
+  
   return (
     <Root>
       <Text type="secondary" weight={500}>
@@ -56,8 +66,14 @@ const SelectsAssets: React.FC<IProps> = () => {
             <SizedBox height={16} />
           </>
         )}
+        {!vm.areTouchedTokensRangesValid && (
+          <>
+            <Notification type="error" text={validRangeNotification} />
+            <SizedBox height={16} />
+          </>
+        )}
         <Row alignItems="center" justifyContent="start">
-          <Text style={{ width: "fit-content" }} weight={500}>
+          <Text fitContent weight={500} nowrap>
             Base token
           </Text>
           <Tooltip
@@ -71,6 +87,16 @@ const SelectsAssets: React.FC<IProps> = () => {
           >
             <InfoIcon style={{ marginLeft: 8 }} />
           </Tooltip>
+          <Row alignItems="center" justifyContent="flex-end">
+            <Text weight={500} fitContent nowrap>
+              Equal Shares
+            </Text>
+            <SizedBox width={8} />
+            <Switch
+              value={vm.equalShares}
+              onChange={() => vm.setEqualShares(!vm.equalShares)}
+            />
+          </Row>
         </Row>
         <SizedBox height={24} />
         {vm.rangeAssets.slice(0, 1).map(({ asset, share, locked }, index) => {
@@ -96,23 +122,45 @@ const SelectsAssets: React.FC<IProps> = () => {
             background: theme.colors.primary100,
           }}
         />
-        <Text style={{ width: "fit-content" }} weight={500}>
-          Composition
-        </Text>
+        <Row alignItems="center">
+          <Text size="medium" weight={500}>
+            Composition
+          </Text>
+          <Row alignItems="center">
+            <Text size="medium" weight={500} fitContent nowrap>Set Range</Text>
+            <SizedBox width={80} />
+            <Text size="medium" weight={500} fitContent nowrap>Max Sell-Off</Text>
+            <SizedBox width={8} />
+            <Text type="secondary" size="small" fitContent nowrap>(Optional)</Text>
+            <SizedBox width={143} />
+          </Row>
+        </Row>
         <SizedBox height={24} />
         <Grid>
-          {vm.rangeAssets.slice(1).map(({ asset, share, locked }, index) => {
-            // const minShare = new BN(5);
+          {vm.rangeAssets.slice(1).map(({
+            asset,
+            share,
+            minPrice,
+            maxPrice,
+            maxSellOff,
+            locked
+          }, index) => {
             return (
               <TokenCompositionRow
                 key={index + "select-asset"}
-                locked={locked}
-                onLockClick={() => vm.updateLockedState(asset.assetId, !locked)}
-                onUpdateAsset={vm.replaceAssetInRange}
                 balances={vm.tokensToAdd}
                 asset={asset}
+                onUpdateAsset={vm.replaceAssetInRange}
+                minPrice={minPrice}
+                onUpdateMinPrice={(newMinPrice) => vm.updateAssetMinPrice(asset.assetId, newMinPrice)}
+                maxPrice={maxPrice}
+                onUpdateMaxPrice={(newMaxPrice) => vm.updateAssetMaxPrice(asset.assetId, newMaxPrice)}
+                maxSellOff={maxSellOff}
+                onUpdateMaxSellOff={(newMaxSellOff) => vm.updateAssetMaxSellOff(asset.assetId, newMaxSellOff)}
                 share={share}
                 setShare={(v) => vm.changeAssetShareInRange(asset.assetId, v)}
+                locked={locked}
+                onLockClick={() => vm.updateLockedState(asset.assetId, !locked)}
                 onDelete={() => vm.removeAssetFromRange(asset.assetId)}
               />
             );

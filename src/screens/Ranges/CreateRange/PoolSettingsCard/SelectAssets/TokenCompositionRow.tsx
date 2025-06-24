@@ -13,12 +13,24 @@ import { ReactComponent as Close } from "@src/assets/icons/smallClose.svg";
 import { Row } from "@src/components/Flex";
 import ShareTokenInput from "./ShareTokenInput";
 import BN from "@src/utils/BN";
+import AssetSelector from "./AssetSelector";
+import RangeSelector from "./RangeSelector";
+import MaxSellOffSelector from "./MaxSellOffSelector";
 
 interface IProps {
   balances: Balance[];
 
   asset: IToken;
   onUpdateAsset: (assetId: string, newAssetId: string) => void;
+
+  minPrice?: BN;
+  onUpdateMinPrice?: (price: BN) => void;
+
+  maxPrice?: BN;
+  onUpdateMaxPrice?: (price: BN) => void;
+
+  maxSellOff?: BN;
+  onUpdateMaxSellOff?: (sellOff: BN) => void;
 
   share: BN;
   setShare: (e: BN) => void;
@@ -75,11 +87,17 @@ const StyledClose = styled(Close)<{ baseToken?: boolean }>`
 `;
 
 const TokenCompositionRow: React.FC<IProps> = ({
-  onUpdateAsset,
   asset,
+  onUpdateAsset,
   balances,
-  setShare,
+  minPrice,
+  onUpdateMinPrice,
+  maxPrice,
+  onUpdateMaxPrice,
+  maxSellOff,
+  onUpdateMaxSellOff,
   share,
+  setShare,
   locked,
   onLockClick,
   onDelete,
@@ -88,15 +106,31 @@ const TokenCompositionRow: React.FC<IProps> = ({
   const [openModal, setOpenModal] = useState(false);
   return (
     <Root>
-      <AssetContainer
-        modalOpened={openModal}
-        onClick={() => setOpenModal(true)}
-      >
-        <RoundTokenIcon src={asset.logo} />
-        <SizedBox width={8} />
-        <Text>{asset.symbol}</Text>
-      </AssetContainer>
+      <AssetSelector
+        asset={asset}
+        balances={balances}
+        onUpdateAsset={onUpdateAsset}
+      />
       <Row mainAxisSize="fit-content" alignItems="center">
+        {!baseToken && (
+          <Row alignItems="center">
+            <SizedBox width={24} />
+            <RangeSelector
+              asset={asset}
+              balances={balances}
+              minPrice={minPrice}
+              maxPrice={maxPrice}
+              onUpdateMinPrice={onUpdateMinPrice}
+              onUpdateMaxPrice={onUpdateMaxPrice}
+            />
+            <SizedBox width={24} />
+            <MaxSellOffSelector
+              value={maxSellOff}
+              onUpdate={onUpdateMaxSellOff}
+            />
+            <SizedBox width={30} />
+          </Row>
+        )}
         <ShareTokenInput
           amount={share}
           onChange={setShare}

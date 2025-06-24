@@ -33,8 +33,13 @@ interface IProps {
 
 interface IRangeToken {
   asset: IToken;
-  share: BN;
+  minPrice?: BN;
+  minPriceTouched?: boolean;
+  maxPrice?: BN;
+  maxPriceTouched?: boolean;
+  maxSellOff?: BN;
   locked: boolean;
+  share: BN;
 }
 
 const ctx = React.createContext<CreateRangeVm | null>(null);
@@ -79,6 +84,24 @@ class CreateRangeVm {
         locked: false,
       },
     ];
+  };
+
+  public equalShares: boolean = false;
+  setEqualShares = (v: boolean) => {
+    this.equalShares = v;
+    if (v) {
+      this.rangeAssets.forEach((v) => {
+        v.locked = false;
+      });
+      this.syncShares();
+      this.rangeAssets.forEach((v) => {
+        v.locked = true;
+      });
+    } else {
+      this.rangeAssets.forEach((v) => {
+        v.locked = false;
+      });
+    }
   };
 
   maxStep: number = 0;
@@ -138,11 +161,42 @@ class CreateRangeVm {
     window.location.reload();
   };
 
+  get isAllTokensShareMoreThanFive() {
+    return this.rangeAssets
+      .every((v) => v.share.gt(50) || v.share.eq(50));
+  }
+
+  get areTouchedTokensRangesValid() {
+    return this.rangeAssets.slice(1).filter((t) => t.minPriceTouched && t.maxPriceTouched).every(
+      (v) => (
+        v.minPrice
+        && v.minPrice.gt(0)
+        && v.maxPrice
+        && v.maxPrice.gt(v.minPrice)
+      )
+    );
+  }
+
+  get areAllTokensRangesValid() {
+    return this.rangeAssets.slice(1).every((v) => {
+      return (
+        v.minPriceTouched
+        && v.maxPriceTouched
+        && v.minPrice
+        && v.minPrice.gt(0)
+        && v.maxPrice
+        && v.maxPrice.gt(v.minPrice)
+        && (v.maxSellOff == null || v.maxSellOff.gte(0))
+      );
+    });
+  }
+
   get correct0() {
     return (
       this.isAllTokensShareMoreThanFive &&
       this.rangeAssets.length > 1 &&
-      this.totalTakenShare.eq(1000)
+      this.totalTakenShare.eq(1000) &&
+      this.areAllTokensRangesValid
     );
   }
 
@@ -232,6 +286,29 @@ class CreateRangeVm {
     this.rangeAssets[indexOfObject].asset = asset;
   };
 
+  updateAssetMinPrice = (assetId: string, val: BN) => {
+    const indexOfObject = this.rangeAssets.findIndex(
+      ({ asset }) => asset.assetId === assetId
+    );
+    this.rangeAssets[indexOfObject].minPrice = val;
+    this.rangeAssets[indexOfObject].minPriceTouched = true;
+  };
+
+  updateAssetMaxPrice = (assetId: string, val: BN) => {
+    const indexOfObject = this.rangeAssets.findIndex(
+      ({ asset }) => asset.assetId === assetId
+    );
+    this.rangeAssets[indexOfObject].maxPrice = val;
+    this.rangeAssets[indexOfObject].maxPriceTouched = true;
+  };
+
+  updateAssetMaxSellOff = (assetId: string, val: BN) => {
+    const indexOfObject = this.rangeAssets.findIndex(
+      ({ asset }) => asset.assetId === assetId
+    );
+    this.rangeAssets[indexOfObject].maxSellOff = val;
+  }
+
   updateLockedState = (assetId: string, val: boolean) => {
     const indexOfObject = this.rangeAssets.findIndex(
       ({ asset }) => asset.assetId === assetId
@@ -239,9 +316,9 @@ class CreateRangeVm {
     this.rangeAssets[indexOfObject].locked = val;
   };
 
-  get tokensToAdd() {
+  get balances() {
     const { accountStore } = this.rootStore;
-    const balances = TOKENS_LIST.map((t) => {
+    return TOKENS_LIST.map((t) => {
       const balance = accountStore.findBalanceByAssetId(t.assetId);
       return balance ?? new Balance(t);
     }).sort((a, b) => {
@@ -250,11 +327,14 @@ class CreateRangeVm {
       if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
       return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
     });
+  }
+
+  get tokensToAdd() {
     const currentTokens = this.rangeAssets.reduce<string[]>(
       (acc, v) => [...acc, v.asset.assetId],
       []
     );
-    return balances.filter((b) => !currentTokens.includes(b.assetId));
+    return this.balances.filter((b) => !currentTokens.includes(b.assetId));
   }
 
   saveSettings = () => {
@@ -520,11 +600,5 @@ class CreateRangeVm {
           .toString(),
       };
     });
-  }
-
-  get isAllTokensShareMoreThanFive() {
-    return this.rangeAssets
-      .map((v) => v.share)
-      .every((v) => v.gt(50) || v.eq(50));
   }
 }
