@@ -68,6 +68,9 @@ importers:
       '@waves/signer':
         specifier: ^1.1.0
         version: 1.1.0
+      '@waves/ts-lib-crypto':
+        specifier: 1.4.4-beta.1
+        version: 1.4.4-beta.1
       '@waves/waves-transactions':
         specifier: ^4.3.11
         version: 4.3.11
@@ -2199,6 +2202,9 @@ packages:
 
   '@waves/ts-lib-crypto@1.4.3':
     resolution: {integrity: sha512-2pKgyvtLapgM5vpaUEYzX7NYe2bkB+HdWn9W/4d7UFKwyg6zoOYhRQWyb6GuLi3OLHTETgiqpcMZvciFA0Ds6g==}
+
+  '@waves/ts-lib-crypto@1.4.4-beta.1':
+    resolution: {integrity: sha512-tlvThkMCoCDicOznW82wDZWQqfAWcm6ulQnuNzR++X9o0EOHM3Cj8LlS2pkgF0YjZrqEYHTp/4e0RXXYVY+dpw==}
 
   '@waves/ts-types@0.3.5':
     resolution: {integrity: sha512-f4rTEc0hJ1yrsZPmnkLLhxbv6Kry4P35cPhOz8VIe/j4pB5uk0DrHRb5UoKV1xmTWBSZt5bKRiVZLdsIcIn8Gw==}
@@ -4874,6 +4880,10 @@ packages:
     peerDependenciesMeta:
       encoding:
         optional: true
+
+  node-forge@0.10.0:
+    resolution: {integrity: sha512-PPmu8eEeG9saEUvI97fm4OYxXVB6bFvyNTyiUOBichBpFG8A1Ljw3bY62+5oOjDEMHRnd0Y7HQ+x7uzxOzC6JA==}
+    engines: {node: '>= 6.0.0'}
 
   node-forge@0.8.5:
     resolution: {integrity: sha512-vFMQIWt+J/7FLNyKouZ9TazT74PRV3wgv9UT4cRjC8BffxFbKXkgIWR42URCPSnHm/QDz6BOlb2Q0U4+VQT67Q==}
@@ -9879,6 +9889,11 @@ snapshots:
       js-sha3: 0.8.0
       node-forge: 0.8.5
 
+  '@waves/ts-lib-crypto@1.4.4-beta.1':
+    dependencies:
+      js-sha3: 0.8.0
+      node-forge: 0.10.0
+
   '@waves/ts-types@0.3.5': {}
 
   '@waves/ts-types@1.2.0': {}
@@ -13116,6 +13131,8 @@ snapshots:
   node-fetch@2.7.0:
     dependencies:
       whatwg-url: 5.0.0
+
+  node-forge@0.10.0: {}
 
   node-forge@0.8.5: {}
 
