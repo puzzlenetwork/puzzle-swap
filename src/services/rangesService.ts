@@ -1,4 +1,5 @@
 import { IGlobalRangesInfoResponse, ILPDataResponse, IRangeParamsResponse } from "@src/entities/Range";
+import { IHistory } from "@src/utils/types";
 import axios from "axios";
 
 export interface IGetRanges {
@@ -21,6 +22,12 @@ export interface IGetRange {
 export interface IGetRangesResponse {
   ranges: IRangeParamsResponse[];
   totalItems: number;
+}
+
+export interface IGetChartData {
+  startTime?: number;
+  endTime?: number;
+  nominatePriceIn?: string;
 }
 
 const rangesService = {
@@ -63,7 +70,27 @@ const rangesService = {
     const url = `${baseUrl}?${paramsString.toString()}`;
     const { data } = await axios.get(url);
     return data.data[0];
-  }
+  },
+  getChartData: async (address: string, params?: IGetChartData): Promise<IHistory[]> => {
+    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged`;
+    const rangeUrl = `${baseUrl}/${address}/charts`;
+    const paramsString = params ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : "";
+    const url = `${rangeUrl}${paramsString}`;
+    const { data } = await axios.get(url);
+    return data.charts;
+  },
+  getUserTotalProvided: async (userAddress: string): Promise<number> => {
+    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/provided_data`;
+    const paramsString = new URLSearchParams({
+      userAddress: userAddress,
+      poolMode: "ranged",
+      page: "1",
+      size: "500",
+    });
+    const url = `${baseUrl}?${paramsString.toString()}`;
+    const { data } = await axios.get(url);
+    return data.total_provided_usd;
+  },
 };
 
 export default rangesService; 

@@ -1,9 +1,10 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, when } from "mobx";
 import { RangesStore, RootStore, useStores } from "@stores";
 import rangesService from "@src/services/rangesService";
 import { GlobalRangesInfo } from "@src/entities/Range";
+import BN from "@src/utils/BN";
 
 interface IProps {
   children: React.ReactNode;
@@ -34,6 +35,10 @@ class AllRangesVm {
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     this.syncRanges();
+    when(
+      () => this.rootStore.accountStore.address !== null,
+      () => this.syncUserInvestedAmount(),
+    );
     makeAutoObservable(this);
   }
 
@@ -81,6 +86,17 @@ class AllRangesVm {
   setShowOnlyActiveRanges = (v: boolean) => {
     this.showOnlyActiveRanges = v;
     this.rootStore.rangesStore.setMinLiquidity(v ? 1 : 0);
+  };
+
+  userInvestedAmount: BN | null = null;
+  setUserInvestedAmount = (v: number) => (this.userInvestedAmount = new BN(v));
+
+  syncUserInvestedAmount = async () => {
+    const { address } = this.rootStore.accountStore;
+    if (!address) return;
+    rangesService.getUserTotalProvided(address).then((amount) => {
+      this.setUserInvestedAmount(amount);
+    });
   };
 
   syncRanges = async () => {

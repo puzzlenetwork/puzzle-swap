@@ -140,13 +140,13 @@ const AllRangesImpl: React.FC<IProps> = () => {
                   justifyContent="space-between"
                   alignItems="center"
                 >
-                  <Column>
+                  {vm.userInvestedAmount && <Column>
                     <Text type="secondary">My Investment Balance</Text>
                     <SizedBox height={4} />
                     <Text size="big" style={whiteText}>
-                      $3167.23
+                      ${vm.userInvestedAmount.toFormat(2)}
                     </Text>
-                  </Column>
+                  </Column>}
                   <Button
                     onClick={() => navigate(`${ROUTES.USER_RANGES}`)}
                     size="medium"
