@@ -314,6 +314,7 @@ class CreateRangeVm {
       ({ asset }) => asset.assetId === assetId
     );
     this.rangeAssets[indexOfObject].locked = val;
+    this.equalShares = false;
   };
 
   get balances() {

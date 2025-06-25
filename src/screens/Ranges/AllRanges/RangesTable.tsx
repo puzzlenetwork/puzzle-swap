@@ -48,15 +48,7 @@ const RangesTable: React.FC = () => {
 
   useMemo(
     () => {
-      const filteredData =rangesStore.ranges
-      .filter(({ title, assets }) =>
-        vm.searchValue
-          ? [title, ...assets.map(({ name }) => name)]
-              .map((v) => v?.toLowerCase())
-              .some((v) => v?.includes(vm.searchValue?.toLowerCase()))
-          : true
-      )
-      .map((range, index) => ({
+      const mappedData = rangesStore.ranges.map((range, index) => ({
       onClick: () => navigate(`/ranges/${range.address}/invest`),
       range: (
         // <Text>{range.assetsWithLeverage.map(({ leverage }) => `${leverage}`).join(", ")}</Text>
@@ -77,6 +69,7 @@ const RangesTable: React.FC = () => {
                   key={index}
                   asset={asset}
                   baseToken={range.baseToken}
+                  showInUsd={vm.showPriceInUsd}
                   style={{ marginRight: 4 }}
                 />
               ))}
@@ -110,9 +103,9 @@ const RangesTable: React.FC = () => {
         </Column>
       ),
       }));
-      setTableData(filteredData);
+      setTableData(mappedData);
     },
-    [rangesStore.ranges, vm.searchValue, navigate]
+    [rangesStore.ranges, navigate, vm.showPriceInUsd]
   );
 
   return (

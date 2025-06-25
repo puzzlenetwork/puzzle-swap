@@ -4,7 +4,7 @@ import axios from "axios";
 export interface IGetRanges {
   page: number;
   size: number;
-  sortBy?: "liquidity" | "earned" | "virtualLiquidity";
+  sortBy?: "fact_liquidity" | "earned" | "virtual_liquidity";
   order?: "asc" | "desc";
   search?: string;
 }

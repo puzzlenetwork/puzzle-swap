@@ -8,12 +8,15 @@ export interface IRangeAssetResponse {
   balance: number,
   balance_usd: number,
   current_price: number,
+  current_price_usd: number,
   extra_earned: number,
   fact_balance: number,
   fact_balance_usd: number,
   fees_earned: number,
   max_price: number,
   min_price: number,
+  max_price_usd: number,
+  min_price_usd: number,
   name: string,
   real_balance: number,
   share: number
@@ -102,12 +105,15 @@ export class RangeAsset {
   balance: BN;
   balanceUsd: BN;
   currentPrice: BN;
+  currentPriceUsd: BN;
   extraEarned: BN;
   factBalance: BN;
   factBalanceUsd: BN;
   feesEarned: BN;
   maxPrice: BN;
   minPrice: BN;
+  maxPriceUsd: BN;
+  minPriceUsd: BN;
   name: string;
   realBalance: BN;
   share: BN;
@@ -117,12 +123,15 @@ export class RangeAsset {
     this.balance = new BN(params.balance);
     this.balanceUsd = new BN(params.balance_usd);
     this.currentPrice = new BN(params.current_price);
+    this.currentPriceUsd = new BN(params.current_price_usd);
     this.extraEarned = new BN(params.extra_earned);
     this.factBalance = new BN(params.fact_balance);
     this.factBalanceUsd = new BN(params.fact_balance_usd);
     this.feesEarned = new BN(params.fees_earned);
     this.maxPrice = new BN(params.max_price);
     this.minPrice = new BN(params.min_price);
+    this.maxPriceUsd = new BN(params.max_price_usd);
+    this.minPriceUsd = new BN(params.min_price_usd);
     this.name = params.name;
     this.realBalance = new BN(params.real_balance);
     this.share = new BN(params.share);

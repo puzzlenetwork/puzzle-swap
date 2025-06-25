@@ -20,6 +20,7 @@ const Root = styled(Row)`
 
 const SearchAndFilterTab: React.FC<IProps> = () => {
   const vm = useAllRangesVm();
+
   return (
     <Root>
       <Input
@@ -37,14 +38,14 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
             Show all prices in USD
           </Text>
           <SizedBox width={12} />
-          <Switch onChange={() => {}} value={false} />
+          <Switch onChange={() => vm.setShowPriceInUsd(!vm.showPriceInUsd)} value={vm.showPriceInUsd} />
         </Card>
         <Card flexGrow={1} flexDirection="row" alignItems="center" fitContent paddingDesktop="12px 20px" paddingMobile="12px 20px">
           <Text type="secondary" weight={500}>
             Only active ranges
           </Text>
           <SizedBox width={12} />
-          <Switch onChange={() => {}} value={false} />
+          <Switch onChange={() => vm.setShowOnlyActiveRanges(!vm.showOnlyActiveRanges)} value={vm.showOnlyActiveRanges} />
         </Card>
       </Row>
       <Row style={{ flexGrow: 5, gap: 12 }} mainAxisSize="fit-content">

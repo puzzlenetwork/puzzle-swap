@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable } from "mobx";
-import { RootStore, useStores } from "@stores";
+import { RangesStore, RootStore, useStores } from "@stores";
 import rangesService from "@src/services/rangesService";
 import { GlobalRangesInfo } from "@src/entities/Range";
 
@@ -28,6 +28,9 @@ class AllRangesVm {
   public rangesInfo: GlobalRangesInfo | null = null;
   private _setRangesInfo = (v: GlobalRangesInfo) => (this.rangesInfo = v);
 
+  public ranges: Range[] = [];
+  private _setRanges = (v: Range[]) => (this.ranges = v);
+
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     this.syncRanges();
@@ -35,31 +38,50 @@ class AllRangesVm {
   }
 
   searchValue: string = "";
-  setSearchValue = (v: string) => (this.searchValue = v);
+  setSearchValue = (v: string) => {
+    this.searchValue = v;
+    this.rootStore.rangesStore.setSearchValue(v);
+  };
 
   rangesSortings = [
-    { title: "Fact Liquidity ↑", key: "factLiqAsc" },
-    { title: "Fact Liquidity ↓", key: "factLiqDesc" },
-    { title: "Virtual Liquidity ↑", key: "virtLiqAsc" },
-    { title: "Virtual Liquidity ↓", key: "virtLiqDesc" },
-    { title: "Earned ↑", key: "earnedAsc" },
-    { title: "Earned ↓", key: "earnedDesc" },
+    { title: "Fact Liquidity ↓", key: "fact_liquidityD" },
+    { title: "Fact Liquidity ↑", key: "fact_liquidityA" },
+    { title: "Virtual Liquidity ↓", key: "virtual_liquidityD" },
+    { title: "Virtual Liquidity ↑", key: "virtual_liquidityA" },
+    { title: "Earned ↓", key: "earnedD" },
+    { title: "Earned ↑", key: "earnedA" },
   ];
   rangesSorting: number = 0;
-  setRangesSorting = (v: number) => (this.rangesSorting = v);
+  setRangesSorting = (v: number) => {
+    this.rangesSorting = v;
+    this.rootStore.rangesStore.setFilter({
+      sortBy: this.rangesSortings[v].key.slice(0, -1) as "fact_liquidity" | "earned" | "virtual_liquidity",
+      order: (this.rangesSortings[v].key.slice(-1) === "A" ? "asc" : "desc") as "asc" | "desc",
+    });
+  };
 
   statsRanges = [
     { title: "Stats All Time", key: "all" },
     { title: "Stats Last Day", key: "1d" },
     { title: "Stats Last Week", key: "7d" },
-    { title: "Stats Last Month", key: "1m" },
-    { title: "Stats Last 3 Months", key: "3m" },
+    { title: "Stats Last Month", key: "30d" },
+    { title: "Stats Last 3 Months", key: "90d" },
     { title: "Stats Last Year", key: "1y" },
   ]
   selectedStatsRange: number = 0;
   setSelectedStatsRange = (v: number) => {
     this.selectedStatsRange = v;
+    this.rootStore.rangesStore.setTimeRange(this.statsRanges[v].key as "all" | "1d" | "7d" | "30d" | "90d" | "1y");
   }
+
+  showPriceInUsd: boolean = false;
+  setShowPriceInUsd = (v: boolean) => (this.showPriceInUsd = v);
+
+  showOnlyActiveRanges: boolean = false;
+  setShowOnlyActiveRanges = (v: boolean) => {
+    this.showOnlyActiveRanges = v;
+    this.rootStore.rangesStore.setMinLiquidity(v ? 1 : 0);
+  };
 
   syncRanges = async () => {
     rangesService.getGlobalRangesInfo().then((data) => {
