@@ -26,6 +26,7 @@ export const ROUTES = {
   POOL_BOOST: "/pools/:poolDomain/boost",
   //ranges block
   RANGES: "/ranges",
+  RANGES_TRADE: "/ranges/:rangeAddress",
   RANGES_CREATE: "/ranges/create",
   USER_RANGES: "/ranges/my",
   RANGES_INVEST: "/ranges/:rangeAddress/invest",

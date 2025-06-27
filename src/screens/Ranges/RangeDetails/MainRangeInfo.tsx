@@ -116,7 +116,7 @@ const MainRangeInfo: React.FC<IProps> = ({ isMobile }) => {
               fixed={isMobile}
               size="medium"
               style={{ marginRight: 8 }}
-              onClick={() => navigate(`/range/${vm.range!.address}`)}
+              onClick={() => navigate(`/ranges/${vm.range!.address}`)}
             >
               Trade
             </Button>
