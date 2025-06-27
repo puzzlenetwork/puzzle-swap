@@ -1,20 +1,20 @@
 import Card from "@src/components/Card";
 import { Column, Row } from "@src/components/Flex";
 import SizedBox from "@src/components/SizedBox";
-import ArrowWithSuperText from "../../../components/ArrowWithSuperText";
+import ArrowWithSuperText from "@components/ArrowWithSuperText";
 import Text from "@src/components/Text";
 import styled from "@emotion/styled";
-import { RangeAsset } from "@src/entities/Range";
 import Img from "@src/components/Img";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import Tooltip from "@src/components/Tooltip";
 import { useTheme } from "@emotion/react";
 import { observer } from "mobx-react-lite";
+import { IRangeToken } from "../../CreateRangeVm";
+import BN from "@src/utils/BN";
 
 interface IParams {
-  asset: RangeAsset;
+  asset: IRangeToken;
   isBase?: boolean;
-  showInUsd?: boolean;
 }
 
 type TCardType = "primary" | "secondary" | "error";
@@ -38,37 +38,45 @@ const LocalCard = styled(Card)<{ kind?: TCardType }>`
   }};
 `
 
-const TokenInRangePreview = ({ asset, isBase, showInUsd, ...rest }: IParams & React.HTMLAttributes<HTMLDivElement>) => {
+const TokenInRangePreview = ({ asset, isBase, ...rest }: IParams & React.HTMLAttributes<HTMLDivElement>) => {
   const theme = useTheme();
   if (isBase) {
     return (
       <LocalCard kind="primary" {...rest}>
-        <Text>{asset.name}</Text>
+        <Row>
+          <Text ellipsis={70}>{asset.asset.symbol}</Text>
+          <SizedBox width={8} />
+          <Text fitContent style={{ marginLeft: "auto" }}>{asset.share.div(10).toNumber()}%</Text>
+        </Row>
         <SizedBox height={12} />
         <Text type="secondary" size="small" weight={500}>Base</Text>
       </LocalCard>
     )
   }
 
-  const isPriceValid = (asset.currentPrice.lte(asset.maxPrice) && asset.currentPrice.gte(asset.minPrice));
+  const isPriceValid = (asset.currentPrice?.lte(asset.maxPrice ?? 0) && asset.currentPrice?.gte(asset.minPrice ?? 0));
 
   return (
     <LocalCard kind={isPriceValid ? "secondary" : "error"} {...rest}>
-      <Text type={isPriceValid ? "primary" : "error"}>{asset.name}</Text>
+      <Row>
+        <Text type={isPriceValid ? "primary" : "error"} ellipsis={70}>{asset.asset.symbol}</Text>
+        <SizedBox width={8} />
+        <Text type={isPriceValid ? "primary" : "error"} fitContent style={{ marginLeft: "auto" }}>{asset.share.div(10).toNumber()}%</Text>
+      </Row>
       <SizedBox height={12} />
       <Row alignItems="center">
         <Text type={isPriceValid ? "secondary" : "error"} size="small" weight={500}>{
-          showInUsd ? `$${asset.minPriceUsd.toSmallFormat()}` : asset.minPrice.toSmallFormat()
+          `${BN.formatUnits(asset.minPrice ?? 0, asset.asset.decimals).toSmallFormat()}`
         }</Text>
         <SizedBox width={4} />
         <ArrowWithSuperText color={ isPriceValid ? theme.colors.primary650 : theme.colors.error500 }>
           <Text type={isPriceValid ? "secondary" : "error"} size="small" weight={500}>{
-            showInUsd ? `$${asset.currentPriceUsd.toSmallFormat()}` : asset.currentPrice.toSmallFormat()
+            `${BN.formatUnits(asset.currentPrice ?? 0, asset.asset.decimals).toSmallFormat()}`
           }</Text>
         </ArrowWithSuperText>
         <SizedBox width={4} />
         <Text type={isPriceValid ? "secondary" : "error"} size="small" weight={500}>{
-          showInUsd ? `$${asset.maxPriceUsd.toSmallFormat()}` : asset.maxPrice.toSmallFormat()
+          `${BN.formatUnits(asset.maxPrice ?? 0, asset.asset.decimals).toSmallFormat()}`
         }</Text>
       </Row>
     </LocalCard>
@@ -76,43 +84,49 @@ const TokenInRangePreview = ({ asset, isBase, showInUsd, ...rest }: IParams & Re
 }
 
 interface IWrapperParams {
-  asset: RangeAsset;
-  baseToken?: RangeAsset;
-  showInUsd?: boolean;
+  asset: IRangeToken;
+  isBaseToken?: boolean;
 }
 
-const TokenInRangePreviewWrapper = ({ asset, baseToken, showInUsd, ...rest }: IWrapperParams & React.HTMLAttributes<HTMLDivElement>) => {
-  const isBase = asset.assetId === baseToken?.assetId;
-  return isBase ? (
-    <TokenInRangePreview asset={asset} isBase={true} showInUsd={showInUsd} {...rest} />
+const TokenInRangePreviewWrapper = ({ asset, isBaseToken, ...rest }: IWrapperParams & React.HTMLAttributes<HTMLDivElement>) => {
+  return isBaseToken ? (
+    <TokenInRangePreview asset={asset} isBase={true} {...rest} />
   ) : (
     <Tooltip config={{ placement: "top" }} content={(
       <Column>
         <Row alignItems="center">
-          <Img src={TOKENS_BY_ASSET_ID[asset.assetId]?.logo} alt={asset.name} width="20px" height="20px" style={{ borderRadius: "10px" }} />
+          <Img src={TOKENS_BY_ASSET_ID[asset.asset.assetId]?.logo} alt={asset.asset.name} width="20px" height="20px" style={{ borderRadius: "10px" }} />
           <SizedBox width={6} />
-          <Text>{asset.name}</Text>
+          <Text>{asset.asset.name}</Text>
         </Row>
         <SizedBox height={8} />
+        <Row>
+          <Text type="secondary" size="small" weight={500} nowrap>Share in range:</Text>
+          <SizedBox width={4} />
+            <Text size="small" fitContent weight={500} nowrap>{
+              `${asset.share.div(10).toNumber()}%`
+            }</Text>
+        </Row>
+        <SizedBox height={4} />
         <Row>
           <Text type="secondary" size="small" weight={500} nowrap>Current Price:</Text>
           <SizedBox width={4} />
             <Text size="small" fitContent weight={500} nowrap>{
-              showInUsd ? `$${asset.currentPriceUsd.toSmallFormat()}` : `${asset.currentPrice.toSmallFormat()} ${baseToken?.name}`
+              `${BN.formatUnits(asset.currentPrice ?? 0, asset.asset.decimals).toSmallFormat()}`
             }</Text>
         </Row>
         <Row alignItems="center">
           <Text type="secondary" size="small" weight={500} nowrap>Range:</Text>
           <SizedBox width={40} />
             <Text size="small" weight={500} nowrap>{
-              showInUsd ? `$${asset.minPriceUsd.toSmallFormat()}` : `${asset.minPrice.toSmallFormat()} ${baseToken?.name}`
+              `${BN.formatUnits(asset.minPrice ?? 0, asset.asset.decimals).toSmallFormat()}`
             } <div style={{ display: "inline", fontSize: "1.4rem" }}>⟷</div> {
-              showInUsd ? `$${asset.maxPriceUsd.toSmallFormat()}` : `${asset.maxPrice.toSmallFormat()} ${baseToken?.name}`
+              `${BN.formatUnits(asset.maxPrice ?? 0, asset.asset.decimals).toSmallFormat()}`
             }</Text>
         </Row>
       </Column>
     )}>
-      <TokenInRangePreview asset={asset} isBase={false} showInUsd={showInUsd} {...rest} />
+      <TokenInRangePreview asset={asset} isBase={false} {...rest} />
     </Tooltip>
   );
 }

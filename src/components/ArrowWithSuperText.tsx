@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ScalableArrow from './ScalableArrow'; // Ensure this is the interpolating ScalableArrow component from earlier
+import ScalableArrow from './ScalableArrow';
 
 type ArrowWithSuperTextProps = {
   children: React.ReactNode;

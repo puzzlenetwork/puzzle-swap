@@ -31,12 +31,13 @@ interface IProps {
   children: React.ReactNode;
 }
 
-interface IRangeToken {
+export interface IRangeToken {
   asset: IToken;
   minPrice?: BN;
   minPriceTouched?: boolean;
   maxPrice?: BN;
   maxPriceTouched?: boolean;
+  currentPrice?: BN;
   maxSellOff?: BN;
   locked: boolean;
   share: BN;
@@ -237,7 +238,7 @@ class CreateRangeVm {
     const averageUnlockedPercent = unlockedPercent.div(unlockedCount).div(10);
     this.rangeAssets.forEach((v, i) => {
       if (v.locked) return;
-      const percent = Math.round(averageUnlockedPercent.toNumber() * 2) / 2;
+      const percent = Math.round(averageUnlockedPercent.toNumber() * 10) / 10;
       this.rangeAssets[i].share = new BN(percent).times(10);
     });
   };

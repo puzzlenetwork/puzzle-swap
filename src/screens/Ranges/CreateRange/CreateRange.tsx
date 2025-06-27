@@ -52,7 +52,7 @@ const CreateRangeImpl: React.FC = () => {
       <Observer>
         {() => (
           <Root>
-            <GoBack link={ROUTES.POOLS} text="Back to AllRanges" />
+            <GoBack link={ROUTES.RANGES} text="Back to Ranges" />
             <SizedBox height={24} />
             <Text weight={500} size="large">
               Create Range

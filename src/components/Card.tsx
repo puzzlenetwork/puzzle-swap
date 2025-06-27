@@ -25,7 +25,6 @@ const Card = styled.div<{
   flexDirection?: "column" | "row";
   type?: "white" | "dark" | "image";
   bordered?: boolean;
-  paddingSize?: "default" | "small";
 }>`
   display: flex;
   flex-direction: ${({ flexDirection }) => flexDirection ?? "column"};

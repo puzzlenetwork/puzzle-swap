@@ -38,7 +38,7 @@ const RangeSelector = ({ asset, balances, minPrice, maxPrice, onUpdateMinPrice, 
           borderColor: containsError ? theme.colors.error500 : undefined,
         }}
       >{(minPrice && maxPrice) ? (
-        <span style={{ display: "flex", fontSize: "14px" }}>${BN.formatUnits(minPrice, asset.decimals).toBigFormat(1)} <span style={{ fontSize: "1.4rem", transform: "translateY(-0.25rem)", margin: "0 0.2rem" }}>⟷</span> ${BN.formatUnits(maxPrice, asset.decimals).toBigFormat(1)}</span>
+        <span style={{ display: "flex", fontSize: "14px" }}>{BN.formatUnits(minPrice, asset.decimals).toBigFormat(1)} <span style={{ fontSize: "1.4rem", transform: "translateY(-0.25rem)", margin: "0 0.2rem" }}>⟷</span> {BN.formatUnits(maxPrice, asset.decimals).toBigFormat(1)}</span>
       ) : "Add"}</Button>
       <Dialog
         visible={modalOpened}
