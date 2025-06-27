@@ -7,6 +7,7 @@ import { useTradeInRangeVM } from "./TradeInRangeVM";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
 import Button from "@src/components/Button";
+import SizedBox from "@src/components/SizedBox";
 
 const Root = styled(Card)`
   display: flex;
@@ -36,15 +37,17 @@ const Details: React.FC = () => {
       <Row alignItems="center">
         <Column crossAxisSize="max">
           <Text type="secondary" size="small">
-            Total liquidity
+            Range Fact/Virtual Liquidity
           </Text>
-          <Text>$ {vm.range.liquidity.toFormat(0)}</Text>
+          <Row>
+            <Text fitContent>${vm.range.liquidity.toFormat(0)} / <Text fitContent type="secondary" style={{ display: "inline" }}>${vm.range.virtualLiquidity.toFormat(0)}</Text></Text>
+          </Row>
         </Column>
         <Column crossAxisSize="max">
           <Text type="secondary" size="small">
             Total volume
           </Text>
-          <Text>$ {vm.range.getVolume()?.toFormat(0)}</Text>
+          <Text>${vm.range.getVolume()?.toFormat(0)}</Text>
         </Column>
       </Row>
       <Link to="invest">
