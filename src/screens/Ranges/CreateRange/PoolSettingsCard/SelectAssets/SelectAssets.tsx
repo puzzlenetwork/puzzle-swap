@@ -99,8 +99,8 @@ const SelectsAssets: React.FC<IProps> = () => {
           </Row>
         </Row>
         <SizedBox height={24} />
+        {/* base token selection row */}
         {vm.rangeAssets.slice(0, 1).map(({ asset, share, locked }, index) => {
-          // const minShare = new BN(5);
           return (
             <TokenCompositionRow
               baseToken
@@ -137,6 +137,7 @@ const SelectsAssets: React.FC<IProps> = () => {
         </Row>
         <SizedBox height={24} />
         <Grid>
+          {/* tokens table */}
           {vm.rangeAssets.slice(1).map(({
             asset,
             share,
@@ -148,7 +149,7 @@ const SelectsAssets: React.FC<IProps> = () => {
             return (
               <TokenCompositionRow
                 key={index + "select-asset"}
-                balances={vm.tokensToAdd}
+                balances={vm.balances}
                 asset={asset}
                 onUpdateAsset={vm.replaceAssetInRange}
                 minPrice={minPrice}
