@@ -86,6 +86,8 @@ const RangeSelector = ({ asset, balances, minPrice, maxPrice, onUpdateMinPrice, 
           onClick={() => setModalOpened(false)}
           size="medium"
           fixed
+          disabled={containsError || !minPrice || !maxPrice}
+          title={containsError ? "Min price must be less than max price" : ""}
         >
           Confirm
         </Button>

@@ -140,13 +140,22 @@ const AllRangesImpl: React.FC<IProps> = () => {
                   justifyContent="space-between"
                   alignItems="center"
                 >
-                  {vm.userInvestedAmount && <Column>
+                  <Column>
                     <Text type="secondary">My Investment Balance</Text>
                     <SizedBox height={4} />
-                    <Text size="big" style={whiteText}>
-                      ${vm.userInvestedAmount.toFormat(2)}
-                    </Text>
-                  </Column>}
+                    {vm.userInvestedAmount ? (
+                      <Text size="big" style={whiteText}>
+                        ${vm.userInvestedAmount.toFormat(2)}
+                      </Text>
+                    ) : (
+                      <Skeleton
+                        width={85}
+                        height={24}
+                        baseColor="#8082C5"
+                        highlightColor="#F1F2FE"
+                      />
+                    )}
+                  </Column>
                 </Card>
               )}
               <Card paddingDesktop="16px 20px">
