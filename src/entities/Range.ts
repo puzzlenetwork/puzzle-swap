@@ -332,6 +332,10 @@ export class Range {
     return this.assets.reduce((acc, { balance }) => acc.plus(balance), BN.ZERO);
   }
 
+  get totalFees() {
+    return this.stats.poolFees.plus(this.stats.ownerFees).plus(this.stats.protocolFees);
+  }
+
   contractKeysRequest = (keys: string[] | string) =>
     nodeService.nodeKeysRequest(this.address, keys);
 }

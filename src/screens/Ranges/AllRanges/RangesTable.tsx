@@ -49,7 +49,7 @@ const RangesTable: React.FC = () => {
   useMemo(
     () => {
       const mappedData = rangesStore.ranges.map((range, index) => ({
-      onClick: () => navigate(`/ranges/${range.address}/invest`),
+      onClick: () => navigate(`/ranges/${range.address}/details`),
       range: (
         // <Text>{range.assetsWithLeverage.map(({ leverage }) => `${leverage}`).join(", ")}</Text>
         <Row>
@@ -98,7 +98,7 @@ const RangesTable: React.FC = () => {
           </Row>
           <SizedBox height={10} />
           <Text type="secondary" size="medium" textAlign="end">
-            ≈${ range.stats.poolFees.plus(range.stats.ownerFees).plus(range.stats.protocolFees).toFormat(2) }
+            ≈${ range.totalFees.toFormat(2) }
           </Text>
         </Column>
       ),

@@ -14,11 +14,6 @@ import Tooltip from "@components/Tooltip";
 import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import { Row } from "@src/components/Flex";
 import { useTheme } from "@emotion/react";
-import AssetSelector from "./AssetSelector";
-import RangeSelector from "./RangeSelector";
-import Table from "@src/components/Table";
-import BN from "@src/utils/BN";
-import ShareTokenInput from "./ShareTokenInput";
 import Switch from "@src/components/Switch";
 
 interface IProps {}

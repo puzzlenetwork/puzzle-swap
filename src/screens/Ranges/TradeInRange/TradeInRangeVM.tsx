@@ -58,7 +58,7 @@ class TradeInRangeVM {
   setAssetId0 = (assetId: string) => (this.assetId0 = assetId);
 
   get token0() {
-    return this.range?.assets.find(({ assetId }) => assetId === this.assetId0);
+    return { ...TOKENS_BY_ASSET_ID[this.assetId0], ...this.range.assets.find(({ assetId }) => assetId === this.assetId0) };
   }
 
   get balance0() {
@@ -83,11 +83,11 @@ class TradeInRangeVM {
     const usdtRate = this.rootStore.poolsStore.usdtRate(this.assetId0, 1);
     if (token0 == null || usdtRate == null) return "—";
     const result = usdtRate.times(
-      BN.formatUnits(this.amount0, TOKENS_BY_ASSET_ID[token0.assetId].decimals)
+      BN.formatUnits(this.amount0, token0.decimals)
     );
     if (!result.gt(0)) return "—";
     return `~ ${usdtRate
-      .times(BN.formatUnits(this.amount0, TOKENS_BY_ASSET_ID[token0.assetId].decimals))
+      .times(BN.formatUnits(this.amount0, token0.decimals))
       .toFormat(2)} $`;
   }
 
@@ -99,7 +99,7 @@ class TradeInRangeVM {
   setAssetId1 = (assetId: string) => (this.assetId1 = assetId);
 
   get token1() {
-    return this.range.assets.find(({ assetId }) => assetId === this.assetId1);
+    return { ...TOKENS_BY_ASSET_ID[this.assetId1], ...this.range.assets.find(({ assetId }) => assetId === this.assetId1) };
   }
 
   get liquidityOfToken1() {
@@ -119,8 +119,8 @@ class TradeInRangeVM {
     if (this.token1 == null || this.token0 == null || rate.eq(BN.ZERO)) {
       return null;
     }
-    const amount0 = BN.formatUnits(this.amount0, TOKENS_BY_ASSET_ID[this.token0!.assetId].decimals);
-    const amount1 = BN.formatUnits(this.amount1, TOKENS_BY_ASSET_ID[this.token1!.assetId].decimals);
+    const amount0 = BN.formatUnits(this.amount0, this.token0.decimals);
+    const amount1 = BN.formatUnits(this.amount1, this.token1.decimals);
     //(amount0/(amount1*rate))*100
     let priceImpact = amount0.times(rate).div(amount1).minus(1).times(100);
     // let priceImpact = new BN(100).times(rate.div(amount0.div(amount1)));
@@ -152,7 +152,7 @@ class TradeInRangeVM {
   get amount1() {
     const { liquidityOfToken0: l0, liquidityOfToken1: l1 } = this;
     const { token1, token0, amount0 } = this;
-    if (l0 == null || l1 == null || token1 == null || token0 == null) {
+    if (l0 == null || l1 == null || token1.share == null || token0.share == null) {
       return BN.ZERO;
     }
     const share0 = new BN(token0.share);
@@ -160,14 +160,14 @@ class TradeInRangeVM {
 
     try {
       const power = share0.div(share1).toSignificant(8).toNumber();
-      const base = l0.div(l0.plus(BN.formatUnits(amount0, TOKENS_BY_ASSET_ID[token0.assetId].decimals))).toNumber();
+      const base = l0.div(l0.plus(BN.formatUnits(amount0, token0.decimals))).toNumber();
       const rightPart = new BN(1).minus(Math.pow(base, power));
 
       return BN.parseUnits(
         l1
           .times(rightPart)
           .times(new BN(100).minus(this.range.swapFee).div(100)),
-        TOKENS_BY_ASSET_ID[token1.assetId].decimals
+        token1.decimals
       );
     } catch (e) {
       return BN.ZERO;
@@ -179,11 +179,11 @@ class TradeInRangeVM {
     const usdtRate = this.rootStore.poolsStore.usdtRate(this.assetId1, 1);
     if (token1 == null || usdtRate == null) return "—";
     const result = usdtRate.times(
-      BN.formatUnits(this.amount1, TOKENS_BY_ASSET_ID[token1.assetId].decimals)
+      BN.formatUnits(this.amount1, token1.decimals)
     );
     if (!result.gt(0)) return "—";
     return `~ ${usdtRate
-      .times(BN.formatUnits(this.amount1, TOKENS_BY_ASSET_ID[token1.assetId].decimals))
+      .times(BN.formatUnits(this.amount1, token1.decimals))
       .toFormat(2)} $`;
   }
 

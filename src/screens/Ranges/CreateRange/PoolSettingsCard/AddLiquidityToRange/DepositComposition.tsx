@@ -58,9 +58,10 @@ const DepositComposition: React.FC<IProps> = () => {
               token.asset.assetId
             );
             const available =
-              balance &&
+              (balance &&
               balance.balance &&
-              BN.formatUnits(balance?.balance, token.asset.decimals);
+              BN.formatUnits(balance?.balance, token.asset.decimals))
+              ?? BN.ZERO;
             const depositAmount = vm.maxToProvide
               .times(vm.providedPercentOfPool)
               .div(100)

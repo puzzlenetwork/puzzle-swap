@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useMemo } from "react";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import Card from "@components/Card";
@@ -16,6 +16,10 @@ const Root = styled.div`
 
 const AddLiquidityToRangeAmountSelector: React.FC<IProps> = () => {
   const vm = useCreateRangeVM();
+  const providedUsd = useMemo(
+    () => vm.maxToProvide.times(vm.providedPercentOfPool).div(100),
+    [vm.maxToProvide, vm.providedPercentOfPool]
+  )
   return (
     <Root>
       <Text style={{ width: "100%" }} weight={500} type="secondary">
@@ -29,10 +33,7 @@ const AddLiquidityToRangeAmountSelector: React.FC<IProps> = () => {
         <SizedBox height={16} />
         <Text type="primary" size="large" style={{ textAlign: "center" }}>
           {`${vm.providedPercentOfPool}% `}
-          <span style={{ color: "#8082C5" }}>{`($${vm.maxToProvide
-            .times(vm.providedPercentOfPool)
-            .div(100)
-            .toFormat(2)})`}</span>
+          <span style={{ color: "#8082C5" }}>{`($${providedUsd.toFormat(2)})`}</span>
         </Text>
         <SizedBox height={16} />
         <Slider

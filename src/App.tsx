@@ -108,7 +108,7 @@ const App: React.FC = () => {
 
         {/*Ranges block*/}
         <Route path={ROUTES.RANGES} element={<AllRanges />} />
-        <Route path={ROUTES.RANGES_INVEST} element={<RangeDetails />} />
+        <Route path={ROUTES.RANGES_DETAILS} element={<RangeDetails />} />
         <Route path={ROUTES.RANGES_DEPOSIT} element={<DepositToRange />} />
         <Route path={ROUTES.RANGES_DEPOSIT_ONE_TOKEN} element={<DepositToRange />} />
         <Route path={ROUTES.RANGES_WITHDRAW} element={<WithdrawFromRange />} />

@@ -2,8 +2,6 @@ import styled from "@emotion/styled";
 import React, { useState } from "react";
 import { IToken } from "@src/constants";
 import Balance from "@src/entities/Balance";
-import RoundTokenIcon from "@components/RoundTokenIcon";
-import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import TokenSelectModal from "@components/TokensSelectModal/TokenSelectModal";
 import arrowDownIcon from "@src/assets/icons/thingArrowDown.svg";

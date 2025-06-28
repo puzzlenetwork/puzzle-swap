@@ -54,7 +54,7 @@ const DepositToRangeImpl = observer(() => {
     <Layout>
       <Root>
         <GoBack
-          link={`/ranges/${vm.rangeAddress}/invest`}
+          link={`/ranges/${vm.rangeAddress}/details`}
           text="Back to Range Info"
         />
         <SizedBox height={24} />

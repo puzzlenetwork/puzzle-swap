@@ -1,13 +1,13 @@
-import Card from "@src/components/Card";
-import { Column, Row } from "@src/components/Flex";
-import SizedBox from "@src/components/SizedBox";
-import ArrowWithSuperText from "../../../components/ArrowWithSuperText";
-import Text from "@src/components/Text";
+import Card from "@components/Card";
+import { Column, Row } from "@components/Flex";
+import SizedBox from "@components/SizedBox";
+import ArrowWithSuperText from "@components/ArrowWithSuperText";
+import Text from "@components/Text";
 import styled from "@emotion/styled";
 import { RangeAsset } from "@src/entities/Range";
-import Img from "@src/components/Img";
+import Img from "@components/Img";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
-import Tooltip from "@src/components/Tooltip";
+import Tooltip from "@components/Tooltip";
 import { useTheme } from "@emotion/react";
 import { observer } from "mobx-react-lite";
 

@@ -8,9 +8,9 @@ import SquareTokenIcon from "@components/SquareTokenIcon";
 import styled from "@emotion/styled";
 
 interface IProps {
-  availableAmount?: BN | null;
+  availableAmount: BN;
   depositPrefix?: string;
-  depositAmount: BN | null;
+  depositAmount: BN;
   percent: number;
   symbol: string;
   logo: string;
@@ -25,13 +25,7 @@ const AddTokenRow: React.FC<IProps> = ({
   logo,
   depositPrefix,
 }) => {
-  const available = availableAmount ? availableAmount.toFormat(4) : "-";
-  const deposit = depositAmount
-    ? depositAmount.isNaN()
-      ? "-"
-      : depositAmount.toFormat(4)
-    : "-";
-  const isLowMoney = availableAmount != null && availableAmount.eq(0);
+  const isLowMoney = availableAmount.eq(0);
   return (
     <Root className="gridRow" warning={isLowMoney}>
       <Row alignItems="center" mainAxisSize="fit-content">
@@ -50,10 +44,10 @@ const AddTokenRow: React.FC<IProps> = ({
       <Column style={{ width: "100%", textAlign: "end" }}>
         <Text nowrap className="text">
           {depositPrefix}
-          {deposit}
+          {depositAmount.toFormat(4)}
         </Text>
         <Text type="secondary" size="small" className="text">
-          Available: {available}
+          Available: {availableAmount.toFormat(4)}
         </Text>
       </Column>
     </Root>

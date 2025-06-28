@@ -104,7 +104,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
       ? customRangeInformation as { title: string; value: string | JSX.Element }[]
       : puzzleRangeInformation as { title: string; value: string | JSX.Element }[]
   );
-  const link = `https://swap.puzzle.network/ranges/${vm.range!.address}/invest`;
+  const link = `https://swap.puzzle.network/ranges/${vm.range!.address}/details`;
   const text = `Invest to ${vm.range!.title} Puzzle Swap range`;
   const shareInfo = [
     {

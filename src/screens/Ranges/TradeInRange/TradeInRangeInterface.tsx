@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import SizedBox from "@components/SizedBox";
 import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import { Row } from "@components/Flex";
@@ -94,6 +94,14 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
     vm.setAssetId1(assetId);
   };
 
+  const minToRecieve = useMemo(
+    () => {
+      if (vm.token1 == null || vm.amount1.isNaN()) return null;
+      return `~ ${BN.formatUnits(vm.minimumToReceive, vm.token1.decimals).toFormat(2)} ${vm.token1.name}`;
+    },
+    [vm.token1, vm.amount1, vm.minimumToReceive]
+  );
+
   if (vm.range == null) {
     return <Loading />;
   }
@@ -153,12 +161,7 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
             >
               {vm.priceImpact && (
                 <Text nowrap>
-                  ~{" "}
-                  {BN.formatUnits(
-                    vm.minimumToReceive,
-                    TOKENS_BY_ASSET_ID[vm.token1!.assetId].decimals
-                  ).toFormat(2)}{" "}
-                  {vm.token1!.name}
+                  {minToRecieve}
                 </Text>
               )}
             </Row>
