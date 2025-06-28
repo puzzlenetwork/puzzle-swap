@@ -5,10 +5,10 @@ import Text from "@src/components/Text";
 import share from "@src/assets/icons/share.svg";
 import more from "@src/assets/icons/dots.svg";
 import SizedBox from "@components/SizedBox";
+import { Link } from "react-router-dom";
 
 interface IProps {
   setOpenedShare: (state: boolean) => void;
-  setOpenedDetails: (state: boolean) => void;
 }
 
 const Root = styled.div`
@@ -21,7 +21,6 @@ const Icon = styled.img`
   height: 24px;
 `;
 const MoreRangeInformation: React.FC<IProps> = ({
-  setOpenedDetails,
   setOpenedShare,
 }) => {
   return (
@@ -37,16 +36,17 @@ const MoreRangeInformation: React.FC<IProps> = ({
         <Text>Share on social media</Text>
       </Row>
       <SizedBox height={20} />
-      <Row
-        justifyContent="center"
-        alignItems="center"
-        style={{ cursor: "pointer" }}
-        onClick={() => setOpenedDetails(true)}
-      >
-        <Icon src={more} alt="pic" />
-        <SizedBox width={11} />
-        <Text>More information</Text>
-      </Row>
+      <Link to="https://stage2.puzzle.name/ranged/" target="_blank">
+        <Row
+          justifyContent="center"
+          alignItems="center"
+          style={{ cursor: "pointer" }}
+        >
+          <Icon src={more} alt="pic" />
+          <SizedBox width={11} />
+          <Text>More information</Text>
+        </Row>
+      </Link>
     </Root>
   );
 };

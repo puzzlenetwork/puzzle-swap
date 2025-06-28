@@ -48,7 +48,7 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
           <Switch onChange={() => vm.setShowOnlyActiveRanges(!vm.showOnlyActiveRanges)} value={vm.showOnlyActiveRanges} />
         </Card>
       </Row>
-      <Row style={{ flexGrow: 5, gap: 12 }} mainAxisSize="fit-content">
+      <Row style={{ flexGrow: 5, flexWrap: "wrap", gap: 12 }} mainAxisSize="fit-content">
         <Card flexDirection="row" alignItems="center" fitContent paddingDesktop="12px 20px" paddingMobile="12px 20px" flexGrow={1}>
           <Select
             options={vm.rangesSortings}

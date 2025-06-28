@@ -204,7 +204,7 @@ const RangeComposition: React.FC<IProps> = (props) => {
         <Text weight={500} type="secondary">
           Range composition
         </Text>
-        <Row alignItems="center" mainAxisSize="fit-content">
+        <Row alignItems="baseline" mainAxisSize="fit-content">
           {!props.isMobile && (
             <Row alignItems="center" mainAxisSize="fit-content">
               <Text fitContent nowrap>Show Sell-Off</Text>

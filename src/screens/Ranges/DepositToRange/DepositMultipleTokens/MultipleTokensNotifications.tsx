@@ -30,7 +30,7 @@ const MultipleTokensNotifications: React.FC<IProps> = () => {
             type="warning"
             text={
               <Text size="medium">
-                You must have all assets to bring liquidity to the pool. Top up
+                You must have all assets to bring liquidity to the range. Top up
                 empty balances or&nbsp;
                 <Link to={addOneTokenRoute}>
                   provide liquidity with single token.
@@ -54,7 +54,7 @@ const MultipleTokensNotifications: React.FC<IProps> = () => {
                 >
                   &nbsp;Buy {vm.minBalanceAsset?.symbol}&nbsp;
                 </Link>
-                to deposit to this pool.
+                to deposit to this range.
               </Text>
             }
             style={{ margin: 24 }}

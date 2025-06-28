@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { JSX, useMemo } from "react";
 import Text from "@components/Text";
 import { useStores } from "@src/stores";
 import SizedBox from "@components/SizedBox";
@@ -19,6 +19,7 @@ import TokenTag from "@src/components/TokenTag";
 import BN from "@src/utils/BN";
 import TokenInRangePreview from "./TokenInRangePreview";
 import { useAllRangesVm } from "./AllRangesVm";
+import RangeNotFound from "./RangeNotFound";
 
 
 const GrayCard = styled(Card)`
@@ -36,7 +37,7 @@ const RangesTable: React.FC = () => {
   const columns = React.useMemo(
     () => [
       { Header: "Range", accessor: "range" },
-      { Header: "Fact / Virtual Liquidity", accessor: "liquidity" },
+      { Header: <Text size="medium" type="secondary" nowrap>Fact / Virtual Liquidity</Text>, accessor: "liquidity" },
       { Header: <Text size="medium" type="secondary" textAlign="end">Earned by LP</Text>, accessor: "periodFees" },
     ],
     []
@@ -46,38 +47,40 @@ const RangesTable: React.FC = () => {
     rangesStore.setPagination({ page: el, size: 20 });
   };
 
+  const rangePreviewByAddress: Record<string, JSX.Element> = rangesStore.ranges.reduce((acc, range, index) => ({
+    ...acc,
+    [range.address]: (<Row>
+    <GrayCard paddingDesktop="4px" paddingMobile="4px">
+      <RangeChart range={range} size={120} index={index} />
+    </GrayCard>
+    <SizedBox width={16} />
+    <Column crossAxisSize="max" justifyContent="space-between">
+      <SizedBox height={20} />
+      <Text weight={500}>
+        Range {range.title}
+      </Text>
+      <SizedBox height={8} />
+      <Row>
+        {range.assets.slice().sort((a, b) => range.baseTokenId === a.assetId ? -1 : range.baseTokenId === b.assetId ? 1 : 0).map((asset, index) => (
+          <TokenInRangePreview
+            key={index}
+            asset={asset}
+            baseToken={range.baseToken}
+            showInUsd={vm.showPriceInUsd}
+            style={{ marginRight: 4 }}
+          />
+        ))}
+      </Row>
+      <SizedBox height={20} />
+    </Column>
+  </Row>
+  )}), {});
+
   useMemo(
     () => {
       const mappedData = rangesStore.ranges.map((range, index) => ({
       onClick: () => navigate(`/ranges/${range.address}/details`),
-      range: (
-        // <Text>{range.assetsWithLeverage.map(({ leverage }) => `${leverage}`).join(", ")}</Text>
-        <Row>
-          <GrayCard paddingDesktop="4px" paddingMobile="4px">
-            <RangeChart range={range} size={120} index={index} />
-          </GrayCard>
-          <SizedBox width={16} />
-          <Column crossAxisSize="max" justifyContent="space-between">
-            <SizedBox height={20} />
-            <Text weight={500}>
-              Range {range.title}
-            </Text>
-            <SizedBox height={8} />
-            <Row>
-              {range.assets.map((asset, index) => (
-                <TokenInRangePreview
-                  key={index}
-                  asset={asset}
-                  baseToken={range.baseToken}
-                  showInUsd={vm.showPriceInUsd}
-                  style={{ marginRight: 4 }}
-                />
-              ))}
-            </Row>
-            <SizedBox height={20} />
-          </Column>
-        </Row>
-      ),
+      range: rangePreviewByAddress[range.address],
       liquidity: <Text nowrap>${range.liquidity.toFormat(2)} / <Text type="secondary" size="medium" style={{ display: "inline" }}>${range.virtualLiquidity.toFormat(2)}</Text></Text>,
       periodFees: (
         <Column alignItems="flex-end" crossAxisSize="max">
@@ -129,19 +132,16 @@ const RangesTable: React.FC = () => {
           />
         </>
       ) : (
-        <>
-          <SizedBox height={24} />
-          <NotFoundIcon style={{ marginBottom: 24 }} />
-          <Text size="medium" type="secondary" className="text">
-            {rangesStore.loading ? (
-              <Loading big />
-            ) : (
-              "No ranges found. Try adjusting your filters or create a new range."
-            )}
-          </Text>
-          <Button onClick={() => { }}>Cancel the search</Button>
-          <SizedBox height={24} />
-        </>
+        <RangeNotFound
+          onClear={() => {
+            vm.setSearchValue("");
+            vm.setRangesSorting(0);
+            vm.setSelectedStatsRange(0);
+            vm.setShowOnlyActiveRanges(false);
+            vm.setShowPriceInUsd(false);
+          }}
+          searchValue={vm.searchValue}
+        />
       )}
     </>
   );

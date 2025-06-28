@@ -23,9 +23,6 @@ export const useAllRangesVm = () => useVM(ctx);
 class AllRangesVm {
   public rootStore: RootStore;
 
-  rangeCategoryFilter: number = 0;
-  setRangeCategoryFilter = (v: number) => (this.rangeCategoryFilter = v);
-
   public rangesInfo: GlobalRangesInfo | null = null;
   private _setRangesInfo = (v: GlobalRangesInfo) => (this.rangesInfo = v);
 

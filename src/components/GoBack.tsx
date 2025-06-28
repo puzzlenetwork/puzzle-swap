@@ -22,15 +22,15 @@ const Root = styled(Row)`
 
 const GoBack: React.FC<IProps> = ({ link, text }) => {
   return (
-    <Root alignItems="center">
-      <img src={arrow} alt="back" />
-      <SizedBox width={8} />
-      <Link to={link}>
-        <Text weight={500} type="blue500">
-          {text}
-        </Text>
-      </Link>
-    </Root>
+    <Link to={link}>
+      <Root alignItems="center">
+        <img src={arrow} alt="back" />
+        <SizedBox width={8} />
+          <Text weight={500} type="blue500">
+            {text}
+          </Text>
+      </Root>
+    </Link>
   );
 };
 export default GoBack;

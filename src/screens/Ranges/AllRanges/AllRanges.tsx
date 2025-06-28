@@ -147,12 +147,6 @@ const AllRangesImpl: React.FC<IProps> = () => {
                       ${vm.userInvestedAmount.toFormat(2)}
                     </Text>
                   </Column>}
-                  <Button
-                    onClick={() => navigate(`${ROUTES.USER_RANGES}`)}
-                    size="medium"
-                  >
-                    My Ranges
-                  </Button>
                 </Card>
               )}
               <Card paddingDesktop="16px 20px">

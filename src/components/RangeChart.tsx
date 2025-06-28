@@ -55,6 +55,7 @@ const RangeChart = ({ range, size, index }: IParams) => {
               {...props}
             />
           }
+          isAnimationActive={false}
         />
         <PolarAngleAxis
           dataKey="assetId"
