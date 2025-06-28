@@ -40,6 +40,7 @@ const DepositSingleToken: React.FC<IProps> = () => {
           amount={vm.singleTokenAmount}
           setAmount={vm.setSingleTokenAmount}
           assetId={selectedToken.assetId}
+          // setAssetId={vm.setSelectedTokenToDepositId}
           balances={vm.balances ?? []}
           onMaxClick={vm.onMaxSingleTokenClick}
           usdnEquivalent={vm.selectedTokenAmountUsdnEquivalent}

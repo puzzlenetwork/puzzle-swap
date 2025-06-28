@@ -147,16 +147,30 @@ const RangeComposition: React.FC<IProps> = (props) => {
             <Text fitContent>{a.symbol}</Text>
           </Row>
         ),
-        price: (a.assetId === vm.range!.baseTokenId) ? (
-          <Row alignItems="center" justifyContent="flex-end">{ relativeTokenAssetId === "USD" && "$" }{a.currentPrice.times(rateToRelativeToken).toSmallFormat()}</Row>
+        price: (relativeTokenAssetId === "USD") ? (
+          (a.assetId === vm.range!.baseTokenId) ? (
+            <Row alignItems="center" justifyContent="flex-end">${a.currentPriceUsd.toSmallFormat()}</Row>
+          ) : (
+            <Row alignItems="center" justifyContent="flex-end">
+              <Text fitContent type="secondary" size="small">${a.minPriceUsd.toSmallFormat()}</Text>
+              <SizedBox width={4} />
+              <Text fitContent> ← ${a.currentPriceUsd.toSmallFormat()} → </Text>
+              <SizedBox width={4} />
+              <Text fitContent type="secondary" size="small">${a.maxPriceUsd.toSmallFormat()}</Text>
+            </Row>
+          )
         ) : (
-          <Row alignItems="center" justifyContent="flex-end">
-            <Text fitContent type="secondary" size="small">{ relativeTokenAssetId === "USD" && "$" }{a.minPrice.times(rateToRelativeToken).toSmallFormat()}</Text>
-            <SizedBox width={4} />
-            <Text fitContent> ← { relativeTokenAssetId === "USD" && "$" }{a.currentPrice.times(rateToRelativeToken).toSmallFormat()} → </Text>
-            <SizedBox width={4} />
-            <Text fitContent type="secondary" size="small">{ relativeTokenAssetId === "USD" && "$" }{a.maxPrice.times(rateToRelativeToken).toSmallFormat()}</Text>
-          </Row>
+          (a.assetId === vm.range!.baseTokenId) ? (
+            <Row alignItems="center" justifyContent="flex-end">{a.currentPrice.times(rateToRelativeToken).toSmallFormat()}</Row>
+          ) : (
+            <Row alignItems="center" justifyContent="flex-end">
+              <Text fitContent type="secondary" size="small">{a.minPrice.times(rateToRelativeToken).toSmallFormat()}</Text>
+              <SizedBox width={4} />
+              <Text fitContent> ← {a.currentPrice.times(rateToRelativeToken).toSmallFormat()} → </Text>
+              <SizedBox width={4} />
+              <Text fitContent type="secondary" size="small">{a.maxPrice.times(rateToRelativeToken).toSmallFormat()}</Text>
+            </Row>
+          )
         ),
         balance: (
           <Row alignItems="center" justifyContent="center">

@@ -48,6 +48,11 @@ class DepositToRangeVM {
   public setSelectedTokenToDeposit = (token: IToken | null) =>
     (this.selectedTokenToDeposit = token);
 
+  public setSelectedTokenToDepositId = (assetId: string | null) => {
+    const token = TOKENS_BY_ASSET_ID[assetId ?? "WAVES"];
+    this.setSelectedTokenToDeposit(token);
+  };
+
   public singleTokenAmount: BN = BN.ZERO;
   public setSingleTokenAmount = (amount: BN) => (this.singleTokenAmount = amount);
 
@@ -137,8 +142,8 @@ class DepositToRangeVM {
           },
         ],
         call: {
-          function: "generateIndexWithOneTokenAndStake",
-          args: [],
+          function: "generateIndexWithOneToken",
+          args: [{ type: "boolean", value: false }],
         },
       })
       .then((txId) => {
