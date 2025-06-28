@@ -3,14 +3,14 @@ name: Deploy
 env:
   REACT_APP_API_BASE_DEV: https://puzzle-js-back.herokuapp.com
   REACT_APP_API_BASE_PROD: https://puzzle-js-back.herokuapp.com
-  REACT_APP_AGG_API_DEV: https://swapapi.puzzleswap.org
+  REACT_APP_AGG_API_DEV: https://stage2.puzzle.name/
   REACT_APP_AGG_API_PROD: https://swapapi.puzzleswap.org
 
 on:
   push:
     branches:
       - master
-      - ranges
+      - develop
 
 jobs:
   deploy_to_Heroku:
@@ -19,8 +19,8 @@ jobs:
       HEROKU_EMAIL: izhur27@gmail.com
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to RANGES
-        if: endsWith(github.ref, '/ranges')
+      - name: Deploy to DEVELOP
+        if: endsWith(github.ref, '/develop')
         run: |
           echo "REACT_APP_API_BASE=${REACT_APP_API_BASE_DEV}" >> $GITHUB_ENV
           echo "REACT_APP_AGG_API=${REACT_APP_AGG_API_DEV}" >> $GITHUB_ENV
