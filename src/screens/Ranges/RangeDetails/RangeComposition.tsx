@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React, { useMemo, useState } from "react";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import { Row } from "@components/Flex";
+import { Column, Row } from "@components/Flex";
 import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
 import { observer } from "mobx-react-lite";
 import Table from "@components/Table";
@@ -96,7 +96,10 @@ const RangeComposition: React.FC<IProps> = (props) => {
               trigger: "hover",
             }}
             content={
-              <Text size="small">Sell-Off is...</Text>
+              <Column>
+                <Text size="small">Sell of is Max portion of this token that can</Text>
+                <Text size="small">be safely sold without breaking range balance</Text>
+              </Column>
             }
           >
             <Row>
@@ -193,10 +196,33 @@ const RangeComposition: React.FC<IProps> = (props) => {
               {a.share.toFormat(2)}%
             </Text>
           </Row>
+        ),
+        selloff: (BN.ZERO).lt(a.maxSellAllowed) ? (
+          <Tooltip
+            content={(
+              <Column>
+                <Text size="small">The token has currently reached</Text>
+                <Text size="small">its peak sales volume. Sales will</Text>
+                <Text size="small">resume in ... minutes.</Text>
+              </Column>
+            )}
+          >
+            <Row alignItems="center" justifyContent="flex-end">
+              <Text fitContent type={(BN.ZERO).gt(a.maxSellAllowed) ? "error" : "success"}>
+                {(BN.ZERO).toSmallFormat()}% / <Text type="secondary" size="medium" style={{ display: "inline" }}>{a.maxSellAllowed.times(100).toSmallFormat()}%</Text>
+              </Text>
+            </Row>
+          </Tooltip>
+        ) : (
+          <Row alignItems="center" justifyContent="flex-end">
+            <Text fitContent type={(BN.ZERO).gt(a.maxSellAllowed) ? "error" : "success"}>
+              {(BN.ZERO).toSmallFormat()}% / <Text type="secondary" size="medium" style={{ display: "inline" }}>{a.maxSellAllowed.times(100).toSmallFormat()}%</Text>
+            </Text>
+          </Row>
         )
       }));
     setFilteredTokens(data);
-  }, [balanceSort, vm.range, rateToRelativeToken]);
+  }, [vm.range, balanceSort, relativeTokenAssetId, rateToRelativeToken]);
   const { width } = useWindowSize();
   return (
     <Root balanceSort={balanceSort}>

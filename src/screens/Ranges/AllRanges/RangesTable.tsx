@@ -49,32 +49,34 @@ const RangesTable: React.FC = () => {
 
   const rangePreviewByAddress: Record<string, JSX.Element> = rangesStore.ranges.reduce((acc, range, index) => ({
     ...acc,
-    [range.address]: (<Row>
-    <GrayCard paddingDesktop="4px" paddingMobile="4px">
-      <RangeChart range={range} size={120} index={index} />
-    </GrayCard>
-    <SizedBox width={16} />
-    <Column crossAxisSize="max" justifyContent="space-between">
-      <SizedBox height={20} />
-      <Text weight={500}>
-        Range {range.title}
-      </Text>
-      <SizedBox height={8} />
-      <Row>
-        {range.assets.slice().sort((a, b) => range.baseTokenId === a.assetId ? -1 : range.baseTokenId === b.assetId ? 1 : 0).map((asset, index) => (
-          <TokenInRangePreview
-            key={index}
-            asset={asset}
-            baseToken={range.baseToken}
-            showInUsd={vm.showPriceInUsd}
-            style={{ marginRight: 4 }}
-          />
-        ))}
+    [range.address]: (
+      <Row alignItems="center">
+        <GrayCard paddingDesktop="4px" paddingMobile="4px">
+          <RangeChart range={range} size={120} index={index} />
+        </GrayCard>
+        <SizedBox width={16} />
+        <Column crossAxisSize="max" justifyContent="space-between">
+          <SizedBox height={20} />
+          <Text weight={500}>
+            Range {range.title}
+          </Text>
+          <SizedBox height={8} />
+          <Row>
+            {range.assets.slice().sort((a, b) => range.baseTokenId === a.assetId ? -1 : range.baseTokenId === b.assetId ? 1 : 0).map((asset, index) => (
+              <TokenInRangePreview
+                key={index}
+                asset={asset}
+                baseToken={range.baseToken}
+                showInUsd={vm.showPriceInUsd}
+                style={{ marginRight: 4 }}
+              />
+            ))}
+          </Row>
+          <SizedBox height={20} />
+        </Column>
       </Row>
-      <SizedBox height={20} />
-    </Column>
-  </Row>
-  )}), {});
+    )
+  }), {});
 
   useMemo(
     () => {
