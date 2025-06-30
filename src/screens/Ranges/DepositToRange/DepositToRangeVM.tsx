@@ -179,14 +179,15 @@ class DepositToRangeVM {
           inWalletBalance?.balance ?? BN.ZERO,
           inWalletBalance?.decimals ?? 8
         );
-        const inRangeBalance = this.range.assets.find((a) => a.assetId === assetId)?.balance ?? BN.ZERO;
+        const inRangeBalance = this.range.assets.find((a) => a.assetId === assetId)?.factBalance ?? BN.ZERO;
+        if (inRangeBalance.isZero()) return BN.ZERO;
         return (userBalance).div(inRangeBalance)
       })
     );
   }
 
   get tokensToDepositAmounts(): Record<string, BN> | null {
-    return this.range.assets.reduce<Record<string, BN>>((acc, { assetId, balance: inRangeBalance }) => {
+    return this.range.assets.reduce<Record<string, BN>>((acc, { assetId, factBalance: inRangeBalance }) => {
       const depositAmount = this.minAvailableTokens
         .times(inRangeBalance)
         .times(this.percentToDeposit.div(100));
@@ -261,7 +262,7 @@ class DepositToRangeVM {
           payment,
           call: {
             function: "generateIndex",
-            args: [{ type: "boolean", value: false }],
+            args: [{ type: "boolean", value: true }],
           },
         })
         .then((txId) => {

@@ -6,9 +6,6 @@ import Table from "@src/components/Table";
 import Scrollbar from "@components/Scrollbar";
 import { observer } from "mobx-react-lite";
 import { Pagination } from "@src/components/Pagination/Pagination";
-import { ReactComponent as NotFoundIcon } from "@src/assets/notFound.svg";
-import Button from "@components/Button";
-import Loading from "@components/Loading";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import { useNavigate } from "react-router-dom";
 import RangeChart from "@components/RangeChart";
@@ -20,6 +17,7 @@ import BN from "@src/utils/BN";
 import TokenInRangePreview from "./TokenInRangePreview";
 import { useAllRangesVm } from "./AllRangesVm";
 import RangeNotFound from "./RangeNotFound";
+import useWindowSize from "@src/hooks/useWindowSize";
 
 
 const GrayCard = styled(Card)`
@@ -31,6 +29,7 @@ const GrayCard = styled(Card)`
 const RangesTable: React.FC = () => {
   const vm = useAllRangesVm();
   const navigate = useNavigate();
+  const { width } = useWindowSize();
   const { rangesStore } = useStores();
   const [tableData, setTableData] = React.useState<any[]>([]);
 
@@ -47,18 +46,23 @@ const RangesTable: React.FC = () => {
     rangesStore.setPagination({ page: el, size: 20 });
   };
 
-  const rangePreviewByAddress: Record<string, JSX.Element> = rangesStore.ranges.reduce((acc, range, index) => ({
-    ...acc,
-    [range.address]: (
-      <Row alignItems="center">
-        <GrayCard paddingDesktop="4px" paddingMobile="4px">
-          <RangeChart range={range} size={120} index={index} />
+  const stopPropagation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
+  const rangePreviewByAddress: Record<string, JSX.Element> = useMemo(
+    () => rangesStore.ranges.reduce((acc, range, index) => ({
+      ...acc,
+      [range.address]: (
+        <Row alignItems="center">
+          <GrayCard paddingDesktop="4px" paddingMobile="4px" onClick={width && width < 880 ? stopPropagation : undefined}>
+            <RangeChart range={range} size={120} index={index} />
         </GrayCard>
         <SizedBox width={16} />
         <Column crossAxisSize="max" justifyContent="space-between">
           <SizedBox height={20} />
           <Text weight={500}>
-            Range {range.title}
+            Range {range.domain}
           </Text>
           <SizedBox height={8} />
           <Row>
@@ -76,7 +80,9 @@ const RangesTable: React.FC = () => {
         </Column>
       </Row>
     )
-  }), {});
+    }), {}),
+    [rangesStore.ranges, vm.showPriceInUsd, width]
+  );
 
   useMemo(
     () => {

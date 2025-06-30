@@ -151,11 +151,11 @@ const RangeComposition: React.FC<IProps> = (props) => {
           </Row>
         ),
         price: (relativeTokenAssetId === "USD") ? (
-          (a.assetId === vm.range!.baseTokenId) ? (
+          (a.assetId === relativeTokenAssetId) ? (
             <Row alignItems="center" justifyContent="flex-end">${a.currentPriceUsd.toSmallFormat()}</Row>
           ) : (
             <Row alignItems="center" justifyContent="flex-end">
-              <Text fitContent type="secondary" size="small">${a.minPriceUsd.toSmallFormat()}</Text>
+                <Text fitContent type="secondary" size="small">${a.minPriceUsd.toSmallFormat()}</Text>
               <SizedBox width={4} />
               <Text fitContent> ← ${a.currentPriceUsd.toSmallFormat()} → </Text>
               <SizedBox width={4} />
@@ -163,7 +163,7 @@ const RangeComposition: React.FC<IProps> = (props) => {
             </Row>
           )
         ) : (
-          (a.assetId === vm.range!.baseTokenId) ? (
+          (a.assetId === relativeTokenAssetId) ? (
             <Row alignItems="center" justifyContent="flex-end">{a.currentPrice.times(rateToRelativeToken).toSmallFormat()}</Row>
           ) : (
             <Row alignItems="center" justifyContent="flex-end">

@@ -189,7 +189,7 @@ class WithdrawFromRangeVM {
       .then((txId) => {
         txId &&
           notificationStore.notify(
-            `Liquidity is successfully withdrawn from the range ${this.range.title}.`,
+            `Liquidity is successfully withdrawn from the range ${this.range.domain}.`,
             {
               type: "success",
               title: "Successfully withdrawn",
