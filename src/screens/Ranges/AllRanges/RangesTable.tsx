@@ -14,7 +14,7 @@ import Card from "@src/components/Card";
 import styled from "@emotion/styled";
 import TokenTag from "@src/components/TokenTag";
 import BN from "@src/utils/BN";
-import TokenInRangePreview from "./TokenInRangePreview";
+import TokenInRangePreview, { TokenCard } from "./TokenInRangePreview";
 import { useAllRangesVm } from "./AllRangesVm";
 import RangeNotFound from "./RangeNotFound";
 import useWindowSize from "@src/hooks/useWindowSize";
@@ -66,7 +66,7 @@ const RangesTable: React.FC = () => {
           </Text>
           <SizedBox height={8} />
           <Row>
-            {range.assets.slice().sort((a, b) => range.baseTokenId === a.assetId ? -1 : range.baseTokenId === b.assetId ? 1 : 0).map((asset, index) => (
+            {range.assets.slice().sort((a, b) => range.baseTokenId === a.assetId ? -1 : range.baseTokenId === b.assetId ? 1 : 0).slice(0, 4).map((asset, index) => (
               <TokenInRangePreview
                 key={index}
                 asset={asset}
@@ -75,6 +75,11 @@ const RangesTable: React.FC = () => {
                 style={{ marginRight: 4 }}
               />
             ))}
+            {range.assets.length > 4 && (
+              <TokenCard style={{ alignItems: "center", justifyContent: "center", height: 76 }}>
+                <Text>+{range.assets.length - 4}</Text>
+              </TokenCard>
+            )}
           </Row>
           <SizedBox height={20} />
         </Column>

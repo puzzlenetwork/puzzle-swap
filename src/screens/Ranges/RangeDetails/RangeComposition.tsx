@@ -197,32 +197,32 @@ const RangeComposition: React.FC<IProps> = (props) => {
             </Text>
           </Row>
         ),
-        selloff: (BN.ZERO).lt(a.maxSellAllowed) ? (
+        selloff: a.maxSellAllowed && ((a.currentSelloff).gte(a.maxSellAllowed) ? (
           <Tooltip
             content={(
               <Column>
                 <Text size="small">The token has currently reached</Text>
                 <Text size="small">its peak sales volume. Sales will</Text>
-                <Text size="small">resume in ... minutes.</Text>
+                <Text size="small">resume in { new BN(vm.currentBlockHeight).div(100).toDecimalPlaces(0, BN.ROUND_CEIL).times(100).minus(a.selloffStartHeight).toNumber() } minutes.</Text>
               </Column>
             )}
           >
             <Row alignItems="center" justifyContent="flex-end">
-              <Text fitContent type={(BN.ZERO).gt(a.maxSellAllowed) ? "error" : "success"}>
-                {(BN.ZERO).toSmallFormat()}% / <Text type="secondary" size="medium" style={{ display: "inline" }}>{a.maxSellAllowed.times(100).toSmallFormat()}%</Text>
+              <Text fitContent type={(a.currentSelloff).gt(a.maxSellAllowed) ? "error" : "success"}>
+                {(a.currentSelloff).toSmallFormat()}% / <Text type="secondary" size="medium" style={{ display: "inline" }}>{a.maxSellAllowed.toSmallFormat()}%</Text>
               </Text>
             </Row>
           </Tooltip>
         ) : (
           <Row alignItems="center" justifyContent="flex-end">
-            <Text fitContent type={(BN.ZERO).gt(a.maxSellAllowed) ? "error" : "success"}>
-              {(BN.ZERO).toSmallFormat()}% / <Text type="secondary" size="medium" style={{ display: "inline" }}>{a.maxSellAllowed.times(100).toSmallFormat()}%</Text>
+            <Text fitContent type={(a.currentSelloff).gt(a.maxSellAllowed) ? "error" : "success"}>
+              {(a.currentSelloff).toSmallFormat()}% / <Text type="secondary" size="medium" style={{ display: "inline" }}>{a.maxSellAllowed.toSmallFormat()}%</Text>
             </Text>
           </Row>
-        )
+        ))
       }));
     setFilteredTokens(data);
-  }, [vm.range, balanceSort, relativeTokenAssetId, rateToRelativeToken]);
+  }, [vm.range, vm.currentBlockHeight, balanceSort, relativeTokenAssetId, rateToRelativeToken]);
   const { width } = useWindowSize();
   return (
     <Root balanceSort={balanceSort}>

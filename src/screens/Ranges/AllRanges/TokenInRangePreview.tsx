@@ -19,7 +19,7 @@ interface IParams {
 
 type TCardType = "primary" | "secondary" | "error";
 
-const LocalCard = styled(Card)<{ kind?: TCardType }>`
+export const TokenCard = styled(Card)<{ kind?: TCardType }>`
   border: none;
   width: fit-content;
   padding: 12px 8px !important;
@@ -42,18 +42,18 @@ const TokenInRangePreview = ({ asset, isBase, showInUsd, ...rest }: IParams & Re
   const theme = useTheme();
   if (isBase) {
     return (
-      <LocalCard kind="primary" {...rest}>
+      <TokenCard kind="primary" {...rest}>
         <Text>{asset.name}</Text>
         <SizedBox height={12} />
         <Text type="secondary" size="small" weight={500}>Base</Text>
-      </LocalCard>
+      </TokenCard>
     )
   }
 
   const isPriceValid = (asset.currentPrice.lte(asset.maxPrice) && asset.currentPrice.gte(asset.minPrice));
 
   return (
-    <LocalCard kind={isPriceValid ? "secondary" : "error"} {...rest}>
+    <TokenCard kind={isPriceValid ? "secondary" : "error"} {...rest}>
       <Text type={isPriceValid ? "primary" : "error"}>{asset.name}</Text>
       <SizedBox height={12} />
       <Row alignItems="center">
@@ -71,7 +71,7 @@ const TokenInRangePreview = ({ asset, isBase, showInUsd, ...rest }: IParams & Re
           showInUsd ? `$${asset.maxPriceUsd.toSmallFormat()}` : asset.maxPrice.toSmallFormat()
         }</Text>
       </Row>
-    </LocalCard>
+    </TokenCard>
   )
 }
 
@@ -106,7 +106,7 @@ const TokenInRangePreviewWrapper = ({ asset, baseToken, showInUsd, ...rest }: IW
           <SizedBox width={40} />
             <Text size="small" weight={500} nowrap>{
               showInUsd ? `$${asset.minPriceUsd.toSmallFormat()}` : `${asset.minPrice.toSmallFormat()} ${baseToken?.name}`
-            } <div style={{ display: "inline", fontSize: "1.4rem" }}>⟷</div> {
+            } <span style={{ display: "inline", fontSize: "1.4rem" }}>⟷</span> {
               showInUsd ? `$${asset.maxPriceUsd.toSmallFormat()}` : `${asset.maxPrice.toSmallFormat()} ${baseToken?.name}`
             }</Text>
         </Row>

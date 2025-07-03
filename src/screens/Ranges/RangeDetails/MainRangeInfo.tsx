@@ -77,7 +77,7 @@ const MainRangeInfo: React.FC<IProps> = ({ isMobile }) => {
         <Hat>
           <Column>
             <Title size="large" weight={500} style={whiteText}>
-              Range {vm.range!.title}
+              Range {vm.range!.domain}
             </Title>
             <SizedBox height={4} />
             <Text type="purple300" size="medium">

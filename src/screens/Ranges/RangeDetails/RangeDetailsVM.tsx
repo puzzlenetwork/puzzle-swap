@@ -9,6 +9,7 @@ import { IHistory } from "@src/utils/types";
 import { EXPLORER_URL, NODE_URL, TOKENS_BY_ASSET_ID } from "@src/constants";
 import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
 import dayjs, { ManipulateType } from "dayjs";
+import nodeService from "@src/services/nodeService";
 
 const ctx = React.createContext<RangeDetailsInterfaceVM | null>(null);
 
@@ -112,6 +113,14 @@ class RangeDetailsInterfaceVM {
     return new BN(this.range!.totals[this.chartDataKey] ?? 0)
   }
 
+  public currentBlockHeight: number = 0;
+  private setCurrentBlockHeight = (value: number) => (this.currentBlockHeight = value);
+
+  updateBlockHeight = async () => {
+    const data = await nodeService.blocksHeight();
+    this.setCurrentBlockHeight(data.height);
+  };
+
   public useMaxStakeUnstakeAmount: boolean = true;
   public setUseMaxStakeUnstakeAmount = (value: boolean) => (this.useMaxStakeUnstakeAmount = value);
 
@@ -133,6 +142,7 @@ class RangeDetailsInterfaceVM {
         const newRange = new Range(rangeData);
         this.rootStore.rangesStore.updateRange(newRange);
         this.setHistory(rangeData.charts || []);
+        this.updateBlockHeight();
       });
     this.syncChartData("all");
     

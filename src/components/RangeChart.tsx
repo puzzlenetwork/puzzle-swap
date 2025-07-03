@@ -31,6 +31,8 @@ const TokenIcon = styled(Img)`
 const RangeChart = ({ range, size, index }: IParams) => {
   const iconSize = size / 7.5;
   const halfIcon = iconSize / 2;
+  const backgroundIconSize = size / 2;
+  const halfBackgroundIcon = backgroundIconSize / 2;
 
   return (
     <Tooltip config={{ placement: "bottom" }} content={
@@ -48,13 +50,45 @@ const RangeChart = ({ range, size, index }: IParams) => {
         <PolarGrid />
         <Radar
           dataKey="relativeLeverage"
-          shape={(props) =>
-            <RadarWithImage
-              imageElement={<Img src={radarBg} />}
-              uniqueId={"allranges_" + index}
-              {...props}
-            />
-          }
+          shape={(props) => {
+            return (
+              <>
+                <defs>
+                  <filter id={"blur_" + index} x="-100%" y="-100%" width="300%" height="300%" color-interpolation-filters="sRGB">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="12" />
+                  </filter>
+                </defs>
+                <RadarWithImage
+                  imageElement={(
+                    <g filter={`url(#blur_${index})`}>
+                      {props.points.map((point: any, i: any) => (
+                        <foreignObject
+                          width={backgroundIconSize}
+                          height={backgroundIconSize}
+                          x={point.x - halfBackgroundIcon}
+                          y={point.y - halfBackgroundIcon}
+                          key={i}
+                        >
+                          <Img 
+                            src={TOKENS_BY_ASSET_ID[point.name].logo} 
+                            style={{ 
+                              width: backgroundIconSize, 
+                              height: backgroundIconSize, 
+                              borderRadius: halfBackgroundIcon,
+                              opacity: 0.9
+                            }}
+                          />
+                        </foreignObject>
+                      ))}
+                    </g>
+                  )}
+                  uniqueId={"allranges_" + index}
+                  useCssImage
+                  {...props}
+                />
+              </>
+            )
+          }}
           isAnimationActive={false}
         />
         <PolarAngleAxis

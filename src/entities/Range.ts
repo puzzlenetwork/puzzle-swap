@@ -17,7 +17,10 @@ export interface IRangeAssetResponse {
   min_price: number,
   max_price_usd: number,
   min_price_usd: number,
+  current_selloff: number,
   max_sell_allowed: number,
+  selloff_start_balance: number,
+  selloff_start_height: number,
   shutdown_buy: boolean,
   shutdown_sell: boolean,
   name: string,
@@ -117,7 +120,10 @@ export class RangeAsset {
   minPrice: BN;
   maxPriceUsd: BN;
   minPriceUsd: BN;
-  maxSellAllowed: BN;
+  maxSellAllowed: BN | null;
+  currentSelloff: BN;
+  selloffStartBalance: BN;
+  selloffStartHeight: BN;
   shutdownBuy: boolean;
   shutdownSell: boolean;
   name: string;
@@ -138,7 +144,10 @@ export class RangeAsset {
     this.minPrice = new BN(params.min_price);
     this.maxPriceUsd = new BN(params.max_price_usd);
     this.minPriceUsd = new BN(params.min_price_usd);
-    this.maxSellAllowed = new BN(params.max_sell_allowed);
+    this.maxSellAllowed = params.max_sell_allowed ? new BN(params.max_sell_allowed) : null;
+    this.currentSelloff = new BN(params.current_selloff);
+    this.selloffStartBalance = new BN(params.selloff_start_balance);
+    this.selloffStartHeight = new BN(params.selloff_start_height);
     this.shutdownBuy = params.shutdown_buy;
     this.shutdownSell = params.shutdown_sell;
     this.name = params.name;

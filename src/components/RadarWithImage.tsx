@@ -6,8 +6,9 @@ type TRadarWithImageProps = {
   radiusAxis: { cx: number; cy: number };
   imageUrl?: string;
   imageElement?: JSX.Element;
-  strokeWidth?: number; // NEW: stroke width parameter
-  uniqueId?: string; // to allow multiple instances
+  strokeWidth?: number;
+  uniqueId?: string;
+  useCssImage?: boolean;
   debug?: boolean;
 };
 
@@ -15,12 +16,30 @@ type TRadarWithImageProps = {
    * Shrinks or expands a polygon by moving each vertex along the inward angle bisector.
    */
 const offsetPoints = (
-  pts: { x: number; y: number }[],
+  points: { x: number; y: number }[],
   offset: number
 ): { x: number; y: number }[] => {
-  const len = pts.length;
+  const pts = points.reduce(
+    (acc, p, i) => {
+      if (i === 0) return [p];
 
-  return pts.map((p, i) => {
+      const _len = acc.length;
+      const prevP = acc[_len - 1];
+
+      // Skip duplicate points
+      if (p.x === prevP.x && p.y === prevP.y) {
+        return acc;
+      }
+      return [...acc, p];
+    },
+    [] as { x: number; y: number }[]
+  );
+
+  const len = pts.length;
+  if (len <= 1) return points;
+
+  return pts
+    .map((p, i) => {
     // Previous and next vertices
     const prev = pts[(i - 1 + len) % len];
     const next = pts[(i + 1) % len];
@@ -75,6 +94,7 @@ const RadarWithImage = ({
   imageElement,
   strokeWidth = 3, // default stroke width
   uniqueId,
+  useCssImage,
   debug,
 }: TRadarWithImageProps) => {
   const { cx, cy } = radiusAxis;
@@ -118,45 +138,59 @@ const RadarWithImage = ({
     innerPath = makePath(offsetPoints(points, +halfStroke));
   }
 
-  const imageWidth = Math.max(cx, cy) * 2.5;
-  const imageHeight = imageWidth * (3 / 2);
+  const imageWidth = Math.max(cx, cy) * 2;
+  const imageHeight = imageWidth;
 
-  const imageX = cx - imageWidth / 2;
-  const imageY = cy - imageHeight / 2;
+  const imageX = 0;
+  const imageY = 0;
 
-  const renderImage = (extraProps: Partial<JSX.IntrinsicElements["image"]> = {}) =>
-    imageElement ? (
-      // Clone imageElement and apply extra props
-      <foreignObject
-        x={imageX}
-        y={imageY}
-        width={imageWidth}
-        height={imageHeight}
-        {...extraProps}
-      >
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-          }}
-        >
-          {React.cloneElement(imageElement, {
-            style: { ...(imageElement.props?.style || {}), ...(extraProps.style || {}), width: imageWidth, height: imageHeight },
-          })}
-        </div>
-      </foreignObject>
-    ) : imageUrl ? (
-      <image
-        href={imageUrl}
-        x={imageX}
-        y={imageY}
-        width={imageWidth}
-        height={imageHeight}
-        preserveAspectRatio="xMidYMid slice"
-        {...extraProps}
-      />
-    ) : null;
-
+  const renderImage = (extraProps: Partial<JSX.IntrinsicElements["image"]> = {}): JSX.Element | null => {
+    switch (true) {
+      case !!useCssImage && !!imageElement:
+        return (
+          <g {...extraProps}>
+            {React.cloneElement(imageElement!, {
+              style: { ...(imageElement!.props?.style || {}), ...(extraProps.style || {}), width: imageWidth, height: imageHeight },
+            })}
+          </g>
+        );
+      case !useCssImage && !!imageElement:
+        return (
+          <foreignObject
+            x={imageX}
+            y={imageY}
+            width={imageWidth}
+            height={imageHeight}
+            {...extraProps}
+          >
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+            >
+              {React.cloneElement(imageElement!, {
+                style: { ...(imageElement!.props?.style || {}), ...(extraProps.style || {}), width: imageWidth, height: imageHeight },
+              })}
+            </div>
+          </foreignObject>
+        );
+      case !useCssImage && !!imageUrl:
+        return (
+          <image
+            href={imageUrl}
+            x={imageX}
+            y={imageY}
+            width={imageWidth}
+            height={imageHeight}
+            preserveAspectRatio="xMidYMid slice"
+            {...extraProps}
+          />
+        )
+      default:
+        return null;
+    }
+  }
   return (
     <>
       <defs>
@@ -186,8 +220,9 @@ const RadarWithImage = ({
       {/* Debug outlines for development */}
       {debug && (
         <>
-          <path d={outerPath} stroke="lime" strokeWidth={1} fill="none" />
-          <path d={innerPath} stroke="red" strokeWidth={1} fill="none" />
+          <path d={outerPath} stroke="lime" strokeWidth={1} fill="none" opacity={0.5} />
+          <path d={makePath(points)} stroke="blue" strokeWidth={1} fill="none" opacity={0.5} />
+          <path d={innerPath} stroke="red" strokeWidth={1} fill="none" opacity={0.5} />
         </>
       )}
 
