@@ -87,14 +87,14 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
         </Row>
         <SizedBox height={8} />
         <Row>
-          {Array.from({ length: 3 }).map((_, index) => (
+          {[0.3, 1, 3].map((value, index) => (
             <Tag
-              key={index + "percent"}
-              onClick={() => vm.setSwapFee(new BN((index + 1) * 10))}
-              active={vm.swapFee.eq(new BN((index + 1) * 10))}
+              key={value + "percent"}
+              onClick={() => vm.setSwapFee(new BN(value * 10))}
+              active={vm.swapFee.eq(new BN(value * 10))}
               style={{ marginRight: 4 }}
             >
-              {index + 1} %
+              {value} %
             </Tag>
           ))}
           <ShareTokenInput

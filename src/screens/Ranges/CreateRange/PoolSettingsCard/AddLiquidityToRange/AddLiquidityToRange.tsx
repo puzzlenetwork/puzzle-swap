@@ -21,11 +21,6 @@ const AddLiquidityToCustomPool: React.FC<IProps> = () => {
       <AddLiquidityToRangeAmountSelector />
       <SizedBox height={24} />
       <DepositComposition />
-      <SizedBox height={24} />
-      <Notification
-        type="info"
-        text="Please note transaction fee is 1.005 WAVES"
-      />
     </Root>
   );
 };

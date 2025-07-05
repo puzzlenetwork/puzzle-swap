@@ -14,16 +14,23 @@ interface IParams {
 const MaxSellOffSelector = ({ value, onUpdate }: IParams) => {
   const [modalOpened, setModalOpened] = useState(false);
 
+  const handleOpenModal = () => {
+    setModalOpened(true);
+    !value && onUpdate && onUpdate(new BN(100)); // Default value if not set
+  };
+
+  const maxValue = 500; // Maximum value for the slider
+
   return (
     <>
       <Button
-        onClick={() => setModalOpened(true)}
+        onClick={handleOpenModal}
         size="medium"
         kind="secondary"
         style={{
           width: "120px",
         }}
-      >{(value && value.lt(100)) ? `${value.toNumber()}%` : "Add"}</Button>
+      >{(value && value.lt(maxValue)) ? `${value.toNumber()}%` : "Add"}</Button>
       <Dialog
         visible={modalOpened}
         style={{ maxWidth: "360px" }}
@@ -37,9 +44,8 @@ const MaxSellOffSelector = ({ value, onUpdate }: IParams) => {
         <SizedBox height={16} />
         <Slider
           min={0}
-          max={100}
+          max={maxValue}
           step={1}
-          marks={{ 0: 0, 25: 25, 50: 50, 75: 75, 100: 100 }}
           value={(value ?? new BN(100)).toNumber()}
           onChange={(v: number | number[]) => {onUpdate && onUpdate(new BN(v.toString()))}}
         />

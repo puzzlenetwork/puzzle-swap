@@ -75,12 +75,12 @@ class CreateRangeVm {
   setDefaultRangeAssets = () => {
     this.rangeAssets = [
       {
-        asset: TOKENS_BY_SYMBOL.PUZZLE,
+        asset: TOKENS_BY_SYMBOL.ROME,
         share: new BN(500),
         locked: false,
       },
       {
-        asset: TOKENS_BY_SYMBOL.USDT,
+        asset: TOKENS_BY_SYMBOL.PUZZLE,
         share: new BN(500),
         locked: false,
       },
