@@ -44,7 +44,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
   const { notificationStore } = useStores();
   const vm = useRangeDetailsInterfaceVM();
   const [isOpenedShare, setOpenedShare] = useState(false);
-  const link = `https://swap.puzzle.network/ranges/${vm.range!.address}/details`;
+  const link = `${window.location.origin}/ranges/${vm.range!.address}/details`;
   const text = `Invest to ${vm.range!.domain} Puzzle Swap range`;
   const shareInfo = [
     {

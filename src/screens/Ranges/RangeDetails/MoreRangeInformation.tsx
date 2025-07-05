@@ -23,6 +23,7 @@ const Icon = styled.img`
 const MoreRangeInformation: React.FC<IProps> = ({
   setOpenedShare,
 }) => {
+  const linkToRange = "https://stage2.puzzle.name/ranged/";
   return (
     <Root>
       <Row
@@ -36,7 +37,7 @@ const MoreRangeInformation: React.FC<IProps> = ({
         <Text>Share on social media</Text>
       </Row>
       <SizedBox height={20} />
-      <Link to="https://stage2.puzzle.name/ranged/" target="_blank">
+      <Link to={linkToRange} target="_blank">
         <Row
           justifyContent="center"
           alignItems="center"

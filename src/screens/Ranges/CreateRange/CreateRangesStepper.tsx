@@ -28,7 +28,7 @@ const StyledResetButton = styled(ResetAllButton)`
 const CreateRangesStepper: React.FC<IProps> = () => {
   const steps = [
     "Select the composition",
-    "Set up a title",
+    "Set up a title and fee",
     "Add your \nliquidity",
   ];
   const vm = useCreateRangeVM();
