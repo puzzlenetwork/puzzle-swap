@@ -15,6 +15,7 @@ import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import BN from "@src/utils/BN";
 import Checkbox from "@src/components/Checkbox";
 import Select from "@src/components/Select";
+import Tag from "@src/components/Tag";
 
 interface IProps {
   isMobile?: boolean;
@@ -148,6 +149,36 @@ const RangeComposition: React.FC<IProps> = (props) => {
             <Icon src={a.logo} alt="logo" />
             <SizedBox width={8} />
             <Text fitContent>{a.symbol}</Text>
+            {a.shutdownBuy && (
+              <>
+                <SizedBox width={8} />
+                <Tooltip
+                  content={(
+                    <Column>
+                      <Text size="small">For security reasons, the purchase of this</Text>
+                      <Text size="small">token has been temporarily suspended.</Text>
+                    </Column>
+                  )}
+                >
+                  <Tag type="error">Buy Shutdown</Tag>
+                </Tooltip>
+              </>
+            )}
+            {a.shutdownSell && (
+              <>
+                <SizedBox width={8} />
+                <Tooltip
+                  content={(
+                    <Column>
+                      <Text size="small">For security reasons, the sale of this</Text>
+                      <Text size="small">token has been temporarily suspended.</Text>
+                    </Column>
+                  )}
+                >
+                  <Tag type="error">Sell Shutdown</Tag>
+                </Tooltip>
+              </>
+            )}
           </Row>
         ),
         price: (relativeTokenAssetId === "USD") ? (
