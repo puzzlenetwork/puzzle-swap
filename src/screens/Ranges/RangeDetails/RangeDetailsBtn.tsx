@@ -11,15 +11,11 @@ import Button from "@components/Button";
 import SizedBox from "@components/SizedBox";
 import { useStores } from "@stores";
 import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
-import TextButton from "@components/TextButton";
-import linkIcon from "@src/assets/icons/link.svg";
 import copy from "copy-to-clipboard";
 import { ReactComponent as CopyIcon } from "@src/assets/icons/darkCopy.svg";
 import { ReactComponent as XIcon } from "@src/assets/links/x.svg";
 import { ReactComponent as TelegramIcon } from "@src/assets/icons/telegram.svg";
 import { ReactComponent as FacebookIcon } from "@src/assets/icons/facebook.svg";
-import { EXPLORER_URL } from "@src/constants";
-import dayjs from "dayjs";
 
 interface IProps {}
 
@@ -47,65 +43,9 @@ const StyledMoreIcon = styled(MoreIcon)`
 const TransparentDetailsBtn: React.FC<IProps> = () => {
   const { notificationStore } = useStores();
   const vm = useRangeDetailsInterfaceVM();
-  const [isOpenedDetails, setOpenedDetails] = useState(false);
   const [isOpenedShare, setOpenedShare] = useState(false);
-  const puzzleRangeInformation = [
-    {
-      title: "Range creator",
-      value: (
-        <Text size="medium" fitContent nowrap>
-          Puzzle Swap
-        </Text>
-      ),
-    },
-    {
-      title: "Smart-contract",
-      value: (
-        <TextButton
-          size="medium"
-          prefix={linkIcon}
-          kind="secondary"
-          onClick={() =>
-            window.open(`${EXPLORER_URL}/address/${vm.range!.address}`)
-          }
-        >
-          View on Explorer
-        </TextButton>
-      ),
-    },
-    {
-      title: "Total fees earned",
-      value: `$ ${vm.range!.stats.poolFees?.toFormat(2)}`,
-    },
-  ];
-  const customRangeInformation = [
-    {
-      title: "Smart Contract Version",
-      value: vm.range!.version,
-    },
-    {
-      title: "Date of creation",
-      value: dayjs(vm.range!.createdAt).format("MMM D, YYYY h:mm A"),
-    },
-    {
-      title: "Total creator reward",
-      value: `$ ${vm.range!.stats.ownerFees.div(1e6).toFormat(2)}`,
-    },
-    {
-      title: "Total fees earned",
-      value: `$ ${
-        vm.range!.stats.volume.times(vm.range!.swapFee).div(100)?.toFormat(2) ??
-        "0.00"
-      }`,
-    },
-  ];
-  const information = Array.from(
-    vm.range?.isCustom
-      ? customRangeInformation as { title: string; value: string | JSX.Element }[]
-      : puzzleRangeInformation as { title: string; value: string | JSX.Element }[]
-  );
-  const link = `https://swap.puzzle.network/ranges/${vm.range!.address}/invest`;
-  const text = `Invest to ${vm.range!.title} Puzzle Swap range`;
+  const link = `${window.location.origin}/ranges/${vm.range!.address}/details`;
+  const text = `Invest to ${vm.range!.domain} Puzzle Swap range`;
   const shareInfo = [
     {
       title: "X",
@@ -144,7 +84,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
       <Tooltip
         config={{ placement: "bottom-end", trigger: "click" }}
         content={
-          <MoreRangeInformation {...{ setOpenedDetails, setOpenedShare }} />
+          <MoreRangeInformation setOpenedShare={setOpenedShare} />
         }
       >
         <Root>
@@ -154,37 +94,16 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
       <Dialog
         style={{ maxWidth: 400 }}
         bodyStyle={{ minHeight: 232 }}
-        title={isOpenedDetails ? "Range information" : "Share"}
+        title={"Share"}
         onClose={() => {
-          setOpenedDetails(false);
           setOpenedShare(false);
         }}
-        visible={isOpenedDetails || isOpenedShare}
+        visible={isOpenedShare}
       >
         <Column
           crossAxisSize="max"
           style={{ maxHeight: 352, padding: "10px 0" }}
         >
-          {isOpenedDetails &&
-            information.map(({ title, value }, index) => (
-              <React.Fragment key={index + "rangeInformation"}>
-                <Row justifyContent="space-between">
-                  <Text size="medium" type="secondary">
-                    {title}
-                  </Text>
-                  {typeof value === "string" ? (
-                    <Text size="medium" fitContent nowrap>
-                      {value}
-                    </Text>
-                  ) : (
-                    value
-                  )}
-                </Row>
-                {information.length - 1 !== index && (
-                  <Divider style={{ margin: "9px 0 10px" }} />
-                )}
-              </React.Fragment>
-            ))}
           {isOpenedShare &&
             shareInfo.map(({ title, onClick, icon }, index) => (
               <Button

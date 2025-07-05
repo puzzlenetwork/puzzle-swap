@@ -2,6 +2,7 @@ import { RootStore } from "./index";
 import { makeAutoObservable } from "mobx";
 import rangesService from "@src/services/rangesService";
 import { Range } from "@src/entities/Range";
+import { sortBy } from "lodash";
 
 export default class RangesStore {
   constructor(rootStore: RootStore) {
@@ -39,9 +40,14 @@ export default class RangesStore {
 
   // Filter state
   filter = {
-    sortBy: "liquidity" as "liquidity" | "earned" | "virtualLiquidity",
+    sortBy: "fact_liquidity" as "fact_liquidity" | "earned" | "virtual_liquidity",
     order: "desc" as "asc" | "desc",
   };
+
+  // Time range to show statistics
+  timeRange = "all" as "all" | "1d" | "7d" | "30d" | "90d" | "1y";
+
+  minLiquidity = 0;
 
   // Search value
   searchValue = "";
@@ -58,12 +64,22 @@ export default class RangesStore {
 
   // Methods for filtering
   setFilter = (filter: {
-    sortBy: "liquidity" | "earned" | "virtualLiquidity";
+    sortBy: "fact_liquidity" | "earned" | "virtual_liquidity";
     order: "asc" | "desc";
   }) => {
     this.filter = filter;
     this.syncRanges();
   };
+
+  setTimeRange = (timeRange: "all" | "1d" | "7d" | "30d" | "90d" | "1y") => {
+    this.timeRange = timeRange;
+    this.syncRanges();
+  }
+
+  setMinLiquidity = (minLiquidity: number) => {
+    this.minLiquidity = minLiquidity;
+    this.syncRanges();
+  }
 
   setSearchValue = (value: string) => {
     this.searchValue = value;
@@ -77,8 +93,9 @@ export default class RangesStore {
       size: this.pagination.size,
       sortBy: this.filter.sortBy,
       order: this.filter.order,
-      search: this.searchValue,
-      minLiquidity: 0,
+      timeRange: this.timeRange,
+      title: this.searchValue,
+      minLiquidity: this.minLiquidity,
     };
   }
 

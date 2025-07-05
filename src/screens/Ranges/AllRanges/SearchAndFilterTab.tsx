@@ -20,15 +20,15 @@ const Root = styled(Row)`
 
 const SearchAndFilterTab: React.FC<IProps> = () => {
   const vm = useAllRangesVm();
-  const { poolsStore } = useStores();
+
   return (
     <Root>
       <Input
         icon="search"
         placeholder="Search by asset or range name..."
-        value={poolsStore.searchValue}
-        onChange={(e) => poolsStore.setSearchValue(e.target.value)}
-        suffixCondition={poolsStore.searchValue.length > 1}
+        value={vm.searchValue}
+        onChange={(e) => vm.setSearchValue(e.target.value)}
+        suffixCondition={vm.searchValue.length > 1}
         white
         flexGrow={100}
       />
@@ -38,24 +38,24 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
             Show all prices in USD
           </Text>
           <SizedBox width={12} />
-          <Switch onChange={() => {}} value={false} />
+          <Switch onChange={() => vm.setShowPriceInUsd(!vm.showPriceInUsd)} value={vm.showPriceInUsd} />
         </Card>
         <Card flexGrow={1} flexDirection="row" alignItems="center" fitContent paddingDesktop="12px 20px" paddingMobile="12px 20px">
           <Text type="secondary" weight={500}>
             Only active ranges
           </Text>
           <SizedBox width={12} />
-          <Switch onChange={() => {}} value={false} />
+          <Switch onChange={() => vm.setShowOnlyActiveRanges(!vm.showOnlyActiveRanges)} value={vm.showOnlyActiveRanges} />
         </Card>
       </Row>
-      <Row style={{ flexGrow: 5, gap: 12 }} mainAxisSize="fit-content">
+      <Row style={{ flexGrow: 5, flexWrap: "wrap", gap: 12 }} mainAxisSize="fit-content">
         <Card flexDirection="row" alignItems="center" fitContent paddingDesktop="12px 20px" paddingMobile="12px 20px" flexGrow={1}>
           <Select
-            options={vm.rangesFilters}
-            selected={vm.rangesFilters[vm.rangesFilter]}
+            options={vm.rangesSortings}
+            selected={vm.rangesSortings[vm.rangesSorting]}
             onSelect={({ key }) => {
-              const index = vm.rangesFilters.findIndex((o) => o.key === key);
-              vm.setRangesFilter(index);
+              const index = vm.rangesSortings.findIndex((o) => o.key === key);
+              vm.setRangesSorting(index);
             }}
             kind="text"
             fullWidth
@@ -63,11 +63,11 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
         </Card>
         <Card flexDirection="row" alignItems="center" fitContent paddingDesktop="12px 20px" paddingMobile="12px 20px" flexGrow={1}>
           <Select
-            options={vm.rangesFilters}
-            selected={vm.rangesFilters[vm.rangesFilter]}
+            options={vm.statsRanges}
+            selected={vm.statsRanges[vm.selectedStatsRange]}
             onSelect={({ key }) => {
-              const index = vm.rangesFilters.findIndex((o) => o.key === key);
-              vm.setRangesFilter(index);
+              const index = vm.statsRanges.findIndex((o) => o.key === key);
+              vm.setSelectedStatsRange(index);
             }}
             kind="text"
             fullWidth

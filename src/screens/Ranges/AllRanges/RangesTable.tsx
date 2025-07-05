@@ -1,4 +1,4 @@
-import React from "react";
+import React, { JSX, useMemo } from "react";
 import Text from "@components/Text";
 import { useStores } from "@src/stores";
 import SizedBox from "@components/SizedBox";
@@ -6,9 +6,6 @@ import Table from "@src/components/Table";
 import Scrollbar from "@components/Scrollbar";
 import { observer } from "mobx-react-lite";
 import { Pagination } from "@src/components/Pagination/Pagination";
-import { ReactComponent as NotFoundIcon } from "@src/assets/notFound.svg";
-import Button from "@components/Button";
-import Loading from "@components/Loading";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import { useNavigate } from "react-router-dom";
 import RangeChart from "@components/RangeChart";
@@ -17,7 +14,10 @@ import Card from "@src/components/Card";
 import styled from "@emotion/styled";
 import TokenTag from "@src/components/TokenTag";
 import BN from "@src/utils/BN";
-import TokenInRangePreview from "./TokenInRangePreview";
+import TokenInRangePreview, { TokenCard } from "./TokenInRangePreview";
+import { useAllRangesVm } from "./AllRangesVm";
+import RangeNotFound from "./RangeNotFound";
+import useWindowSize from "@src/hooks/useWindowSize";
 
 
 const GrayCard = styled(Card)`
@@ -27,13 +27,16 @@ const GrayCard = styled(Card)`
 `;
 
 const RangesTable: React.FC = () => {
+  const vm = useAllRangesVm();
   const navigate = useNavigate();
+  const { width } = useWindowSize();
   const { rangesStore } = useStores();
+  const [tableData, setTableData] = React.useState<any[]>([]);
 
   const columns = React.useMemo(
     () => [
       { Header: "Range", accessor: "range" },
-      { Header: "Fact / Virtual Liquidity", accessor: "liquidity" },
+      { Header: <Text size="medium" type="secondary" nowrap>Fact / Virtual Liquidity</Text>, accessor: "liquidity" },
       { Header: <Text size="medium" type="secondary" textAlign="end">Earned by LP</Text>, accessor: "periodFees" },
     ],
     []
@@ -43,60 +46,83 @@ const RangesTable: React.FC = () => {
     rangesStore.setPagination({ page: el, size: 20 });
   };
 
-  const tableData = rangesStore.ranges.map((range, index) => ({
-    onClick: () => navigate(`/ranges/${range.address}/invest`),
-    range: (
-      // <Text>{range.assetsWithLeverage.map(({ leverage }) => `${leverage}`).join(", ")}</Text>
-      <Row>
-        <GrayCard paddingDesktop="4px" paddingMobile="4px">
-          <RangeChart range={range} size={120} index={index} />
+  const stopPropagation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
+  const rangePreviewByAddress: Record<string, JSX.Element> = useMemo(
+    () => rangesStore.ranges.reduce((acc, range, index) => ({
+      ...acc,
+      [range.address]: (
+        <Row alignItems="center">
+          <GrayCard paddingDesktop="4px" paddingMobile="4px" onClick={width && width < 880 ? stopPropagation : undefined}>
+            <RangeChart range={range} size={120} index={index} />
         </GrayCard>
         <SizedBox width={16} />
         <Column crossAxisSize="max" justifyContent="space-between">
           <SizedBox height={20} />
           <Text weight={500}>
-            Range {range.title}
+            Range {range.domain}
           </Text>
           <SizedBox height={8} />
           <Row>
-            {range.assets.map((asset, index) => (
+            {range.assets.slice().sort((a, b) => range.baseTokenId === a.assetId ? -1 : range.baseTokenId === b.assetId ? 1 : 0).slice(0, 4).map((asset, index) => (
               <TokenInRangePreview
                 key={index}
                 asset={asset}
                 baseToken={range.baseToken}
+                showInUsd={vm.showPriceInUsd}
                 style={{ marginRight: 4 }}
               />
             ))}
+            {range.assets.length > 4 && (
+              <TokenCard style={{ alignItems: "center", justifyContent: "center", height: 76 }}>
+                <Text>+{range.assets.length - 4}</Text>
+              </TokenCard>
+            )}
           </Row>
           <SizedBox height={20} />
         </Column>
       </Row>
-    ),
-    liquidity: <Text nowrap>${range.liquidity.toFormat(2)} / <Text type="secondary" size="medium" style={{ display: "inline" }}>${range.virtualLiquidity.toFormat(2)}</Text></Text>,
-    periodFees: (
-      <Column alignItems="flex-end" crossAxisSize="max">
-        <Row style={{ gap: 4, flexWrap: "wrap", justifyContent: "flex-end" }}>
-          {Object.entries(range.periodFees).filter(([_, { feesEarned, extraEarned }]) => new BN(feesEarned + extraEarned).gt(0)).map(([assetId, { feesEarned, extraEarned }], i) => {
-            const tokenInfo = TOKENS_BY_ASSET_ID[assetId] || {};
-            return (
-              <TokenTag
-                key={i}
-                token={{...tokenInfo, decimals: 0}}
-                amount={new BN(feesEarned + extraEarned)}
-                size="small"
-                iconRight
-              />
-            );
-          }
-          )}
-        </Row>
-        <SizedBox height={10} />
-        <Text type="secondary" size="medium" textAlign="end">
-          ≈${ range.stats.poolFees.plus(range.stats.ownerFees).plus(range.stats.protocolFees).toFormat(2) }
-        </Text>
-      </Column>
-    ),
-  }));
+    )
+    }), {}),
+    [rangesStore.ranges, vm.showPriceInUsd, width]
+  );
+
+  useMemo(
+    () => {
+      const mappedData = rangesStore.ranges.map((range, index) => ({
+      onClick: () => navigate(`/ranges/${range.address}/details`),
+      range: rangePreviewByAddress[range.address],
+      liquidity: <Text nowrap>${range.liquidity.toFormat(2)} / <Text type="secondary" size="medium" style={{ display: "inline" }}>${range.virtualLiquidity.toFormat(2)}</Text></Text>,
+      periodFees: (
+        <Column alignItems="flex-end" crossAxisSize="max">
+          <Row style={{ gap: 4, flexWrap: "wrap", justifyContent: "flex-end" }}>
+            {Object.entries(range.periodFees).filter(([_, { feesEarned, extraEarned }]) => new BN(feesEarned + extraEarned).gt(0)).map(([assetId, { feesEarned, extraEarned }], i) => {
+              const tokenInfo = TOKENS_BY_ASSET_ID[assetId] || {};
+              return (
+                <TokenTag
+                  key={i}
+                  token={{...tokenInfo, decimals: 0}}
+                  amount={new BN(feesEarned + extraEarned)}
+                  size="small"
+                  iconRight
+                />
+              );
+            }
+            )}
+          </Row>
+          <SizedBox height={10} />
+          <Text type="secondary" size="medium" textAlign="end">
+            ≈${ range.totalFees.toFormat(2) }
+          </Text>
+        </Column>
+      ),
+      }));
+      setTableData(mappedData);
+    },
+    [rangesStore.ranges, navigate, vm.showPriceInUsd]
+  );
 
   return (
     <>
@@ -119,19 +145,16 @@ const RangesTable: React.FC = () => {
           />
         </>
       ) : (
-        <>
-          <SizedBox height={24} />
-          <NotFoundIcon style={{ marginBottom: 24 }} />
-          <Text size="medium" type="secondary" className="text">
-            {rangesStore.loading ? (
-              <Loading big />
-            ) : (
-              "No ranges found. Try adjusting your filters or create a new range."
-            )}
-          </Text>
-          <Button onClick={() => { }}>Cancel the search</Button>
-          <SizedBox height={24} />
-        </>
+        <RangeNotFound
+          onClear={() => {
+            vm.setSearchValue("");
+            vm.setRangesSorting(0);
+            vm.setSelectedStatsRange(0);
+            vm.setShowOnlyActiveRanges(false);
+            vm.setShowPriceInUsd(false);
+          }}
+          searchValue={vm.searchValue}
+        />
       )}
     </>
   );

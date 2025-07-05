@@ -9,6 +9,7 @@ import { IHistory } from "@src/utils/types";
 import { EXPLORER_URL, NODE_URL, TOKENS_BY_ASSET_ID } from "@src/constants";
 import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
 import dayjs, { ManipulateType } from "dayjs";
+import nodeService from "@src/services/nodeService";
 
 const ctx = React.createContext<RangeDetailsInterfaceVM | null>(null);
 
@@ -80,15 +81,24 @@ class RangeDetailsInterfaceVM {
     }
   }
 
+  public chartDataLoaded: IHistory[] | null = null;
+  public setChartDataLoaded = (value: IHistory[]) => (this.chartDataLoaded = value);
+
   public chartDataKey: ("volume" | "fees" | "liquidity") = "volume";
   public setChartDataKey = (value: "volume" | "fees" | "liquidity") => (this.chartDataKey = value);
 
   public get chartData() {
-    return this.range?.charts?.map(({ owner_fees, protocol_fees, time, ...rest }) => ({
+    return (this.chartDataLoaded ?? this.range?.charts)?.map(({ owner_fees, protocol_fees, time, ...rest }) => ({
       fees: owner_fees + protocol_fees,
       time: time * 1000,
       ...rest
     })).sort((a, b) => (a.time < b.time ? -1 : 1)) || [];
+  }
+
+  public chartDataRange: ("1d" | "7d" | "1m" | "3m" | "1y" | "all") = "all";
+  public setChartDataRange = (range: ("1d" | "7d" | "1m" | "3m" | "1y" | "all")) => {
+    this.chartDataRange = range;
+    this.syncChartData(range);
   }
 
   public get chartTotal(): BN {
@@ -102,6 +112,14 @@ class RangeDetailsInterfaceVM {
     }
     return new BN(this.range!.totals[this.chartDataKey] ?? 0)
   }
+
+  public currentBlockHeight: number = 0;
+  private setCurrentBlockHeight = (value: number) => (this.currentBlockHeight = value);
+
+  updateBlockHeight = async () => {
+    const data = await nodeService.blocksHeight();
+    this.setCurrentBlockHeight(data.height);
+  };
 
   public useMaxStakeUnstakeAmount: boolean = true;
   public setUseMaxStakeUnstakeAmount = (value: boolean) => (this.useMaxStakeUnstakeAmount = value);
@@ -124,7 +142,9 @@ class RangeDetailsInterfaceVM {
         const newRange = new Range(rangeData);
         this.rootStore.rangesStore.updateRange(newRange);
         this.setHistory(rangeData.charts || []);
+        this.updateBlockHeight();
       });
+    this.syncChartData("all");
     
     when(
       () => this.range != null,
@@ -138,6 +158,22 @@ class RangeDetailsInterfaceVM {
         this.syncLPData();
       }
     )
+  }
+
+  convertTimeRange = (timeRange: ("1d" | "7d" | "1m" | "3m" | "1y" | "all")): [number, number] => {
+    if (timeRange === "all") {
+      return [0, dayjs().unix()];
+    }
+    const periods: Record<string, [number, ManipulateType]> = {
+      "1d": [1, "days"],
+      "7d": [7, "days"],
+      "1m": [1, "months"],
+      "3m": [3, "months"],
+      "1y": [1, "years"],
+    };
+    const startTime = dayjs().subtract(periods[timeRange][0], periods[timeRange][1]).unix();
+    const endTime = dayjs().unix();
+    return [startTime, endTime];
   }
 
   syncIndexTokenInfo = async () => {
@@ -168,18 +204,20 @@ class RangeDetailsInterfaceVM {
       })
       return;
     };
-    const periods = {
-      "1d": [1, "days"],
-      "7d": [7, "days"],
-      "1m": [1, "months"],
-      "3m": [3, "months"],
-      "1y": [1, "years"],
-    };
-    const startTime = dayjs().subtract(Number(periods[period][0]), periods[period][1] as ManipulateType).unix();
-    rangesService.getRangeByAddress(this.rangeAddress, { startTime, endTime: dayjs().unix() }).then((rangeData: IRangeParamsResponse) => {
+    const [startTime, endTime] = this.convertTimeRange(period);
+    rangesService.getRangeByAddress(this.rangeAddress, { startTime, endTime }).then((rangeData: IRangeParamsResponse) => {
       if (!rangeData) return;
       this.updatelpRewardsByTime(period, Object.entries(rangeData.period_fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
     })
+  }
+
+  public syncChartData = async (period: ("1d" | "7d" | "1m" | "3m" | "1y" | "all")) => {
+    const [startTime, endTime] = this.convertTimeRange(period);
+    rangesService.getChartData(this.rangeAddress, { startTime, endTime })
+      .then((data) => {
+        if (!data) return;
+        this.setChartDataLoaded(data);
+      });
   }
 
   get rangeBalancesTable() {

@@ -31,6 +31,8 @@ import AllRanges from "@screens/Ranges/AllRanges";
 import RangeDetails from "@src/screens/Ranges/RangeDetails";
 import DepositToRange from "./screens/Ranges/DepositToRange";
 import WithdrawFromRange from "./screens/Ranges/WithdrawFromRange";
+import CreateRange from "./screens/Ranges/CreateRange";
+import TradeInRange from "./screens/Ranges/TradeInRange";
 
 const Root = styled(Column)`
   width: 100%;
@@ -106,11 +108,12 @@ const App: React.FC = () => {
 
         {/*Ranges block*/}
         <Route path={ROUTES.RANGES} element={<AllRanges />} />
-        <Route path={ROUTES.RANGES_INVEST} element={<RangeDetails />} />
+        <Route path={ROUTES.RANGES_DETAILS} element={<RangeDetails />} />
         <Route path={ROUTES.RANGES_DEPOSIT} element={<DepositToRange />} />
         <Route path={ROUTES.RANGES_DEPOSIT_ONE_TOKEN} element={<DepositToRange />} />
         <Route path={ROUTES.RANGES_WITHDRAW} element={<WithdrawFromRange />} />
-        <Route path={ROUTES.RANGES_CREATE} element={<div>RANGES_CREATE</div>} />
+        <Route path={ROUTES.RANGES_CREATE} element={<CreateRange />} />
+        <Route path={ROUTES.RANGES_TRADE} element={<TradeInRange />} />
         <Route path={ROUTES.USER_RANGES} element={<div>USER_RANGES</div>} />
       </Routes>
       <WalletModal

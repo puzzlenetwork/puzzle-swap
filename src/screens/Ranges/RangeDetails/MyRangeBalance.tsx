@@ -64,7 +64,7 @@ const MyRangeBalance: React.FC<IProps> = () => {
               ${(vm.lpData?.providedUsd ?? BN.ZERO).toFormat(2)}
             </Text>
             <Text textAlign="right" type="secondary" size="small">
-              {`Share of pool ${(vm.lpData?.share ?? BN.ZERO).toSmallFormat()}%`}
+              {`Share of range ${(vm.lpData?.share ?? BN.ZERO).toSmallFormat()}%`}
             </Text>
           </Column>
         </Header>

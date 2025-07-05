@@ -8,12 +8,21 @@ export interface IRangeAssetResponse {
   balance: number,
   balance_usd: number,
   current_price: number,
+  current_price_usd: number,
   extra_earned: number,
   fact_balance: number,
   fact_balance_usd: number,
   fees_earned: number,
   max_price: number,
   min_price: number,
+  max_price_usd: number,
+  min_price_usd: number,
+  current_selloff: number,
+  max_sell_allowed: number,
+  selloff_start_balance: number,
+  selloff_start_height: number,
+  shutdown_buy: boolean,
+  shutdown_sell: boolean,
   name: string,
   real_balance: number,
   share: number
@@ -102,12 +111,21 @@ export class RangeAsset {
   balance: BN;
   balanceUsd: BN;
   currentPrice: BN;
+  currentPriceUsd: BN;
   extraEarned: BN;
   factBalance: BN;
   factBalanceUsd: BN;
   feesEarned: BN;
   maxPrice: BN;
   minPrice: BN;
+  maxPriceUsd: BN;
+  minPriceUsd: BN;
+  maxSellAllowed: BN | null;
+  currentSelloff: BN;
+  selloffStartBalance: BN;
+  selloffStartHeight: BN;
+  shutdownBuy: boolean;
+  shutdownSell: boolean;
   name: string;
   realBalance: BN;
   share: BN;
@@ -117,12 +135,21 @@ export class RangeAsset {
     this.balance = new BN(params.balance);
     this.balanceUsd = new BN(params.balance_usd);
     this.currentPrice = new BN(params.current_price);
+    this.currentPriceUsd = new BN(params.current_price_usd);
     this.extraEarned = new BN(params.extra_earned);
     this.factBalance = new BN(params.fact_balance);
     this.factBalanceUsd = new BN(params.fact_balance_usd);
     this.feesEarned = new BN(params.fees_earned);
     this.maxPrice = new BN(params.max_price);
     this.minPrice = new BN(params.min_price);
+    this.maxPriceUsd = new BN(params.max_price_usd);
+    this.minPriceUsd = new BN(params.min_price_usd);
+    this.maxSellAllowed = params.max_sell_allowed ? new BN(params.max_sell_allowed) : null;
+    this.currentSelloff = new BN(params.current_selloff);
+    this.selloffStartBalance = new BN(params.selloff_start_balance);
+    this.selloffStartHeight = new BN(params.selloff_start_height);
+    this.shutdownBuy = params.shutdown_buy;
+    this.shutdownSell = params.shutdown_sell;
     this.name = params.name;
     this.realBalance = new BN(params.real_balance);
     this.share = new BN(params.share);
@@ -321,6 +348,10 @@ export class Range {
 
   get totalAssetsInRange() {
     return this.assets.reduce((acc, { balance }) => acc.plus(balance), BN.ZERO);
+  }
+
+  get totalFees() {
+    return this.stats.poolFees.plus(this.stats.ownerFees).plus(this.stats.protocolFees);
   }
 
   contractKeysRequest = (keys: string[] | string) =>

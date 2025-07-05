@@ -78,15 +78,17 @@ class BN extends BigNumber {
 
   toSmallFormat(): string {
     if (super.lte(0)) return super.toFormat(2);
+    if (super.gte(1))
+      return super.toFormat(2); // if value >= 1, round to 2 decimal
     if (super.gte(1e-2))
-      return super.toFormat(2); // if value >= 0.01, round to 2 decimal
+      return super.toFormat(4); // if value >= 0.01, round to 4 decimal
     if (super.gte(1e-4))
-      return super.toFormat(4); // if value >= 0.0001, round to 4 decimal
+      return super.toFormat(6); // if value >= 0.0001, round to 6 decimal
     if (super.gte(1e-6))
-      return super.toFormat(6); // if value >= 0.000001, round to 6 decimal
+      return super.toFormat(8); // if value >= 0.000001, round to 8 decimal
     if (super.gte(1e-8))
-      return super.toFormat(8); // if value >= 0.00000001, round to 8 decimal
-    return super.toFormat(10);
+      return super.toFormat(10); // if value >= 0.00000001, round to 10 decimal
+    return super.toFormat(12);
   }
 
   toBigFormat(decimalPlaces: number): string {

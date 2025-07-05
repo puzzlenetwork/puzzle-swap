@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React, { useMemo, useState } from "react";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import { Row } from "@components/Flex";
+import { Column, Row } from "@components/Flex";
 import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
 import { observer } from "mobx-react-lite";
 import Table from "@components/Table";
@@ -15,6 +15,7 @@ import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import BN from "@src/utils/BN";
 import Checkbox from "@src/components/Checkbox";
 import Select from "@src/components/Select";
+import Tag from "@src/components/Tag";
 
 interface IProps {
   isMobile?: boolean;
@@ -96,7 +97,10 @@ const RangeComposition: React.FC<IProps> = (props) => {
               trigger: "hover",
             }}
             content={
-              <Text size="small">Sell-Off is...</Text>
+              <Column>
+                <Text size="small">Sell of is Max portion of this token that can</Text>
+                <Text size="small">be safely sold without breaking range balance</Text>
+              </Column>
             }
           >
             <Row>
@@ -145,18 +149,62 @@ const RangeComposition: React.FC<IProps> = (props) => {
             <Icon src={a.logo} alt="logo" />
             <SizedBox width={8} />
             <Text fitContent>{a.symbol}</Text>
+            {a.shutdownBuy && (
+              <>
+                <SizedBox width={8} />
+                <Tooltip
+                  content={(
+                    <Column>
+                      <Text size="small">For security reasons, the purchase of this</Text>
+                      <Text size="small">token has been temporarily suspended.</Text>
+                    </Column>
+                  )}
+                >
+                  <Tag type="error">Buy Shutdown</Tag>
+                </Tooltip>
+              </>
+            )}
+            {a.shutdownSell && (
+              <>
+                <SizedBox width={8} />
+                <Tooltip
+                  content={(
+                    <Column>
+                      <Text size="small">For security reasons, the sale of this</Text>
+                      <Text size="small">token has been temporarily suspended.</Text>
+                    </Column>
+                  )}
+                >
+                  <Tag type="error">Sell Shutdown</Tag>
+                </Tooltip>
+              </>
+            )}
           </Row>
         ),
-        price: (a.assetId === vm.range!.baseTokenId) ? (
-          <Row alignItems="center" justifyContent="flex-end">{ relativeTokenAssetId === "USD" && "$" }{a.currentPrice.times(rateToRelativeToken).toSmallFormat()}</Row>
+        price: (relativeTokenAssetId === "USD") ? (
+          (a.assetId === relativeTokenAssetId) ? (
+            <Row alignItems="center" justifyContent="flex-end">${a.currentPriceUsd.toSmallFormat()}</Row>
+          ) : (
+            <Row alignItems="center" justifyContent="flex-end">
+                <Text fitContent type="secondary" size="small">${a.minPriceUsd.toSmallFormat()}</Text>
+              <SizedBox width={4} />
+              <Text fitContent> ← ${a.currentPriceUsd.toSmallFormat()} → </Text>
+              <SizedBox width={4} />
+              <Text fitContent type="secondary" size="small">${a.maxPriceUsd.toSmallFormat()}</Text>
+            </Row>
+          )
         ) : (
-          <Row alignItems="center" justifyContent="flex-end">
-            <Text fitContent type="secondary" size="small">{ relativeTokenAssetId === "USD" && "$" }{a.minPrice.times(rateToRelativeToken).toSmallFormat()}</Text>
-            <SizedBox width={4} />
-            <Text fitContent> ← { relativeTokenAssetId === "USD" && "$" }{a.currentPrice.times(rateToRelativeToken).toSmallFormat()} → </Text>
-            <SizedBox width={4} />
-            <Text fitContent type="secondary" size="small">{ relativeTokenAssetId === "USD" && "$" }{a.maxPrice.times(rateToRelativeToken).toSmallFormat()}</Text>
-          </Row>
+          (a.assetId === relativeTokenAssetId) ? (
+            <Row alignItems="center" justifyContent="flex-end">{a.currentPrice.times(rateToRelativeToken).toSmallFormat()}</Row>
+          ) : (
+            <Row alignItems="center" justifyContent="flex-end">
+              <Text fitContent type="secondary" size="small">{a.minPrice.times(rateToRelativeToken).toSmallFormat()}</Text>
+              <SizedBox width={4} />
+              <Text fitContent> ← {a.currentPrice.times(rateToRelativeToken).toSmallFormat()} → </Text>
+              <SizedBox width={4} />
+              <Text fitContent type="secondary" size="small">{a.maxPrice.times(rateToRelativeToken).toSmallFormat()}</Text>
+            </Row>
+          )
         ),
         balance: (
           <Row alignItems="center" justifyContent="center">
@@ -179,10 +227,33 @@ const RangeComposition: React.FC<IProps> = (props) => {
               {a.share.toFormat(2)}%
             </Text>
           </Row>
-        )
+        ),
+        selloff: a.maxSellAllowed && ((a.currentSelloff).gte(a.maxSellAllowed) ? (
+          <Tooltip
+            content={(
+              <Column>
+                <Text size="small">The token has currently reached</Text>
+                <Text size="small">its peak sales volume. Sales will</Text>
+                <Text size="small">resume in { new BN(vm.currentBlockHeight).div(100).toDecimalPlaces(0, BN.ROUND_CEIL).times(100).minus(a.selloffStartHeight).toNumber() } minutes.</Text>
+              </Column>
+            )}
+          >
+            <Row alignItems="center" justifyContent="flex-end">
+              <Text fitContent type={(a.currentSelloff).gt(a.maxSellAllowed) ? "error" : "success"}>
+                {(a.currentSelloff).toSmallFormat()}% / <Text type="secondary" size="medium" style={{ display: "inline" }}>{a.maxSellAllowed.toSmallFormat()}%</Text>
+              </Text>
+            </Row>
+          </Tooltip>
+        ) : (
+          <Row alignItems="center" justifyContent="flex-end">
+            <Text fitContent type={(a.currentSelloff).gt(a.maxSellAllowed) ? "error" : "success"}>
+              {(a.currentSelloff).toSmallFormat()}% / <Text type="secondary" size="medium" style={{ display: "inline" }}>{a.maxSellAllowed.toSmallFormat()}%</Text>
+            </Text>
+          </Row>
+        ))
       }));
     setFilteredTokens(data);
-  }, [balanceSort, vm.range, rateToRelativeToken]);
+  }, [vm.range, vm.currentBlockHeight, balanceSort, relativeTokenAssetId, rateToRelativeToken]);
   const { width } = useWindowSize();
   return (
     <Root balanceSort={balanceSort}>
@@ -190,7 +261,7 @@ const RangeComposition: React.FC<IProps> = (props) => {
         <Text weight={500} type="secondary">
           Range composition
         </Text>
-        <Row alignItems="center" mainAxisSize="fit-content">
+        <Row alignItems="baseline" mainAxisSize="fit-content">
           {!props.isMobile && (
             <Row alignItems="center" mainAxisSize="fit-content">
               <Text fitContent nowrap>Show Sell-Off</Text>

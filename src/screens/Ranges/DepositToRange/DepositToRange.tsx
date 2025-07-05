@@ -20,7 +20,6 @@ import DepositMultipleTokens from "./DepositMultipleTokens";
 const Root = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
   padding: 0 16px;
   min-height: 100%;
@@ -54,12 +53,12 @@ const DepositToRangeImpl = observer(() => {
     <Layout>
       <Root>
         <GoBack
-          link={`/ranges/${vm.rangeAddress}/invest`}
-          text="Back to Range Info"
+          link={`/ranges/${vm.rangeAddress}/details`}
+          text={`Back to range ${range.domain}`}
         />
         <SizedBox height={24} />
         <Text weight={500} size="large">
-          Deposit liquidity to Range {range.title}
+          Deposit liquidity to Range {range.domain}
         </Text>
         <SizedBox height={4} />
         <Text size="medium">

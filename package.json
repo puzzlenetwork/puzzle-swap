@@ -24,6 +24,7 @@
     "@waves/provider-ledger": "^0.2.1",
     "@waves/provider-metamask": "^1.1.6",
     "@waves/signer": "^1.1.0",
+    "@waves/ts-lib-crypto": "1.4.4-beta.1",
     "@waves/waves-transactions": "^4.3.11",
     "axios": "^1.8.4",
     "babel-jest": "^27.5.1",

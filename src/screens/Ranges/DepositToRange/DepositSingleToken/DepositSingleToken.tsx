@@ -40,6 +40,7 @@ const DepositSingleToken: React.FC<IProps> = () => {
           amount={vm.singleTokenAmount}
           setAmount={vm.setSingleTokenAmount}
           assetId={selectedToken.assetId}
+          // setAssetId={vm.setSelectedTokenToDepositId}
           balances={vm.balances ?? []}
           onMaxClick={vm.onMaxSingleTokenClick}
           usdnEquivalent={vm.selectedTokenAmountUsdnEquivalent}
@@ -47,7 +48,7 @@ const DepositSingleToken: React.FC<IProps> = () => {
         <SizedBox height={24} />
         <Notification
           type="info"
-          text={`Your ${vm.selectedTokenToDeposit?.symbol} will be automatically converted to other pool
+          text={`Your ${vm.selectedTokenToDeposit?.symbol} will be automatically converted to other range
         tokens and provided as liquidity. Please pay attention that value of
         your deposit can be different from value of tokens provided because of
         slippage. We do not recommend to use this method for bigger amounts.`}

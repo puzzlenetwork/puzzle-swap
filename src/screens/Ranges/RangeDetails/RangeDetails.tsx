@@ -93,12 +93,12 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
               <EarnedByLP />
             </Column>
           ) : (
-            <Column>
+            <Column crossAxisSize="max">
               <Row>
                 <MainRangeInfo />
                 <SizedBox width={20} />
                 <Card style={{ width: "auto", padding: "19px" }}>
-                  <RangeChart range={vm.range!} size={200} />
+                  <RangeChart range={vm.range!} size={160} />
                 </Card>
               </Row>
               <SizedBox height={20} />
