@@ -200,28 +200,25 @@ class LimitOrdersVM {
       (acc, id) => [...acc, ...getOrderStateKeys(id)],
       [] as string[]
     );
-    const ordersData: INodeData[] = await makeNodeRequest(
-      `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}`,
-      { postData: { keys: slice(keys, 0, 1000) } }
-    )
-      .then(async ({ data }) => {
-        if (keys.length < 1000) {
-          console.log("less than 1000 data keys");
-          return data;
-        } else {
-          console.log("more than 1000 data keys");
-          return await makeNodeRequest(
-            `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}`,
-            { postData: { keys: slice(keys, 1000, 2000) } }
-          )
-            .then((resp) => {
-              const res = data.concat(resp.data);
-              return res;
-            })
-            .catch(() => data);
-        }
-      })
-      .catch(() => []);
+
+    // Новый подход: разбиваем ключи на чанки по 1000 и делаем все запросы
+    const chunkSize = 1000;
+    const chunks = [];
+    for (let i = 0; i < keys.length; i += chunkSize) {
+      chunks.push(keys.slice(i, i + chunkSize));
+    }
+
+    
+    const allData = await Promise.all(
+      chunks.map(chunk =>
+        makeNodeRequest(
+          `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}`,
+          { postData: { keys: chunk } }
+        ).then(resp => resp.data).catch(() => [])
+      )
+    );
+
+    const ordersData: INodeData[] = allData.flat();
 
     const orders = orderIdList.map((id) => ({
       id,
