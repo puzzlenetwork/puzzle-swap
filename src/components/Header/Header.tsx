@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import MenuIcon from "@src/assets/icons/menu.svg";
 import closeIcon from "@src/assets/icons/close.svg";
 import { Column, Row } from "@components/Flex";
@@ -163,9 +163,9 @@ const Header: React.FC<IProps> = () => {
 
   useEffect(() => {
     if (mobileMenuOpened) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     }
   }, [mobileMenuOpened]);
 
@@ -173,6 +173,7 @@ const Header: React.FC<IProps> = () => {
     { name: "Explore", link: ROUTES.EXPLORE },
     { name: "Trade", link: ROUTES.TRADE },
     { name: "Pools", link: ROUTES.POOLS },
+    { name: "Ranges", link: ROUTES.RANGES },
     { name: "Stake", link: ROUTES.STAKE },
   ];
 

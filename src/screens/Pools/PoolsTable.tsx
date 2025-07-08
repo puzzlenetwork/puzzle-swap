@@ -220,7 +220,6 @@ const PoolsTable: React.FC = () => {
               </Row>
               <TokenTags
                 tokens={pool.assets ?? []}
-                findBalanceByAssetId={accountStore.findBalanceByAssetId}
               />
             </Column>
           </Row>

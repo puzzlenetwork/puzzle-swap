@@ -24,6 +24,15 @@ export const ROUTES = {
   POOLS_CREATE: "/pools/create",
   POOL_SWAP: "/pools/:poolDomain",
   POOL_BOOST: "/pools/:poolDomain/boost",
+  //ranges block
+  RANGES: "/ranges",
+  RANGES_TRADE: "/ranges/:rangeAddress",
+  RANGES_CREATE: "/ranges/create",
+  USER_RANGES: "/ranges/my",
+  RANGES_DETAILS: "/ranges/:rangeAddress/details",
+  RANGES_DEPOSIT: "/ranges/:rangeAddress/deposit",
+  RANGES_DEPOSIT_ONE_TOKEN: "/ranges/:rangeAddress/depositOneToken",
+  RANGES_WITHDRAW: "/ranges/:rangeAddress/withdraw",
 };
 
 export const PRODUCTS = {

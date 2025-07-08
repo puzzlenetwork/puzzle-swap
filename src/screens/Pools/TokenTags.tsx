@@ -8,7 +8,7 @@ import { IAssetConfig } from "@src/services/poolsService";
 
 interface IProps {
   tokens: IAssetConfig[];
-  findBalanceByAssetId: (assetId: string) => IAssetBalance | null | undefined;
+  findBalanceByAssetId?: (assetId: string) => IAssetBalance | null | undefined;
 }
 
 const Root = styled(Row)`
@@ -28,7 +28,7 @@ const TokenTags: React.FC<IProps> = ({ tokens, findBalanceByAssetId }) => {
   return (
     <Root>
       {tokensToDisplay.map(({ name, asset_id, share }, i) => {
-        const assetBalance = findBalanceByAssetId(asset_id);
+        const assetBalance = findBalanceByAssetId && findBalanceByAssetId(asset_id);
         const isActive =
           assetBalance && assetBalance.balance && assetBalance.balance.gt(0);
         return (

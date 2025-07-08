@@ -22,6 +22,7 @@ export default {
   primary800: "#FFFFFF",
   primary650: "#C6C9F4",
   primary300: "#8182C5",
+  primary200: "#5C5EA2",
   primary100: "#363970",
   primary50: "#181931",
   white: "#232345",

@@ -335,7 +335,7 @@ class CreateCustomPoolsVm {
     return nftForPoolCreation?.length !== 0;
   }
 
-  buyRandomArtefact = async () => {    
+  buyRandomArtefact = async () => {
     const { accountStore } = this.rootStore;
     if (!this.canBuyNft) return;
     if (this.puzzleNFTPrice == null) return;
@@ -495,7 +495,7 @@ class CreateCustomPoolsVm {
               ),
               () => (
                 <Button
-                  key="Back to Pools"
+                  key="Back to AllRanges"
                   size="medium"
                   fixed
                   onClick={() => {
@@ -504,7 +504,7 @@ class CreateCustomPoolsVm {
                     window.open(ROUTES.POOLS);
                   }}
                 >
-                  Back to Pools
+                  Back to AllRanges
                 </Button>
               ),
             ],

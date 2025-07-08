@@ -26,6 +26,7 @@ const paths = [
   { title: "Explore", link: ROUTES.EXPLORE },
   { title: "Trade", link: ROUTES.TRADE },
   { title: "Pools", link: ROUTES.POOLS },
+  { title: "Ranges", link: ROUTES.RANGES },
   { title: "Stake", link: ROUTES.STAKE },
 ];
 const Path = styled(Link)`

@@ -15,7 +15,8 @@ export interface IFlexProps {
     | "unset"
     | "flex-end"
     | "flex-start"
-    | "baseline";
+    | "baseline"
+    | "stretch";
   crossAxisSize?: "min" | "max";
   mainAxisSize?: "fit-content" | "stretch";
 }

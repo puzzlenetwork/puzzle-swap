@@ -7,7 +7,7 @@ import Img from "@src/components/Img";
 import { IToken } from "@src/constants";
 import BN from "@src/utils/BN";
 import SizedBox from "@components/SizedBox";
-import TokenTag from "@screens/InvestToPoolInterface/PoolHistory/TokenTag";
+import TokenTag from "@components/TokenTag";
 import Text from "@components/Text";
 
 interface IProps {

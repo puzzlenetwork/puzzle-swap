@@ -13,6 +13,7 @@ interface IProps {
   setActive: (index: number) => void;
   style?: CSSProperties;
   tabStyle?: CSSProperties;
+  textStyle?: CSSProperties;
 }
 
 const Root = styled.div`
@@ -43,6 +44,7 @@ const Tabs: React.FC<IProps> = ({
   setActive,
   style,
   tabStyle,
+  textStyle,
 }) => {
   return (
     <Root style={style}>
@@ -53,7 +55,7 @@ const Tabs: React.FC<IProps> = ({
           onClick={() => setActive(index)}
           style={tabStyle}
         >
-          <Text weight={500}>
+          <Text weight={500} style={textStyle} type={index === activeTab ? "primary" : "secondary"}>
             {name}
             {additionalInfo != null && additionalInfo !== 0 && (
               <span style={{ color: "#8082C5", marginLeft: 10 }}>

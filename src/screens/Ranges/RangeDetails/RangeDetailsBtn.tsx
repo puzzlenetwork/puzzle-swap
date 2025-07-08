@@ -1,0 +1,127 @@
+import styled from "@emotion/styled";
+import React, { JSX, useState } from "react";
+import Tooltip from "@components/Tooltip";
+import MoreRangeInformation from "./MoreRangeInformation";
+import { ReactComponent as MoreIcon } from "@src/assets/icons/dots.svg";
+import Dialog from "@components/Dialog";
+import { Column, Row } from "@components/Flex";
+import Text from "@components/Text";
+import Divider from "@components/Divider";
+import Button from "@components/Button";
+import SizedBox from "@components/SizedBox";
+import { useStores } from "@stores";
+import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
+import copy from "copy-to-clipboard";
+import { ReactComponent as CopyIcon } from "@src/assets/icons/darkCopy.svg";
+import { ReactComponent as XIcon } from "@src/assets/links/x.svg";
+import { ReactComponent as TelegramIcon } from "@src/assets/icons/telegram.svg";
+import { ReactComponent as FacebookIcon } from "@src/assets/icons/facebook.svg";
+
+interface IProps {}
+
+const Root = styled.div`
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  border: 1px solid #8082c5;
+  padding: 7px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  cursor: pointer;
+
+  :hover {
+    background: #8082c5;
+  }
+`;
+
+const StyledMoreIcon = styled(MoreIcon)`
+  path {
+    stroke: #ffffff;
+  }
+`;
+
+const TransparentDetailsBtn: React.FC<IProps> = () => {
+  const { notificationStore } = useStores();
+  const vm = useRangeDetailsInterfaceVM();
+  const [isOpenedShare, setOpenedShare] = useState(false);
+  const link = `${window.location.origin}/ranges/${vm.range!.address}/details`;
+  const text = `Invest to ${vm.range!.domain} Puzzle Swap range`;
+  const shareInfo = [
+    {
+      title: "X",
+      onClick: () =>
+        window.open(
+          `https://x.com/intent/tweet?url=${link}&text=${text}`
+        ),
+      icon: <XIcon />,
+    },
+    {
+      title: "Telegram",
+      onClick: () =>
+        window.open(`https://telegram.me/share/?url=${link}&text=${text}`),
+      icon: <TelegramIcon />,
+    },
+    {
+      title: "Facebook",
+      onClick: () =>
+        window.open(
+          `https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${text}`
+        ),
+      icon: <FacebookIcon />,
+    },
+    {
+      title: "Copy link",
+      onClick: () => {
+        copy(window.location.href);
+        notificationStore.notify("Link was copied");
+        setOpenedShare(false);
+      },
+      icon: <CopyIcon />,
+    },
+  ];
+  return (
+    <>
+      <Tooltip
+        config={{ placement: "bottom-end", trigger: "click" }}
+        content={
+          <MoreRangeInformation setOpenedShare={setOpenedShare} />
+        }
+      >
+        <Root>
+          <StyledMoreIcon />
+        </Root>
+      </Tooltip>
+      <Dialog
+        style={{ maxWidth: 400 }}
+        bodyStyle={{ minHeight: 232 }}
+        title={"Share"}
+        onClose={() => {
+          setOpenedShare(false);
+        }}
+        visible={isOpenedShare}
+      >
+        <Column
+          crossAxisSize="max"
+          style={{ maxHeight: 352, padding: "10px 0" }}
+        >
+          {isOpenedShare &&
+            shareInfo.map(({ title, onClick, icon }, index) => (
+              <Button
+                fixed
+                size="medium"
+                kind="secondary"
+                onClick={onClick}
+                key={index + "share-link"}
+                style={{ marginBottom: 8 }}
+              >
+                {title}
+                <SizedBox width={8} />
+                {icon}
+              </Button>
+            ))}
+        </Column>
+      </Dialog>
+    </>
+  );
+};
+export default TransparentDetailsBtn;

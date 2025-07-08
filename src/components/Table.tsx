@@ -8,6 +8,7 @@ import { position } from "polished";
 interface IProps extends TableProps {
   columns: any[];
   data: any[];
+  initialState?: any;
   fitContent?: boolean;
   withHover?: boolean;
   onClick?: () => void;
@@ -31,6 +32,7 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
       color: ${({ theme }) => `${theme.colors.primary650}`};
       width: 100%;
       transition: 0.4s;
+      background: ${({ theme }) => `${theme.colors.white}`};
 
       :hover {
         ${({ hovered }) => hovered && "cursor: pointer;"};
@@ -78,6 +80,7 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
 const Table: React.FC<IProps> = ({
   columns,
   data,
+  initialState,
   onClick,
   fitContent,
   onLoadMore,
@@ -86,7 +89,7 @@ const Table: React.FC<IProps> = ({
   ...rest
 }) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data });
+    useTable({ columns, data, initialState });
   return (
     <Root {...rest} hovered={withHover} fitContent={fitContent}>
       <table {...getTableProps()}>

@@ -9,6 +9,7 @@ interface IProps {
   fixed?: boolean;
   containerStyles?: CSSProperties;
   children: React.ReactNode;
+  style?: CSSProperties;
 }
 
 const Root = styled.div<{ fixed?: boolean }>`
@@ -34,11 +35,12 @@ const Tooltip: React.FC<IProps> = ({
   children,
   content,
   config,
+  style
 }) => {
   const { getTooltipProps, setTooltipRef, setTriggerRef, visible } =
     usePopperTooltip({ ...config });
   return (
-    <Container>
+    <Container style={style}>
       <div
         ref={setTriggerRef}
         style={{ cursor: "pointer", ...containerStyles }}

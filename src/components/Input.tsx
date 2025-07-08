@@ -20,14 +20,22 @@ interface IProps
   error?: boolean;
   errorText?: string;
   description?: string;
+  white?: boolean;
+  flexGrow?: number;
 }
 
-const Root = styled.div<{ focused?: boolean; error?: boolean }>`
-  width: 100%;
+const Root = styled.div<{ focused?: boolean; error?: boolean; white?: boolean, flexGrow?: number }>`
+  ${({ flexGrow }) => flexGrow ? `
+    display: flex;
+    flex-grow: ${flexGrow};
+  ` : `
+    width: 100%;
+  `}
+
   background: ${({ focused }) => (focused ? "#fffff" : "#f1f2fe")};
 
-  background: ${({ theme, focused }) =>
-    focused ? theme.colors.white : theme.colors.primary100};
+  background: ${({ theme, focused, white }) =>
+    focused ? theme.colors.white : (white ? theme.colors.white : theme.colors.primary100)};
 
   border: 1px solid
     ${({ focused, error, theme }) =>

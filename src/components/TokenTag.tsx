@@ -8,6 +8,8 @@ import BN from "@src/utils/BN";
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   token: IToken;
   amount?: BN;
+  size?: "small" | "medium" | "large";
+  iconRight?: boolean;
 }
 
 const Root = styled.div`
@@ -19,17 +21,19 @@ const Root = styled.div`
   border-radius: 8px;
 `;
 
-const TokenTag: React.FC<IProps> = ({ token, amount }) => {
+const TokenTag: React.FC<IProps> = ({ token, amount, size, iconRight }) => {
   const value =
     amount == null ? BN.ZERO : BN.formatUnits(amount, token.decimals);
+  const imgSize = size === "small" ? 16 : (size === "large" ? 32 : 24);
   return (
     <Root>
-      <Img src={token.logo} alt="token" radius="50%" />
+      {!iconRight && <Img src={token.logo} alt="token" radius="50%" width={`${imgSize}px`} height={`${imgSize}px`} />}
       {amount && (
-        <Text style={{ marginLeft: 8 }} size="medium">
-          {value.isNaN() ? "0.00" : value.toFormat(value.gte(0.01) ? 2 : 4)}
+        <Text style={iconRight ? { marginRight: 8 } : { marginLeft: 8 }} size={size ?? "medium"}>
+          {value.toSmallFormat()}
         </Text>
       )}
+      {iconRight && <Img src={token.logo} alt="token" radius="50%" width={`${imgSize}px`} height={`${imgSize}px`} />}
     </Root>
   );
 };

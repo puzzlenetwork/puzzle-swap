@@ -1,7 +1,10 @@
 import styled from "@emotion/styled";
+import rangesBalanceBackground from "@src/assets/rangesBalanceBackground.svg";
 
 const Card = styled.div<{
   maxWidth?: number;
+  fitContent?: boolean;
+  flexGrow?: number;
   paddingDesktop?: string;
   paddingMobile?: string;
   justifyContent?:
@@ -20,17 +23,18 @@ const Card = styled.div<{
     | "flex-start"
     | "baseline";
   flexDirection?: "column" | "row";
-  type?: "white" | "dark";
+  type?: "white" | "dark" | "image";
   bordered?: boolean;
 }>`
   display: flex;
   flex-direction: ${({ flexDirection }) => flexDirection ?? "column"};
+  flex-grow: ${({ flexGrow }) => flexGrow ?? 0};
   justify-content: ${({ justifyContent }) => justifyContent ?? "default"};
   align-items: ${({ alignItems }) => alignItems ?? "default"};
-  max-width: ${({ maxWidth }) => `${maxWidth}px` ?? "100%"};
+  max-width: ${({ maxWidth }) => maxWidth ? `${maxWidth}px` : "100%"};
   ${({ bordered, theme }) =>
     bordered && `border: 1px solid ${theme.colors.primary100};`};
-  width: 100%;
+  width: ${({ fitContent }) => (fitContent ? "fit-content" : "100%")};
   border: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
   border-radius: 16px;
   box-sizing: border-box;
@@ -42,6 +46,8 @@ const Card = styled.div<{
           return `background: ${theme.colors.card.background};`;
         case "dark":
           return `background: ${theme.colors.blue500};`;
+        case "image":
+          return `background: url(${rangesBalanceBackground}) center no-repeat; background-size: cover;`;
         default:
           return `background: ${theme.colors.card.background};`;
       }
