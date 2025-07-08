@@ -174,7 +174,7 @@ const tokenLogos: Record<string, string> = {
   FTM: ftmLogo,
   CRV: crvLogo,
   TN: tnLogo,
-  "SHIB-WXG": shibLogo,
+  // "SHIB-WXG": shibLogo,
   UNI: uniLogo,
   LINK: linkLogo,
   SNSBT: snsbtLogo,
@@ -303,6 +303,23 @@ const tokenLogos: Record<string, string> = {
 
   MEGAMEME:
     "https://megameme-249514940b30.herokuapp.com/static/media/megameme.49817f851dcdada62613bf2e1f70f56d.svg",
+
+  "CRV-WXG":
+    "https://r.wavesexplorer.com/assets/site/img/assets_logo/3KhNcHo4We1G5EWps7b1e5DTdLgWDzctc8S6ynu37KAb.svg",
+  "ETH-WXG":
+    "https://r.wavesexplorer.com/assets/site/img/assets_logo/474jTeYx2r2Va35794tCScAXWJG9hU2HcgxzMowaZUnu.svg",
+  "SHIB-WXG":
+    "https://r.wavesexplorer.com/assets/site/img/assets_logo/GVxGPBtgVWMW1wHiFnfaCakbJ6sKgZgowJgW5Dqrd7JH.svg",
+  "DAI-WXG":
+    "https://r.wavesexplorer.com/assets/site/img/assets_logo/8zUYbdB8Q6mDhpcXYv52ji8ycfj4SDX4gJXS7YY3dA4R.svg",
+  "BTC-WXG":
+    "https://r.wavesexplorer.com/assets/site/img/assets_logo/8LQW8f7P5d5PZM7GtZEBgaqRPGSzS3DfPuiXrURJ4AJS.svg",
+  "BNB-WXG":
+    "https://r.wavesexplorer.com/assets/site/img/assets_logo/5UYBPpq4WoU5n4MwpFkgJnW3Fq4B1u3ukpK33ik4QerR.svg",
+  "USDC-WXG":
+    "https://r.wavesexplorer.com/assets/site/img/assets_logo/6XtHjpXbs9RRJP2Sr9GUyVqzACcby9TkThHXnjVC5CDJ.svg",
+  "USDT-WXG":
+    "https://r.wavesexplorer.com/assets/site/img/assets_logo/34N9YcEETLWn93qYQ64EsP1x89tSruJU44RrEMSXXEPJ.svg",
 };
 
 export default tokenLogos;
