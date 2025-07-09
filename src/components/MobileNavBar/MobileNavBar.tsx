@@ -10,7 +10,7 @@ import NFT from "./NFT";
 import Swap from "./Swap";
 import Invest from "./Invest";
 import Stake from "@components/MobileNavBar/Stake";
-import Ranges from "@components/MobileNavBar/Ranges";
+// import Ranges from "@components/MobileNavBar/Ranges";
 
 interface IProps {}
 
@@ -75,10 +75,18 @@ const MobileNavBar: React.FC<IProps> = () => {
       icon: <Stake active={isRoutesEquals(ROUTES.STAKE, location.pathname)} />,
       big: false,
     },
+    // {
+    //   name: "Ranges",
+    //   link: ROUTES.RANGES,
+    //   icon: <Ranges active={isRoutesEquals(ROUTES.RANGES, location.pathname)} />,
+    //   big: false,
+    // },
     {
-      name: "Ranges",
-      link: ROUTES.RANGES,
-      icon: <Ranges active={isRoutesEquals(ROUTES.RANGES, location.pathname)} />,
+      name: "NFT",
+      link: ROUTES.ULTRASTAKE,
+      icon: (
+        <NFT active={isRoutesEquals(ROUTES.ULTRASTAKE, location.pathname)} />
+      ),
       big: false,
     },
   ];
