@@ -342,7 +342,7 @@ export class Range {
     return withLeverage.map((asset) => ({
       ...asset,
       leverage: asset.leverage.times(100).toNumber(),
-      relativeLeverage: asset.leverage.div(maxLeverage).times(100).toNumber(),
+      relativeLeverage: asset.leverage.div(maxLeverage).times(100).plus(10).toNumber(),
     }));
   }
 

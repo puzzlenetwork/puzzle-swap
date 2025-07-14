@@ -23,7 +23,6 @@ import ChangePoolModal from "@src/components/ChangePoolModal";
 const Root = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
   padding: 0 16px;
   min-height: 100%;

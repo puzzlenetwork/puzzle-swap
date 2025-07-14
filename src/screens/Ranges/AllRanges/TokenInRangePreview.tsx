@@ -43,7 +43,11 @@ const TokenInRangePreview = ({ asset, isBase, showInUsd, ...rest }: IParams & Re
   if (isBase) {
     return (
       <TokenCard kind="primary" {...rest}>
-        <Text>{asset.name}</Text>
+        <Row>
+          <Text>{asset.name}</Text>
+          <SizedBox width={12}/>
+          <Text fitContent>{asset.share.toNumber()}%</Text>
+        </Row>
         <SizedBox height={12} />
         <Text type="secondary" size="small" weight={500}>Base</Text>
       </TokenCard>
@@ -54,7 +58,11 @@ const TokenInRangePreview = ({ asset, isBase, showInUsd, ...rest }: IParams & Re
 
   return (
     <TokenCard kind={isPriceValid ? "secondary" : "error"} {...rest}>
-      <Text type={isPriceValid ? "primary" : "error"}>{asset.name}</Text>
+      <Row>
+        <Text type={isPriceValid ? "primary" : "error"}>{asset.name}</Text>
+        <SizedBox width={12}/>
+        <Text type={isPriceValid ? "primary" : "error"} fitContent>{asset.share.toNumber()}%</Text>
+      </Row>
       <SizedBox height={12} />
       <Row alignItems="center">
         <Text type={isPriceValid ? "secondary" : "error"} size="small" weight={500}>{

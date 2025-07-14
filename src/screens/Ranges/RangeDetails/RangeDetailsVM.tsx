@@ -266,6 +266,7 @@ class RangeDetailsInterfaceVM {
         },
       })
       .then((txId) => {
+        console.log("claimed", txId);
         notificationStore.notify(`Your rewards was claimed`, {
           type: "success",
           title: `Success`,
@@ -274,12 +275,16 @@ class RangeDetailsInterfaceVM {
         });
       })
       .catch((e) => {
+        console.error("claimRewards error", e);
         notificationStore.notify(e.message ?? JSON.stringify(e), {
           type: "error",
           title: "Transaction is not completed",
         });
       })
-      .finally(() => this._setLoading(false));
+      .finally(() => {
+        this._setLoading(false);
+        this.syncLPData();
+      });
   };
 
   get canUnstakeIndex() {
