@@ -200,14 +200,14 @@ class RangeDetailsInterfaceVM {
     if (period === "all") {
       rangesService.getRangeByAddress(this.rangeAddress).then((rangeData: IRangeParamsResponse) => {
         if (!rangeData) return;
-        this.updatelpRewardsByTime(period, Object.entries(rangeData.period_fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
+        this.updatelpRewardsByTime(period, Object.entries(rangeData.period_stats.fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
       })
       return;
     };
     const [startTime, endTime] = this.convertTimeRange(period);
     rangesService.getRangeByAddress(this.rangeAddress, { startTime, endTime }).then((rangeData: IRangeParamsResponse) => {
       if (!rangeData) return;
-      this.updatelpRewardsByTime(period, Object.entries(rangeData.period_fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
+      this.updatelpRewardsByTime(period, Object.entries(rangeData.period_stats.fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
     })
   }
 
