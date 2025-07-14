@@ -14,7 +14,8 @@ import Tooltip from "@components/Tooltip";
 import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import { Row } from "@src/components/Flex";
 import { useTheme } from "@emotion/react";
-import Switch from "@src/components/Switch";
+import RangeBaseTokenRow from "./RangeBaseTokenRow";
+import RangeTokenRow from "./RangeTokenRow";
 
 interface IProps {}
 
@@ -30,11 +31,22 @@ const Grid = styled.div`
 `;
 
 const SizedBoxStyled = styled(SizedBox)`
-  width: calc(100% + 48px);
+  box-sizing: border-box;
+  width: 100%;
   margin: 24px 0 24px -24px;
   @media (max-width: 560px) {
-    width: calc(100% + 34px);
     margin: 24px 0 24px -17px;
+  }
+`;
+
+const StyledTable = styled.table`
+  width: 100%;
+  tr {
+    padding-top: 20px;
+
+    td {
+      padding: 0 5px;
+    }
   }
 `;
 
@@ -42,126 +54,65 @@ const SelectsAssets: React.FC<IProps> = () => {
   const [addAssetModal, openAssetModal] = useState(false);
   const vm = useCreateRangeVM();
   const theme = useTheme();
-  const minShareNotification =
-    "Please note that minimal share of token should be 5 %";
-  const validRangeNotification =
-    "Please note that ranges for all assets should be set and valid, i.e. min price should be less than max price";
-  
+
   return (
     <Root>
       <Text type="secondary" weight={500}>
-        Select Assets
+        Tokens and Weights
       </Text>
       <SizedBox height={8} />
       <Card style={{ width: "100%" }}>
-
-        {!vm.isAllTokensShareMoreThanFive && (
-          <>
-            <Notification type="error" text={minShareNotification} />
-            <SizedBox height={16} />
-          </>
-        )}
-        {!vm.areTouchedTokensRangesValid && (
-          <>
-            <Notification type="error" text={validRangeNotification} />
-            <SizedBox height={16} />
-          </>
-        )}
-        <Row alignItems="center" justifyContent="start">
-          <Text fitContent weight={500} nowrap>
-            Base token
-          </Text>
-          <Tooltip
-            containerStyles={{ display: "flex", alignItems: "center" }}
-            content={
-              <Text>
-                Base token is used to provide liquidity with single asset. Also
-                most of the LP rewards will be accumulated in this token.
-              </Text>
-            }
-          >
-            <InfoIcon style={{ marginLeft: 8 }} />
-          </Tooltip>
-          <Row alignItems="center" justifyContent="flex-end">
-            <Text weight={500} fitContent nowrap>
-              Equal Shares
-            </Text>
-            <SizedBox width={8} />
-            <Switch
-              value={vm.equalShares}
-              onChange={() => vm.setEqualShares(!vm.equalShares)}
-            />
-          </Row>
-        </Row>
-        <SizedBox height={24} />
-        {/* base token selection row */}
-        {vm.rangeAssets.slice(0, 1).map(({ asset, share, locked }, index) => {
-          return (
-            <TokenCompositionRow
-              baseToken
-              key={index + "select-asset"}
-              locked={locked}
-              onLockClick={() => vm.updateLockedState(asset.assetId, !locked)}
-              onUpdateAsset={vm.replaceAssetInRange}
-              balances={vm.tokensToAdd}
-              asset={asset}
-              share={share}
-              setShare={(v) => vm.changeAssetShareInRange(asset.assetId, v)}
-              onDelete={() => vm.removeAssetFromRange(asset.assetId)}
-            />
-          );
-        })}
+        <RangeBaseTokenRow
+          equalShares={vm.equalShares}
+          setEqualShares={vm.setEqualShares}
+          token={vm.rangeAssets[0]}
+          tokensToAdd={vm.tokensToAdd}
+          replaceAssetInRange={vm.replaceAssetInRange}
+          changeAssetShareInRange={vm.changeAssetShareInRange}
+          updateLockedState={vm.updateLockedState}
+        />
+        
+        <SizedBox height={12} />
         <SizedBoxStyled
           height={1}
           style={{
             background: theme.colors.primary100,
           }}
         />
-        <Row alignItems="center">
-          <Text size="medium" weight={500}>
-            Composition
-          </Text>
-          <Row alignItems="center">
-            <Text size="medium" weight={500} fitContent nowrap>Set Range</Text>
-            <SizedBox width={80} />
-            <Text size="medium" weight={500} fitContent nowrap>Max Sell-Off</Text>
-            <SizedBox width={8} />
-            <Text type="secondary" size="small" fitContent nowrap>(Optional)</Text>
-            <SizedBox width={143} />
-          </Row>
-        </Row>
+
+        <StyledTable>
+          <thead>
+            <tr>
+              <th>
+                <Text weight={500} size="medium" fitContent nowrap>
+                  Token
+                </Text>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {vm.rangeAssets.slice(1).map((asset, index) => {
+              return (
+                <RangeTokenRow
+                  key={index + "range-token-row"}
+                  token={asset}
+                  tokensToAdd={vm.tokensToAdd}
+                  replaceAssetInRange={vm.replaceAssetInRange}
+                  changeAssetShareInRange={vm.changeAssetShareInRange}
+                  changeAssetMaxSellOffInRange={vm.updateAssetMaxSellOff}
+                  updateLockedState={vm.updateLockedState}
+                  changeAssetInitialPriceInRange={vm.updateAssetInitialPrice}
+                  deleteAssetFromRange={vm.removeAssetFromRange}
+                  baseTokenSymbol={vm.rangeAssets[0].asset.symbol}
+                  isLast={index === vm.rangeAssets.length - 2}
+                />
+              );
+            })}
+          </tbody>
+        </StyledTable>
+
         <SizedBox height={24} />
-        <Grid>
-          {/* tokens table */}
-          {vm.rangeAssets.slice(1).map(({
-            asset,
-            share,
-            minPrice,
-            maxPrice,
-            maxSellOff,
-            locked
-          }, index) => {
-            return (
-              <TokenCompositionRow
-                key={index + "select-asset"}
-                balances={vm.balances}
-                asset={asset}
-                onUpdateAsset={vm.replaceAssetInRange}
-                minPrice={minPrice}
-                onUpdateMinPrice={(newMinPrice) => vm.updateAssetMinPrice(asset.assetId, newMinPrice)}
-                maxPrice={maxPrice}
-                onUpdateMaxPrice={(newMaxPrice) => vm.updateAssetMaxPrice(asset.assetId, newMaxPrice)}
-                maxSellOff={maxSellOff}
-                onUpdateMaxSellOff={(newMaxSellOff) => vm.updateAssetMaxSellOff(asset.assetId, newMaxSellOff)}
-                share={share}
-                setShare={(v) => vm.changeAssetShareInRange(asset.assetId, v)}
-                locked={locked}
-                onLockClick={() => vm.updateLockedState(asset.assetId, !locked)}
-                onDelete={() => vm.removeAssetFromRange(asset.assetId)}
-              />
-            );
-          })}
-        </Grid>
+
         {vm.rangeAssets.length < 10 && (
           <Button
             fixed

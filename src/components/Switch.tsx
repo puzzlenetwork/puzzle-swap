@@ -1,20 +1,35 @@
 import styled from "@emotion/styled";
 import React from "react";
 
+type TSwitchSize = "small" | "default";
+
 interface IProps {
   value: boolean;
   onChange: () => void;
+  size?: TSwitchSize;
 }
 
-const Root = styled.div`
+const Root = styled.div<{ size?: TSwitchSize }>`
   display: flex;
   flex-direction: column;
 
   .switch {
     position: relative;
     display: inline-block;
-    width: 40px;
-    height: 24px;
+    ${({ size }) => {
+      switch (size) {
+        case "small":
+          return `
+            width: 24px;
+            height: 14.4px;
+          `;
+        default:
+          return `
+            width: 40px;
+            height: 24px;
+          `;
+      }
+    }};
   }
 
   .switch input {
@@ -43,10 +58,25 @@ const Root = styled.div`
   .slider:before {
     position: absolute;
     content: "";
-    width: 18px;
-    height: 18px;
-    left: 3px;
-    bottom: 3px;
+    ${({ size }) => {
+      switch (size) {
+        case "small":
+          return `
+            width: 10.8px;
+            height: 10.8px;
+            left: 1.8px;
+            bottom: 1.8px;
+          `;
+        default:
+          return `
+            width: 18px;
+            height: 18px;
+            left: 3px;
+            bottom: 3px;
+          `;
+      }
+    }};
+
     background-color: white;
     box-shadow: 0px 2px 4px rgba(54, 56, 112, 0.12);
 
@@ -63,24 +93,59 @@ const Root = styled.div`
   }
 
   input:checked + .slider:before {
-    -webkit-transform: translateX(16px);
-    -ms-transform: translateX(16px);
-    transform: translateX(16px);
+    ${({ size }) => {
+      switch (size) {
+        case "small":
+          return `
+            -webkit-transform: translateX(9.6px);
+            -ms-transform: translateX(9.6px);
+            transform: translateX(9.6px);
+          `;
+        default:
+          return `
+            -webkit-transform: translateX(16px);
+            -ms-transform: translateX(16px);
+            transform: translateX(16px);
+          `;
+      }
+    }};
   }
 
   .slider.round {
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(54, 56, 112, 0.12);
+    ${({ size }) => {
+      switch (size) {
+        case "small":
+          return `
+            border-radius: 4.8px;
+          `;
+        default:
+          return `
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(54, 56, 112, 0.12);
+          `;
+      }
+    }};
   }
 
   .slider.round:before {
-    border-radius: 6px;
+    ${({ size }) => {
+      switch (size) {
+        case "small":
+          return `
+            border-radius: 3.6px;
+          `;
+        default:
+          return `
+            border-radius: 6px;
+          `;
+      }
+    }};
   }
 `;
 
-const Switch: React.FC<IProps> = ({ value, onChange }) => {
+const Switch: React.FC<IProps> = ({ value, onChange, size }) => {
   return (
-    <Root>
+    <Root size={size}>
       <label className="switch">
         <input type="checkbox" checked={value} onChange={onChange} />
         <span className="slider round" />

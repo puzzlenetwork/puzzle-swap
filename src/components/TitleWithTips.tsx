@@ -7,12 +7,14 @@ import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 interface IProps {
   title: string;
   description: string;
+  type?: "primary" | "secondary";
+  size?: "small" | "medium" | "large";
 }
 
-const TitleWithTips: React.FC<IProps> = ({ description, title }) => {
+const TitleWithTips: React.FC<IProps> = ({ description, title, type, size }) => {
   return (
     <Row alignItems="center">
-      <Text weight={500} type="secondary" style={{ width: "fit-content" }}>
+      <Text weight={500} type={type || "secondary"} size={size} style={{ width: "fit-content" }}>
         {title}
       </Text>
       <Tooltip

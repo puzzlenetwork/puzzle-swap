@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 
 type TButtonType = "primary" | "secondary" | "danger";
-type TButtonSize = "medium" | "large";
+type TButtonSize = "small" | "medium" | "large";
 
 const Button = styled.button<{
   kind?: TButtonType;
@@ -31,8 +31,14 @@ const Button = styled.button<{
   border-radius: 12px;
   box-shadow: none;
   font-weight: 500;
-  font-size: 16px;
-  line-height: 24px;
+  ${({ size }) => {
+    switch (size) {
+      case "small":
+        return "font-size: 14px; line-height: 20px;";
+      default:
+        return "font-size: 16px; line-height: 24px;";
+    }
+  }}
 
   width: ${({ fixed }) => (fixed ? "100%" : "fit-content")};
   transition: 0.4s;
@@ -53,6 +59,8 @@ const Button = styled.button<{
   ${({ size }) =>
     (() => {
       switch (size) {
+        case "small":
+          return "padding: 6px 16px; height: 40px;";
         case "medium":
           return "padding: 0 20px; height: 40px;";
         case "large":

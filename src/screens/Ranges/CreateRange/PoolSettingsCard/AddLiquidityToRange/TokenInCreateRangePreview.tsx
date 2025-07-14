@@ -54,7 +54,7 @@ const TokenInRangePreview = ({ asset, isBase, ...rest }: IParams & React.HTMLAtt
     )
   }
 
-  const isPriceValid = (asset.currentPrice?.lte(asset.maxPrice ?? 0) && asset.currentPrice?.gte(asset.minPrice ?? 0));
+  const isPriceValid = (asset.initialPrice?.lte(asset.maxPrice ?? 0) && asset.initialPrice?.gte(asset.minPrice ?? 0));
 
   return (
     <LocalCard kind={isPriceValid ? "secondary" : "error"} {...rest}>
@@ -71,7 +71,7 @@ const TokenInRangePreview = ({ asset, isBase, ...rest }: IParams & React.HTMLAtt
         <SizedBox width={4} />
         <ArrowWithSuperText color={ isPriceValid ? theme.colors.primary650 : theme.colors.error500 }>
           <Text type={isPriceValid ? "secondary" : "error"} size="small" weight={500}>{
-            `${BN.formatUnits(asset.currentPrice ?? 0, asset.asset.decimals).toSmallFormat()}`
+            `${BN.formatUnits(asset.initialPrice ?? 0, asset.asset.decimals).toSmallFormat()}`
           }</Text>
         </ArrowWithSuperText>
         <SizedBox width={4} />
@@ -112,7 +112,7 @@ const TokenInRangePreviewWrapper = ({ asset, isBaseToken, ...rest }: IWrapperPar
           <Text type="secondary" size="small" weight={500} nowrap>Current Price:</Text>
           <SizedBox width={4} />
             <Text size="small" fitContent weight={500} nowrap>{
-              `${BN.formatUnits(asset.currentPrice ?? 0, asset.asset.decimals).toSmallFormat()}`
+              `${BN.formatUnits(asset.initialPrice ?? 0, asset.asset.decimals).toSmallFormat()}`
             }</Text>
         </Row>
         <Row alignItems="center">

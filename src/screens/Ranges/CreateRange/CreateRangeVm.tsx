@@ -37,7 +37,7 @@ export interface IRangeToken {
   minPriceTouched?: boolean;
   maxPrice?: BN;
   maxPriceTouched?: boolean;
-  currentPrice?: BN;
+  initialPrice?: BN;
   maxSellOff?: BN;
   locked: boolean;
   share: BN;
@@ -293,6 +293,13 @@ class CreateRangeVm {
     );
     this.rangeAssets[indexOfObject].minPrice = val;
     this.rangeAssets[indexOfObject].minPriceTouched = true;
+  };
+
+  updateAssetInitialPrice = (assetId: string, val: BN) => {
+    const indexOfObject = this.rangeAssets.findIndex(
+      ({ asset }) => asset.assetId === assetId
+    );
+    this.rangeAssets[indexOfObject].initialPrice = val;
   };
 
   updateAssetMaxPrice = (assetId: string, val: BN) => {

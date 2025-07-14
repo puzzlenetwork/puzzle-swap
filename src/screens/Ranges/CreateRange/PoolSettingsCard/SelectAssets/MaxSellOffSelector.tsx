@@ -25,12 +25,10 @@ const MaxSellOffSelector = ({ value, onUpdate }: IParams) => {
     <>
       <Button
         onClick={handleOpenModal}
-        size="medium"
+        size="small"
         kind="secondary"
-        style={{
-          width: "120px",
-        }}
-      >{(value && value.lt(maxValue)) ? `${value.toNumber()}%` : "Add"}</Button>
+        fixed
+      >{(value && value.lt(maxValue)) ? `Max Sell-Off: ${value.toNumber()}%` : "Add Max Sell-Off (Optional)"}</Button>
       <Dialog
         visible={modalOpened}
         style={{ maxWidth: "360px" }}
