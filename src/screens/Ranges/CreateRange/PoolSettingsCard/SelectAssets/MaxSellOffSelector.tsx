@@ -32,7 +32,9 @@ const MaxSellOffSelector = ({ value, onUpdate }: IParams) => {
       <Dialog
         visible={modalOpened}
         style={{ maxWidth: "360px" }}
-        bodyStyle={{ minHeight: "232px" }}
+        styles={{
+          body: { minHeight: "232px" }
+        }}
         onClose={() => setModalOpened(false)}
         title="Add Max Sell-Off (Optional)"
       >

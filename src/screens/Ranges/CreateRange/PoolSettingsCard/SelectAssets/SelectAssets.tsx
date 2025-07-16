@@ -1,18 +1,13 @@
 import styled from "@emotion/styled";
-import React, { JSX, useState } from "react";
+import React, { useState } from "react";
 import Card from "@components/Card";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import Notification from "@components/Notification";
 import Button from "@components/Button";
 import { ReactComponent as Add } from "@src/assets/icons/add.svg";
 import { observer } from "mobx-react-lite";
 import { useCreateRangeVM } from "../../CreateRangeVm";
-import TokenCompositionRow from "./TokenCompositionRow";
 import TokenSelectModal from "@components/TokensSelectModal/TokenSelectModal";
-import Tooltip from "@components/Tooltip";
-import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
-import { Row } from "@src/components/Flex";
 import { useTheme } from "@emotion/react";
 import RangeBaseTokenRow from "./RangeBaseTokenRow";
 import RangeTokenRow from "./RangeTokenRow";
@@ -23,11 +18,6 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-`;
-const Grid = styled.div`
-  display: grid;
-  row-gap: 26px;
-  padding: 0 0 24px 0;
 `;
 
 const SizedBoxStyled = styled(SizedBox)`
@@ -68,6 +58,7 @@ const SelectsAssets: React.FC<IProps> = () => {
           token={vm.rangeAssets[0]}
           tokensToAdd={vm.tokensToAdd}
           replaceAssetInRange={vm.replaceAssetInRange}
+          changeAssetLeverageInRange={vm.updateAssetLeverage}
           changeAssetShareInRange={vm.changeAssetShareInRange}
           updateLockedState={vm.updateLockedState}
         />
@@ -98,6 +89,7 @@ const SelectsAssets: React.FC<IProps> = () => {
                   token={asset}
                   tokensToAdd={vm.tokensToAdd}
                   replaceAssetInRange={vm.replaceAssetInRange}
+                  changeAssetLeverageInRange={vm.updateAssetLeverage}
                   changeAssetShareInRange={vm.changeAssetShareInRange}
                   changeAssetMaxSellOffInRange={vm.updateAssetMaxSellOff}
                   updateLockedState={vm.updateLockedState}

@@ -93,7 +93,9 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
       </Tooltip>
       <Dialog
         style={{ maxWidth: 400 }}
-        bodyStyle={{ minHeight: 232 }}
+        styles={{
+          body: { minHeight: 232 }
+        }}
         title={"Share"}
         onClose={() => {
           setOpenedShare(false);

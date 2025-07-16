@@ -13,12 +13,24 @@ import { ReactComponent as Unlock } from "@src/assets/icons/unlock.svg";
 import { ReactComponent as Close } from "@src/assets/icons/smallClose.svg";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite"
+import LogSliderWithImage from "@src/components/LogSliderWithImage"
 
 const StyledClose = styled(Close)`
   margin-left: 10px;
   width: 16px;
   height: 16px;
   opacity: 0.5;
+`;
+
+const StyledTable = styled.table`
+  width: 100%;
+  tr {
+    padding-top: 20px;
+
+    td {
+      padding: 0 5px;
+    }
+  }
 `;
 
 interface IParams {
@@ -28,6 +40,7 @@ interface IParams {
   setEqualShares: (value: boolean) => void;
   replaceAssetInRange: (assetId: string, newAsset: string) => void;
   changeAssetShareInRange: (assetId: string, share: BN) => void;
+  changeAssetLeverageInRange: (assetId: string, leverage: BN) => void;
   updateLockedState: (assetId: string, locked: boolean) => void;
 }
 
@@ -38,9 +51,10 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
   tokensToAdd,
   replaceAssetInRange,
   changeAssetShareInRange,
+  changeAssetLeverageInRange,
   updateLockedState,
 }) => (
-  <table>
+  <StyledTable>
     <thead>
       <tr>
         <th>
@@ -77,17 +91,32 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
     </thead>
     <tbody>
       <tr>
-        <td>
+        <td width="10%">
           <AssetSelector
             asset={token.asset}
             balances={tokensToAdd}
             onUpdateAsset={replaceAssetInRange}
           />
         </td>
-        <td>
-          <Text>TODO</Text>
+        <td width="80%">
+          <Row alignItems="center">
+            <Text size="small" type="secondary" fitContent>1x</Text>
+            <SizedBox width={4} />
+            <LogSliderWithImage
+              value={token.leverage?.toNumber() || 1}
+              min={1}
+              max={500}
+              imageUrl={token.asset.logo}
+              onChange={(v) => {
+                changeAssetLeverageInRange(token.asset.assetId, new BN(v));
+                console.log("slider", v);
+              }}
+            />
+            <SizedBox width={4} />
+            <Text size="small" type="secondary" fitContent>∞</Text>
+          </Row>
         </td>
-        <td>
+        <td width="10%">
           <Row alignItems="center" justifyContent="flex-end">
             <ShareTokenInput
               amount={token.share}
@@ -106,7 +135,7 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
         </td>
       </tr>
     </tbody>
-  </table>
+  </StyledTable>
 )
 
 export default observer(RangeBaseTokenRow);

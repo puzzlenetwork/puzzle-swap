@@ -38,6 +38,9 @@ importers:
       '@testing-library/user-event':
         specifier: ^13.5.0
         version: 13.5.0(@testing-library/dom@8.20.1)
+      '@types/d3-scale':
+        specifier: ^4.0.9
+        version: 4.0.9
       '@types/jest':
         specifier: ^27.5.2
         version: 27.5.2
@@ -113,6 +116,9 @@ importers:
       css-minimizer-webpack-plugin:
         specifier: ^3.4.1
         version: 3.4.1(webpack@5.98.0)
+      d3-scale:
+        specifier: ^4.0.2
+        version: 4.0.2
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13

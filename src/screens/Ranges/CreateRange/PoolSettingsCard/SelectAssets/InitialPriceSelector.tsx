@@ -12,7 +12,6 @@ import PriceLimitInput from "./PriceLimitInput";
 interface IParams {
   asset: IRangeToken;
   value: BN;
-  marketPrice?: BN;
   onUpdate: (v: BN) => void;
   baseTokenSymbol?: string;
 }
@@ -20,7 +19,6 @@ interface IParams {
 const InitialPriceSelector = ({
   asset,
   value,
-  marketPrice,
   onUpdate,
   baseTokenSymbol
 }: IParams) => {
@@ -37,11 +35,15 @@ const InitialPriceSelector = ({
         size="small"
         kind="secondary"
         fixed
-      >Initial Price: { value.toSmallFormat() } { baseTokenSymbol }</Button>
+      >Initial Price: { BN.formatUnits(value, asset.asset.decimals).toSmallFormat() } { baseTokenSymbol }</Button>
       <Dialog
         visible={modalOpened}
         style={{ maxWidth: "360px" }}
-        bodyStyle={{ minHeight: "232px" }}
+        styles={{
+          body: {
+            padding: "16px 24px",
+          }
+        }}
         onClose={() => setModalOpened(false)}
         title="Initial Price"
       >
@@ -58,8 +60,8 @@ const InitialPriceSelector = ({
             <Text size="medium">{asset.asset.name}</Text>
             <Text size="small" type="secondary">{asset.asset.symbol}</Text>
           </Column>
-          {marketPrice && <Text size="medium" fitContent nowrap>
-            {marketPrice.toSmallFormat()} {baseTokenSymbol}
+          {asset.currentPrice && asset.currentPrice.gt(0) && <Text size="medium" fitContent nowrap>
+            {BN.formatUnits(asset.currentPrice, asset.asset.decimals).toSmallFormat()} {baseTokenSymbol}
           </Text>}
         </Row>
         <SizedBox height={16} />
@@ -69,8 +71,9 @@ const InitialPriceSelector = ({
           amount={value}
           decimals={asset.asset.decimals}
           onChange={(v) => onUpdate(v)}
-          placeholder={marketPrice ? marketPrice.toSmallFormat() : "Enter Initial Price"}
+          placeholder={asset.currentPrice ? BN.formatUnits(asset.currentPrice, asset.asset.decimals).toSmallFormat() : "Enter Initial Price"}
         />
+        <SizedBox height={24} />
         <Button
           onClick={() => setModalOpened(false)}
           size="medium"
