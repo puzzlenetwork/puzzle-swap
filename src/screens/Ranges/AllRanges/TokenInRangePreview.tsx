@@ -64,18 +64,18 @@ const TokenInRangePreview = ({ asset, isBase, showInUsd, ...rest }: IParams & Re
         <Text type={isPriceValid ? "primary" : "error"} fitContent>{asset.share.toNumber()}%</Text>
       </Row>
       <SizedBox height={12} />
-      <Row alignItems="center">
-        <Text type={isPriceValid ? "secondary" : "error"} size="small" weight={500}>{
+      <Row alignItems="center" justifyContent="start">
+        <Text fitContent type={isPriceValid ? "secondary" : "error"} size="small" weight={500}>{
           showInUsd ? `$${asset.minPriceUsd.toSmallFormat()}` : asset.minPrice.toSmallFormat()
         }</Text>
         <SizedBox width={4} />
         <ArrowWithSuperText color={ isPriceValid ? theme.colors.primary650 : theme.colors.error500 }>
-          <Text type={isPriceValid ? "secondary" : "error"} size="small" weight={500}>{
+          <Text fitContent type={isPriceValid ? "secondary" : "error"} size="small" weight={500}>{
             showInUsd ? `$${asset.currentPriceUsd.toSmallFormat()}` : asset.currentPrice.toSmallFormat()
           }</Text>
         </ArrowWithSuperText>
         <SizedBox width={4} />
-        <Text type={isPriceValid ? "secondary" : "error"} size="small" weight={500}>{
+        <Text fitContent type={isPriceValid ? "secondary" : "error"} size="small" weight={500}>{
           showInUsd ? `$${asset.maxPriceUsd.toSmallFormat()}` : asset.maxPrice.toSmallFormat()
         }</Text>
       </Row>

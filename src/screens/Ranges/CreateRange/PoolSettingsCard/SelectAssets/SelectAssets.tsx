@@ -11,6 +11,10 @@ import TokenSelectModal from "@components/TokensSelectModal/TokenSelectModal";
 import { useTheme } from "@emotion/react";
 import RangeBaseTokenRow from "./RangeBaseTokenRow";
 import RangeTokenRow from "./RangeTokenRow";
+import Table from "@src/components/Table";
+import { Row } from "@src/components/Flex";
+import RoundTokenIcon from "@src/components/RoundTokenIcon";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -122,6 +126,57 @@ const SelectsAssets: React.FC<IProps> = () => {
           onSelect={vm.addAssetToRange}
           balances={vm.tokensToAdd}
           onClose={() => openAssetModal(!addAssetModal)}
+        />
+      </Card>
+      <SizedBox height={24} />
+      <Text type="secondary" weight={500}>
+        Preview
+      </Text>
+      <SizedBox height={8} />
+      <Card style={{ width: "100%" }}>
+        <Table
+          columns={[
+            { Header: "Token", accessor: "token" },
+            { Header: "Min ← Current → Max Price", accessor: "price" },
+            { Header: "Max Sell-Off", accessor: "maxSellOff" },
+            { Header: "Share", accessor: "share" },
+          ]}
+          data={
+            vm.rangeAssets.map((asset, index) => ({
+              token: (
+                <Row mainAxisSize="fit-content" key={asset.asset.symbol}>
+                  <RoundTokenIcon
+                    src={asset.asset.logo}
+                  />
+                  <SizedBox width={8} />
+                  <Text type="primary" weight={500} size="medium">
+                    {asset.asset.symbol}
+                  </Text>
+                </Row>
+              ),
+              price: (
+                <Text type="primary" weight={500} size="medium">
+                  {index === 0 ? "Base" :
+                    (
+                      (asset.minPrice ? `${BN.formatUnits(asset.minPrice, asset.asset.decimals).toFixed(2)} ← ` : "")
+                      + (asset.initialPrice ? BN.formatUnits(asset.initialPrice, asset.asset.decimals).toFixed(2) : "-")
+                      + (asset.maxPrice ? ` → ${BN.formatUnits(asset.maxPrice, asset.asset.decimals).toFixed(2)}` : "-")
+                    )
+                  }
+                </Text>
+              ),
+              maxSellOff: (
+                <Text type="primary" weight={500} size="medium">
+                  {asset.maxSellOff ? `${asset.maxSellOff.toNumber()}%` : "-"}
+                </Text>
+              ),
+              share: (
+                <Text type="primary" weight={500} size="medium">
+                  {asset.share ? `${BN.formatUnits(asset.share, 1).toNumber()}%` : "-"}
+                </Text>
+              )
+            }))
+          }
         />
       </Card>
     </Root>

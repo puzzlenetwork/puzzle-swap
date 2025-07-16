@@ -103,7 +103,9 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
             <Text size="small" type="secondary" fitContent>1x</Text>
             <SizedBox width={4} />
             <LogSliderWithImage
-              value={token.leverage?.toNumber() || 1}
+              value={token.leverage ? (
+                token.leverage.gte(500) ? 500 : token.leverage.toNumber()
+              ) : 1}
               min={1}
               max={500}
               imageUrl={token.asset.logo}
