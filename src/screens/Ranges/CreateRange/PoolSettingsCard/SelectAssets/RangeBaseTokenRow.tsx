@@ -1,4 +1,4 @@
-import { Row } from "@components/Flex"
+import { Column, Row } from "@components/Flex"
 import SizedBox from "@components/SizedBox"
 import Switch from "@components/Switch"
 import TitleWithTips from "@components/TitleWithTips"
@@ -112,6 +112,32 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
               onChange={(v) => {
                 changeAssetLeverageInRange(token.asset.assetId, new BN(v));
               }}
+              minTooltipContent={(
+                <Column>
+                  <Text size="small" nowrap>
+                    Leverage 1x means fact balance = virt balance. You will
+                  </Text>
+                  <Text size="small" nowrap>
+                    need to provide the entire balance as liquidity and there
+                  </Text>
+                  <Text size="small" nowrap>
+                    will be no max price for this token.
+                  </Text>
+                </Column>
+              )}
+              maxTooltipContent={(
+                <Column>
+                  <Text size="small" nowrap>
+                    The infinite leverage means there will be no fact balance
+                  </Text>
+                  <Text size="small" nowrap>
+                    for this token: you won't need to provide liquidity in it
+                  </Text>
+                  <Text size="small" nowrap>
+                    and it won't be available for purchase in the range.
+                  </Text>
+                </Column>
+              )}
             />
             <SizedBox width={4} />
             <Text size="small" type="secondary" fitContent>∞</Text>

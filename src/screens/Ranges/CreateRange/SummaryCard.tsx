@@ -23,6 +23,7 @@ const Legend = styled(Row)`
   max-width: 155px;
   flex-wrap: wrap;
   justify-content: center;
+  gap: 4px;
 
   & > * {
     padding-right: 12px;
@@ -85,7 +86,7 @@ const SummaryCard: React.FC<IProps> = () => {
           ))}
         </Legend>
 
-        <SizedBox height={24} />
+        <SizedBox height={16} />
         <Divider />
         <SizedBox height={14} />
         <Text type="secondary" fitContent>
