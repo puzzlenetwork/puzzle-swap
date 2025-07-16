@@ -95,6 +95,27 @@ class CreateRangeVm {
     ];
   };
 
+  get assetsWithLeverage() {
+    const mutatedAssets = this.rangeAssets.map((v) => {
+      return {
+        ...v,
+        leverage: v.leverage ? new BN(1).div(v.leverage) : new BN(1),
+      };
+    });
+    const maxLeverage = mutatedAssets.reduce((acc, v) => {
+      return BN.max(acc, v.leverage);
+    }, BN.ZERO);
+
+    return mutatedAssets.map((v) => {
+      return {
+        ...v.asset,
+        ...v,
+        leverage: v.leverage.times(100).toNumber(),
+        relativeLeverage: v.leverage.div(maxLeverage).times(100).plus(10).toNumber(),
+      }
+    });
+  }
+
   public baseTokenPrice!: BN;
   public setBaseTokenPrice = (val: BN) => {
     if (this.baseTokenPrice)
@@ -648,23 +669,36 @@ class CreateRangeVm {
     );
   }
 
+  get correspondingVirtualBalanceOfBaseToken(): Record<string, BN> {
+    const { accountStore } = this.rootStore;
+    const { findBalanceByAssetId } = accountStore;
+    return this.rangeAssets.reduce<Record<string, BN>>(
+      (acc, { asset, share, initialPrice, leverage }, i) => {
+        const tokenBalance = findBalanceByAssetId(asset.assetId);
+        if (tokenBalance == null || tokenBalance.balance == null || initialPrice == null || leverage == null) return acc;
+        const value = BN.formatUnits(tokenBalance.balance, asset.decimals).times(i === 0 ? 1 : BN.formatUnits(initialPrice, asset.decimals)).times(leverage).div(share.div(1000));
+  //       console.log(`
+  // ${asset.symbol} ${value.toFormat(2)}
+  // \nF=${BN.formatUnits(tokenBalance.balance, asset.decimals).toFormat(2)}
+  // \nP=${i === 0 ? 1 : BN.formatUnits(initialPrice, asset.decimals).toFormat(2)}
+  // \nL=${leverage.toFormat(2)}
+  // \nw=${share.div(1000).toFormat(2)}
+  // \nL0=${this.rangeAssets[0].leverage?.toFormat(2)}
+  // \n\nRes=${value.div(this.rangeAssets[0].leverage ?? 1).toFormat(2)}`)
+        return {
+          ...acc,
+          [asset.assetId]: value,
+        }
+      },
+      {} as Record<string, BN>
+    )
+  }
+
   get maxToProvide(): BN {
-    if (this.tokensToProvideInUsdnMap == null) return BN.ZERO;
-    if (!this.totalTakenShare.eq(1000)) return BN.ZERO;
-    const arr = Object.entries(this.tokensToProvideInUsdnMap).map(
-      ([a, maxDollarValue]) => ({
-        assetId: a,
-        dollarValue: maxDollarValue,
-      })
-    );
-    const min = arr.sort((a, b) =>
-      a.dollarValue!.gt(b.dollarValue!) ? 1 : -1
-    )[0];
-    const minAsset = this.rangeAssets.find(
-      ({ asset }) => asset.assetId === min?.assetId
-    );
-    if (minAsset == null) return BN.ZERO;
-    return min.dollarValue;
+    return Object.values(this.correspondingVirtualBalanceOfBaseToken).reduce(
+      (acc, v, i) => i === 0 ? v : BN.min(acc, v),
+      BN.ZERO
+    ).div(this.rangeAssets[0].leverage ?? 1);
   }
 
   get assetsForInitFunction(): { assetId: string | null; amount: string }[] {

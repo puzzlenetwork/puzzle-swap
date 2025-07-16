@@ -23,7 +23,9 @@ const TokensChartMobileImpl: React.FC<IProps> = observer(({ ...rest }) => {
   return (
     <Dialog
       onClose={rest.onClose}
-      bodyStyle={{ maxHeight: "70vh", overflowY: "auto" }}
+      styles={{
+        body: { maxHeight: "70vh", overflowY: "auto" }
+      }}
       visible={rest.visible}
       title={`${rest.token0.symbol}/${rest.token1.symbol}`}
     >

@@ -109,7 +109,6 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
               imageUrl={token.asset.logo}
               onChange={(v) => {
                 changeAssetLeverageInRange(token.asset.assetId, new BN(v));
-                console.log("slider", v);
               }}
             />
             <SizedBox width={4} />

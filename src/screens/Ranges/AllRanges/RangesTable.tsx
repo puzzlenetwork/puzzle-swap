@@ -56,8 +56,8 @@ const RangesTable: React.FC = () => {
       [range.address]: (
         <Row alignItems="center">
           <GrayCard paddingDesktop="4px" paddingMobile="4px" onClick={width && width < 880 ? stopPropagation : undefined}>
-            <RangeChart range={range} size={120} index={index} />
-        </GrayCard>
+            <RangeChart assetsWithLeverage={range.assetsWithLeverage} size={120} index={index} />
+          </GrayCard>
         <SizedBox width={16} />
         <Column crossAxisSize="max" justifyContent="space-between">
           <SizedBox height={20} />

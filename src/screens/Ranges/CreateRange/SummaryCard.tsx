@@ -8,6 +8,8 @@ import { useCreateRangeVM } from "./CreateRangeVm";
 import { Row } from "@src/components/Flex";
 import Divider from "@src/components/Divider";
 import { Cell, Pie, PieChart } from "recharts";
+import RangeChart from "@src/components/RangeChart";
+import RoundTokenIcon from "@src/components/RoundTokenIcon";
 
 interface IProps {}
 
@@ -17,21 +19,7 @@ const Root = styled.div`
   flex-direction: column;
 `;
 
-const COLORS = [
-  "#99CC33",
-  "#669900",
-  "#CCEE66",
-  "#006699",
-  "#3399CC",
-  "#990066",
-  "#CC3399",
-  "#FF6600",
-  "#FF9900",
-  "#FFCC00",
-];
-
-const Legend = styled.div`
-  display: flex;
+const Legend = styled(Row)`
   max-width: 155px;
   flex-wrap: wrap;
   justify-content: center;
@@ -40,6 +28,14 @@ const Legend = styled.div`
     padding-right: 12px;
   }
 `;
+
+const GrayCard = styled(Card)`
+  background: ${({ theme }) => theme.colors.primary100};
+  border: none;
+  width: fit-content;
+  padding: 5px;
+`;
+
 const SummaryCard: React.FC<IProps> = () => {
   const vm = useCreateRangeVM();
   const data = vm.rangeAssets?.reduce<{ name: string; value: number }[]>(
@@ -62,39 +58,33 @@ const SummaryCard: React.FC<IProps> = () => {
         paddingDesktop="0px"
         paddingMobile="0px"
       >
-        <PieChart width={100} height={150}>
-          <Pie
-            data={data}
-            innerRadius={40}
-            outerRadius={50}
-            fill="#C6C9F4"
-            paddingAngle={2}
-            dataKey="value"
-          >
-            {data.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-          </Pie>
-        </PieChart>
+        <SizedBox height={40} />
+        <GrayCard>
+          <RangeChart
+            assetsWithLeverage={vm.assetsWithLeverage}
+            size={180}
+          />
+        </GrayCard>
+
+        <SizedBox height={12} />
+
         <Legend>
-          {data.map(({ name }, index) => (
+          {vm.rangeAssets.map(({ asset }, index) => (
             <Row
               key={index + "summary-card"}
               justifyContent="center"
               alignItems="center"
               mainAxisSize="fit-content"
             >
-              <Dot color={COLORS[index % COLORS.length]} />
+              <RoundTokenIcon src={asset.logo} />
               <SizedBox width={4} />
-              <Text size="small" type="secondary" fitContent>
-                {name}
+              <Text size="small" type="primary" weight={500} fitContent>
+                {asset.symbol}
               </Text>
             </Row>
           ))}
         </Legend>
+
         <SizedBox height={24} />
         <Divider />
         <SizedBox height={14} />
