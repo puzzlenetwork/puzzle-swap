@@ -96,7 +96,9 @@ const TokenSelectModal: React.FC<IProps> = ({
     <Dialog
       visible={visible}
       style={{ maxWidth: 360 }}
-      bodyStyle={{ minHeight: 440 }}
+      styles={{
+        body: { minHeight: 440 },
+      }}
       onClose={() => {
         setActiveFilter(0);
         onClose();

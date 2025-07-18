@@ -37,6 +37,8 @@ export interface IRangeToken {
   minPriceTouched?: boolean;
   maxPrice?: BN;
   maxPriceTouched?: boolean;
+  leverage?: BN;
+  initialPrice?: BN;
   currentPrice?: BN;
   maxSellOff?: BN;
   locked: boolean;
@@ -73,19 +75,62 @@ class CreateRangeVm {
 
   public rangeAssets: IRangeToken[] = [];
   setDefaultRangeAssets = () => {
+    const romePrice = this.rootStore.tokenStore.statisticsByAssetId[TOKENS_BY_SYMBOL.ROME.assetId].currentPrice;
+    const puzzlePrice = this.rootStore.tokenStore.statisticsByAssetId[TOKENS_BY_SYMBOL.ROME.assetId].currentPrice;
     this.rangeAssets = [
       {
         asset: TOKENS_BY_SYMBOL.ROME,
         share: new BN(500),
+        initialPrice: romePrice,
+        currentPrice: romePrice,
         locked: false,
       },
       {
         asset: TOKENS_BY_SYMBOL.PUZZLE,
         share: new BN(500),
+        initialPrice: BN.parseUnits(puzzlePrice, TOKENS_BY_SYMBOL.PUZZLE.decimals),
+        currentPrice: BN.parseUnits(puzzlePrice, TOKENS_BY_SYMBOL.PUZZLE.decimals),
         locked: false,
       },
     ];
   };
+
+  get assetsWithLeverage() {
+    const mutatedAssets = this.rangeAssets.map((v) => {
+      return {
+        ...v,
+        leverage: v.leverage ? new BN(1).div(v.leverage) : new BN(1),
+      };
+    });
+    const maxLeverage = mutatedAssets.reduce((acc, v) => {
+      return BN.max(acc, v.leverage);
+    }, BN.ZERO);
+
+    return mutatedAssets.map((v) => {
+      return {
+        ...v.asset,
+        ...v,
+        leverage: v.leverage.times(100).toNumber(),
+        relativeLeverage: v.leverage.div(maxLeverage).times(100).plus(10).toNumber(),
+      }
+    });
+  }
+
+  public baseTokenPrice!: BN;
+  public setBaseTokenPrice = (val: BN) => {
+    if (this.baseTokenPrice)
+      this.rangeAssets.slice(1).forEach((asset) => {
+        const newInitialPrice = asset.initialPrice?.times(this.baseTokenPrice.div(val));
+        newInitialPrice && this.updateAssetInitialPrice(asset.asset.assetId, newInitialPrice);
+
+        const currentPriceFromStore = this.rootStore.tokenStore.statisticsByAssetId[asset.asset.assetId]?.currentPrice;
+        if (currentPriceFromStore) {
+          const newCurrentPrice = BN.parseUnits(currentPriceFromStore.div(val), asset.asset.decimals);
+          this.updateAssetCurrentPrice(asset.asset.assetId, newCurrentPrice);
+        }
+      })
+    this.baseTokenPrice = val;
+  }
 
   public equalShares: boolean = false;
   setEqualShares = (v: boolean) => {
@@ -137,11 +182,14 @@ class CreateRangeVm {
 
   initialize = (initData: IInitDataToStore | null) => {
     if (initData != null) {
+      this.setBaseTokenPrice(new BN(initData.assets[0].initialPrice ?? 0));
       if (initData.assets != null) {
         this.rangeAssets = initData.assets?.map(
-          ({ assetId, share, locked }) => ({
+          ({ assetId, share, initialPrice, locked }) => ({
             share: new BN(share).times(10),
             locked,
+            initialPrice: new BN(initialPrice),
+            currentPrice: BN.parseUnits(this.rootStore.tokenStore.statisticsByAssetId[assetId]?.currentPrice.div(initData.assets[0].initialPrice ?? 1) ?? BN.ZERO, TOKENS_BY_ASSET_ID[assetId].decimals),
             asset: TOKENS_BY_ASSET_ID[assetId],
           })
         );
@@ -149,6 +197,11 @@ class CreateRangeVm {
     } else {
       this.setDefaultRangeAssets();
     }
+
+    this.rangeAssets.forEach((v) => {
+      this.syncMinPriceByAssetId(v.asset.assetId);
+      this.syncMaxPriceByAssetId(v.asset.assetId);
+    });
 
     this.domain = initData?.title ?? "";
     this.step = initData?.step ?? 0;
@@ -247,8 +300,21 @@ class CreateRangeVm {
     const balances = this.tokensToAdd;
     const asset = balances?.find((b) => b.assetId === assetId);
     if (asset == null) return;
-    this.rangeAssets.push({ asset: asset, share: BN.ZERO, locked: false });
+
+    const initialPrice = this.rootStore.tokenStore.statisticsByAssetId[assetId].currentPrice;
+    const relativeInitialPrice = initialPrice.div(this.baseTokenPrice)
+
+    this.rangeAssets.push({
+      asset: asset,
+      share: BN.ZERO,
+      initialPrice: BN.parseUnits(relativeInitialPrice, asset.decimals),
+      currentPrice: BN.parseUnits(relativeInitialPrice, asset.decimals),
+      leverage: new BN(1),
+      locked: false
+    });
     this.syncShares();
+    this.syncMinPriceByAssetId(assetId);
+    this.syncMaxPriceByAssetId(assetId);
     if (this.maxToProvide.eq(0)) {
       this.rootStore.notificationStore.notify(
         "Change the assets you don’t have enough in wallet, or reset the whole composition.",
@@ -285,6 +351,46 @@ class CreateRangeVm {
     const asset = this.tokensToAdd?.find((b) => b.assetId === newAssetId);
     if (asset == null) return;
     this.rangeAssets[indexOfObject].asset = asset;
+
+    const currentPrice = this.rootStore.tokenStore.statisticsByAssetId[newAssetId]?.currentPrice || BN.ZERO;
+
+
+    if (indexOfObject === 0) {
+      this.setBaseTokenPrice(currentPrice);
+    } else {
+      const basePrice = this.rootStore.tokenStore.statisticsByAssetId[oldAssetId].currentPrice;
+      this.rangeAssets[indexOfObject].initialPrice = BN.parseUnits(
+        indexOfObject === 0
+          ? currentPrice
+          : currentPrice.div(basePrice),
+        asset.decimals
+      );
+
+      this.rangeAssets[indexOfObject].currentPrice = BN.parseUnits(
+        indexOfObject === 0
+          ? currentPrice
+          : currentPrice.div(basePrice),
+        asset.decimals
+      );
+    }
+    this.syncMinPriceByAssetId(newAssetId);
+    this.syncMaxPriceByAssetId(newAssetId);
+  };
+
+  updateAssetLeverage = (assetId: string, v: BN) => {
+    const val = v.gte(500) ? new BN(Infinity) : v;
+    const indexOfObject = this.rangeAssets.findIndex(
+      ({ asset }) => asset.assetId === assetId
+    );
+    this.rangeAssets[indexOfObject].leverage = val;
+
+    if (indexOfObject === 0) {
+      this.rangeAssets.forEach((v) => {
+        this.syncMinPriceByAssetId(v.asset.assetId);
+      });
+    } else {
+      this.syncMaxPriceByAssetId(assetId);
+    }
   };
 
   updateAssetMinPrice = (assetId: string, val: BN) => {
@@ -293,6 +399,24 @@ class CreateRangeVm {
     );
     this.rangeAssets[indexOfObject].minPrice = val;
     this.rangeAssets[indexOfObject].minPriceTouched = true;
+  };
+
+  updateAssetInitialPrice = (assetId: string, val: BN) => {
+    const indexOfObject = this.rangeAssets.findIndex(
+      ({ asset }) => asset.assetId === assetId
+    );
+    this.rangeAssets[indexOfObject].initialPrice = val;
+    this.syncMinPriceByAssetId(assetId);
+    this.syncMaxPriceByAssetId(assetId);
+  };
+
+  updateAssetCurrentPrice = (assetId: string, val: BN) => {
+    const indexOfObject = this.rangeAssets.findIndex(
+      ({ asset }) => asset.assetId === assetId
+    );
+    this.rangeAssets[indexOfObject].currentPrice = val;
+    this.syncMinPriceByAssetId(assetId);
+    this.syncMaxPriceByAssetId(assetId);
   };
 
   updateAssetMaxPrice = (assetId: string, val: BN) => {
@@ -317,6 +441,58 @@ class CreateRangeVm {
     this.rangeAssets[indexOfObject].locked = val;
     this.equalShares = false;
   };
+
+  public syncMinPriceByAssetId = (assetId: string): BN | undefined => {
+    const { accountStore } = this.rootStore;
+    const asset = this.rangeAssets.find((v) => v.asset.assetId === assetId);
+    if (asset == null) return undefined;
+    const baseToken = this.rangeAssets[0];
+
+    const L0 = baseToken.leverage ?? new BN(1);
+    const F0 = accountStore.findBalanceByAssetId(baseToken.asset.assetId)?.balance ?? BN.ZERO;
+    const B0 = L0.times(F0);
+
+    const P1 = asset.initialPrice ?? new BN(1);
+
+    const w0 = baseToken.share.div(10);
+    const w1 = asset.share.div(10);
+
+    const rawRes = P1.times(
+      ((B0.minus(F0)).div(B0)).pow((w0.div(w1)).plus(1))
+    ).times(w1.div(w0));
+
+    const res = rawRes.isNaN() || rawRes.isZero() ? P1 : rawRes;
+
+    this.updateAssetMinPrice(assetId, res);
+
+    return res;
+  }
+
+  public syncMaxPriceByAssetId = (assetId: string): BN | undefined => {
+    const { accountStore } = this.rootStore;
+    const asset = this.rangeAssets.find((v) => v.asset.assetId === assetId);
+    if (asset == null) return undefined;
+    const baseToken = this.rangeAssets[0];
+
+    const L1 = asset.leverage ?? new BN(1);
+    const F1 = accountStore.findBalanceByAssetId(asset.asset.assetId)?.balance ?? BN.ZERO;
+    const B1 = L1.times(F1);
+
+    const P1 = asset.initialPrice ? BN.formatUnits(asset.initialPrice, asset.asset.decimals * 2) : new BN(1);
+
+    const w0 = baseToken.share.div(10);
+    const w1 = asset.share.div(10);
+
+    const rawRes = new BN(1).div(P1).times(
+      (B1.div(B1.minus(F1))).pow((w1.div(w0)).plus(1))
+    ).times(w1.div(w0));
+
+    const res = rawRes.isNaN() || rawRes.isZero() ? P1 : rawRes;
+
+    this.updateAssetMaxPrice(assetId, res);
+
+    return res;
+  }
 
   get balances() {
     const { accountStore } = this.rootStore;
@@ -343,6 +519,7 @@ class CreateRangeVm {
     const assets = this.rangeAssets.map((t) => ({
       assetId: t.asset?.assetId,
       locked: t.locked,
+      initialPrice: t.initialPrice?.toNumber(),
       share: t.share.div(10).toNumber(),
     }));
     const state = {
@@ -565,23 +742,36 @@ class CreateRangeVm {
     );
   }
 
+  get correspondingVirtualBalanceOfBaseToken(): Record<string, BN> {
+    const { accountStore } = this.rootStore;
+    const { findBalanceByAssetId } = accountStore;
+    return this.rangeAssets.reduce<Record<string, BN>>(
+      (acc, { asset, share, initialPrice, leverage }, i) => {
+        const tokenBalance = findBalanceByAssetId(asset.assetId);
+        if (tokenBalance == null || tokenBalance.balance == null || initialPrice == null || leverage == null) return acc;
+        const value = BN.formatUnits(tokenBalance.balance, asset.decimals).times(i === 0 ? 1 : BN.formatUnits(initialPrice, asset.decimals)).times(leverage).div(share.div(1000));
+  //       console.log(`
+  // ${asset.symbol} ${value.toFormat(2)}
+  // \nF=${BN.formatUnits(tokenBalance.balance, asset.decimals).toFormat(2)}
+  // \nP=${i === 0 ? 1 : BN.formatUnits(initialPrice, asset.decimals).toFormat(2)}
+  // \nL=${leverage.toFormat(2)}
+  // \nw=${share.div(1000).toFormat(2)}
+  // \nL0=${this.rangeAssets[0].leverage?.toFormat(2)}
+  // \n\nRes=${value.div(this.rangeAssets[0].leverage ?? 1).toFormat(2)}`)
+        return {
+          ...acc,
+          [asset.assetId]: value,
+        }
+      },
+      {} as Record<string, BN>
+    )
+  }
+
   get maxToProvide(): BN {
-    if (this.tokensToProvideInUsdnMap == null) return BN.ZERO;
-    if (!this.totalTakenShare.eq(1000)) return BN.ZERO;
-    const arr = Object.entries(this.tokensToProvideInUsdnMap).map(
-      ([a, maxDollarValue]) => ({
-        assetId: a,
-        dollarValue: maxDollarValue,
-      })
-    );
-    const min = arr.sort((a, b) =>
-      a.dollarValue!.gt(b.dollarValue!) ? 1 : -1
-    )[0];
-    const minAsset = this.rangeAssets.find(
-      ({ asset }) => asset.assetId === min?.assetId
-    );
-    if (minAsset == null) return BN.ZERO;
-    return min.dollarValue;
+    return Object.values(this.correspondingVirtualBalanceOfBaseToken).reduce(
+      (acc, v, i) => i === 0 ? v : BN.min(acc, v),
+      BN.ZERO
+    ).div(this.rangeAssets[0].leverage ?? 1);
   }
 
   get assetsForInitFunction(): { assetId: string | null; amount: string }[] {

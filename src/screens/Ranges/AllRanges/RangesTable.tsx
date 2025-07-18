@@ -56,8 +56,8 @@ const RangesTable: React.FC = () => {
       [range.address]: (
         <Row alignItems="center">
           <GrayCard paddingDesktop="4px" paddingMobile="4px" onClick={width && width < 880 ? stopPropagation : undefined}>
-            <RangeChart range={range} size={120} index={index} />
-        </GrayCard>
+            <RangeChart assetsWithLeverage={range.assetsWithLeverage} size={120} index={index} />
+          </GrayCard>
         <SizedBox width={16} />
         <Column crossAxisSize="max" justifyContent="space-between">
           <SizedBox height={20} />
@@ -98,7 +98,7 @@ const RangesTable: React.FC = () => {
       periodFees: (
         <Column alignItems="flex-end" crossAxisSize="max">
           <Row style={{ gap: 4, flexWrap: "wrap", justifyContent: "flex-end" }}>
-            {Object.entries(range.periodFees).filter(([_, { feesEarned, extraEarned }]) => new BN(feesEarned + extraEarned).gt(0)).map(([assetId, { feesEarned, extraEarned }], i) => {
+            {Object.entries(range.periodStats).filter(([_, { feesEarned, extraEarned }]) => new BN(feesEarned + extraEarned).gt(0)).map(([assetId, { feesEarned, extraEarned }], i) => {
               const tokenInfo = TOKENS_BY_ASSET_ID[assetId] || {};
               return (
                 <TokenTag

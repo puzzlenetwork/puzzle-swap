@@ -18,15 +18,17 @@ const Slider: React.FC<SliderProps> = (props) => {
     <Root>
       <RCSlider
         dotStyle={{ border: "3px solid #F1F2FE", backgroundColor: "#F1F2FE" }}
-        trackStyle={{ backgroundColor: "#7075E9" }}
         activeDotStyle={{ backgroundColor: "#7075E9", borderColor: "#7075E9" }}
-        railStyle={{ backgroundColor: "#F1F2FE" }}
-        handleStyle={{
-          border: "3px solid #7075E9",
-          boxShadow: "0px 4px 16px rgba(112, 117, 233, 0.32)",
-          width: 16,
-          height: 16,
-          marginTop: -6,
+        styles={{
+          track: { backgroundColor: "#7075E9" },
+          rail: { backgroundColor: "#F1F2FE" },
+          handle: {
+            border: "3px solid #7075E9",
+            boxShadow: "0px 4px 16px rgba(112, 117, 233, 0.32)",
+            width: 16,
+            height: 16,
+            marginTop: -6,
+          },
         }}
         {...props}
       />

@@ -214,39 +214,39 @@ const tokenLogos: Record<string, string> = {
   VVUSDNLP: usdnViresVested,
   SWAVES: SWAVES,
   TND: tndLogo,
-  "NEXT-WEEK-PEPE": NEXT_WEEK_PEPE,
+  NEXT_WEEK_PEPE: NEXT_WEEK_PEPE,
   EAST: eastLogo,
   WBTC: wbtcErc20Logo,
-  "USDT-BSC": usdtBscLogo,
-  "USDC-BSC": usdcBscLogo,
+  USDT_BSC: usdtBscLogo,
+  USDC_BSC: usdcBscLogo,
   BTCB: btcbLogo,
   ORIENT: orientLogo,
   ANOTE: anoteLogo,
   WAVESDLP: wavesdlpLogo,
   PETE: peteLogo,
   BAI: baiLogo,
-  "PZ-Old-Gold": oldgoldLogo,
-  "PZ-Mega-Pete":
+  PZ_Old_Gold: oldgoldLogo,
+  PZ_Mega_Pete:
     "https://images.wavesducks.com/api/images/DUCK-GGGGAAAA-GG.svg",
-  "USDT-POLY": usdtpolyLogo,
-  "USDT-PPT": usdtpptLogo,
+  USDT_POLY: usdtpolyLogo,
+  USDT_PPT: usdtpptLogo,
   WHIRLPOOL: whirlpoolLogo,
-  "PL-WAVES": plwavesLogo,
-  "PL-USDT": plusdtLogo,
-  "PL-ETH": plethLogo,
-  "PL-PUZZLE": plpuzzleLogo,
+  PL_WAVES: plwavesLogo,
+  PL_USDT: plusdtLogo,
+  PL_ETH: plethLogo,
+  PL_PUZZLE: plpuzzleLogo,
   ROME: romeLogo,
   UNIT0: unit0Logo,
-  "PZ-5pool": pool5Logo,
-  "PZ-WEB": pzWebLogo,
-  "PZ-WEBU":
+  PZ_5pool: pool5Logo,
+  PZ_WEB: pzWebLogo,
+  PZ_WEBU:
     "https://puzzleswop.s3.amazonaws.com/f63b754d-8dd8-40c4-83aa-3dd1429a4e18",
-  "PZ-REWIND":
+  PZ_REWIND:
     "https://puzzleswop.s3.amazonaws.com/fcf39537-9ead-4e17-bfd9-1330eb3f05ce",
-  "PZ-Units": pzUnitsLogo,
-  "PZ-BURN-XTN": pzBurnXtnLogo,
-  "PZ-BBB": pzBbbLogo,
-  "PZ-BURN-XTN-x-PPT": pzBurnXtnXPptLogo,
+  PZ_Units: pzUnitsLogo,
+  PZ_BURN_XTN: pzBurnXtnLogo,
+  PZ_BBB: pzBbbLogo,
+  PZ_BURN_XTN_x_PPT: pzBurnXtnXPptLogo,
   SBT: sbtLogo,
   WIND: windLogo,
   FUDT: fudtLogo,
@@ -279,12 +279,12 @@ const tokenLogos: Record<string, string> = {
   SANCHO:
     "https://s3.eu-central-1.amazonaws.com/memecity-prod/meme-city/bf7ee3ff-1805-4ec7-9398-daf06841c535.png?t=1744303065718",
 
-  "WX-USDCUSDT-LP":
+  WX_USDCUSDT_LP:
     "https://waves.exchange/static/icons/assets/rZMQ6g31Lr7sPAaAoYc4U2PHCVauTuKUSzUbJtUyPZN.svg",
   AXLY: "https://waves.exchange/static/icons/assets/DcAbWMXrfMeooG1BrZ9ipiseFSVm7zxTs1XZKRp6DVeZ.svg",
-  "USDC-PPT":
+  USDC_PPT:
     "https://waves.exchange/static/icons/assets/3ayH3PhWMkhFsySsUVcC8BvFf1QyxGB5BZuTPyVtmP4v.svg",
-  "USDT-TRC":
+  USDT_TRC:
     "https://waves.exchange/static/icons/assets/DaErMEp76HtuvbbSYxDwLovRimaAwtEyQGFeHLQ3UWwh.svg",
   SPICE: "https://wavesducks.com/static/img/token/spice.svg",
   BNB: "https://wavescap.com/wp-content/uploads/asset-logo/66a1br3BrkoaJgP7yEar9hJcSTvJPoH6PYBLqscXcMGo.svg",
@@ -304,22 +304,15 @@ const tokenLogos: Record<string, string> = {
   MEGAMEME:
     "https://megameme-249514940b30.herokuapp.com/static/media/megameme.49817f851dcdada62613bf2e1f70f56d.svg",
 
-  "CRV-WXG":
+  CRV_WXG:
     "https://r.wavesexplorer.com/assets/site/img/assets_logo/3KhNcHo4We1G5EWps7b1e5DTdLgWDzctc8S6ynu37KAb.svg",
-  "ETH-WXG":
-    "https://r.wavesexplorer.com/assets/site/img/assets_logo/474jTeYx2r2Va35794tCScAXWJG9hU2HcgxzMowaZUnu.svg",
-  "SHIB-WXG":
+  SHIB_WXG:
     "https://r.wavesexplorer.com/assets/site/img/assets_logo/GVxGPBtgVWMW1wHiFnfaCakbJ6sKgZgowJgW5Dqrd7JH.svg",
-  "DAI-WXG":
+  DAI_WXG:
     "https://r.wavesexplorer.com/assets/site/img/assets_logo/8zUYbdB8Q6mDhpcXYv52ji8ycfj4SDX4gJXS7YY3dA4R.svg",
-  "BTC-WXG":
-    "https://r.wavesexplorer.com/assets/site/img/assets_logo/8LQW8f7P5d5PZM7GtZEBgaqRPGSzS3DfPuiXrURJ4AJS.svg",
-  "BNB-WXG":
-    "https://r.wavesexplorer.com/assets/site/img/assets_logo/5UYBPpq4WoU5n4MwpFkgJnW3Fq4B1u3ukpK33ik4QerR.svg",
-  "USDC-WXG":
-    "https://r.wavesexplorer.com/assets/site/img/assets_logo/6XtHjpXbs9RRJP2Sr9GUyVqzACcby9TkThHXnjVC5CDJ.svg",
-  "USDT-WXG":
-    "https://r.wavesexplorer.com/assets/site/img/assets_logo/34N9YcEETLWn93qYQ64EsP1x89tSruJU44RrEMSXXEPJ.svg",
+  
+  USDC_ERC: usdcLogo,
+
 };
 
 export default tokenLogos;

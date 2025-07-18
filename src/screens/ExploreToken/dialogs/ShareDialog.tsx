@@ -112,8 +112,10 @@ const ShareDialog: React.FC<IProps> = ({ ...rest }) => {
   };
   return (
     <Dialog
-      bodyStyle={{ padding: 0 }}
       style={{ maxWidth: 360 }}
+      styles={{
+        body: { padding: 0 }
+      }}
       title={`Share ${vm.asset?.symbol} with friends`}
       {...rest}
     >

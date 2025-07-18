@@ -200,14 +200,14 @@ class RangeDetailsInterfaceVM {
     if (period === "all") {
       rangesService.getRangeByAddress(this.rangeAddress).then((rangeData: IRangeParamsResponse) => {
         if (!rangeData) return;
-        this.updatelpRewardsByTime(period, Object.entries(rangeData.period_fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
+        this.updatelpRewardsByTime(period, Object.entries(rangeData.period_stats.fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
       })
       return;
     };
     const [startTime, endTime] = this.convertTimeRange(period);
     rangesService.getRangeByAddress(this.rangeAddress, { startTime, endTime }).then((rangeData: IRangeParamsResponse) => {
       if (!rangeData) return;
-      this.updatelpRewardsByTime(period, Object.entries(rangeData.period_fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
+      this.updatelpRewardsByTime(period, Object.entries(rangeData.period_stats.fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
     })
   }
 
@@ -266,6 +266,7 @@ class RangeDetailsInterfaceVM {
         },
       })
       .then((txId) => {
+        console.log("claimed", txId);
         notificationStore.notify(`Your rewards was claimed`, {
           type: "success",
           title: `Success`,
@@ -274,12 +275,16 @@ class RangeDetailsInterfaceVM {
         });
       })
       .catch((e) => {
+        console.error("claimRewards error", e);
         notificationStore.notify(e.message ?? JSON.stringify(e), {
           type: "error",
           title: "Transaction is not completed",
         });
       })
-      .finally(() => this._setLoading(false));
+      .finally(() => {
+        this._setLoading(false);
+        this.syncLPData();
+      });
   };
 
   get canUnstakeIndex() {

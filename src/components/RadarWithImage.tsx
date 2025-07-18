@@ -227,10 +227,10 @@ const RadarWithImage = ({
       )}
 
       {/* Fill inside shape with opacity */}
-      {renderImage({ clipPath: `url(#${uniqueId}_radarClip)`, opacity: 0.5 })}
+      {!debug && renderImage({ clipPath: `url(#${uniqueId}_radarClip)`, opacity: 0.5 })}
 
       {/* Stroke band */}
-      {renderImage({ mask: `url(#${uniqueId}_radarStrokeMask)`, opacity: 1 })}
+      {!debug && renderImage({ mask: `url(#${uniqueId}_radarStrokeMask)`, opacity: 1 })}
     </>
   );
 };
