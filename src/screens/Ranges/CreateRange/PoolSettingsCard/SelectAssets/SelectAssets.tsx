@@ -15,6 +15,7 @@ import Table from "@src/components/Table";
 import { Row } from "@src/components/Flex";
 import RoundTokenIcon from "@src/components/RoundTokenIcon";
 import BN from "@src/utils/BN";
+import { ReactComponent as Autostaking } from "@src/assets/icons/autostaking.svg";
 
 interface IProps {}
 
@@ -149,9 +150,19 @@ const SelectsAssets: React.FC<IProps> = () => {
                     src={asset.asset.logo}
                   />
                   <SizedBox width={8} />
-                  <Text type="primary" weight={500} size="medium">
+                  <Text type="primary" weight={500} size="medium" fitContent>
                     {asset.asset.symbol}
                   </Text>
+                  {asset.apr && (
+                    <>
+                      <SizedBox width={8} />
+                      <Text type="success" size="medium" weight={500} fitContent>
+                        {asset.apr.toFixed(2)}%
+                      </Text>
+                      <SizedBox width={6} />
+                      <Autostaking width={20} height={20} />
+                    </>
+                  )}
                 </Row>
               ),
               price: (

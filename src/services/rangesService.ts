@@ -30,6 +30,16 @@ export interface IGetChartData {
   nominatePriceIn?: string;
 }
 
+export interface IStakingStatistics {
+  asset_id: string;
+  name: string;
+  group: "common" | "index";
+  apr_1d: number;
+  apr_7d: number;
+  apr_30d: number;
+  apr_1y: number;
+}
+
 const rangesService = {
   getRanges: async (params: IGetRanges): Promise<IGetRangesResponse> => {
     const paramsString = new URLSearchParams();
@@ -91,6 +101,18 @@ const rangesService = {
     const { data } = await axios.get(url);
     return data.total_provided_usd;
   },
+  getStakingStatistics: async (group?: ("common" | "index")): Promise<IStakingStatistics[]> => {
+    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/aprs`;
+    const paramsString = new URLSearchParams({
+      page: "1",
+      size: "500",
+      ...(group ? { group } : {})
+    });
+    const url = `${baseUrl}?${paramsString.toString()}`;
+    const { data } = await axios.get(url);
+    console.log("Staking statistics data:", data);
+    return data.data;
+  }
 };
 
 export default rangesService; 

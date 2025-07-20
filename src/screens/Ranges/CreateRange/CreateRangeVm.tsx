@@ -19,7 +19,7 @@ import poolsService from "@src/services/poolsService";
 import Balance from "@src/entities/Balance";
 import Button from "@components/Button";
 import loadCreateRangeStateFromStorage, { IInitDataToStore } from "./utils/loadCreateRangeStateFromStorage";
-import rangesService from "@src/services/rangesService";
+import rangesService, { IStakingStatistics } from "@src/services/rangesService";
 import { address as Address, randomSeed } from "@waves/ts-lib-crypto";
 import { broadcast, invokeScript, setScript, transfer, waitForTx } from "@waves/waves-transactions";
 
@@ -41,6 +41,7 @@ export interface IRangeToken {
   initialPrice?: BN;
   currentPrice?: BN;
   maxSellOff?: BN;
+  apr?: BN;
   locked: boolean;
   share: BN;
 }
@@ -178,6 +179,7 @@ class CreateRangeVm {
     setInterval(this.saveSettings, 1000);
     const initData = loadCreateRangeStateFromStorage();
     this.initialize(initData);
+    this.syncStakingStats();
   }
 
   initialize = (initData: IInitDataToStore | null) => {
@@ -296,6 +298,23 @@ class CreateRangeVm {
     });
   };
 
+  stakingStats: IStakingStatistics[] = [];
+  setStakingStats = (stats: IStakingStatistics[]) => {
+    this.stakingStats = stats;
+    this.rangeAssets.forEach((v) => {
+      const stat = stats.find((s) => s.asset_id === v.asset.assetId);
+      if (stat) {
+        v.apr = new BN(stat.apr_1y);
+      }
+    });
+  };
+
+  syncStakingStats = () => {
+    rangesService.getStakingStatistics().then((stats) => {
+      this.setStakingStats(stats);
+    })
+  }
+
   addAssetToRange = (assetId: string) => {
     const balances = this.tokensToAdd;
     const asset = balances?.find((b) => b.assetId === assetId);
@@ -304,12 +323,15 @@ class CreateRangeVm {
     const initialPrice = this.rootStore.tokenStore.statisticsByAssetId[assetId].currentPrice;
     const relativeInitialPrice = initialPrice.div(this.baseTokenPrice)
 
+    const apr = this.stakingStats.find((s) => s.asset_id === assetId)?.apr_1y;
+
     this.rangeAssets.push({
       asset: asset,
       share: BN.ZERO,
       initialPrice: BN.parseUnits(relativeInitialPrice, asset.decimals),
       currentPrice: BN.parseUnits(relativeInitialPrice, asset.decimals),
       leverage: new BN(1),
+      apr: apr ? new BN(apr) : undefined,
       locked: false
     });
     this.syncShares();
@@ -353,7 +375,8 @@ class CreateRangeVm {
     this.rangeAssets[indexOfObject].asset = asset;
 
     const currentPrice = this.rootStore.tokenStore.statisticsByAssetId[newAssetId]?.currentPrice || BN.ZERO;
-
+    const apr = this.stakingStats.find((s) => s.asset_id === newAssetId)?.apr_1y;
+    this.rangeAssets[indexOfObject].apr = apr ? new BN(apr) : undefined;
 
     if (indexOfObject === 0) {
       this.setBaseTokenPrice(currentPrice);
