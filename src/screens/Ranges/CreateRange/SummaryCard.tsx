@@ -93,7 +93,8 @@ const SummaryCard: React.FC<IProps> = () => {
           Max to provide
         </Text>
         <Text weight={500} fitContent>
-          ${vm.maxToProvide.toFormat(2)}
+          {vm.maxToProvide.toFormat(2)}
+          {` ${vm.rangeAssets[0].asset.symbol}`}
         </Text>
         <SizedBox height={14} />
       </Card>
@@ -101,15 +102,3 @@ const SummaryCard: React.FC<IProps> = () => {
   );
 };
 export default observer(SummaryCard);
-
-const Dot: React.FC<{ color: string }> = ({ color }) => (
-  <svg
-    width="9"
-    height="8"
-    viewBox="0 0 9 8"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <circle cx="4.5" cy="4" r="4" fill={color} />
-  </svg>
-);

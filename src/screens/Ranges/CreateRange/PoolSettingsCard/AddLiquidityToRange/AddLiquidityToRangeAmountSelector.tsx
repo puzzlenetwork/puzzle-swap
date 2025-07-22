@@ -33,7 +33,7 @@ const AddLiquidityToRangeAmountSelector: React.FC<IProps> = () => {
         <SizedBox height={16} />
         <Text type="primary" size="large" style={{ textAlign: "center" }}>
           {`${vm.providedPercentOfPool}% `}
-          <span style={{ color: "#8082C5" }}>{`($${providedUsd.toFormat(2)})`}</span>
+          <span style={{ color: "#8082C5" }}>{`(${providedUsd.toFormat(2)} ${vm.rangeAssets[0].asset.symbol})`}</span>
         </Text>
         <SizedBox height={16} />
         <Slider

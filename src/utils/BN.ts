@@ -37,6 +37,10 @@ class BN extends BigNumber {
     return new BN(super.pow(bigNumberify(n), bigNumberify(m)));
   }
 
+  mathPow(n: TValue): BN {
+    return new BN(Math.pow(super.toNumber(), new BN(n).toNumber()));
+  }
+
   exponentiatedBy = this.pow;
 
   minus(n: TValue, base?: Undefinable<number>): BN {

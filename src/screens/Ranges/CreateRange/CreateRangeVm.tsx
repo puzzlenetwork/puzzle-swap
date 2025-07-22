@@ -450,59 +450,63 @@ class CreateRangeVm {
 
     const P1 = asset.initialPrice ? BN.formatUnits(asset.initialPrice, asset.asset.decimals) : new BN(1);
 
-    const B1 = B0.div(P1);
-    const L1 = asset.leverage ?? new BN(1);
-    const F1 = B1.div(L1);
-
-
     const w0 = baseToken.share.div(10);
     const w1 = asset.share.div(10);
 
+    const B1 = B0.div(P1).times(w1.div(w0));
+    const L1 = asset.leverage ?? new BN(1);
+    const F1 = B1.div(L1);
+
     const rawMin = BN.parseUnits(
       P1.times(
-        ((B0.minus(F0)).div(B0)).pow((w0.div(w1)).plus(1))
-      ).times(w1.div(w0)),
+        ((B0.minus(F0)).div(B0)).mathPow((w0.div(w1)).plus(1))
+      ),
       asset.asset.decimals
     );
 
     const min = rawMin.isNaN() ? BN.parseUnits(P1, asset.asset.decimals) : rawMin;
 
-    const rawMax = BN.parseUnits(B0.div(B1).times(
-      (B1.div(B1.minus(F1))).pow(w1.div(w0).plus(1))
-    ).times(w1.div(w0)), asset.asset.decimals);
+    const rawMax = BN.parseUnits(
+      P1.times(
+        (B1.div(B1.minus(F1))).mathPow(w1.div(w0).plus(1))
+      ),
+      asset.asset.decimals
+    );
 
     const max = rawMax.isNaN() || rawMax.isZero() ? BN.parseUnits(P1, asset.asset.decimals) : rawMax;
 
-//     console.log(`
-// ${asset.asset.symbol} ${BN.formatUnits(min, asset.asset.decimals).toSmallFormat()} - ${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}:
+    console.log(`
+${asset.asset.symbol} ${BN.formatUnits(min, asset.asset.decimals).toSmallFormat()} - ${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}:
 
-// B0=${B0.toSmallFormat()}
-// L0=${L0.toSmallFormat()}
-// F0=${F0.toSmallFormat()}
+B0=${B0.toSmallFormat()}
+L0=${L0.toSmallFormat()}
+F0=${F0.toSmallFormat()}
 
-// P1=${P1.toSmallFormat()}
+P1=${P1.toSmallFormat()}
 
-// B1=${B1.toSmallFormat()}
-// L1=${L1.toSmallFormat()}
-// F1=${F1.toSmallFormat()}
+B1=${B1.toSmallFormat()}
+L1=${L1.toSmallFormat()}
+F1=${F1.toSmallFormat()}
 
-// B0-F0=${B0.minus(F0).toSmallFormat()}
-// (B0-F0)/B0=${B0.minus(F0).div(B0).toSmallFormat()}
-// ((B0-F0)/B0)^(w0/w1+1)=${(B0.minus(F0).div(B0)).pow(w0.div(w1).plus(1)).toSmallFormat()}
+B0-F0=${B0.minus(F0).toSmallFormat()}
+(B0-F0)/B0=${B0.minus(F0).div(B0).toSmallFormat()}
+w0/w1=${w0.div(w1).toSmallFormat()}
+((B0-F0)/B0)^(w0/w1+1)=${(B0.minus(F0).div(B0)).mathPow(w0.div(w1).plus(1)).toSmallFormat()}
 
-// B1-F1=${B1.minus(F1).toSmallFormat()}
-// B1/(B1-F1)=${B1.div(B1.minus(F1)).toSmallFormat()}
-// (B1/(B1-F1))^(w1/w0+1)=${(B1.div(B1.minus(F1))).pow(w1.div(w0).plus(1)).toSmallFormat()}
+B1-F1=${B1.minus(F1).toSmallFormat()}
+B1/(B1-F1)=${B1.div(B1.minus(F1)).toSmallFormat()}
+w1/w0=${w1.div(w0).toSmallFormat()}
+(B1/(B1-F1))^(w1/w0+1)=${(B1.div(B1.minus(F1))).mathPow(w1.div(w0).plus(1)).toSmallFormat()}
 
-// w0=${w0.toSmallFormat()}
-// w1=${w1.toSmallFormat()}
+w0=${w0.toSmallFormat()}
+w1=${w1.toSmallFormat()}
 
-// RawMin=${BN.formatUnits(rawMin, asset.asset.decimals).toSmallFormat()}
-// Min=${BN.formatUnits(min, asset.asset.decimals).toSmallFormat()}
+RawMin=${BN.formatUnits(rawMin, asset.asset.decimals).toSmallFormat()}
+Min=${BN.formatUnits(min, asset.asset.decimals).toSmallFormat()}
 
-// RawMax=${BN.formatUnits(rawMax, asset.asset.decimals).toSmallFormat()}
-// Max=${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}
-// `)
+RawMax=${BN.formatUnits(rawMax, asset.asset.decimals).toSmallFormat()}
+Max=${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}
+`)
 
     this.updateAssetMinPrice(assetId, min);
     this.updateAssetMaxPrice(assetId, max);
@@ -570,7 +574,7 @@ class CreateRangeVm {
 
       // Prepare init function parameters
       const assetIdsStr = this.rangeAssets.map(({ asset }) => asset.assetId).join(",");
-      const assetWeightsStr = this.rangeAssets.map(({ share }) => share.div(10).toNumber()).join(",");
+      const assetWeightsStr = this.rangeAssets.map(({ share }) => BN.parseUnits(share, 1).toNumber()).join(",");
       
       // Calculate max selloff values (empty string if not provided)
       const assetMaxSelloffStr = this.rangeAssets.map(({ maxSellOff }) => 
@@ -721,7 +725,7 @@ class CreateRangeVm {
   };
 
   // Store the deployed contract address for later use
-  deployedContractAddress: string | null = null;
+  deployedContractAddress: string | null = "3PEFY1nKccEttmt33geJaAXWrD9RQ74iKUn";
   setDeployedContractAddress = (address: string | null) => (this.deployedContractAddress = address);
 
   createRange = async () => {
@@ -734,8 +738,8 @@ class CreateRangeVm {
       // Generate random address for the new range contract
       const seed = randomSeed();
       const randomAddress = Address(seed, "W");
-      console.log("🌱 Range contract address:", randomAddress);
-      console.log("🌱 Seed:", seed);
+      // console.log("🌱 Range contract address:", randomAddress);
+      // console.log("🌱 Seed:", seed);
 
       // Initial waves transfer for fees
       const transferTxId = await this.rootStore.accountStore.transfer({
@@ -803,25 +807,6 @@ class CreateRangeVm {
     }
   }
 
-  get tokensToProvideInUsdnMap(): Record<string, BN> | null {
-    const { poolsStore, accountStore } = this.rootStore;
-    const { assetBalances, findBalanceByAssetId, address } = accountStore;
-    if (assetBalances == null || address == null) return null;
-    return this.rangeAssets.reduce<Record<string, BN>>(
-      (acc, { asset, share }) => {
-        if (!asset) return acc;
-        const { assetId, decimals } = asset;
-        const tokenBalance = findBalanceByAssetId(assetId);
-        const rate = poolsStore.usdtRate(assetId) ?? BN.ZERO;
-        if (tokenBalance?.balance == null) return acc;
-        const balance = BN.formatUnits(tokenBalance.balance, decimals);
-        const maxDollarValue = balance.times(rate).div(share.div(1000));
-        return { ...acc, [assetId]: maxDollarValue };
-      },
-      {}
-    );
-  }
-
   get correspondingVirtualBalanceOfBaseToken(): Record<string, BN> {
     const { accountStore } = this.rootStore;
     const { findBalanceByAssetId } = accountStore;
@@ -856,26 +841,56 @@ class CreateRangeVm {
   }
 
   get maxToProvide(): BN {
-    return this.minVirtualBalanceOfBaseToken.div(this.rangeAssets[0].leverage ?? 1).div(this.rangeAssets[0].share ?? 1);
+    const baseToken = this.rangeAssets[0];
+    const share = BN.formatUnits(baseToken.share, 3);
+    const res = this.minVirtualBalanceOfBaseToken.div(baseToken.leverage ?? 1).div(share)
+//     console.log(`
+// Max to provide: ${res.toFormat(2)}
+
+// min virtual balance: ${this.minVirtualBalanceOfBaseToken.toFormat(2)}
+
+// By asset:
+// ${Object.entries(this.correspondingVirtualBalanceOfBaseToken).map(([assetId, value]) => `${TOKENS_BY_ASSET_ID[assetId]?.symbol ?? assetId}: ${value.toFormat(2)}`).join("\n")}`);
+    return res;
+  }
+
+  get assetsToProvide(): Record<string, BN> {
+    const B0 = this.minVirtualBalanceOfBaseToken;
+
+    const w0 = this.rangeAssets[0].share.div(10);
+
+    return this.rangeAssets.reduce<Record<string, BN>>((acc, { asset, share, initialPrice, leverage }, i) => {
+      const { assetId, decimals } = asset;
+      const p = i === 0 ? new BN(1) : initialPrice ? BN.formatUnits(initialPrice, decimals) : new BN(1);
+      const w1 = share.div(10);
+
+      const B1 = B0.div(p).times(w1.div(w0));
+      const L1 = leverage ?? new BN(1);
+      const F1 = B1.div(L1);
+      const amountToProvide = F1.times(this.providedPercentOfPool.div(100));
+
+//       console.log(`
+// to provide ${asset.symbol}: ${amountToProvide.toFormat(2)}
+
+// F1=${F1.toFormat(2)}
+// w0/w1 = ${w0.div(w1).toFormat(2)}
+// percent=${this.providedPercentOfPool.div(100).toFormat(2)}
+// p=${p.toFormat(2)}
+// `)
+
+      return {
+        ...acc,
+        [assetId]: amountToProvide,
+      };
+    }, {});
   }
 
   get assetsForInitFunction(): { assetId: string | null; amount: string }[] {
-    if (this.tokensToProvideInUsdnMap == null) return [];
-    const { poolsStore } = this.rootStore;
-    return this.rangeAssets.map(({ asset, share }) => {
-      const { assetId, decimals } = asset;
-      const rate = poolsStore.usdtRate(assetId, 1) ?? BN.ZERO;
-      const amountToProvide = this.maxToProvide
-        .div(rate)
-        .times(share.div(1000))
-        .times(this.providedPercentOfPool.div(100));
-
-      return {
-        assetId: assetId === "WAVES" ? null : assetId,
-        amount: BN.parseUnits(amountToProvide, decimals)
-          .toSignificant(0)
-          .toString(),
-      };
-    });
+    return Object.entries(this.assetsToProvide).map(([assetId, amount]) => ({
+      assetId: assetId === "WAVES" ? null : assetId,
+      amount: BN.parseUnits(amount, this.rangeAssets.find(asset => asset.asset.assetId === assetId)?.asset.decimals ?? 8)
+        .toSignificant(0)
+        .toString(),
+    }));
   }
 }

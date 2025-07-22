@@ -62,16 +62,13 @@ const DepositComposition: React.FC<IProps> = () => {
               balance.balance &&
               BN.formatUnits(balance?.balance, token.asset.decimals))
               ?? BN.ZERO;
-            const depositAmount = vm.maxToProvide
-              .times(vm.providedPercentOfPool)
-              .div(100)
-              .times(token.share.div(100).div(10));
+            const depositAmount = vm.assetsToProvide[token.asset.assetId];
             return (
               <AddTokenRow
                 symbol={token.asset.symbol}
                 key={i}
                 availableAmount={available}
-                depositPrefix="$"
+                depositPrefix=""
                 depositAmount={depositAmount}
                 percent={token.share.div(10).toNumber()}
                 logo={token.asset.logo}
@@ -83,11 +80,11 @@ const DepositComposition: React.FC<IProps> = () => {
         <AdaptiveRowWithPadding justifyContent="space-between">
           <Text fitContent>Total value</Text>
           <Text weight={500} fitContent nowrap>
-            $
             {vm.maxToProvide
               .times(vm.providedPercentOfPool)
               .div(100)
               .toFormat(4)}
+            {` ${vm.rangeAssets[0].asset.symbol}`}
           </Text>
         </AdaptiveRowWithPadding>
       </Card>

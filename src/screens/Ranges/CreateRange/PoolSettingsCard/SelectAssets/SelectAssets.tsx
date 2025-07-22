@@ -58,11 +58,6 @@ const SelectsAssets: React.FC<IProps> = () => {
   ];
 
   const data = vm.rangeAssets.map((asset, index) => {
-    console.log(`
-Asset: ${asset.asset.symbol}
-Min Price: ${asset.minPrice ? BN.formatUnits(asset.minPrice, asset.asset.decimals).toSmallFormat() : "-"}
-Max Price: ${asset.maxPrice ? BN.formatUnits(asset.maxPrice, asset.asset.decimals).toSmallFormat() : "-"}
-`)
     return {
       token: (
         <Row mainAxisSize="fit-content" key={asset.asset.symbol}>
