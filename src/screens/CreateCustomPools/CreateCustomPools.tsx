@@ -52,7 +52,7 @@ const CreateCustomPoolsImpl: React.FC = () => {
       <Observer>
         {() => (
           <Root>
-            <GoBack link={ROUTES.POOLS} text="Back to AllRanges" />
+            <GoBack link={ROUTES.POOLS} text="Back to pools" />
             <SizedBox height={24} />
             <Text weight={500} size="large">
               Create pool
