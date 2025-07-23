@@ -64,7 +64,7 @@ const LogSliderWithImage: React.FC<IParams> = ({
   maxTooltipContent 
 }) => {
   const scale = scalePow()
-    .exponent(Math.log(base) / Math.log(2))
+    .exponent(3)
     .domain([domainMin, domainMax])
     .range([min, max]);
     
