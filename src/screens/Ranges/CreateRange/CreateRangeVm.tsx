@@ -68,6 +68,7 @@ class CreateRangeVm {
   public rangeAssets: IRangeToken[] = [];
   setDefaultRangeAssets = () => {
     const romePrice = this.rootStore.tokenStore.statisticsByAssetId[TOKENS_BY_SYMBOL.ROME.assetId].currentPrice;
+    this.setBaseTokenPrice(romePrice);
     const puzzlePrice = this.rootStore.tokenStore.statisticsByAssetId[TOKENS_BY_SYMBOL.ROME.assetId].currentPrice;
     this.rangeAssets = [
       observable({
@@ -181,17 +182,23 @@ class CreateRangeVm {
   }
 
   initialize = (initData: IInitDataToStore | null) => {
-    if (initData != null) {
-      this.setBaseTokenPrice(new BN(initData.assets[0].initialPrice ?? 0));
+    if (initData != null && initData.assets != null && initData.assets.length > 0) {
+      const baseTokenPrice = new BN(this.rootStore.tokenStore.statisticsByAssetId[initData.assets[0].assetId]?.currentPrice ?? 1);
+      this.setBaseTokenPrice(baseTokenPrice);
       if (initData.assets != null) {
         this.rangeAssets = initData.assets?.map(
-          ({ assetId, share, initialPrice, locked }) => observable({
-            share: new BN(share).times(10),
-            locked,
-            initialPrice: new BN(initialPrice),
-            currentPrice: BN.parseUnits(this.rootStore.tokenStore.statisticsByAssetId[assetId]?.currentPrice.div(initData.assets[0].initialPrice ?? 1) ?? BN.ZERO, TOKENS_BY_ASSET_ID[assetId].decimals),
-            asset: TOKENS_BY_ASSET_ID[assetId],
-          })
+          ({ assetId, share, locked }) => {
+            const currentPriceUsd = this.rootStore.tokenStore.statisticsByAssetId[assetId]?.currentPrice ?? BN.ZERO;
+            const currentPriceRelative = currentPriceUsd.div(baseTokenPrice);
+            console.log(`Asset ${assetId} current price: ${currentPriceRelative.toSmallFormat()}`);
+            return observable({
+              share: new BN(share).times(10),
+              locked,
+              initialPrice: BN.parseUnits(currentPriceRelative, TOKENS_BY_ASSET_ID[assetId].decimals),
+              currentPrice: BN.parseUnits(currentPriceRelative, TOKENS_BY_ASSET_ID[assetId].decimals),
+              asset: TOKENS_BY_ASSET_ID[assetId],
+            })
+          }
         );
       }
     } else {
@@ -277,6 +284,16 @@ class CreateRangeVm {
       const percent = Math.round(averageUnlockedPercent.toNumber() * 10) / 10;
       this.rangeAssets[i].share = new BN(percent).times(10);
     });
+
+    // If sum != 1000, add difference to the first unlocked token, so the data is valid
+    const totalShare = this.totalTakenShare;
+    if (totalShare.lt(1000)) {
+      const diff = new BN(1000).minus(totalShare);
+      const firstUnlockedIndex = this.rangeAssets.findIndex((v) => !v.locked);
+      if (firstUnlockedIndex !== -1) {
+        this.rangeAssets[firstUnlockedIndex].share = this.rangeAssets[firstUnlockedIndex].share.plus(diff);
+      }
+    }
   };
 
   stakingStats: IStakingStatistics[] = [];
@@ -475,38 +492,38 @@ class CreateRangeVm {
 
     const max = rawMax.isNaN() || rawMax.isZero() ? BN.parseUnits(P1, asset.asset.decimals) : rawMax;
 
-    console.log(`
-${asset.asset.symbol} ${BN.formatUnits(min, asset.asset.decimals).toSmallFormat()} - ${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}:
+//     console.log(`
+// ${asset.asset.symbol} ${BN.formatUnits(min, asset.asset.decimals).toSmallFormat()} - ${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}:
 
-B0=${B0.toSmallFormat()}
-L0=${L0.toSmallFormat()}
-F0=${F0.toSmallFormat()}
+// B0=${B0.toSmallFormat()}
+// L0=${L0.toSmallFormat()}
+// F0=${F0.toSmallFormat()}
 
-P1=${P1.toSmallFormat()}
+// P1=${P1.toSmallFormat()}
 
-B1=${B1.toSmallFormat()}
-L1=${L1.toSmallFormat()}
-F1=${F1.toSmallFormat()}
+// B1=${B1.toSmallFormat()}
+// L1=${L1.toSmallFormat()}
+// F1=${F1.toSmallFormat()}
 
-B0-F0=${B0.minus(F0).toSmallFormat()}
-(B0-F0)/B0=${B0.minus(F0).div(B0).toSmallFormat()}
-w0/w1=${w0.div(w1).toSmallFormat()}
-((B0-F0)/B0)^(w0/w1+1)=${(B0.minus(F0).div(B0)).mathPow(w0.div(w1).plus(1)).toSmallFormat()}
+// B0-F0=${B0.minus(F0).toSmallFormat()}
+// (B0-F0)/B0=${B0.minus(F0).div(B0).toSmallFormat()}
+// w0/w1=${w0.div(w1).toSmallFormat()}
+// ((B0-F0)/B0)^(w0/w1+1)=${(B0.minus(F0).div(B0)).mathPow(w0.div(w1).plus(1)).toSmallFormat()}
 
-B1-F1=${B1.minus(F1).toSmallFormat()}
-B1/(B1-F1)=${B1.div(B1.minus(F1)).toSmallFormat()}
-w1/w0=${w1.div(w0).toSmallFormat()}
-(B1/(B1-F1))^(w1/w0+1)=${(B1.div(B1.minus(F1))).mathPow(w1.div(w0).plus(1)).toSmallFormat()}
+// B1-F1=${B1.minus(F1).toSmallFormat()}
+// B1/(B1-F1)=${B1.div(B1.minus(F1)).toSmallFormat()}
+// w1/w0=${w1.div(w0).toSmallFormat()}
+// (B1/(B1-F1))^(w1/w0+1)=${(B1.div(B1.minus(F1))).mathPow(w1.div(w0).plus(1)).toSmallFormat()}
 
-w0=${w0.toSmallFormat()}
-w1=${w1.toSmallFormat()}
+// w0=${w0.toSmallFormat()}
+// w1=${w1.toSmallFormat()}
 
-RawMin=${BN.formatUnits(rawMin, asset.asset.decimals).toSmallFormat()}
-Min=${BN.formatUnits(min, asset.asset.decimals).toSmallFormat()}
+// RawMin=${BN.formatUnits(rawMin, asset.asset.decimals).toSmallFormat()}
+// Min=${BN.formatUnits(min, asset.asset.decimals).toSmallFormat()}
 
-RawMax=${BN.formatUnits(rawMax, asset.asset.decimals).toSmallFormat()}
-Max=${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}
-`)
+// RawMax=${BN.formatUnits(rawMax, asset.asset.decimals).toSmallFormat()}
+// Max=${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}
+// `)
 
     this.updateAssetMinPrice(assetId, min);
     this.updateAssetMaxPrice(assetId, max);
@@ -543,7 +560,6 @@ Max=${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}
     const assets = this.rangeAssets.map((t) => ({
       assetId: t.asset?.assetId,
       locked: t.locked,
-      initialPrice: t.initialPrice?.toNumber(),
       share: t.share.div(10).toNumber(),
     }));
     const state = {
@@ -578,7 +594,7 @@ Max=${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}
       
       // Calculate max selloff values (empty string if not provided)
       const assetMaxSelloffStr = this.rangeAssets.map(({ maxSellOff }) => 
-        maxSellOff ? maxSellOff.toNumber().toString() : ""
+        maxSellOff ? BN.parseUnits(maxSellOff, 2).toNumber().toString() : ""
       ).join(",");
       
       const baseTokenId = this.rangeAssets[0].asset.assetId;
@@ -633,7 +649,7 @@ Max=${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}
       const txId = await this.rootStore.accountStore.invoke({
         dApp: this.deployedContractAddress,
         payment: payments,
-        fee: 100500000, // High fee for complex operation
+        fee: 900000,
         call: {
           function: "init",
           args: [
@@ -725,7 +741,7 @@ Max=${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}
   };
 
   // Store the deployed contract address for later use
-  deployedContractAddress: string | null = "3PEFY1nKccEttmt33geJaAXWrD9RQ74iKUn";
+  deployedContractAddress: string | null = null;
   setDeployedContractAddress = (address: string | null) => (this.deployedContractAddress = address);
 
   createRange = async () => {
