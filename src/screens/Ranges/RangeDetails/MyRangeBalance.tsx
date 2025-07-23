@@ -60,12 +60,18 @@ const MyRangeBalance: React.FC<IProps> = () => {
             <Text weight={500}>Total value</Text>
           </Column>
           <Column>
-            <Text textAlign="right" size="medium">
-              ${(vm.lpData?.providedUsd ?? BN.ZERO).toFormat(2)}
-            </Text>
-            <Text textAlign="right" type="secondary" size="small">
-              {`Share of range ${(vm.lpData?.share ?? BN.ZERO).toSmallFormat()}%`}
-            </Text>
+            {vm.isLPDataLoading ? (
+              <Skeleton width={100} height={36} />
+            ) : (
+              <>
+                <Text textAlign="right" size="medium">
+                  ${(vm.lpData?.providedUsd ?? BN.ZERO).toFormat(2)}
+                </Text>
+                <Text textAlign="right" type="secondary" size="small">
+                  {`Share of range ${(vm.lpData?.share ?? BN.ZERO).toSmallFormat()}%`}
+                </Text>
+              </>
+            )}
           </Column>
         </Header>
         <Divider style={{ margin: "16px 0" }} />
@@ -123,14 +129,20 @@ const MyRangeBalance: React.FC<IProps> = () => {
                     <Column
                       crossAxisSize="max"
                       className="desktop"
-                      style={{ textAlign: "end" }}
+                      style={{ textAlign: "end", alignItems: "flex-end" }}
                     >
-                      <Text size="medium">
-                        {address !== null ? value : "-"}
-                      </Text>
-                      <Text size="small" type="secondary">
-                        {address !== null ? `$ ${usdn}` : "-"}
-                      </Text>
+                      {vm.isLPDataLoading ? (
+                        <Skeleton width={100} height={36} />
+                      ) : (
+                        <>
+                          <Text size="medium">
+                            {address !== null ? value : "-"}
+                          </Text>
+                          <Text size="small" type="secondary">
+                            {address !== null ? `$ ${usdn}` : "-"}
+                          </Text>
+                        </>
+                      )}
                     </Column>
                   </AdaptiveRow>
                 </div>

@@ -158,7 +158,7 @@ class CreateRangeVm {
   rangeSettingError: boolean = false;
   setRangeSettingError = (v: boolean) => (this.rangeSettingError = v);
 
-  swapFee: BN = new BN(20);
+  swapFee: BN = new BN(10);
   setSwapFee = (v: BN) => (this.swapFee = v);
 
   providedPercentOfPool: BN = new BN(100);

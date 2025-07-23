@@ -185,15 +185,22 @@ class RangeDetailsInterfaceVM {
     decimals &&this._setIndexTokenDecimals(decimals);
   };
 
+  public isLPDataLoading = false;
+  public setIsLPDataLoading = (value: boolean) => (this.isLPDataLoading = value);
+
   public syncLPData = async () => {
     if (!this.rootStore.accountStore.address) return;
-    rangesService.getLPData(this.rangeAddress, this.rootStore.accountStore.address)
+    this.setIsLPDataLoading(true);
+    rangesService.getLPData(this.rangeAddress, this.rootStore.accountStore.address, true)
       .then((data) => {
         if (!data) return;
         console.log("LPData", data)
         const newLPData = new LPData(data);
         this.setLPData(newLPData);
       })
+      .finally(() => {
+        this.setIsLPDataLoading(false);
+      });
   }
 
   public syncLPRewards = async (period: ("1d" | "7d" | "1m" | "3m" | "1y" | "all")) => {
