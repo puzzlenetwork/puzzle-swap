@@ -19,6 +19,7 @@ import rangesService, { IStakingStatistics } from "@src/services/rangesService";
 import { address as Address, randomSeed } from "@waves/ts-lib-crypto";
 import { broadcast, setScript, waitForTx } from "@waves/waves-transactions";
 import { RANGE_CONTRACT_B64 } from "@src/constants/contracts";
+import { generate } from "random-words";
 
 interface IProps {
   children: React.ReactNode;
@@ -209,7 +210,7 @@ class CreateRangeVm {
       this.syncMinMaxPriceByAssetId(v.asset.assetId);
     });
 
-    this.domain = initData?.title ?? "";
+    this.domain = initData?.title ?? generate({ minLength: 2, maxLength: 6, exactly: 2, join: "-" });
     this.step = initData?.step ?? 0;
     this.maxStep = initData?.maxStep ?? 0;
     this.saveSettings();
@@ -246,7 +247,9 @@ class CreateRangeVm {
 
   get correct1() {
     return (
-      this.domain.length > 0 &&
+      this.domain.length > 1 &&
+      this.domain.length < 14 &&
+      !/[^a-z0-9_-]/.test(this.domain) &&
       this.swapFee.gte(1) &&
       this.swapFee.lte(50)
     )
