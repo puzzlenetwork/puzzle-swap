@@ -83,14 +83,16 @@ const SelectsAssets: React.FC<IProps> = () => {
             {asset.asset.symbol}
           </Text>
           {asset.apr && (
-            <>
-              <SizedBox width={8} />
-              <Text type="success" size="medium" weight={500} fitContent>
-                {asset.apr.toFixed(2)}%
-              </Text>
-              <SizedBox width={6} />
-              <Autostaking width={20} height={20} />
-            </>
+            <Tooltip content="Some tokens keep earning yield even while inside a range.">
+              <Row mainAxisSize="fit-content">
+                <SizedBox width={8} />
+                <Text type="success" size="medium" weight={500} fitContent>
+                  {asset.apr.toFixed(2)}%
+                </Text>
+                <SizedBox width={6} />
+                <Autostaking width={20} height={20} />
+              </Row>
+            </Tooltip>
           )}
         </Row>
       ),

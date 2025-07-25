@@ -44,7 +44,7 @@ const TooltipContainer = styled.div<{ position: number }>`
   top: -20px;
   left: ${({ position }) => position}%;
   transform: translateX(calc(-50% - 1px));
-  z-index: 10;
+  z-index: 1;
   pointer-events: none;
 `;
 
@@ -81,15 +81,15 @@ const LogSliderWithImage: React.FC<IParams> = ({
 
   // Auto-trigger tooltip for edge cases
   useEffect(() => {
-    const isAtMinEdge = currentSliderValue === domainMin;
-    const isAtMaxEdge = currentSliderValue === domainMax;
+    const isAtMinEdge = Math.round(currentSliderValue) <= domainMin;
+    const isAtMaxEdge = Math.round(currentSliderValue) >= domainMax;
     const hasMinTooltip = isAtMinEdge && minTooltipContent;
     const hasMaxTooltip = isAtMaxEdge && maxTooltipContent;
     
     // Only trigger if we just reached the edge (not on initial load)
     const justReachedEdge = (
-      (isAtMinEdge && previousSliderValue !== domainMin) ||
-      (isAtMaxEdge && previousSliderValue !== domainMax)
+      (isAtMinEdge && previousSliderValue > domainMin) ||
+      (isAtMaxEdge && previousSliderValue < domainMax)
     );
     
     if ((hasMinTooltip || hasMaxTooltip) && justReachedEdge) {
@@ -142,15 +142,15 @@ const LogSliderWithImage: React.FC<IParams> = ({
   };
   
   const getDisplayValue = () => {
-    if (currentSliderValue === domainMin) return "1x";
-    if (currentSliderValue === domainMax) return "∞";
+    if (Math.round(currentSliderValue) <= domainMin) return "1x";
+    if (Math.round(currentSliderValue) >= domainMax) return "∞";
     return `${Math.round(currentSliderValue)}x`;
   };
   
   const getSpecialTooltipContent = useMemo(
     () => {
-      if (currentSliderValue === domainMin) return minTooltipContent;
-      if (currentSliderValue === domainMax) return maxTooltipContent;
+      if (Math.round(currentSliderValue) <= domainMin) return minTooltipContent;
+      if (Math.round(currentSliderValue) >= domainMax) return maxTooltipContent;
       return null;
     },
     [currentSliderValue, minTooltipContent, maxTooltipContent]
