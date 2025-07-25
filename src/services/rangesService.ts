@@ -8,6 +8,7 @@ export interface IGetRanges {
   sortBy?: "fact_liquidity" | "earned" | "virtual_liquidity";
   order?: "asc" | "desc";
   search?: string;
+  userAddress?: string
 }
 
 export interface IGetRange {
@@ -44,7 +45,7 @@ const rangesService = {
   getRanges: async (params: IGetRanges): Promise<IGetRangesResponse> => {
     const paramsString = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
-      paramsString.append(key, value.toString());
+      (value !== undefined) && paramsString.append(key, value.toString());
     });
     const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged`;
     const url = `${baseUrl}?${paramsString.toString()}`;

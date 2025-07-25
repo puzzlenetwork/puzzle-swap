@@ -32,7 +32,7 @@ export default class RangesStore {
   // Pagination state
   pagination = {
     page: 1,
-    size: 10,
+    size: 20,
   };
 
   // Total number of ranges
@@ -51,6 +51,9 @@ export default class RangesStore {
 
   // Search value
   searchValue = "";
+
+  // If specified, filters ranges by user address (show only ones, with investments)
+  userAddress?: string = undefined;
 
   // Methods for pagination
   setPagination = (pagination: { page: number; size: number }) => {
@@ -86,6 +89,11 @@ export default class RangesStore {
     this.syncRanges();
   };
 
+  setUserAddress = (value?: string) => {
+    this.userAddress = value;
+    this.syncRanges();
+  }
+
   // Get pagination parameters for API calls
   get paginationParams() {
     return {
@@ -96,6 +104,7 @@ export default class RangesStore {
       timeRange: this.timeRange,
       title: this.searchValue,
       minLiquidity: this.minLiquidity,
+      userAddress: this.userAddress,
     };
   }
 

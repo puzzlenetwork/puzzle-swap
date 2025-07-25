@@ -601,7 +601,7 @@ class CreateRangeVm {
       ).join(",");
       
       const baseTokenId = this.rangeAssets[0].asset.assetId;
-      const fee = this.swapFee.toNumber();
+      const fee = BN.parseUnits(this.swapFee, 1).toNumber();
 
       // Calculate virtual balances: amount * leverage for each token
       const virtualBalances: string[] = [];

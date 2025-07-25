@@ -365,7 +365,7 @@ export class Range {
   }
 
   get totalFees() {
-    return this.periodStats.ownerFees.plus(this.periodStats.protocolFees);
+    return this.periodStats.totalFeesUsd;
   }
 
   contractKeysRequest = (keys: string[] | string) =>
