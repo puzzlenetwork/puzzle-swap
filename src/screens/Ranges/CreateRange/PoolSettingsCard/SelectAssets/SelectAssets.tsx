@@ -16,6 +16,8 @@ import { Row } from "@src/components/Flex";
 import RoundTokenIcon from "@src/components/RoundTokenIcon";
 import BN from "@src/utils/BN";
 import { ReactComponent as Autostaking } from "@src/assets/icons/autostaking.svg";
+import Tooltip from "@src/components/Tooltip";
+import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg"
 
 interface IProps {}
 
@@ -51,10 +53,22 @@ const SelectsAssets: React.FC<IProps> = () => {
   const theme = useTheme();
 
   const cols = [
-    { Header: "Token", accessor: "token" },
-    { Header: "Min ← Current → Max Price", accessor: "price" },
-    { Header: "Max Sell-Off", accessor: "maxSellOff" },
-    { Header: "Share", accessor: "share" },
+    {
+      Header: () => (<Text size="medium" type="secondary" nowrap>Token</Text>), accessor: "token"
+    },
+    {
+      Header: () => (
+        <Tooltip content={"Given in base token"} config={{ placement: "top" }}>
+          <Row alignItems="center" mainAxisSize="fit-content">
+            <Text size="medium" type="secondary" nowrap>Min ← Current → Max Price</Text>
+            <SizedBox width={4} />
+            <InfoIcon />
+          </Row>
+        </Tooltip>
+      ), accessor: "price"
+    },
+    { Header: () => (<Text size="medium" type="secondary" nowrap>Max Sell-Off</Text>), accessor: "maxSellOff" },
+    { Header: () => (<Text size="medium" type="secondary" nowrap>Share</Text>), accessor: "share" },
   ];
 
   const data = vm.rangeAssets.map((asset, index) => {
@@ -69,14 +83,16 @@ const SelectsAssets: React.FC<IProps> = () => {
             {asset.asset.symbol}
           </Text>
           {asset.apr && (
-            <>
-              <SizedBox width={8} />
-              <Text type="success" size="medium" weight={500} fitContent>
-                {asset.apr.toFixed(2)}%
-              </Text>
-              <SizedBox width={6} />
-              <Autostaking width={20} height={20} />
-            </>
+            <Tooltip content="Some tokens keep earning yield even while inside a range.">
+              <Row mainAxisSize="fit-content">
+                <SizedBox width={8} />
+                <Text type="success" size="medium" weight={500} fitContent>
+                  {asset.apr.toFixed(2)}%
+                </Text>
+                <SizedBox width={6} />
+                <Autostaking width={20} height={20} />
+              </Row>
+            </Tooltip>
           )}
         </Row>
       ),
@@ -188,7 +204,7 @@ const SelectsAssets: React.FC<IProps> = () => {
         Preview
       </Text>
       <SizedBox height={8} />
-      <Card style={{ width: "100%" }}>
+      <Card style={{ width: "100%", padding: 0, overflow: "hidden" }}>
         <Table
           columns={cols}
           data={data}

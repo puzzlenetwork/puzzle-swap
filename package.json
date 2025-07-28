@@ -68,6 +68,7 @@
     "postcss-preset-env": "^7.8.3",
     "prettier": "^2.8.8",
     "prompts": "^2.4.2",
+    "random-words": "^2.0.1",
     "rc-dialog": "^9.6.0",
     "rc-notification": "^4.6.1",
     "rc-slider": "^10.6.2",

@@ -98,13 +98,13 @@ const RangesTable: React.FC = () => {
       periodFees: (
         <Column alignItems="flex-end" crossAxisSize="max">
           <Row style={{ gap: 4, flexWrap: "wrap", justifyContent: "flex-end" }}>
-            {Object.entries(range.periodStats).filter(([_, { feesEarned, extraEarned }]) => new BN(feesEarned + extraEarned).gt(0)).map(([assetId, { feesEarned, extraEarned }], i) => {
+            {Object.entries(range.periodStats.fees).filter(([_, { feesEarned, extraEarned }]) => feesEarned.plus(extraEarned).gt(0)).map(([assetId, { feesEarned, extraEarned }], i) => {
               const tokenInfo = TOKENS_BY_ASSET_ID[assetId] || {};
               return (
                 <TokenTag
                   key={i}
                   token={{...tokenInfo, decimals: 0}}
-                  amount={new BN(feesEarned + extraEarned)}
+                  amount={feesEarned.plus(extraEarned)}
                   size="small"
                   iconRight
                 />

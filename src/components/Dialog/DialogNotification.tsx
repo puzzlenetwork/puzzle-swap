@@ -204,7 +204,7 @@ export const buildSuccessDepositToRangeDialogParams = ({
   const range = accountStore.rootStore.rangesStore.getRangeByAddress(rangeAddress);
   return {
     title: "Successfully deposited",
-    description: `Liquidity successfully provided to the range ${range?.title}. You can track your reward on the range page.`,
+    description: `Liquidity successfully provided to the range ${range?.domain}. You can track your reward on the range page.`,
     type: "success",
     buttons: [
       () => (

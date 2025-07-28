@@ -62,7 +62,7 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
             type="primary"
             size="medium"
             title="Base Token"
-            description="TODO"
+            description="This is your reference asset — all other token prices in the range are set relative to it."
           />
         </th>
         <th>
@@ -70,7 +70,7 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
             type="primary"
             size="medium"
             title="Leverage"
-            description="TODO"
+            description="Leverage defines how much virtual balance a token has compared to its real balance in the pool."
           />
         </th>
         <th>
