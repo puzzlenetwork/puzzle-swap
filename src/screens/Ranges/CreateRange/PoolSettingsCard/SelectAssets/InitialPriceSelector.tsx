@@ -47,7 +47,7 @@ const InitialPriceSelector = ({
         onClose={() => setModalOpened(false)}
         title="Initial Price"
       >
-        <Text size="medium">TODO</Text>
+        <Text size="medium">Initial Price is the price of the selected token expressed in the base token. It defines the starting point of the price curve for that token within the range.</Text>
         <SizedBox height={16} />
         <Text type="secondary">
           Asset
