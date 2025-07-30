@@ -112,7 +112,6 @@ const rangesService = {
     });
     const url = `${baseUrl}?${paramsString.toString()}`;
     const { data } = await axios.get(url);
-    console.log("Staking statistics data:", data);
     return data.data;
   }
 };
