@@ -145,7 +145,7 @@ export class RangeAsset {
     this.feesEarned = new BN(params.fees_earned);
     this.maxPrice = new BN(params.max_price);
     this.minPrice = new BN(params.min_price);
-    this.maxPriceUsd = new BN(params.max_price_usd);
+    this.maxPriceUsd = new BN(params.max_price_usd ?? Infinity);
     this.minPriceUsd = new BN(params.min_price_usd);
     this.maxSellAllowed = params.max_sell_allowed ? new BN(params.max_sell_allowed) : null;
     this.currentSelloff = new BN(params.current_selloff);

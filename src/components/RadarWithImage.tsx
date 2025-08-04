@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { JSX } from "react";
 
 type TRadarWithImageProps = {
@@ -93,7 +93,7 @@ const RadarWithImage = ({
   imageUrl,
   imageElement,
   strokeWidth = 3, // default stroke width
-  uniqueId,
+  uniqueId = "default",
   useCssImage,
   debug,
 }: TRadarWithImageProps) => {
@@ -195,7 +195,7 @@ const RadarWithImage = ({
     <>
       <defs>
         {/* Mask for stroke: white ring, hollow inside */}
-        <mask id={`${(uniqueId || "")}_radarStrokeMask`}>
+        <mask id={`${(uniqueId || "default")}-radarStrokeMask`}>
           <rect width="100%" height="100%" fill="black" />
           <path
             d={outerPath}
@@ -209,7 +209,7 @@ const RadarWithImage = ({
 
 
         {/* Clip for the main radar fill */}
-        <clipPath id={`${(uniqueId || "")}_radarClip`}>
+        <clipPath id={`${(uniqueId || "default")}-radarClip`}>
           <path
             d={outerPath}
           />
@@ -227,10 +227,10 @@ const RadarWithImage = ({
       )}
 
       {/* Fill inside shape with opacity */}
-      {!debug && renderImage({ clipPath: `url(#${uniqueId}_radarClip)`, opacity: 0.5 })}
+      {!debug && renderImage({ clipPath: `url(#${uniqueId || "default"}-radarClip)`, opacity: 0.5 })}
 
       {/* Stroke band */}
-      {!debug && renderImage({ mask: `url(#${uniqueId}_radarStrokeMask)`, opacity: 1 })}
+      {!debug && renderImage({ mask: `url(#${uniqueId || "default"}-radarStrokeMask)`, opacity: 1 })}
     </>
   );
 };

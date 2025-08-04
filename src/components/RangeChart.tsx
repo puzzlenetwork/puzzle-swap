@@ -29,7 +29,7 @@ const TokenIcon = styled(Img)`
   border-radius: 50%;
 `;
 
-const RangeChart = ({ assetsWithLeverage, size, index }: IParams) => {
+const RangeChart = ({ assetsWithLeverage, size, index = 0 }: IParams) => {
   const iconSize = size / 7.5;
   const halfIcon = iconSize / 2;
   const backgroundIconSize = size / 2;
@@ -55,13 +55,13 @@ const RangeChart = ({ assetsWithLeverage, size, index }: IParams) => {
             return (
               <>
                 <defs>
-                  <filter id={"blur_" + index} x="-100%" y="-100%" width="300%" height="300%" color-interpolation-filters="sRGB">
+                  <filter id={"blur" + index} x="-100%" y="-100%" width="300%" height="300%" color-interpolation-filters="sRGB">
                     <feGaussianBlur in="SourceGraphic" stdDeviation="12" />
                   </filter>
                 </defs>
                 <RadarWithImage
                   imageElement={(
-                    <g filter={`url(#blur_${index})`}>
+                    <g filter={`url(#blur${index})`}>
                       {props.points.map((point: any, i: any) => (
                         <foreignObject
                           width={backgroundIconSize}

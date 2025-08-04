@@ -190,7 +190,7 @@ const RangeComposition: React.FC<IProps> = (props) => {
               <SizedBox width={4} />
               <Text fitContent> ← ${a.currentPriceUsd.toSmallFormat()} → </Text>
               <SizedBox width={4} />
-              <Text fitContent type="secondary" size="small">${a.maxPriceUsd.toSmallFormat()}</Text>
+              <Text fitContent type="secondary" size="small">{a.maxPriceUsd?.isFinite() ? `${a.maxPriceUsd.toSmallFormat()}` : "∞"}</Text>
             </Row>
           )
         ) : (
@@ -202,7 +202,7 @@ const RangeComposition: React.FC<IProps> = (props) => {
               <SizedBox width={4} />
               <Text fitContent> ← {a.currentPrice.times(rateToRelativeToken).toSmallFormat()} → </Text>
               <SizedBox width={4} />
-              <Text fitContent type="secondary" size="small">{a.maxPrice.times(rateToRelativeToken).toSmallFormat()}</Text>
+              <Text fitContent type="secondary" size="small">{a.maxPrice?.isFinite() ? a.maxPrice.times(rateToRelativeToken).toSmallFormat() : "∞"}</Text>
             </Row>
           )
         ),
@@ -240,14 +240,14 @@ const RangeComposition: React.FC<IProps> = (props) => {
           >
             <Row alignItems="center" justifyContent="flex-end">
               <Text fitContent type={(a.currentSelloff).gt(a.maxSellAllowed) ? "error" : "success"}>
-                {(a.currentSelloff).toSmallFormat()}% / <Text type="secondary" size="medium" style={{ display: "inline" }}>{a.maxSellAllowed.toSmallFormat()}%</Text>
+                {(a.currentSelloff.gt(1e-2) ? a.currentSelloff.toFormat(2) : (a.currentSelloff.gt(1e-4) ? a.currentSelloff.toFormat(4) : 0))}% / <Text type="secondary" size="medium" style={{ display: "inline" }}>{a.maxSellAllowed.toSmallFormat()}%</Text>
               </Text>
             </Row>
           </Tooltip>
         ) : (
           <Row alignItems="center" justifyContent="flex-end">
             <Text fitContent type={(a.currentSelloff).gt(a.maxSellAllowed) ? "error" : "success"}>
-              {(a.currentSelloff).toSmallFormat()}% / <Text type="secondary" size="medium" style={{ display: "inline" }}>{a.maxSellAllowed.toSmallFormat()}%</Text>
+              {(a.currentSelloff.gt(1e-2) ? a.currentSelloff.toFormat(2) : (a.currentSelloff.gt(1e-4) ? a.currentSelloff.toFormat(4) : 0))}% / <Text type="secondary" size="medium" style={{ display: "inline" }}>{a.maxSellAllowed.toSmallFormat()}%</Text>
             </Text>
           </Row>
         ))
