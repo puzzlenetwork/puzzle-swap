@@ -138,17 +138,7 @@ class CreateRangeVm {
   setEqualShares = (v: boolean) => {
     this.equalShares = v;
     if (v) {
-      this.rangeAssets.forEach((v) => {
-        v.locked = false;
-      });
       this.syncShares();
-      this.rangeAssets.forEach((v) => {
-        v.locked = true;
-      });
-    } else {
-      this.rangeAssets.forEach((v) => {
-        v.locked = false;
-      });
     }
   };
 
@@ -931,7 +921,6 @@ class CreateRangeVm {
 
   async syncCurrentPrices() {
     const basePrice = await this.getTokenPrice(this.rangeAssets[0].asset.assetId);
-    console.log("Base token price:", basePrice.toFormat(2));
     this.setBaseTokenPrice(basePrice);
   }
 }

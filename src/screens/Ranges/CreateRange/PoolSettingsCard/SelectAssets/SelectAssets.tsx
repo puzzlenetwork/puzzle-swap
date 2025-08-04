@@ -100,9 +100,9 @@ const SelectsAssets: React.FC<IProps> = () => {
         <Text type="primary" weight={500} size="medium">
           {index === 0 ? "Base" :
             (
-              (asset.minPrice ? `${BN.formatUnits(asset.minPrice, asset.asset.decimals).toFixed(2)} ← ` : "")
-              + (asset.initialPrice ? BN.formatUnits(asset.initialPrice, asset.asset.decimals).toFixed(2) : "-")
-              + (asset.maxPrice ? ` → ${BN.formatUnits(asset.maxPrice, asset.asset.decimals).toFixed(2)}` : "-")
+              (asset.minPrice ? `${BN.formatUnits(asset.minPrice, asset.asset.decimals).toAdaptiveFormat(true)} ← ` : "")
+              + (asset.initialPrice ? BN.formatUnits(asset.initialPrice, asset.asset.decimals).toAdaptiveFormat(true) : "-")
+              + (asset.maxPrice ? (asset.leverage?.lte(1) || !asset.maxPrice.isFinite()) ? " → ∞" : ` → ${BN.formatUnits(asset.maxPrice, asset.asset.decimals).toAdaptiveFormat(true)}` : "-")
             )
           }
         </Text>
