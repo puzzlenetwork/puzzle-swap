@@ -54,32 +54,25 @@ const RangeChart = ({ assetsWithLeverage, size, index }: IParams) => {
           shape={(props) => {
             return (
               <>
-                <defs>
+                {/* Удалить или закомментировать фильтр для тестирования в Safari */}
+                {/* <defs>
                   <filter id={"blur_" + index} x="-100%" y="-100%" width="300%" height="300%" color-interpolation-filters="sRGB">
                     <feGaussianBlur in="SourceGraphic" stdDeviation="12" />
                   </filter>
-                </defs>
+                </defs> */}
                 <RadarWithImage
                   imageElement={(
-                    <g filter={`url(#blur_${index})`}>
+                    <g>
                       {props.points.map((point: any, i: any) => (
-                        <foreignObject
-                          width={backgroundIconSize}
-                          height={backgroundIconSize}
-                          x={point.x - halfBackgroundIcon}
-                          y={point.y - halfBackgroundIcon}
-                          key={i}
-                        >
-                          <Img 
-                            src={TOKENS_BY_ASSET_ID[point.name].logo} 
-                            style={{ 
-                              width: backgroundIconSize, 
-                              height: backgroundIconSize, 
-                              borderRadius: halfBackgroundIcon,
-                              opacity: 0.9
-                            }}
+                        <>
+                          {/* Заменить foreignObject на более совместимый SVG элемент */}
+                          <circle
+                            cx={point.x}
+                            cy={point.y}
+                            r={halfBackgroundIcon}
+                            fill={TOKENS_BY_ASSET_ID[point.name].logoColor}
                           />
-                        </foreignObject>
+                        </>
                       ))}
                     </g>
                   )}
