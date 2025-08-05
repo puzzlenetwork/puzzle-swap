@@ -68,25 +68,23 @@ class CreateRangeVm {
 
   public rangeAssets: IRangeToken[] = [];
   setDefaultRangeAssets = () => {
-    const romePrice = this.rootStore.tokenStore.statisticsByAssetId[TOKENS_BY_SYMBOL.ROME.assetId].currentPrice;
-    this.setBaseTokenPrice(romePrice);
-    const puzzlePrice = this.rootStore.tokenStore.statisticsByAssetId[TOKENS_BY_SYMBOL.ROME.assetId].currentPrice;
     this.rangeAssets = [
       observable({
         asset: TOKENS_BY_SYMBOL.ROME,
         share: new BN(500),
-        initialPrice: romePrice,
-        currentPrice: romePrice,
+        initialPrice: new BN(1),
+        currentPrice: new BN(1),
         locked: false,
       }),
       observable({
         asset: TOKENS_BY_SYMBOL.PUZZLE,
         share: new BN(500),
-        initialPrice: BN.parseUnits(puzzlePrice, TOKENS_BY_SYMBOL.PUZZLE.decimals),
-        currentPrice: BN.parseUnits(puzzlePrice, TOKENS_BY_SYMBOL.PUZZLE.decimals),
+        initialPrice: new BN(1),
+        currentPrice: new BN(1),
         locked: false,
       }),
     ];
+    this.syncCurrentPrices();
   };
 
   get assetsWithLeverage() {
@@ -112,17 +110,27 @@ class CreateRangeVm {
 
   public baseTokenPrice!: BN;
   public setBaseTokenPrice = (val: BN) => {
-    if (this.baseTokenPrice)
-      this.rangeAssets.slice(1).forEach((asset) => {
+    if (this.baseTokenPrice) {
+      this.rangeAssets.slice(1).forEach(async (asset) => {
         const newInitialPrice = asset.initialPrice?.times(this.baseTokenPrice.div(val));
         newInitialPrice && this.updateAssetInitialPrice(asset.asset.assetId, newInitialPrice);
 
-        const currentPriceFromStore = this.rootStore.tokenStore.statisticsByAssetId[asset.asset.assetId]?.currentPrice;
+        const currentPriceFromStore = await this.getTokenPrice(asset.asset.assetId);
         if (currentPriceFromStore) {
           const newCurrentPrice = BN.parseUnits(currentPriceFromStore.div(val), asset.asset.decimals);
           this.updateAssetCurrentPrice(asset.asset.assetId, newCurrentPrice);
         }
       })
+    } else {
+      this.rangeAssets.slice(1).forEach(async (asset) => {
+        const currentPriceFromStore = await this.getTokenPrice(asset.asset.assetId);
+        if (currentPriceFromStore) {
+          const newInitialPrice = BN.parseUnits(currentPriceFromStore.div(val), asset.asset.decimals);
+          this.updateAssetInitialPrice(asset.asset.assetId, newInitialPrice);
+          this.updateAssetCurrentPrice(asset.asset.assetId, newInitialPrice);
+        }
+      });
+    }
     this.baseTokenPrice = val;
   }
 
@@ -130,17 +138,7 @@ class CreateRangeVm {
   setEqualShares = (v: boolean) => {
     this.equalShares = v;
     if (v) {
-      this.rangeAssets.forEach((v) => {
-        v.locked = false;
-      });
       this.syncShares();
-      this.rangeAssets.forEach((v) => {
-        v.locked = true;
-      });
-    } else {
-      this.rangeAssets.forEach((v) => {
-        v.locked = false;
-      });
     }
   };
 
@@ -184,23 +182,19 @@ class CreateRangeVm {
 
   initialize = (initData: IInitDataToStore | null) => {
     if (initData != null && initData.assets != null && initData.assets.length > 0) {
-      const baseTokenPrice = new BN(this.rootStore.tokenStore.statisticsByAssetId[initData.assets[0].assetId]?.currentPrice ?? 1);
-      this.setBaseTokenPrice(baseTokenPrice);
       if (initData.assets != null) {
         this.rangeAssets = initData.assets?.map(
           ({ assetId, share, locked }) => {
-            const currentPriceUsd = this.rootStore.tokenStore.statisticsByAssetId[assetId]?.currentPrice ?? BN.ZERO;
-            const currentPriceRelative = currentPriceUsd.div(baseTokenPrice);
-            console.log(`Asset ${assetId} current price: ${currentPriceRelative.toSmallFormat()}`);
             return observable({
               share: new BN(share).times(10),
               locked,
-              initialPrice: BN.parseUnits(currentPriceRelative, TOKENS_BY_ASSET_ID[assetId].decimals),
-              currentPrice: BN.parseUnits(currentPriceRelative, TOKENS_BY_ASSET_ID[assetId].decimals),
+              initialPrice: new BN(1),
+              currentPrice: new BN(1),
               asset: TOKENS_BY_ASSET_ID[assetId],
             })
           }
         );
+        this.syncCurrentPrices();
       }
     } else {
       this.setDefaultRangeAssets();
@@ -316,12 +310,12 @@ class CreateRangeVm {
     })
   }
 
-  addAssetToRange = (assetId: string) => {
+  addAssetToRange = async (assetId: string) => {
     const balances = this.tokensToAdd;
     const asset = balances?.find((b) => b.assetId === assetId);
     if (asset == null) return;
 
-    const initialPrice = this.rootStore.tokenStore.statisticsByAssetId[assetId].currentPrice;
+    const initialPrice = await this.getTokenPrice(assetId);
     const relativeInitialPrice = initialPrice.div(this.baseTokenPrice)
 
     const apr = this.stakingStats.find((s) => s.asset_id === assetId)?.apr_1y;
@@ -367,7 +361,7 @@ class CreateRangeVm {
     this.syncMinMaxPriceByAssetId(assetId);
   };
 
-  replaceAssetInRange = (oldAssetId: string, newAssetId: string) => {
+  replaceAssetInRange = async (oldAssetId: string, newAssetId: string) => {
     const indexOfObject = this.rangeAssets.findIndex(
       ({ asset }) => asset.assetId === oldAssetId
     );
@@ -375,14 +369,14 @@ class CreateRangeVm {
     if (asset == null) return;
     this.rangeAssets[indexOfObject].asset = asset;
 
-    const currentPrice = this.rootStore.tokenStore.statisticsByAssetId[newAssetId]?.currentPrice || BN.ZERO;
+    const currentPrice = await this.getTokenPrice(newAssetId);
     const apr = this.stakingStats.find((s) => s.asset_id === newAssetId)?.apr_1y;
     this.rangeAssets[indexOfObject].apr = apr ? new BN(apr) : undefined;
 
     if (indexOfObject === 0) {
       this.setBaseTokenPrice(currentPrice);
     } else {
-      const basePrice = this.rootStore.tokenStore.statisticsByAssetId[oldAssetId].currentPrice;
+      const basePrice = await this.getTokenPrice(oldAssetId);
       this.rangeAssets[indexOfObject].initialPrice = BN.parseUnits(
         indexOfObject === 0
           ? currentPrice
@@ -911,5 +905,22 @@ class CreateRangeVm {
         .toSignificant(0)
         .toString(),
     }));
+  }
+
+  async getTokenPrice(assetId: string, tries = 0): Promise<BN> {
+    const { tokenStore } = this.rootStore;
+    if (tokenStore.initialized) {
+      return this.rootStore.tokenStore.statisticsByAssetId[assetId].currentPrice;
+    } else if (tries * 10 > 2000) {
+      throw new Error("Timeout: tokenStore not initialized after 2 seconds");
+    } else {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      return this.getTokenPrice(assetId, tries + 1);
+    }
+  }
+
+  async syncCurrentPrices() {
+    const basePrice = await this.getTokenPrice(this.rangeAssets[0].asset.assetId);
+    this.setBaseTokenPrice(basePrice);
   }
 }

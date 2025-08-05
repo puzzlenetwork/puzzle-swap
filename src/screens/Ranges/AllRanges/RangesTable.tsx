@@ -65,14 +65,13 @@ const RangesTable: React.FC = () => {
             Range {range.domain}
           </Text>
           <SizedBox height={8} />
-          <Row>
+          <Row style={{ flexWrap: "wrap", gap: 4 }}>
             {range.assets.slice().sort((a, b) => range.baseTokenId === a.assetId ? -1 : range.baseTokenId === b.assetId ? 1 : 0).slice(0, 4).map((asset, index) => (
               <TokenInRangePreview
                 key={index}
                 asset={asset}
                 baseToken={range.baseToken}
                 showInUsd={vm.showPriceInUsd}
-                style={{ marginRight: 4 }}
               />
             ))}
             {range.assets.length > 4 && (
@@ -94,7 +93,7 @@ const RangesTable: React.FC = () => {
       const mappedData = rangesStore.ranges.map((range, index) => ({
       onClick: () => navigate(`/ranges/${range.address}/details`),
       range: rangePreviewByAddress[range.address],
-      liquidity: <Text nowrap>${range.liquidity.toFormat(2)} / <Text type="secondary" size="medium" style={{ display: "inline" }}>${range.virtualLiquidity.toFormat(2)}</Text></Text>,
+      liquidity: <Text nowrap fitContent>${range.liquidity.toFormat(2)} / <Text type="secondary" size="medium" style={{ display: "inline" }}>${range.virtualLiquidity.toFormat(2)}</Text></Text>,
       periodFees: (
         <Column alignItems="flex-end" crossAxisSize="max">
           <Row style={{ gap: 4, flexWrap: "wrap", justifyContent: "flex-end" }}>

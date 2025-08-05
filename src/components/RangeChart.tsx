@@ -1,15 +1,12 @@
 import Img from "@src/components/Img";
 import RadarWithImage from "@src/components/RadarWithImage";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
-import { Range, RangeAsset } from "@src/entities/Range";
 import { RadarChart, PolarGrid, Radar, PolarAngleAxis } from "recharts";
-import radarBg from "@src/assets/radar_bg.svg";
 import Tooltip from "@components/Tooltip";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
 import SizedBox from "./SizedBox";
 import styled from "@emotion/styled";
-import BN from "@src/utils/BN";
 
 interface IParams {
   assetsWithLeverage: ({ assetId: string, leverage: number, relativeLeverage: number })[];
@@ -55,36 +52,32 @@ const RangeChart = ({ assetsWithLeverage, size, index }: IParams) => {
             return (
               <>
                 <defs>
-                  <filter id={"blur_" + index} x="-100%" y="-100%" width="300%" height="300%" color-interpolation-filters="sRGB">
+                  <filter id={"blur" + index} x="-100%" y="-100%" width="300%" height="300%" color-interpolation-filters="sRGB">
                     <feGaussianBlur in="SourceGraphic" stdDeviation="12" />
                   </filter>
                 </defs>
                 <RadarWithImage
                   imageElement={(
-                    <g filter={`url(#blur_${index})`}>
-                      {props.points.map((point: any, i: any) => (
-                        <foreignObject
-                          width={backgroundIconSize}
-                          height={backgroundIconSize}
-                          x={point.x - halfBackgroundIcon}
-                          y={point.y - halfBackgroundIcon}
-                          key={i}
-                        >
-                          <Img 
-                            src={TOKENS_BY_ASSET_ID[point.name].logo} 
-                            style={{ 
-                              width: backgroundIconSize, 
-                              height: backgroundIconSize, 
-                              borderRadius: halfBackgroundIcon,
-                              opacity: 0.9
+                      <g filter={`url(#blur${index})`}>
+                        {props.points.map((point: any, i: any) => (
+                          <image
+                            href={TOKENS_BY_ASSET_ID[point.name].logo}
+                            width={backgroundIconSize}
+                            height={backgroundIconSize}
+                            x={point.x - halfBackgroundIcon}
+                            y={point.y - halfBackgroundIcon}
+                            key={i}
+                            style={{
+                              opacity: 0.9,
+                              borderRadius: halfBackgroundIcon // Note: SVG image does not support borderRadius directly
                             }}
                           />
-                        </foreignObject>
-                      ))}
-                    </g>
-                  )}
-                  uniqueId={"allranges_" + index}
-                  useCssImage
+                        ))}
+                      </g>
+                    )
+                  }
+                  uniqueId={index}
+                  useSvgImage
                   {...props}
                 />
               </>
