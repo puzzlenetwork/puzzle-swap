@@ -47,7 +47,9 @@ export default class RangesStore {
   // Time range to show statistics
   timeRange = "all" as "all" | "1d" | "7d" | "30d" | "90d" | "1y";
 
-  minLiquidity = 0;
+  minLiquidity = 1;
+
+  onlyActiveRanges: boolean | undefined = undefined;
 
   // Search value
   searchValue = "";
@@ -84,6 +86,11 @@ export default class RangesStore {
     this.syncRanges();
   }
 
+  setOnlyActiveRanges = (onlyActive: boolean) => {
+    this.onlyActiveRanges = onlyActive;
+    this.syncRanges();
+  };
+
   setSearchValue = (value: string) => {
     this.searchValue = value;
     this.syncRanges();
@@ -104,6 +111,7 @@ export default class RangesStore {
       timeRange: this.timeRange,
       title: this.searchValue,
       minLiquidity: this.minLiquidity,
+      active: this.onlyActiveRanges,
       userAddress: this.userAddress,
     };
   }

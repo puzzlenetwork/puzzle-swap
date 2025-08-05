@@ -120,7 +120,7 @@ const RangesTable: React.FC = () => {
       }));
       setTableData(mappedData);
     },
-    [rangesStore.ranges, navigate, vm.showPriceInUsd]
+    [rangesStore.ranges, rangePreviewByAddress, navigate]
   );
 
   return (
