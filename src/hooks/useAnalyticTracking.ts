@@ -1,5 +1,15 @@
 import { useEffect } from "react";
 
+declare global {
+    interface Window {
+        dataLayer: any[];
+    }
+}
+
+function gtag(...args: any[]) {
+    window.dataLayer.push(args);
+}
+
 export function useAnalyticTracking(env: "development" | "production" = "development") {
     useEffect(() => {
         console.log('process.env.REACT_APP_ENV', process.env.REACT_APP_ENV);
@@ -32,6 +42,16 @@ export function useAnalyticTracking(env: "development" | "production" = "develop
                 f.parentNode.insertBefore(j, f);
             }
         })(window, document, 'script', 'dataLayer', 'GTM-P7S4TWZM');
+
+        // ---- Google Analytics ----
+        const gaScript = document.createElement('script');
+        gaScript.async = true;
+        gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-5N1PSQ0TEV';
+        document.head.appendChild(gaScript);
+
+        window.dataLayer = window.dataLayer || [];
+        gtag('js', new Date());
+        gtag('config', 'G-5N1PSQ0TEV');
 
         // ---- GTM (noscript) ----
         const noscript = document.createElement('noscript');
