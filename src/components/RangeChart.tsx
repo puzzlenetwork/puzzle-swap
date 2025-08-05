@@ -35,6 +35,8 @@ const RangeChart = ({ assetsWithLeverage, size, index }: IParams) => {
   const backgroundIconSize = size / 2;
   const halfBackgroundIcon = backgroundIconSize / 2;
 
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
   return (
     <Tooltip config={{ placement: "bottom" }} content={
       <Column crossAxisSize="max">
@@ -54,29 +56,52 @@ const RangeChart = ({ assetsWithLeverage, size, index }: IParams) => {
           shape={(props) => {
             return (
               <>
-                {/* Удалить или закомментировать фильтр для тестирования в Safari */}
-                {/* <defs>
-                  <filter id={"blur_" + index} x="-100%" y="-100%" width="300%" height="300%" color-interpolation-filters="sRGB">
+                <defs>
+                  <filter id={"blur" + index} x="-100%" y="-100%" width="300%" height="300%" color-interpolation-filters="sRGB">
                     <feGaussianBlur in="SourceGraphic" stdDeviation="12" />
                   </filter>
-                </defs> */}
+                </defs>
                 <RadarWithImage
-                  imageElement={(
-                    <g>
-                      {props.points.map((point: any, i: any) => (
-                        <>
-                          {/* Заменить foreignObject на более совместимый SVG элемент */}
+                  imageElement={isSafari
+                    ? (
+                      <g filter={`url(#blur${index})`}>
+                        {props.points.map((point: any, i: any) => (
                           <circle
                             cx={point.x}
                             cy={point.y}
                             r={halfBackgroundIcon}
                             fill={TOKENS_BY_ASSET_ID[point.name].logoColor}
+                            opacity={0.9}
+                            key={i}
                           />
-                        </>
-                      ))}
-                    </g>
-                  )}
-                  uniqueId={"allranges_" + index}
+                        ))}
+                      </g>
+                    )
+                    : (
+                      <g filter={`url(#blur${index})`}>
+                        {props.points.map((point: any, i: any) => (
+                          <foreignObject
+                            width={backgroundIconSize}
+                            height={backgroundIconSize}
+                            x={point.x - halfBackgroundIcon}
+                            y={point.y - halfBackgroundIcon}
+                            key={i}
+                          >
+                            <Img 
+                              src={TOKENS_BY_ASSET_ID[point.name].logo} 
+                              style={{ 
+                                width: backgroundIconSize, 
+                                height: backgroundIconSize, 
+                                borderRadius: halfBackgroundIcon,
+                                opacity: 0.9
+                              }}
+                            />
+                          </foreignObject>
+                        ))}
+                      </g>
+                    )
+                  }
+                  uniqueId={index}
                   useCssImage
                   {...props}
                 />
