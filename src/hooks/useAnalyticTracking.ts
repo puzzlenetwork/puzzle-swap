@@ -59,6 +59,6 @@ export function useAnalyticTracking(env: "development" | "production" = "develop
         height="0" width="0" style="display:none;visibility:hidden"></iframe>`;
         document.body.appendChild(noscript);
 
-        console.log(`[Tracking] Microsoft Clarity + GTM initialized in ${env} mode`);
+        console.log(`[Tracking] Microsoft Clarity + GA + GTM initialized in ${env} mode`);
     }, [env]);
 }
