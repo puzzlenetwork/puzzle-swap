@@ -2,7 +2,6 @@ import tokens from "./tokens.json";
 import tokensDetails from "./tokenDetails.json";
 import nftsPics from "@src/constants/nftsPics";
 import tokenLogos from "@src/constants/tokenLogos";
-import tokenLogoColors from "@src/constants/tokenLogoColors";
 import { IAssetConfig } from "@src/services/poolsService";
 
 export const ROUTES = {
@@ -48,7 +47,6 @@ export const TOKEN_DETAILS_BY_SYMBOL: Record<string, string> = tokensDetails;
 export const TOKENS_LIST: Array<IToken> = Object.values(tokens).map((t) => ({
   ...t,
   logo: tokenLogos[t.symbol],
-  logoColor: tokenLogoColors[t.symbol],
 }));
 export const TOKENS_BY_SYMBOL: Record<string, IToken> = TOKENS_LIST.reduce(
   (acc, t) => ({ ...acc, [t.symbol]: t }),
