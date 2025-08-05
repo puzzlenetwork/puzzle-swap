@@ -102,15 +102,19 @@ class RangeDetailsInterfaceVM {
   }
 
   public get chartTotal(): BN {
+    const postfix =
+      this.chartDataRange === "1m" ? "30d" :
+        this.chartDataRange === "3m" ? "90d" :
+          this.chartDataRange;
     switch (this.chartDataKey) {
       case "volume":
-        return new BN(this.range!.totals["volume_all"] ?? 0);
+        return new BN(this.range!.totals[`volume_${postfix}`] ?? 0);
       case "fees":
-        return new BN((this.range!.totals["pool_fees_all"] ?? 0) + (this.range!.totals["owner_fees_all"] ?? 0) + (this.range!.totals["protocol_fees_all"] ?? 0));
+        return new BN((this.range!.totals[`pool_fees_${postfix}`] ?? 0));
       case "liquidity":
-        return new BN(this.range!.liquidity ?? 0);
+        return new BN(this.range!.totals[`liquidity_${postfix}`] ?? 0);
     }
-    return new BN(this.range!.totals[this.chartDataKey] ?? 0)
+    return new BN(this.range!.totals[`${this.chartDataKey}_${postfix}`] ?? 0)
   }
 
   public currentBlockHeight: number = 0;
@@ -185,29 +189,36 @@ class RangeDetailsInterfaceVM {
     decimals &&this._setIndexTokenDecimals(decimals);
   };
 
+  public isLPDataLoading = false;
+  public setIsLPDataLoading = (value: boolean) => (this.isLPDataLoading = value);
+
   public syncLPData = async () => {
     if (!this.rootStore.accountStore.address) return;
-    rangesService.getLPData(this.rangeAddress, this.rootStore.accountStore.address)
+    this.setIsLPDataLoading(true);
+    rangesService.getLPData(this.rangeAddress, this.rootStore.accountStore.address, true)
       .then((data) => {
         if (!data) return;
         console.log("LPData", data)
         const newLPData = new LPData(data);
         this.setLPData(newLPData);
       })
+      .finally(() => {
+        this.setIsLPDataLoading(false);
+      });
   }
 
   public syncLPRewards = async (period: ("1d" | "7d" | "1m" | "3m" | "1y" | "all")) => {
     if (period === "all") {
       rangesService.getRangeByAddress(this.rangeAddress).then((rangeData: IRangeParamsResponse) => {
         if (!rangeData) return;
-        this.updatelpRewardsByTime(period, Object.entries(rangeData.period_fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
+        this.updatelpRewardsByTime(period, Object.entries(rangeData.period_stats.fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
       })
       return;
     };
     const [startTime, endTime] = this.convertTimeRange(period);
     rangesService.getRangeByAddress(this.rangeAddress, { startTime, endTime }).then((rangeData: IRangeParamsResponse) => {
       if (!rangeData) return;
-      this.updatelpRewardsByTime(period, Object.entries(rangeData.period_fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
+      this.updatelpRewardsByTime(period, Object.entries(rangeData.period_stats.fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
     })
   }
 
@@ -266,6 +277,7 @@ class RangeDetailsInterfaceVM {
         },
       })
       .then((txId) => {
+        console.log("claimed", txId);
         notificationStore.notify(`Your rewards was claimed`, {
           type: "success",
           title: `Success`,
@@ -274,12 +286,16 @@ class RangeDetailsInterfaceVM {
         });
       })
       .catch((e) => {
+        console.error("claimRewards error", e);
         notificationStore.notify(e.message ?? JSON.stringify(e), {
           type: "error",
           title: "Transaction is not completed",
         });
       })
-      .finally(() => this._setLoading(false));
+      .finally(() => {
+        this._setLoading(false);
+        this.syncLPData();
+      });
   };
 
   get canUnstakeIndex() {

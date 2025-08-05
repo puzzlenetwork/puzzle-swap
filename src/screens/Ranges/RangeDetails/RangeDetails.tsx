@@ -84,7 +84,7 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
               <SizedBox height={20} />
               <Row>
                 <Card style={{ width: "auto", padding: "4px" }}>
-                  <RangeChart range={vm.range!} size={120} />
+                  <RangeChart assetsWithLeverage={vm.range!.assetsWithLeverage} size={120} />
                 </Card>
                 <SizedBox width={12} />
                 <RangeLiquidity style={{ height: "130px", padding: "16px 20px" }} />
@@ -98,7 +98,7 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
                 <MainRangeInfo />
                 <SizedBox width={20} />
                 <Card style={{ width: "auto", padding: "19px" }}>
-                  <RangeChart range={vm.range!} size={160} />
+                  <RangeChart assetsWithLeverage={vm.range!.assetsWithLeverage} size={160} />
                 </Card>
               </Row>
               <SizedBox height={20} />

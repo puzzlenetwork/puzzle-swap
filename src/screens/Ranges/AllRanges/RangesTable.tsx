@@ -56,8 +56,8 @@ const RangesTable: React.FC = () => {
       [range.address]: (
         <Row alignItems="center">
           <GrayCard paddingDesktop="4px" paddingMobile="4px" onClick={width && width < 880 ? stopPropagation : undefined}>
-            <RangeChart range={range} size={120} index={index} />
-        </GrayCard>
+            <RangeChart assetsWithLeverage={range.assetsWithLeverage} size={120} index={index} />
+          </GrayCard>
         <SizedBox width={16} />
         <Column crossAxisSize="max" justifyContent="space-between">
           <SizedBox height={20} />
@@ -65,14 +65,13 @@ const RangesTable: React.FC = () => {
             Range {range.domain}
           </Text>
           <SizedBox height={8} />
-          <Row>
+          <Row style={{ flexWrap: "wrap", gap: 4 }}>
             {range.assets.slice().sort((a, b) => range.baseTokenId === a.assetId ? -1 : range.baseTokenId === b.assetId ? 1 : 0).slice(0, 4).map((asset, index) => (
               <TokenInRangePreview
                 key={index}
                 asset={asset}
                 baseToken={range.baseToken}
                 showInUsd={vm.showPriceInUsd}
-                style={{ marginRight: 4 }}
               />
             ))}
             {range.assets.length > 4 && (
@@ -94,17 +93,17 @@ const RangesTable: React.FC = () => {
       const mappedData = rangesStore.ranges.map((range, index) => ({
       onClick: () => navigate(`/ranges/${range.address}/details`),
       range: rangePreviewByAddress[range.address],
-      liquidity: <Text nowrap>${range.liquidity.toFormat(2)} / <Text type="secondary" size="medium" style={{ display: "inline" }}>${range.virtualLiquidity.toFormat(2)}</Text></Text>,
+      liquidity: <Text nowrap fitContent>${range.liquidity.toFormat(2)} / <Text type="secondary" size="medium" style={{ display: "inline" }}>${range.virtualLiquidity.toFormat(2)}</Text></Text>,
       periodFees: (
         <Column alignItems="flex-end" crossAxisSize="max">
           <Row style={{ gap: 4, flexWrap: "wrap", justifyContent: "flex-end" }}>
-            {Object.entries(range.periodFees).filter(([_, { feesEarned, extraEarned }]) => new BN(feesEarned + extraEarned).gt(0)).map(([assetId, { feesEarned, extraEarned }], i) => {
+            {Object.entries(range.periodStats.fees).filter(([_, { feesEarned, extraEarned }]) => feesEarned.plus(extraEarned).gt(0)).map(([assetId, { feesEarned, extraEarned }], i) => {
               const tokenInfo = TOKENS_BY_ASSET_ID[assetId] || {};
               return (
                 <TokenTag
                   key={i}
                   token={{...tokenInfo, decimals: 0}}
-                  amount={new BN(feesEarned + extraEarned)}
+                  amount={feesEarned.plus(extraEarned)}
                   size="small"
                   iconRight
                 />

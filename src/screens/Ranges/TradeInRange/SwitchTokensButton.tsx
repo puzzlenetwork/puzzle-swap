@@ -54,7 +54,7 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
     token1?.name,
     price != null && price.gt(0)
       ? price?.toFormat(4)
-      : rate.gt(0)
+      : rate?.gt(0)
       ? rate.toFormat(4)
       : undefined
   );

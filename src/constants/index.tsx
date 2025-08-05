@@ -601,6 +601,7 @@ export interface IToken {
   startPrice?: number;
   description?: string;
   logo: string;
+  logoColor?: string;
   category?: string[];
 }
 

@@ -8,6 +8,7 @@ export interface IGetRanges {
   sortBy?: "fact_liquidity" | "earned" | "virtual_liquidity";
   order?: "asc" | "desc";
   search?: string;
+  userAddress?: string
 }
 
 export interface IGetRange {
@@ -30,11 +31,21 @@ export interface IGetChartData {
   nominatePriceIn?: string;
 }
 
+export interface IStakingStatistics {
+  asset_id: string;
+  name: string;
+  group: "common" | "index";
+  apr_1d: number;
+  apr_7d: number;
+  apr_30d: number;
+  apr_1y: number;
+}
+
 const rangesService = {
   getRanges: async (params: IGetRanges): Promise<IGetRangesResponse> => {
     const paramsString = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
-      paramsString.append(key, value.toString());
+      (value !== undefined) && paramsString.append(key, value.toString());
     });
     const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged`;
     const url = `${baseUrl}?${paramsString.toString()}`;
@@ -58,7 +69,7 @@ const rangesService = {
     const { data } = await axios.get(url);
     return data;
   },
-  getLPData: async (address: string, userAddress: string): Promise<ILPDataResponse> => {
+  getLPData: async (address: string, userAddress: string, force?: boolean): Promise<ILPDataResponse> => {
     const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/provided_data`;
     const paramsString = new URLSearchParams({
       poolAddress: address,
@@ -66,6 +77,7 @@ const rangesService = {
       poolMode: "ranged",
       page: "1",
       size: "1",
+      force: force ? "true" : "false",
     })
     const url = `${baseUrl}?${paramsString.toString()}`;
     const { data } = await axios.get(url);
@@ -91,6 +103,17 @@ const rangesService = {
     const { data } = await axios.get(url);
     return data.total_provided_usd;
   },
+  getStakingStatistics: async (group?: ("common" | "index")): Promise<IStakingStatistics[]> => {
+    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/aprs`;
+    const paramsString = new URLSearchParams({
+      page: "1",
+      size: "500",
+      ...(group ? { group } : {})
+    });
+    const url = `${baseUrl}?${paramsString.toString()}`;
+    const { data } = await axios.get(url);
+    return data.data;
+  }
 };
 
 export default rangesService; 

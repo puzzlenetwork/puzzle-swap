@@ -140,22 +140,36 @@ const AllRangesImpl: React.FC<IProps> = () => {
                   justifyContent="space-between"
                   alignItems="center"
                 >
-                  <Column>
-                    <Text type="secondary">My Investment Balance</Text>
-                    <SizedBox height={4} />
-                    {vm.userInvestedAmount ? (
-                      <Text size="big" style={whiteText}>
-                        ${vm.userInvestedAmount.toFormat(2)}
-                      </Text>
-                    ) : (
+                  {vm.userInvestedAmount ? (
+                    <>
+                      <Column>
+                        <Text type="secondary">My Investment Balance</Text>
+                        <SizedBox height={4} />
+                        <Text size="big" style={whiteText}>
+                          ${vm.userInvestedAmount.toFormat(2)}
+                        </Text>
+                      </Column>
+                      {vm.userInvestedAmount.gt(0) && (
+                        <Button
+                          onClick={() => vm.setShowOnlyUserRanges(!vm.showOnlyUserRanges)}
+                          size="medium"
+                        >
+                          {vm.showOnlyUserRanges ? "All Ranges" : "My Ranges"}
+                        </Button>
+                      )}
+                    </>
+                  ) : (
+                    <Column>
+                      <Text type="secondary">My Investment Balance</Text>
+                      <SizedBox height={4} />
                       <Skeleton
                         width={85}
                         height={24}
                         baseColor="#8082C5"
                         highlightColor="#F1F2FE"
                       />
-                    )}
-                  </Column>
+                    </Column>
+                  )}
                 </Card>
               )}
               <Card paddingDesktop="16px 20px">
@@ -183,7 +197,6 @@ const AllRangesImpl: React.FC<IProps> = () => {
             <SearchAndFilterTab />
             <SizedBox height={32} />
             <RangesTable />
-            {/*<PoolsTable />*/}
           </Root>
         )}
       </Observer>

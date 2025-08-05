@@ -13,6 +13,7 @@ import Loading from "@components/Loading";
 import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
 import Divider from "@src/components/Divider";
 import BN from "@src/utils/BN";
+import Skeleton from "react-loading-skeleton";
 
 interface IProps {}
 
@@ -55,9 +56,13 @@ const Reward: React.FC<IProps> = () => {
               <Row justifyContent="space-between">
                 <Text size="medium" style={{ flex: 1 }}>Claimed</Text>
               </Row>
-              <Text weight={500}>
-                {`$${(vm.lpData?.claimedUsd ?? BN.ZERO).toSmallFormat()}`}
-              </Text>
+              {vm.isLPDataLoading ? (
+                <Skeleton width={100} height={24} />
+              ) : (
+                <Text weight={500}>
+                  {`$${(vm.lpData?.claimedUsd ?? BN.ZERO).toSmallFormat()}`}
+                </Text>
+              )}
             </Column>
           </Row>
           <Divider />
@@ -66,9 +71,13 @@ const Reward: React.FC<IProps> = () => {
             <SizedBox width={8} />
             <Column>
               <Text size="medium" nowrap>Available to claim</Text>
-              <Text weight={500}>
-                {`$${(vm.lpData?.unclaimedUsd ?? BN.ZERO).toSmallFormat()}`}
-              </Text>
+              {vm.isLPDataLoading ? (
+                <Skeleton width={100} height={24} />
+              ) : (
+                <Text weight={500}>
+                  {`$${(vm.lpData?.unclaimedUsd ?? BN.ZERO).toSmallFormat()}`}
+                </Text>
+              )}
             </Column>
           </Row>
           {vm.loading ? (

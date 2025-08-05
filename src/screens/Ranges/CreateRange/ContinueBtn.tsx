@@ -39,13 +39,13 @@ const ContinueBtn: React.FC = () => {
       );
     case 1:
       return (
-        <Button onClick={() => handleContinue(2)} fixed disabled={!vm.correct1}>
-          {vm.correct1 ? "Continue" : "Fill in all fields"}
+        <Button onClick={vm.createRange} fixed disabled={!vm.correct1}>
+          {vm.correct1 ? "Deploy Smart Contract" : "Fill in all fields"}
         </Button>
       );
     case 2:
       return (
-        <Button onClick={vm.provideLiquidityToPool} fixed disabled={!vm.correct2}>
+        <Button onClick={vm.provideLiquidityToRange} fixed disabled={!vm.correct2}>
           {vm.correct2 ? "Continue" : "Enter the amount to provide"}
         </Button>
       );

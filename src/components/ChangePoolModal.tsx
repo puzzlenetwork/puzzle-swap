@@ -65,7 +65,9 @@ const ChangePoolModal: React.FC<IProps> = ({
   return (
     <Dialog
       style={{ maxWidth: 360 }}
-      bodyStyle={{ minHeight: 440 }}
+      styles={{
+        body: { minHeight: 440 }
+      }}
       title="Select a pool"
       {...rest}
     >

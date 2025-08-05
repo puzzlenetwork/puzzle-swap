@@ -8,6 +8,8 @@ import { useCreateRangeVM } from "./CreateRangeVm";
 import { Row } from "@src/components/Flex";
 import Divider from "@src/components/Divider";
 import { Cell, Pie, PieChart } from "recharts";
+import RangeChart from "@src/components/RangeChart";
+import RoundTokenIcon from "@src/components/RoundTokenIcon";
 
 interface IProps {}
 
@@ -17,29 +19,24 @@ const Root = styled.div`
   flex-direction: column;
 `;
 
-const COLORS = [
-  "#99CC33",
-  "#669900",
-  "#CCEE66",
-  "#006699",
-  "#3399CC",
-  "#990066",
-  "#CC3399",
-  "#FF6600",
-  "#FF9900",
-  "#FFCC00",
-];
-
-const Legend = styled.div`
-  display: flex;
+const Legend = styled(Row)`
   max-width: 155px;
   flex-wrap: wrap;
   justify-content: center;
+  gap: 4px;
 
   & > * {
     padding-right: 12px;
   }
 `;
+
+const GrayCard = styled(Card)`
+  background: ${({ theme }) => theme.colors.primary100};
+  border: none;
+  width: fit-content;
+  padding: 5px;
+`;
+
 const SummaryCard: React.FC<IProps> = () => {
   const vm = useCreateRangeVM();
   const data = vm.rangeAssets?.reduce<{ name: string; value: number }[]>(
@@ -62,47 +59,42 @@ const SummaryCard: React.FC<IProps> = () => {
         paddingDesktop="0px"
         paddingMobile="0px"
       >
-        <PieChart width={100} height={150}>
-          <Pie
-            data={data}
-            innerRadius={40}
-            outerRadius={50}
-            fill="#C6C9F4"
-            paddingAngle={2}
-            dataKey="value"
-          >
-            {data.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-          </Pie>
-        </PieChart>
+        <SizedBox height={40} />
+        <GrayCard>
+          <RangeChart
+            assetsWithLeverage={vm.assetsWithLeverage}
+            size={180}
+          />
+        </GrayCard>
+
+        <SizedBox height={12} />
+
         <Legend>
-          {data.map(({ name }, index) => (
+          {vm.rangeAssets.map(({ asset }, index) => (
             <Row
               key={index + "summary-card"}
               justifyContent="center"
               alignItems="center"
               mainAxisSize="fit-content"
             >
-              <Dot color={COLORS[index % COLORS.length]} />
+              <RoundTokenIcon src={asset.logo} />
               <SizedBox width={4} />
-              <Text size="small" type="secondary" fitContent>
-                {name}
+              <Text size="small" type="primary" weight={500} fitContent>
+                {asset.symbol}
               </Text>
             </Row>
           ))}
         </Legend>
-        <SizedBox height={24} />
+
+        <SizedBox height={16} />
         <Divider />
         <SizedBox height={14} />
         <Text type="secondary" fitContent>
           Max to provide
         </Text>
         <Text weight={500} fitContent>
-          ${vm.maxToProvide.toFormat(2)}
+          {vm.maxToProvide.toFormat(2)}
+          {` ${vm.rangeAssets[0].asset.symbol}`}
         </Text>
         <SizedBox height={14} />
       </Card>
@@ -110,15 +102,3 @@ const SummaryCard: React.FC<IProps> = () => {
   );
 };
 export default observer(SummaryCard);
-
-const Dot: React.FC<{ color: string }> = ({ color }) => (
-  <svg
-    width="9"
-    height="8"
-    viewBox="0 0 9 8"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <circle cx="4.5" cy="4" r="4" fill={color} />
-  </svg>
-);

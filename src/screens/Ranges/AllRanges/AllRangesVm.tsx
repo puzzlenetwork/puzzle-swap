@@ -5,6 +5,7 @@ import { RangesStore, RootStore, useStores } from "@stores";
 import rangesService from "@src/services/rangesService";
 import { GlobalRangesInfo } from "@src/entities/Range";
 import BN from "@src/utils/BN";
+import { address } from "@waves/ts-lib-crypto";
 
 interface IProps {
   children: React.ReactNode;
@@ -85,8 +86,28 @@ class AllRangesVm {
     this.rootStore.rangesStore.setMinLiquidity(v ? 1 : 0);
   };
 
+  showOnlyUserRanges: boolean = false;
+  setShowOnlyUserRanges = (v: boolean) => {
+    this.showOnlyUserRanges = v;
+    if (v) {
+      const { address } = this.rootStore.accountStore;
+      this.rootStore.rangesStore.setUserAddress(address ?? undefined);
+    } else {
+      this.rootStore.rangesStore.setUserAddress(undefined);
+    }
+  }
+
   userInvestedAmount: BN | null = null;
   setUserInvestedAmount = (v: number) => (this.userInvestedAmount = new BN(v));
+
+  syncFiltersWithRangesStore = () => {
+    const rangesStore = this.rootStore.rangesStore;
+    this.searchValue = rangesStore.searchValue;
+    this.rangesSorting = this.rangesSortings.findIndex(({ key }) => key === `${rangesStore.filter.sortBy}${rangesStore.filter.order === "asc" ? "A" : "D"}`) ?? 0;
+    this.selectedStatsRange = this.statsRanges.findIndex(({ key }) => key === rangesStore.timeRange) ?? 0;
+    this.showOnlyActiveRanges = !!rangesStore.minLiquidity;
+    this.showOnlyUserRanges = !!rangesStore.userAddress;
+  }
 
   syncUserInvestedAmount = async () => {
     const { address } = this.rootStore.accountStore;

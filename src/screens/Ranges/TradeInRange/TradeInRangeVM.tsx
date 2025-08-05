@@ -34,30 +34,31 @@ class TradeInRangeVM {
   ) {
     makeAutoObservable(this);
     when(
-      () => this.defaultAssetId0 != null && this.defaultAssetId1 != null,
+      () => this.range != null && this.defaultAssetId0 != null && this.defaultAssetId1 != null,
       () => {
-        this.setAssetId0(this.defaultAssetId0);
-        this.setAssetId1(this.defaultAssetId1);
+        this.setAssetId0(this.defaultAssetId0!);
+        this.setAssetId1(this.defaultAssetId1!);
       }
     );
   }
 
   public get range() {
-    return this.rootStore.rangesStore.getRangeByAddress(this.rangeAddress)!;
+    return this.rootStore.rangesStore.getRangeByAddress(this.rangeAddress);
   }
 
   public get defaultAssetId0() {
-    return this.range.baseTokenId;
+    return this.range?.baseTokenId;
   }
 
   public get defaultAssetId1() {
-    return this.range.assets[1].assetId;
+    return this.range?.assets[1].assetId;
   }
 
   assetId0: string = "";
   setAssetId0 = (assetId: string) => (this.assetId0 = assetId);
 
   get token0() {
+    if (!this.range) return null;
     return { ...TOKENS_BY_ASSET_ID[this.assetId0], ...this.range.assets.find(({ assetId }) => assetId === this.assetId0) };
   }
 
@@ -92,6 +93,7 @@ class TradeInRangeVM {
   }
 
   get liquidityOfToken0() {
+    if (!this.range) return null;
     return this.range.assets.find(({ assetId }) => assetId === this.assetId0)?.balance ?? BN.ZERO;
   }
 
@@ -99,24 +101,26 @@ class TradeInRangeVM {
   setAssetId1 = (assetId: string) => (this.assetId1 = assetId);
 
   get token1() {
+    if (!this.range) return null
     return { ...TOKENS_BY_ASSET_ID[this.assetId1], ...this.range.assets.find(({ assetId }) => assetId === this.assetId1) };
   }
 
   get liquidityOfToken1() {
+    if (!this.range) return null;
     return this.range.assets.find(({ assetId }) => assetId === this.assetId1)?.balance ?? BN.ZERO;
   }
 
   get rate() {
     return (
-      this.liquidityOfToken1.div(this.token1?.share ?? 1)
-      .div(this.liquidityOfToken0.div(this.token0?.share ?? 1))
+      this.liquidityOfToken1?.div(this.token1?.share ?? 1)
+      .div(this.liquidityOfToken0?.div(this.token0?.share ?? 1) || 1)
     );
   }
 
   get priceImpact() {
     //100 * (Price(0,1) / (Amount0/Amount1))
     const rate = this.rate;
-    if (this.token1 == null || this.token0 == null || rate.eq(BN.ZERO)) {
+    if (this.token1 == null || this.token0 == null || !rate || rate.eq(BN.ZERO)) {
       return null;
     }
     const amount0 = BN.formatUnits(this.amount0, this.token0.decimals);
@@ -152,8 +156,8 @@ class TradeInRangeVM {
   get amount1() {
     const { liquidityOfToken0: l0, liquidityOfToken1: l1 } = this;
     const { token1, token0, amount0 } = this;
-    if (l0 == null || l1 == null || token1.share == null || token0.share == null) {
-      return BN.ZERO;
+    if (!this.range || l0 == null || l1 == null || token1?.share == null || token0?.share == null) {
+    return BN.ZERO;
     }
     const share0 = new BN(token0.share);
     const share1 = new BN(token1.share);
