@@ -33,6 +33,7 @@ import DepositToRange from "./screens/Ranges/DepositToRange";
 import WithdrawFromRange from "./screens/Ranges/WithdrawFromRange";
 import CreateRange from "./screens/Ranges/CreateRange";
 import TradeInRange from "./screens/Ranges/TradeInRange";
+import { useAnalyticTracking } from "./hooks/useAnalyticTracking";
 
 const Root = styled(Column)`
   width: 100%;
@@ -49,6 +50,7 @@ const MobileSpace = styled.div`
 const App: React.FC = () => {
   const { accountStore } = useStores();
   usePageTitle();
+  useAnalyticTracking('development');
   return (
     <Root>
       <LoginScreen />
