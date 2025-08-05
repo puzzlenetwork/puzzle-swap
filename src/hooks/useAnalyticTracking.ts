@@ -2,8 +2,8 @@ import { useEffect } from "react";
 
 export function useAnalyticTracking(env: "development" | "production" = "development") {
     useEffect(() => {
-        console.log('process.env.NODE_ENV', process.env.NODE_ENV);
-        if (process.env.NODE_ENV !== env) return;
+        console.log('process.env.REACT_APP_ENV', process.env.REACT_APP_ENV);
+        if (process.env.REACT_APP_ENV !== env) return;
 
         // ---- Microsoft Clarity ----
         (function (c: any, l: Document, a: string, r: string, i: string) {
