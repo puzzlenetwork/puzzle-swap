@@ -8,7 +8,7 @@ type TRadarWithImageProps = {
   imageElement?: JSX.Element;
   strokeWidth?: number;
   uniqueId?: string;
-  useCssImage?: boolean;
+  useSvgImage?: boolean;
   debug?: boolean;
 };
 
@@ -94,7 +94,7 @@ const RadarWithImage = ({
   imageElement,
   strokeWidth = 3, // default stroke width
   uniqueId = "default",
-  useCssImage,
+  useSvgImage,
   debug,
 }: TRadarWithImageProps) => {
   const { cx, cy } = radiusAxis;
@@ -146,7 +146,7 @@ const RadarWithImage = ({
 
   const renderImage = (extraProps: Partial<JSX.IntrinsicElements["image"]> = {}): JSX.Element | null => {
     switch (true) {
-      case !!useCssImage && !!imageElement:
+      case !!useSvgImage && !!imageElement:
         return (
           <g {...extraProps}>
             {React.cloneElement(imageElement!, {
@@ -154,7 +154,7 @@ const RadarWithImage = ({
             })}
           </g>
         );
-      case !useCssImage && !!imageElement:
+      case !useSvgImage && !!imageElement:
         return (
           <foreignObject
             x={imageX}
@@ -175,7 +175,7 @@ const RadarWithImage = ({
             </div>
           </foreignObject>
         );
-      case !useCssImage && !!imageUrl:
+      case !useSvgImage && !!imageUrl:
         return (
           <image
             href={imageUrl}

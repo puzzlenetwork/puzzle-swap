@@ -1,15 +1,12 @@
 import Img from "@src/components/Img";
 import RadarWithImage from "@src/components/RadarWithImage";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
-import { Range, RangeAsset } from "@src/entities/Range";
 import { RadarChart, PolarGrid, Radar, PolarAngleAxis } from "recharts";
-import radarBg from "@src/assets/radar_bg.svg";
 import Tooltip from "@components/Tooltip";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
 import SizedBox from "./SizedBox";
 import styled from "@emotion/styled";
-import BN from "@src/utils/BN";
 
 interface IParams {
   assetsWithLeverage: ({ assetId: string, leverage: number, relativeLeverage: number })[];
@@ -34,8 +31,6 @@ const RangeChart = ({ assetsWithLeverage, size, index }: IParams) => {
   const halfIcon = iconSize / 2;
   const backgroundIconSize = size / 2;
   const halfBackgroundIcon = backgroundIconSize / 2;
-
-  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
   return (
     <Tooltip config={{ placement: "bottom" }} content={
@@ -62,47 +57,27 @@ const RangeChart = ({ assetsWithLeverage, size, index }: IParams) => {
                   </filter>
                 </defs>
                 <RadarWithImage
-                  imageElement={isSafari
-                    ? (
+                  imageElement={(
                       <g filter={`url(#blur${index})`}>
                         {props.points.map((point: any, i: any) => (
-                          <circle
-                            cx={point.x}
-                            cy={point.y}
-                            r={halfBackgroundIcon}
-                            fill={TOKENS_BY_ASSET_ID[point.name].logoColor}
-                            opacity={0.9}
-                            key={i}
-                          />
-                        ))}
-                      </g>
-                    )
-                    : (
-                      <g filter={`url(#blur${index})`}>
-                        {props.points.map((point: any, i: any) => (
-                          <foreignObject
+                          <image
+                            href={TOKENS_BY_ASSET_ID[point.name].logo}
                             width={backgroundIconSize}
                             height={backgroundIconSize}
                             x={point.x - halfBackgroundIcon}
                             y={point.y - halfBackgroundIcon}
                             key={i}
-                          >
-                            <Img 
-                              src={TOKENS_BY_ASSET_ID[point.name].logo} 
-                              style={{ 
-                                width: backgroundIconSize, 
-                                height: backgroundIconSize, 
-                                borderRadius: halfBackgroundIcon,
-                                opacity: 0.9
-                              }}
-                            />
-                          </foreignObject>
+                            style={{
+                              opacity: 0.9,
+                              borderRadius: halfBackgroundIcon // Note: SVG image does not support borderRadius directly
+                            }}
+                          />
                         ))}
                       </g>
                     )
                   }
                   uniqueId={index}
-                  useCssImage
+                  useSvgImage
                   {...props}
                 />
               </>
