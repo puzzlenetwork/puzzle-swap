@@ -1,17 +1,16 @@
-import React, { useMemo } from "react";
-import { useVM } from "@src/hooks/useVM";
-import { makeAutoObservable, when } from "mobx";
-import { RootStore, useStores } from "@stores";
-import BN from "@src/utils/BN";
-import Balance from "@src/entities/Balance";
-import { CONTRACT_ADDRESSES } from "@src/constants";
 import {
   buildErrorDialogParams,
   buildSuccessBoostParams,
   IDialogNotificationProps
 } from "@components/Dialog/DialogNotification";
+import { CONTRACT_ADDRESSES } from "@src/constants";
+import Balance from "@src/entities/Balance";
+import { useVM } from "@src/hooks/useVM";
+import BN from "@src/utils/BN";
+import { RootStore, useStores } from "@stores";
 import dayjs from "dayjs";
-import poolsService from "@src/services/poolsService";
+import { makeAutoObservable, when } from "mobx";
+import React, { useMemo } from "react";
 
 const ctx = React.createContext<BoostApyVm | null>(null);
 

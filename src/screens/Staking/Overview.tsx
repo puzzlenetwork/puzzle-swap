@@ -1,16 +1,13 @@
-import styled from "@emotion/styled";
-import React from "react";
-import Text from "@components/Text";
 import Card from "@components/Card";
 import SizedBox from "@components/SizedBox";
-import { Column } from "@src/components/Flex";
-import { observer } from "mobx-react-lite";
+import Text from "@components/Text";
+import styled from "@emotion/styled";
 import { useStakingVM } from "@screens/Staking/StakingVM";
-import Skeleton from "react-loading-skeleton";
+import { Column } from "@src/components/Flex";
 import { useStores } from "@stores";
-import { Line, LineChart, Tooltip, XAxis } from "recharts";
-import dayjs from "dayjs";
-import BN from "@src/utils/BN";
+import { observer } from "mobx-react-lite";
+import React from "react";
+import Skeleton from "react-loading-skeleton";
 
 const Root = styled.div`
   display: flex;

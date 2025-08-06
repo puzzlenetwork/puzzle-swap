@@ -231,7 +231,8 @@ class Pool implements IPoolConfig {
 
   getAccountLiquidityInfoByState = (user: string, state: IData[]): IShortPoolInfo => {
     const addressIndexStaked = new BN(getStateByKey(state, `${user}_indexStaked`) ?? 0);
-    const globalIndexStaked = new BN(getStateByKey(state, `global_indexStaked`) ?? 0);
+    // TODO: find out what is this property for
+    // const globalIndexStaked = new BN(getStateByKey(state, `global_indexStaked`) ?? 0);
     const globalPoolTokenAmount = new BN(getStateByKey(state, "global_poolToken_amount") ?? 0);
     const indexTokenRate =
       globalPoolTokenAmount && globalPoolTokenAmount.gt(0)

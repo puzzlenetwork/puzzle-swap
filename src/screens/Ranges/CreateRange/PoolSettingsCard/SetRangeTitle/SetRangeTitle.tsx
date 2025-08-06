@@ -1,20 +1,17 @@
-import styled from "@emotion/styled";
-import React, { useCallback, useEffect, useState } from "react";
 import Card from "@components/Card";
-import Text from "@components/Text";
-import SizedBox from "@components/SizedBox";
 import Input from "@components/Input";
-import { useCreateRangeVM } from "../../CreateRangeVm";
-import { observer } from "mobx-react-lite";
-import { Row } from "@src/components/Flex";
-import ShareTokenInput from "../../PoolSettingsCard/SelectAssets/ShareTokenInput";
-import Notification from "@src/components/Notification";
-import ImageUpload from "@components/ImageUpload";
-import BN from "@src/utils/BN";
-import poolService from "@src/services/poolsService";
-import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
+import SizedBox from "@components/SizedBox";
+import Text from "@components/Text";
 import Tooltip from "@components/Tooltip";
-import { POOL_CONFIG } from "@src/constants";
+import styled from "@emotion/styled";
+import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
+import { Row } from "@src/components/Flex";
+import Notification from "@src/components/Notification";
+import BN from "@src/utils/BN";
+import { observer } from "mobx-react-lite";
+import React, { useState } from "react";
+import { useCreateRangeVM } from "../../CreateRangeVm";
+import ShareTokenInput from "../../PoolSettingsCard/SelectAssets/ShareTokenInput";
 
 interface IProps {}
 

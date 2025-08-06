@@ -1,27 +1,26 @@
-import styled from "@emotion/styled";
-import React, { useState } from "react";
-import Tooltip from "@components/Tooltip";
-import MorePoolInformation from "@screens/InvestToPoolInterface/MorePoolInformation";
-import { ReactComponent as MoreIcon } from "@src/assets/icons/dots.svg";
-import Dialog from "@components/Dialog";
-import { Column, Row } from "@components/Flex";
-import Text from "@components/Text";
-import Divider from "@components/Divider";
 import Button from "@components/Button";
+import Dialog from "@components/Dialog";
+import Divider from "@components/Divider";
+import { Column, Row } from "@components/Flex";
 import SizedBox from "@components/SizedBox";
-import { useStores } from "@stores";
-import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
+import Text from "@components/Text";
 import TextButton from "@components/TextButton";
-import linkIcon from "@src/assets/icons/link.svg";
-import copy from "copy-to-clipboard";
+import Tooltip from "@components/Tooltip";
+import styled from "@emotion/styled";
+import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
+import MorePoolInformation from "@screens/InvestToPoolInterface/MorePoolInformation";
 import { ReactComponent as CopyIcon } from "@src/assets/icons/darkCopy.svg";
-import { ReactComponent as TwitterIcon } from "@src/assets/icons/twitter.svg";
-import { ReactComponent as TelegramIcon } from "@src/assets/icons/telegram.svg";
+import { ReactComponent as MoreIcon } from "@src/assets/icons/dots.svg";
 import { ReactComponent as FacebookIcon } from "@src/assets/icons/facebook.svg";
+import linkIcon from "@src/assets/icons/link.svg";
+import { ReactComponent as TelegramIcon } from "@src/assets/icons/telegram.svg";
+import { ReactComponent as TwitterIcon } from "@src/assets/icons/twitter.svg";
 import { EXPLORER_URL } from "@src/constants";
-import centerEllipsis from "@src/utils/centerEllipsis";
-import dayjs from "dayjs";
 import BN from "@src/utils/BN";
+import { useStores } from "@stores";
+import copy from "copy-to-clipboard";
+import dayjs from "dayjs";
+import React, { useState } from "react";
 
 interface IProps {}
 

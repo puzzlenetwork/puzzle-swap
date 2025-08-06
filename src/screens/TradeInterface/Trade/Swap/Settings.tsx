@@ -1,20 +1,19 @@
-import styled from "@emotion/styled";
-import React, { useState } from "react";
-import { observer } from "mobx-react-lite";
+import Button from "@components/Button";
 import Card from "@components/Card";
-import { ReactComponent as Close } from "@src/assets/icons/darkClose.svg";
+import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
+import TextButton from "@components/TextButton";
+import { useTheme } from "@emotion/react";
+import styled from "@emotion/styled";
+import ShareTokenInput from "@screens/CreateCustomPools/PoolSettingsCard/SelectAssets/ShareTokenInput";
+import { useSwapVM } from "@screens/TradeInterface/SwapVM";
+import { ReactComponent as Close } from "@src/assets/icons/darkClose.svg";
+import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import { Column, Row } from "@src/components/Flex";
 import Tooltip from "@src/components/Tooltip";
 import BN from "@src/utils/BN";
-import SizedBox from "@components/SizedBox";
-import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
-import ShareTokenInput from "@screens/CreateCustomPools/PoolSettingsCard/SelectAssets/ShareTokenInput";
-import TextButton from "@components/TextButton";
-import Button from "@components/Button";
-import { useTheme } from "@emotion/react";
-import { useSwapVM } from "@screens/TradeInterface/SwapVM";
-import { useStores } from "@stores";
+import { observer } from "mobx-react-lite";
+import React, { useState } from "react";
 
 interface IProps {}
 

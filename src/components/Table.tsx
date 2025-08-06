@@ -1,9 +1,8 @@
+import Loading from "@components/Loading";
+import Text from "@components/Text";
+import styled from "@emotion/styled";
 import React from "react";
 import { TableProps, useTable } from "react-table";
-import styled from "@emotion/styled";
-import Text from "@components/Text";
-import Loading from "@components/Loading";
-import { position } from "polished";
 
 interface IProps extends TableProps {
   columns: any[];

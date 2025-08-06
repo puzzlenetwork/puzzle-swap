@@ -1,11 +1,11 @@
-import React, { useMemo } from "react";
-import { useVM } from "@src/hooks/useVM";
-import { makeAutoObservable, reaction } from "mobx";
-import { RootStore, useStores } from "@stores";
-import Pool from "@src/entities/Pool";
-import BN from "@src/utils/BN";
-import poolService from "@src/services/poolsService";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
+import Pool from "@src/entities/Pool";
+import { useVM } from "@src/hooks/useVM";
+import poolService from "@src/services/poolsService";
+import BN from "@src/utils/BN";
+import { RootStore, useStores } from "@stores";
+import { makeAutoObservable } from "mobx";
+import React, { useMemo } from "react";
 interface IProps {
   children: React.ReactNode;
 }

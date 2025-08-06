@@ -1,11 +1,10 @@
-import React, { useMemo } from "react";
-import { useVM } from "@src/hooks/useVM";
-import { makeAutoObservable, when } from "mobx";
-import { RangesStore, RootStore, useStores } from "@stores";
-import rangesService from "@src/services/rangesService";
 import { GlobalRangesInfo } from "@src/entities/Range";
+import { useVM } from "@src/hooks/useVM";
+import rangesService from "@src/services/rangesService";
 import BN from "@src/utils/BN";
-import { address } from "@waves/ts-lib-crypto";
+import { RootStore, useStores } from "@stores";
+import { makeAutoObservable, when } from "mobx";
+import React, { useMemo } from "react";
 
 interface IProps {
   children: React.ReactNode;

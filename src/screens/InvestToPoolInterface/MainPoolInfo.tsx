@@ -1,24 +1,24 @@
+import Button from "@components/Button";
+import SizedBox from "@components/SizedBox";
+import SquareTokenIcon from "@components/SquareTokenIcon";
+import Text from "@components/Text";
+import TextButton from "@components/TextButton";
 import styled from "@emotion/styled";
-import React from "react";
-import bg from "@src/assets/puzzleBackground2.png";
+import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
+import TransparentDetailsBtn from "@screens/InvestToPoolInterface/TransparentDetailsBtn";
 import customBg from "@src/assets/customPuzzleBg.png";
 import puzzleIcon from "@src/assets/icons/smallWhitePuzzle.svg";
 import link from "@src/assets/icons/whiteLink.svg";
-import Text from "@components/Text";
+import bg from "@src/assets/puzzleBackground2.png";
 import { Column, Row } from "@src/components/Flex";
-import { observer } from "mobx-react-lite";
-import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
-import SizedBox from "@components/SizedBox";
-import Button from "@components/Button";
-import TransparentDetailsBtn from "@screens/InvestToPoolInterface/TransparentDetailsBtn";
-import { useNavigate } from "react-router-dom";
-import centerEllipsis from "@src/utils/centerEllipsis";
-import TextButton from "@components/TextButton";
-import { EXPLORER_URL, ROUTES } from "@src/constants";
-import { useStores } from "@stores";
-import SquareTokenIcon from "@components/SquareTokenIcon";
+import { ROUTES } from "@src/constants";
 import useWindowSize from "@src/hooks/useWindowSize";
 import { themes } from "@src/themes/ThemeProvider";
+import centerEllipsis from "@src/utils/centerEllipsis";
+import { useStores } from "@stores";
+import { observer } from "mobx-react-lite";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {}
 

@@ -1,9 +1,8 @@
+import styled from "@emotion/styled";
 import AmountInput from "@src/components/AmountInput";
 import BigNumberInput from "@src/components/BigNumberInput";
 import BN from "@src/utils/BN";
-import styled from "@emotion/styled";
 import { useState } from "react";
-import Text from "@src/components/Text";
 
 interface IProps
   extends Omit<React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "onChange"> {

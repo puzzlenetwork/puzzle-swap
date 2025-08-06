@@ -1,24 +1,24 @@
-import styled from "@emotion/styled";
-import { observer } from "mobx-react-lite";
-import React, { useMemo, useState } from "react";
-import SearchTab from "./SearchTab";
-import SizedBox from "@components/SizedBox";
-import GridTable from "@components/GridTable";
 import Card from "@components/Card";
+import GridTable from "@components/GridTable";
+import SizedBox from "@components/SizedBox";
+import Text from "@components/Text";
+import { tokenCategoriesEnum } from "@components/TokensSelectModal/TokenSelectModal";
+import styled from "@emotion/styled";
+import { useExploreVM } from "@screens/Explore/ExploreVm";
+import MobileTokenTableRow from "@screens/Explore/MobileTokenTableRow";
+import { ReactComponent as SortDownIcon } from "@src/assets/icons/sortDown.svg";
+import { ReactComponent as NotFoundIcon } from "@src/assets/notFound.svg";
+import { Column, Row } from "@src/components/Flex";
+import { Pagination } from "@src/components/Pagination/Pagination";
 import { IToken, TOKENS_BY_ASSET_ID } from "@src/constants";
 import useWindowSize from "@src/hooks/useWindowSize";
-import DesktopTokenTableRow from "./DesktopTokenTableRow";
-import MobileTokenTableRow from "@screens/Explore/MobileTokenTableRow";
-import { useStores } from "@stores";
-import { tokenCategoriesEnum } from "@components/TokensSelectModal/TokenSelectModal";
-import { useExploreVM } from "@screens/Explore/ExploreVm";
-import { Column, Row } from "@src/components/Flex";
-import Text from "@components/Text";
-import { ReactComponent as NotFoundIcon } from "@src/assets/notFound.svg";
-import { ReactComponent as SortDownIcon } from "@src/assets/icons/sortDown.svg";
-import { TTokenStatistics } from "@stores/TokenStore";
 import BN from "@src/utils/BN";
-import { Pagination } from "@src/components/Pagination/Pagination";
+import { useStores } from "@stores";
+import { TTokenStatistics } from "@stores/TokenStore";
+import { observer } from "mobx-react-lite";
+import React, { useMemo, useState } from "react";
+import DesktopTokenTableRow from "./DesktopTokenTableRow";
+import SearchTab from "./SearchTab";
 
 interface IProps {}
 

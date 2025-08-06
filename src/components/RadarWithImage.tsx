@@ -1,5 +1,4 @@
-import React, { useRef } from "react";
-import { JSX } from "react";
+import React, { JSX } from "react";
 
 type TRadarWithImageProps = {
   points: { x: number; y: number }[];
