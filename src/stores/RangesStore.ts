@@ -28,6 +28,7 @@ export default class RangesStore {
     this.ranges.find((range) => range.address === address);
 
   loading: boolean = false;
+  setLoading = (loading: boolean) => (this.loading = loading);
 
   // Pagination state
   pagination = {
@@ -125,18 +126,18 @@ export default class RangesStore {
   // Sync ranges from API
   syncRanges = async () => {
     try {
-      this.loading = true;
+      this.setLoading(true);
       console.log("syncRanges");
       const { ranges, totalItems } = await rangesService.getRanges(
         this.paginationParams
       );
       console.log("ranges", ranges);
-      this.ranges = ranges.map((range) => new Range(range));
+      this.setRanges(ranges.map((range) => new Range(range)));
       this.setTotalItems(totalItems);
     } catch (error) {
       console.error("Error fetching ranges:", error);
     } finally {
-      this.loading = false;
+      this.setLoading(false);
     }
   };
 }
