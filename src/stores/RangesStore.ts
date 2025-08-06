@@ -119,7 +119,6 @@ export default class RangesStore {
   syncRanges = async () => {
     try {
       this.loading = true;
-      console.log("syncRanges");
       const { ranges, totalItems } = await rangesService.getRanges(this.paginationParams);
       console.log("ranges", ranges);
       this.ranges = ranges.map((range) => new Range(range));

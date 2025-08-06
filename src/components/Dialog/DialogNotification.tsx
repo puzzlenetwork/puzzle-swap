@@ -141,7 +141,7 @@ export const buildErrorDialogParams = ({
   return {
     title,
     description,
-    type: "error",
+    type: "warning",
     buttons: [
       () => (
         <Button size="medium" fixed onClick={onTryAgain}>

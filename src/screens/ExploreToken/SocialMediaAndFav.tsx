@@ -10,6 +10,7 @@ import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import ShareDialog from "@screens/ExploreToken/dialogs/ShareDialog";
+import { Store } from 'react-notifications-component';
 
 interface IProps {}
 
@@ -35,15 +36,33 @@ const SocialMediaAndFav: React.FC<IProps> = () => {
     const watchListText = 'Keep track of your favorite coins by turning on the "Watchlist" filter above the table';
     if (tokenStatus) {
       tokenStore.removeFromWatchList(assetId);
-      notificationStore.notify(watchListText, {
+      Store.addNotification({
+        title: `${TOKENS_BY_ASSET_ID[assetId].symbol} has been removed to the watchlist`,
+        message: watchListText,
         type: "info",
-        title: `${TOKENS_BY_ASSET_ID[assetId].symbol} has been removed to the watchlist`
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animate__animated", "animate__fadeIn"],
+        animationOut: ["animate__animated", "animate__fadeOut"],
+        dismiss: {
+          duration: 5000,
+          onScreen: true
+        }
       });
     } else {
       tokenStore.addToWatchList(assetId);
-      notificationStore.notify(watchListText, {
+      Store.addNotification({
+        title: `${TOKENS_BY_ASSET_ID[assetId].symbol} has been added to the watchlist`,
+        message: watchListText,
         type: "success",
-        title: `${TOKENS_BY_ASSET_ID[assetId].symbol} has been added to the watchlist`
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animate__animated", "animate__fadeIn"],
+        animationOut: ["animate__animated", "animate__fadeOut"],
+        dismiss: {
+          duration: 5000,
+          onScreen: true
+        }
       });
     }
   };

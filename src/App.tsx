@@ -34,6 +34,8 @@ import WithdrawFromRange from "./screens/Ranges/WithdrawFromRange";
 import CreateRange from "./screens/Ranges/CreateRange";
 import TradeInRange from "./screens/Ranges/TradeInRange";
 import { useAnalyticTracking } from "./hooks/useAnalyticTracking";
+import { ReactNotifications } from 'react-notifications-component';
+import 'react-notifications-component/dist/theme.css';
 
 const Root = styled(Column)`
   width: 100%;
@@ -53,6 +55,7 @@ const App: React.FC = () => {
   useAnalyticTracking("development");
   return (
     <Root>
+      <ReactNotifications />
       <LoginScreen />
       <Header />
       <Routes>

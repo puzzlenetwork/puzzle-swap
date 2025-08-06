@@ -12,7 +12,6 @@ function gtag(...args: any[]) {
 
 export function useAnalyticTracking(env: "development" | "production" = "development") {
   useEffect(() => {
-    console.log("process.env.REACT_APP_ENV", process.env.REACT_APP_ENV);
     if (process.env.REACT_APP_ENV !== env) return;
 
     // ---- Microsoft Clarity ----
@@ -63,6 +62,5 @@ export function useAnalyticTracking(env: "development" | "production" = "develop
         height="0" width="0" style="display:none;visibility:hidden"></iframe>`;
     document.body.appendChild(noscript);
 
-    console.log(`[Tracking] Microsoft Clarity + GA + GTM initialized in ${env} mode`);
   }, [env]);
 }
