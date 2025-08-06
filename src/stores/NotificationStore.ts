@@ -72,22 +72,19 @@ class NotificationStore {
       message: content,
       type: type,
       insert: "top",
-      container: "top-right",
-      animationIn: ["animate__animated", "animate__fadeIn"],
-      animationOut: ["animate__animated", "animate__slideOutRight"],
-      dismiss: {
-        duration: opts.duration ?? 5000,
-        onScreen: true
+      container: "top-left",
+      slidingExit: {
+        duration: 200,
+        timingFunction: 'ease-out',
+        delay: 0
       },
-      // style: {
-      //   boxShadow: "0px 8px 24px rgba(54, 56, 112, 0.16)",
-      //   borderRadius: 12,
-      //   padding: 16,
-      //   border: `1px solid ${
-      //     this.rootStore.accountStore.selectedTheme === THEME_TYPE.LIGHT_THEME ? "#F1F2FE" : "#363970"
-      //   }`,
-      //   ...opts.style
-      // }
+      dismiss: {
+        duration: opts.duration ?? 8000,
+        onScreen: true,
+        pauseOnHover: true,
+        showIcon: opts.closable !== false
+      },
+      userDefinedTypes: opts.style ? [{ name: 'custom-style', htmlClasses: [opts.style.toString()] }] : undefined,
     });
   }
 }

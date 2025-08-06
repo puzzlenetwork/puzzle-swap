@@ -6,7 +6,7 @@ import { autorun } from "mobx";
 import "normalize.css";
 import "rc-dialog/assets/index.css";
 import "rc-slider/assets/index.css";
-import "react-notifications-component/dist/theme.css";
+// import "react-notifications-component/dist/theme.css";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -15,6 +15,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import ThemeWrapper from "./themes/ThemeProvider";
+import './styles/customNotificationStyles.css';
 
 const relativeTime = require("dayjs/plugin/relativeTime");
 dayjs.extend(relativeTime);
