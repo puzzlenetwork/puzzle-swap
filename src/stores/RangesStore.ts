@@ -2,7 +2,6 @@ import { RootStore } from "./index";
 import { makeAutoObservable } from "mobx";
 import rangesService from "@src/services/rangesService";
 import { Range } from "@src/entities/Range";
-import { sortBy } from "lodash";
 
 export default class RangesStore {
   constructor(rootStore: RootStore) {
@@ -24,15 +23,16 @@ export default class RangesStore {
     } else {
       this.ranges.push(range);
     }
-  }
-  getRangeByAddress = (address: string) => this.ranges.find((range) => range.address === address);
+  };
+  getRangeByAddress = (address: string) =>
+    this.ranges.find((range) => range.address === address);
 
   loading: boolean = false;
 
   // Pagination state
   pagination = {
     page: 1,
-    size: 20,
+    size: 10,
   };
 
   // Total number of ranges
@@ -40,7 +40,10 @@ export default class RangesStore {
 
   // Filter state
   filter = {
-    sortBy: "fact_liquidity" as "fact_liquidity" | "earned" | "virtual_liquidity",
+    sortBy: "fact_liquidity" as
+      | "fact_liquidity"
+      | "earned"
+      | "virtual_liquidity",
     order: "desc" as "asc" | "desc",
   };
 
@@ -82,12 +85,12 @@ export default class RangesStore {
   setTimeRange = (timeRange: "all" | "1d" | "7d" | "30d" | "90d" | "1y") => {
     this.timeRange = timeRange;
     this.syncRanges();
-  }
+  };
 
   setMinLiquidity = (minLiquidity: number) => {
     this.minLiquidity = minLiquidity;
     this.syncRanges();
-  }
+  };
 
   setOnlyActiveRanges = (onlyActive: boolean | undefined) => {
     this.onlyActiveRanges = onlyActive;
@@ -102,7 +105,7 @@ export default class RangesStore {
   setUserAddress = (value?: string) => {
     this.userAddress = value;
     this.syncRanges();
-  }
+  };
 
   // Get pagination parameters for API calls
   get paginationParams() {
@@ -124,7 +127,9 @@ export default class RangesStore {
     try {
       this.loading = true;
       console.log("syncRanges");
-      const { ranges, totalItems } = await rangesService.getRanges(this.paginationParams);
+      const { ranges, totalItems } = await rangesService.getRanges(
+        this.paginationParams
+      );
       console.log("ranges", ranges);
       this.ranges = ranges.map((range) => new Range(range));
       this.setTotalItems(totalItems);
