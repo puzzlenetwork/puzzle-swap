@@ -21,11 +21,8 @@ const Root = styled.div`
   }
 `;
 
-const buildRateStr = (
-  symbol0: string | undefined,
-  symbol1: string | undefined,
-  price1?: string | number | undefined
-) => `1 ${symbol0} = ${price1 != null ? `~ ${price1}` : "–"} ${symbol1}`;
+const buildRateStr = (symbol0: string | undefined, symbol1: string | undefined, price1?: string | number | undefined) =>
+  `1 ${symbol0} = ${price1 != null ? `~ ${price1}` : "–"} ${symbol1}`;
 
 const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
   const [switched, setSwitched] = useState(false);
@@ -40,7 +37,7 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
     urlSearchParams.set("asset1", vm.assetId1);
     navigate({
       pathname: window.location.pathname,
-      search: `?${urlSearchParams.toString()}`,
+      search: `?${urlSearchParams.toString()}`
     });
     setSwitched((v) => !v);
   };
@@ -52,11 +49,7 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
   const rateStr = buildRateStr(
     token0?.name,
     token1?.name,
-    price != null && price.gt(0)
-      ? price?.toFormat(4)
-      : rate?.gt(0)
-      ? rate.toFormat(4)
-      : undefined
+    price != null && price.gt(0) ? price?.toFormat(4) : rate?.gt(0) ? rate.toFormat(4) : undefined
   );
   return (
     <Root {...rest} onClick={handleSwitch}>
@@ -66,7 +59,7 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
         className="icon"
         style={{
           transform: switched ? "rotate(360deg)" : "rotate(0)",
-          margin: "0 8px",
+          margin: "0 8px"
         }}
       />
       <SizedBox width={8} />

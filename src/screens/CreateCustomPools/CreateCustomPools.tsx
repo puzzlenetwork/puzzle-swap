@@ -59,10 +59,9 @@ const CreateCustomPoolsImpl: React.FC = () => {
             </Text>
             <SizedBox height={8} />
             <Subtitle size="medium">
-              Create a custom megapool using one of the NFT Artefacts. You can
-              set any pool composition and maximise your liquidity providing
-              rewards. Moreover, being an owner, you will earn a part of all
-              fees collected by the pool.
+              Create a custom megapool using one of the NFT Artefacts. You can set any pool composition and maximise
+              your liquidity providing rewards. Moreover, being an owner, you will earn a part of all fees collected by
+              the pool.
             </Subtitle>
             <SizedBox height={24} />
             <Grid>

@@ -1,13 +1,12 @@
-import styled from "@emotion/styled";
-import React from "react";
 import Card from "@components/Card";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
-import { useTradeInRangeVM } from "./TradeInRangeVM";
-import { observer } from "mobx-react-lite";
-import { Link } from "react-router-dom";
+import styled from "@emotion/styled";
 import Button from "@src/components/Button";
-import SizedBox from "@src/components/SizedBox";
+import { observer } from "mobx-react-lite";
+import React from "react";
+import { Link } from "react-router-dom";
+import { useTradeInRangeVM } from "./TradeInRangeVM";
 
 const Root = styled(Card)`
   display: flex;
@@ -40,7 +39,12 @@ const Details: React.FC = () => {
             Range Fact/Virtual Liquidity
           </Text>
           <Row>
-            <Text fitContent>${vm.range.liquidity.toFormat(0)} / <Text fitContent type="secondary" style={{ display: "inline" }}>${vm.range.virtualLiquidity.toFormat(0)}</Text></Text>
+            <Text fitContent>
+              ${vm.range.liquidity.toFormat(0)} /{" "}
+              <Text fitContent type="secondary" style={{ display: "inline" }}>
+                ${vm.range.virtualLiquidity.toFormat(0)}
+              </Text>
+            </Text>
           </Row>
         </Column>
         <Column crossAxisSize="max">

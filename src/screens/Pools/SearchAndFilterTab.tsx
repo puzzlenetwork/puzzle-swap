@@ -1,21 +1,21 @@
-import styled from "@emotion/styled";
-import React from "react";
-import Input from "@components/Input";
-import { observer } from "mobx-react-lite";
-import { useInvestVM } from "@screens/Pools/InvestVm";
-import Divider from "@src/components/Divider";
-import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
+import Img from "@components/Img";
+import Input from "@components/Input";
 import Select from "@components/Select";
-import useWindowSize from "@src/hooks/useWindowSize";
+import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
+import { useTheme } from "@emotion/react";
+import styled from "@emotion/styled";
+import { useInvestVM } from "@screens/Pools/InvestVm";
 import close from "@src/assets/icons/primaryBlue16CloseIcon.svg";
+import Divider from "@src/components/Divider";
 import { Row } from "@src/components/Flex";
 import { ROUTES } from "@src/constants";
-import { useNavigate } from "react-router-dom";
-import Img from "@components/Img";
-import { useTheme } from "@emotion/react";
+import useWindowSize from "@src/hooks/useWindowSize";
 import { useStores } from "@src/stores";
+import { observer } from "mobx-react-lite";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {}
 
@@ -78,18 +78,18 @@ const StyledRow = styled(Row)`
     flex-wrap: nowrap;
   }
 `;
-const categoriesOptions = [
-  { title: "All categories", key: "all" },
-  { title: "Stablecoins", key: "stable" },
-  { title: "Common", key: "common" },
-  { title: "PZ Indexes", key: "pz" },
-  { title: "Waves DeFi", key: "defi" },
-  // { title: "Waves Ducks", key: "duck" },
-  // {
-  //   title: "Global coins",
-  //   key: "global",
-  // },
-];
+// const categoriesOptions = [
+//   { title: "All categories", key: "all" },
+//   { title: "Stablecoins", key: "stable" },
+//   { title: "Common", key: "common" },
+//   { title: "PZ Indexes", key: "pz" },
+//   { title: "Waves DeFi", key: "defi" }
+//   // { title: "Waves Ducks", key: "duck" },
+//   // {
+//   //   title: "Global coins",
+//   //   key: "global",
+//   // },
+// ];
 
 const ClearBtn = styled(Text)`
   margin: 12px 12px 0 12px;
@@ -120,8 +120,7 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
   const vm = useInvestVM();
   const { poolsStore } = useStores();
   const navigate = useNavigate();
-  const isFiltersChosen =
-    vm.poolCategoryFilter !== 0 || vm.customPoolFilter !== 0;
+  const isFiltersChosen = vm.poolCategoryFilter !== 0 || vm.customPoolFilter !== 0;
   const handleClearFilters = () => {
     vm.setPoolCategoryFilter(0);
     vm.setCustomPoolFilter(0);
@@ -156,34 +155,23 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
             options={poolsStore.versionOptions}
             selected={poolsStore.versionOptions[poolsStore.versionFilter]}
             onSelect={({ key }) => {
-              const index = poolsStore.versionOptions.findIndex(
-                (o) => o.key === key
-              );
+              const index = poolsStore.versionOptions.findIndex((o) => o.key === key);
               poolsStore.setVersionFilter(index);
             }}
           />
           <SizedBox width={12} />
           <Select
             options={poolsStore.volumeByTimestamp}
-            selected={
-              poolsStore.volumeByTimestamp[poolsStore.volumeByTimeFilter]
-            }
+            selected={poolsStore.volumeByTimestamp[poolsStore.volumeByTimeFilter]}
             onSelect={({ key }) => {
-              const index = poolsStore.volumeByTimestamp.findIndex(
-                (o) => o.key === key
-              );
+              const index = poolsStore.volumeByTimestamp.findIndex((o) => o.key === key);
               poolsStore.setVolumeByTimeFilter(index);
             }}
           />
           <SizedBox width={12} />
         </StyledRow>
         {isFiltersChosen && (
-          <ClearBtn
-            fitContent
-            weight={500}
-            type="blue500"
-            onClick={handleClearFilters}
-          >
+          <ClearBtn fitContent weight={500} type="blue500" onClick={handleClearFilters}>
             Clear all
           </ClearBtn>
         )}
@@ -191,11 +179,7 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
       <SizedBox height={16} />
       {width && width <= 1080 && <Divider />}
       <Btn>
-        <Button
-          size="medium"
-          fixed={width != null && width <= 1080}
-          onClick={() => navigate(`${ROUTES.POOLS_CREATE}`)}
-        >
+        <Button size="medium" fixed={width != null && width <= 1080} onClick={() => navigate(`${ROUTES.POOLS_CREATE}`)}>
           <Img src={theme.images.icons.add} alt="add" />
           <SizedBox width={12} />
           Create a pool

@@ -48,11 +48,7 @@ const RoutingSchema: React.FC<IProps> = () => {
       <SizedBox width={12} />
       <div style={{ position: "relative" }}>
         {values?.length !== 1 && (
-          <Img
-            height="100%"
-            src={theme.images.icons.rightArrow}
-            style={{ position: "absolute", left: "-32px" }}
-          />
+          <Img height="100%" src={theme.images.icons.rightArrow} style={{ position: "absolute", left: "-32px" }} />
         )}
         <SquareTokenIcon src={vm.token1.logo} size="small" />
       </div>

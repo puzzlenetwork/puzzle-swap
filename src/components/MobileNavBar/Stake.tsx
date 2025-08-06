@@ -8,13 +8,7 @@ interface IProps extends React.SVGProps<SVGSVGElement> {
 const Compass: React.FC<IProps> = ({ active }) => {
   const theme = useTheme();
   return (
-    <svg
-      width="25"
-      height="24"
-      viewBox="0 0 25 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M12.6001 2L2.6001 7L12.6001 12L22.6001 7L12.6001 2Z"
         stroke={active ? theme.colors.blue500 : theme.colors.primary300}

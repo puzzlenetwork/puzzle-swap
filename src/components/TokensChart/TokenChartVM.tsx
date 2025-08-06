@@ -13,16 +13,9 @@ interface IProps {
   assetId1: string;
 }
 
-export const TokenChartVMProvider: React.FC<IProps> = ({
-  assetId0,
-  assetId1,
-  children,
-}) => {
+export const TokenChartVMProvider: React.FC<IProps> = ({ assetId0, assetId1, children }) => {
   const rootStore = useStores();
-  const store = useMemo(
-    () => new TokenChartVM(rootStore, assetId0, assetId1),
-    [assetId0, assetId1, rootStore]
-  );
+  const store = useMemo(() => new TokenChartVM(rootStore, assetId0, assetId1), [assetId0, assetId1, rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
 
@@ -78,8 +71,7 @@ class TokenChartVM {
   }
 
   selectedChartPeriod: keyof TChartDataRecord = "all";
-  setSelectedChartPeriod = (v: string) =>
-    (this.selectedChartPeriod = v as keyof TChartDataRecord);
+  setSelectedChartPeriod = (v: string) => (this.selectedChartPeriod = v as keyof TChartDataRecord);
 
   chartData: TChartDataRecord = {};
   setChartData = (period: keyof TChartDataRecord, value: TChartData) =>
@@ -100,9 +92,7 @@ class TokenChartVM {
     const marketsReq = `https://wavescap.com/api/markets/${this.assetId1}.json`;
     const { data: markets }: { data: any[] } = await axios.get(marketsReq);
 
-    const market = markets.find(
-      (m) => m.amount_asset_id === this.assetId0 && m.dapp != null
-    );
+    const market = markets.find((m) => m.amount_asset_id === this.assetId0 && m.dapp != null);
     if (market == null) {
       this.setChartLoading(false);
       this.setChartUnavailable(true);
@@ -119,7 +109,7 @@ class TokenChartVM {
       res.data.data.map(({ data }: any) => {
         return {
           date: data.time,
-          price: data.weightedAveragePrice,
+          price: data.weightedAveragePrice
         };
       })
     );

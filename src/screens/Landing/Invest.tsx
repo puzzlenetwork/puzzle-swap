@@ -96,20 +96,13 @@ const Invest: React.FC<IProps> = () => {
     <Wrapper>
       <Root>
         <TitleWrapper>
-          <Text
-            style={{ color: "#7075E9", textAlign: "center", marginBottom: 8 }}
-            weight={500}
-            fitContent
-          >
+          <Text style={{ color: "#7075E9", textAlign: "center", marginBottom: 8 }} weight={500} fitContent>
             INVEST
           </Text>
-          <Title>
-            Be one of the first liquidity providers in Puzzle MegaPools!
-          </Title>
+          <Title>Be one of the first liquidity providers in Puzzle MegaPools!</Title>
           <Row>
             <Subtitle style={{ paddingBottom: 0 }}>
-              Earn passive income for staking your portfolio and exchange fees
-              from puzzle volume at the same time.
+              Earn passive income for staking your portfolio and exchange fees from puzzle volume at the same time.
               <br />
               <Anchor href="https://medium.com/@izhur27/what-is-puzzle-swap-1e4b4af4ed17">
                 Learn more on our Medium.

@@ -27,8 +27,7 @@ const Root = styled.div<{ withClickLogic?: boolean }>`
   padding: 8px 24px;
 
   :hover {
-    background: ${({ withClickLogic, theme }) =>
-      withClickLogic && `${theme.colors.primary100}`};
+    background: ${({ withClickLogic, theme }) => withClickLogic && `${theme.colors.primary100}`};
   }
 
   .green {
@@ -78,20 +77,10 @@ const InvestRow: React.FC<IProps> = ({
         </Column>
       </Row>
       <Column alignItems="flex-end">
-        <Text
-          weight={500}
-          size="medium"
-          style={{ whiteSpace: "nowrap" }}
-          textAlign="right"
-        >
+        <Text weight={500} size="medium" style={{ whiteSpace: "nowrap" }} textAlign="right">
           {topRightInfo}
         </Text>
-        <Text
-          style={{ whiteSpace: "nowrap" }}
-          textAlign="right"
-          type="secondary"
-          size="small"
-        >
+        <Text style={{ whiteSpace: "nowrap" }} textAlign="right" type="secondary" size="small">
           {bottomRightInfo}
         </Text>
       </Column>

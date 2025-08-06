@@ -26,9 +26,9 @@ const GoBack: React.FC<IProps> = ({ link, text }) => {
       <Root alignItems="center">
         <img src={arrow} alt="back" />
         <SizedBox width={8} />
-          <Text weight={500} type="blue500">
-            {text}
-          </Text>
+        <Text weight={500} type="blue500">
+          {text}
+        </Text>
       </Root>
     </Link>
   );

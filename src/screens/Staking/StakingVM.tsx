@@ -6,11 +6,7 @@ import BN from "@src/utils/BN";
 import Balance from "@src/entities/Balance";
 import stakedPuzzleLogo from "@src/assets/tokens/staked-puzzle.svg";
 import nodeService from "@src/services/nodeService";
-import {
-  CONTRACT_ADDRESSES,
-  EXPLORER_URL,
-  TOKENS_BY_SYMBOL,
-} from "@src/constants";
+import { CONTRACT_ADDRESSES, EXPLORER_URL, TOKENS_BY_SYMBOL } from "@src/constants";
 
 interface IProps {
   children: React.ReactNode;
@@ -44,8 +40,7 @@ class StakingVM {
   private _setAddressStaked = (v: BN) => (this.addressStaked = v);
 
   private _setClaimedRewardInUSDN = (v: BN) => (this.claimedRewardInUSDN = v);
-  private _setClaimedRewardInPuzzle = (v: BN) =>
-    (this.claimedRewardInPuzzle = v);
+  private _setClaimedRewardInPuzzle = (v: BN) => (this.claimedRewardInPuzzle = v);
 
   private _setAvailableToClaim = (v: BN) => (this.availableToClaim = v);
   private _setLastClaimDate = (v: BN) => (this.lastClaimDate = v);
@@ -54,19 +49,14 @@ class StakingVM {
     makeAutoObservable(this);
     this.updateAddressStakingInfo();
     // when(() => accountStore.address !== null, this.updateAddressStakingInfo);
-    reaction(
-      () => this.rootStore.accountStore?.address,
-      this.updateAddressStakingInfo
-    );
+    reaction(() => this.rootStore.accountStore?.address, this.updateAddressStakingInfo);
   }
 
   public puzzleAmountToStake: BN = BN.ZERO;
-  public setPuzzleAmountToStake = (value: BN) =>
-    (this.puzzleAmountToStake = value);
+  public setPuzzleAmountToStake = (value: BN) => (this.puzzleAmountToStake = value);
 
   public puzzleAmountToUnstake: BN = BN.ZERO;
-  public setPuzzleAmountToUnStake = (value: BN) =>
-    (this.puzzleAmountToUnstake = value);
+  public setPuzzleAmountToUnStake = (value: BN) => (this.puzzleAmountToUnstake = value);
 
   public get puzzleToken() {
     return TOKENS_BY_SYMBOL.PUZZLE;
@@ -74,9 +64,7 @@ class StakingVM {
 
   get puzzleBalance() {
     const { accountStore } = this.rootStore;
-    const puzzleBalance = accountStore.findBalanceByAssetId(
-      this.puzzleToken.assetId
-    );
+    const puzzleBalance = accountStore.findBalanceByAssetId(this.puzzleToken.assetId);
     return puzzleBalance ? puzzleBalance : new Balance(this.puzzleToken);
   }
 
@@ -107,34 +95,26 @@ class StakingVM {
       claimedRewardInPuzzle: `${address}_${puzzle}_claimed`,
       globalLastCheckInterest: `global_lastCheck_${puzzle}_interest`,
       addressLastCheckInterest: `${address}_lastCheck_${puzzle}_interest`,
-      lastClaimDate: `${address}_${puzzle}_lastClaim`,
+      lastClaimDate: `${address}_${puzzle}_lastClaim`
     };
-    const response = await nodeService.nodeKeysRequest(
-      CONTRACT_ADDRESSES.staking,
-      Object.values(keysArray)
-    );
+    const response = await nodeService.nodeKeysRequest(CONTRACT_ADDRESSES.staking, Object.values(keysArray));
     //todo вынести в отдельную фунцию
-    const parsedNodeResponse = [...(response ?? [])].reduce<Record<string, BN>>(
-      (acc, { key, value }) => {
-        Object.entries(keysArray).forEach(([regName, regValue]) => {
-          const regexp = new RegExp(regValue);
-          if (regexp.test(key)) {
-            acc[regName] = new BN(value);
-          }
-        });
-        return acc;
-      },
-      {}
-    );
+    const parsedNodeResponse = [...(response ?? [])].reduce<Record<string, BN>>((acc, { key, value }) => {
+      Object.entries(keysArray).forEach(([regName, regValue]) => {
+        const regexp = new RegExp(regValue);
+        if (regexp.test(key)) {
+          acc[regName] = new BN(value);
+        }
+      });
+      return acc;
+    }, {});
 
     const globalStaked = parsedNodeResponse["globalStaked"];
     const addressStaked = parsedNodeResponse["addressStaked"];
     const claimedRewardInUSDN = parsedNodeResponse["claimedRewardInUSDN"];
     const claimedRewardInPuzzle = parsedNodeResponse["claimedRewardInPuzzle"];
-    const globalLastCheckInterest =
-      parsedNodeResponse["globalLastCheckInterest"];
-    const addressLastCheckInterest =
-      parsedNodeResponse["addressLastCheckInterest"];
+    const globalLastCheckInterest = parsedNodeResponse["globalLastCheckInterest"];
+    const addressLastCheckInterest = parsedNodeResponse["addressLastCheckInterest"];
     const lastClaimDate = parsedNodeResponse["lastClaimDate"];
 
     this._setGlobalStaked(globalStaked);
@@ -159,8 +139,8 @@ class StakingVM {
         payment: [],
         call: {
           function: "claimReward",
-          args: [],
-        },
+          args: []
+        }
       })
       .then((txId) => {
         if (txId == null) return;
@@ -168,13 +148,13 @@ class StakingVM {
           type: "success",
           title: `Success`,
           link: `${EXPLORER_URL}/transactions/${txId}`,
-          linkTitle: "View on Explorer",
+          linkTitle: "View on Explorer"
         });
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
           type: "error",
-          title: "Transaction is not completed",
+          title: "Transaction is not completed"
         });
       })
       .then(this.updateAddressStakingInfo)
@@ -185,42 +165,34 @@ class StakingVM {
     this._setLoading(true);
     const { puzzleToken, puzzleAmountToStake, rootStore } = this;
     const { accountStore, notificationStore } = rootStore;
-    const puzzleAmount = BN.formatUnits(
-      this.puzzleAmountToStake,
-      this.puzzleToken.decimals
-    ).toFormat(2);
+    const puzzleAmount = BN.formatUnits(this.puzzleAmountToStake, this.puzzleToken.decimals).toFormat(2);
     await accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.staking ?? "",
         payment: [
           {
             assetId: puzzleToken.assetId,
-            amount: puzzleAmountToStake.toString(),
-          },
+            amount: puzzleAmountToStake.toString()
+          }
         ],
         call: {
           function: "stake",
-          args: [],
-        },
+          args: []
+        }
       })
       .then((txId) => {
-        this._setAddressStaked(
-          this.addressStaked?.plus(this.puzzleAmountToStake) ?? BN.ZERO
-        );
-        notificationStore.notify(
-          `You can track your reward on the staking page`,
-          {
-            type: "success",
-            title: `${puzzleAmount} PUZZLE successfully staked`,
-            link: `${EXPLORER_URL}/transactions/${txId}`,
-            linkTitle: "View on Explorer",
-          }
-        );
+        this._setAddressStaked(this.addressStaked?.plus(this.puzzleAmountToStake) ?? BN.ZERO);
+        notificationStore.notify(`You can track your reward on the staking page`, {
+          type: "success",
+          title: `${puzzleAmount} PUZZLE successfully staked`,
+          link: `${EXPLORER_URL}/transactions/${txId}`,
+          linkTitle: "View on Explorer"
+        });
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
           type: "error",
-          title: "Transaction is not completed",
+          title: "Transaction is not completed"
         });
       })
       .then(this.updateAddressStakingInfo)
@@ -231,10 +203,7 @@ class StakingVM {
     this._setLoading(true);
     const { puzzleAmountToUnstake, rootStore } = this;
     const { accountStore, notificationStore } = rootStore;
-    const puzzleAmount = BN.formatUnits(
-      this.puzzleAmountToUnstake,
-      this.puzzleToken.decimals
-    ).toFormat(2);
+    const puzzleAmount = BN.formatUnits(this.puzzleAmountToUnstake, this.puzzleToken.decimals).toFormat(2);
     await accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.staking ?? "",
@@ -244,32 +213,25 @@ class StakingVM {
           args: [
             {
               type: "integer",
-              value: puzzleAmountToUnstake.toString(),
-            },
-          ],
-        },
+              value: puzzleAmountToUnstake.toString()
+            }
+          ]
+        }
       })
       .then((txId) => {
+        txId && this._setAddressStaked(this.addressStaked?.minus(this.puzzleAmountToUnstake ?? BN.ZERO) ?? BN.ZERO);
         txId &&
-          this._setAddressStaked(
-            this.addressStaked?.minus(this.puzzleAmountToUnstake ?? BN.ZERO) ??
-              BN.ZERO
-          );
-        txId &&
-          notificationStore.notify(
-            `You can track your available to trade PUZZLE balance in the header section`,
-            {
-              type: "success",
-              title: `${puzzleAmount} PUZZLE successfully unstaked`,
-              link: `${EXPLORER_URL}/transactions/${txId}`,
-              linkTitle: "View on Explorer",
-            }
-          );
+          notificationStore.notify(`You can track your available to trade PUZZLE balance in the header section`, {
+            type: "success",
+            title: `${puzzleAmount} PUZZLE successfully unstaked`,
+            link: `${EXPLORER_URL}/transactions/${txId}`,
+            linkTitle: "View on Explorer"
+          });
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
           type: "error",
-          title: "Transaction is not completed",
+          title: "Transaction is not completed"
         });
       })
       .then(this.updateAddressStakingInfo)
@@ -278,18 +240,11 @@ class StakingVM {
 
   get tokenStakeInputInfo() {
     const { address } = this.rootStore.accountStore;
-    const rate =
-      this.rootStore.poolsStore.usdtRate(this.puzzleToken.assetId, 1) ??
-      BN.ZERO;
+    const rate = this.rootStore.poolsStore.usdtRate(this.puzzleToken.assetId, 1) ?? BN.ZERO;
     const usdnEquivalentValue = rate.times(this.puzzleAmountToStake);
-    const usdnEquivalent =
-      "~ $ " +
-      BN.formatUnits(usdnEquivalentValue, this.puzzleToken.decimals).toFixed(0);
+    const usdnEquivalent = "~ $ " + BN.formatUnits(usdnEquivalentValue, this.puzzleToken.decimals).toFixed(0);
     const onMaxClick =
-      address != null
-        ? () =>
-            this.setPuzzleAmountToStake(this.puzzleBalance.balance ?? BN.ZERO)
-        : undefined;
+      address != null ? () => this.setPuzzleAmountToStake(this.puzzleBalance.balance ?? BN.ZERO) : undefined;
     return {
       selectable: false,
       decimals: this.puzzleToken.decimals,
@@ -298,28 +253,21 @@ class StakingVM {
       assetId: this.puzzleToken.assetId,
       balances: [this.puzzleBalance],
       onMaxClick,
-      usdnEquivalent,
+      usdnEquivalent
     };
   }
 
   get unstakeTokenInputInfo() {
     const { address } = this.rootStore.accountStore;
-    const rate =
-      this.rootStore.poolsStore.usdtRate(this.puzzleToken.assetId, 1) ??
-      BN.ZERO;
+    const rate = this.rootStore.poolsStore.usdtRate(this.puzzleToken.assetId, 1) ?? BN.ZERO;
     const usdnEquivalentValue = rate.times(this.puzzleAmountToUnstake);
-    const usdnEquivalent =
-      "~ $ " +
-      BN.formatUnits(usdnEquivalentValue, this.puzzleToken.decimals).toFixed(0);
+    const usdnEquivalent = "~ $ " + BN.formatUnits(usdnEquivalentValue, this.puzzleToken.decimals).toFixed(0);
     const balances = new Balance({
       ...this.puzzleBalance,
       balance: this.addressStaked ?? BN.ZERO,
-      logo: stakedPuzzleLogo,
+      logo: stakedPuzzleLogo
     });
-    const onMaxClick =
-      address != null
-        ? () => this.setPuzzleAmountToUnStake(this.addressStaked ?? BN.ZERO)
-        : undefined;
+    const onMaxClick = address != null ? () => this.setPuzzleAmountToUnStake(this.addressStaked ?? BN.ZERO) : undefined;
     return {
       selectable: false,
       decimals: this.puzzleToken.decimals,
@@ -328,7 +276,7 @@ class StakingVM {
       assetId: this.puzzleToken.assetId,
       balances: [balances],
       onMaxClick,
-      usdnEquivalent,
+      usdnEquivalent
     };
   }
 

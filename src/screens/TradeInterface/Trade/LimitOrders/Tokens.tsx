@@ -41,7 +41,7 @@ const Tokens: React.FC<IProps> = () => {
     if (assetId === vm.assetId0) {
       notificationStore.notify("You can't choose same assets", {
         type: "error",
-        title: "Warning",
+        title: "Warning"
       });
       return;
     }
@@ -49,7 +49,7 @@ const Tokens: React.FC<IProps> = () => {
     urlSearchParams.set("asset0", assetId);
     navigate({
       pathname: window.location.pathname,
-      search: `?${urlSearchParams.toString()}`,
+      search: `?${urlSearchParams.toString()}`
     });
     vm.setAssetId0(assetId);
     vm.setPrice(BN.ZERO);
@@ -59,7 +59,7 @@ const Tokens: React.FC<IProps> = () => {
     if (assetId === vm.assetId1) {
       notificationStore.notify("You can't choose same assets", {
         type: "error",
-        title: "Warning",
+        title: "Warning"
       });
       return;
     }
@@ -67,7 +67,7 @@ const Tokens: React.FC<IProps> = () => {
     urlSearchParams.set("asset1", assetId);
     navigate({
       pathname: window.location.pathname,
-      search: `?${urlSearchParams.toString()}`,
+      search: `?${urlSearchParams.toString()}`
     });
     vm.setAssetId1(assetId);
     vm.setPrice(BN.ZERO);
@@ -81,7 +81,7 @@ const Tokens: React.FC<IProps> = () => {
     urlSearchParams.set("asset1", vm.assetId1);
     navigate({
       pathname: window.location.pathname,
-      search: `?${urlSearchParams.toString()}`,
+      search: `?${urlSearchParams.toString()}`
     });
     swapVm.setAssetId0(vm.assetId0);
     swapVm.setAssetId1(vm.assetId1);
@@ -96,17 +96,9 @@ const Tokens: React.FC<IProps> = () => {
         balanceError={vm.amountError || vm.totalError}
       />
       <SizedBox height={8} style={{ position: "relative" }}>
-        <ArrowImg
-          onClick={handleSwitch}
-          src={theme.images.icons.limitOrderArrow}
-        />
+        <ArrowImg onClick={handleSwitch} src={theme.images.icons.limitOrderArrow} />
       </SizedBox>
-      <Token
-        badge="You buy"
-        assetId={vm.assetId1}
-        balances={accountStore.balances}
-        setAssetId={handleSetAssetId1}
-      />
+      <Token badge="You buy" assetId={vm.assetId1} balances={accountStore.balances} setAssetId={handleSetAssetId1} />
     </Root>
   );
 };

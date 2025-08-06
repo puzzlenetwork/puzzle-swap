@@ -36,12 +36,7 @@ const LearnMoreTokenChartButtons = () => {
   return (
     <Root>
       {[vm.asset0, vm.asset1].map((t) => (
-        <Card
-          key={t.assetId}
-          alignItems="center"
-          justifyContent="space-between"
-          flexDirection="row"
-        >
+        <Card key={t.assetId} alignItems="center" justifyContent="space-between" flexDirection="row">
           <Row alignItems="center">
             <SquareTokenIcon size="small" src={t.logo} />
             <SizedBox width={12} />
@@ -55,11 +50,7 @@ const LearnMoreTokenChartButtons = () => {
             </Column>
             <SizedBox width={12} />
           </Row>
-          <Link
-            src={link}
-            alt="link"
-            onClick={() => navigate(`/explore/token/${t.assetId}`)}
-          />
+          <Link src={link} alt="link" onClick={() => navigate(`/explore/token/${t.assetId}`)} />
         </Card>
       ))}
     </Root>

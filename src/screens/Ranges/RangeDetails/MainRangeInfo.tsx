@@ -68,8 +68,7 @@ const WSCAN_EXPLORER_URL = "https://wscan.io/";
 const MainRangeInfo: React.FC<IProps> = ({ isMobile }) => {
   const vm = useRangeDetailsInterfaceVM();
   const navigate = useNavigate();
-  const handleSmartContractClick = () =>
-    window.open(`${WSCAN_EXPLORER_URL}${vm.range!.address}`);
+  const handleSmartContractClick = () => window.open(`${WSCAN_EXPLORER_URL}${vm.range!.address}`);
   const whiteText = { color: themes.lightTheme.colors.white };
   return (
     <ShortInfo pic={bg}>
@@ -100,12 +99,7 @@ const MainRangeInfo: React.FC<IProps> = ({ isMobile }) => {
               Range Creator
             </Text>
             <Text type="light" size="medium">
-              <TextButton
-                prefix={link}
-                onClick={() =>
-                  window.open(`${WSCAN_EXPLORER_URL}${vm.range?.owner}`)
-                }
-              >
+              <TextButton prefix={link} onClick={() => window.open(`${WSCAN_EXPLORER_URL}${vm.range?.owner}`)}>
                 {centerEllipsis(vm.range?.owner ?? "", 8)}
               </TextButton>
             </Text>

@@ -32,19 +32,13 @@ const YourRange: React.FC<IProps> = () => {
           <SizedBox width={12} />
           <Column>
             <Text weight={500}>Range {vm.domain}</Text>
-            <Text type="secondary">
-              Swap fees: {vm.swapFee.div(10).toString()}%
-            </Text>
+            <Text type="secondary">Swap fees: {vm.swapFee.div(10).toString()}%</Text>
           </Column>
         </Row>
         <SizedBox height={12} />
         <Row style={{ flexWrap: "wrap", gap: 4 }}>
           {vm.rangeAssets.map((asset, index) => (
-            <TokenInCreateRangePreview
-              key={index}
-              asset={asset}
-              isBaseToken={index === 0}
-            />
+            <TokenInCreateRangePreview key={index} asset={asset} isBaseToken={index === 0} />
           ))}
         </Row>
       </Card>

@@ -84,10 +84,7 @@ const MultipleTokensAddLiquidity: React.FC<IProps> = () => {
               balance.balance &&
               BN.formatUnits(balance?.balance, TOKENS_BY_ASSET_ID[token.assetId].decimals);
 
-            const depositAmount = (
-              vm.tokensToDepositAmounts
-              && vm.tokensToDepositAmounts[token.assetId]
-            ) ?? BN.ZERO;
+            const depositAmount = (vm.tokensToDepositAmounts && vm.tokensToDepositAmounts[token.assetId]) ?? BN.ZERO;
             return (
               <DepositCompositionRow
                 key={i}
@@ -115,11 +112,7 @@ const MultipleTokensAddLiquidity: React.FC<IProps> = () => {
       </HideDesktop>
       <FixedMobileBlock>
         {!vm.loading ? (
-          <Button
-            fixed
-            disabled={!vm.canDepositMultipleTokens}
-            onClick={vm.depositMultipleTokens}
-          >
+          <Button fixed disabled={!vm.canDepositMultipleTokens} onClick={vm.depositMultipleTokens}>
             Deposit {vm.totalAmountToDeposit ?? "$ 0.0"}
           </Button>
         ) : (

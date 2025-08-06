@@ -23,10 +23,7 @@ const Investments: React.FC = () => {
   const { accountStore, poolsStore, stakeStore } = useStores();
   const navigate = useNavigate();
   const vm = useWalletVM();
-  if (
-    poolsStore.investedInPools == null ||
-    stakeStore.stakedAccountPuzzle == null
-  )
+  if (poolsStore.investedInPools == null || stakeStore.stakedAccountPuzzle == null)
     return (
       <Root style={{ padding: "0 24px" }}>
         <Skeleton height={56} style={{ marginBottom: 8 }} count={3} />
@@ -50,12 +47,8 @@ const Investments: React.FC = () => {
                   logo={item.logo}
                   topLeftInfo={item.name}
                   topRightInfo={item.amount}
-                  bottomRightInfo={
-                    "$ " + (item.usdnEquivalent.eq(0) ? "0.00" : usdnEquivalent)
-                  }
-                  bottomLeftInfo={
-                    "$ " + (item.nuclearValue.eq(0) ? "0.00" : nuclearValue)
-                  }
+                  bottomRightInfo={"$ " + (item.usdnEquivalent.eq(0) ? "0.00" : usdnEquivalent)}
+                  bottomLeftInfo={"$ " + (item.nuclearValue.eq(0) ? "0.00" : nuclearValue)}
                 />
               </Link>
             );
@@ -65,12 +58,7 @@ const Investments: React.FC = () => {
         <Column justifyContent="center" alignItems="center" crossAxisSize="max">
           <SizedBox height={16} />
           <NotFoundIcon />
-          <Text
-            type="secondary"
-            size="medium"
-            textAlign="center"
-            style={{ whiteSpace: "pre-wrap" }}
-          >
+          <Text type="secondary" size="medium" textAlign="center" style={{ whiteSpace: "pre-wrap" }}>
             {`You didn’t invest yet.Go to Pools page\nto provide liquidity and get rewards,\n or stake puzzle on the Stake page.`}
           </Text>
           <SizedBox height={16} />

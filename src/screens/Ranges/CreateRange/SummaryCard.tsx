@@ -1,15 +1,14 @@
-import React from "react";
-import styled from "@emotion/styled";
 import Card from "@components/Card";
-import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import { observer } from "mobx-react-lite";
-import { useCreateRangeVM } from "./CreateRangeVm";
-import { Row } from "@src/components/Flex";
+import Text from "@components/Text";
+import styled from "@emotion/styled";
 import Divider from "@src/components/Divider";
-import { Cell, Pie, PieChart } from "recharts";
+import { Row } from "@src/components/Flex";
 import RangeChart from "@src/components/RangeChart";
 import RoundTokenIcon from "@src/components/RoundTokenIcon";
+import { observer } from "mobx-react-lite";
+import React from "react";
+import { useCreateRangeVM } from "./CreateRangeVm";
 
 interface IProps {}
 
@@ -39,13 +38,11 @@ const GrayCard = styled(Card)`
 
 const SummaryCard: React.FC<IProps> = () => {
   const vm = useCreateRangeVM();
-  const data = vm.rangeAssets?.reduce<{ name: string; value: number }[]>(
-    (acc, { asset, share }) => [
-      ...acc,
-      { name: asset.symbol, value: share.toNumber() },
-    ],
-    []
-  );
+  // TODO: fix this
+  // const data = vm.rangeAssets?.reduce<{ name: string; value: number }[]>(
+  //   (acc, { asset, share }) => [...acc, { name: asset.symbol, value: share.toNumber() }],
+  //   []
+  // );
 
   return (
     <Root>
@@ -53,30 +50,17 @@ const SummaryCard: React.FC<IProps> = () => {
         Summary
       </Text>
       <SizedBox height={8} />
-      <Card
-        justifyContent="center"
-        alignItems="center"
-        paddingDesktop="0px"
-        paddingMobile="0px"
-      >
+      <Card justifyContent="center" alignItems="center" paddingDesktop="0px" paddingMobile="0px">
         <SizedBox height={40} />
         <GrayCard>
-          <RangeChart
-            assetsWithLeverage={vm.assetsWithLeverage}
-            size={180}
-          />
+          <RangeChart assetsWithLeverage={vm.assetsWithLeverage} size={180} />
         </GrayCard>
 
         <SizedBox height={12} />
 
         <Legend>
           {vm.rangeAssets.map(({ asset }, index) => (
-            <Row
-              key={index + "summary-card"}
-              justifyContent="center"
-              alignItems="center"
-              mainAxisSize="fit-content"
-            >
+            <Row key={index + "summary-card"} justifyContent="center" alignItems="center" mainAxisSize="fit-content">
               <RoundTokenIcon src={asset.logo} />
               <SizedBox width={4} />
               <Text size="small" type="primary" weight={500} fitContent>

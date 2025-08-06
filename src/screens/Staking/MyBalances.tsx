@@ -31,13 +31,8 @@ const Container = styled(Card)`
 const MyBalances: React.FC = () => {
   const { accountStore } = useStores();
   const vm = useStakingVM();
-  const staked = vm.addressStaked
-    ? BN.formatUnits(vm.addressStaked, vm.puzzleToken.decimals).toFormat(2)
-    : null;
-  const available = BN.formatUnits(
-    vm.puzzleBalance.balance ?? BN.ZERO,
-    vm.puzzleToken.decimals
-  );
+  const staked = vm.addressStaked ? BN.formatUnits(vm.addressStaked, vm.puzzleToken.decimals).toFormat(2) : null;
+  const available = BN.formatUnits(vm.puzzleBalance.balance ?? BN.ZERO, vm.puzzleToken.decimals);
   return (
     <Root>
       <Text weight={500} type="secondary">
@@ -53,8 +48,7 @@ const MyBalances: React.FC = () => {
               Available to stake
             </Text>
             <Text weight={500}>
-              {vm.puzzleBalance.balance == null &&
-              accountStore.address != null ? (
+              {vm.puzzleBalance.balance == null && accountStore.address != null ? (
                 <Skeleton height={16} width={110} />
               ) : (
                 `${available.toFormat(2)}`
@@ -69,9 +63,7 @@ const MyBalances: React.FC = () => {
             <Text type="secondary" size="small" style={{ marginBottom: 2 }}>
               Staked balance
             </Text>
-            <Text weight={500}>
-              {staked != null ? staked : <Skeleton height={16} width={110} />}
-            </Text>
+            <Text weight={500}>{staked != null ? staked : <Skeleton height={16} width={110} />}</Text>
           </Column>
         </Row>
       </Container>

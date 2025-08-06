@@ -23,12 +23,9 @@ const MaxSellOffSelector = ({ value, onUpdate }: IParams) => {
 
   return (
     <>
-      <Button
-        onClick={handleOpenModal}
-        size="small"
-        kind="secondary"
-        fixed
-      >{(value && value.lt(maxValue)) ? `Max Sell-Off: ${value.toNumber()}%` : "Add Max Sell-Off (Optional)"}</Button>
+      <Button onClick={handleOpenModal} size="small" kind="secondary" fixed>
+        {value && value.lt(maxValue) ? `Max Sell-Off: ${value.toNumber()}%` : "Add Max Sell-Off (Optional)"}
+      </Button>
       <Dialog
         visible={modalOpened}
         style={{ maxWidth: "360px" }}
@@ -38,28 +35,30 @@ const MaxSellOffSelector = ({ value, onUpdate }: IParams) => {
         onClose={() => setModalOpened(false)}
         title="Add Max Sell-Off (Optional)"
       >
-        <Text size="medium">Sell-Off limits how much % of the pool can be sold in 100 minutes. Protects liquidity providers.</Text>
+        <Text size="medium">
+          Sell-Off limits how much % of the pool can be sold in 100 minutes. Protects liquidity providers.
+        </Text>
         <SizedBox height={24} />
-        <Text type="primary" size="large" style={{ textAlign: "center" }}>{(value ?? new BN(100)).toNumber() }%</Text>
+        <Text type="primary" size="large" style={{ textAlign: "center" }}>
+          {(value ?? new BN(100)).toNumber()}%
+        </Text>
         <SizedBox height={16} />
         <Slider
           min={0}
           max={maxValue}
           step={1}
           value={(value ?? new BN(100)).toNumber()}
-          onChange={(v: number | number[]) => {onUpdate && onUpdate(new BN(v.toString()))}}
+          onChange={(v: number | number[]) => {
+            onUpdate && onUpdate(new BN(v.toString()));
+          }}
         />
         <SizedBox height={24} />
-        <Button
-          onClick={() => setModalOpened(false)}
-          size="medium"
-          fixed
-        >
+        <Button onClick={() => setModalOpened(false)} size="medium" fixed>
           Confirm
         </Button>
       </Dialog>
     </>
-  )
-}
+  );
+};
 
 export default MaxSellOffSelector;

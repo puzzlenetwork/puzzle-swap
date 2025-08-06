@@ -9,14 +9,14 @@ import {
   ROUTES,
   TOKENS_BY_ASSET_ID,
   TOKENS_BY_SYMBOL,
-  TOKENS_LIST,
+  TOKENS_LIST
 } from "@src/constants";
 import BN from "@src/utils/BN";
 import {
   buildDialogParams,
   buildErrorDialogParams,
   buildSuccessNFTSaleDialogParams,
-  IDialogNotificationProps,
+  IDialogNotificationProps
 } from "@components/Dialog/DialogNotification";
 import nodeService from "@src/services/nodeService";
 import poolsService from "@src/services/poolsService";
@@ -83,22 +83,18 @@ class CreateCustomPoolsVm {
   initialize = (initData: IInitData | null) => {
     if (initData != null) {
       if (initData.assets != null) {
-        this.poolsAssets = initData.assets?.map(
-          ({ assetId, share, locked }) => ({
-            share: new BN(share).times(10),
-            locked,
-            asset: TOKENS_BY_ASSET_ID[assetId],
-          })
-        );
+        this.poolsAssets = initData.assets?.map(({ assetId, share, locked }) => ({
+          share: new BN(share).times(10),
+          locked,
+          asset: TOKENS_BY_ASSET_ID[assetId]
+        }));
       }
     } else {
       this.setDefaultPoolsAssets();
     }
     this.logo = initData?.logo ?? null;
     this.swapFee =
-      initData?.swapFee != null && !isNaN(initData?.swapFee)
-        ? new BN(initData?.swapFee).times(10)
-        : new BN(20);
+      initData?.swapFee != null && !isNaN(initData?.swapFee) ? new BN(initData?.swapFee).times(10) : new BN(20);
     this.fileName = initData?.fileName ?? null;
     this.title = initData?.title ?? "";
     this.step = initData?.step ?? 0;
@@ -128,17 +124,14 @@ class CreateCustomPoolsVm {
 
   get isThereUsdnOrPuzzle() {
     return (
-      this.poolsAssets.filter(({ asset }) =>
-        ["XTN", "PUZZLE", "USDT", "WAVES", "ROME"].includes(asset?.symbol)
-      ).length > 0
+      this.poolsAssets.filter(({ asset }) => ["XTN", "PUZZLE", "USDT", "WAVES", "ROME"].includes(asset?.symbol))
+        .length > 0
     );
   }
 
   get requiredTokensCorrectShare() {
     return this.poolsAssets
-      .filter(({ asset }) =>
-        ["XTN", "PUZZLE", "USDT", "WAVES", "ROME"].includes(asset?.symbol)
-      )
+      .filter(({ asset }) => ["XTN", "PUZZLE", "USDT", "WAVES", "ROME"].includes(asset?.symbol))
       .some(({ share }) => share.gte(20));
   }
 
@@ -175,12 +168,7 @@ class CreateCustomPoolsVm {
 
   get minStep() {
     if (this.rootStore.accountStore.address == null) return 0;
-    const step = [
-      this.correct0,
-      this.correct1,
-      this.correct2,
-      this.correct3,
-    ].indexOf(false);
+    const step = [this.correct0, this.correct1, this.correct2, this.correct3].indexOf(false);
     return step === -1 ? this.step : step;
   }
 
@@ -190,13 +178,13 @@ class CreateCustomPoolsVm {
       {
         asset: TOKENS_BY_SYMBOL.PUZZLE,
         share: new BN(500),
-        locked: false,
+        locked: false
       },
       {
         asset: TOKENS_BY_SYMBOL.USDT,
         share: new BN(500),
-        locked: false,
-      },
+        locked: false
+      }
     ];
   };
 
@@ -210,14 +198,8 @@ class CreateCustomPoolsVm {
   };
 
   syncShares = () => {
-    const unlockedPercent = this.poolsAssets.reduce(
-      (acc, v) => (v.locked ? acc.minus(v.share) : acc),
-      new BN(1000)
-    );
-    const unlockedCount = this.poolsAssets.reduce(
-      (acc, v) => (!v.locked ? acc + 1 : acc),
-      0
-    );
+    const unlockedPercent = this.poolsAssets.reduce((acc, v) => (v.locked ? acc.minus(v.share) : acc), new BN(1000));
+    const unlockedCount = this.poolsAssets.reduce((acc, v) => (!v.locked ? acc + 1 : acc), 0);
     const averageUnlockedPercent = unlockedPercent.div(unlockedCount).div(10);
     this.poolsAssets.forEach((v, i) => {
       if (v.locked) return;
@@ -239,38 +221,30 @@ class CreateCustomPoolsVm {
           title: "Your max to provide is too low for this pool composition",
           type: "error",
           onClickText: "Reset the composition",
-          onClick: () => this.setDefaultPoolsAssets(),
+          onClick: () => this.setDefaultPoolsAssets()
         }
       );
     }
   };
 
   removeAssetFromPool = (assetId: string) => {
-    const indexOfObject = this.poolsAssets.findIndex(
-      ({ asset }) => asset.assetId === assetId
-    );
+    const indexOfObject = this.poolsAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.poolsAssets.splice(indexOfObject, 1);
     this.syncShares();
   };
   changeAssetShareInPool = (assetId: string, share: BN) => {
     if (share.gt(1000)) share = new BN(1000);
-    const indexOfObject = this.poolsAssets.findIndex(
-      ({ asset }) => asset.assetId === assetId
-    );
+    const indexOfObject = this.poolsAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.poolsAssets[indexOfObject].share = share;
   };
   changeAssetInShareInPool = (oldAssetId: string, newAssetId: string) => {
-    const indexOfObject = this.poolsAssets.findIndex(
-      ({ asset }) => asset.assetId === oldAssetId
-    );
+    const indexOfObject = this.poolsAssets.findIndex(({ asset }) => asset.assetId === oldAssetId);
     const asset = this.tokensToAdd?.find((b) => b.assetId === newAssetId);
     if (asset == null) return;
     this.poolsAssets[indexOfObject].asset = asset;
   };
   updateLockedState = (assetId: string, val: boolean) => {
-    const indexOfObject = this.poolsAssets.findIndex(
-      ({ asset }) => asset.assetId === assetId
-    );
+    const indexOfObject = this.poolsAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.poolsAssets[indexOfObject].locked = val;
   };
 
@@ -305,8 +279,7 @@ class CreateCustomPoolsVm {
   setLogo = (v: any) => (this.logo = v);
 
   public notificationParams: IDialogNotificationProps | null = null;
-  public setNotificationParams = (params: IDialogNotificationProps | null) =>
-    (this.notificationParams = params);
+  public setNotificationParams = (params: IDialogNotificationProps | null) => (this.notificationParams = params);
 
   get tokensToAdd() {
     const { accountStore } = this.rootStore;
@@ -319,16 +292,12 @@ class CreateCustomPoolsVm {
       if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
       return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
     });
-    const currentTokens = this.poolsAssets.reduce<string[]>(
-      (acc, v) => [...acc, v.asset.assetId],
-      []
-    );
+    const currentTokens = this.poolsAssets.reduce<string[]>((acc, v) => [...acc, v.asset.assetId], []);
     return balances.filter((b) => !currentTokens.includes(b.assetId));
   }
 
   artefactToSpend: IPaymentsArtefact | null = null;
-  setArtefactToSpend = (v: IPaymentsArtefact | null) =>
-    (this.artefactToSpend = v);
+  setArtefactToSpend = (v: IPaymentsArtefact | null) => (this.artefactToSpend = v);
 
   get isThereArtefacts() {
     const { nftForPoolCreation } = this.rootStore.nftStore;
@@ -339,10 +308,7 @@ class CreateCustomPoolsVm {
     const { accountStore } = this.rootStore;
     if (!this.canBuyNft) return;
     if (this.puzzleNFTPrice == null) return;
-    const amount = BN.parseUnits(
-      this.puzzleNFTPrice,
-      TOKENS_BY_SYMBOL.PUZZLE.decimals
-    );
+    const amount = BN.parseUnits(this.puzzleNFTPrice, TOKENS_BY_SYMBOL.PUZZLE.decimals);
     this._setLoading(true);
     await accountStore
       .invoke({
@@ -350,10 +316,10 @@ class CreateCustomPoolsVm {
         payment: [
           {
             assetId: TOKENS_BY_SYMBOL.PUZZLE.assetId,
-            amount: amount.toString(),
-          },
+            amount: amount.toString()
+          }
         ],
-        call: { function: "generateArtefact", args: [] },
+        call: { function: "generateArtefact", args: [] }
       })
       .then(async (txId) => {
         if (txId === null) return;
@@ -362,9 +328,7 @@ class CreateCustomPoolsVm {
         const nftId = transDetails.stateChanges.transfers[0].asset;
         const details = await nodeService.assetDetails(nftId);
         if (details == null) return;
-        const picture = PUZZLE_NFTS.find(
-          ({ name }) => name === details.name
-        )?.image;
+        const picture = PUZZLE_NFTS.find(({ name }) => name === details.name)?.image;
         this.setNotificationParams(
           buildSuccessNFTSaleDialogParams({
             name: details.name,
@@ -373,10 +337,10 @@ class CreateCustomPoolsVm {
               this.setArtefactToSpend({
                 name: details.name,
                 assetId: nftId,
-                picture: picture ?? "",
+                picture: picture ?? ""
               });
               this.setNotificationParams(null);
-            },
+            }
           })
         );
         await this.rootStore.nftStore.syncAccountNFTs();
@@ -387,7 +351,7 @@ class CreateCustomPoolsVm {
           buildErrorDialogParams({
             title: "Woops! Couldn't buy NFT",
             description: `Something went wrong while buying a NFT. Check if you have ${this.puzzleNFTPrice} PUZZLE and 0.005 WAVES (transaction fee) in your wallet to buy one.`,
-            onTryAgain: () => this.buyRandomArtefact(),
+            onTryAgain: () => this.buyRandomArtefact()
           })
         );
       })
@@ -407,16 +371,13 @@ class CreateCustomPoolsVm {
   get canBuyNft() {
     const { accountStore, nftStore } = this.rootStore;
     if (nftStore.totalPuzzleNftsAmount == null) return false;
-    const balance = accountStore.findBalanceByAssetId(
-      TOKENS_BY_SYMBOL.PUZZLE.assetId
-    );
+    const balance = accountStore.findBalanceByAssetId(TOKENS_BY_SYMBOL.PUZZLE.assetId);
     if (balance == null || this.puzzleNFTPrice == null) return false;
     return balance.balance?.gte(this.puzzleNFTPrice);
   }
 
   providedPercentOfPool: BN = new BN(100);
-  setProvidedPercentOfPool = (value: number | number[]) =>
-    (this.providedPercentOfPool = new BN(value.toString()));
+  setProvidedPercentOfPool = (value: number | number[]) => (this.providedPercentOfPool = new BN(value.toString()));
 
   get totalAmountToAddLiquidity(): string | null {
     return BN.ZERO.toFormat();
@@ -426,7 +387,7 @@ class CreateCustomPoolsVm {
     const assets = this.poolsAssets.map((t) => ({
       assetId: t.asset?.assetId,
       locked: t.locked,
-      share: t.share.div(10).toNumber(),
+      share: t.share.div(10).toNumber()
     }));
     const state = {
       assets,
@@ -437,7 +398,7 @@ class CreateCustomPoolsVm {
       fileName: this.fileName,
       fileSize: this.fileSize,
       maxStep: this.maxStep,
-      swapFee: this.swapFee.div(10).toNumber(),
+      swapFee: this.swapFee.div(10).toNumber()
     };
     localStorage.setItem("puzzle-custom-pool", JSON.stringify(state));
   };
@@ -446,19 +407,13 @@ class CreateCustomPoolsVm {
     const domain = this.domain;
     this.setNotificationParams(null);
     if (domain == null) {
-      this.rootStore.notificationStore.notify(
-        `There is no pool domain, try to refresh the page`,
-        { type: "error" }
-      );
+      this.rootStore.notificationStore.notify(`There is no pool domain, try to refresh the page`, { type: "error" });
       return;
     }
     this._setLoading(true);
     const pool = await poolsService.getPoolByDomain(domain);
     if (pool == null) {
-      this.rootStore.notificationStore.notify(
-        `Cannot find pool with domain ${domain}`,
-        { type: "error" }
-      );
+      this.rootStore.notificationStore.notify(`Cannot find pool with domain ${domain}`, { type: "error" });
       this._setLoading(false);
       return;
     }
@@ -468,7 +423,7 @@ class CreateCustomPoolsVm {
         dApp: pool.contractAddress,
         payment: this.assetsForInitFunction,
         fee: 100500000,
-        call: { function: "init", args: [] },
+        call: { function: "init", args: [] }
       })
       .then((txId) => console.log(txId))
       .then(() =>
@@ -506,8 +461,8 @@ class CreateCustomPoolsVm {
                 >
                   Back to AllRanges
                 </Button>
-              ),
-            ],
+              )
+            ]
           })
         )
       )
@@ -522,7 +477,7 @@ class CreateCustomPoolsVm {
           buildErrorDialogParams({
             title: "Error: Couldn't provide liquidity",
             description: e.message ?? e.toString(),
-            onTryAgain: () => this.provideLiquidityToPool,
+            onTryAgain: () => this.provideLiquidityToPool
           })
         );
       })
@@ -540,8 +495,8 @@ class CreateCustomPoolsVm {
         payment: [{ assetId: artefactToSpend.assetId, amount: "1" }],
         call: {
           function: "spendArtefact",
-          args: [{ type: "string", value: this.domain }],
-        },
+          args: [{ type: "string", value: this.domain }]
+        }
       });
     }
   };
@@ -574,10 +529,9 @@ class CreateCustomPoolsVm {
         }
       }
       if (artefactOriginTransactionId == null) {
-        this.rootStore.notificationStore.notify(
-          "Cannot find artefact origin txId. Try to reload the page",
-          { type: "error" }
-        );
+        this.rootStore.notificationStore.notify("Cannot find artefact origin txId. Try to reload the page", {
+          type: "error"
+        });
         this._setLoading(false);
         return;
       }
@@ -585,7 +539,7 @@ class CreateCustomPoolsVm {
 
       const assets = this.poolsAssets.map(({ asset, share }) => ({
         asset_id: asset.assetId,
-        share: share.div(10).toNumber(),
+        share: share.div(10).toNumber()
       }));
 
       await poolsService.createPool({
@@ -595,7 +549,7 @@ class CreateCustomPoolsVm {
         owner: address,
         assets,
         title: this.title,
-        artefactOriginTransactionId,
+        artefactOriginTransactionId
       });
       this.setStep(this.step + 1);
       this._setLoading(false);
@@ -603,7 +557,7 @@ class CreateCustomPoolsVm {
       this._setLoading(false);
       this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
         type: "error",
-        title: "Couldn't create pool",
+        title: "Couldn't create pool"
       });
     }
   };
@@ -612,36 +566,27 @@ class CreateCustomPoolsVm {
     const { poolsStore, accountStore } = this.rootStore;
     const { assetBalances, findBalanceByAssetId, address } = accountStore;
     if (assetBalances == null || address == null) return null;
-    return this.poolsAssets.reduce<Record<string, BN>>(
-      (acc, { asset, share }) => {
-        if (!asset) return acc;
-        const { assetId, decimals } = asset;
-        const tokenBalance = findBalanceByAssetId(assetId);
-        const rate = poolsStore.usdtRate(assetId) ?? BN.ZERO;
-        if (tokenBalance?.balance == null) return acc;
-        const balance = BN.formatUnits(tokenBalance.balance, decimals);
-        const maxDollarValue = balance.times(rate).div(share.div(1000));
-        return { ...acc, [assetId]: maxDollarValue };
-      },
-      {}
-    );
+    return this.poolsAssets.reduce<Record<string, BN>>((acc, { asset, share }) => {
+      if (!asset) return acc;
+      const { assetId, decimals } = asset;
+      const tokenBalance = findBalanceByAssetId(assetId);
+      const rate = poolsStore.usdtRate(assetId) ?? BN.ZERO;
+      if (tokenBalance?.balance == null) return acc;
+      const balance = BN.formatUnits(tokenBalance.balance, decimals);
+      const maxDollarValue = balance.times(rate).div(share.div(1000));
+      return { ...acc, [assetId]: maxDollarValue };
+    }, {});
   }
 
   get maxToProvide(): BN {
     if (this.tokensToProvideInUsdnMap == null) return BN.ZERO;
     if (!this.totalTakenShare.eq(1000)) return BN.ZERO;
-    const arr = Object.entries(this.tokensToProvideInUsdnMap).map(
-      ([a, maxDollarValue]) => ({
-        assetId: a,
-        dollarValue: maxDollarValue,
-      })
-    );
-    const min = arr.sort((a, b) =>
-      a.dollarValue!.gt(b.dollarValue!) ? 1 : -1
-    )[0];
-    const minAsset = this.poolsAssets.find(
-      ({ asset }) => asset.assetId === min?.assetId
-    );
+    const arr = Object.entries(this.tokensToProvideInUsdnMap).map(([a, maxDollarValue]) => ({
+      assetId: a,
+      dollarValue: maxDollarValue
+    }));
+    const min = arr.sort((a, b) => (a.dollarValue!.gt(b.dollarValue!) ? 1 : -1))[0];
+    const minAsset = this.poolsAssets.find(({ asset }) => asset.assetId === min?.assetId);
     if (minAsset == null) return BN.ZERO;
     return min.dollarValue;
   }
@@ -659,16 +604,12 @@ class CreateCustomPoolsVm {
 
       return {
         assetId: assetId === "WAVES" ? null : assetId,
-        amount: BN.parseUnits(amountToProvide, decimals)
-          .toSignificant(0)
-          .toString(),
+        amount: BN.parseUnits(amountToProvide, decimals).toSignificant(0).toString()
       };
     });
   }
 
   get isAllTokensShareMoreThanFive() {
-    return this.poolsAssets
-      .map((v) => v.share)
-      .every((v) => v.gt(50) || v.eq(50));
+    return this.poolsAssets.map((v) => v.share).every((v) => v.gt(50) || v.eq(50));
   }
 }

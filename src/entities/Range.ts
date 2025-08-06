@@ -4,32 +4,32 @@ import { IHistory } from "@src/utils/types";
 import { makeAutoObservable } from "mobx";
 
 export interface IRangeAssetResponse {
-  asset_id: string,
-  balance: number,
-  balance_usd: number,
-  current_price: number,
-  current_price_usd: number,
-  extra_earned: number,
-  fact_balance: number,
-  fact_balance_usd: number,
-  fees_earned: number,
-  max_price: number,
-  min_price: number,
-  max_price_usd: number,
-  min_price_usd: number,
-  is_active: boolean,
-  leverage: number,
-  staked: boolean,
-  stake_apr: number,
-  current_selloff: number,
-  max_sell_allowed: number,
-  selloff_start_balance: number,
-  selloff_start_height: number,
-  shutdown_buy: boolean,
-  shutdown_sell: boolean,
-  name: string,
-  real_balance: number,
-  share: number
+  asset_id: string;
+  balance: number;
+  balance_usd: number;
+  current_price: number;
+  current_price_usd: number;
+  extra_earned: number;
+  fact_balance: number;
+  fact_balance_usd: number;
+  fees_earned: number;
+  max_price: number;
+  min_price: number;
+  max_price_usd: number;
+  min_price_usd: number;
+  is_active: boolean;
+  leverage: number;
+  staked: boolean;
+  stake_apr: number;
+  current_selloff: number;
+  max_sell_allowed: number;
+  selloff_start_balance: number;
+  selloff_start_height: number;
+  shutdown_buy: boolean;
+  shutdown_sell: boolean;
+  name: string;
+  real_balance: number;
+  share: number;
 }
 
 export interface IRewardResponse {
@@ -63,7 +63,7 @@ export interface IAssetFeesResponse {
 
 export interface IPeriodStatsResponse {
   time_range: string;
-  time_frame: "1d" |"7d" |"30d" |"90d" |"1y" | "all";
+  time_frame: "1d" | "7d" | "30d" | "90d" | "1y" | "all";
   start_time: number;
   end_time: number;
   apr: number;
@@ -230,7 +230,7 @@ export class AssetFees {
 
 export class PeriodStats {
   timeRange: string;
-  timeFrame: "1d" |"7d" |"30d" |"90d" |"1y" | "all";
+  timeFrame: "1d" | "7d" | "30d" | "90d" | "1y" | "all";
   startTime: BN;
   endTime: BN;
   apr: BN;
@@ -247,7 +247,7 @@ export class PeriodStats {
 
   constructor(params: IPeriodStatsResponse) {
     this.timeRange = params.time_range;
-    this.timeFrame = params.time_frame as "1d" |"7d" |"30d" |"90d" |"1y" | "all";
+    this.timeFrame = params.time_frame as "1d" | "7d" | "30d" | "90d" | "1y" | "all";
     this.startTime = new BN(params.start_time);
     this.endTime = new BN(params.end_time);
     this.apr = new BN(params.apr);
@@ -261,9 +261,7 @@ export class PeriodStats {
     this.volume = new BN(params.volume);
     this.totalFeesUsd = new BN(params.total_fees_usd);
 
-    this.fees = Object.fromEntries(
-      Object.entries(params.fees).map(([key, value]) => [key, new AssetFees(value)])
-    );
+    this.fees = Object.fromEntries(Object.entries(params.fees).map(([key, value]) => [key, new AssetFees(value)]));
   }
 }
 
@@ -350,8 +348,7 @@ export class Range {
   // Добавляйте методы по необходимости
 
   get indexTokenRate(): BN {
-    if (!this.lpTokenAmount)
-      return BN.ZERO;
+    if (!this.lpTokenAmount) return BN.ZERO;
     return new BN(this.liquidity).div(this.lpTokenAmount);
   }
 
@@ -360,7 +357,7 @@ export class Range {
       ...rest,
       leverage: factBalance.div(balance),
       balance,
-      factBalance,
+      factBalance
     }));
 
     const maxLeverage = withLeverage.reduce((acc, { leverage }) => BN.max(acc, leverage), BN.ZERO);
@@ -368,7 +365,7 @@ export class Range {
     return withLeverage.map((asset) => ({
       ...asset,
       leverage: asset.leverage.times(100).toNumber(),
-      relativeLeverage: asset.leverage.div(maxLeverage).times(100).plus(10).toNumber(),
+      relativeLeverage: asset.leverage.div(maxLeverage).times(100).plus(10).toNumber()
     }));
   }
 
@@ -380,8 +377,7 @@ export class Range {
     return this.periodStats.totalFeesUsd;
   }
 
-  contractKeysRequest = (keys: string[] | string) =>
-    nodeService.nodeKeysRequest(this.address, keys);
+  contractKeysRequest = (keys: string[] | string) => nodeService.nodeKeysRequest(this.address, keys);
 }
 
 export interface ILPDataAssetResponse {

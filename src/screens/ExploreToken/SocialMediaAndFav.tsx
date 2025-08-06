@@ -32,41 +32,31 @@ const SocialMediaAndFav: React.FC<IProps> = () => {
   const tokenStatus = tokenStore.watchList.includes(assetId);
   const [visibleModal, setVisibleModal] = useState(false);
   const handleWatchListChange = () => {
-    const watchListText =
-      'Keep track of your favorite coins by turning on the "Watchlist" filter above the table';
+    const watchListText = 'Keep track of your favorite coins by turning on the "Watchlist" filter above the table';
     if (tokenStatus) {
       tokenStore.removeFromWatchList(assetId);
       notificationStore.notify(watchListText, {
         type: "info",
-        title: `${TOKENS_BY_ASSET_ID[assetId].symbol} has been removed to the watchlist`,
+        title: `${TOKENS_BY_ASSET_ID[assetId].symbol} has been removed to the watchlist`
       });
     } else {
       tokenStore.addToWatchList(assetId);
       notificationStore.notify(watchListText, {
         type: "success",
-        title: `${TOKENS_BY_ASSET_ID[assetId].symbol} has been added to the watchlist`,
+        title: `${TOKENS_BY_ASSET_ID[assetId].symbol} has been added to the watchlist`
       });
     }
   };
 
   return (
     <ButtonWrapper mainAxisSize="fit-content">
-      <IconButtonAdaptive
-        icon={tokenStatus ? <StarredIcon /> : <StarIcon />}
-        onClick={handleWatchListChange}
-      >
+      <IconButtonAdaptive icon={tokenStatus ? <StarredIcon /> : <StarIcon />} onClick={handleWatchListChange}>
         {tokenStatus ? " Added to watchlist" : " Add to watchlist"}
       </IconButtonAdaptive>
-      <IconButtonAdaptive
-        icon={<ShareIcon />}
-        onClick={() => setVisibleModal(true)}
-      >
+      <IconButtonAdaptive icon={<ShareIcon />} onClick={() => setVisibleModal(true)}>
         Share
       </IconButtonAdaptive>
-      <ShareDialog
-        visible={visibleModal}
-        onClose={() => setVisibleModal(false)}
-      />
+      <ShareDialog visible={visibleModal} onClose={() => setVisibleModal(false)} />
     </ButtonWrapper>
   );
 };

@@ -1,14 +1,11 @@
 import styled from "@emotion/styled";
 import React from "react";
 import SizedBox from "@components/SizedBox";
-import Divider from "@components/Divider";
 import Wallet from "@components/Wallet/Wallet";
-import Scrollbar from "@components/Scrollbar";
 import Text from "@components/Text";
 import { Column } from "../Flex";
 import { observer } from "mobx-react-lite";
 import { ROUTES } from "@src/constants";
-import DarkMode from "@components/Header/DarkMode";
 import { Anchor } from "../Anchor";
 import isRoutesEquals from "@src/utils/isRoutesEquals";
 import { useLocation } from "react-router-dom";
@@ -79,7 +76,7 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
     { name: "Trade", link: ROUTES.TRADE, outer: false },
     { name: "Pools", link: ROUTES.POOLS, outer: false },
     { name: "Ranges", link: ROUTES.RANGES, outer: false },
-    { name: "Stake", link: ROUTES.STAKE, outer: false },
+    { name: "Stake", link: ROUTES.STAKE, outer: false }
   ];
 
   const toolsMenu = [
@@ -87,14 +84,14 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
       name: "Notifications bot",
       link: "https://t.me/puzzle_swap",
       outer: true,
-      icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""} />,
+      icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""} />
     },
     {
       name: "Alerts bot",
       link: "https://t.me/puzzle_alerts_bot",
       outer: true,
-      icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""} />,
-    },
+      icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""} />
+    }
   ];
 
   const communityMenu = [
@@ -102,20 +99,20 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
       name: "Telegram",
       link: "https://t.me/puzzle_network",
       outer: true,
-      icon: <TelegramIcon className={isDarkTheme ? "theme_icon" : ""} />,
+      icon: <TelegramIcon className={isDarkTheme ? "theme_icon" : ""} />
     },
     {
       name: "(X) Twitter",
       link: "https://twitter.com/puzzle_swap",
       outer: true,
-      icon: <XIcon className={isDarkTheme ? "theme_icon" : ""} />,
+      icon: <XIcon className={isDarkTheme ? "theme_icon" : ""} />
     },
     {
       name: "Medium",
       link: "https://medium.com/@puzzlenetwork",
       outer: true,
-      icon: <MediumIcon className={isDarkTheme ? "theme_icon" : ""} />,
-    },
+      icon: <MediumIcon className={isDarkTheme ? "theme_icon" : ""} />
+    }
   ];
 
   const location = useLocation();
@@ -142,12 +139,7 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
               Tools
             </Text>
             {toolsMenu.map(({ icon, name, link }) => (
-              <MenuItem
-                key={name}
-                selected={isRoutesEquals(link, location.pathname)}
-                href={link}
-                target={""}
-              >
+              <MenuItem key={name} selected={isRoutesEquals(link, location.pathname)} href={link} target={""}>
                 {icon}
                 {name}
               </MenuItem>
@@ -159,12 +151,7 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
               Community
             </Text>
             {communityMenu.map(({ icon, name, link }) => (
-              <MenuItem
-                key={name}
-                selected={isRoutesEquals(link, location.pathname)}
-                href={link}
-                target={""}
-              >
+              <MenuItem key={name} selected={isRoutesEquals(link, location.pathname)} href={link} target={""}>
                 {icon}
                 {name}
               </MenuItem>

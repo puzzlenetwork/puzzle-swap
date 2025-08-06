@@ -33,7 +33,7 @@ const TradeWithTokens: React.FC<IProps> = () => {
     TOKENS_BY_SYMBOL.WAVES,
     TOKENS_BY_SYMBOL.ETH,
     TOKENS_BY_SYMBOL.USDC,
-    TOKENS_BY_SYMBOL.BNB,
+    TOKENS_BY_SYMBOL.BNB
   ].filter(Boolean);
 
   return (
@@ -45,12 +45,7 @@ const TradeWithTokens: React.FC<IProps> = () => {
       <SizedBox height={16} />
       <Row style={{ flexWrap: "wrap" }}>
         {tokens.map((t) => (
-          <Tag
-            key={t.assetId}
-            onClick={() =>
-              navigate(`/trade?asset0=${vm.asset.assetId}&asset1=${t.assetId}`)
-            }
-          >
+          <Tag key={t.assetId} onClick={() => navigate(`/trade?asset0=${vm.asset.assetId}&asset1=${t.assetId}`)}>
             <RoundTokenIcon src={t.logo} sizes="small" />
             <SizedBox width={8} />
             <Text>{t.symbol}</Text>

@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
 type ScalableArrowProps = React.SVGProps<SVGSVGElement> & {
   length: number;
   color?: string;
 };
 
-const ScalableArrow: React.FC<ScalableArrowProps> = ({ length, color = '#8082C5', ...rest }) => {
+const ScalableArrow: React.FC<ScalableArrowProps> = ({ length, color = "#8082C5", ...rest }) => {
   const min = 41;
   const max = 75;
   const t = (length - min) / (max - min); // allow extrapolation beyond 0–1
@@ -44,7 +44,7 @@ const ScalableArrow: React.FC<ScalableArrowProps> = ({ length, color = '#8082C5'
     BackLine: lerp(2.534, 2.59217),
     C4x1: lerp(2.968, 3.03613),
     C4x2: lerp(3.43, 3.50873),
-    C4x3: lerp(3.878, 3.96702),
+    C4x3: lerp(3.878, 3.96702)
   };
 
   const d = `

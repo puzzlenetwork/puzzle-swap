@@ -25,11 +25,7 @@ const Root = styled.div`
   }
 `;
 
-const buildRateStr = (
-  symbol0: string | undefined,
-  symbol1: string | undefined,
-  price1?: undefined | BN
-) => {
+const buildRateStr = (symbol0: string | undefined, symbol1: string | undefined, price1?: undefined | BN) => {
   let priceDisplay = price1?.toFormat(4);
   if (priceDisplay === "0.0000") {
     priceDisplay = price1?.toFormat(8);
@@ -51,7 +47,7 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
     urlSearchParams.set("asset1", vm.assetId1);
     navigate({
       pathname: window.location.pathname,
-      search: `?${urlSearchParams.toString()}`,
+      search: `?${urlSearchParams.toString()}`
     });
     setSwitched((v) => !v);
   };
@@ -60,20 +56,12 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
     TOKENS_BY_SYMBOL.USDT.assetId,
     TOKENS_BY_SYMBOL.USDTu.assetId,
     TOKENS_BY_SYMBOL.USDCu.assetId,
-    TOKENS_BY_SYMBOL.ROME.assetId,
+    TOKENS_BY_SYMBOL.ROME.assetId
   ];
 
   const rate = stablesIds.some((assetId) => assetId === token0?.assetId)
-    ? buildRateStr(
-        token1?.symbol,
-        token0?.symbol,
-        price != null && price.gt(0) ? price.pow(-1) : undefined
-      )
-    : buildRateStr(
-        token0?.symbol,
-        token1?.symbol,
-        price != null && price.gt(0) ? price : undefined
-      );
+    ? buildRateStr(token1?.symbol, token0?.symbol, price != null && price.gt(0) ? price.pow(-1) : undefined)
+    : buildRateStr(token0?.symbol, token1?.symbol, price != null && price.gt(0) ? price : undefined);
   return (
     <Root {...rest} onClick={handleSwitch}>
       <img
@@ -82,7 +70,7 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
         className="icon"
         style={{
           transform: switched ? "rotate(360deg)" : "rotate(0)",
-          margin: "0 8px",
+          margin: "0 8px"
         }}
       />
       {!rest.new && (

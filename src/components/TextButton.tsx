@@ -42,15 +42,7 @@ const Icon = styled.img`
   height: 16px;
   width: 16px;
 `;
-const TextButton: React.FC<IProps> = ({
-  suffix,
-  prefix,
-  children,
-  onClick,
-  kind,
-  weight,
-  ...rest
-}) => {
+const TextButton: React.FC<IProps> = ({ suffix, prefix, children, onClick, kind, weight, ...rest }) => {
   return (
     <Root
       {...rest}

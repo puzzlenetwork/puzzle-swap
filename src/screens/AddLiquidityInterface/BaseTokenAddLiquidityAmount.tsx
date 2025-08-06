@@ -59,8 +59,7 @@ const BaseTokenAddLiquidityAmount: React.FC<IProps> = () => {
             text={
               <div>
                 Your {vm.baseToken.symbol} balance is too low to deposit.{" "}
-                <Link to={buyBaseTokenRoute}>Buy {vm.baseToken.symbol}</Link> to
-                deposit.
+                <Link to={buyBaseTokenRoute}>Buy {vm.baseToken.symbol}</Link> to deposit.
               </div>
             }
           />
@@ -82,11 +81,7 @@ const BaseTokenAddLiquidityAmount: React.FC<IProps> = () => {
       )}
       {accountStore.address != null &&
         (!vm.loading ? (
-          <Button
-            fixed
-            onClick={handleCallDepositBaseToken}
-            disabled={!vm.canDepositBaseToken}
-          >
+          <Button fixed onClick={handleCallDepositBaseToken} disabled={!vm.canDepositBaseToken}>
             Deposit
           </Button>
         ) : (

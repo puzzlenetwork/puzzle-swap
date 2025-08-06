@@ -14,15 +14,14 @@ const RangeLiquidity: React.FC<HTMLAttributes<HTMLElement>> = (props) => {
         Fact / Virtual Liquidity
       </Text>
       <SizedBox height={12} />
-        <Text fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px" }}>
-          ${
-            vm.range!.liquidity.toFormat(2)
-          } / <Text type="secondary" fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px" }}>
-            ${vm.range!.virtualLiquidity.toFormat(2)}
-          </Text>
+      <Text fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px" }}>
+        ${vm.range!.liquidity.toFormat(2)} /{" "}
+        <Text type="secondary" fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px" }}>
+          ${vm.range!.virtualLiquidity.toFormat(2)}
         </Text>
+      </Text>
     </Card>
   );
-}
+};
 
 export default observer(RangeLiquidity);

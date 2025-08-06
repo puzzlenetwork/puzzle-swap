@@ -9,7 +9,7 @@ import {
   usePaddingWarning,
   useUniqueId,
   useEffectAfterMount,
-  useControlledState,
+  useControlledState
 } from "./utils";
 import {
   UseCollapseInput,
@@ -17,7 +17,7 @@ import {
   GetCollapsePropsOutput,
   GetCollapsePropsInput,
   GetTogglePropsOutput,
-  GetTogglePropsInput,
+  GetTogglePropsInput
 } from "./types";
 
 const easeInOut = "cubic-bezier(0.4, 0, 0.2, 1)";
@@ -37,10 +37,7 @@ export default function useCollapse({
   hasDisabledAnimation = false,
   ...initialConfig
 }: UseCollapseInput = {}): UseCollapseOutput {
-  const [isExpanded, setExpanded] = useControlledState(
-    configIsExpanded,
-    defaultExpanded
-  );
+  const [isExpanded, setExpanded] = useControlledState(configIsExpanded, defaultExpanded);
   const uniqueId = useUniqueId();
   const el = useRef<HTMLElement>(null!);
   usePaddingWarning(el);
@@ -48,11 +45,9 @@ export default function useCollapse({
   const collapsedStyles = {
     display: collapsedHeight === "0px" ? "none" : "block",
     height: collapsedHeight,
-    overflow: "hidden",
+    overflow: "hidden"
   };
-  const [styles, setStylesRaw] = useState<CSSProperties>(
-    isExpanded ? {} : collapsedStyles
-  );
+  const [styles, setStylesRaw] = useState<CSSProperties>(isExpanded ? {} : collapsedStyles);
   const setStyles = (newStyles: {} | ((oldStyles: {}) => {})): void => {
     // We rely on reading information from layout
     // at arbitrary times, so ensure all style changes
@@ -69,11 +64,9 @@ export default function useCollapse({
     if (hasDisabledAnimation) {
       return {};
     }
-    const _duration = isExpanded
-      ? hideDuration
-      : showDuration || getAutoHeightDuration(height);
+    const _duration = isExpanded ? hideDuration : showDuration || getAutoHeightDuration(height);
     return {
-      transition: `height ${_duration}ms ${easing}`,
+      transition: `height ${_duration}ms ${easing}`
     };
   }
 
@@ -85,13 +78,13 @@ export default function useCollapse({
           ...expandStyles,
           willChange: "height",
           display: "block",
-          overflow: "hidden",
+          overflow: "hidden"
         });
         requestAnimationFrame(() => {
           const height = getElementHeight(el);
           mergeStyles({
             ...getTransitionStyles(height),
-            height,
+            height
           });
         });
       });
@@ -103,12 +96,12 @@ export default function useCollapse({
           ...collapseStyles,
           ...getTransitionStyles(height),
           willChange: "height",
-          height,
+          height
         });
         requestAnimationFrame(() => {
           mergeStyles({
             height: collapsedHeight,
-            overflow: "hidden",
+            overflow: "hidden"
           });
         });
       });
@@ -166,7 +159,7 @@ export default function useCollapse({
       tabIndex: 0,
       disabled,
       ...rest,
-      onClick: disabled ? noop : callAll(onClick, () => setExpanded((n) => !n)),
+      onClick: disabled ? noop : callAll(onClick, () => setExpanded((n) => !n))
     };
   }
 
@@ -188,8 +181,8 @@ export default function useCollapse({
         // additional styles passed, e.g. getCollapseProps({style: {}})
         ...style,
         // style overrides from state
-        ...styles,
-      },
+        ...styles
+      }
     };
   }
 
@@ -197,6 +190,6 @@ export default function useCollapse({
     getToggleProps,
     getCollapseProps,
     isExpanded,
-    setExpanded,
+    setExpanded
   };
 }

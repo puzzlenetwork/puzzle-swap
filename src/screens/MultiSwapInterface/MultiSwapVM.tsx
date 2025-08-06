@@ -13,25 +13,16 @@ interface IProps {
   poolDomain: string;
 }
 
-export const MultiSwapVMProvider: React.FC<IProps> = ({
-  poolDomain,
-  children,
-}) => {
+export const MultiSwapVMProvider: React.FC<IProps> = ({ poolDomain, children }) => {
   const rootStore = useStores();
-  const store = useMemo(
-    () => new MultiSwapVM(rootStore, poolDomain),
-    [rootStore, poolDomain]
-  );
+  const store = useMemo(() => new MultiSwapVM(rootStore, poolDomain), [rootStore, poolDomain]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
 
 export const useMultiSwapVM = () => useVM(ctx);
 
 class MultiSwapVM {
-  constructor(
-    private rootStore: RootStore,
-    public readonly poolDomain: string
-  ) {
+  constructor(private rootStore: RootStore, public readonly poolDomain: string) {
     makeAutoObservable(this);
     when(
       () => this.pool != null,
@@ -59,9 +50,7 @@ class MultiSwapVM {
 
   get amount0MaxClickFunc(): (() => void) | undefined {
     const { token0, balance0 } = this;
-    return token0 != null && balance0 != null
-      ? () => this.setAmount0(balance0)
-      : undefined;
+    return token0 != null && balance0 != null ? () => this.setAmount0(balance0) : undefined;
   }
 
   amount0: BN = BN.ZERO;
@@ -74,13 +63,9 @@ class MultiSwapVM {
     const { token0 } = this;
     const usdtRate = this.rootStore.poolsStore.usdtRate(this.assetId0, 1);
     if (token0 == null || usdtRate == null) return "—";
-    const result = usdtRate.times(
-      BN.formatUnits(this.amount0, token0.decimals)
-    );
+    const result = usdtRate.times(BN.formatUnits(this.amount0, token0.decimals));
     if (!result.gt(0)) return "—";
-    return `~ ${usdtRate
-      .times(BN.formatUnits(this.amount0, token0.decimals))
-      .toFormat(2)} $`;
+    return `~ ${usdtRate.times(BN.formatUnits(this.amount0, token0.decimals)).toFormat(2)} $`;
   }
 
   get liquidityOfToken0() {
@@ -154,12 +139,7 @@ class MultiSwapVM {
       const base = l0.div(l0.plus(amount0)).toNumber();
       const rightPart = new BN(1).minus(Math.pow(base, power));
 
-      return BN.parseUnits(
-        leftPart
-          .times(rightPart)
-          .times(new BN(100 - this.pool.swapFee).div(100)),
-        token1.decimals
-      );
+      return BN.parseUnits(leftPart.times(rightPart).times(new BN(100 - this.pool.swapFee).div(100)), token1.decimals);
     } catch (e) {
       return BN.ZERO;
     }
@@ -169,20 +149,13 @@ class MultiSwapVM {
     const { token1 } = this;
     const usdtRate = this.rootStore.poolsStore.usdtRate(this.assetId1, 1);
     if (token1 == null || usdtRate == null) return "—";
-    const result = usdtRate.times(
-      BN.formatUnits(this.amount1, token1.decimals)
-    );
+    const result = usdtRate.times(BN.formatUnits(this.amount1, token1.decimals));
     if (!result.gt(0)) return "—";
-    return `~ ${usdtRate
-      .times(BN.formatUnits(this.amount1, token1.decimals))
-      .toFormat(2)} $`;
+    return `~ ${usdtRate.times(BN.formatUnits(this.amount1, token1.decimals)).toFormat(2)} $`;
   }
 
   get minimumToReceive(): BN {
-    const slippage =
-      JSON.parse(
-        localStorage.getItem("puzzle-user-settings") || '{"slippage": 1}'
-      )?.slippage || 1;
+    const slippage = JSON.parse(localStorage.getItem("puzzle-user-settings") || '{"slippage": 1}')?.slippage || 1;
     return this.amount1.times(new BN(100 - slippage).div(100));
   }
 
@@ -197,10 +170,9 @@ class MultiSwapVM {
         dApp: this.pool.address,
         payment: [
           {
-            assetId:
-              this.token0.assetId === "WAVES" ? null : this.token0.assetId,
-            amount: this.amount0.toString(),
-          },
+            assetId: this.token0.assetId === "WAVES" ? null : this.token0.assetId,
+            amount: this.amount0.toString()
+          }
         ],
         call: {
           function: "swap",
@@ -208,26 +180,23 @@ class MultiSwapVM {
             { type: "string", value: this.token1.assetId },
             {
               type: "integer",
-              value: this.minimumToReceive.toFixed(0).toString(),
-            },
-          ],
-        },
+              value: this.minimumToReceive.toFixed(0).toString()
+            }
+          ]
+        }
       })
       .then((txId) => {
-        notificationStore.notify(
-          "You can view the details of it in Waves Explorer",
-          {
-            type: "success",
-            title: "Transaction is completed",
-            link: `${EXPLORER_URL}/transactions/${txId}`,
-            linkTitle: "View on Explorer",
-          }
-        );
+        notificationStore.notify("You can view the details of it in Waves Explorer", {
+          type: "success",
+          title: "Transaction is completed",
+          link: `${EXPLORER_URL}/transactions/${txId}`,
+          linkTitle: "View on Explorer"
+        });
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
           type: "error",
-          title: "Transaction is not completed",
+          title: "Transaction is not completed"
         });
       })
       .finally(() => this._setLoading(false));

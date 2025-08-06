@@ -71,57 +71,54 @@ const RangeCharts: React.FC<IProps> = () => {
   }, [vm.chartDataKey]);
 
   const handleChangeTab = (index: number) => {
-    vm.setChartDataKey(["volume", "fees", "liquidity"][index] as ("volume" | "fees" | "liquidity"));
-  }
+    vm.setChartDataKey(["volume", "fees", "liquidity"][index] as "volume" | "fees" | "liquidity");
+  };
 
   const timeRanges = [
     {
       key: "1d",
-      title: "Last Day",
+      title: "Last Day"
     },
     {
       key: "7d",
-      title: "Last Week",
+      title: "Last Week"
     },
     {
       key: "1m",
-      title: "Last Month",
+      title: "Last Month"
     },
     {
       key: "3m",
-      title: "Last 3 Months",
+      title: "Last 3 Months"
     },
     {
       key: "1y",
-      title: "Last Year",
+      title: "Last Year"
     },
     {
       key: "all",
-      title: "All Time",
-    },
-  ]
+      title: "All Time"
+    }
+  ];
 
   return (
-    <Root
-      disabled={
-        vm.chartData == null ||
-        vm.chartData.length < 2
-      }
-    >
-      <Row style={isMobile ? { flexDirection: "column", gap: 12 } : { }}>
+    <Root disabled={vm.chartData == null || vm.chartData.length < 2}>
+      <Row style={isMobile ? { flexDirection: "column", gap: 12 } : {}}>
         <Tabs
-          tabs={[
-            { name: "Trades volume" },
-            { name: "Fees Earned" },
-            { name: "Total Liquidity" },
-          ]}
+          tabs={[{ name: "Trades volume" }, { name: "Fees Earned" }, { name: "Total Liquidity" }]}
           textStyle={{ textWrap: "nowrap" }}
           activeTab={activeTab}
           setActive={handleChangeTab}
           style={{ borderBottom: "none" }}
         />
         {isMobile ? (
-          <Card flexDirection="row" alignItems="center" paddingMobile="8px 12px" flexGrow={1} style={{ borderRadius: "8px" }}>
+          <Card
+            flexDirection="row"
+            alignItems="center"
+            paddingMobile="8px 12px"
+            flexGrow={1}
+            style={{ borderRadius: "8px" }}
+          >
             <Select
               kind="text"
               textSize="medium"
@@ -135,22 +132,26 @@ const RangeCharts: React.FC<IProps> = () => {
           </Card>
         ) : (
           <Select
-              kind="text"
-              textSize="medium"
-              options={timeRanges}
-              selected={timeRanges.find((v) => v.key === vm.chartDataRange)}
-              onSelect={(v) => {
-                vm.setChartDataRange(v.key as "1d" | "7d" | "1m" | "3m" | "1y" | "all");
-              }}
-            />
+            kind="text"
+            textSize="medium"
+            options={timeRanges}
+            selected={timeRanges.find((v) => v.key === vm.chartDataRange)}
+            onSelect={(v) => {
+              vm.setChartDataRange(v.key as "1d" | "7d" | "1m" | "3m" | "1y" | "all");
+            }}
+          />
         )}
       </Row>
       <SizedBox height={8} />
       <Card>
         <Row>
-          <Text type="secondary" size="medium" fitContent>Total for period:</Text>
+          <Text type="secondary" size="medium" fitContent>
+            Total for period:
+          </Text>
           <SizedBox width={8} />
-          <Text size="medium" fitContent>${ vm.chartTotal.toFormat(2) }</Text>
+          <Text size="medium" fitContent>
+            ${vm.chartTotal.toFormat(2)}
+          </Text>
         </Row>
         <LineChart width={chartWidth} height={240} data={vm.chartData}>
           <XAxis
@@ -169,16 +170,10 @@ const RangeCharts: React.FC<IProps> = () => {
             itemStyle={{ border: "none" }}
             contentStyle={{
               border: "none",
-              filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))",
+              filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))"
             }}
           />
-          <Line
-            dot={false}
-            type="monotone"
-            dataKey={vm.chartDataKey}
-            stroke="#7075E9"
-            strokeWidth={2}
-          />
+          <Line dot={false} type="monotone" dataKey={vm.chartDataKey} stroke="#7075E9" strokeWidth={2} />
         </LineChart>
       </Card>
     </Root>

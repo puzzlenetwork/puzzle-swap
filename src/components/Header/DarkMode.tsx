@@ -3,8 +3,6 @@ import React, { HTMLAttributes } from "react";
 import moon from "@src/assets/icons/moon.svg";
 import sun from "@src/assets/icons/sun.svg";
 import Img from "@components/Img";
-import Text from "@components/Text";
-import Switch from "@components/Switch";
 import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
 import { THEME_TYPE } from "@src/themes/ThemeProvider";

@@ -27,8 +27,7 @@ const Pool = styled.div<{ active?: boolean }>`
   box-sizing: border-box;
 
   :hover {
-    ${({ active, theme }) =>
-      !active && `background: ${theme.colors.primary100}`};
+    ${({ active, theme }) => !active && `background: ${theme.colors.primary100}`};
   }
 `;
 
@@ -42,11 +41,7 @@ const Gradient = styled.div`
   background: ${({ theme }) => theme.colors.gradient};
   z-index: 10;
 `;
-const ChangePoolModal: React.FC<IProps> = ({
-  onChange,
-  activePoolId,
-  ...rest
-}) => {
+const ChangePoolModal: React.FC<IProps> = ({ onChange, activePoolId, ...rest }) => {
   const { poolsStore } = useStores();
   const [searchValue, setSearchValue] = useState<string>("");
   const filteredPools = poolsStore.pools
@@ -93,22 +88,13 @@ const ChangePoolModal: React.FC<IProps> = ({
                   <SizedBox width={8} />
                   <Column>
                     <Text size="medium">{pool.title}</Text>
-                    <Text
-                      size="small"
-                      type="secondary"
-                      style={{ maxWidth: 130, overflowWrap: "anywhere" }}
-                    >
+                    <Text size="small" type="secondary" style={{ maxWidth: 130, overflowWrap: "anywhere" }}>
                       {pool.tokens.map((t) => t.name).join(", ")}
                     </Text>
                   </Column>
                 </Row>
                 <Column>
-                  <Text>
-                    {(pool.statistics?.apr &&
-                      new BN(pool.statistics?.apr).toFormat(2)) ??
-                      "--"}
-                    %
-                  </Text>
+                  <Text>{(pool.statistics?.apr && new BN(pool.statistics?.apr).toFormat(2)) ?? "--"}%</Text>
                   <Text size="small" type="secondary" textAlign="right">
                     APY
                   </Text>

@@ -3,13 +3,7 @@ import React from "react";
 import Text from "@components/Text";
 import Card from "@components/Card";
 import { observer } from "mobx-react-lite";
-import {
-  Line,
-  LineChart,
-  Tooltip as RechartsTooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Line, LineChart, Tooltip as RechartsTooltip, XAxis, YAxis } from "recharts";
 import useWindowSize from "@src/hooks/useWindowSize";
 import dayjs from "dayjs";
 import { Row } from "@src/components/Flex";
@@ -108,11 +102,7 @@ const ExploreTokenPriceChart: React.FC<IProps> = () => {
     <Root>
       <Header>
         <Text weight={500}>{vm.asset.symbol} to USDN chart</Text>
-        <ChartAgeButtons
-          className="age-btns"
-          value={vm.selectedChartPeriod}
-          onChange={vm.setSelectedChartPeriod}
-        />
+        <ChartAgeButtons className="age-btns" value={vm.selectedChartPeriod} onChange={vm.setSelectedChartPeriod} />
       </Header>
       <Body>
         {vm.chartLoading ? (
@@ -137,24 +127,15 @@ const ExploreTokenPriceChart: React.FC<IProps> = () => {
               formatter={(value) => "$" + new BN(`${value}`).toFormat(4)}
               contentStyle={{
                 border: "none",
-                filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))",
+                filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))"
               }}
             />
-            <Line
-              dot={false}
-              type="monotone"
-              dataKey="volume"
-              stroke="#7075E9"
-              strokeWidth={2}
-            />
+            <Line dot={false} type="monotone" dataKey="volume" stroke="#7075E9" strokeWidth={2} />
           </LineChart>
         )}
       </Body>
       <Footer>
-        <ChartAgeButtons
-          value={vm.selectedChartPeriod}
-          onChange={vm.setSelectedChartPeriod}
-        />
+        <ChartAgeButtons value={vm.selectedChartPeriod} onChange={vm.setSelectedChartPeriod} />
       </Footer>
     </Root>
   );

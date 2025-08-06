@@ -17,20 +17,9 @@ interface IProps {
 }
 
 const Root = styled.div<{ warning: boolean }>``;
-const AddTokenRow: React.FC<IProps> = ({
-  availableAmount,
-  depositAmount,
-  percent,
-  symbol,
-  logo,
-  depositPrefix,
-}) => {
+const AddTokenRow: React.FC<IProps> = ({ availableAmount, depositAmount, percent, symbol, logo, depositPrefix }) => {
   const available = availableAmount ? availableAmount.toFormat(4) : "-";
-  const deposit = depositAmount
-    ? depositAmount.isNaN()
-      ? "-"
-      : depositAmount.toFormat(4)
-    : "-";
+  const deposit = depositAmount ? (depositAmount.isNaN() ? "-" : depositAmount.toFormat(4)) : "-";
   const isLowMoney = availableAmount != null && availableAmount.eq(0);
   return (
     <Root className="gridRow" warning={isLowMoney}>

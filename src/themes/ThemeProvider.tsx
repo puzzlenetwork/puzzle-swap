@@ -8,7 +8,7 @@ import { Observer } from "mobx-react-lite";
 
 export enum THEME_TYPE {
   LIGHT_THEME = "lightTheme",
-  DARK_THEME = "darkTheme",
+  DARK_THEME = "darkTheme"
 }
 
 interface IProps {
@@ -17,18 +17,12 @@ interface IProps {
 
 export const themes = {
   darkTheme,
-  lightTheme,
+  lightTheme
 };
 const ThemeWrapper: React.FC<IProps> = ({ children }) => {
   const { accountStore } = useStores();
   return (
-    <Observer>
-      {() => (
-        <ThemeProvider theme={themes[accountStore.selectedTheme]}>
-          {children}
-        </ThemeProvider>
-      )}
-    </Observer>
+    <Observer>{() => <ThemeProvider theme={themes[accountStore.selectedTheme]}>{children}</ThemeProvider>}</Observer>
   );
 };
 

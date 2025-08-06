@@ -4,11 +4,7 @@ import { makeAutoObservable, reaction, when } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import nodeService from "@src/services/nodeService";
-import {
-  CONTRACT_ADDRESSES,
-  EXPLORER_URL,
-  TOKENS_BY_SYMBOL,
-} from "@src/constants";
+import { CONTRACT_ADDRESSES, EXPLORER_URL, TOKENS_BY_SYMBOL } from "@src/constants";
 import poolsService from "@src/services/poolsService";
 
 interface IProps {
@@ -34,14 +30,8 @@ class NFTStakingVM {
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
     poolsService.getStats().then((d) => this._setStats(d));
-    when(
-      () => rootStore.accountStore.address != null,
-      this.updateAddressStakingInfo
-    );
-    reaction(
-      () => this.rootStore.accountStore?.address,
-      this.updateAddressStakingInfo
-    );
+    when(() => rootStore.accountStore.address != null, this.updateAddressStakingInfo);
+    reaction(() => this.rootStore.accountStore?.address, this.updateAddressStakingInfo);
   }
 
   public nftDisplayState: number = 0;
@@ -57,8 +47,7 @@ class NFTStakingVM {
   private _setStats = (v: any) => (this.stats = v);
 
   private _setClaimedRewardInUSDN = (v: BN) => (this.claimedRewardInUSDN = v);
-  private _setClaimedRewardInPuzzle = (v: BN) =>
-    (this.claimedRewardInPuzzle = v);
+  private _setClaimedRewardInPuzzle = (v: BN) => (this.claimedRewardInPuzzle = v);
   private _setAvailableToClaim = (v: BN) => (this.availableToClaim = v);
   private _setLastClaimDate = (v: BN) => (this.lastClaimDate = v);
 
@@ -74,32 +63,24 @@ class NFTStakingVM {
       claimedRewardInPuzzle: `${address}_${puzzle}_claimed`,
       globalLastCheckInterest: `global_lastCheck_${puzzle}_interest`,
       addressLastCheckInterest: `${address}_lastCheck_${puzzle}_interest`,
-      lastClaimDate: `${address}_${puzzle}_lastClaim`,
+      lastClaimDate: `${address}_${puzzle}_lastClaim`
     };
-    const response = await nodeService.nodeKeysRequest(
-      contractAddress,
-      Object.values(keysArray)
-    );
-    const parsedNodeResponse = [...(response ?? [])].reduce<Record<string, BN>>(
-      (acc, { key, value }) => {
-        Object.entries(keysArray).forEach(([regName, regValue]) => {
-          const regexp = new RegExp(regValue);
-          if (regexp.test(key)) {
-            acc[regName] = new BN(value);
-          }
-        });
-        return acc;
-      },
-      {}
-    );
+    const response = await nodeService.nodeKeysRequest(contractAddress, Object.values(keysArray));
+    const parsedNodeResponse = [...(response ?? [])].reduce<Record<string, BN>>((acc, { key, value }) => {
+      Object.entries(keysArray).forEach(([regName, regValue]) => {
+        const regexp = new RegExp(regValue);
+        if (regexp.test(key)) {
+          acc[regName] = new BN(value);
+        }
+      });
+      return acc;
+    }, {});
 
     const addressStaked = parsedNodeResponse["addressStaked"] ?? BN.ZERO;
     const claimedRewardInUSDN = parsedNodeResponse["claimedRewardInUSDN"];
     const claimedRewardInPuzzle = parsedNodeResponse["claimedRewardInPuzzle"];
-    const globalLastCheckInterest =
-      parsedNodeResponse["globalLastCheckInterest"] ?? BN.ZERO;
-    const addressLastCheckInterest =
-      parsedNodeResponse["addressLastCheckInterest"] ?? BN.ZERO;
+    const globalLastCheckInterest = parsedNodeResponse["globalLastCheckInterest"] ?? BN.ZERO;
+    const addressLastCheckInterest = parsedNodeResponse["addressLastCheckInterest"] ?? BN.ZERO;
     const lastClaimDate = parsedNodeResponse["lastClaimDate"];
 
     if (addressStaked == null) {
@@ -111,9 +92,7 @@ class NFTStakingVM {
 
     this._setClaimedRewardInUSDN(claimedRewardInUSDN ?? BN.ZERO);
     this._setClaimedRewardInPuzzle(claimedRewardInPuzzle ?? BN.ZERO);
-    const availableToClaim = globalLastCheckInterest
-      .minus(addressLastCheckInterest)
-      .times(addressStaked);
+    const availableToClaim = globalLastCheckInterest.minus(addressLastCheckInterest).times(addressStaked);
     this._setAvailableToClaim(availableToClaim);
     lastClaimDate && this._setLastClaimDate(lastClaimDate);
   };
@@ -130,7 +109,7 @@ class NFTStakingVM {
       .invoke({
         dApp: this.contractAddress,
         payment: [],
-        call: { function: "claimReward", args: [] },
+        call: { function: "claimReward", args: [] }
       })
       .then(
         (txId) =>
@@ -139,13 +118,13 @@ class NFTStakingVM {
             type: "success",
             title: `Success`,
             link: `${EXPLORER_URL}/transactions/${txId}`,
-            linkTitle: "View on Explorer",
+            linkTitle: "View on Explorer"
           })
       )
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
           type: "error",
-          title: "Transaction is not completed",
+          title: "Transaction is not completed"
         });
       })
       .then(this.updateAddressStakingInfo)
@@ -159,10 +138,8 @@ class NFTStakingVM {
     await accountStore
       .invoke({
         dApp: this.contractAddress,
-        payment: [
-          { assetId: assetId === "WAVES" ? null : assetId, amount: "1" },
-        ],
-        call: { function: "stake", args: [] },
+        payment: [{ assetId: assetId === "WAVES" ? null : assetId, amount: "1" }],
+        call: { function: "stake", args: [] }
       })
       .then(
         (txId) =>
@@ -171,13 +148,13 @@ class NFTStakingVM {
             type: "success",
             title: `Success`,
             link: `${EXPLORER_URL}/transactions/${txId}`,
-            linkTitle: "View on Explorer",
+            linkTitle: "View on Explorer"
           })
       )
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
           type: "error",
-          title: "Transaction is not completed",
+          title: "Transaction is not completed"
         });
       })
       .then(async () => {
@@ -186,7 +163,7 @@ class NFTStakingVM {
         await Promise.all([
           this.rootStore.nftStore.syncAccountNFTs(),
           this.rootStore.nftStore.syncAccountNFTsOnStaking(),
-          this.updateAddressStakingInfo(),
+          this.updateAddressStakingInfo()
         ]);
       })
       .finally(() => this._setLoading(false));
@@ -203,8 +180,8 @@ class NFTStakingVM {
         payment: [],
         call: {
           function: "unStake",
-          args: [{ type: "string", value: assetId }],
-        },
+          args: [{ type: "string", value: assetId }]
+        }
       })
       .then(
         (txId) =>
@@ -213,13 +190,13 @@ class NFTStakingVM {
             type: "success",
             title: `Success`,
             link: `${EXPLORER_URL}/transactions/${txId}`,
-            linkTitle: "View on Explorer",
+            linkTitle: "View on Explorer"
           })
       )
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
           type: "error",
-          title: "Transaction is not completed",
+          title: "Transaction is not completed"
         });
       })
       .then(async () => {
@@ -228,7 +205,7 @@ class NFTStakingVM {
         await Promise.all([
           this.rootStore.nftStore.syncAccountNFTs(),
           this.rootStore.nftStore.syncAccountNFTsOnStaking(),
-          this.updateAddressStakingInfo(),
+          this.updateAddressStakingInfo()
         ]);
       })
       .finally(() => this._setLoading(false));

@@ -26,8 +26,7 @@ const Stake: React.FC<IProps> = () => {
             type="warning"
             text={
               <Text>
-                Your have low PUZZLE balance.{" "}
-                <Link to={buyPuzzleRoute}>Buy PUZZLE</Link> to stake it.
+                Your have low PUZZLE balance. <Link to={buyPuzzleRoute}>Buy PUZZLE</Link> to stake it.
               </Text>
             }
           />

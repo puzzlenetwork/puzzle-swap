@@ -27,17 +27,8 @@ const NoPayment: React.FC<IProps> = () => {
         <Text weight={500}>You don’t have any NFT</Text>
         <Text type="secondary">Buy a random NFT to create the pool</Text>
       </Column>
-      <Button
-        fixed
-        size="medium"
-        onClick={vm.buyRandomArtefact}
-        disabled={!vm.canBuyNft || vm.loading}
-      >
-        {nftStore.totalPuzzleNftsAmount == null || vm.loading ? (
-          <Loading big />
-        ) : (
-          `Buy for ${vm.puzzleNFTPrice} PUZZLE`
-        )}
+      <Button fixed size="medium" onClick={vm.buyRandomArtefact} disabled={!vm.canBuyNft || vm.loading}>
+        {nftStore.totalPuzzleNftsAmount == null || vm.loading ? <Loading big /> : `Buy for ${vm.puzzleNFTPrice} PUZZLE`}
       </Button>
     </Root>
   );

@@ -2,10 +2,7 @@ import styled from "@emotion/styled";
 import React from "react";
 import { observer } from "mobx-react-lite";
 import Layout from "@components/Layout";
-import {
-  RangeDetailsInterfaceVMProvider,
-  useRangeDetailsInterfaceVM,
-} from "./RangeDetailsVM";
+import { RangeDetailsInterfaceVMProvider, useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
 import SizedBox from "@components/SizedBox";
 import { Column, Row } from "@src/components/Flex";
 import GoBack from "@components/GoBack";
@@ -77,46 +74,46 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
       <Root>
         <GoBack link={ROUTES.RANGES} text="Back to Range list" />
         <SizedBox height={24} />
-        {
-          isMobile ? (
-            <Column crossAxisSize="max">
-              <MainRangeInfo isMobile />
-              <SizedBox height={20} />
-              <Row>
-                <Card style={{ width: "auto", padding: "4px" }}>
-                  <RangeChart assetsWithLeverage={vm.range!.assetsWithLeverage} size={120} />
-                </Card>
-                <SizedBox width={12} />
-                <RangeLiquidity style={{ height: "130px", padding: "16px 20px" }} />
-              </Row>
-              <SizedBox height={12} />
+        {isMobile ? (
+          <Column crossAxisSize="max">
+            <MainRangeInfo isMobile />
+            <SizedBox height={20} />
+            <Row>
+              <Card style={{ width: "auto", padding: "4px" }}>
+                <RangeChart assetsWithLeverage={vm.range!.assetsWithLeverage} size={120} />
+              </Card>
+              <SizedBox width={12} />
+              <RangeLiquidity style={{ height: "130px", padding: "16px 20px" }} />
+            </Row>
+            <SizedBox height={12} />
+            <EarnedByLP />
+          </Column>
+        ) : (
+          <Column crossAxisSize="max">
+            <Row>
+              <MainRangeInfo />
+              <SizedBox width={20} />
+              <Card style={{ width: "auto", padding: "19px" }}>
+                <RangeChart assetsWithLeverage={vm.range!.assetsWithLeverage} size={160} />
+              </Card>
+            </Row>
+            <SizedBox height={20} />
+            <Row alignItems="stretch">
+              <RangeLiquidity />
+              <SizedBox width={12} />
               <EarnedByLP />
-            </Column>
-          ) : (
-            <Column crossAxisSize="max">
-              <Row>
-                <MainRangeInfo />
-                <SizedBox width={20} />
-                <Card style={{ width: "auto", padding: "19px" }}>
-                  <RangeChart assetsWithLeverage={vm.range!.assetsWithLeverage} size={160} />
-                </Card>
-              </Row>
-              <SizedBox height={20} />
-              <Row alignItems="stretch">
-                <RangeLiquidity />
-                <SizedBox width={12} />
-                <EarnedByLP />
-              </Row>
-            </Column>
-          )
-        }
+            </Row>
+          </Column>
+        )}
         <Body>
           <MainBlock>
-            {isMobile && <Column crossAxisSize="max">
-              <Reward />
-              <MyRangeBalance />
-              <LPStaking />
-            </Column>}
+            {isMobile && (
+              <Column crossAxisSize="max">
+                <Reward />
+                <MyRangeBalance />
+                <LPStaking />
+              </Column>
+            )}
             <RangeCharts />
             <RangeComposition isMobile={isMobile} />
           </MainBlock>

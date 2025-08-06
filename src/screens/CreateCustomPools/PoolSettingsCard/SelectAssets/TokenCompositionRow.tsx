@@ -83,36 +83,25 @@ const TokenCompositionRow: React.FC<IProps> = ({
   locked,
   onLockClick,
   onDelete,
-  baseToken,
+  baseToken
 }) => {
   const [openModal, setOpenModal] = useState(false);
   return (
     <Root>
-      <AssetContainer
-        modalOpened={openModal}
-        onClick={() => setOpenModal(true)}
-      >
+      <AssetContainer modalOpened={openModal} onClick={() => setOpenModal(true)}>
         <RoundTokenIcon src={asset.logo} />
         <SizedBox width={8} />
         <Text>{asset.symbol}</Text>
       </AssetContainer>
       <Row mainAxisSize="fit-content" alignItems="center">
-        <ShareTokenInput
-          amount={share}
-          onChange={setShare}
-          disabled={locked}
-          maxValue={new BN(1001)}
-        />
+        <ShareTokenInput amount={share} onChange={setShare} disabled={locked} maxValue={new BN(1001)} />
         <SizedBox width={10} />
         {locked ? (
           <Lock onClick={onLockClick} style={{ cursor: "pointer" }} />
         ) : (
           <Unlock onClick={onLockClick} style={{ cursor: "pointer" }} />
         )}
-        <StyledClose
-          baseToken={baseToken}
-          onClick={!baseToken ? onDelete : undefined}
-        />
+        <StyledClose baseToken={baseToken} onClick={!baseToken ? onDelete : undefined} />
       </Row>
       <TokenSelectModal
         selectedTokenId={asset.assetId}

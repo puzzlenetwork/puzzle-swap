@@ -20,10 +20,7 @@ const Icon = styled.img`
   width: 24px;
   height: 24px;
 `;
-const MorePoolInformation: React.FC<IProps> = ({
-  setOpenedDetails,
-  setOpenedShare,
-}) => {
+const MorePoolInformation: React.FC<IProps> = ({ setOpenedDetails, setOpenedShare }) => {
   return (
     <Root>
       <Row

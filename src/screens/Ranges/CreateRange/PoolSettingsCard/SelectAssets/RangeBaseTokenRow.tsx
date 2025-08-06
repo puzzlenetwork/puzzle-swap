@@ -1,19 +1,19 @@
-import { Column, Row } from "@components/Flex"
-import SizedBox from "@components/SizedBox"
-import Switch from "@components/Switch"
-import TitleWithTips from "@components/TitleWithTips"
-import Text from "@components/Text"
-import BN from "@src/utils/BN"
-import AssetSelector from "./AssetSelector"
-import ShareTokenInput from "./ShareTokenInput"
-import { IRangeToken } from "../../CreateRangeVm"
-import Balance from "@src/entities/Balance"
+import { Column, Row } from "@components/Flex";
+import SizedBox from "@components/SizedBox";
+import Switch from "@components/Switch";
+import TitleWithTips from "@components/TitleWithTips";
+import Text from "@components/Text";
+import BN from "@src/utils/BN";
+import AssetSelector from "./AssetSelector";
+import ShareTokenInput from "./ShareTokenInput";
+import { IRangeToken } from "../../CreateRangeVm";
+import Balance from "@src/entities/Balance";
 import { ReactComponent as Lock } from "@src/assets/icons/lock.svg";
 import { ReactComponent as Unlock } from "@src/assets/icons/unlock.svg";
 import { ReactComponent as Close } from "@src/assets/icons/smallClose.svg";
 import styled from "@emotion/styled";
-import { observer } from "mobx-react-lite"
-import LogSliderWithImage from "@src/components/LogSliderWithImage"
+import { observer } from "mobx-react-lite";
+import LogSliderWithImage from "@src/components/LogSliderWithImage";
 
 const StyledClose = styled(Close)`
   margin-left: 10px;
@@ -52,7 +52,7 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
   replaceAssetInRange,
   changeAssetShareInRange,
   changeAssetLeverageInRange,
-  updateLockedState,
+  updateLockedState
 }) => (
   <StyledTable>
     <thead>
@@ -79,11 +79,7 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
               Equal Shares
             </Text>
             <SizedBox width={8} />
-            <Switch
-              value={equalShares}
-              onChange={() => setEqualShares(!equalShares)}
-              size="small"
-            />
+            <Switch value={equalShares} onChange={() => setEqualShares(!equalShares)} size="small" />
           </Row>
         </th>
       </tr>
@@ -92,27 +88,23 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
     <tbody>
       <tr>
         <td width="10%">
-          <AssetSelector
-            asset={token.asset}
-            balances={tokensToAdd}
-            onUpdateAsset={replaceAssetInRange}
-          />
+          <AssetSelector asset={token.asset} balances={tokensToAdd} onUpdateAsset={replaceAssetInRange} />
         </td>
         <td width="80%">
           <Row alignItems="center">
-            <Text size="small" type="secondary" fitContent>1x</Text>
+            <Text size="small" type="secondary" fitContent>
+              1x
+            </Text>
             <SizedBox width={4} />
             <LogSliderWithImage
-              value={token.leverage ? (
-                token.leverage.gte(500) ? 500 : token.leverage.toNumber()
-              ) : 1}
+              value={token.leverage ? (token.leverage.gte(500) ? 500 : token.leverage.toNumber()) : 1}
               min={1}
               max={500}
               imageUrl={token.asset.logo}
               onChange={(v) => {
                 changeAssetLeverageInRange(token.asset.assetId, new BN(v));
               }}
-              minTooltipContent={(
+              minTooltipContent={
                 <Column>
                   <Text size="small" nowrap>
                     Leverage 1x means fact balance = virt balance. You will
@@ -124,8 +116,8 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
                     will be no max price for this token.
                   </Text>
                 </Column>
-              )}
-              maxTooltipContent={(
+              }
+              maxTooltipContent={
                 <Column>
                   <Text size="small" nowrap>
                     The infinite leverage means there will be no fact balance
@@ -137,10 +129,12 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
                     and it won't be available for purchase in the range.
                   </Text>
                 </Column>
-              )}
+              }
             />
             <SizedBox width={4} />
-            <Text size="small" type="secondary" fitContent>∞</Text>
+            <Text size="small" type="secondary" fitContent>
+              ∞
+            </Text>
           </Row>
         </td>
         <td width="10%">
@@ -163,6 +157,6 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
       </tr>
     </tbody>
   </StyledTable>
-)
+);
 
 export default observer(RangeBaseTokenRow);

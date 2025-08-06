@@ -42,8 +42,7 @@ const RangeNotFound: React.FC<IProps> = ({ onClear, searchValue }) => {
         <SizedBox height={24} />
         <NotFoundIcon style={{ marginBottom: 24 }} />
         <Text size="medium" type="secondary" className="text">
-          We are loading ranges. Sorry for taking so long, please bear
-          with us!
+          We are loading ranges. Sorry for taking so long, please bear with us!
         </Text>
         <Button onClick={onClear}>Cancel the search</Button>
         <SizedBox height={24} />

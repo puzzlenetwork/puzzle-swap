@@ -20,20 +20,12 @@ const Root = styled.div`
   width: fit-content;
   flex-direction: row;
 `;
-const Token0Amount: React.FC<IProps> = ({
-  percent,
-  imgSrc,
-  displayPercent,
-}) => {
+const Token0Amount: React.FC<IProps> = ({ percent, imgSrc, displayPercent }) => {
   const theme = useTheme();
   return (
     <Root>
       <Column justifyContent="center" alignItems="center">
-        <SquareTokenIcon
-          size="small"
-          alt="icon"
-          src={imgSrc ?? tokenLogos.UNKNOWN}
-        />
+        <SquareTokenIcon size="small" alt="icon" src={imgSrc ?? tokenLogos.UNKNOWN} />
         {displayPercent && (
           <>
             <SizedBox height={8} />

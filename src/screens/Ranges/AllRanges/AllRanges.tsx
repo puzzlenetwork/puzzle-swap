@@ -19,7 +19,7 @@ import { themes } from "@src/themes/ThemeProvider";
 import Skeleton from "react-loading-skeleton";
 import useWindowSize from "@src/hooks/useWindowSize";
 
-interface IProps { }
+interface IProps {}
 
 const Root = styled.div<{
   apySort?: boolean;
@@ -44,8 +44,7 @@ const Root = styled.div<{
   .balance-group {
     width: 20px;
     height: 20px;
-    transform: ${({ balanceSort }) =>
-    balanceSort ? "scale(1)" : "scale(1, -1)"};
+    transform: ${({ balanceSort }) => (balanceSort ? "scale(1)" : "scale(1, -1)")};
   }
 
   .apy-group {
@@ -57,8 +56,7 @@ const Root = styled.div<{
   .liquidity-group {
     width: 20px;
     height: 20px;
-    transform: ${({ liquiditySort }) =>
-    liquiditySort ? "scale(1)" : "scale(1, -1)"};
+    transform: ${({ liquiditySort }) => (liquiditySort ? "scale(1)" : "scale(1, -1)")};
   }
 `;
 const AboutRanges = styled(Column)`
@@ -82,8 +80,7 @@ const Stats = styled.div<{ loggedIn?: boolean }>`
   gap: 16px;
 
   @media (min-width: 880px) {
-    grid-template-columns: ${({ loggedIn }) =>
-    loggedIn ? "1fr 1fr 1fr" : "1fr 1fr"};
+    grid-template-columns: ${({ loggedIn }) => (loggedIn ? "1fr 1fr 1fr" : "1fr 1fr")};
   }
 `;
 const AllRangesImpl: React.FC<IProps> = () => {
@@ -116,15 +113,14 @@ const AllRangesImpl: React.FC<IProps> = () => {
                 </Row>
                 <SizedBox height={4} />
                 <Subtitle size="medium" fitContent>
-                  View your active liquidity ranges or discover opportunities
-                  created by others.
+                  View your active liquidity ranges or discover opportunities created by others.
                   <br />
-                  Analyze token usage by price range, and decide where to
-                  provide concentrated liquidity in the Puzzle ecosystem.
+                  Analyze token usage by price range, and decide where to provide concentrated liquidity in the Puzzle
+                  ecosystem.
                 </Subtitle>
               </Column>
               <SizedBox height={24} />
-              <Button fixed={ isMobile } onClick={() => navigate(`${ROUTES.RANGES_CREATE}`)}>
+              <Button fixed={isMobile} onClick={() => navigate(`${ROUTES.RANGES_CREATE}`)}>
                 <Img src={theme.images.icons.add} alt="add" />
                 <SizedBox width={12} />
                 Create a range
@@ -150,10 +146,7 @@ const AllRangesImpl: React.FC<IProps> = () => {
                         </Text>
                       </Column>
                       {vm.userInvestedAmount.gt(0) && (
-                        <Button
-                          onClick={() => vm.setShowOnlyUserRanges(!vm.showOnlyUserRanges)}
-                          size="medium"
-                        >
+                        <Button onClick={() => vm.setShowOnlyUserRanges(!vm.showOnlyUserRanges)} size="medium">
                           {vm.showOnlyUserRanges ? "All Ranges" : "My Ranges"}
                         </Button>
                       )}
@@ -162,12 +155,7 @@ const AllRangesImpl: React.FC<IProps> = () => {
                     <Column>
                       <Text type="secondary">My Investment Balance</Text>
                       <SizedBox height={4} />
-                      <Skeleton
-                        width={85}
-                        height={24}
-                        baseColor="#8082C5"
-                        highlightColor="#F1F2FE"
-                      />
+                      <Skeleton width={85} height={24} baseColor="#8082C5" highlightColor="#F1F2FE" />
                     </Column>
                   )}
                 </Card>
@@ -175,18 +163,17 @@ const AllRangesImpl: React.FC<IProps> = () => {
               <Card paddingDesktop="16px 20px">
                 <Text type="secondary">Number Of Ranges</Text>
                 <SizedBox height={4} />
-                {vm.rangesInfo ? (
-                  <Text size="big">{vm.rangesInfo?.totalPools}</Text>
-                ) : (
-                  <Skeleton width={34} />
-                )}
+                {vm.rangesInfo ? <Text size="big">{vm.rangesInfo?.totalPools}</Text> : <Skeleton width={34} />}
               </Card>
               <Card paddingDesktop="16px 20px">
                 <Text type="secondary">Total Fact / Virtual Liquidity</Text>
                 <SizedBox height={4} />
                 {vm.rangesInfo ? (
                   <Text size="big">
-                    ${ vm.rangesInfo?.totalLiquidity.toFormat(2) } / <Text type="secondary" size="big" style={{ display: "inline" }}>${ vm.rangesInfo?.totalVirtualLiquidity.toFormat(2) }</Text>
+                    ${vm.rangesInfo?.totalLiquidity.toFormat(2)} /{" "}
+                    <Text type="secondary" size="big" style={{ display: "inline" }}>
+                      ${vm.rangesInfo?.totalVirtualLiquidity.toFormat(2)}
+                    </Text>
                   </Text>
                 ) : (
                   <Skeleton width={240} />

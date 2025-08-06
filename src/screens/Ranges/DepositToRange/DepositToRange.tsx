@@ -4,10 +4,7 @@ import Layout from "@components/Layout";
 import { observer } from "mobx-react-lite";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import {
-  DepositToRangeVMProvider,
-  useDepositToRangeVM,
-} from "./DepositToRangeVM";
+import { DepositToRangeVMProvider, useDepositToRangeVM } from "./DepositToRangeVM";
 import DialogNotification from "@components/Dialog/DialogNotification";
 import GoBack from "@components/GoBack";
 import Card from "@components/Card";
@@ -52,18 +49,13 @@ const DepositToRangeImpl = observer(() => {
   return (
     <Layout>
       <Root>
-        <GoBack
-          link={`/ranges/${vm.rangeAddress}/details`}
-          text={`Back to range ${range.domain}`}
-        />
+        <GoBack link={`/ranges/${vm.rangeAddress}/details`} text={`Back to range ${range.domain}`} />
         <SizedBox height={24} />
         <Text weight={500} size="large">
           Deposit liquidity to Range {range.domain}
         </Text>
         <SizedBox height={4} />
-        <Text size="medium">
-          Select the method of adding liquidity and enter the amount to provide
-        </Text>
+        <Text size="medium">Select the method of adding liquidity and enter the amount to provide</Text>
         <SizedBox height={24} />
         <Text weight={500} type="secondary">
           Method
@@ -74,20 +66,13 @@ const DepositToRangeImpl = observer(() => {
             values={["Multiple tokens", "Single Token"]}
             active={activeTab}
             onActivate={(i) => {
-              i === 1
-                ? navigate(depositOneTokenRoute)
-                : navigate(depositRoute);
+              i === 1 ? navigate(depositOneTokenRoute) : navigate(depositRoute);
             }}
           />
         </Card>
         <SizedBox height={24} />
-        {isDepositMultiple && (
-            <DepositMultipleTokens />
-          )
-        }
-        {isDepositSingle && (
-          <DepositSingleToken />
-        )}
+        {isDepositMultiple && <DepositMultipleTokens />}
+        {isDepositSingle && <DepositSingleToken />}
         <DialogNotification
           onClose={() => vm.setNotificationParams(null)}
           title={vm.notificationParams?.title ?? ""}

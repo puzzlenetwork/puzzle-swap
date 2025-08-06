@@ -35,12 +35,7 @@ const Balance = styled.div`
   color: #8082c5;
 `;
 
-const TokenSelect: React.FC<IProps> = ({
-  token,
-  selectable,
-  balance,
-  ...rest
-}) => {
+const TokenSelect: React.FC<IProps> = ({ token, selectable, balance, ...rest }) => {
   const theme = useTheme();
   return (
     <Root {...rest}>

@@ -8,11 +8,7 @@ const Root = styled(Text)`
 `;
 
 const ExploreFooter = () => (
-  <Root
-    onClick={() => window.open("https://wavescap.com")}
-    type="secondary"
-    size="medium"
-  >
+  <Root onClick={() => window.open("https://wavescap.com")} type="secondary" size="medium">
     Data provided by WavesCap 💙
   </Root>
 );

@@ -1,24 +1,17 @@
-import styled from "@emotion/styled";
-import React from "react";
+import Button from "@components/Button";
+import GoBack from "@components/GoBack";
 import Layout from "@components/Layout";
-import { observer } from "mobx-react-lite";
-import Text from "@components/Text";
+import Loading from "@components/Loading";
 import SizedBox from "@components/SizedBox";
+import Text from "@components/Text";
+import styled from "@emotion/styled";
 import { useStores } from "@stores";
-import {
-  useWithdrawFromRangeVM,
-  WithdrawFromRangeVMProvider
-} from "./WithdrawFromRangeVM";
-import ShortPoolInfoCard from "@components/ShortPoolInfoCard";
+import { observer } from "mobx-react-lite";
+import React from "react";
+import { useParams } from "react-router-dom";
+import { useWithdrawFromRangeVM, WithdrawFromRangeVMProvider } from "./WithdrawFromRangeVM";
 import WithdrawLiquidityAmount from "./WithdrawLiquidityAmount";
 import WithdrawLiquidityTable from "./WithdrawLiquidityTable";
-import Button from "@components/Button";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
-import GoBack from "@components/GoBack";
-import Loading from "@components/Loading";
-import { ROUTES } from "@src/constants";
-import BN from "@src/utils/BN";
-import ChangePoolModal from "@src/components/ChangePoolModal";
 
 const Root = styled.div`
   display: flex;
@@ -44,18 +37,13 @@ const WithdrawFromRange = observer(() => {
   return (
     <Layout>
       <Root>
-        <GoBack
-          link={`/ranges/${vm.rangeAddress}/details`}
-          text={`Back to range ${vm.range.domain}`}
-        />
+        <GoBack link={`/ranges/${vm.rangeAddress}/details`} text={`Back to range ${vm.range.domain}`} />
         <SizedBox height={24} />
         <Text weight={500} size="large">
           Withdraw liquidity
         </Text>
         <SizedBox height={4} />
-        <Text size="medium">
-          Select the percentage of assets you want to withdraw from the pool
-        </Text>
+        <Text size="medium">Select the percentage of assets you want to withdraw from the pool</Text>
         <SizedBox height={24} />
         {accountStore.address != null ? (
           <>

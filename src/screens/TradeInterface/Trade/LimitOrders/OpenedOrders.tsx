@@ -43,10 +43,7 @@ const OpenedOrders: React.FC<IProps> = () => {
   return (
     <Root>
       {!vm.isThereOpenedOrders && (
-        <Text textAlign="center">
-          Your open orders will show up here. Create an order above this
-          section!
-        </Text>
+        <Text textAlign="center">Your open orders will show up here. Create an order above this section!</Text>
       )}
       {Object.entries(vm.groupedOrders(true)).map(([time, orders]) => (
         <Column key={time} crossAxisSize="max">

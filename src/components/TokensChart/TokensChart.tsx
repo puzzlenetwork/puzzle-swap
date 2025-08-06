@@ -4,14 +4,7 @@ import { Row } from "@components/Flex";
 import Text from "@components/Text";
 import { observer } from "mobx-react-lite";
 import Spinner from "@components/Spinner";
-import {
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip as RechartsTooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Line, LineChart, ResponsiveContainer, Tooltip as RechartsTooltip, XAxis, YAxis } from "recharts";
 import dayjs from "dayjs";
 import { useTokenChartVM } from "@components/TokensChart/TokenChartVM";
 import BN from "@src/utils/BN";
@@ -59,22 +52,14 @@ const TokensChart: React.FC<IProps> = () => {
                   </Text>
                 )}
                 formatter={(value) =>
-                  ` 1 ${vm.asset1.symbol} = ` +
-                  new BN(`${value}`).toFormat(4) +
-                  ` ${vm.asset0.symbol}`
+                  ` 1 ${vm.asset1.symbol} = ` + new BN(`${value}`).toFormat(4) + ` ${vm.asset0.symbol}`
                 }
                 contentStyle={{
                   border: "none",
-                  filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))",
+                  filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))"
                 }}
               />
-              <Line
-                dot={false}
-                type="monotone"
-                dataKey="price"
-                stroke="#7075E9"
-                strokeWidth={2}
-              />
+              <Line dot={false} type="monotone" dataKey="price" stroke="#7075E9" strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
         ))}

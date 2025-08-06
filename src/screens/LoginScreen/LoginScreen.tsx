@@ -73,47 +73,45 @@ const Container = styled(Column)`
 const LoginScreen: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const handleLogin = (loginType: LOGIN_TYPE) => () =>
-    accountStore
-      .login(loginType)
-      .then(() => accountStore.setLoginModalOpened(false));
+    accountStore.login(loginType).then(() => accountStore.setLoginModalOpened(false));
   const isMetamaskInstalled = typeof window.ethereum !== "undefined";
   const loginTypes = [
     {
       title: "WX.Network Email",
       icon: email,
       type: LOGIN_TYPE.SIGNER_EMAIL,
-      active: true,
+      active: true
     },
     {
       title: "Seed phrase",
       icon: seed,
       type: LOGIN_TYPE.SIGNER_SEED,
-      active: true,
+      active: true
     },
     {
       title: "MetaMask",
       icon: metamask,
       type: LOGIN_TYPE.METAMASK,
-      active: isMetamaskInstalled,
+      active: isMetamaskInstalled
     },
     {
       title: "Keeper Mobile",
       icon: keeper,
       type: LOGIN_TYPE.KEEPER_MOBILE,
-      active: true,
+      active: true
     },
     {
       title: "Keeper Wallet",
       icon: keeper,
       type: LOGIN_TYPE.KEEPER,
-      active: accountStore.isWavesKeeperInstalled,
+      active: accountStore.isWavesKeeperInstalled
     },
     {
       title: "Ledger",
       icon: ledger,
       type: LOGIN_TYPE.LEDGER,
-      active: true,
-    },
+      active: true
+    }
   ];
   if (!accountStore.loginModalOpened) return null;
   return (
@@ -122,23 +120,14 @@ const LoginScreen: React.FC<IProps> = () => {
       <Row alignItems="center">
         <Pic />
         <Root>
-          <Column
-            justifyContent="center"
-            alignItems="center"
-            crossAxisSize="max"
-            style={{ maxWidth: 360 }}
-          >
+          <Column justifyContent="center" alignItems="center" crossAxisSize="max" style={{ maxWidth: 360 }}>
             <Text size="large" textAlign="center" weight={500}>
               Connect wallet
             </Text>
             <SizedBox height={40} />
             <Container>
               {loginTypes.map((t) => (
-                <LoginType
-                  {...t}
-                  key={t.type}
-                  onClick={t.active ? handleLogin(t.type) : undefined}
-                />
+                <LoginType {...t} key={t.type} onClick={t.active ? handleLogin(t.type) : undefined} />
               ))}
             </Container>
           </Column>

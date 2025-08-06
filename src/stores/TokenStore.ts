@@ -53,19 +53,15 @@ export default class TokenStore {
     const assets = TOKENS_LIST.map(({ assetId }) => assetId);
     const stats = await wavesCapService.getAssetsStats(assets).catch((e) => {
       notificationStore.notify(e.message ?? e.toString(), {
-        type: "error",
+        type: "error"
       });
       return [];
     });
     const statistics = stats.map((details) => {
       const asset = TOKENS_BY_ASSET_ID[details.id] ?? details.precision;
       const decimals = asset.decimals;
-      const firstPrice = new BN(
-        details.data?.["firstPrice_usdt-erc20-ppt"] ?? 0
-      );
-      const currentPrice = new BN(
-        details.data?.["lastPrice_usdt-erc20-ppt"] ?? 0
-      );
+      const firstPrice = new BN(details.data?.["firstPrice_usdt-erc20-ppt"] ?? 0);
+      const currentPrice = new BN(details.data?.["lastPrice_usdt-erc20-ppt"] ?? 0);
 
       const totalSupply = BN.formatUnits(details.totalSupply, decimals);
       const circulatingSupply = BN.formatUnits(details.circulating, decimals);
@@ -74,12 +70,8 @@ export default class TokenStore {
       const change24HUsd = change24H.div(100).times(currentPrice);
 
       const changePrefix = change24H?.gte(0) ? "+" : "-";
-      const formatChange24HUsd = change24HUsd
-        ?.times(change24H?.gte(0) ? 1 : -1)
-        .toFormat(4);
-      const formatChange24H = change24H
-        ?.times(change24H?.gte(0) ? 1 : -1)
-        .toFormat(2);
+      const formatChange24HUsd = change24HUsd?.times(change24H?.gte(0) ? 1 : -1).toFormat(4);
+      const formatChange24H = change24H?.times(change24H?.gte(0) ? 1 : -1).toFormat(2);
       const changeStr = `${changePrefix} $${formatChange24HUsd} (${formatChange24H}%)`;
       return {
         assetId: details.id,
@@ -95,7 +87,7 @@ export default class TokenStore {
         fullyDilutedMC: totalSupply.times(currentPrice),
         marketCap: circulatingSupply.times(currentPrice),
         totalBurned: totalSupply.minus(circulatingSupply),
-        volume24: new BN(details["24h_vol_usd"]),
+        volume24: new BN(details["24h_vol_usd"])
       };
     });
     this.setStatistics(statistics);
@@ -105,13 +97,11 @@ export default class TokenStore {
     this.rootStore = rootStore;
     makeAutoObservable(this);
     this.watchList = initState?.watchList ?? [];
-    Promise.all([this.syncTokenStatistics()]).then(() =>
-      this.setInitialized(true)
-    );
+    Promise.all([this.syncTokenStatistics()]).then(() => this.setInitialized(true));
     setInterval(this.syncTokenStatistics, 60 * 1000);
   }
 
   serialize = (): ISerializedTokenStore => ({
-    watchList: this.watchList,
+    watchList: this.watchList
   });
 }

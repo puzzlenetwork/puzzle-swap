@@ -8,7 +8,7 @@ export interface IGetRanges {
   sortBy?: "fact_liquidity" | "earned" | "virtual_liquidity";
   order?: "asc" | "desc";
   search?: string;
-  userAddress?: string
+  userAddress?: string;
 }
 
 export interface IGetRange {
@@ -18,7 +18,6 @@ export interface IGetRange {
   user?: string;
   charts?: boolean;
 }
-
 
 export interface IGetRangesResponse {
   ranges: IRangeParamsResponse[];
@@ -45,7 +44,7 @@ const rangesService = {
   getRanges: async (params: IGetRanges): Promise<IGetRangesResponse> => {
     const paramsString = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
-      (value !== undefined) && paramsString.append(key, value.toString());
+      value !== undefined && paramsString.append(key, value.toString());
     });
     const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged`;
     const url = `${baseUrl}?${paramsString.toString()}`;
@@ -55,7 +54,7 @@ const rangesService = {
   getGlobalRangesInfo: async (): Promise<IGlobalRangesInfoResponse> => {
     const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/global_info`;
     const paramsString = new URLSearchParams({
-      poolMode: "ranged",
+      poolMode: "ranged"
     });
     const url = `${baseUrl}?${paramsString.toString()}`;
     const { data } = await axios.get(url);
@@ -77,8 +76,8 @@ const rangesService = {
       poolMode: "ranged",
       page: "1",
       size: "1",
-      force: force ? "true" : "false",
-    })
+      force: force ? "true" : "false"
+    });
     const url = `${baseUrl}?${paramsString.toString()}`;
     const { data } = await axios.get(url);
     return data.data[0];
@@ -97,13 +96,13 @@ const rangesService = {
       userAddress: userAddress,
       poolMode: "ranged",
       page: "1",
-      size: "500",
+      size: "500"
     });
     const url = `${baseUrl}?${paramsString.toString()}`;
     const { data } = await axios.get(url);
     return data.total_provided_usd;
   },
-  getStakingStatistics: async (group?: ("common" | "index")): Promise<IStakingStatistics[]> => {
+  getStakingStatistics: async (group?: "common" | "index"): Promise<IStakingStatistics[]> => {
     const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/aprs`;
     const paramsString = new URLSearchParams({
       page: "1",
@@ -116,4 +115,4 @@ const rangesService = {
   }
 };
 
-export default rangesService; 
+export default rangesService;

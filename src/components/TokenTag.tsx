@@ -22,9 +22,8 @@ const Root = styled.div`
 `;
 
 const TokenTag: React.FC<IProps> = ({ token, amount, size, iconRight }) => {
-  const value =
-    amount == null ? BN.ZERO : BN.formatUnits(amount, token.decimals);
-  const imgSize = size === "small" ? 16 : (size === "large" ? 32 : 24);
+  const value = amount == null ? BN.ZERO : BN.formatUnits(amount, token.decimals);
+  const imgSize = size === "small" ? 16 : size === "large" ? 32 : 24;
   return (
     <Root>
       {!iconRight && <Img src={token.logo} alt="token" radius="50%" width={`${imgSize}px`} height={`${imgSize}px`} />}

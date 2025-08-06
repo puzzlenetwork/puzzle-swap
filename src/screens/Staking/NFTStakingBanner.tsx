@@ -36,12 +36,7 @@ const NFTStakingBanner: React.FC = () => {
   const { stakeStore } = useStores();
   return (
     <Root>
-      <Card
-        type="dark"
-        flexDirection="row"
-        justifyContent="space-between"
-        alignItems="center"
-      >
+      <Card type="dark" flexDirection="row" justifyContent="space-between" alignItems="center">
         <Column mainAxisSize="stretch">
           <Title type="light">NFT Staking</Title>
           <Text type="light" style={{ maxWidth: 195 }}>

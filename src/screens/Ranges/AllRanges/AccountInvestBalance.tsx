@@ -76,30 +76,20 @@ const AccountInvestBalance: React.FC<IProps> = () => {
             style={{
               fontSize: 24,
               lineHeight: "32px",
-              color: themes.lightTheme.colors.white,
+              color: themes.lightTheme.colors.white
             }}
             // type="light"
           >
             {vm.totalInvestmentBalance}
           </Text>
         ) : (
-          <Skeleton
-            height={32}
-            width={150}
-            baseColor="#8082C5"
-            highlightColor="#F1F2FE"
-          />
+          <Skeleton height={32} width={150} baseColor="#8082C5" highlightColor="#F1F2FE" />
         )}
       </Column>
       <SizedBox height={8} />
       <Details>
         <Row justifyContent="space-between" style={{ position: "relative" }}>
-          <LastClaimDate
-            type="secondary"
-            textAlign="right"
-            size="medium"
-            style={{ position: "absolute" }}
-          >
+          <LastClaimDate type="secondary" textAlign="right" size="medium" style={{ position: "absolute" }}>
             {/*Last claim 1 Jan 2022*/}
             {/*{!vm.lastClaimDate.eq(0) && "Last claim " + format}*/}
           </LastClaimDate>

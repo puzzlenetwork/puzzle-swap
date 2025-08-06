@@ -18,10 +18,7 @@ const ExploreImpl: React.FC<IProps> = () => {
           Explore cryptocurrencies on Puzzle Swap
         </Text>
         <SizedBox height={8} />
-        <Text>
-          Learn more about the coins featured on Puzzle Swap: statistics, price
-          charts and much more!
-        </Text>
+        <Text>Learn more about the coins featured on Puzzle Swap: statistics, price charts and much more!</Text>
         <SizedBox height={24} />
         <TopTokens />
         <SizedBox height={56} />

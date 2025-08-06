@@ -35,8 +35,7 @@ const InputContainer = styled.div<{
   invalid?: boolean;
   readOnly?: boolean;
 }>`
-  background: ${({ focused, theme }) =>
-    focused ? "#fffff" : theme.colors.primary100};
+  background: ${({ focused, theme }) => (focused ? "#fffff" : theme.colors.primary100)};
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -56,11 +55,7 @@ const InputContainer = styled.div<{
 
   border: 1px solid
     ${({ focused, readOnly, error, theme }) =>
-      error
-        ? theme.colors.error500
-        : focused && !readOnly
-        ? theme.colors.blue500
-        : theme.colors.primary100};
+      error ? theme.colors.error500 : focused && !readOnly ? theme.colors.blue500 : theme.colors.primary100};
 
   :hover {
     border-color: ${({ readOnly, focused, error, theme }) =>
@@ -76,16 +71,8 @@ const LimitTokenInput: React.FC<IProps> = (props) => {
   const theme = useTheme();
   return (
     <Root>
-      <InputContainer
-        focused={focused}
-        readOnly={!props.setAmount}
-        error={props.error}
-      >
-        <Text
-          fitContent
-          type={focused ? "primary" : "secondary"}
-          style={{ paddingRight: 2, fontSize: 16 }}
-        >
+      <InputContainer focused={focused} readOnly={!props.setAmount} error={props.error}>
+        <Text fitContent type={focused ? "primary" : "secondary"} style={{ paddingRight: 2, fontSize: 16 }}>
           {props.prefix}
         </Text>
         {props.loading ? (
@@ -123,12 +110,7 @@ const LimitTokenInput: React.FC<IProps> = (props) => {
             readOnly={!props.setAmount}
           />
         )}
-        <Text
-          style={{ whiteSpace: "nowrap" }}
-          type="secondary"
-          size="small"
-          fitContent
-        >
+        <Text style={{ whiteSpace: "nowrap" }} type="secondary" size="small" fitContent>
           {props.usdnEquivalent}
         </Text>
       </InputContainer>

@@ -59,41 +59,33 @@ const poolService = {
   },
   getPoolChartByDomain: async (address: string): Promise<IHistory[]> => {
     const params = new URLSearchParams({
-      timeRange: "all",
+      timeRange: "all"
     });
-    const req = `${
-      process.env.REACT_APP_AGG_API
-    }/stats/v1/statistics/pools/${address}/charts?${params.toString()}`;
+    const req = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/${address}/charts?${params.toString()}`;
     const { data } = await axios.get(req);
     return data;
   },
   updateStats: async (domain: string): Promise<void> => {
-    await axios(
-      `${process.env.REACT_APP_API_BASE}/api/v1/pools/update-stats/${domain}`,
-      {
-        method: "POST",
-        headers: { "Content-type": "application/json" },
-        data: { domain },
-      }
-    );
+    await axios(`${process.env.REACT_APP_API_BASE}/api/v1/pools/update-stats/${domain}`, {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      data: { domain }
+    });
   },
   checkDomain: async (domain: string): Promise<boolean> => {
     await axios(`${process.env.REACT_APP_API_BASE}/api/v1/pools/check-domain`, {
       method: "POST",
       headers: { "Content-type": "application/json" },
-      data: { domain },
+      data: { domain }
     });
     return true;
   },
   createPool: async (data: ICreatePoolData): Promise<boolean> => {
-    await axios(
-      `${process.env.REACT_APP_API_BASE}/api/v1/pools/pool/${data.domain}`,
-      {
-        method: "POST",
-        headers: { "Content-type": "application/json" },
-        data,
-      }
-    );
+    await axios(`${process.env.REACT_APP_API_BASE}/api/v1/pools/pool/${data.domain}`, {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      data
+    });
     return true;
   },
   getPools: async (
@@ -114,22 +106,16 @@ const poolService = {
       params.append(key, value);
     });
     const { data: statsData } = await axios.get(
-      `${
-        process.env.REACT_APP_AGG_API
-      }/stats/v1/statistics/pools/all?${params.toString()}`
+      `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/all?${params.toString()}`
     );
     return { pools: statsData.pools, totalItems: statsData.total };
   },
   getStats: async (): Promise<IStakingStatsResponse> => {
-    const { data } = await axios.get(
-      `${process.env.REACT_APP_API_BASE}/api/v1/stats`
-    );
+    const { data } = await axios.get(`${process.env.REACT_APP_API_BASE}/api/v1/stats`);
     return data;
   },
-  getPoolsStateByUserAddress: async (
-    address?: string | null
-  ): Promise<TPoolState[]> => {
-    const req = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/datastorage`
+  getPoolsStateByUserAddress: async (address?: string | null): Promise<TPoolState[]> => {
+    const req = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/datastorage`;
     const { data } = await axios.get(req);
     return data;
   },
@@ -137,6 +123,6 @@ const poolService = {
     const req = `${process.env.REACT_APP_API_BASE}/api/v1/pools/limit`;
     const { data } = await axios.get(req);
     return data.isLimited;
-  },
+  }
 };
 export default poolService;

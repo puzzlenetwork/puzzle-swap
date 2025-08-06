@@ -47,10 +47,7 @@ const AssetSelector = ({ asset, onUpdateAsset, balances }: IParams) => {
 
   return (
     <>
-      <AssetContainer
-        modalOpened={openModal}
-        onClick={() => setOpenModal(true)}
-      >
+      <AssetContainer modalOpened={openModal} onClick={() => setOpenModal(true)}>
         <RoundTokenIcon src={asset.logo} />
         <SizedBox width={8} />
         <Text nowrap>{asset.symbol}</Text>
@@ -65,6 +62,6 @@ const AssetSelector = ({ asset, onUpdateAsset, balances }: IParams) => {
       />
     </>
   );
-}
+};
 
 export default AssetSelector;

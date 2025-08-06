@@ -24,8 +24,7 @@ const PoolsTable: React.FC = () => {
   const vm = useInvestVM();
   const navigate = useNavigate();
   const theme = useTheme();
-  const timeRange =
-    poolsStore.volumeByTimestamp[poolsStore.volumeByTimeFilter].key;
+  const timeRange = poolsStore.volumeByTimestamp[poolsStore.volumeByTimeFilter].key;
   const columns = React.useMemo(
     () => [
       { Header: "Pool name", accessor: "poolName" },
@@ -46,7 +45,7 @@ const PoolsTable: React.FC = () => {
             />
           </Row>
         ),
-        accessor: "accountBalance",
+        accessor: "accountBalance"
       },
       {
         Header: () => (
@@ -65,7 +64,7 @@ const PoolsTable: React.FC = () => {
             />
           </Row>
         ),
-        accessor: "liquidity",
+        accessor: "liquidity"
       },
       { Header: `Volume (${timeRange})`, accessor: "volume" },
       {
@@ -85,8 +84,8 @@ const PoolsTable: React.FC = () => {
               }}
             />
           </Row>
-        ),
-      },
+        )
+      }
     ],
     [vm, theme.images.icons.group, timeRange]
   );
@@ -101,9 +100,7 @@ const PoolsTable: React.FC = () => {
       .filter(({ globalLiquidity }) => globalLiquidity.gt(new BN(20)))
       .filter((pool) => {
         if (!poolsStore.showEmptyBalances) {
-          const data = poolsStore.investedInPools?.find(
-            (v) => pool.domain === v.pool.domain
-          );
+          const data = poolsStore.investedInPools?.find((v) => pool.domain === v.pool.domain);
           return data?.liquidityInUsdt != null && data.liquidityInUsdt.gt(0);
         }
         return true;
@@ -119,12 +116,8 @@ const PoolsTable: React.FC = () => {
           }
         } else if (poolsStore.activeSort === 2) {
           if (accountStore.address == null) return 1;
-          const balanceA = poolsStore.investedInPools?.find(
-            (v) => a.domain === v.pool.domain
-          );
-          const balanceB = poolsStore.investedInPools?.find(
-            (v) => b.domain === v.pool.domain
-          );
+          const balanceA = poolsStore.investedInPools?.find((v) => a.domain === v.pool.domain);
+          const balanceB = poolsStore.investedInPools?.find((v) => b.domain === v.pool.domain);
           if (balanceA == null || balanceB == null) return 1;
           if (balanceA.liquidityInUsdt.lt(balanceB.liquidityInUsdt)) {
             return poolsStore.sortBalance ? 1 : -1;
@@ -166,8 +159,7 @@ const PoolsTable: React.FC = () => {
       .filter((pool) => {
         if (vm.poolCategoryFilter === 0) return true;
         const poolsCategories = pool.tokens.reduce(
-          (acc, { category }) =>
-            category != null ? [...acc, ...category] : [...acc],
+          (acc, { category }) => (category != null ? [...acc, ...category] : [...acc]),
           [] as string[]
         );
         const categories = poolsCategories.filter(
@@ -177,10 +169,7 @@ const PoolsTable: React.FC = () => {
       })
       .filter((pool) => {
         if (poolsStore.versionFilter === 0) return true;
-        return (
-          pool.version ===
-          poolsStore.versionOptions[poolsStore.versionFilter]["title"]
-        );
+        return pool.version === poolsStore.versionOptions[poolsStore.versionFilter]["title"];
       })
       // .filter(({}) => {
 
@@ -199,8 +188,7 @@ const PoolsTable: React.FC = () => {
       )
       .map((pool) => ({
         onClick: () => navigate(`/pools/${pool.domain}/invest`),
-        disabled:
-          pool.statistics == null && pool.owner !== accountStore.address,
+        disabled: pool.statistics == null && pool.owner !== accountStore.address,
         poolName: (
           <Row>
             <SquareTokenIcon src={pool.logo} alt="logo" />
@@ -211,48 +199,36 @@ const PoolsTable: React.FC = () => {
                   {pool.title}
                 </Text>
                 <SizedBox width={4} />
-                {pool.statistics?.boostedApy != null &&
-                  new BN(pool.statistics.boostedApy).gt(0) && (
-                    <Tag background={theme.colors.blue500} type="primary">
-                      Boosted APY 🚀
-                    </Tag>
-                  )}
+                {pool.statistics?.boostedApy != null && new BN(pool.statistics.boostedApy).gt(0) && (
+                  <Tag background={theme.colors.blue500} type="primary">
+                    Boosted APY 🚀
+                  </Tag>
+                )}
               </Row>
-              <TokenTags
-                tokens={pool.assets ?? []}
-              />
+              <TokenTags tokens={pool.assets ?? []} />
             </Column>
           </Row>
         ),
         accountBalance: (() => {
-          const data = poolsStore.investedInPools?.find(
-            (v) => pool.domain === v.pool.domain
-          );
+          const data = poolsStore.investedInPools?.find((v) => pool.domain === v.pool.domain);
           return data?.liquidityInUsdt != null && data.liquidityInUsdt.gt(0)
             ? `$${data.liquidityInUsdt.toFormat(2)}`
             : "";
         })(),
         liquidity: "$" + new BN(pool.statistics?.liquidity ?? 0).toBigFormat(0),
         volume: (() => {
-          const volume =
-            pool.stats != null
-              ? new BN(pool.stats.volume).toBigFormat(0)
-              : null;
+          const volume = pool.stats != null ? new BN(pool.stats.volume).toBigFormat(0) : null;
           return volume != null ? `$${volume}` : "—";
         })(),
         apy: (
           <Row>
-            {pool.statistics?.boostedApy != null &&
-            new BN(pool.statistics.boostedApy).gt(0) ? (
+            {pool.statistics?.boostedApy != null && new BN(pool.statistics.boostedApy).gt(0) ? (
               <Row alignItems="center">
                 <Text fitContent type="secondary" crossed>
                   {new BN(pool.statistics?.apr ?? 0).toFormat(2).concat("%")}
                 </Text>
                 <SizedBox width={2} />
-                {new BN(pool.statistics?.apr ?? 0)
-                  .plus(pool.statistics.boostedApy)
-                  .toBigFormat(2)
-                  .concat("%")}
+                {new BN(pool.statistics?.apr ?? 0).plus(pool.statistics.boostedApy).toBigFormat(2).concat("%")}
               </Row>
             ) : (
               <>
@@ -267,7 +243,7 @@ const PoolsTable: React.FC = () => {
             )}
           </Row>
         ),
-        owner: pool.owner,
+        owner: pool.owner
       }));
     setFilteredPools(data);
   }, [
@@ -286,12 +262,10 @@ const PoolsTable: React.FC = () => {
     accountStore.address,
     accountStore.findBalanceByAssetId,
     navigate,
-    poolsStore.pagination,
+    poolsStore.pagination
   ]);
 
-  const myPools = filteredPools.filter(
-    ({ owner }) => owner != null && accountStore.address === owner
-  );
+  const myPools = filteredPools.filter(({ owner }) => owner != null && accountStore.address === owner);
 
   return (
     <>
@@ -303,9 +277,7 @@ const PoolsTable: React.FC = () => {
             </Text>
           </Row>
           <SizedBox height={8} />
-          <Scrollbar
-            style={{ maxWidth: "calc(100vw - 32px)", borderRadius: 16 }}
-          >
+          <Scrollbar style={{ maxWidth: "calc(100vw - 32px)", borderRadius: 16 }}>
             <Table style={{ minWidth: 900 }} columns={columns} data={myPools} />
           </Scrollbar>
           <SizedBox height={24} />
@@ -318,10 +290,7 @@ const PoolsTable: React.FC = () => {
         {accountStore.address != null && (
           <>
             <SizedBox width={28} />
-            <Checkbox
-              checked={poolsStore.showEmptyBalances}
-              onChange={(e) => poolsStore.setShowEmptyBalances(e)}
-            />
+            <Checkbox checked={poolsStore.showEmptyBalances} onChange={(e) => poolsStore.setShowEmptyBalances(e)} />
             <SizedBox width={12} />
             <Text style={{ width: "auto" }}>Show my empty balances</Text>
           </>
@@ -330,15 +299,8 @@ const PoolsTable: React.FC = () => {
       <SizedBox height={8} />
       {filteredPools.length > 0 ? (
         <>
-          <Scrollbar
-            style={{ maxWidth: "calc(100vw - 32px)", borderRadius: 16 }}
-          >
-            <Table
-              style={{ minWidth: 900 }}
-              columns={columns}
-              data={filteredPools}
-              withHover
-            />
+          <Scrollbar style={{ maxWidth: "calc(100vw - 32px)", borderRadius: 16 }}>
+            <Table style={{ minWidth: 900 }} columns={columns} data={filteredPools} withHover />
           </Scrollbar>
           <Pagination
             currentPage={poolsStore.pagination.page}

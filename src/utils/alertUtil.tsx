@@ -29,10 +29,7 @@ const Link = styled.a`
   cursor: pointer;
 `;
 
-const getAlert = (
-  content: string,
-  { type, title, link, linkTitle, onClick, onClickText }: TNotifyOptions
-) => {
+const getAlert = (content: string, { type, title, link, linkTitle, onClick, onClickText }: TNotifyOptions) => {
   if (!type) return null;
   return (
     <Root>

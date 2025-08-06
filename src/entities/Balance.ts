@@ -45,9 +45,7 @@ class Balance implements IAssetBalance {
       return "—";
     }
     if (this.usdnEquivalent.eq(0)) return `~ 0.00 $`;
-    const v = this.usdnEquivalent.gt(0.01)
-      ? this.usdnEquivalent.toFormat(2)
-      : this.usdnEquivalent.toFormat(6);
+    const v = this.usdnEquivalent.gt(0.01) ? this.usdnEquivalent.toFormat(2) : this.usdnEquivalent.toFormat(6);
     return `~ ${v} $`;
   }
 }

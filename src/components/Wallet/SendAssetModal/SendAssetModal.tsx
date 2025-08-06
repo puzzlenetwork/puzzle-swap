@@ -19,20 +19,12 @@ interface IProps extends IDialogPropTypes {}
 const SendAssetModal: React.FC<IProps> = ({ ...rest }) => {
   const { accountStore } = useStores();
   const { assetToSend } = accountStore;
-  const balance = BN.formatUnits(
-    assetToSend?.balance ?? 0,
-    assetToSend?.decimals
-  );
+  const balance = BN.formatUnits(assetToSend?.balance ?? 0, assetToSend?.decimals);
   return (
     <RcDialog
       wrapClassName="send-asset"
       closeIcon={<CloseIcon style={{ cursor: "pointer" }} />}
-      title={
-        <SendAssetHeader
-          tokenName={`Send ${assetToSend?.name}`}
-          onClose={rest.onClose}
-        />
-      }
+      title={<SendAssetHeader tokenName={`Send ${assetToSend?.name}`} onClose={rest.onClose} />}
       destroyOnClose
       {...rest}
     >
@@ -49,13 +41,8 @@ const SendAssetModal: React.FC<IProps> = ({ ...rest }) => {
               <SizedBox height={24} />
               <SquareTokenIcon src={assetToSend?.logo} />
               <SizedBox height={8} />
-              <Text fitContent weight={500}>{`${balance?.toFormat(2)} ${
-                assetToSend?.symbol
-              }`}</Text>
-              <Text
-                fitContent
-                type="secondary"
-              >{`$ ${assetToSend?.usdnEquivalent?.toFormat(2)}`}</Text>
+              <Text fitContent weight={500}>{`${balance?.toFormat(2)} ${assetToSend?.symbol}`}</Text>
+              <Text fitContent type="secondary">{`$ ${assetToSend?.usdnEquivalent?.toFormat(2)}`}</Text>
               <RecipientInfo />
             </Column>
           </SendAssetVMProvider>

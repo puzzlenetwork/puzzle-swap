@@ -59,8 +59,8 @@ const CreateRangeImpl: React.FC = () => {
             </Text>
             <SizedBox height={8} />
             <Subtitle size="medium">
-              Create a custom Range with any token combination and optimize your liquidity
-              distribution. As the Range owner, you’ll also earn a share of all fees generated within it.
+              Create a custom Range with any token combination and optimize your liquidity distribution. As the Range
+              owner, you’ll also earn a share of all fees generated within it.
             </Subtitle>
             <SizedBox height={24} />
             <Grid>

@@ -25,9 +25,7 @@ const Reward: React.FC<IProps> = () => {
         Reward
       </Text>
       <SizedBox height={8} />
-      <Card>
-        {address == null ? <LoggedOutRewardInfo /> : <LoggedInRewardInfo />}
-      </Card>
+      <Card>{address == null ? <LoggedOutRewardInfo /> : <LoggedInRewardInfo />}</Card>
     </Root>
   );
 };

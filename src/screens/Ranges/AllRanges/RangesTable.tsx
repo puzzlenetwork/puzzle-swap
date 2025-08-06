@@ -40,7 +40,7 @@ const RangesTable: React.FC = () => {
             Fact / Virtual Liquidity
           </Text>
         ),
-        accessor: "liquidity",
+        accessor: "liquidity"
       },
       {
         Header: (
@@ -48,8 +48,8 @@ const RangesTable: React.FC = () => {
             Earned by LP
           </Text>
         ),
-        accessor: "periodFees",
-      },
+        accessor: "periodFees"
+      }
     ],
     []
   );
@@ -57,7 +57,7 @@ const RangesTable: React.FC = () => {
   const changePage = (el: number) => {
     rangesStore.setPagination({
       page: el,
-      size: rangesStore.rangesPaginationSize,
+      size: rangesStore.rangesPaginationSize
     });
   };
 
@@ -77,11 +77,7 @@ const RangesTable: React.FC = () => {
                 paddingMobile="4px"
                 onClick={width && width < 880 ? stopPropagation : undefined}
               >
-                <RangeChart
-                  assetsWithLeverage={range.assetsWithLeverage}
-                  size={120}
-                  index={index}
-                />
+                <RangeChart assetsWithLeverage={range.assetsWithLeverage} size={120} index={index} />
               </GrayCard>
               <SizedBox width={16} />
               <Column crossAxisSize="max" justifyContent="space-between">
@@ -91,13 +87,7 @@ const RangesTable: React.FC = () => {
                 <Row style={{ flexWrap: "wrap", gap: 4 }}>
                   {range.assets
                     .slice()
-                    .sort((a, b) =>
-                      range.baseTokenId === a.assetId
-                        ? -1
-                        : range.baseTokenId === b.assetId
-                        ? 1
-                        : 0
-                    )
+                    .sort((a, b) => (range.baseTokenId === a.assetId ? -1 : range.baseTokenId === b.assetId ? 1 : 0))
                     .slice(0, 4)
                     .map((asset, index) => (
                       <TokenInRangePreview
@@ -112,7 +102,7 @@ const RangesTable: React.FC = () => {
                       style={{
                         alignItems: "center",
                         justifyContent: "center",
-                        height: 76,
+                        height: 76
                       }}
                     >
                       <Text>+{range.assets.length - 4}</Text>
@@ -122,7 +112,7 @@ const RangesTable: React.FC = () => {
                 <SizedBox height={20} />
               </Column>
             </Row>
-          ),
+          )
         }),
         {}
       ),
@@ -145,9 +135,7 @@ const RangesTable: React.FC = () => {
         <Column alignItems="flex-end" crossAxisSize="max">
           <Row style={{ gap: 4, flexWrap: "wrap", justifyContent: "flex-end" }}>
             {Object.entries(range.periodStats.fees)
-              .filter(([_, { feesEarned, extraEarned }]) =>
-                feesEarned.plus(extraEarned).gt(0)
-              )
+              .filter(([_, { feesEarned, extraEarned }]) => feesEarned.plus(extraEarned).gt(0))
               .map(([assetId, { feesEarned, extraEarned }], i) => {
                 const tokenInfo = TOKENS_BY_ASSET_ID[assetId] || {};
                 return (
@@ -166,7 +154,7 @@ const RangesTable: React.FC = () => {
             ≈${range.totalFees.toFormat(2)}
           </Text>
         </Column>
-      ),
+      )
     }));
     setTableData(mappedData);
   }, [rangesStore.ranges, rangePreviewByAddress, navigate]);
@@ -175,14 +163,8 @@ const RangesTable: React.FC = () => {
     <>
       {rangesStore.ranges.length > 0 ? (
         <>
-          <Scrollbar
-            style={{ maxWidth: "calc(100vw - 32px)", borderRadius: 16 }}
-          >
-            <Table
-              columns={columns}
-              data={tableData}
-              loading={rangesStore.loading}
-            />
+          <Scrollbar style={{ maxWidth: "calc(100vw - 32px)", borderRadius: 16 }}>
+            <Table columns={columns} data={tableData} loading={rangesStore.loading} />
           </Scrollbar>
           <Pagination
             currentPage={rangesStore.pagination.page}

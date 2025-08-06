@@ -66,7 +66,6 @@
     "postcss-loader": "^6.2.1",
     "postcss-normalize": "^10.0.1",
     "postcss-preset-env": "^7.8.3",
-    "prettier": "^2.8.8",
     "prompts": "^2.4.2",
     "random-words": "^2.0.1",
     "rc-dialog": "^9.6.0",
@@ -101,7 +100,7 @@
     "webpack": "^5.98.0",
     "webpack-dev-server": "^4.15.2",
     "webpack-manifest-plugin": "^4.1.1",
-    "workbox-webpack-plugin": "^6.6.0"
+    "workbox-webpack-plugin": "^6.6.1"
   },
   "scripts": {
     "start": "node --optimize_for_size scripts/start.js",
@@ -185,12 +184,13 @@
   "devDependencies": {
     "@types/axios": "^0.14.4",
     "@types/lodash": "^4.17.16",
-    "@types/node": "^18.19.84",
+    "@types/node": "^18.19.85",
     "@types/react-alert": "^7.0.6",
     "@types/react-collapse": "^5.0.4",
     "@types/react-dom": "^19.0.4",
     "@types/react-notifications-component": "^3.2.0",
     "@types/react-table": "^7.7.20",
-    "gh-pages": "^4.0.0"
+    "gh-pages": "^4.0.0",
+    "prettier": "^2.8.8"
   }
 }

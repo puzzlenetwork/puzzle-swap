@@ -77,28 +77,16 @@ const MyRangeBalance: React.FC<IProps> = () => {
         <Divider style={{ margin: "16px 0" }} />
         <GridTable desktopTemplate="1fr 1fr" mobileTemplate="1fr 1fr">
           {vm.rangeBalancesTable == null ? (
-            <Skeleton
-              height={48}
-              count={3}
-              style={{ margin: "4px 24px", width: "calc(100% - 48px)" }}
-            />
+            <Skeleton height={48} count={3} style={{ margin: "4px 24px", width: "calc(100% - 48px)" }} />
           ) : (
             vm.rangeBalancesTable.map((token, i) => {
               const value = token.value.toSmallFormat();
               const usdn = token.usdnEquivalent.toSmallFormat();
               return (
-                <div
-                  className="gridRow"
-                  key={i}
-                  style={{ padding: "8px 0", alignItems: "center" }}
-                >
+                <div className="gridRow" key={i} style={{ padding: "8px 0", alignItems: "center" }}>
                   <Row alignItems="center">
                     {screenWidth && screenWidth >= 880 ? (
-                      <SquareTokenIcon
-                        size="small"
-                        src={token.logo}
-                        alt="logo"
-                      />
+                      <SquareTokenIcon size="small" src={token.logo} alt="logo" />
                     ) : (
                       <RoundTokenIcon src={token.logo} alt="logo" />
                     )}
@@ -113,17 +101,10 @@ const MyRangeBalance: React.FC<IProps> = () => {
                     </AdaptiveColumn>
                   </Row>
                   <AdaptiveRow>
-                    <Row
-                      style={{ width: "100%", textAlign: "end" }}
-                      className="mobile"
-                    >
+                    <Row style={{ width: "100%", textAlign: "end" }} className="mobile">
                       <Text size="medium">
-                        <span>
-                          {value}
-                        </span>
-                        <span style={{ color: "#8082C5" }}>
-                          (${usdn})
-                        </span>
+                        <span>{value}</span>
+                        <span style={{ color: "#8082C5" }}>(${usdn})</span>
                       </Text>
                     </Row>
                     <Column
@@ -135,9 +116,7 @@ const MyRangeBalance: React.FC<IProps> = () => {
                         <Skeleton width={100} height={36} />
                       ) : (
                         <>
-                          <Text size="medium">
-                            {address !== null ? value : "-"}
-                          </Text>
+                          <Text size="medium">{address !== null ? value : "-"}</Text>
                           <Text size="small" type="secondary">
                             {address !== null ? `$ ${usdn}` : "-"}
                           </Text>
@@ -173,11 +152,7 @@ const MyRangeBalance: React.FC<IProps> = () => {
                 Connect your wallet to invest
               </Text>
               <SizedBox height={16} />
-              <Button
-                fixed
-                size="medium"
-                onClick={() => setLoginModalOpened(true)}
-              >
+              <Button fixed size="medium" onClick={() => setLoginModalOpened(true)}>
                 Connect wallet
               </Button>
             </Column>

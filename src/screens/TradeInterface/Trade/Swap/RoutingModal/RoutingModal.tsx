@@ -31,11 +31,9 @@ const RoutingModal: React.FC<IProps> = ({ ...rest }) => {
           <>
             &nbsp;With the selected path you will get by&nbsp;
             <b>
-              {profit.gte(0.01) ? profit.toFormat(2) : profit.toFormat(6)}{" "}
-              {token1.symbol} more
+              {profit.gte(0.01) ? profit.toFormat(2) : profit.toFormat(6)} {token1.symbol} more
             </b>
-            &nbsp;than if you exchange directly from {token0.symbol} to{" "}
-            {token1.symbol}.
+            &nbsp;than if you exchange directly from {token0.symbol} to {token1.symbol}.
           </>
         )}
       </Title>

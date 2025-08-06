@@ -34,12 +34,10 @@ const ListWrapper = styled.div<{ headerExpanded: boolean }>`
   display: flex;
   flex-direction: column;
   transition: 0.4s;
-  height: ${({ headerExpanded }) =>
-    headerExpanded ? "calc(100vh - 212px)" : "calc(100vh - 96px)"};
+  height: ${({ headerExpanded }) => (headerExpanded ? "calc(100vh - 212px)" : "calc(100vh - 96px)")};
 
   @media (min-width: 560px) {
-    height: ${({ headerExpanded }) =>
-      headerExpanded ? "calc(560px - 212px)" : "calc(560px - 96px)"};
+    height: ${({ headerExpanded }) => (headerExpanded ? "calc(560px - 212px)" : "calc(560px - 96px)")};
   }
 `;
 
