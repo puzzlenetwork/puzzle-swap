@@ -4,8 +4,8 @@ import rangesService from "@src/services/rangesService";
 import { Range } from "@src/entities/Range";
 
 export default class RangesStore {
+  rangesPaginationSize = 10;
   constructor(rootStore: RootStore) {
-    console.log("constructor of ranges tore");
     this.rootStore = rootStore;
     makeAutoObservable(this);
     this.syncRanges();
@@ -32,7 +32,7 @@ export default class RangesStore {
   // Pagination state
   pagination = {
     page: 1,
-    size: 10,
+    size: this.rangesPaginationSize,
   };
 
   // Total number of ranges
