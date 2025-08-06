@@ -56,10 +56,7 @@ const Reward: React.FC<IProps> = () => {
   if (address == null) return null;
   const date = dayjs(vm.lastClaimDate?.toNumber() ?? 0);
   const format = date.format("D MMM YYYY");
-  const totalClaimed = BN.formatUnits(
-    vm.totalClaimedReward ?? BN.ZERO,
-    TOKENS_BY_SYMBOL.XTN.decimals
-  ).toFormat(2);
+  const totalClaimed = BN.formatUnits(vm.totalClaimedReward ?? BN.ZERO, TOKENS_BY_SYMBOL.XTN.decimals).toFormat(2);
   return (
     <Root>
       <Text weight={500} type="secondary">
@@ -83,10 +80,7 @@ const Reward: React.FC<IProps> = () => {
                   vm.claimedRewardList?.length > 0 ? (
                     vm.claimedRewardList?.map((item: any) => (
                       <Text textAlign="left" type="secondary" size="small">
-                        {new BN(
-                          item["amount"] /
-                            10 ** TOKENS_BY_ASSET_ID[item["assetId"]].decimals
-                        ).toFormat(2)}{" "}
+                        {new BN(item["amount"] / 10 ** TOKENS_BY_ASSET_ID[item["assetId"]].decimals).toFormat(2)}{" "}
                         {TOKENS_BY_ASSET_ID[item["assetId"]].symbol}
                       </Text>
                     ))
@@ -105,11 +99,7 @@ const Reward: React.FC<IProps> = () => {
             <Column>
               <Title>Available to claim</Title>
               <Text weight={500}>
-                {vm.totalRewardToClaim != null ? (
-                  `$${vm.totalRewardToClaim.toFixed(2)}`
-                ) : (
-                  <Skeleton height={16} />
-                )}
+                {vm.totalRewardToClaim != null ? `$${vm.totalRewardToClaim.toFixed(2)}` : <Skeleton height={16} />}
               </Text>
             </Column>
           </AvailableToClaim>
@@ -121,12 +111,7 @@ const Reward: React.FC<IProps> = () => {
           ) : (
             <Column crossAxisSize="max">
               {!vm.loading ? (
-                <Button
-                  fixed
-                  size="medium"
-                  onClick={vm.claimRewards}
-                  disabled={!vm.canClaimRewards}
-                >
+                <Button fixed size="medium" onClick={vm.claimRewards} disabled={!vm.canClaimRewards}>
                   Claim reward
                 </Button>
               ) : (

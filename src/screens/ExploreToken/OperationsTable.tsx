@@ -8,11 +8,7 @@ import { observer } from "mobx-react-lite";
 import dayjs from "dayjs";
 import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
 import BN from "@src/utils/BN";
-import {
-  EXPLORER_URL,
-  TOKENS_BY_ASSET_ID,
-  TOKENS_BY_SYMBOL,
-} from "@src/constants";
+import { EXPLORER_URL, TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL } from "@src/constants";
 import PoolAction from "@screens/InvestToPoolInterface/PoolHistory/PoolAction";
 import Swap from "@screens/InvestToPoolInterface/PoolHistory/Swap";
 
@@ -31,7 +27,7 @@ const AggregatorHistory: React.FC<IProps> = () => {
     () => [
       { Header: "Details", accessor: "details" },
       { Header: "Value", accessor: "value" },
-      { Header: "Time", accessor: "time" },
+      { Header: "Time", accessor: "time" }
     ],
     []
   );
@@ -61,25 +57,22 @@ const AggregatorHistory: React.FC<IProps> = () => {
               case "generateIndexWithOneTokenAndStake":
                 const oneToken = {
                   amount: new BN(v.payment[0].amount),
-                  ...TOKENS_BY_ASSET_ID[v.payment[0].assetId ?? "WAVES"],
+                  ...TOKENS_BY_ASSET_ID[v.payment[0].assetId ?? "WAVES"]
                 };
                 return <PoolAction tokens={[oneToken]} action="add" />;
               case "unstakeAndRedeemIndex":
-                const removedTokens =
-                  v.stateChanges[0].invokes[1].stateChanges.transfers.map(
-                    ({ asset, amount }: { asset: string; amount: number }) => ({
-                      amount: new BN(amount),
-                      ...TOKENS_BY_ASSET_ID[asset ?? "WAVES"],
-                    })
-                  );
-                return <PoolAction tokens={removedTokens} action="remove" />;
-              case "claimIndexRewards":
-                const claimedTokens = v.stateChanges.transfers.map(
-                  ({ asset, amount }: any) => ({
+                const removedTokens = v.stateChanges[0].invokes[1].stateChanges.transfers.map(
+                  ({ asset, amount }: { asset: string; amount: number }) => ({
                     amount: new BN(amount),
-                    ...TOKENS_BY_ASSET_ID[asset ?? "WAVES"],
+                    ...TOKENS_BY_ASSET_ID[asset ?? "WAVES"]
                   })
                 );
+                return <PoolAction tokens={removedTokens} action="remove" />;
+              case "claimIndexRewards":
+                const claimedTokens = v.stateChanges.transfers.map(({ asset, amount }: any) => ({
+                  amount: new BN(amount),
+                  ...TOKENS_BY_ASSET_ID[asset ?? "WAVES"]
+                }));
                 return <PoolAction tokens={claimedTokens} action="claim" />;
               default:
                 return "–";
@@ -92,7 +85,7 @@ const AggregatorHistory: React.FC<IProps> = () => {
               return `${units} ${token?.symbol ?? "WAVES"}`;
             })
             .join(" ,"),
-          time: (dayjs(v.timestamp) as any).fromNow(),
+          time: (dayjs(v.timestamp) as any).fromNow()
         };
       })
     );
@@ -113,7 +106,7 @@ const AggregatorHistory: React.FC<IProps> = () => {
           style={{
             width: "100%",
             whiteSpace: "nowrap",
-            minWidth: "fit-content",
+            minWidth: "fit-content"
           }}
           loading={vm.loading}
         />

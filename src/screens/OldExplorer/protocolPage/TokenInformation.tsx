@@ -67,30 +67,18 @@ const TokenInformation = () => {
           />
           <Info
             title="24H change"
-            valueColor={
-              vm.tokenDetails.change24H?.gte(0) ? "#35A15A" : "#ED827E"
-            }
+            valueColor={vm.tokenDetails.change24H?.gte(0) ? "#35A15A" : "#ED827E"}
             value={vm.tokenDetails.change24H?.toFormat(2) + " %" ?? "-"}
             loading={vm.tokenDetails.change24H == null}
           />
         </Row>
         <SizedBox height={16} />
         <Row>
-          <Info
-            title="24H Low"
-            value={vm.low24H?.toFormat(2)}
-            loading={vm.low24H == null}
-          />
-          <Info
-            title="24H High"
-            value={vm.high24H?.toFormat(2)}
-            loading={vm.high24H == null}
-          />
+          <Info title="24H Low" value={vm.low24H?.toFormat(2)} loading={vm.low24H == null} />
+          <Info title="24H High" value={vm.high24H?.toFormat(2)} loading={vm.high24H == null} />
         </Row>
         <SizedBox height={16} />
-        <Link
-          to={`/trade?asset0=${vm.assetId}&asset1=DG2xFkPdDwKUoBkzGAhQtLpSGzfXLiCYPEzeKH2Ad24p`}
-        >
+        <Link to={`/trade?asset0=${vm.assetId}&asset1=DG2xFkPdDwKUoBkzGAhQtLpSGzfXLiCYPEzeKH2Ad24p`}>
           <TradePuzzleButton size="medium" kind="secondary">
             <Row alignItems="center" justifyContent="center">
               Trade PUZZLE&nbsp;
@@ -118,14 +106,7 @@ const Info: React.FC<
     {loading ? (
       <Skeleton style={{ boxSizing: "border-box" }} height={20} width={100} />
     ) : (
-      <Text
-        weight={500}
-        style={
-          valueColor
-            ? { color: valueColor, height: "20px" }
-            : { height: "20px" }
-        }
-      >
+      <Text weight={500} style={valueColor ? { color: valueColor, height: "20px" } : { height: "20px" }}>
         {value}
       </Text>
     )}

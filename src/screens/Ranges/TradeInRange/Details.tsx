@@ -40,7 +40,12 @@ const Details: React.FC = () => {
             Range Fact/Virtual Liquidity
           </Text>
           <Row>
-            <Text fitContent>${vm.range.liquidity.toFormat(0)} / <Text fitContent type="secondary" style={{ display: "inline" }}>${vm.range.virtualLiquidity.toFormat(0)}</Text></Text>
+            <Text fitContent>
+              ${vm.range.liquidity.toFormat(0)} /{" "}
+              <Text fitContent type="secondary" style={{ display: "inline" }}>
+                ${vm.range.virtualLiquidity.toFormat(0)}
+              </Text>
+            </Text>
           </Row>
         </Column>
         <Column crossAxisSize="max">

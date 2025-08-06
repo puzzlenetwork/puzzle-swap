@@ -48,34 +48,30 @@ const RangeTokenRow: React.FC<IParams> = ({
   changeAssetInitialPriceInRange,
   deleteAssetFromRange,
   baseTokenSymbol,
-  isLast,
+  isLast
 }) => {
   return (
     <>
-      <tr style={{height: 20 }} />
+      <tr style={{ height: 20 }} />
       <tr>
         <td width="10%">
-          <AssetSelector
-            asset={token.asset}
-            balances={tokensToAdd}
-            onUpdateAsset={replaceAssetInRange}
-          />
+          <AssetSelector asset={token.asset} balances={tokensToAdd} onUpdateAsset={replaceAssetInRange} />
         </td>
         <td colSpan={2} width="80%">
           <Row alignItems="center">
-            <Text size="small" type="secondary" fitContent>1x</Text>
+            <Text size="small" type="secondary" fitContent>
+              1x
+            </Text>
             <SizedBox width={4} />
             <LogSliderWithImage
-              value={token.leverage ? (
-                token.leverage.gte(500) ? 500 : token.leverage.toNumber()
-              ) : 1}
+              value={token.leverage ? (token.leverage.gte(500) ? 500 : token.leverage.toNumber()) : 1}
               min={1}
               max={500}
               imageUrl={token.asset.logo}
               onChange={(v) => {
                 changeAssetLeverageInRange(token.asset.assetId, new BN(v));
               }}
-              minTooltipContent={(
+              minTooltipContent={
                 <Column>
                   <Text size="small" nowrap>
                     Leverage 1x means fact balance = virt balance. You will
@@ -87,8 +83,8 @@ const RangeTokenRow: React.FC<IParams> = ({
                     will be no max price for this token.
                   </Text>
                 </Column>
-              )}
-              maxTooltipContent={(
+              }
+              maxTooltipContent={
                 <Column>
                   <Text size="small" nowrap>
                     The infinite leverage means there will be no fact balance
@@ -100,10 +96,12 @@ const RangeTokenRow: React.FC<IParams> = ({
                     and it won't be available for purchase in the range.
                   </Text>
                 </Column>
-              )}
+              }
             />
             <SizedBox width={4} />
-            <Text size="small" type="secondary" fitContent>∞</Text>
+            <Text size="small" type="secondary" fitContent>
+              ∞
+            </Text>
           </Row>
         </td>
         <td width="10%">
@@ -124,7 +122,7 @@ const RangeTokenRow: React.FC<IParams> = ({
           </Row>
         </td>
       </tr>
-      <tr style={{height: 20 }} />
+      <tr style={{ height: 20 }} />
       <tr>
         <td colSpan={2} width="50%">
           <MaxSellOffSelector
@@ -143,7 +141,7 @@ const RangeTokenRow: React.FC<IParams> = ({
       </tr>
       {!isLast && (
         <>
-          <tr style={{height: 20 }} />
+          <tr style={{ height: 20 }} />
           <tr>
             <td colSpan={4}>
               <Divider />
@@ -153,6 +151,6 @@ const RangeTokenRow: React.FC<IParams> = ({
       )}
     </>
   );
-}
+};
 
 export default observer(RangeTokenRow);

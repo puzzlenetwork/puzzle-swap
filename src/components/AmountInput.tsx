@@ -27,22 +27,20 @@ const Root = styled.input<{ small?: boolean }>`
 
 type TProps = React.InputHTMLAttributes<HTMLInputElement> & { small?: boolean };
 
-const AmountInput = React.forwardRef<HTMLInputElement, TProps>(
-  ({ onWheel, ...props }, ref) => (
-    <Root
-      {...props}
-      ref={ref}
-      small={props.small}
-      type="number"
-      onWheel={(e) => {
-        e.target && (e.target as any).blur();
-        onWheel && onWheel(e);
-      }}
-      onBlur={props.onBlur}
-      onFocus={props.onFocus}
-    />
-  )
-);
+const AmountInput = React.forwardRef<HTMLInputElement, TProps>(({ onWheel, ...props }, ref) => (
+  <Root
+    {...props}
+    ref={ref}
+    small={props.small}
+    type="number"
+    onWheel={(e) => {
+      e.target && (e.target as any).blur();
+      onWheel && onWheel(e);
+    }}
+    onBlur={props.onBlur}
+    onFocus={props.onFocus}
+  />
+));
 
 AmountInput.displayName = "AmountInput";
 

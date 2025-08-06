@@ -1,13 +1,6 @@
 import styled from "@emotion/styled";
 
-type TTextType =
-  | "primary"
-  | "secondary"
-  | "light"
-  | "blue500"
-  | "error"
-  | "success"
-  | "purple300";
+type TTextType = "primary" | "secondary" | "light" | "blue500" | "error" | "success" | "purple300";
 type TTextSize = "small" | "medium" | "large" | "big";
 type TTextAlign = "center" | "left" | "right" | "justify" | "end";
 
@@ -49,8 +42,7 @@ const Text = styled.p<{
       }
     })()}
   ${({ ellipsis }) =>
-    ellipsis != null &&
-    `max-width: ${ellipsis}px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;`};
+    ellipsis != null && `max-width: ${ellipsis}px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;`};
   ${({ size }) =>
     (() => {
       switch (size) {

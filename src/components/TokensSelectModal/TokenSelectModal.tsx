@@ -26,7 +26,7 @@ const tokenCategories = [
   "Stables",
   "Common",
   "PZ LP",
-  "Memes",
+  "Memes"
   // "Waves DeFi",
   // "Waves Ducks",
 ];
@@ -40,7 +40,7 @@ export enum tokenCategoriesEnum {
   common = 2,
   pz = 3,
   // defi = 4,
-  meme = 4,
+  meme = 4
 }
 
 const Scroll = styled.div`
@@ -57,13 +57,7 @@ const Scroll = styled.div`
 
   border-bottom: 1px solid ${({ theme }) => theme.colors.primary100};
 `;
-const TokenSelectModal: React.FC<IProps> = ({
-  onClose,
-  balances,
-  onSelect,
-  visible,
-  selectedTokenId,
-}) => {
+const TokenSelectModal: React.FC<IProps> = ({ onClose, balances, onSelect, visible, selectedTokenId }) => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [activeFilter, setActiveFilter] = useState<number>(0);
   const handleSearch = (event: any) => {
@@ -97,7 +91,7 @@ const TokenSelectModal: React.FC<IProps> = ({
       visible={visible}
       style={{ maxWidth: 360 }}
       styles={{
-        body: { minHeight: 440 },
+        body: { minHeight: 440 }
       }}
       onClose={() => {
         setActiveFilter(0);
@@ -105,20 +99,11 @@ const TokenSelectModal: React.FC<IProps> = ({
       }}
       title="Select a token"
     >
-      <Input
-        icon="search"
-        value={searchValue}
-        onChange={handleSearch}
-        placeholder="Search by name or ticker…"
-      />
+      <Input icon="search" value={searchValue} onChange={handleSearch} placeholder="Search by name or ticker…" />
       <SizedBox height={16} />
 
       <Scroll>
-        <ButtonsGroup
-          values={tokenCategories}
-          active={activeFilter}
-          onClick={(v) => setActiveFilter(v)}
-        />
+        <ButtonsGroup values={tokenCategories} active={activeFilter} onClick={(v) => setActiveFilter(v)} />
       </Scroll>
       <SizedBox height={32} />
       <Scrollbar style={{ margin: -24 }}>
@@ -131,9 +116,7 @@ const TokenSelectModal: React.FC<IProps> = ({
                   hidden={disabled}
                   style={{ position: "relative" }}
                   withClickLogic
-                  onClick={
-                    !disabled ? () => handleTokenSelect(t.assetId) : () => null
-                  }
+                  onClick={!disabled ? () => handleTokenSelect(t.assetId) : () => null}
                   key={t.assetId}
                   token={t}
                 />

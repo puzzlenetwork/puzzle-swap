@@ -39,8 +39,7 @@ const AddressContainer = styled.div<{ expanded: boolean }>`
   border: 1px solid ${({ theme }) => theme.colors.primary100};
   border-radius: 10px;
   cursor: pointer;
-  background: ${({ expanded, theme }) =>
-    expanded ? theme.colors.primary100 : theme.colors.white};
+  background: ${({ expanded, theme }) => (expanded ? theme.colors.primary100 : theme.colors.white)};
 
   :hover {
     background: ${({ theme }) => theme.colors.primary100};
@@ -56,8 +55,7 @@ const AddressContainer = styled.div<{ expanded: boolean }>`
 
   .menu-arrow {
     transition: 0.4s;
-    transform: ${({ expanded }) =>
-      expanded ? "rotate(-90deg)" : "rotate(90deg)"};
+    transform: ${({ expanded }) => (expanded ? "rotate(-90deg)" : "rotate(90deg)")};
   }
 `;
 
@@ -72,7 +70,7 @@ const LoggedInAccountInfo: React.FC<IProps> = () => {
         config={{
           placement: "bottom-end",
           trigger: "click",
-          onVisibleChange: setAccountOpened,
+          onVisibleChange: setAccountOpened
         }}
         content={<WalletActionsTooltip address={address!} />}
       >

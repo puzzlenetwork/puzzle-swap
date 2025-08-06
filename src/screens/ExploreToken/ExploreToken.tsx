@@ -3,10 +3,7 @@ import Layout from "@components/Layout";
 import ExploreLayout from "@screens/Explore/ExploreLayout";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import {
-  ExploreTokenVMProvider,
-  useExploreTokenVM,
-} from "@screens/ExploreToken/ExploreTokenVm";
+import { ExploreTokenVMProvider, useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { ROUTES, TOKENS_BY_ASSET_ID } from "@src/constants";
 import { Row } from "@components/Flex";
@@ -59,18 +56,14 @@ const ExploreTokenImpl: React.FC<IProps> = observer(() => {
             <SizedBox width={8} />
             <TokenTitle weight={500}>
               {vm.asset.name}&nbsp;
-              <span style={{ color: theme.colors.primary650 }}>
-                {vm.asset.symbol}
-              </span>
+              <span style={{ color: theme.colors.primary650 }}>{vm.asset.symbol}</span>
             </TokenTitle>
           </Row>
           <SocialMediaAndFav />
         </Row>
         <SizedBox height={8} />
         <Row alignItems="end" mainAxisSize="fit-content">
-          <PriceTitle size="large">
-            $ {vm.statistics?.currentPrice.toFormat(4) ?? ""}&nbsp;
-          </PriceTitle>
+          <PriceTitle size="large">$ {vm.statistics?.currentPrice.toFormat(4) ?? ""}&nbsp;</PriceTitle>
           <Text
             style={{ lineHeight: "16px", whiteSpace: "nowrap" }}
             type={vm.statistics?.change24H.gte(0) ? "success" : "error"}

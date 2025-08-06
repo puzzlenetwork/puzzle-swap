@@ -2,16 +2,9 @@ import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable, observable, reaction } from "mobx";
 import { RootStore, useStores } from "@stores";
-import {
-  IToken,
-  TOKENS_BY_ASSET_ID,
-  TOKENS_BY_SYMBOL,
-  TOKENS_LIST,
-} from "@src/constants";
+import { IToken, TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL, TOKENS_LIST } from "@src/constants";
 import BN from "@src/utils/BN";
-import {
-  IDialogNotificationProps,
-} from "@components/Dialog/DialogNotification";
+import { IDialogNotificationProps } from "@components/Dialog/DialogNotification";
 import Balance from "@src/entities/Balance";
 import Button from "@components/Button";
 import loadCreateRangeStateFromStorage, { IInitDataToStore } from "./utils/loadCreateRangeStateFromStorage";
@@ -63,8 +56,7 @@ class CreateRangeVm {
   private _setLoading = (l: boolean) => (this.loading = l);
 
   public notificationParams: IDialogNotificationProps | null = null;
-  public setNotificationParams = (params: IDialogNotificationProps | null) =>
-    (this.notificationParams = params);
+  public setNotificationParams = (params: IDialogNotificationProps | null) => (this.notificationParams = params);
 
   public rangeAssets: IRangeToken[] = [];
   setDefaultRangeAssets = () => {
@@ -74,15 +66,15 @@ class CreateRangeVm {
         share: new BN(500),
         initialPrice: new BN(1),
         currentPrice: new BN(1),
-        locked: false,
+        locked: false
       }),
       observable({
         asset: TOKENS_BY_SYMBOL.PUZZLE,
         share: new BN(500),
         initialPrice: new BN(1),
         currentPrice: new BN(1),
-        locked: false,
-      }),
+        locked: false
+      })
     ];
     this.syncCurrentPrices();
   };
@@ -91,7 +83,7 @@ class CreateRangeVm {
     const mutatedAssets = this.rangeAssets.map((v) => {
       return {
         ...v,
-        leverage: v.leverage ? new BN(1).div(v.leverage) : new BN(1),
+        leverage: v.leverage ? new BN(1).div(v.leverage) : new BN(1)
       };
     });
     const maxLeverage = mutatedAssets.reduce((acc, v) => {
@@ -103,8 +95,8 @@ class CreateRangeVm {
         ...v.asset,
         ...v,
         leverage: v.leverage.times(100).toNumber(),
-        relativeLeverage: v.leverage.div(maxLeverage).times(100).plus(10).toNumber(),
-      }
+        relativeLeverage: v.leverage.div(maxLeverage).times(100).plus(10).toNumber()
+      };
     });
   }
 
@@ -120,7 +112,7 @@ class CreateRangeVm {
           const newCurrentPrice = BN.parseUnits(currentPriceFromStore.div(val), asset.asset.decimals);
           this.updateAssetCurrentPrice(asset.asset.assetId, newCurrentPrice);
         }
-      })
+      });
     } else {
       this.rangeAssets.slice(1).forEach(async (asset) => {
         const currentPriceFromStore = await this.getTokenPrice(asset.asset.assetId);
@@ -132,7 +124,7 @@ class CreateRangeVm {
       });
     }
     this.baseTokenPrice = val;
-  }
+  };
 
   public equalShares: boolean = false;
   setEqualShares = (v: boolean) => {
@@ -150,7 +142,7 @@ class CreateRangeVm {
     }
     this.step = s;
   };
-  
+
   domain: string = "";
   setDomain = (v: string) => (this.domain = v);
 
@@ -161,8 +153,7 @@ class CreateRangeVm {
   setSwapFee = (v: BN) => (this.swapFee = v);
 
   providedPercentOfPool: BN = new BN(100);
-  setProvidedPercentOfPool = (value: number | number[]) =>
-    (this.providedPercentOfPool = new BN(value.toString()));
+  setProvidedPercentOfPool = (value: number | number[]) => (this.providedPercentOfPool = new BN(value.toString()));
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
@@ -183,17 +174,15 @@ class CreateRangeVm {
   initialize = (initData: IInitDataToStore | null) => {
     if (initData != null && initData.assets != null && initData.assets.length > 0) {
       if (initData.assets != null) {
-        this.rangeAssets = initData.assets?.map(
-          ({ assetId, share, locked }) => {
-            return observable({
-              share: new BN(share).times(10),
-              locked,
-              initialPrice: new BN(1),
-              currentPrice: new BN(1),
-              asset: TOKENS_BY_ASSET_ID[assetId],
-            })
-          }
-        );
+        this.rangeAssets = initData.assets?.map(({ assetId, share, locked }) => {
+          return observable({
+            share: new BN(share).times(10),
+            locked,
+            initialPrice: new BN(1),
+            currentPrice: new BN(1),
+            asset: TOKENS_BY_ASSET_ID[assetId]
+          });
+        });
         this.syncCurrentPrices();
       }
     } else {
@@ -217,16 +206,12 @@ class CreateRangeVm {
   };
 
   get isAllTokensShareMoreThanFive() {
-    return this.rangeAssets
-      .every((v) => v.share.gt(50) || v.share.eq(50));
+    return this.rangeAssets.every((v) => v.share.gt(50) || v.share.eq(50));
   }
 
   get areAllTokensPricesValid() {
     return this.rangeAssets.slice(1).every((v) => {
-      return (
-        v.initialPrice
-        && v.initialPrice.gt(0)
-      );
+      return v.initialPrice && v.initialPrice.gt(0);
     });
   }
 
@@ -246,7 +231,7 @@ class CreateRangeVm {
       !/[^a-z0-9_-]/.test(this.domain) &&
       this.swapFee.gte(1) &&
       this.swapFee.lte(50)
-    )
+    );
   }
 
   get correct2() {
@@ -255,10 +240,7 @@ class CreateRangeVm {
 
   get minStep() {
     if (this.rootStore.accountStore.address == null) return 0;
-    const step = [
-      this.correct0,
-      this.correct1,
-    ].indexOf(false);
+    const step = [this.correct0, this.correct1].indexOf(false);
     return step === -1 ? this.step : step;
   }
 
@@ -267,14 +249,8 @@ class CreateRangeVm {
   }
 
   syncShares = () => {
-    const unlockedPercent = this.rangeAssets.reduce(
-      (acc, v) => (v.locked ? acc.minus(v.share) : acc),
-      new BN(1000)
-    );
-    const unlockedCount = this.rangeAssets.reduce(
-      (acc, v) => (!v.locked ? acc + 1 : acc),
-      0
-    );
+    const unlockedPercent = this.rangeAssets.reduce((acc, v) => (v.locked ? acc.minus(v.share) : acc), new BN(1000));
+    const unlockedCount = this.rangeAssets.reduce((acc, v) => (!v.locked ? acc + 1 : acc), 0);
     const averageUnlockedPercent = unlockedPercent.div(unlockedCount).div(10);
     this.rangeAssets.forEach((v, i) => {
       if (v.locked) return;
@@ -307,8 +283,8 @@ class CreateRangeVm {
   syncStakingStats = () => {
     rangesService.getStakingStatistics().then((stats) => {
       this.setStakingStats(stats);
-    })
-  }
+    });
+  };
 
   addAssetToRange = async (assetId: string) => {
     const balances = this.tokensToAdd;
@@ -316,19 +292,21 @@ class CreateRangeVm {
     if (asset == null) return;
 
     const initialPrice = await this.getTokenPrice(assetId);
-    const relativeInitialPrice = initialPrice.div(this.baseTokenPrice)
+    const relativeInitialPrice = initialPrice.div(this.baseTokenPrice);
 
     const apr = this.stakingStats.find((s) => s.asset_id === assetId)?.apr_1y;
 
-    this.rangeAssets.push(observable({
-      asset: asset,
-      share: BN.ZERO,
-      initialPrice: BN.parseUnits(relativeInitialPrice, asset.decimals),
-      currentPrice: BN.parseUnits(relativeInitialPrice, asset.decimals),
-      leverage: new BN(1),
-      apr: apr ? new BN(apr) : undefined,
-      locked: false
-    }));
+    this.rangeAssets.push(
+      observable({
+        asset: asset,
+        share: BN.ZERO,
+        initialPrice: BN.parseUnits(relativeInitialPrice, asset.decimals),
+        currentPrice: BN.parseUnits(relativeInitialPrice, asset.decimals),
+        leverage: new BN(1),
+        apr: apr ? new BN(apr) : undefined,
+        locked: false
+      })
+    );
     this.syncShares();
     this.syncMinMaxPriceByAssetId(assetId);
     if (this.maxToProvide.eq(0)) {
@@ -338,33 +316,27 @@ class CreateRangeVm {
           title: "Your max to provide is too low for this range composition",
           type: "error",
           onClickText: "Reset the composition",
-          onClick: () => this.setDefaultRangeAssets(),
+          onClick: () => this.setDefaultRangeAssets()
         }
       );
     }
   };
 
   removeAssetFromRange = (assetId: string) => {
-    const indexOfObject = this.rangeAssets.findIndex(
-      ({ asset }) => asset.assetId === assetId
-    );
+    const indexOfObject = this.rangeAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.rangeAssets.splice(indexOfObject, 1);
     this.syncShares();
   };
 
   changeAssetShareInRange = (assetId: string, share: BN) => {
     if (share.gt(1000)) share = new BN(1000);
-    const indexOfObject = this.rangeAssets.findIndex(
-      ({ asset }) => asset.assetId === assetId
-    );
+    const indexOfObject = this.rangeAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.rangeAssets[indexOfObject].share = share;
     this.syncMinMaxPriceByAssetId(assetId);
   };
 
   replaceAssetInRange = async (oldAssetId: string, newAssetId: string) => {
-    const indexOfObject = this.rangeAssets.findIndex(
-      ({ asset }) => asset.assetId === oldAssetId
-    );
+    const indexOfObject = this.rangeAssets.findIndex(({ asset }) => asset.assetId === oldAssetId);
     const asset = this.tokensToAdd?.find((b) => b.assetId === newAssetId);
     if (asset == null) return;
     this.rangeAssets[indexOfObject].asset = asset;
@@ -378,16 +350,12 @@ class CreateRangeVm {
     } else {
       const basePrice = await this.getTokenPrice(oldAssetId);
       this.rangeAssets[indexOfObject].initialPrice = BN.parseUnits(
-        indexOfObject === 0
-          ? currentPrice
-          : currentPrice.div(basePrice),
+        indexOfObject === 0 ? currentPrice : currentPrice.div(basePrice),
         asset.decimals
       );
 
       this.rangeAssets[indexOfObject].currentPrice = BN.parseUnits(
-        indexOfObject === 0
-          ? currentPrice
-          : currentPrice.div(basePrice),
+        indexOfObject === 0 ? currentPrice : currentPrice.div(basePrice),
         asset.decimals
       );
     }
@@ -396,9 +364,7 @@ class CreateRangeVm {
 
   updateAssetLeverage = (assetId: string, v: BN) => {
     const val = v.gte(500) ? new BN(1e4) : v;
-    const indexOfObject = this.rangeAssets.findIndex(
-      ({ asset }) => asset.assetId === assetId
-    );
+    const indexOfObject = this.rangeAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.rangeAssets[indexOfObject].leverage = val;
 
     if (indexOfObject === 0) {
@@ -409,46 +375,34 @@ class CreateRangeVm {
   };
 
   updateAssetMinPrice = (assetId: string, val: BN) => {
-    const indexOfObject = this.rangeAssets.findIndex(
-      ({ asset }) => asset.assetId === assetId
-    );
+    const indexOfObject = this.rangeAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.rangeAssets[indexOfObject].minPrice = val;
   };
 
   updateAssetInitialPrice = (assetId: string, val: BN) => {
-    const indexOfObject = this.rangeAssets.findIndex(
-      ({ asset }) => asset.assetId === assetId
-    );
+    const indexOfObject = this.rangeAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.rangeAssets[indexOfObject].initialPrice = val;
     this.syncMinMaxPriceByAssetId(assetId);
   };
 
   updateAssetCurrentPrice = (assetId: string, val: BN) => {
-    const indexOfObject = this.rangeAssets.findIndex(
-      ({ asset }) => asset.assetId === assetId
-    );
+    const indexOfObject = this.rangeAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.rangeAssets[indexOfObject].currentPrice = val;
     this.syncMinMaxPriceByAssetId(assetId);
   };
 
   updateAssetMaxPrice = (assetId: string, val: BN) => {
-    const indexOfObject = this.rangeAssets.findIndex(
-      ({ asset }) => asset.assetId === assetId
-    );
+    const indexOfObject = this.rangeAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.rangeAssets[indexOfObject].maxPrice = val;
   };
 
   updateAssetMaxSellOff = (assetId: string, val: BN) => {
-    const indexOfObject = this.rangeAssets.findIndex(
-      ({ asset }) => asset.assetId === assetId
-    );
+    const indexOfObject = this.rangeAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.rangeAssets[indexOfObject].maxSellOff = val;
-  }
+  };
 
   updateLockedState = (assetId: string, val: boolean) => {
-    const indexOfObject = this.rangeAssets.findIndex(
-      ({ asset }) => asset.assetId === assetId
-    );
+    const indexOfObject = this.rangeAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.rangeAssets[indexOfObject].locked = val;
     this.equalShares = false;
   };
@@ -471,66 +425,56 @@ class CreateRangeVm {
     const L1 = asset.leverage ?? new BN(1);
     const F1 = B1.div(L1);
 
-    const rawMin = BN.parseUnits(
-      P1.times(
-        ((B0.minus(F0)).div(B0)).mathPow((w0.div(w1)).plus(1))
-      ),
-      asset.asset.decimals
-    );
+    const rawMin = BN.parseUnits(P1.times(B0.minus(F0).div(B0).mathPow(w0.div(w1).plus(1))), asset.asset.decimals);
 
     const min = rawMin.isNaN() ? BN.parseUnits(P1, asset.asset.decimals) : rawMin;
 
-    const rawMax = BN.parseUnits(
-      P1.times(
-        (B1.div(B1.minus(F1))).mathPow(w1.div(w0).plus(1))
-      ),
-      asset.asset.decimals
-    );
+    const rawMax = BN.parseUnits(P1.times(B1.div(B1.minus(F1)).mathPow(w1.div(w0).plus(1))), asset.asset.decimals);
 
     const max = rawMax.isNaN() || rawMax.isZero() ? BN.parseUnits(P1, asset.asset.decimals) : rawMax;
 
-//     console.log(`
-// ${asset.asset.symbol} ${BN.formatUnits(min, asset.asset.decimals).toSmallFormat()} - ${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}:
+    //     console.log(`
+    // ${asset.asset.symbol} ${BN.formatUnits(min, asset.asset.decimals).toSmallFormat()} - ${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}:
 
-// B0=${B0.toSmallFormat()}
-// L0=${L0.toSmallFormat()}
-// F0=${F0.toSmallFormat()}
+    // B0=${B0.toSmallFormat()}
+    // L0=${L0.toSmallFormat()}
+    // F0=${F0.toSmallFormat()}
 
-// P1=${P1.toSmallFormat()}
+    // P1=${P1.toSmallFormat()}
 
-// B1=${B1.toSmallFormat()}
-// L1=${L1.toSmallFormat()}
-// F1=${F1.toSmallFormat()}
+    // B1=${B1.toSmallFormat()}
+    // L1=${L1.toSmallFormat()}
+    // F1=${F1.toSmallFormat()}
 
-// B0-F0=${B0.minus(F0).toSmallFormat()}
-// (B0-F0)/B0=${B0.minus(F0).div(B0).toSmallFormat()}
-// w0/w1=${w0.div(w1).toSmallFormat()}
-// ((B0-F0)/B0)^(w0/w1+1)=${(B0.minus(F0).div(B0)).mathPow(w0.div(w1).plus(1)).toSmallFormat()}
+    // B0-F0=${B0.minus(F0).toSmallFormat()}
+    // (B0-F0)/B0=${B0.minus(F0).div(B0).toSmallFormat()}
+    // w0/w1=${w0.div(w1).toSmallFormat()}
+    // ((B0-F0)/B0)^(w0/w1+1)=${(B0.minus(F0).div(B0)).mathPow(w0.div(w1).plus(1)).toSmallFormat()}
 
-// B1-F1=${B1.minus(F1).toSmallFormat()}
-// B1/(B1-F1)=${B1.div(B1.minus(F1)).toSmallFormat()}
-// w1/w0=${w1.div(w0).toSmallFormat()}
-// (B1/(B1-F1))^(w1/w0+1)=${(B1.div(B1.minus(F1))).mathPow(w1.div(w0).plus(1)).toSmallFormat()}
+    // B1-F1=${B1.minus(F1).toSmallFormat()}
+    // B1/(B1-F1)=${B1.div(B1.minus(F1)).toSmallFormat()}
+    // w1/w0=${w1.div(w0).toSmallFormat()}
+    // (B1/(B1-F1))^(w1/w0+1)=${(B1.div(B1.minus(F1))).mathPow(w1.div(w0).plus(1)).toSmallFormat()}
 
-// w0=${w0.toSmallFormat()}
-// w1=${w1.toSmallFormat()}
+    // w0=${w0.toSmallFormat()}
+    // w1=${w1.toSmallFormat()}
 
-// RawMin=${BN.formatUnits(rawMin, asset.asset.decimals).toSmallFormat()}
-// Min=${BN.formatUnits(min, asset.asset.decimals).toSmallFormat()}
+    // RawMin=${BN.formatUnits(rawMin, asset.asset.decimals).toSmallFormat()}
+    // Min=${BN.formatUnits(min, asset.asset.decimals).toSmallFormat()}
 
-// RawMax=${BN.formatUnits(rawMax, asset.asset.decimals).toSmallFormat()}
-// Max=${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}
-// `)
+    // RawMax=${BN.formatUnits(rawMax, asset.asset.decimals).toSmallFormat()}
+    // Max=${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}
+    // `)
 
     this.updateAssetMinPrice(assetId, min);
     this.updateAssetMaxPrice(assetId, max);
 
     return [min, max];
-  }
+  };
 
   syncAllMinMaxPrices = () => {
-    this.rangeAssets.forEach((t) => this.syncMinMaxPriceByAssetId(t.asset.assetId))
-  }
+    this.rangeAssets.forEach((t) => this.syncMinMaxPriceByAssetId(t.asset.assetId));
+  };
 
   get balances() {
     const { accountStore } = this.rootStore;
@@ -546,10 +490,7 @@ class CreateRangeVm {
   }
 
   get tokensToAdd() {
-    const currentTokens = this.rangeAssets.reduce<string[]>(
-      (acc, v) => [...acc, v.asset.assetId],
-      []
-    );
+    const currentTokens = this.rangeAssets.reduce<string[]>((acc, v) => [...acc, v.asset.assetId], []);
     return this.balances.filter((b) => !currentTokens.includes(b.assetId));
   }
 
@@ -557,14 +498,14 @@ class CreateRangeVm {
     const assets = this.rangeAssets.map((t) => ({
       assetId: t.asset?.assetId,
       locked: t.locked,
-      share: t.share.div(10).toNumber(),
+      share: t.share.div(10).toNumber()
     }));
     const state = {
       assets,
       title: this.domain,
       step: this.step,
       maxStep: this.maxStep,
-      swapFee: this.swapFee.div(10).toNumber(),
+      swapFee: this.swapFee.div(10).toNumber()
     };
     localStorage.setItem("puzzle-custom-range", JSON.stringify(state));
   };
@@ -577,7 +518,9 @@ class CreateRangeVm {
     }
 
     if (this.deployedContractAddress === null) {
-      this.rootStore.notificationStore.notify("No deployed contract found. Please deploy the range first.", { type: "error" });
+      this.rootStore.notificationStore.notify("No deployed contract found. Please deploy the range first.", {
+        type: "error"
+      });
       return;
     }
 
@@ -588,12 +531,12 @@ class CreateRangeVm {
       // Prepare init function parameters
       const assetIdsStr = this.rangeAssets.map(({ asset }) => asset.assetId).join(",");
       const assetWeightsStr = this.rangeAssets.map(({ share }) => BN.parseUnits(share, 1).toNumber()).join(",");
-      
+
       // Calculate max selloff values (empty string if not provided)
-      const assetMaxSelloffStr = this.rangeAssets.map(({ maxSellOff }) => 
-        maxSellOff ? BN.parseUnits(maxSellOff, 2).toNumber().toString() : ""
-      ).join(",");
-      
+      const assetMaxSelloffStr = this.rangeAssets
+        .map(({ maxSellOff }) => (maxSellOff ? BN.parseUnits(maxSellOff, 2).toNumber().toString() : ""))
+        .join(",");
+
       const baseTokenId = this.rangeAssets[0].asset.assetId;
       const fee = BN.parseUnits(this.swapFee, 1).toNumber();
 
@@ -604,19 +547,18 @@ class CreateRangeVm {
       for (const rangeAsset of this.rangeAssets) {
         const { asset, leverage } = rangeAsset;
         const leverageValue = leverage ?? new BN(1);
-        
+
         // Get the amount to provide from assetsForInitFunction
-        const assetForInit = this.assetsForInitFunction.find(a => 
-          (a.assetId === null && asset.assetId === "WAVES") || 
-          (a.assetId === asset.assetId)
+        const assetForInit = this.assetsForInitFunction.find(
+          (a) => (a.assetId === null && asset.assetId === "WAVES") || a.assetId === asset.assetId
         );
-        
+
         if (!assetForInit) {
           throw new Error(`No amount calculated for asset ${asset.symbol}`);
         }
 
         const amountToProvide = new BN(assetForInit.amount);
-        
+
         // Virtual balance = amount * leverage
         const virtualBalance = amountToProvide.times(leverageValue);
         // Format as integer string without scientific notation
@@ -625,7 +567,7 @@ class CreateRangeVm {
         // Add to payments array
         payments.push({
           assetId: asset.assetId === "WAVES" ? null : asset.assetId,
-          amount: amountToProvide.toFixed(0),
+          amount: amountToProvide.toFixed(0)
         });
       }
 
@@ -656,9 +598,9 @@ class CreateRangeVm {
             { type: "string", value: baseTokenId },
             { type: "string", value: this.domain },
             { type: "integer", value: fee.toString() },
-            { type: "string", value: vBalancesStr },
-          ],
-        },
+            { type: "string", value: vBalancesStr }
+          ]
+        }
       });
 
       if (!txId) {
@@ -671,7 +613,8 @@ class CreateRangeVm {
       this.setNotificationParams({
         type: "success",
         title: `"${this.domain}" Range has been created!`,
-        description: "You have successfully provided initial liquidity. Your range is now active and ready for trading.",
+        description:
+          "You have successfully provided initial liquidity. Your range is now active and ready for trading.",
         buttons: [
           () => (
             <Button
@@ -703,13 +646,12 @@ class CreateRangeVm {
             >
               Back to AllRanges
             </Button>
-          ),
-        ],
+          )
+        ]
       });
 
       // Update stores to reflect the new range
       await this.rootStore.rangesStore?.syncRanges?.();
-
     } catch (e: any) {
       console.error("Error providing liquidity to range:", e);
       this.setNotificationParams({
@@ -729,8 +671,8 @@ class CreateRangeVm {
             >
               Try Again
             </Button>
-          ),
-        ],
+          )
+        ]
       });
     } finally {
       this._setLoading(false);
@@ -758,23 +700,20 @@ class CreateRangeVm {
       const transferTxId = await this.rootStore.accountStore.transfer({
         amount: Number(0.1 * 1e8).toString(), // 0.1 WAVES for fees
         recipient: randomAddress,
-        assetId: null,
+        assetId: null
       });
 
       if (!transferTxId) {
         this.setNotificationParams({
           type: "error",
           title: "Error: Couldn't transfer WAVES for fees",
-          description: "Please ensure you have enough WAVES in your wallet.",
+          description: "Please ensure you have enough WAVES in your wallet."
         });
         throw new Error("Failed to transfer WAVES for fees");
       }
 
       // Deploy the range smart contract
-      const deployScriptTx = await setScript(
-        { script: RANGE_CONTRACT_B64, chainId: "W", fee: "4200000" },
-        seed
-      );
+      const deployScriptTx = await setScript({ script: RANGE_CONTRACT_B64, chainId: "W", fee: "4200000" }, seed);
       await broadcast(deployScriptTx, NODE_URL);
       await waitForTx(deployScriptTx.id, { apiBase: NODE_URL });
 
@@ -783,7 +722,7 @@ class CreateRangeVm {
 
       // Move to next step and show success message
       this.setStep(this.step + 1);
-      
+
       this.setNotificationParams({
         type: "success",
         title: "Range Contract Deployed Successfully!",
@@ -801,54 +740,52 @@ class CreateRangeVm {
             >
               Continue
             </Button>
-          ),
-        ],
+          )
+        ]
       });
 
       console.log("🌱 Range contract deployed at address:", randomAddress);
       console.log("🌱 Deploy transaction ID:", deployScriptTx.id);
-
     } catch (e: any) {
-      this.rootStore.notificationStore.notify(
-        "Cannot create range. Try to reload the page and try again.",
-        { type: "error" }
-      );
-      
+      this.rootStore.notificationStore.notify("Cannot create range. Try to reload the page and try again.", {
+        type: "error"
+      });
+
       console.error("Error creating range:", e);
     } finally {
       this._setLoading(false);
     }
-  }
+  };
 
   get correspondingVirtualBalanceOfBaseToken(): Record<string, BN> {
     const { accountStore } = this.rootStore;
     const { findBalanceByAssetId } = accountStore;
-    return this.rangeAssets.reduce<Record<string, BN>>(
-      (acc, { asset, share, initialPrice, leverage }, i) => {
-        const tokenBalance = findBalanceByAssetId(asset.assetId);
-        if (tokenBalance == null || tokenBalance.balance == null || initialPrice == null) return acc;
-        const baseToken = this.rangeAssets[0];
-        const value = BN.formatUnits(tokenBalance.balance, asset.decimals).times(i === 0 ? 1 : BN.formatUnits(initialPrice, asset.decimals)).times(leverage ?? 1).times(baseToken.share.div(share));
-//         console.log(`
-// ${asset.symbol} ${value.toFormat(2)}
-// \nF=${BN.formatUnits(tokenBalance.balance, asset.decimals).toFormat(2)}
-// \nP=${i === 0 ? 1 : BN.formatUnits(initialPrice, asset.decimals).toFormat(2)}
-// \nL=${leverage?.toFormat(2)}
-// \nw=${share.div(1000).toFormat(2)}
-// \nL0=${this.rangeAssets[0].leverage?.toFormat(2)}
-// \n\nRes=${value.div(this.rangeAssets[0].leverage ?? 1).toFormat(2)}`)
-        return {
-          ...acc,
-          [asset.assetId]: value,
-        }
-      },
-      {} as Record<string, BN>
-    )
+    return this.rangeAssets.reduce<Record<string, BN>>((acc, { asset, share, initialPrice, leverage }, i) => {
+      const tokenBalance = findBalanceByAssetId(asset.assetId);
+      if (tokenBalance == null || tokenBalance.balance == null || initialPrice == null) return acc;
+      const baseToken = this.rangeAssets[0];
+      const value = BN.formatUnits(tokenBalance.balance, asset.decimals)
+        .times(i === 0 ? 1 : BN.formatUnits(initialPrice, asset.decimals))
+        .times(leverage ?? 1)
+        .times(baseToken.share.div(share));
+      //         console.log(`
+      // ${asset.symbol} ${value.toFormat(2)}
+      // \nF=${BN.formatUnits(tokenBalance.balance, asset.decimals).toFormat(2)}
+      // \nP=${i === 0 ? 1 : BN.formatUnits(initialPrice, asset.decimals).toFormat(2)}
+      // \nL=${leverage?.toFormat(2)}
+      // \nw=${share.div(1000).toFormat(2)}
+      // \nL0=${this.rangeAssets[0].leverage?.toFormat(2)}
+      // \n\nRes=${value.div(this.rangeAssets[0].leverage ?? 1).toFormat(2)}`)
+      return {
+        ...acc,
+        [asset.assetId]: value
+      };
+    }, {} as Record<string, BN>);
   }
 
   get minVirtualBalanceOfBaseToken(): BN {
     return Object.values(this.correspondingVirtualBalanceOfBaseToken).reduce(
-      (acc, v, i) => i === 0 ? v : BN.min(acc, v),
+      (acc, v, i) => (i === 0 ? v : BN.min(acc, v)),
       BN.ZERO
     );
   }
@@ -856,14 +793,14 @@ class CreateRangeVm {
   get maxToProvide(): BN {
     const baseToken = this.rangeAssets[0];
     const share = BN.formatUnits(baseToken.share, 3);
-    const res = this.minVirtualBalanceOfBaseToken.div(baseToken.leverage ?? 1).div(share)
-//     console.log(`
-// Max to provide: ${res.toFormat(2)}
+    const res = this.minVirtualBalanceOfBaseToken.div(baseToken.leverage ?? 1).div(share);
+    //     console.log(`
+    // Max to provide: ${res.toFormat(2)}
 
-// min virtual balance: ${this.minVirtualBalanceOfBaseToken.toFormat(2)}
+    // min virtual balance: ${this.minVirtualBalanceOfBaseToken.toFormat(2)}
 
-// By asset:
-// ${Object.entries(this.correspondingVirtualBalanceOfBaseToken).map(([assetId, value]) => `${TOKENS_BY_ASSET_ID[assetId]?.symbol ?? assetId}: ${value.toFormat(2)}`).join("\n")}`);
+    // By asset:
+    // ${Object.entries(this.correspondingVirtualBalanceOfBaseToken).map(([assetId, value]) => `${TOKENS_BY_ASSET_ID[assetId]?.symbol ?? assetId}: ${value.toFormat(2)}`).join("\n")}`);
     return res;
   }
 
@@ -882,18 +819,18 @@ class CreateRangeVm {
       const F1 = B1.div(L1);
       const amountToProvide = F1.times(this.providedPercentOfPool.div(100));
 
-//       console.log(`
-// to provide ${asset.symbol}: ${amountToProvide.toFormat(2)}
+      //       console.log(`
+      // to provide ${asset.symbol}: ${amountToProvide.toFormat(2)}
 
-// F1=${F1.toFormat(2)}
-// w0/w1 = ${w0.div(w1).toFormat(2)}
-// percent=${this.providedPercentOfPool.div(100).toFormat(2)}
-// p=${p.toFormat(2)}
-// `)
+      // F1=${F1.toFormat(2)}
+      // w0/w1 = ${w0.div(w1).toFormat(2)}
+      // percent=${this.providedPercentOfPool.div(100).toFormat(2)}
+      // p=${p.toFormat(2)}
+      // `)
 
       return {
         ...acc,
-        [assetId]: amountToProvide,
+        [assetId]: amountToProvide
       };
     }, {});
   }
@@ -901,9 +838,12 @@ class CreateRangeVm {
   get assetsForInitFunction(): { assetId: string | null; amount: string }[] {
     return Object.entries(this.assetsToProvide).map(([assetId, amount]) => ({
       assetId: assetId === "WAVES" ? null : assetId,
-      amount: BN.parseUnits(amount, this.rangeAssets.find(asset => asset.asset.assetId === assetId)?.asset.decimals ?? 8)
+      amount: BN.parseUnits(
+        amount,
+        this.rangeAssets.find((asset) => asset.asset.assetId === assetId)?.asset.decimals ?? 8
+      )
         .toSignificant(0)
-        .toString(),
+        .toString()
     }));
   }
 

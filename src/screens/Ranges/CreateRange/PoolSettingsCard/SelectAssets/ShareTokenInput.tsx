@@ -6,13 +6,7 @@ import BigNumberInput from "@components/BigNumberInput";
 import BN from "@src/utils/BN";
 
 interface IProps
-  extends Omit<
-    React.DetailedHTMLProps<
-      React.InputHTMLAttributes<HTMLInputElement>,
-      HTMLInputElement
-    >,
-    "onChange"
-  > {
+  extends Omit<React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "onChange"> {
   amount: BN;
   maxValue?: BN;
   minValue?: BN;
@@ -26,23 +20,14 @@ const Root = styled.div<{
   disabled?: boolean;
 }>`
   position: relative;
-  background: ${({ focused, theme }) =>
-    focused ? theme.colors.white : theme.colors.primary100};
+  background: ${({ focused, theme }) => (focused ? theme.colors.white : theme.colors.primary100)};
   border: 1px solid
     ${({ focused, error, theme }) =>
-      error
-        ? theme.colors.error500
-        : focused
-        ? theme.colors.blue500
-        : theme.colors.primary100};
+      error ? theme.colors.error500 : focused ? theme.colors.blue500 : theme.colors.primary100};
 
   :hover {
     border-color: ${({ focused, error, theme }) =>
-      error
-        ? theme.colors.error500
-        : !focused
-        ? theme.colors.primary650
-        : theme.colors.blue500};
+      error ? theme.colors.error500 : !focused ? theme.colors.primary650 : theme.colors.blue500};
   }
 
   border-radius: 12px;
@@ -60,8 +45,7 @@ const Root = styled.div<{
     padding: 0;
     width: 41px;
     height: 22px;
-    color: ${({ focused, theme }) =>
-      focused ? theme.colors.primary800 : theme.colors.primary650};
+    color: ${({ focused, theme }) => (focused ? theme.colors.primary800 : theme.colors.primary650)};
     outline: none;
     border: none;
     background-color: transparent;
@@ -85,14 +69,7 @@ const Root = styled.div<{
   }
 `;
 
-const ShareTokenInput: React.FC<IProps> = ({
-  amount,
-  error,
-  maxValue,
-  minValue,
-  onChange,
-  ...props
-}) => {
+const ShareTokenInput: React.FC<IProps> = ({ amount, error, maxValue, minValue, onChange, ...props }) => {
   const [focused, setFocused] = useState(false);
   return (
     <>
@@ -119,12 +96,7 @@ const ShareTokenInput: React.FC<IProps> = ({
           onChange={(v) => onChange && onChange(v)}
           placeholder="0.00"
         />
-        <Text
-          type="secondary"
-          size="medium"
-          fitContent
-          style={{ position: "absolute", right: 12, top: 10 }}
-        >
+        <Text type="secondary" size="medium" fitContent style={{ position: "absolute", right: 12, top: 10 }}>
           %
         </Text>
       </Root>

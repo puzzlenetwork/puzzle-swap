@@ -63,10 +63,7 @@ const Boosting: React.FC<IProps> = () => {
           <Text style={whiteText}>
             {data.boostings?.map((boosting) => (
               <div>
-                {new BN(boosting.per_day).toFormat(4) +
-                  " " +
-                  TOKENS_BY_ASSET_ID[boosting.asset_id].name +
-                  " per day"}
+                {new BN(boosting.per_day).toFormat(4) + " " + TOKENS_BY_ASSET_ID[boosting.asset_id].name + " per day"}
               </div>
             ))}
           </Text>

@@ -40,10 +40,7 @@ const GrayCard = styled(Card)`
 const SummaryCard: React.FC<IProps> = () => {
   const vm = useCreateRangeVM();
   const data = vm.rangeAssets?.reduce<{ name: string; value: number }[]>(
-    (acc, { asset, share }) => [
-      ...acc,
-      { name: asset.symbol, value: share.toNumber() },
-    ],
+    (acc, { asset, share }) => [...acc, { name: asset.symbol, value: share.toNumber() }],
     []
   );
 
@@ -53,30 +50,17 @@ const SummaryCard: React.FC<IProps> = () => {
         Summary
       </Text>
       <SizedBox height={8} />
-      <Card
-        justifyContent="center"
-        alignItems="center"
-        paddingDesktop="0px"
-        paddingMobile="0px"
-      >
+      <Card justifyContent="center" alignItems="center" paddingDesktop="0px" paddingMobile="0px">
         <SizedBox height={40} />
         <GrayCard>
-          <RangeChart
-            assetsWithLeverage={vm.assetsWithLeverage}
-            size={180}
-          />
+          <RangeChart assetsWithLeverage={vm.assetsWithLeverage} size={180} />
         </GrayCard>
 
         <SizedBox height={12} />
 
         <Legend>
           {vm.rangeAssets.map(({ asset }, index) => (
-            <Row
-              key={index + "summary-card"}
-              justifyContent="center"
-              alignItems="center"
-              mainAxisSize="fit-content"
-            >
+            <Row key={index + "summary-card"} justifyContent="center" alignItems="center" mainAxisSize="fit-content">
               <RoundTokenIcon src={asset.logo} />
               <SizedBox width={4} />
               <Text size="small" type="primary" weight={500} fitContent>

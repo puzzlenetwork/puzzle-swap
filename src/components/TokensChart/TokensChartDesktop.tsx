@@ -8,10 +8,7 @@ import SizedBox from "@components/SizedBox";
 import ChartAgeButtons from "@components/ChartAgeButtons";
 import { IToken } from "@src/constants";
 import TokensChart from "@components/TokensChart/TokensChart";
-import {
-  TokenChartVMProvider,
-  useTokenChartVM,
-} from "@components/TokensChart/TokenChartVM";
+import { TokenChartVMProvider, useTokenChartVM } from "@components/TokensChart/TokenChartVM";
 import LearnMoreTokenChartButtons from "@components/TokensChart/LearnMoreTokenChartButtons";
 import MyOrders from "@screens/TradeInterface/Trade/LimitOrders/MyOrders";
 import { useSwapVM } from "@screens/TradeInterface/SwapVM";
@@ -42,48 +39,36 @@ const Root = styled.div`
   }
 `;
 
-const TokensChartDesktopImpl: React.FC<IProps> = observer(
-  ({ height, ...rest }) => {
-    const { getCollapseProps } = useCollapse({
-      isExpanded: rest.visible,
-      showDuration: 500,
-      hideDuration: 0,
-    });
-    const vm = useTokenChartVM();
-    const swapVm = useSwapVM();
-    return (
-      <Root {...getCollapseProps()}>
-        <Card style={{ height }}>
-          <Row alignItems="center" justifyContent="space-between">
-            <Row alignItems="center">
-              <Text
-                weight={500}
-                fitContent
-              >{`${rest.token1.symbol}/${rest.token0.symbol}`}</Text>
-              <SizedBox width={8} />
-            </Row>
-            <ChartAgeButtons
-              className="age-btns"
-              value={vm.selectedChartPeriod}
-              onChange={vm.setSelectedChartPeriod}
-            />
+const TokensChartDesktopImpl: React.FC<IProps> = observer(({ height, ...rest }) => {
+  const { getCollapseProps } = useCollapse({
+    isExpanded: rest.visible,
+    showDuration: 500,
+    hideDuration: 0
+  });
+  const vm = useTokenChartVM();
+  const swapVm = useSwapVM();
+  return (
+    <Root {...getCollapseProps()}>
+      <Card style={{ height }}>
+        <Row alignItems="center" justifyContent="space-between">
+          <Row alignItems="center">
+            <Text weight={500} fitContent>{`${rest.token1.symbol}/${rest.token0.symbol}`}</Text>
+            <SizedBox width={8} />
           </Row>
-          <TokensChart {...(rest as any)} />
-        </Card>
-        <SizedBox height={16} />
-        <LearnMoreTokenChartButtons />
-        <SizedBox height={40} />
-        {swapVm.activeAction === 1 && <MyOrders />}
-      </Root>
-    );
-  }
-);
+          <ChartAgeButtons className="age-btns" value={vm.selectedChartPeriod} onChange={vm.setSelectedChartPeriod} />
+        </Row>
+        <TokensChart {...(rest as any)} />
+      </Card>
+      <SizedBox height={16} />
+      <LearnMoreTokenChartButtons />
+      <SizedBox height={40} />
+      {swapVm.activeAction === 1 && <MyOrders />}
+    </Root>
+  );
+});
 
 const TokensChartDesktop: React.FC<IProps> = (props) => (
-  <TokenChartVMProvider
-    assetId0={props.token0.assetId}
-    assetId1={props.token1.assetId}
-  >
+  <TokenChartVMProvider assetId0={props.token0.assetId} assetId1={props.token1.assetId}>
     <TokensChartDesktopImpl {...props} />
   </TokenChartVMProvider>
 );

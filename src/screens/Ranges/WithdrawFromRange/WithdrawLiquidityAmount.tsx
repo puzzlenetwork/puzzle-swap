@@ -27,9 +27,7 @@ const WithdrawLiquidityAmount: React.FC<IProps> = () => {
         <Text type="primary" size="large" style={{ textAlign: "center" }}>
           {`${vm.percentToWithdraw}% `}
           {vm.totalAmountToWithdrawDisplay && (
-            <span
-              style={{ color: "#8082C5" }}
-            >{`(${vm.totalAmountToWithdrawDisplay})`}</span>
+            <span style={{ color: "#8082C5" }}>{`(${vm.totalAmountToWithdrawDisplay})`}</span>
           )}
         </Text>
         <SizedBox height={16} />

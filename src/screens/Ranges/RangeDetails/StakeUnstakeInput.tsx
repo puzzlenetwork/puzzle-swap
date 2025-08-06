@@ -27,8 +27,7 @@ const InputContainer = styled.div<{
   invalid?: boolean;
   readOnly?: boolean;
 }>`
-  background: ${({ focused, theme }) =>
-    focused ? theme.colors.white : theme.colors.primary100};
+  background: ${({ focused, theme }) => (focused ? theme.colors.white : theme.colors.primary100)};
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -46,14 +45,11 @@ const InputContainer = styled.div<{
   }
 
   border: 1px solid
-    ${({ focused, readOnly, theme }) =>
-      focused && !readOnly ? theme.colors.blue500 : theme.colors.primary100};
+    ${({ focused, readOnly, theme }) => (focused && !readOnly ? theme.colors.blue500 : theme.colors.primary100)};
 
   :hover {
     border-color: ${({ readOnly, focused, theme }) =>
-      !readOnly && !focused
-        ? theme.colors.primary650
-        : focused ?? theme.colors.blue500};
+      !readOnly && !focused ? theme.colors.primary650 : focused ?? theme.colors.blue500};
   }
 `;
 
@@ -115,7 +111,7 @@ const StakeUnstakeInput: React.FC<IProps> = (props) => {
         )}
       </InputContainer>
     </Root>
-  )
-}
+  );
+};
 
 export default StakeUnstakeInput;

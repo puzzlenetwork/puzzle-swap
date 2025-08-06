@@ -30,13 +30,9 @@ const Tag = styled.div<{ active?: boolean }>`
   justify-content: center;
   align-items: center;
   padding: 8px 20px;
-  color: ${({ active, theme }) =>
-    active ? theme.colors.white : theme.colors.primary800};
-  background: ${({ active, theme }) =>
-    active ? theme.colors.blue500 : theme.colors.white};
-  border: 1px solid
-    ${({ active, theme }) =>
-      active ? theme.colors.blue500 : theme.colors.primary100};
+  color: ${({ active, theme }) => (active ? theme.colors.white : theme.colors.primary800)};
+  background: ${({ active, theme }) => (active ? theme.colors.blue500 : theme.colors.white)};
+  border: 1px solid ${({ active, theme }) => (active ? theme.colors.blue500 : theme.colors.primary100)};
   box-sizing: border-box;
   border-radius: 10px;
   cursor: pointer;
@@ -45,9 +41,7 @@ const Tag = styled.div<{ active?: boolean }>`
 const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
   const vm = useCreateCustomPoolsVM();
   const swapFeeError = vm.swapFee.gt(30) || vm.swapFee.lt(5);
-  const [customPercent, setCustomPercent] = useState<BN>(
-    vm.swapFee ?? new BN(10)
-  );
+  const [customPercent, setCustomPercent] = useState<BN>(vm.swapFee ?? new BN(10));
   const handleChangeCustomPercent = (v: BN) => {
     setCustomPercent(v);
     vm.setSwapFee(v);
@@ -60,11 +54,7 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
       if (domain === "") return;
       setValidationProcessing(true);
       vm.setPoolSettingError(false);
-      if (
-        /[^a-z0-9_-]/.test(domain) ||
-        domain.length > 13 ||
-        domain.length < 2
-      ) {
+      if (/[^a-z0-9_-]/.test(domain) || domain.length > 13 || domain.length < 2) {
         setDomainError("2–13 lowercase latin and number characters");
         setValidationProcessing(false);
         return;
@@ -109,11 +99,7 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
           Title of the pool
         </Text>
         <SizedBox height={4} />
-        <Input
-          value={vm.title}
-          onChange={(e) => vm.setTitle(e.target.value)}
-          placeholder="Enter the title…"
-        />
+        <Input value={vm.title} onChange={(e) => vm.setTitle(e.target.value)} placeholder="Enter the title…" />
         <SizedBox height={16} />
         <Row mainAxisSize="fit-content" alignItems="center">
           <Text type="secondary" size="medium">
@@ -123,8 +109,7 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
             containerStyles={{ display: "flex", alignItems: "center" }}
             content={
               <Text size="small">
-                Will be used for generating a direct link to the pool and giving
-                a name to Pool Index token.
+                Will be used for generating a direct link to the pool and giving a name to Pool Index token.
               </Text>
             }
           >
@@ -180,11 +165,7 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
           />
         </Row>
         {swapFeeError && (
-          <Notification
-            style={{ marginTop: 16 }}
-            type="error"
-            text="Swap fees for the pool must be from 0.5% to 3%"
-          />
+          <Notification style={{ marginTop: 16 }} type="error" text="Swap fees for the pool must be from 0.5% to 3%" />
         )}
       </Card>
     </Root>

@@ -36,7 +36,7 @@ const AboutToken: React.FC<IProps> = () => {
   const vm = useExploreTokenVM();
   const [opened, setOpened] = useState(false);
   const { getCollapseProps } = useCollapse({
-    isExpanded: opened,
+    isExpanded: opened
   });
   return (
     <Root>
@@ -49,7 +49,7 @@ const AboutToken: React.FC<IProps> = () => {
         type="secondary"
         style={{
           whiteSpace: "pre-wrap",
-          position: "relative",
+          position: "relative"
         }}
       >
         {vm.tokenLifeData[0]}
@@ -64,11 +64,7 @@ const AboutToken: React.FC<IProps> = () => {
         </Text>
       </Body>
       <SizedBox height={16} />
-      <TextButton
-        kind="secondary"
-        weight={500}
-        onClick={() => setOpened(!opened)}
-      >
+      <TextButton kind="secondary" weight={500} onClick={() => setOpened(!opened)}>
         {!opened ? "Read more..." : "Hide.."}
       </TextButton>
     </Root>

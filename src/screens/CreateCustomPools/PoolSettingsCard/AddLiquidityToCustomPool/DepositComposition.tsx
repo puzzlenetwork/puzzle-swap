@@ -57,13 +57,8 @@ const DepositComposition: React.FC<IProps> = () => {
       <Card paddingMobile="0" paddingDesktop="8px 0">
         <GridTable desktopTemplate={"1fr 1fr"} mobileTemplate={"1fr 1fr"}>
           {vm.poolsAssets.map((token, i) => {
-            const balance = accountStore.findBalanceByAssetId(
-              token.asset.assetId
-            );
-            const available =
-              balance &&
-              balance.balance &&
-              BN.formatUnits(balance?.balance, token.asset.decimals);
+            const balance = accountStore.findBalanceByAssetId(token.asset.assetId);
+            const available = balance && balance.balance && BN.formatUnits(balance?.balance, token.asset.decimals);
             const depositAmount = vm.maxToProvide
               .times(vm.providedPercentOfPool)
               .div(100)
@@ -85,11 +80,7 @@ const DepositComposition: React.FC<IProps> = () => {
         <AdaptiveRowWithPadding justifyContent="space-between">
           <Text fitContent>Total value</Text>
           <Text weight={500} fitContent nowrap>
-            $
-            {vm.maxToProvide
-              .times(vm.providedPercentOfPool)
-              .div(100)
-              .toFormat(4)}
+            ${vm.maxToProvide.times(vm.providedPercentOfPool).div(100).toFormat(4)}
           </Text>
         </AdaptiveRowWithPadding>
       </Card>

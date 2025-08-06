@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, JSX } from "react";
 import styled from "@emotion/styled";
 import { scalePow } from "d3-scale";
@@ -54,26 +53,23 @@ const TooltipTriggerArea = styled.div`
   pointer-events: auto;
 `;
 
-const LogSliderWithImage: React.FC<IParams> = ({ 
-  value, 
-  min, 
-  max, 
-  imageUrl, 
-  onChange, 
-  minTooltipContent, 
-  maxTooltipContent 
+const LogSliderWithImage: React.FC<IParams> = ({
+  value,
+  min,
+  max,
+  imageUrl,
+  onChange,
+  minTooltipContent,
+  maxTooltipContent
 }) => {
-  const scale = scalePow()
-    .exponent(3)
-    .domain([domainMin, domainMax])
-    .range([min, max]);
-    
+  const scale = scalePow().exponent(3).domain([domainMin, domainMax]).range([min, max]);
+
   const [currentSliderValue, setCurrentSliderValue] = useState(() => scale.invert(value));
   const [showAutoTooltip, setShowAutoTooltip] = useState(false);
   const [autoTooltipTimeoutId, setAutoTooltipTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const [previousSliderValue, setPreviousSliderValue] = useState(() => scale.invert(value));
   const [isHandleHovered, setIsHandleHovered] = useState(false);
-  
+
   // Update slider value when prop changes
   useEffect(() => {
     setCurrentSliderValue(scale.invert(value));
@@ -85,27 +81,25 @@ const LogSliderWithImage: React.FC<IParams> = ({
     const isAtMaxEdge = Math.round(currentSliderValue) >= domainMax;
     const hasMinTooltip = isAtMinEdge && minTooltipContent;
     const hasMaxTooltip = isAtMaxEdge && maxTooltipContent;
-    
+
     // Only trigger if we just reached the edge (not on initial load)
-    const justReachedEdge = (
-      (isAtMinEdge && previousSliderValue > domainMin) ||
-      (isAtMaxEdge && previousSliderValue < domainMax)
-    );
-    
+    const justReachedEdge =
+      (isAtMinEdge && previousSliderValue > domainMin) || (isAtMaxEdge && previousSliderValue < domainMax);
+
     if ((hasMinTooltip || hasMaxTooltip) && justReachedEdge) {
       // Clear any existing timeout
       if (autoTooltipTimeoutId) {
         clearTimeout(autoTooltipTimeoutId);
       }
-      
+
       // Show tooltip immediately
       setShowAutoTooltip(true);
-      
+
       // Set timeout to hide tooltip after 5 seconds
       const timeoutId = setTimeout(() => {
         setShowAutoTooltip(false);
       }, 2000);
-      
+
       setAutoTooltipTimeoutId(timeoutId);
     } else if (!isAtMinEdge && !isAtMaxEdge) {
       // Hide tooltip if not at exact edge
@@ -115,11 +109,11 @@ const LogSliderWithImage: React.FC<IParams> = ({
         setAutoTooltipTimeoutId(null);
       }
     }
-    
+
     // Update previous value
     setPreviousSliderValue(currentSliderValue);
   }, [currentSliderValue, minTooltipContent, maxTooltipContent, autoTooltipTimeoutId, previousSliderValue]);
-  
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -128,33 +122,30 @@ const LogSliderWithImage: React.FC<IParams> = ({
       }
     };
   }, [autoTooltipTimeoutId]);
-    
+
   const handleChange = (v: number | number[]) => {
     const sliderValue = v as number;
     const scaledValue = scale(sliderValue);
     setCurrentSliderValue(sliderValue);
     onChange(scaledValue);
   };
-  
+
   const getTooltipPosition = () => {
     const percentage = ((currentSliderValue - domainMin) / (domainMax - domainMin)) * 100;
     return Math.max(0, Math.min(100, percentage));
   };
-  
+
   const getDisplayValue = () => {
     if (Math.round(currentSliderValue) <= domainMin) return "1x";
     if (Math.round(currentSliderValue) >= domainMax) return "∞";
     return `${Math.round(currentSliderValue)}x`;
   };
-  
-  const getSpecialTooltipContent = useMemo(
-    () => {
-      if (Math.round(currentSliderValue) <= domainMin) return minTooltipContent;
-      if (Math.round(currentSliderValue) >= domainMax) return maxTooltipContent;
-      return null;
-    },
-    [currentSliderValue, minTooltipContent, maxTooltipContent]
-  );
+
+  const getSpecialTooltipContent = useMemo(() => {
+    if (Math.round(currentSliderValue) <= domainMin) return minTooltipContent;
+    if (Math.round(currentSliderValue) >= domainMax) return maxTooltipContent;
+    return null;
+  }, [currentSliderValue, minTooltipContent, maxTooltipContent]);
 
   const shouldShowTooltip = useMemo(() => {
     return showAutoTooltip && !!getSpecialTooltipContent;
@@ -172,8 +163,12 @@ const LogSliderWithImage: React.FC<IParams> = ({
     <SliderWrapper className="slider-wrapper">
       {/* Tooltip above the handle */}
       <TooltipContainer position={getTooltipPosition()}>
-        <Tooltip 
-          config={{ placement: "top", trigger: "hover", visible: (!!getSpecialTooltipContent && (shouldShowTooltip || isHandleHovered)) }} 
+        <Tooltip
+          config={{
+            placement: "top",
+            trigger: "hover",
+            visible: !!getSpecialTooltipContent && (shouldShowTooltip || isHandleHovered)
+          }}
           content={getSpecialTooltipContent || ""}
         >
           <TooltipTriggerArea onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
@@ -183,16 +178,22 @@ const LogSliderWithImage: React.FC<IParams> = ({
           </TooltipTriggerArea>
         </Tooltip>
       </TooltipContainer>
-      
+
       <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
         <Slider
-          dotStyle={{ border: "3px solid #F1F2FE", backgroundColor: "#111331ff" }}
-          activeDotStyle={{ backgroundColor: "#7075E9", borderColor: "#7075E9" }}
+          dotStyle={{
+            border: "3px solid #F1F2FE",
+            backgroundColor: "#111331ff"
+          }}
+          activeDotStyle={{
+            backgroundColor: "#7075E9",
+            borderColor: "#7075E9"
+          }}
           style={{
             padding: 0,
             height: 20,
             border: "1px solid #F1F2FE",
-            borderRadius: 10,
+            borderRadius: 10
           }}
           handleStyle={{
             border: "3px solid #7075E9",
@@ -201,7 +202,7 @@ const LogSliderWithImage: React.FC<IParams> = ({
             height: 20,
             marginTop: -1,
             borderRadius: 10,
-            opacity: 1,
+            opacity: 1
           }}
           styles={{
             track: {
@@ -211,12 +212,12 @@ const LogSliderWithImage: React.FC<IParams> = ({
               colorInterpolation: "sRGB",
               backgroundColor: imageUrl ? "rgba(38, 38, 38, 0)" : "#7075E9",
               height: 18,
-              borderRadius: "10px 0 0 10px",
+              borderRadius: "10px 0 0 10px"
             },
             rail: {
               backgroundColor: "transparent",
               height: 18,
-              borderRadius: "10px",
+              borderRadius: "10px"
             },
             handle: {
               border: "3px solid #7075E9",
@@ -226,8 +227,8 @@ const LogSliderWithImage: React.FC<IParams> = ({
               marginTop: -1,
               borderRadius: 10,
               opacity: 1,
-              cursor: "grab",
-            },
+              cursor: "grab"
+            }
           }}
           min={domainMin}
           max={domainMax}

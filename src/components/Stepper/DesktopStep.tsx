@@ -30,16 +30,12 @@ const IconContainer = styled.div<{ state: TStep }>`
   flex-shrink: 0;
   transition: 0.4s;
   position: relative;
-  background: ${({ state, theme }) =>
-    state === "current" ? theme.colors.blue500 : theme.colors.primary100};
+  background: ${({ state, theme }) => (state === "current" ? theme.colors.blue500 : theme.colors.primary100)};
 
-  ${({ state, theme }) =>
-    state === "previous" ? `background: ${theme.colors.primary300};` : ""}
+  ${({ state, theme }) => (state === "previous" ? `background: ${theme.colors.primary300};` : "")}
   & > div {
-    color: ${({ state, theme }) =>
-      state === "current" ? theme.colors.white : theme.colors.blue500};
-    ${({ state, theme }) =>
-      state === "previous" ? `color: ${theme.colors.primary300};` : ""}
+    color: ${({ state, theme }) => (state === "current" ? theme.colors.white : theme.colors.blue500)};
+    ${({ state, theme }) => (state === "previous" ? `color: ${theme.colors.primary300};` : "")}
   }
 
 
@@ -59,23 +55,11 @@ const IconContainer = styled.div<{ state: TStep }>`
 
 const TextContainer = styled(Text)<{ state: TStep }>`
   font-weight: ${({ state }) => (state === "current" ? 500 : 400)};
-  color: ${({ state, theme }) =>
-    state === "next" ? theme.colors.primary650 : theme.colors.primary800};
+  color: ${({ state, theme }) => (state === "next" ? theme.colors.primary650 : theme.colors.primary800)};
 `;
-const DesktopStep: React.FC<IProps> = ({
-  index,
-  state,
-  title,
-  onClick,
-  disabled,
-  ...rest
-}) => {
+const DesktopStep: React.FC<IProps> = ({ index, state, title, onClick, disabled, ...rest }) => {
   return (
-    <Root
-      onClick={!disabled ? onClick : undefined}
-      {...rest}
-      disabled={disabled}
-    >
+    <Root onClick={!disabled ? onClick : undefined} {...rest} disabled={disabled}>
       <IconContainer state={state}>
         {state !== "previous" && (
           <Text fitContent size="small">

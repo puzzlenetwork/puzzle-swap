@@ -27,8 +27,8 @@ const Slider: React.FC<SliderProps> = (props) => {
             boxShadow: "0px 4px 16px rgba(112, 117, 233, 0.32)",
             width: 16,
             height: 16,
-            marginTop: -6,
-          },
+            marginTop: -6
+          }
         }}
         {...props}
       />

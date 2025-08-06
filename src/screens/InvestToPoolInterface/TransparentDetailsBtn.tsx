@@ -58,7 +58,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
         <Text size="medium" fitContent nowrap>
           Puzzle Swap
         </Text>
-      ),
+      )
     },
     {
       title: "Smart-contract",
@@ -67,13 +67,11 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
           size="medium"
           prefix={linkIcon}
           kind="secondary"
-          onClick={() =>
-            window.open(`${EXPLORER_URL}/address/${vm.pool.address}`)
-          }
+          onClick={() => window.open(`${EXPLORER_URL}/address/${vm.pool.address}`)}
         >
           View on Explorer
         </TextButton>
-      ),
+      )
     },
     // {
     //   title: "Total fees earned",
@@ -88,17 +86,17 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
       title: "Fees earned (30 days)",
       value: vm.pool.statistics?.totals?.pool_fees_30d
         ? `$ ${new BN(vm.pool.statistics.totals.pool_fees_30d).toFormat(2)}`
-        : "–",
-    },
+        : "–"
+    }
   ];
   const customPoolInformation = [
     {
       title: "Smart Contract Version",
-      value: vm.pool.version,
+      value: vm.pool.version
     },
     {
       title: "Date of creation",
-      value: dayjs(vm.pool.createdAt).format("MMM D, YYYY h:mm A"),
+      value: dayjs(vm.pool.createdAt).format("MMM D, YYYY h:mm A")
     },
     // {
     //   title: "Total creator reward",
@@ -114,39 +112,28 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
     // },
     {
       title: "Volume (7D)",
-      value: vm.pool.statistics?.totals?.volume_7d
-        ? `$${new BN(vm.pool.statistics.totals.volume_7d).toFormat(2)}`
-        : "–",
+      value: vm.pool.statistics?.totals?.volume_7d ? `$${new BN(vm.pool.statistics.totals.volume_7d).toFormat(2)}` : "–"
     },
     {
       title: "Liquidity Providers Fee (7D)",
       value:
         vm.pool.statistics && vm.pool.statistics?.totals?.protocol_fees_7d
-          ? `$${new BN(vm.pool.statistics?.totals?.protocol_fees_7d)
-              .div(10)
-              .times(5)
-              .toFormat(2)}`
-          : "–",
+          ? `$${new BN(vm.pool.statistics?.totals?.protocol_fees_7d).div(10).times(5).toFormat(2)}`
+          : "–"
     },
     {
       title: "Owner Fee (7D)",
       value:
         vm.pool.statistics && vm.pool.statistics?.totals?.protocol_fees_7d
-          ? `$${new BN(vm.pool.statistics?.totals?.protocol_fees_7d)
-              .div(10)
-              .times(1)
-              .toFormat(2)}`
-          : "–",
+          ? `$${new BN(vm.pool.statistics?.totals?.protocol_fees_7d).div(10).times(1).toFormat(2)}`
+          : "–"
     },
     {
       title: "Protocol Fee (7D)",
       value:
         vm.pool.statistics && vm.pool.statistics?.totals?.protocol_fees_7d
-          ? `$${new BN(vm.pool.statistics?.totals?.protocol_fees_7d)
-              .div(10)
-              .times(4)
-              .toFormat(2)}`
-          : "–",
+          ? `$${new BN(vm.pool.statistics?.totals?.protocol_fees_7d).div(10).times(4).toFormat(2)}`
+          : "–"
     },
     {
       title: "Created via",
@@ -155,44 +142,31 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
           size="medium"
           prefix={linkIcon}
           kind="secondary"
-          onClick={() =>
-            window.open(
-              `${EXPLORER_URL}/transactions/${vm.pool?.artefactOriginTransactionId}`
-            )
-          }
+          onClick={() => window.open(`${EXPLORER_URL}/transactions/${vm.pool?.artefactOriginTransactionId}`)}
         >
           {vm.nftPaymentName}
         </TextButton>
-      ),
-    },
+      )
+    }
   ];
-  const information = Array.from(
-    vm.pool.isCustom ? customPoolInformation : puzzlePoolInformation
-  );
+  const information = Array.from(vm.pool.isCustom ? customPoolInformation : puzzlePoolInformation);
   const link = `https://swap.puzzle.network/pools/${vm.pool.domain}/invest`;
   const text = `Invest to ${vm.pool.title} Puzzle Swap megapool`;
   const shareInfo = [
     {
       title: "Twitter",
-      onClick: () =>
-        window.open(
-          `https://twitter.com/intent/tweet?url=${link}&text=${text}`
-        ),
-      icon: <TwitterIcon />,
+      onClick: () => window.open(`https://twitter.com/intent/tweet?url=${link}&text=${text}`),
+      icon: <TwitterIcon />
     },
     {
       title: "Telegram",
-      onClick: () =>
-        window.open(`https://telegram.me/share/?url=${link}&text=${text}`),
-      icon: <TelegramIcon />,
+      onClick: () => window.open(`https://telegram.me/share/?url=${link}&text=${text}`),
+      icon: <TelegramIcon />
     },
     {
       title: "Facebook",
-      onClick: () =>
-        window.open(
-          `https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${text}`
-        ),
-      icon: <FacebookIcon />,
+      onClick: () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${text}`),
+      icon: <FacebookIcon />
     },
     {
       title: "Copy link",
@@ -201,16 +175,14 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
         notificationStore.notify("Link was copied");
         setOpenedShare(false);
       },
-      icon: <CopyIcon />,
-    },
+      icon: <CopyIcon />
+    }
   ];
   return (
     <>
       <Tooltip
         config={{ placement: "bottom-end", trigger: "click" }}
-        content={
-          <MorePoolInformation {...{ setOpenedDetails, setOpenedShare }} />
-        }
+        content={<MorePoolInformation {...{ setOpenedDetails, setOpenedShare }} />}
       >
         <Root>
           <StyledMoreIcon />
@@ -219,7 +191,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
       <Dialog
         style={{ maxWidth: 400 }}
         styles={{
-          body: { minHeight: 232 },
+          body: { minHeight: 232 }
         }}
         title={isOpenedDetails ? "Pool information" : "Share"}
         onClose={() => {
@@ -228,10 +200,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
         }}
         visible={isOpenedDetails || isOpenedShare}
       >
-        <Column
-          crossAxisSize="max"
-          style={{ maxHeight: 352, padding: "10px 0" }}
-        >
+        <Column crossAxisSize="max" style={{ maxHeight: 352, padding: "10px 0" }}>
           {isOpenedDetails &&
             information.map(({ title, value }, index) => (
               <React.Fragment key={index + "poolInformation"}>
@@ -247,9 +216,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
                     value
                   )}
                 </Row>
-                {information.length - 1 !== index && (
-                  <Divider style={{ margin: "9px 0 10px" }} />
-                )}
+                {information.length - 1 !== index && <Divider style={{ margin: "9px 0 10px" }} />}
               </React.Fragment>
             ))}
           {isOpenedShare &&

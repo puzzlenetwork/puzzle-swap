@@ -24,15 +24,14 @@ export default class RangesStore {
       this.ranges.push(range);
     }
   };
-  getRangeByAddress = (address: string) =>
-    this.ranges.find((range) => range.address === address);
+  getRangeByAddress = (address: string) => this.ranges.find((range) => range.address === address);
 
   loading: boolean = false;
 
   // Pagination state
   pagination = {
     page: 1,
-    size: this.rangesPaginationSize,
+    size: this.rangesPaginationSize
   };
 
   // Total number of ranges
@@ -40,11 +39,8 @@ export default class RangesStore {
 
   // Filter state
   filter = {
-    sortBy: "fact_liquidity" as
-      | "fact_liquidity"
-      | "earned"
-      | "virtual_liquidity",
-    order: "desc" as "asc" | "desc",
+    sortBy: "fact_liquidity" as "fact_liquidity" | "earned" | "virtual_liquidity",
+    order: "desc" as "asc" | "desc"
   };
 
   // Time range to show statistics
@@ -74,10 +70,7 @@ export default class RangesStore {
   };
 
   // Methods for filtering
-  setFilter = (filter: {
-    sortBy: "fact_liquidity" | "earned" | "virtual_liquidity";
-    order: "asc" | "desc";
-  }) => {
+  setFilter = (filter: { sortBy: "fact_liquidity" | "earned" | "virtual_liquidity"; order: "asc" | "desc" }) => {
     this.filter = filter;
     this.syncRanges();
   };
@@ -118,7 +111,7 @@ export default class RangesStore {
       title: this.searchValue,
       minLiquidity: this.minLiquidity,
       active: this.onlyActiveRanges,
-      userAddress: this.userAddress,
+      userAddress: this.userAddress
     };
   }
 
@@ -127,9 +120,7 @@ export default class RangesStore {
     try {
       this.loading = true;
       console.log("syncRanges");
-      const { ranges, totalItems } = await rangesService.getRanges(
-        this.paginationParams
-      );
+      const { ranges, totalItems } = await rangesService.getRanges(this.paginationParams);
       console.log("ranges", ranges);
       this.ranges = ranges.map((range) => new Range(range));
       this.setTotalItems(totalItems);

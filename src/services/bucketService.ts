@@ -9,6 +9,6 @@ const bucketService = {
     const headers = { "Content-Type": "multipart/form-data" };
     const { data } = await axios.post(url, formData, { headers });
     return data;
-  },
+  }
 };
 export default bucketService;

@@ -33,23 +33,47 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
         flexGrow={100}
       />
       <Row style={{ flexGrow: 1, flexWrap: "wrap", gap: 12 }} mainAxisSize="fit-content">
-        <Card flexGrow={1} flexDirection="row" alignItems="center" fitContent paddingDesktop="12px 20px" paddingMobile="12px 20px">
+        <Card
+          flexGrow={1}
+          flexDirection="row"
+          alignItems="center"
+          fitContent
+          paddingDesktop="12px 20px"
+          paddingMobile="12px 20px"
+        >
           <Text type="secondary" weight={500}>
             Show all prices in USD
           </Text>
           <SizedBox width={12} />
           <Switch onChange={() => vm.setShowPriceInUsd(!vm.showPriceInUsd)} value={vm.showPriceInUsd} />
         </Card>
-        <Card flexGrow={1} flexDirection="row" alignItems="center" fitContent paddingDesktop="12px 20px" paddingMobile="12px 20px">
+        <Card
+          flexGrow={1}
+          flexDirection="row"
+          alignItems="center"
+          fitContent
+          paddingDesktop="12px 20px"
+          paddingMobile="12px 20px"
+        >
           <Text type="secondary" weight={500}>
             Only active ranges
           </Text>
           <SizedBox width={12} />
-          <Switch onChange={() => vm.setShowOnlyActiveRanges(!vm.showOnlyActiveRanges)} value={vm.showOnlyActiveRanges} />
+          <Switch
+            onChange={() => vm.setShowOnlyActiveRanges(!vm.showOnlyActiveRanges)}
+            value={vm.showOnlyActiveRanges}
+          />
         </Card>
       </Row>
       <Row style={{ flexGrow: 5, flexWrap: "wrap", gap: 12 }} mainAxisSize="fit-content">
-        <Card flexDirection="row" alignItems="center" fitContent paddingDesktop="12px 20px" paddingMobile="12px 20px" flexGrow={1}>
+        <Card
+          flexDirection="row"
+          alignItems="center"
+          fitContent
+          paddingDesktop="12px 20px"
+          paddingMobile="12px 20px"
+          flexGrow={1}
+        >
           <Select
             options={vm.rangesSortings}
             selected={vm.rangesSortings[vm.rangesSorting]}
@@ -61,7 +85,14 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
             fullWidth
           />
         </Card>
-        <Card flexDirection="row" alignItems="center" fitContent paddingDesktop="12px 20px" paddingMobile="12px 20px" flexGrow={1}>
+        <Card
+          flexDirection="row"
+          alignItems="center"
+          fitContent
+          paddingDesktop="12px 20px"
+          paddingMobile="12px 20px"
+          flexGrow={1}
+        >
           <Select
             options={vm.statsRanges}
             selected={vm.statsRanges[vm.selectedStatsRange]}

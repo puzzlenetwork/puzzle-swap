@@ -34,7 +34,7 @@ const Overview: React.FC = () => {
   const data = [
     { date: 123001230, value: 1000 },
     { date: 123005230, value: 1000 },
-    { date: 123005230, value: 1000 },
+    { date: 123005230, value: 1000 }
   ];
 
   return (
@@ -66,9 +66,7 @@ const Overview: React.FC = () => {
             ) : vm.shareOfTotalStake.eq(0) ? (
               "0.00 %"
             ) : (
-              vm.shareOfTotalStake
-                .toFormat(vm.shareOfTotalStake.lte(0.01) ? 6 : 2)
-                .concat(" %")
+              vm.shareOfTotalStake.toFormat(vm.shareOfTotalStake.lte(0.01) ? 6 : 2).concat(" %")
             )}
           </Text>
         </Column>

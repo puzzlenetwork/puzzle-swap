@@ -45,8 +45,7 @@ const Links = styled.div<{ isCustom?: boolean }>`
   display: grid;
   column-gap: 8px;
   @media (min-width: 880px) {
-    grid-template-columns: ${({ isCustom }) =>
-      isCustom ? "1fr 1fr 1fr 3fr" : "1fr 1fr 4fr 1fr"};
+    grid-template-columns: ${({ isCustom }) => (isCustom ? "1fr 1fr 1fr 3fr" : "1fr 1fr 4fr 1fr")};
     grid-template-rows: 1fr;
     padding-top: 44px;
   }
@@ -73,17 +72,16 @@ const Title = styled(Text)`
 `;
 
 const AdaptiveButton = styled(Button)`
-    width: fit-content;
-    @media (max-width: 880px) {
-      width: 100%;
-    }
-`
+  width: fit-content;
+  @media (max-width: 880px) {
+    width: 100%;
+  }
+`;
 const MainPoolInfo: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
   const { accountStore } = useStores();
   const navigate = useNavigate();
-  const handleSmartContractClick = () =>
-    window.open(`https://wscan.io/${vm.pool.address}`);
+  const handleSmartContractClick = () => window.open(`https://wscan.io/${vm.pool.address}`);
   const completePoolInitialization = () => {
     vm.prepareCompletePoolInitialization();
     navigate(ROUTES.POOLS_CREATE);
@@ -141,12 +139,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
               </Text>
               <Text type="light" size="medium">
                 {vm.pool.isCustom ? (
-                  <TextButton
-                    prefix={link}
-                    onClick={() =>
-                      window.open(`https://wscan.io/${vm.pool?.owner}`)
-                    }
-                  >
+                  <TextButton prefix={link} onClick={() => window.open(`https://wscan.io/${vm.pool?.owner}`)}>
                     {centerEllipsis(vm.pool?.owner ?? "", 8)}
                   </TextButton>
                 ) : (
@@ -158,12 +151,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
             <SizedBox height={16} />
             <Row justifyContent="flex-end">
               {vm.pool.statistics == null ? (
-                <AdaptiveButton
-                  fixed
-                  size="medium"
-                  style={{ marginRight: 8 }}
-                  onClick={completePoolInitialization}
-                >
+                <AdaptiveButton fixed size="medium" style={{ marginRight: 8 }} onClick={completePoolInitialization}>
                   Complete pool initialization
                 </AdaptiveButton>
               ) : (

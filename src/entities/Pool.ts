@@ -1,9 +1,4 @@
-import {
-  IPoolConfig,
-  IPoolConfigStatistics,
-  IPoolStats,
-  IToken,
-} from "@src/constants";
+import { IPoolConfig, IPoolConfigStatistics, IPoolStats, IToken } from "@src/constants";
 import { makeAutoObservable } from "mobx";
 import BN from "@src/utils/BN";
 import tokenLogos from "@src/constants/tokenLogos";
@@ -54,15 +49,13 @@ class Pool implements IPoolConfig {
     return this._logo ?? tokenLogos.UNKNOWN;
   }
 
-  public getAssetById = (assetId: string) =>
-    this.tokens.find((t) => assetId === t.assetId);
+  public getAssetById = (assetId: string) => this.tokens.find((t) => assetId === t.assetId);
 
   public globalVolume: BN | null = null;
   setGlobalVolume = (value: BN) => (this.globalVolume = value);
 
   public globalLiquidityByUSDT: BN | null = null;
-  setGlobalLiquidityByUSDT = (value: BN | null) =>
-    (this.globalLiquidityByUSDT = value);
+  setGlobalLiquidityByUSDT = (value: BN | null) => (this.globalLiquidityByUSDT = value);
 
   public get globalLiquidity(): BN {
     if (this.globalLiquidityByUSDT != null) return this.globalLiquidityByUSDT;
@@ -72,15 +65,13 @@ class Pool implements IPoolConfig {
   }
 
   public globalPoolTokenAmount: BN = BN.ZERO;
-  setGlobalPoolTokenAmount = (value: BN) =>
-    (this.globalPoolTokenAmount = value);
+  setGlobalPoolTokenAmount = (value: BN) => (this.globalPoolTokenAmount = value);
 
   public globalEarnedByOwner: BN | null = null;
   setGlobalEarnedByOwner = (value: BN) => (this.globalEarnedByOwner = value);
 
   public liquidity: Record<string, BN> = {};
-  private setLiquidity = (value: Record<string, BN>) =>
-    (this.liquidity = value);
+  private setLiquidity = (value: Record<string, BN>) => (this.liquidity = value);
 
   public puzzleRate: BN = BN.ZERO;
   public setPuzzleRate = (value: BN) => (this.puzzleRate = value);
@@ -115,11 +106,7 @@ class Pool implements IPoolConfig {
     makeAutoObservable(this);
   }
 
-  currentPrice = (
-    assetId0: string,
-    assetId1: string,
-    coefficient = 1
-  ): BN | null => {
+  currentPrice = (assetId0: string, assetId1: string, coefficient = 1): BN | null => {
     if (this.tokens == null) return null;
     const asset0 = this.getAssetById(assetId0);
     const asset1 = this.getAssetById(assetId1);
@@ -135,11 +122,8 @@ class Pool implements IPoolConfig {
   };
 
   get indexTokenRate() {
-    if (this.globalPoolTokenAmount == null || this.globalPoolTokenAmount.eq(0))
-      return BN.ZERO;
-    return this.globalLiquidity.div(
-      BN.formatUnits(this.globalPoolTokenAmount, 8)
-    );
+    if (this.globalPoolTokenAmount == null || this.globalPoolTokenAmount.eq(0)) return BN.ZERO;
+    return this.globalLiquidity.div(BN.formatUnits(this.globalPoolTokenAmount, 8));
   }
 
   syncLiquidity = (data?: IData[]) => {
@@ -151,9 +135,7 @@ class Pool implements IPoolConfig {
     }, {});
     this.setLiquidity(balances);
 
-    const globalPoolTokenAmount = data.find(
-      (v) => v.key === "global_poolToken_amount"
-    );
+    const globalPoolTokenAmount = data.find((v) => v.key === "global_poolToken_amount");
     if (globalPoolTokenAmount?.value != null) {
       this.setGlobalPoolTokenAmount(new BN(globalPoolTokenAmount.value));
     }
@@ -163,10 +145,7 @@ class Pool implements IPoolConfig {
       const globalVolume = new BN(globalVolumeValue.value).div(1e6);
       this.setGlobalVolume(globalVolume);
     }
-    const usdtAsset = this.tokens.find(
-      ({ assetId }) =>
-        assetId === "34N9YcEETLWn93qYQ64EsP1x89tSruJU44RrEMSXXEPJ"
-    )!;
+    const usdtAsset = this.tokens.find(({ assetId }) => assetId === "34N9YcEETLWn93qYQ64EsP1x89tSruJU44RrEMSXXEPJ")!;
     const usdtLiquidity = this.liquidity[usdtAsset?.assetId];
 
     const usdnAsset = this.tokens.find(({ symbol }) => symbol === "XTN")!;
@@ -178,42 +157,20 @@ class Pool implements IPoolConfig {
     const wavesAsset = this.tokens.find(({ symbol }) => symbol === "WAVES")!;
     const wavesLiquidity = this.liquidity[wavesAsset?.assetId];
 
-    const usdtPptAsset = this.tokens.find(
-      ({ assetId }) =>
-        assetId === "9wc3LXNA4TEBsXyKtoLE9mrbDD7WMHXvXrCjZvabLAsi"
-    )!;
+    const usdtPptAsset = this.tokens.find(({ assetId }) => assetId === "9wc3LXNA4TEBsXyKtoLE9mrbDD7WMHXvXrCjZvabLAsi")!;
     const usdtPptLiquidity = this.liquidity[usdtPptAsset?.assetId];
 
     let globalLiquidityByUSDT = null;
     if (usdtAsset && usdtLiquidity) {
-      globalLiquidityByUSDT = new BN(usdtLiquidity)
-        .div(usdtAsset.share)
-        .times(this._usdtRate)
-        .times(100)
-        .div(1e6);
+      globalLiquidityByUSDT = new BN(usdtLiquidity).div(usdtAsset.share).times(this._usdtRate).times(100).div(1e6);
     } else if (puzzleAsset && puzzleLiquidity) {
-      globalLiquidityByUSDT = new BN(puzzleLiquidity)
-        .div(puzzleAsset.share)
-        .times(100)
-        .times(this.puzzleRate)
-        .div(1e8);
+      globalLiquidityByUSDT = new BN(puzzleLiquidity).div(puzzleAsset.share).times(100).times(this.puzzleRate).div(1e8);
     } else if (usdnAsset && usdnLiquidity) {
-      globalLiquidityByUSDT = new BN(usdnLiquidity)
-        .div(usdnAsset.share)
-        .times(100)
-        .times(this.usdnRate)
-        .div(1e6);
+      globalLiquidityByUSDT = new BN(usdnLiquidity).div(usdnAsset.share).times(100).times(this.usdnRate).div(1e6);
     } else if (wavesAsset && wavesLiquidity) {
-      globalLiquidityByUSDT = new BN(wavesLiquidity)
-        .div(wavesAsset.share)
-        .times(100)
-        .times(this.wavesRate)
-        .div(1e8);
+      globalLiquidityByUSDT = new BN(wavesLiquidity).div(wavesAsset.share).times(100).times(this.wavesRate).div(1e8);
     } else if (usdtPptAsset && usdtPptLiquidity) {
-      globalLiquidityByUSDT = new BN(usdtPptLiquidity)
-        .div(usdtPptAsset.share)
-        .times(100)
-        .div(1e6);
+      globalLiquidityByUSDT = new BN(usdtPptLiquidity).div(usdtPptAsset.share).times(100).div(1e6);
     }
     this.setGlobalLiquidityByUSDT(globalLiquidityByUSDT);
   };
@@ -224,35 +181,29 @@ class Pool implements IPoolConfig {
       globalIndexStaked: `global_indexStaked`,
       globalIndexAmount: `global_poolToken_amount`,
       globalPoolTokenAmount: "global_poolToken_amount",
-      globalEarnedByOwner: "global_earnedByOwner",
+      globalEarnedByOwner: "global_earnedByOwner"
     };
     const [values, staticPoolDomainValue] = await Promise.all([
       this.contractKeysRequest(Object.values(keysArray)),
-      this.contractKeysRequest(`static_poolDomain`),
+      this.contractKeysRequest(`static_poolDomain`)
     ]);
-    const staticPoolDomain =
-      staticPoolDomainValue?.length === 1 ? staticPoolDomainValue[0].value : "";
-    const parsedNodeResponse = [...(values ?? [])].reduce<Record<string, BN>>(
-      (acc, { key, value }) => {
-        Object.entries(keysArray).forEach(([regName, regValue]) => {
-          const regexp = new RegExp(regValue);
-          if (regexp.test(key)) {
-            acc[regName] = new BN(value);
-          }
-        });
-        return acc;
-      },
-      {}
-    );
+    const staticPoolDomain = staticPoolDomainValue?.length === 1 ? staticPoolDomainValue[0].value : "";
+    const parsedNodeResponse = [...(values ?? [])].reduce<Record<string, BN>>((acc, { key, value }) => {
+      Object.entries(keysArray).forEach(([regName, regValue]) => {
+        const regexp = new RegExp(regValue);
+        if (regexp.test(key)) {
+          acc[regName] = new BN(value);
+        }
+      });
+      return acc;
+    }, {});
     const globalEarnedByOwner = parsedNodeResponse["globalEarnedByOwner"];
     this.setGlobalEarnedByOwner(globalEarnedByOwner);
     const addressIndexStaked = parsedNodeResponse["addressIndexStaked"];
     const globalIndexStaked = parsedNodeResponse["globalIndexStaked"];
     const globalIndexAmount = parsedNodeResponse["globalIndexAmount"];
     const globalPoolTokenAmount = parsedNodeResponse["globalPoolTokenAmount"];
-    const indexTokenRate = this.globalLiquidity.div(
-      BN.formatUnits(globalPoolTokenAmount, 8)
-    );
+    const indexTokenRate = this.globalLiquidity.div(BN.formatUnits(globalPoolTokenAmount, 8));
 
     if (addressIndexStaked == null || addressIndexStaked.eq(0)) {
       return {
@@ -261,16 +212,12 @@ class Pool implements IPoolConfig {
         shareOfPool: BN.ZERO,
         pool: this,
         indexTokenRate,
-        indexTokenName: " PZ" + staticPoolDomain,
+        indexTokenName: " PZ" + staticPoolDomain
       };
     }
 
-    const liquidityInUsdt = this.globalLiquidity
-      .times(addressIndexStaked)
-      .div(globalIndexAmount);
-    const percent = liquidityInUsdt
-      .times(new BN(100))
-      .div(this.globalLiquidity);
+    const liquidityInUsdt = this.globalLiquidity.times(addressIndexStaked).div(globalIndexAmount);
+    const percent = liquidityInUsdt.times(new BN(100)).div(this.globalLiquidity);
 
     return {
       liquidityInUsdt,
@@ -278,23 +225,14 @@ class Pool implements IPoolConfig {
       shareOfPool: percent,
       pool: this,
       indexTokenRate,
-      indexTokenName: " PZ " + staticPoolDomain,
+      indexTokenName: " PZ " + staticPoolDomain
     };
   };
 
-  getAccountLiquidityInfoByState = (
-    user: string,
-    state: IData[]
-  ): IShortPoolInfo => {
-    const addressIndexStaked = new BN(
-      getStateByKey(state, `${user}_indexStaked`) ?? 0
-    );
-    const globalIndexStaked = new BN(
-      getStateByKey(state, `global_indexStaked`) ?? 0
-    );
-    const globalPoolTokenAmount = new BN(
-      getStateByKey(state, "global_poolToken_amount") ?? 0
-    );
+  getAccountLiquidityInfoByState = (user: string, state: IData[]): IShortPoolInfo => {
+    const addressIndexStaked = new BN(getStateByKey(state, `${user}_indexStaked`) ?? 0);
+    const globalIndexStaked = new BN(getStateByKey(state, `global_indexStaked`) ?? 0);
+    const globalPoolTokenAmount = new BN(getStateByKey(state, "global_poolToken_amount") ?? 0);
     const indexTokenRate =
       globalPoolTokenAmount && globalPoolTokenAmount.gt(0)
         ? this.globalLiquidity.div(BN.formatUnits(globalPoolTokenAmount, 8))
@@ -306,28 +244,23 @@ class Pool implements IPoolConfig {
         shareOfPool: BN.ZERO,
         pool: this,
         indexTokenRate,
-        indexTokenName: " PZ " + this.domain,
+        indexTokenName: " PZ " + this.domain
       };
     }
 
-    const liquidityInUsdt = this.globalLiquidity
-      .times(addressIndexStaked)
-      .div(globalPoolTokenAmount);
-    const percent = liquidityInUsdt
-      .times(new BN(100))
-      .div(this.globalLiquidity);
+    const liquidityInUsdt = this.globalLiquidity.times(addressIndexStaked).div(globalPoolTokenAmount);
+    const percent = liquidityInUsdt.times(new BN(100)).div(this.globalLiquidity);
     return {
       liquidityInUsdt,
       addressStaked: addressIndexStaked,
       shareOfPool: percent,
       pool: this,
       indexTokenRate,
-      indexTokenName: " PZ " + this.domain,
+      indexTokenName: " PZ " + this.domain
     };
   };
 
-  contractKeysRequest = (keys: string[] | string) =>
-    nodeService.nodeKeysRequest(this.address, keys);
+  contractKeysRequest = (keys: string[] | string) => nodeService.nodeKeysRequest(this.address, keys);
 }
 
 export default Pool;

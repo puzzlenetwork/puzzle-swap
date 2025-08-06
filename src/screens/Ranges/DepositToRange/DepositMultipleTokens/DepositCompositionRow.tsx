@@ -20,13 +20,7 @@ const Root = styled.div<{ warning: boolean }>`
     color: ${({ warning }) => warning && "#ed827e"};
   }
 `;
-const DepositCompositionRow: React.FC<IProps> = ({
-  availableAmount,
-  depositAmount,
-  share,
-  name,
-  logo,
-}) => {
+const DepositCompositionRow: React.FC<IProps> = ({ availableAmount, depositAmount, share, name, logo }) => {
   const available = availableAmount ? availableAmount.toFormat(4) : "-";
   const deposit = depositAmount.toFormat(4);
   const isLowMoney = availableAmount != null && availableAmount.eq(0);
@@ -44,7 +38,7 @@ const DepositCompositionRow: React.FC<IProps> = ({
             <span
               style={{
                 color: isLowMoney ? "#ed827e" : "#363870",
-                paddingLeft: 1,
+                paddingLeft: 1
               }}
             >
               {share.toFormat(2)} %

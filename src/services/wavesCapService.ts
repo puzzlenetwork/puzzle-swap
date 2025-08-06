@@ -31,11 +31,9 @@ const wavesCapService = {
     }
     const url = `https://wavescap.com/api/assets-info.php`;
     const response = await axios.post(url, data, {
-      headers: { "Content-type": "multipart/form-data" },
+      headers: { "Content-type": "multipart/form-data" }
     });
-    return response.data.assets != null
-      ? response.data.assets.filter((v: any) => v != null)
-      : [];
+    return response.data.assets != null ? response.data.assets.filter((v: any) => v != null) : [];
   },
   getAllAssetsStats: async (): Promise<IAssetResponse[]> => {
     const response = await axios.get("https://wavescap.com/api/assets.json");
@@ -44,9 +42,7 @@ const wavesCapService = {
   getAssetRate: async (assetsId: string): Promise<BN | null> => {
     const url = `https://wavescap.com/api/asset/${assetsId}.json`;
     const { data: res } = await axios.get<IAssetResponse>(url);
-    return res.data && res.data["firstPrice_usdt-ppt"]
-      ? new BN(res.data["firstPrice_usdt-ppt"])
-      : null;
-  },
+    return res.data && res.data["firstPrice_usdt-ppt"] ? new BN(res.data["firstPrice_usdt-ppt"]) : null;
+  }
 };
 export default wavesCapService;

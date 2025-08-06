@@ -99,13 +99,11 @@ type TBuildSuccessLiquidityDialogParamsProps = {
 export const buildSuccessLiquidityDialogParams = ({
   accountStore,
   txId,
-  poolDomain,
+  poolDomain
 }: TBuildSuccessLiquidityDialogParamsProps): IDialogNotificationProps => {
   const txLink = `${EXPLORER_URL}/transactions/${txId}`;
   const poolLink = `/pools/${poolDomain}/invest`;
-  const pool = accountStore.rootStore.poolsStore.pools.find(
-    ({ domain }) => domain === poolDomain
-  );
+  const pool = accountStore.rootStore.poolsStore.pools.find(({ domain }) => domain === poolDomain);
   return {
     title: "Successfully provided",
     description: `Liquidity successfully provided to the ${pool?.title}. You can track your reward on the pool page.`,
@@ -124,8 +122,8 @@ export const buildSuccessLiquidityDialogParams = ({
             View on Waves Explorer
           </Button>
         </Anchor>
-      ),
-    ],
+      )
+    ]
   };
 };
 
@@ -138,7 +136,7 @@ type TbuildErrorDialogParamsProps = {
 export const buildErrorDialogParams = ({
   title,
   description,
-  onTryAgain,
+  onTryAgain
 }: TbuildErrorDialogParamsProps): IDialogNotificationProps => {
   return {
     title,
@@ -149,8 +147,8 @@ export const buildErrorDialogParams = ({
         <Button size="medium" fixed onClick={onTryAgain}>
           Try again
         </Button>
-      ),
-    ],
+      )
+    ]
   };
 };
 type TBuildWarningLiquidityDialogParamsProps = {
@@ -166,7 +164,7 @@ export const buildWarningLiquidityDialogParams = ({
   description,
   onContinue,
   continueText,
-  onCancel,
+  onCancel
 }: TBuildWarningLiquidityDialogParamsProps): IDialogNotificationProps => {
   return {
     title,
@@ -183,8 +181,8 @@ export const buildWarningLiquidityDialogParams = ({
         <Button size="medium" fixed onClick={onContinue}>
           {continueText}
         </Button>
-      ),
-    ],
+      )
+    ]
   };
 };
 
@@ -197,7 +195,7 @@ type TBuildSuccessDepositToRangeDialogParamsProps = {
 export const buildSuccessDepositToRangeDialogParams = ({
   accountStore,
   txId,
-  rangeAddress,
+  rangeAddress
 }: TBuildSuccessDepositToRangeDialogParamsProps): IDialogNotificationProps => {
   const txLink = `${EXPLORER_URL}/transactions/${txId}`;
   const rangeLink = `/ranges/${rangeAddress}/details`;
@@ -220,8 +218,8 @@ export const buildSuccessDepositToRangeDialogParams = ({
             View on Waves Explorer
           </Button>
         </Anchor>
-      ),
-    ],
+      )
+    ]
   };
 };
 
@@ -235,14 +233,14 @@ export const buildDialogParams = ({
   title,
   description,
   buttons,
-  type,
+  type
 }: TBuildParamsProps): IDialogNotificationProps => {
   return {
     title,
     description,
     type,
     buttonsDirection: "row",
-    buttons,
+    buttons
   };
 };
 
@@ -257,7 +255,7 @@ type TBuildSuccessNFTSaleDialogParamsProps = {
 export const buildSuccessNFTSaleDialogParams = ({
   name,
   picture,
-  onContinue,
+  onContinue
 }: TBuildSuccessNFTSaleDialogParamsProps): IDialogNotificationProps => {
   return {
     title: `You’ve got “${name}” NFT!`,
@@ -268,8 +266,8 @@ export const buildSuccessNFTSaleDialogParams = ({
         <Button size="medium" fixed onClick={onContinue}>
           Use it to create the pool
         </Button>
-      ),
-    ],
+      )
+    ]
   };
 };
 
@@ -280,10 +278,7 @@ type TBuildSuccessBoostProps = {
   domain: string;
 };
 
-export const buildSuccessBoostParams = ({
-  description,
-  domain,
-}: TBuildSuccessBoostProps): IDialogNotificationProps => {
+export const buildSuccessBoostParams = ({ description, domain }: TBuildSuccessBoostProps): IDialogNotificationProps => {
   return {
     title: `Successfully boosted!`,
     description,
@@ -294,8 +289,8 @@ export const buildSuccessBoostParams = ({
             Back to Pool page
           </Button>
         </Anchor>
-      ),
-    ],
+      )
+    ]
   };
 };
 //CancelOrder
@@ -309,40 +304,26 @@ type TBuildCancelOrderProps = {
 export const buildCancelOrderParams = ({
   onOrderCancel,
   onCancel,
-  many,
+  many
 }: TBuildCancelOrderProps): IDialogNotificationProps => {
   return {
     icon: <></>,
-    title: many
-      ? "Are you sure you want cancel all orders?"
-      : "Are you sure you want cancel the order?",
+    title: many ? "Are you sure you want cancel all orders?" : "Are you sure you want cancel the order?",
     description: many
       ? "The current orders progress will not be canceled, but further execution will stop"
       : "The current order progress will not be canceled, but further execution will stop",
     buttons: [
       () => (
-        <Button
-          key="explorer"
-          size="medium"
-          kind="danger"
-          fixed
-          onClick={onOrderCancel}
-        >
+        <Button key="explorer" size="medium" kind="danger" fixed onClick={onOrderCancel}>
           {many ? "Cancel all orders" : "Cancel the order"}
         </Button>
       ),
       () => (
-        <Button
-          key="explorer"
-          size="medium"
-          kind="secondary"
-          fixed
-          onClick={onCancel}
-        >
+        <Button key="explorer" size="medium" kind="secondary" fixed onClick={onCancel}>
           Back to trade
         </Button>
-      ),
-    ],
+      )
+    ]
   };
 };
 export default DialogNotification;

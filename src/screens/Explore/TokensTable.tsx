@@ -39,16 +39,12 @@ const TableTitle: React.FC<{
     style={{
       userSelect: "none",
       cursor: "pointer",
-      ...(sort ? { color: "#363870" } : {}),
+      ...(sort ? { color: "#363870" } : {})
     }}
   >
     <div>{children}</div>
-    {sort && mode === "descending" && (
-      <SortDownIcon style={{ marginLeft: 8 }} />
-    )}
-    {sort && mode === "ascending" && (
-      <SortDownIcon style={{ marginLeft: 8, transform: "scale(1, -1)" }} />
-    )}
+    {sort && mode === "descending" && <SortDownIcon style={{ marginLeft: 8 }} />}
+    {sort && mode === "ascending" && <SortDownIcon style={{ marginLeft: 8, transform: "scale(1, -1)" }} />}
   </Row>
 );
 
@@ -60,9 +56,7 @@ const TokensTable: React.FC<IProps> = () => {
   const vm = useExploreVM();
 
   const [sort, setSort] = useState<"price" | "change" | "volume">("change");
-  const [sortMode, setSortMode] = useState<"descending" | "ascending">(
-    "descending"
-  );
+  const [sortMode, setSortMode] = useState<"descending" | "ascending">("descending");
 
   const selectSort = (v: "price" | "change" | "volume") => {
     if (sort === v) {
@@ -78,20 +72,19 @@ const TokensTable: React.FC<IProps> = () => {
   };
 
   const handleWatchListChange = (assetId: string) => {
-    const watchListText =
-      'Keep track of your favorite coins by turning on the "Watchlist" filter above the table';
+    const watchListText = 'Keep track of your favorite coins by turning on the "Watchlist" filter above the table';
     const tokenStatus = tokenStore.watchList.includes(assetId);
     if (tokenStatus) {
       tokenStore.removeFromWatchList(assetId);
       notificationStore.notify(watchListText, {
         type: "info",
-        title: `${TOKENS_BY_ASSET_ID[assetId].symbol} has been removed to the watchlist`,
+        title: `${TOKENS_BY_ASSET_ID[assetId].symbol} has been removed to the watchlist`
       });
     } else {
       tokenStore.addToWatchList(assetId);
       notificationStore.notify(watchListText, {
         type: "success",
-        title: `${TOKENS_BY_ASSET_ID[assetId].symbol} has been added to the watchlist`,
+        title: `${TOKENS_BY_ASSET_ID[assetId].symbol} has been added to the watchlist`
       });
     }
   };
@@ -105,10 +98,8 @@ const TokensTable: React.FC<IProps> = () => {
       //   !isFiltersChosen ? displayedTokens : vm.assetsWithStats.length - 1
       // )
       .sort((a, b) => {
-        const stats1: TTokenStatistics | undefined =
-          tokenStore.statisticsByAssetId[a.assetId];
-        const stats2: TTokenStatistics | undefined =
-          tokenStore.statisticsByAssetId[b.assetId];
+        const stats1: TTokenStatistics | undefined = tokenStore.statisticsByAssetId[a.assetId];
+        const stats2: TTokenStatistics | undefined = tokenStore.statisticsByAssetId[b.assetId];
         let key: keyof TTokenStatistics | undefined;
         if (sort === "change") key = "change24H";
         if (sort === "price") key = "currentPrice";
@@ -131,15 +122,10 @@ const TokensTable: React.FC<IProps> = () => {
           : 1;
       })
 
-      .filter(
-        (token) =>
-          !tokenStore.statisticsByAssetId[token.assetId].currentPrice.eq(0)
-      )
+      .filter((token) => !tokenStore.statisticsByAssetId[token.assetId].currentPrice.eq(0))
       .filter(({ name, symbol }) =>
         vm.tokenNameFilter
-          ? [name, symbol]
-              .map((v) => v.toLowerCase())
-              .some((v) => v.includes(vm.tokenNameFilter.toLowerCase()))
+          ? [name, symbol].map((v) => v.toLowerCase()).some((v) => v.includes(vm.tokenNameFilter.toLowerCase()))
           : true
       )
       .filter(({ category }) => {
@@ -159,10 +145,7 @@ const TokensTable: React.FC<IProps> = () => {
         }
         return true;
       });
-    const data = filteredSortedData.slice(
-      (pagination - 1) * 20,
-      20 * pagination
-    );
+    const data = filteredSortedData.slice((pagination - 1) * 20, 20 * pagination);
     setLengthData(filteredSortedData.length);
     setFilteredTokens(data);
   }, [
@@ -175,17 +158,14 @@ const TokensTable: React.FC<IProps> = () => {
     vm.assetsWithStats,
     vm.tokenCategoryFilter,
     vm.tokenNameFilter,
-    vm.tokenUserFilter,
+    vm.tokenUserFilter
   ]);
 
   return (
     <Root>
       <SearchTab />
       <SizedBox height={24} />
-      <Card
-        style={{ padding: 0, overflow: "auto", maxWidth: "calc(100vw - 32px)" }}
-        justifyContent="center"
-      >
+      <Card style={{ padding: 0, overflow: "auto", maxWidth: "calc(100vw - 32px)" }} justifyContent="center">
         <GridTable
           style={{ width: "fit-content", minWidth: "100%" }}
           desktopTemplate={"2fr 1fr 1fr 1fr 1fr "}
@@ -194,35 +174,19 @@ const TokensTable: React.FC<IProps> = () => {
           {width && width >= 880 && (
             <div className="gridTitle">
               <div>Token name</div>
-              <TableTitle
-                onClick={() => selectSort("price")}
-                sort={sort === "price"}
-                mode={sortMode}
-              >
+              <TableTitle onClick={() => selectSort("price")} sort={sort === "price"} mode={sortMode}>
                 Price
               </TableTitle>
-              <TableTitle
-                onClick={() => selectSort("change")}
-                sort={sort === "change"}
-                mode={sortMode}
-              >
+              <TableTitle onClick={() => selectSort("change")} sort={sort === "change"} mode={sortMode}>
                 Change (24h)
               </TableTitle>
-              <TableTitle
-                onClick={() => selectSort("volume")}
-                sort={sort === "volume"}
-                mode={sortMode}
-              >
+              <TableTitle onClick={() => selectSort("volume")} sort={sort === "volume"} mode={sortMode}>
                 Volume (24h)
               </TableTitle>
             </div>
           )}
           {filteredTokens.length === 0 && (
-            <Column
-              justifyContent="center"
-              alignItems="center"
-              crossAxisSize="max"
-            >
+            <Column justifyContent="center" alignItems="center" crossAxisSize="max">
               <SizedBox height={24} />
               <NotFoundIcon style={{ marginBottom: 24 }} />
               <Text type="secondary" className="text" textAlign="center">
@@ -275,12 +239,7 @@ const TokensTable: React.FC<IProps> = () => {
           {/*)}*/}
         </GridTable>
       </Card>
-      <Pagination
-        currentPage={pagination}
-        lengthData={lengthData}
-        limit={20}
-        onChange={changePage}
-      />
+      <Pagination currentPage={pagination} lengthData={lengthData} limit={20} onChange={changePage} />
     </Root>
   );
 };

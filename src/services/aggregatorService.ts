@@ -24,18 +24,14 @@ export interface ICalcResponse {
 }
 
 const aggregatorService = {
-  calc: async (
-    assetId0: string,
-    assetId1: string,
-    amount: BN
-  ): Promise<ICalcResponse> => {
+  calc: async (assetId0: string, assetId1: string, amount: BN): Promise<ICalcResponse> => {
     const url = `${
       process.env.REACT_APP_AGG_API
     }/aggregator/calc?token0=${assetId0}&token1=${assetId1}&amountIn=${amount.toString()}`;
     const { data } = await axios.get(url, {
       headers: {
-        Authorization: `Bearer ${process.env.REACT_APP_AGGREGATOR_KEY}`,
-      },
+        Authorization: `Bearer ${process.env.REACT_APP_AGGREGATOR_KEY}`
+      }
     });
 
     // const stablesLi = ["9wc3LXNA4TEBsXyKtoLE9mrbDD7WMHXvXrCjZvabLAsi", "HGgabTqUS8WtVFUJzfmrTDMgEccJuZLBPhFgQFxvnsoW"]
@@ -50,6 +46,6 @@ const aggregatorService = {
     // }
 
     return data;
-  },
+  }
 };
 export default aggregatorService;

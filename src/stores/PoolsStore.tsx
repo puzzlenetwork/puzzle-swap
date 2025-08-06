@@ -2,12 +2,7 @@ import { RootStore } from "./index";
 import { makeAutoObservable, reaction } from "mobx";
 import Pool, { IData, IShortPoolInfo } from "@src/entities/Pool";
 import BN from "@src/utils/BN";
-import {
-  CONTRACT_ADDRESSES,
-  POOL_CONFIG,
-  TOKENS_BY_ASSET_ID,
-  TOKENS_BY_SYMBOL,
-} from "@src/constants";
+import { CONTRACT_ADDRESSES, POOL_CONFIG, TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL } from "@src/constants";
 import poolService, { IGetPools } from "@src/services/poolsService";
 import nodeService from "@src/services/nodeService";
 
@@ -31,15 +26,15 @@ interface ISyncTokensFromPyResponse {
 }
 
 interface ISyncFromResponse {
-  "asset_id": string,
-  "name": string,
-  "allowed": boolean,
-  "symbol": string,
-  "decimals": number,
-  "description": string,
-  "price": number,
-  "start_price": number,
-  "category": string[]
+  asset_id: string;
+  name: string;
+  allowed: boolean;
+  symbol: string;
+  decimals: number;
+  description: string;
+  price: number;
+  start_price: number;
+  category: string[];
 }
 
 export default class PoolsStore {
@@ -60,7 +55,7 @@ export default class PoolsStore {
         this.syncPuzzleRate(),
         this.updateInvestedInPoolsInfo(),
         this.updatePoolsState(),
-        this.syncCustomPools(),
+        this.syncCustomPools()
       ]);
     }, 1000);
 
@@ -71,7 +66,7 @@ export default class PoolsStore {
         this.updateInvestedInPoolsInfo(),
         this.updatePoolsState(),
         this.syncPuzzleRate(),
-        this.syncCustomPools(),
+        this.syncCustomPools()
       ]);
     }, 15 * 1000);
     reaction(
@@ -85,7 +80,7 @@ export default class PoolsStore {
           this.updateInvestedInPoolsInfo(),
           this.updatePoolsState(),
           this.syncPuzzleRate(),
-          this.syncCustomPools(),
+          this.syncCustomPools()
         ]);
 
         setTimeout(() => {
@@ -95,18 +90,14 @@ export default class PoolsStore {
             this.syncPuzzleRate(),
             this.updateInvestedInPoolsInfo(),
             this.updatePoolsState(),
-            this.syncCustomPools(),
+            this.syncCustomPools()
           ]);
         }, 500);
       }
     );
     reaction(
       () => this.rootStore.accountStore.address,
-      () =>
-        Promise.all([
-          this.updateInvestedInPoolsInfo(true),
-          this.updatePoolsState(),
-        ])
+      () => Promise.all([this.updateInvestedInPoolsInfo(true), this.updatePoolsState()])
     );
   }
 
@@ -137,22 +128,21 @@ export default class PoolsStore {
 
   pools: Pool[] = [];
   setPools = (pools: Pool[]) => (this.pools = pools);
-  getPoolByDomain = (domain: string) =>
-    this.pools.find((pool) => pool.domain === domain);
+  getPoolByDomain = (domain: string) => this.pools.find((pool) => pool.domain === domain);
 
   volumeByTimestamp = [
     { title: "Stats all time", key: "all" },
     { title: "Stats 1 year", key: "1y" },
     { title: "Stats 30 days", key: "30d" },
     { title: "Stats 7 days", key: "7d" },
-    { title: "Stats 1 day", key: "1d" },
+    { title: "Stats 1 day", key: "1d" }
   ];
 
   versionOptions = [
     { title: "All versions", key: "all" },
     { title: "PZ-1.0.0", key: "PZ-1.0.0" },
     { title: "PZ-1.2.1", key: "PZ-1.2.1" },
-    { title: "PZ-1.2.3", key: "PZ-1.2.3" },
+    { title: "PZ-1.2.3", key: "PZ-1.2.3" }
   ];
 
   versionFilter: number = 0;
@@ -160,12 +150,9 @@ export default class PoolsStore {
 
   filter: { sortBy: IGetPools["sortBy"]; order: IGetPools["order"] } = {
     sortBy: "liquidity",
-    order: "desc",
+    order: "desc"
   };
-  setFilter = (filter: {
-    sortBy: IGetPools["sortBy"];
-    order: IGetPools["order"];
-  }) => {
+  setFilter = (filter: { sortBy: IGetPools["sortBy"]; order: IGetPools["order"] }) => {
     this.filter = filter;
   };
 
@@ -174,7 +161,7 @@ export default class PoolsStore {
 
   pagination = {
     page: 1,
-    size: 20,
+    size: 20
   };
   setPagination = (pagination: { page: number; size: number }) => {
     this.pagination = pagination;
@@ -193,7 +180,7 @@ export default class PoolsStore {
     this.sortApy = v;
     this.rootStore.poolsStore.setFilter({
       sortBy: "apr",
-      order: v ? "asc" : "desc",
+      order: v ? "asc" : "desc"
     });
   };
 
@@ -202,7 +189,7 @@ export default class PoolsStore {
     this.sortLiquidity = v;
     this.rootStore.poolsStore.setFilter({
       sortBy: "liquidity",
-      order: v ? "asc" : "desc",
+      order: v ? "asc" : "desc"
     });
   };
   sortBalance = true;
@@ -229,53 +216,36 @@ export default class PoolsStore {
     this.poolsState?.find((v) => v.contractAddress === contractAddress);
 
   investedInPools: IShortPoolInfo[] | null = null;
-  setInvestedInPools = (
-    v: IShortPoolInfo[] | null,
-    options?: { onlyMain?: boolean; onlyCustom?: boolean }
-  ) => {
+  setInvestedInPools = (v: IShortPoolInfo[] | null, options?: { onlyMain?: boolean; onlyCustom?: boolean }) => {
     if (v == null) {
       this.investedInPools = null;
     } else if (options?.onlyCustom) {
-      const mainPoolsInfo = this.investedInPools?.filter(
-        ({ pool }) => !pool.isCustom
-      );
-      this.investedInPools =
-        mainPoolsInfo != null ? [...mainPoolsInfo, ...v] : v;
+      const mainPoolsInfo = this.investedInPools?.filter(({ pool }) => !pool.isCustom);
+      this.investedInPools = mainPoolsInfo != null ? [...mainPoolsInfo, ...v] : v;
     } else if (options?.onlyMain) {
-      const customPoolsInfo = this.investedInPools?.filter(
-        ({ pool }) => pool.isCustom
-      );
-      this.investedInPools =
-        customPoolsInfo != null ? [...customPoolsInfo, ...v] : v;
+      const customPoolsInfo = this.investedInPools?.filter(({ pool }) => pool.isCustom);
+      this.investedInPools = customPoolsInfo != null ? [...customPoolsInfo, ...v] : v;
     } else {
       this.investedInPools = v;
     }
   };
 
   investedInPoolsLoading = false;
-  setInvestedInPoolsLoading = (state: boolean) =>
-    (this.investedInPoolsLoading = state);
+  setInvestedInPoolsLoading = (state: boolean) => (this.investedInPoolsLoading = state);
 
   get liquidity(): Record<string, BN> {
-    return this.pools.reduce<Record<string, BN>>(
-      (acc, pool) => ({ ...acc, ...pool.liquidity }),
-      {}
-    );
+    return this.pools.reduce<Record<string, BN>>((acc, pool) => ({ ...acc, ...pool.liquidity }), {});
   }
 
   get globalVolume(): BN {
-    return this.pools.reduce(
-      (acc, pool) => acc.plus(pool.globalVolume ?? BN.ZERO),
-      BN.ZERO
-    );
+    return this.pools.reduce((acc, pool) => acc.plus(pool.globalVolume ?? BN.ZERO), BN.ZERO);
   }
   get paramsAllPools(): IGetPools {
     return {
       // ...this.filter,
       page: 1,
       size: 500,
-      timeRange: this.volumeByTimestamp[this.volumeByTimeFilter]
-        .key as IGetPools["timeRange"],
+      timeRange: this.volumeByTimestamp[this.volumeByTimeFilter].key as IGetPools["timeRange"],
       minLiquidity: 0
       // title: this?.searchPool ?? "",
       // version: this?.versionFilter === 0 ? "" : this?.versionOptions[this.versionFilter].key
@@ -284,9 +254,7 @@ export default class PoolsStore {
 
   usdtRate = (assetId: string, coefficient = 1): BN | null => {
     if (this.tokensList) {
-      const token = this.tokensList.filter(
-        (token: { assetId: string }) => token.assetId === assetId
-      )[0];
+      const token = this.tokensList.filter((token: { assetId: string }) => token.assetId === assetId)[0];
       if (token?.lastPrice) return new BN(token.lastPrice);
     }
 
@@ -297,9 +265,7 @@ export default class PoolsStore {
     const usdtppt = TOKENS_BY_SYMBOL.USDT.assetId;
 
     const pool = this.pools.find(
-      (pool) =>
-        pool.tokens.some((t) => t.assetId === assetId) &&
-        pool.globalLiquidityByUSDT?.gt(100)
+      (pool) => pool.tokens.some((t) => t.assetId === assetId) && pool.globalLiquidityByUSDT?.gt(100)
     );
 
     const startPrice = TOKENS_BY_ASSET_ID[assetId]?.startPrice;
@@ -324,14 +290,10 @@ export default class PoolsStore {
       return priceInWaves != null ? priceInWaves.times(pool.wavesRate) : null;
     } else if (pool.tokens.some(({ assetId }) => assetId === puzzle)) {
       const priceInPuzzle = pool.currentPrice(assetId, puzzle, coefficient);
-      return priceInPuzzle != null
-        ? priceInPuzzle.times(pool.puzzleRate)
-        : null;
+      return priceInPuzzle != null ? priceInPuzzle.times(pool.puzzleRate) : null;
     } else if (pool.tokens.some(({ assetId }) => assetId === usdn)) {
       const priceInUSDN = pool.currentPrice(assetId, usdn);
-      return priceInUSDN != null
-        ? priceInUSDN.times(pool.usdnRate)
-        : new BN(startPrice ?? 0);
+      return priceInUSDN != null ? priceInUSDN.times(pool.usdnRate) : new BN(startPrice ?? 0);
     } else if (pool.tokens.some(({ assetId }) => assetId === usdt)) {
       const priceInUsdt = pool.currentPrice(assetId, usdt, coefficient);
       return priceInUsdt != null ? priceInUsdt.times(pool._usdtRate) : null;
@@ -342,17 +304,13 @@ export default class PoolsStore {
   };
 
   syncPools = async () => {
-    const pools = Object.values(POOL_CONFIG).map(
-      (pool) => new Pool({ ...pool, isCustom: false })
-    );
+    const pools = Object.values(POOL_CONFIG).map((pool) => new Pool({ ...pool, isCustom: false }));
     this.setPools(pools);
     await Promise.all(this.pools.map((pool) => pool.syncLiquidity()));
   };
 
   syncCustomPools = async () => {
-    const { pools: configs, totalItems } = await poolService.getPools(
-      this.paramsAllPools
-    );
+    const { pools: configs, totalItems } = await poolService.getPools(this.paramsAllPools);
     this.rootStore.poolsStore.setTotalItems(totalItems);
     const newPools: Array<Pool> = [];
     configs.forEach((config) => {
@@ -362,13 +320,13 @@ export default class PoolsStore {
           ...config.stats,
           totals: config?.totals,
           liquidity: config.liquidity,
-          boostedApy: config.boosted_apr ?? null,
+          boostedApy: config.boosted_apr ?? null
         });
       }
       if (config.isCustom && pool == null) {
         const tokens = config.assets.map(({ asset_id, share }) => ({
           ...TOKENS_BY_ASSET_ID[asset_id],
-          share,
+          share
         }));
         newPools.push(new Pool({ ...config, tokens }));
       }
@@ -392,21 +350,17 @@ export default class PoolsStore {
   private updateAccountCustomPoolsLiquidityInfo = (address: string) => {
     const customPoolsInfo = this.customPools.reduce((acc, pool) => {
       const state = this.getStateByAddress(pool.address)?.state;
-      return state
-        ? [...acc, pool.getAccountLiquidityInfoByState(address, state)]
-        : acc;
+      return state ? [...acc, pool.getAccountLiquidityInfoByState(address, state)] : acc;
     }, [] as Array<IShortPoolInfo>);
     this.setInvestedInPools(customPoolsInfo, { onlyCustom: true });
   };
 
   private updateAccountMainPoolsLiquidityInfo = async (address: string) => {
-    const mainPoolsAccountLiquidity = await Promise.all(
-      this.mainPools.map((p) => p.getAccountLiquidityInfo(address))
-    );
+    const mainPoolsAccountLiquidity = await Promise.all(this.mainPools.map((p) => p.getAccountLiquidityInfo(address)));
     const newAddress = this.rootStore.accountStore.address;
     if (address !== newAddress) return;
     this.setInvestedInPools(mainPoolsAccountLiquidity, {
-      onlyMain: true,
+      onlyMain: true
     });
   };
 
@@ -425,9 +379,7 @@ export default class PoolsStore {
     });
 
   private syncTokensFromPy = async () => {
-    const res = await fetch(
-      `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/tokens?allowed=true`
-    );
+    const res = await fetch(`${process.env.REACT_APP_AGG_API}/stats/v1/statistics/tokens?allowed=true`);
     if (!res.ok) {
       throw new Error("Failed to fetch data");
     }
@@ -439,38 +391,23 @@ export default class PoolsStore {
       lastPrice: el.price,
       name: el.name,
       startPrice: el.start_price,
-      symbol: el.symbol,
+      symbol: el.symbol
     }));
     this.setTokensList(mappedData);
   };
 
   private syncPuzzleRate = async () => {
-    const priceResponse = await nodeService.nodeKeysRequest(
-      CONTRACT_ADDRESSES.priceOracle,
-      [
-        `${TOKENS_BY_SYMBOL.PUZZLE.assetId}_twap5B`,
-        `${TOKENS_BY_SYMBOL.XTN.assetId}_twap5B`,
-        `${TOKENS_BY_SYMBOL.WAVES.assetId}_twap5B`,
-        `${TOKENS_BY_SYMBOL.USDT_WXG.assetId}_twap5B`,
-      ]
-    );
+    const priceResponse = await nodeService.nodeKeysRequest(CONTRACT_ADDRESSES.priceOracle, [
+      `${TOKENS_BY_SYMBOL.PUZZLE.assetId}_twap5B`,
+      `${TOKENS_BY_SYMBOL.XTN.assetId}_twap5B`,
+      `${TOKENS_BY_SYMBOL.WAVES.assetId}_twap5B`,
+      `${TOKENS_BY_SYMBOL.USDT_WXG.assetId}_twap5B`
+    ]);
 
-    const puzzleRate =
-      priceResponse != null
-        ? BN.formatUnits(priceResponse[0].value, 6)
-        : BN.ZERO;
-    const usdnRate =
-      priceResponse != null
-        ? BN.formatUnits(priceResponse[1].value, 6)
-        : BN.ZERO;
-    const wavesRate =
-      priceResponse != null
-        ? BN.formatUnits(priceResponse[2].value, 6)
-        : BN.ZERO;
-    const _usdtRate =
-      priceResponse != null
-        ? BN.formatUnits(priceResponse[3].value, 6)
-        : BN.ZERO;
+    const puzzleRate = priceResponse != null ? BN.formatUnits(priceResponse[0].value, 6) : BN.ZERO;
+    const usdnRate = priceResponse != null ? BN.formatUnits(priceResponse[1].value, 6) : BN.ZERO;
+    const wavesRate = priceResponse != null ? BN.formatUnits(priceResponse[2].value, 6) : BN.ZERO;
+    const _usdtRate = priceResponse != null ? BN.formatUnits(priceResponse[3].value, 6) : BN.ZERO;
     this.setPuzzleRate(puzzleRate);
     this.setUsdnRate(usdnRate);
     this.setWavesRate(wavesRate);

@@ -38,7 +38,7 @@ class WalletVM {
       copy(accountStore.address ?? "");
       notificationStore.notify("Your address was copied", {
         type: "success",
-        title: "Congratulations!",
+        title: "Congratulations!"
       });
     } else {
       notificationStore.notify("There is no address", { type: "error" });
@@ -51,7 +51,7 @@ class WalletVM {
       this.rootStore.accountStore.setAssetBalances(null),
       this.rootStore.accountStore.setAddress(null),
       this.rootStore.accountStore.setLoginType(null),
-      this.rootStore.stakeStore.setStakedAccountPuzzle(null),
+      this.rootStore.stakeStore.setStakedAccountPuzzle(null)
     ]);
 
   get signInInfo() {
@@ -76,10 +76,7 @@ class WalletVM {
 
   get totalInvestmentAmount() {
     const { balances } = this.rootStore.accountStore;
-    const balancesAmount = balances.reduce(
-      (acc, b) => acc.plus(b.usdnEquivalent ?? 0),
-      BN.ZERO
-    );
+    const balancesAmount = balances.reduce((acc, b) => acc.plus(b.usdnEquivalent ?? 0), BN.ZERO);
     return balancesAmount.plus(BN.ZERO).toFormat(2);
   }
 
@@ -88,41 +85,29 @@ class WalletVM {
     const poolsData =
       poolsStore.investedInPools
         ?.filter(({ liquidityInUsdt }) => !liquidityInUsdt.eq(0))
-        .map(
-          ({
-            pool,
-            addressStaked,
-            indexTokenRate,
-            liquidityInUsdt,
-            indexTokenName,
-          }) => {
-            const amount = BN.formatUnits(addressStaked, 8);
-            return {
-              onClickPath: `/pools/${pool.domain}/invest`,
-              logo: pool?.logo,
-              name: pool?.title,
-              amount:
-                (amount.gte(0.0001) ? amount.toFormat(4) : amount.toFormat(8)) +
-                indexTokenName,
-              nuclearValue: indexTokenRate,
-              usdnEquivalent: liquidityInUsdt,
-            };
-          }
-        ) ?? [];
-    const stakedNftData = this.stakedNfts.map(
-      ({ imageLink, marketPrice, name }) => {
-        return {
-          onClickPath: ROUTES.ULTRASTAKE,
-          logo: imageLink,
-          amount: "1 NFT",
-          name,
-          nuclearValue: new BN(marketPrice ?? 0),
-          usdnEquivalent: new BN(marketPrice ?? 0),
-        };
-      }
-    );
-    return [...stakedNftData, ...poolsData, ...stakeStore.puzzleWallet].sort(
-      (a, b) => (a.usdnEquivalent.gt(b.usdnEquivalent) ? -1 : 1)
+        .map(({ pool, addressStaked, indexTokenRate, liquidityInUsdt, indexTokenName }) => {
+          const amount = BN.formatUnits(addressStaked, 8);
+          return {
+            onClickPath: `/pools/${pool.domain}/invest`,
+            logo: pool?.logo,
+            name: pool?.title,
+            amount: (amount.gte(0.0001) ? amount.toFormat(4) : amount.toFormat(8)) + indexTokenName,
+            nuclearValue: indexTokenRate,
+            usdnEquivalent: liquidityInUsdt
+          };
+        }) ?? [];
+    const stakedNftData = this.stakedNfts.map(({ imageLink, marketPrice, name }) => {
+      return {
+        onClickPath: ROUTES.ULTRASTAKE,
+        logo: imageLink,
+        amount: "1 NFT",
+        name,
+        nuclearValue: new BN(marketPrice ?? 0),
+        usdnEquivalent: new BN(marketPrice ?? 0)
+      };
+    });
+    return [...stakedNftData, ...poolsData, ...stakeStore.puzzleWallet].sort((a, b) =>
+      a.usdnEquivalent.gt(b.usdnEquivalent) ? -1 : 1
     );
   }
 

@@ -40,12 +40,7 @@ const AccountNfts: React.FC<IProps> = () => {
       />
     );
 
-  if (
-    accountNFTsToStake &&
-    accountNFTsToStake.length === 0 &&
-    stakedAccountNFTs &&
-    stakedAccountNFTs.length === 0
-  )
+  if (accountNFTsToStake && accountNFTsToStake.length === 0 && stakedAccountNFTs && stakedAccountNFTs.length === 0)
     return (
       <NoNfts
         text={`You have no NFT on your wallet yet.\nGo to the market tab to buy one.`}
@@ -55,9 +50,7 @@ const AccountNfts: React.FC<IProps> = () => {
     );
   return (
     <Root>
-      {accountNFTsToStake == null && stakedAccountNFTs == null && (
-        <ArtefactSkeleton />
-      )}
+      {accountNFTsToStake == null && stakedAccountNFTs == null && <ArtefactSkeleton />}
       {accountNFTsToStake &&
         accountNFTsToStake.map((nft, index) => (
           <Artefact
@@ -72,11 +65,7 @@ const AccountNfts: React.FC<IProps> = () => {
             buttons={
               <>
                 {!vm.loading ? (
-                  <Button
-                    size="medium"
-                    onClick={() => vm.stake(nft.assetId)}
-                    fixed
-                  >
+                  <Button size="medium" onClick={() => vm.stake(nft.assetId)} fixed>
                     Stake
                   </Button>
                 ) : (
@@ -86,11 +75,7 @@ const AccountNfts: React.FC<IProps> = () => {
                 )}
                 <DetailsButton style={{ marginLeft: 8 }}>
                   <Anchor
-                    href={
-                      nft.marketLink == null
-                        ? `https://puzzlemarket.org/nft/${nft.assetId}`
-                        : nft.marketLink
-                    }
+                    href={nft.marketLink == null ? `https://puzzlemarket.org/nft/${nft.assetId}` : nft.marketLink}
                   >
                     <Row alignItems="center">
                       <LinkIcon />
@@ -120,12 +105,7 @@ const AccountNfts: React.FC<IProps> = () => {
             buttons={
               <>
                 {!vm.loading ? (
-                  <Button
-                    kind="secondary"
-                    size="medium"
-                    fixed
-                    onClick={() => vm.unStake(nft.assetId)}
-                  >
+                  <Button kind="secondary" size="medium" fixed onClick={() => vm.unStake(nft.assetId)}>
                     Unstake
                   </Button>
                 ) : (
@@ -135,11 +115,7 @@ const AccountNfts: React.FC<IProps> = () => {
                 )}
                 <DetailsButton style={{ marginLeft: 8 }}>
                   <Anchor
-                    href={
-                      nft.marketLink == null
-                        ? `https://puzzlemarket.org/nft/${nft.assetId}`
-                        : nft.marketLink
-                    }
+                    href={nft.marketLink == null ? `https://puzzlemarket.org/nft/${nft.assetId}` : nft.marketLink}
                   >
                     <Row alignItems="center">
                       <LinkIcon />

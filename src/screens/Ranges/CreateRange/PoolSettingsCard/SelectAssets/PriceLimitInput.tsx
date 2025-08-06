@@ -6,13 +6,7 @@ import { useState } from "react";
 import Text from "@src/components/Text";
 
 interface IProps
-  extends Omit<
-    React.DetailedHTMLProps<
-      React.InputHTMLAttributes<HTMLInputElement>,
-      HTMLInputElement
-    >,
-    "onChange"
-  > {
+  extends Omit<React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, "onChange"> {
   amount: BN;
   decimals: number;
   placeholder?: string;
@@ -28,23 +22,14 @@ const Root = styled.div<{
   disabled?: boolean;
 }>`
   position: relative;
-  background: ${({ focused, theme }) =>
-    focused ? theme.colors.white : theme.colors.primary100};
+  background: ${({ focused, theme }) => (focused ? theme.colors.white : theme.colors.primary100)};
   border: 1px solid
     ${({ focused, error, theme }) =>
-      error
-        ? theme.colors.error500
-        : focused
-        ? theme.colors.blue500
-        : theme.colors.primary100};
+      error ? theme.colors.error500 : focused ? theme.colors.blue500 : theme.colors.primary100};
 
   :hover {
     border-color: ${({ focused, error, theme }) =>
-      error
-        ? theme.colors.error500
-        : !focused
-        ? theme.colors.primary650
-        : theme.colors.blue500};
+      error ? theme.colors.error500 : !focused ? theme.colors.primary650 : theme.colors.blue500};
   }
 
   border-radius: 12px;
@@ -60,8 +45,7 @@ const Root = styled.div<{
     height: 24px;
     font-size: 20px;
     line-height: 24px;
-    color: ${({ focused, theme }) =>
-      focused ? theme.colors.primary800 : theme.colors.primary650};
+    color: ${({ focused, theme }) => (focused ? theme.colors.primary800 : theme.colors.primary650)};
     outline: none;
     border: none;
     background-color: transparent;
@@ -121,7 +105,7 @@ const PriceLimitInput: React.FC<IProps> = ({
         placeholder={placeholder ?? "0.00"}
       />
     </Root>
-  )
-}
+  );
+};
 
 export default PriceLimitInput;

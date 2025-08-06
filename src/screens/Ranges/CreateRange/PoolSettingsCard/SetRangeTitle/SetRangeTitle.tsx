@@ -30,13 +30,9 @@ const Tag = styled.div<{ active?: boolean }>`
   justify-content: center;
   align-items: center;
   padding: 8px 20px;
-  color: ${({ active, theme }) =>
-    active ? theme.colors.white : theme.colors.primary800};
-  background: ${({ active, theme }) =>
-    active ? theme.colors.blue500 : theme.colors.white};
-  border: 1px solid
-    ${({ active, theme }) =>
-      active ? theme.colors.blue500 : theme.colors.primary100};
+  color: ${({ active, theme }) => (active ? theme.colors.white : theme.colors.primary800)};
+  background: ${({ active, theme }) => (active ? theme.colors.blue500 : theme.colors.white)};
+  border: 1px solid ${({ active, theme }) => (active ? theme.colors.blue500 : theme.colors.primary100)};
   box-sizing: border-box;
   border-radius: 10px;
   cursor: pointer;
@@ -45,9 +41,7 @@ const Tag = styled.div<{ active?: boolean }>`
 const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
   const vm = useCreateRangeVM();
   const swapFeeError = vm.swapFee.gt(50) || vm.swapFee.lt(1);
-  const [customPercent, setCustomPercent] = useState<BN>(
-    vm.swapFee ?? new BN(10)
-  );
+  const [customPercent, setCustomPercent] = useState<BN>(vm.swapFee ?? new BN(10));
   const handleChangeCustomPercent = (v: BN) => {
     setCustomPercent(v);
     vm.setSwapFee(v);
@@ -64,11 +58,7 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
           Title of the range
         </Text>
         <SizedBox height={4} />
-        <Input
-          value={vm.domain}
-          onChange={(e) => vm.setDomain(e.target.value)}
-          placeholder="Enter the title…"
-        />
+        <Input value={vm.domain} onChange={(e) => vm.setDomain(e.target.value)} placeholder="Enter the title…" />
         <SizedBox height={16} />
         <Row mainAxisSize="fit-content" alignItems="center">
           <Text type="secondary" size="medium">
@@ -111,11 +101,7 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
           text="Fee affects how much traders will pay when interacting with your Range. A higher fee can earn you more from volatile markets, but may reduce trading volume."
         />
         {swapFeeError && (
-          <Notification
-            style={{ marginTop: 16 }}
-            type="error"
-            text="Swap fees for the range must be from 0.1% to 5%"
-          />
+          <Notification style={{ marginTop: 16 }} type="error" text="Swap fees for the range must be from 0.1% to 5%" />
         )}
       </Card>
     </Root>

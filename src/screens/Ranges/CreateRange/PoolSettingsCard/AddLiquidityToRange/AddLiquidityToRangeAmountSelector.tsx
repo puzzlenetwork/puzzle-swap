@@ -19,7 +19,7 @@ const AddLiquidityToRangeAmountSelector: React.FC<IProps> = () => {
   const providedUsd = useMemo(
     () => vm.maxToProvide.times(vm.providedPercentOfPool).div(100),
     [vm.maxToProvide, vm.providedPercentOfPool]
-  )
+  );
   return (
     <Root>
       <Text style={{ width: "100%" }} weight={500} type="secondary">

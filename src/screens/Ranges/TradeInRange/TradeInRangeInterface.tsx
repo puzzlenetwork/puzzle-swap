@@ -7,10 +7,7 @@ import SwapDetailRow from "@components/SwapDetailRow";
 import Card from "@components/Card";
 import Details from "./Details";
 import Tooltip from "@components/Tooltip";
-import {
-  TradeInRangeVMProvider,
-  useTradeInRangeVM,
-} from "./TradeInRangeVM";
+import { TradeInRangeVMProvider, useTradeInRangeVM } from "./TradeInRangeVM";
 import { observer } from "mobx-react-lite";
 import Text from "@components/Text";
 import SwapButton from "./SwapButton";
@@ -64,7 +61,7 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
     if (assetId === vm.assetId1) {
       notificationStore.notify("You can't choose same assets", {
         type: "error",
-        title: "Warning",
+        title: "Warning"
       });
       return;
     }
@@ -72,7 +69,7 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
     urlSearchParams.set("asset0", assetId);
     navigate({
       pathname: window.location.pathname,
-      search: `?${urlSearchParams.toString()}`,
+      search: `?${urlSearchParams.toString()}`
     });
     vm.setAssetId0(assetId);
   };
@@ -81,7 +78,7 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
     if (assetId === vm.assetId0) {
       notificationStore.notify("You can't choose same assets", {
         type: "error",
-        title: "Warning",
+        title: "Warning"
       });
       return;
     }
@@ -89,18 +86,15 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
     urlSearchParams.set("asset1", assetId);
     navigate({
       pathname: window.location.pathname,
-      search: `?${urlSearchParams.toString()}`,
+      search: `?${urlSearchParams.toString()}`
     });
     vm.setAssetId1(assetId);
   };
 
-  const minToRecieve = useMemo(
-    () => {
-      if (vm.token1 == null || vm.amount1.isNaN()) return null;
-      return `~ ${BN.formatUnits(vm.minimumToReceive, vm.token1.decimals).toFormat(2)} ${vm.token1.name}`;
-    },
-    [vm.token1, vm.amount1, vm.minimumToReceive]
-  );
+  const minToRecieve = useMemo(() => {
+    if (vm.token1 == null || vm.amount1.isNaN()) return null;
+    return `~ ${BN.formatUnits(vm.minimumToReceive, vm.token1.decimals).toFormat(2)} ${vm.token1.name}`;
+  }, [vm.token1, vm.amount1, vm.minimumToReceive]);
 
   if (vm.range == null) {
     return <Loading />;
@@ -134,19 +128,10 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
           <SwapButton />
           <SizedBox height={16} />
           <SwapDetailRow title="Price impact">
-            <Row
-              alignItems="center"
-              mainAxisSize="fit-content"
-              justifyContent="flex-end"
-            >
-              {vm.priceImpact && (
-                <Text>~{vm.priceImpact.toFormat(4)}%&nbsp;</Text>
-              )}
+            <Row alignItems="center" mainAxisSize="fit-content" justifyContent="flex-end">
+              {vm.priceImpact && <Text>~{vm.priceImpact.toFormat(4)}%&nbsp;</Text>}
               {vm.token0 && !vm.amount0.isNaN() && (
-                <Tooltip
-                  content={<TooltipFeeInfo />}
-                  config={{ placement: "top", trigger: "click" }}
-                >
+                <Tooltip content={<TooltipFeeInfo />} config={{ placement: "top", trigger: "click" }}>
                   <InfoIcon />
                 </Tooltip>
               )}
@@ -154,16 +139,8 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
           </SwapDetailRow>
           <Divider />
           <SwapDetailRow title="Minimum to receive">
-            <Row
-              alignItems="center"
-              mainAxisSize="fit-content"
-              justifyContent="flex-end"
-            >
-              {vm.priceImpact && (
-                <Text nowrap>
-                  {minToRecieve}
-                </Text>
-              )}
+            <Row alignItems="center" mainAxisSize="fit-content" justifyContent="flex-end">
+              {vm.priceImpact && <Text nowrap>{minToRecieve}</Text>}
             </Row>
           </SwapDetailRow>
         </Card>

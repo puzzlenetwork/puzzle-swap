@@ -1,10 +1,4 @@
-import type {
-  ReactNode,
-  CSSProperties,
-  TransitionEvent,
-  MouseEvent,
-  MutableRefObject,
-} from "react";
+import type { ReactNode, CSSProperties, TransitionEvent, MouseEvent, MutableRefObject } from "react";
 
 type ButtonType = "submit" | "reset" | "button";
 type AriaBoolean = boolean | "true" | "false";

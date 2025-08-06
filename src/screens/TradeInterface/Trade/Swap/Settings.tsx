@@ -38,13 +38,9 @@ const Tag = styled.div<{ active?: boolean }>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  color: ${({ active, theme }) =>
-    active ? theme.colors.white : theme.colors.primary650};
-  background: ${({ active, theme }) =>
-    active ? theme.colors.blue500 : theme.colors.white};
-  border: 1px solid
-    ${({ active, theme }) =>
-      active ? theme.colors.blue500 : theme.colors.primary100};
+  color: ${({ active, theme }) => (active ? theme.colors.white : theme.colors.primary650)};
+  background: ${({ active, theme }) => (active ? theme.colors.blue500 : theme.colors.white)};
+  border: 1px solid ${({ active, theme }) => (active ? theme.colors.blue500 : theme.colors.primary100)};
   box-sizing: border-box;
   border-radius: 10px;
   cursor: pointer;
@@ -59,9 +55,7 @@ const Settings: React.FC<IProps> = () => {
   const vm = useSwapVM();
   const theme = useTheme();
   const storageData = localStorage.getItem("puzzle-user-settings");
-  const initData: ISettingsStorageData | null = storageData
-    ? JSON.parse(storageData)
-    : null;
+  const initData: ISettingsStorageData | null = storageData ? JSON.parse(storageData) : null;
   const initialSlippage = new BN(initData ? initData.slippage : 1).times(10);
   const [slippage, setSlippage] = useState(initialSlippage);
   const isSomethingChanged = slippage.eq(initialSlippage);
@@ -74,7 +68,7 @@ const Settings: React.FC<IProps> = () => {
       "puzzle-user-settings",
       JSON.stringify({
         ...initData,
-        slippage: validateSlippage(slippage.div(10).toNumber()),
+        slippage: validateSlippage(slippage.div(10).toNumber())
       })
     );
     handleClose();
@@ -84,19 +78,14 @@ const Settings: React.FC<IProps> = () => {
     handleClose();
   };
   return (
-    <Root
-      expanded={vm.openedSettings}
-      paddingDesktop="16px 24px"
-      paddingMobile="16px"
-      justifyContent="space-between"
-    >
+    <Root expanded={vm.openedSettings} paddingDesktop="16px 24px" paddingMobile="16px" justifyContent="space-between">
       {/*header*/}
       <Row
         alignItems="center"
         justifyContent="space-between"
         style={{
           borderBottom: `1px solid ${theme.colors.primary100}`,
-          paddingBottom: 16,
+          paddingBottom: 16
         }}
       >
         <Text weight={500}>Settings</Text>
@@ -110,9 +99,8 @@ const Settings: React.FC<IProps> = () => {
             config={{ placement: "bottom-end", trigger: "click" }}
             content={
               <Text>
-                Maximum acceptable % difference between the expected amount of
-                token and the amount you actually receive if the token ratio in
-                the pool suddenly change.
+                Maximum acceptable % difference between the expected amount of token and the amount you actually receive
+                if the token ratio in the pool suddenly change.
               </Text>
             }
           >
@@ -151,17 +139,13 @@ const Settings: React.FC<IProps> = () => {
         justifyContent="space-between"
         style={{
           borderTop: `1px solid ${theme.colors.primary100}`,
-          paddingTop: 16,
+          paddingTop: 16
         }}
       >
         <TextButton kind="secondary" weight={500} onClick={handleReset}>
           Reset
         </TextButton>
-        <Button
-          size="medium"
-          onClick={handleSave}
-          disabled={isSomethingChanged || slippage.gt(1000)}
-        >
+        <Button size="medium" onClick={handleSave} disabled={isSomethingChanged || slippage.gt(1000)}>
           Save
         </Button>
       </Row>

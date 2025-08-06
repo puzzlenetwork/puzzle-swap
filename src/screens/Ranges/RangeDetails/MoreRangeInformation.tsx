@@ -20,9 +20,7 @@ const Icon = styled.img`
   width: 24px;
   height: 24px;
 `;
-const MoreRangeInformation: React.FC<IProps> = ({
-  setOpenedShare,
-}) => {
+const MoreRangeInformation: React.FC<IProps> = ({ setOpenedShare }) => {
   const linkToRange = "https://stage2.puzzle.name/ranged/";
   return (
     <Root>
@@ -38,11 +36,7 @@ const MoreRangeInformation: React.FC<IProps> = ({
       </Row>
       <SizedBox height={20} />
       <Link to={linkToRange} target="_blank">
-        <Row
-          justifyContent="center"
-          alignItems="center"
-          style={{ cursor: "pointer" }}
-        >
+        <Row justifyContent="center" alignItems="center" style={{ cursor: "pointer" }}>
           <Icon src={more} alt="pic" />
           <SizedBox width={11} />
           <Text>More information</Text>

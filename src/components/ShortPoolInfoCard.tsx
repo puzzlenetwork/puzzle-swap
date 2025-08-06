@@ -49,25 +49,14 @@ const Root = styled.div`
     }
   }
 `;
-const DepositToPool: React.FC<IProps> = ({
-  title,
-  poolName,
-  poolLogo,
-  apy,
-  onChangePool,
-}) => {
+const DepositToPool: React.FC<IProps> = ({ title, poolName, poolLogo, apy, onChangePool }) => {
   return (
     <Root>
       <Text weight={500} type="secondary">
         {title}
       </Text>
       <SizedBox height={8} />
-      <Card
-        paddingMobile="16px"
-        flexDirection="row"
-        justifyContent="space-between"
-        alignItems="center"
-      >
+      <Card paddingMobile="16px" flexDirection="row" justifyContent="space-between" alignItems="center">
         <Row style={{ alignItems: "center" }}>
           <SquareTokenIcon src={poolLogo} alt="logo" />
           <SizedBox width={8} />

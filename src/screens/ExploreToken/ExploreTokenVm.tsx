@@ -14,15 +14,9 @@ interface IProps {
 
 const ctx = React.createContext<ExploreTokenVM | null>(null);
 
-export const ExploreTokenVMProvider: React.FC<IProps> = ({
-  assetId,
-  children,
-}) => {
+export const ExploreTokenVMProvider: React.FC<IProps> = ({ assetId, children }) => {
   const rootStore = useStores();
-  const store = useMemo(
-    () => new ExploreTokenVM(rootStore, assetId),
-    [assetId, rootStore]
-  );
+  const store = useMemo(() => new ExploreTokenVM(rootStore, assetId), [assetId, rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
 
@@ -63,12 +57,10 @@ class ExploreTokenVM {
     const volume24 = this.statistics?.volume24?.toFormat(2) ?? "–";
     const sign = this.statistics?.change24H?.gte(0) ? "up" : "down";
     const descr = this.asset?.description ?? "";
-    const change24H = this.statistics?.change24H
-      ?.times(this.statistics?.change24H?.gte(0) ? 1 : -1)
-      .toFormat(4);
+    const change24H = this.statistics?.change24H?.times(this.statistics?.change24H?.gte(0) ? 1 : -1).toFormat(4);
     return [
       `The live ${symbol} price today is $${currentPrice} with a 24-hour trading volume of $${volume24}. We update our ${symbol} to USD price in real-time.`,
-      `\n${symbol} is ${sign} ${change24H}% in the last 24 hours. Trade ${symbol} using puzzleswap.org aggregator to get the best price!\n${descr}`,
+      `\n${symbol} is ${sign} ${change24H}% in the last 24 hours. Trade ${symbol} using puzzleswap.org aggregator to get the best price!\n${descr}`
     ];
   }
 
@@ -81,23 +73,19 @@ class ExploreTokenVM {
   }
 
   selectedChartPeriod: keyof TChartDataRecord = "1d";
-  setSelectedChartPeriod = (v: string) =>
-    (this.selectedChartPeriod = v as keyof TChartDataRecord);
+  setSelectedChartPeriod = (v: string) => (this.selectedChartPeriod = v as keyof TChartDataRecord);
 
   chartData: TChartDataRecord = {};
   setChartData = (period: keyof TChartDataRecord, value: TChartData) =>
     (this.chartData = { ...this.chartData, [period]: value });
 
   getChartByPeriod(period: keyof TChartDataRecord) {
-    const { start, end, data } =
-      this.chartData[period ?? this.selectedChartPeriod] ?? {};
+    const { start, end, data } = this.chartData[period ?? this.selectedChartPeriod] ?? {};
     if (start == null || data == null || end == null) return [];
-    const step = +(
-      end.diff(dayjs(start), "milliseconds") / data.length
-    ).toFixed(0);
+    const step = +(end.diff(dayjs(start), "milliseconds") / data.length).toFixed(0);
     return data.map(([volume], i) => ({
       volume,
-      date: start.add(step * i, "milliseconds").toISOString(),
+      date: start.add(step * i, "milliseconds").toISOString()
     }));
   }
 
@@ -113,15 +101,13 @@ class ExploreTokenVM {
     this.setChartData(this.selectedChartPeriod, {
       ...data,
       start: dayjs(data.start),
-      end: dayjs(),
+      end: dayjs()
     });
     this.setChartLoading(false);
   };
 
   get pools() {
-    return this.rootStore.poolsStore.pools.filter((p) =>
-      p.tokens.some(({ assetId }) => assetId === this.assetId)
-    );
+    return this.rootStore.poolsStore.pools.filter((p) => p.tokens.some(({ assetId }) => assetId === this.assetId));
   }
 
   operations: any[] = [];
@@ -133,7 +119,7 @@ class ExploreTokenVM {
 
     const params = [
       ["assetId", this.assetId],
-      ["after", this.operationsSkip],
+      ["after", this.operationsSkip]
     ] as Array<[string, string | number | boolean]>;
     const txs = await transactionsService.getTransactions(params);
     // console.log(txs);
@@ -146,9 +132,7 @@ class ExploreTokenVM {
     this.rootStore = rootStore;
     this.assetId = assetId;
     makeAutoObservable(this);
-    Promise.all([this.syncChart(), this.loadOperations()]).then(() =>
-      this.setLoading(false)
-    );
+    Promise.all([this.syncChart(), this.loadOperations()]).then(() => this.setLoading(false));
     reaction(() => this.selectedChartPeriod, this.syncChart);
   }
 }

@@ -16,11 +16,7 @@ const RecipientInfo: React.FC<IProps> = () => {
   const { assetToSend } = accountStore;
   const vm = useSendAssetVM();
   return (
-    <Column
-      justifyContent="space-between"
-      mainAxisSize="stretch"
-      crossAxisSize="max"
-    >
+    <Column justifyContent="space-between" mainAxisSize="stretch" crossAxisSize="max">
       <Column crossAxisSize="max" mainAxisSize="stretch">
         <SizedBox height={16} />
         <Text size="medium" type="secondary">

@@ -62,11 +62,7 @@ const DepositSingleToken: React.FC<IProps> = () => {
       )}
       {accountStore.address != null &&
         (!vm.loading ? (
-          <Button
-            fixed
-            onClick={handleCallDepositSingleToken}
-            disabled={!vm.canDepositSingleToken}
-          >
+          <Button fixed onClick={handleCallDepositSingleToken} disabled={!vm.canDepositSingleToken}>
             Deposit
           </Button>
         ) : (

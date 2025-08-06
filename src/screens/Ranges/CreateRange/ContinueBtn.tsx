@@ -32,9 +32,7 @@ const ContinueBtn: React.FC = () => {
         <Button onClick={() => handleContinue(1)} fixed disabled={!vm.correct0}>
           {vm.rangeAssets.length === 1 && "Select assets"}
           {vm.rangeAssets.length > 1 &&
-            (vm.totalTakenShare.eq(1000)
-              ? "Continue"
-              : `Total share should be 100%, now ${stringShare}%`)}
+            (vm.totalTakenShare.eq(1000) ? "Continue" : `Total share should be 100%, now ${stringShare}%`)}
         </Button>
       );
     case 1:

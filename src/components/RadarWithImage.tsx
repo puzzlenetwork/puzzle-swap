@@ -13,33 +13,26 @@ type TRadarWithImageProps = {
 };
 
 /**
-   * Shrinks or expands a polygon by moving each vertex along the inward angle bisector.
-   */
-const offsetPoints = (
-  points: { x: number; y: number }[],
-  offset: number
-): { x: number; y: number }[] => {
-  const pts = points.reduce(
-    (acc, p, i) => {
-      if (i === 0) return [p];
+ * Shrinks or expands a polygon by moving each vertex along the inward angle bisector.
+ */
+const offsetPoints = (points: { x: number; y: number }[], offset: number): { x: number; y: number }[] => {
+  const pts = points.reduce((acc, p, i) => {
+    if (i === 0) return [p];
 
-      const _len = acc.length;
-      const prevP = acc[_len - 1];
+    const _len = acc.length;
+    const prevP = acc[_len - 1];
 
-      // Skip duplicate points
-      if (p.x === prevP.x && p.y === prevP.y) {
-        return acc;
-      }
-      return [...acc, p];
-    },
-    [] as { x: number; y: number }[]
-  );
+    // Skip duplicate points
+    if (p.x === prevP.x && p.y === prevP.y) {
+      return acc;
+    }
+    return [...acc, p];
+  }, [] as { x: number; y: number }[]);
 
   const len = pts.length;
   if (len <= 1) return points;
 
-  return pts
-    .map((p, i) => {
+  return pts.map((p, i) => {
     // Previous and next vertices
     const prev = pts[(i - 1 + len) % len];
     const next = pts[(i + 1) % len];
@@ -75,17 +68,13 @@ const offsetPoints = (
     // Move against bisector to shrink; with bisector to expand
     return {
       x: p.x - bisector.x * scale,
-      y: p.y - bisector.y * scale,
+      y: p.y - bisector.y * scale
     };
   });
 };
 
 const makePath = (pts: { x: number; y: number }[]) =>
-  pts.reduce(
-    (acc, point, i) =>
-      acc + (i === 0 ? `M${point.x},${point.y}` : `L${point.x},${point.y}`),
-    ""
-    ) + "Z";
+  pts.reduce((acc, point, i) => acc + (i === 0 ? `M${point.x},${point.y}` : `L${point.x},${point.y}`), "") + "Z";
 
 const RadarWithImage = ({
   points,
@@ -95,7 +84,7 @@ const RadarWithImage = ({
   strokeWidth = 3, // default stroke width
   uniqueId = "default",
   useSvgImage,
-  debug,
+  debug
 }: TRadarWithImageProps) => {
   const { cx, cy } = radiusAxis;
 
@@ -126,7 +115,7 @@ const RadarWithImage = ({
       { x: p0.x + ux * halfStroke, y: p0.y + uy * halfStroke },
       { x: p1.x + ux * halfStroke, y: p1.y + uy * halfStroke },
       { x: p1.x - ux * halfStroke, y: p1.y - uy * halfStroke },
-      { x: p0.x - ux * halfStroke, y: p0.y - uy * halfStroke },
+      { x: p0.x - ux * halfStroke, y: p0.y - uy * halfStroke }
     ];
 
     outerPath = makePath(polygonPts);
@@ -150,27 +139,31 @@ const RadarWithImage = ({
         return (
           <g {...extraProps}>
             {React.cloneElement(imageElement!, {
-              style: { ...(imageElement!.props?.style || {}), ...(extraProps.style || {}), width: imageWidth, height: imageHeight },
+              style: {
+                ...(imageElement!.props?.style || {}),
+                ...(extraProps.style || {}),
+                width: imageWidth,
+                height: imageHeight
+              }
             })}
           </g>
         );
       case !useSvgImage && !!imageElement:
         return (
-          <foreignObject
-            x={imageX}
-            y={imageY}
-            width={imageWidth}
-            height={imageHeight}
-            {...extraProps}
-          >
+          <foreignObject x={imageX} y={imageY} width={imageWidth} height={imageHeight} {...extraProps}>
             <div
               style={{
                 width: "100%",
-                height: "100%",
+                height: "100%"
               }}
             >
               {React.cloneElement(imageElement!, {
-                style: { ...(imageElement!.props?.style || {}), ...(extraProps.style || {}), width: imageWidth, height: imageHeight },
+                style: {
+                  ...(imageElement!.props?.style || {}),
+                  ...(extraProps.style || {}),
+                  width: imageWidth,
+                  height: imageHeight
+                }
               })}
             </div>
           </foreignObject>
@@ -186,35 +179,25 @@ const RadarWithImage = ({
             preserveAspectRatio="xMidYMid slice"
             {...extraProps}
           />
-        )
+        );
       default:
         return null;
     }
-  }
+  };
   return (
     <>
       <defs>
         {/* Mask for stroke: white ring, hollow inside */}
-        <mask id={`${(uniqueId || "default")}-radarStrokeMask`}>
+        <mask id={`${uniqueId || "default"}-radarStrokeMask`}>
           <rect width="100%" height="100%" fill="black" />
-          <path
-            d={outerPath}
-            fill="white"
-          />
-          <path
-            d={innerPath}
-            fill="black"
-          />
+          <path d={outerPath} fill="white" />
+          <path d={innerPath} fill="black" />
         </mask>
 
-
         {/* Clip for the main radar fill */}
-        <clipPath id={`${(uniqueId || "default")}-radarClip`}>
-          <path
-            d={outerPath}
-          />
+        <clipPath id={`${uniqueId || "default"}-radarClip`}>
+          <path d={outerPath} />
         </clipPath>
-
       </defs>
 
       {/* Debug outlines for development */}
@@ -227,10 +210,18 @@ const RadarWithImage = ({
       )}
 
       {/* Fill inside shape with opacity */}
-      {!debug && renderImage({ clipPath: `url(#${uniqueId || "default"}-radarClip)`, opacity: 0.5 })}
+      {!debug &&
+        renderImage({
+          clipPath: `url(#${uniqueId || "default"}-radarClip)`,
+          opacity: 0.5
+        })}
 
       {/* Stroke band */}
-      {!debug && renderImage({ mask: `url(#${uniqueId || "default"}-radarStrokeMask)`, opacity: 1 })}
+      {!debug &&
+        renderImage({
+          mask: `url(#${uniqueId || "default"}-radarStrokeMask)`,
+          opacity: 1
+        })}
     </>
   );
 };

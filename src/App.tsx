@@ -50,7 +50,7 @@ const MobileSpace = styled.div`
 const App: React.FC = () => {
   const { accountStore } = useStores();
   usePageTitle();
-  useAnalyticTracking('development');
+  useAnalyticTracking("development");
   return (
     <Root>
       <LoginScreen />
@@ -87,20 +87,11 @@ const App: React.FC = () => {
         <Route path={ROUTES.POOL_BOOST} element={<BoostApy />} />
 
         {/* Add liquidity routes */}
-        <Route
-          path={ROUTES.POOLS_ADD_LIQUIDITY}
-          element={<AddLiquidityInterface />}
-        />
-        <Route
-          path={ROUTES.POOLS_ADD_ONE_TOKEN}
-          element={<AddLiquidityInterface />}
-        />
+        <Route path={ROUTES.POOLS_ADD_LIQUIDITY} element={<AddLiquidityInterface />} />
+        <Route path={ROUTES.POOLS_ADD_ONE_TOKEN} element={<AddLiquidityInterface />} />
 
         {/* Withdraw liquidity routes */}
-        <Route
-          path={ROUTES.POOLS_WITHDRAW}
-          element={<WithdrawLiquidityInterface />}
-        />
+        <Route path={ROUTES.POOLS_WITHDRAW} element={<WithdrawLiquidityInterface />} />
 
         <Route path={ROUTES.ULTRASTAKE} element={<NFTStaking />} />
 
@@ -112,19 +103,13 @@ const App: React.FC = () => {
         <Route path={ROUTES.RANGES} element={<AllRanges />} />
         <Route path={ROUTES.RANGES_DETAILS} element={<RangeDetails />} />
         <Route path={ROUTES.RANGES_DEPOSIT} element={<DepositToRange />} />
-        <Route
-          path={ROUTES.RANGES_DEPOSIT_ONE_TOKEN}
-          element={<DepositToRange />}
-        />
+        <Route path={ROUTES.RANGES_DEPOSIT_ONE_TOKEN} element={<DepositToRange />} />
         <Route path={ROUTES.RANGES_WITHDRAW} element={<WithdrawFromRange />} />
         <Route path={ROUTES.RANGES_CREATE} element={<CreateRange />} />
         <Route path={ROUTES.RANGES_TRADE} element={<TradeInRange />} />
         <Route path={ROUTES.USER_RANGES} element={<div>USER_RANGES</div>} />
       </Routes>
-      <WalletModal
-        onClose={() => accountStore.setWalletModalOpened(false)}
-        visible={accountStore.walletModalOpened}
-      />
+      <WalletModal onClose={() => accountStore.setWalletModalOpened(false)} visible={accountStore.walletModalOpened} />
       <SendAssetModal
         onClose={() => accountStore.setSendAssetModalOpened(false)}
         visible={accountStore.sendAssetModalOpened}

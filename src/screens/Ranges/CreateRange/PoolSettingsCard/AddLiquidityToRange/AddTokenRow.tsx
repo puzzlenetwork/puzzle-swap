@@ -17,14 +17,7 @@ interface IProps {
 }
 
 const Root = styled.div<{ warning: boolean }>``;
-const AddTokenRow: React.FC<IProps> = ({
-  availableAmount,
-  depositAmount,
-  percent,
-  symbol,
-  logo,
-  depositPrefix,
-}) => {
+const AddTokenRow: React.FC<IProps> = ({ availableAmount, depositAmount, percent, symbol, logo, depositPrefix }) => {
   const isLowMoney = availableAmount.eq(0);
   return (
     <Root className="gridRow" warning={isLowMoney}>

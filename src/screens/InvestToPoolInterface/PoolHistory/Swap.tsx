@@ -25,14 +25,7 @@ const Root = styled.div`
   //justify-content: center;
 `;
 
-const Swap: React.FC<IProps> = ({
-  token0,
-  amount0,
-  token1,
-  amount1,
-  disableIcon,
-  hideZeros,
-}) => {
+const Swap: React.FC<IProps> = ({ token0, amount0, token1, amount1, disableIcon, hideZeros }) => {
   return (
     <Root>
       {!disableIcon && (
@@ -43,10 +36,7 @@ const Swap: React.FC<IProps> = ({
       )}
       {token0 && (
         <Link to={ROUTES.EXPLORE_TOKEN.replace(":assetId", token0.assetId)}>
-          <TokenTag
-            token={token0}
-            amount={amount0.eq(0) && hideZeros ? undefined : amount0}
-          />
+          <TokenTag token={token0} amount={amount0.eq(0) && hideZeros ? undefined : amount0} />
         </Link>
       )}
       <SizedBox width={12} />
@@ -54,10 +44,7 @@ const Swap: React.FC<IProps> = ({
       <SizedBox width={12} />
       {token1 && (
         <Link to={ROUTES.EXPLORE_TOKEN.replace(":assetId", token1.assetId)}>
-          <TokenTag
-            token={token1}
-            amount={amount1.eq(0) && hideZeros ? undefined : amount1}
-          />
+          <TokenTag token={token1} amount={amount1.eq(0) && hideZeros ? undefined : amount1} />
         </Link>
       )}
     </Root>

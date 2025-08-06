@@ -60,13 +60,7 @@ const TradesVolume: React.FC<IProps> = () => {
     .map((v) => ({ ...v, volume: Number(v.volume), date: v.time * 1000 }))
     .sort((a, b) => (a.time < b.time ? -1 : 1));
   return (
-    <Root
-      disabled={
-        data == null ||
-        data.length < 2 ||
-        data.every(({ volume }) => volume === 0)
-      }
-    >
+    <Root disabled={data == null || data.length < 2 || data.every(({ volume }) => volume === 0)}>
       <Text weight={500} type="secondary">
         Trades volume
       </Text>
@@ -89,16 +83,10 @@ const TradesVolume: React.FC<IProps> = () => {
             itemStyle={{ border: "none" }}
             contentStyle={{
               border: "none",
-              filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))",
+              filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))"
             }}
           />
-          <Line
-            dot={false}
-            type="monotone"
-            dataKey="volume"
-            stroke="#7075E9"
-            strokeWidth={2}
-          />
+          <Line dot={false} type="monotone" dataKey="volume" stroke="#7075E9" strokeWidth={2} />
         </LineChart>
       </Card>
     </Root>

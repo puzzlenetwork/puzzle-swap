@@ -51,12 +51,7 @@ const LoggedInRewardInfo: React.FC = () => {
   return (
     <Root>
       <Row justifyContent="space-between" style={{ position: "relative" }}>
-        <LastClaimDate
-          type="secondary"
-          textAlign="right"
-          size="medium"
-          style={{ position: "absolute" }}
-        >
+        <LastClaimDate type="secondary" textAlign="right" size="medium" style={{ position: "absolute" }}>
           {!vm.lastClaimDate.eq(0) && "Last claim " + format}
         </LastClaimDate>
         <Row alignItems="center">
@@ -68,24 +63,14 @@ const LoggedInRewardInfo: React.FC = () => {
             </Text>
             <Text weight={500}>
               {vm.claimedRewardInPuzzle != null ? (
-                BN.formatUnits(
-                  vm.claimedRewardInPuzzle,
-                  TOKENS_BY_SYMBOL.PUZZLE.decimals
-                )
-                  .toFormat(2)
-                  .concat(" PUZZLE")
+                BN.formatUnits(vm.claimedRewardInPuzzle, TOKENS_BY_SYMBOL.PUZZLE.decimals).toFormat(2).concat(" PUZZLE")
               ) : (
                 <Skeleton height={16} width={90} />
               )}
             </Text>
             <Text weight={500}>
               {vm.claimedRewardInUSDN != null ? (
-                BN.formatUnits(
-                  vm.claimedRewardInUSDN,
-                  TOKENS_BY_SYMBOL.XTN.decimals
-                )
-                  .toFormat(2)
-                  .concat(" XTN")
+                BN.formatUnits(vm.claimedRewardInUSDN, TOKENS_BY_SYMBOL.XTN.decimals).toFormat(2).concat(" XTN")
               ) : (
                 <Skeleton height={16} width={90} />
               )}
@@ -102,9 +87,7 @@ const LoggedInRewardInfo: React.FC = () => {
           </Text>
           <Text weight={500}>
             {vm.availableToClaim != null ? (
-              BN.formatUnits(vm.availableToClaim, 20)
-                .toFormat(2)
-                .concat(" PUZZLE")
+              BN.formatUnits(vm.availableToClaim, 20).toFormat(2).concat(" PUZZLE")
             ) : (
               <Skeleton height={16} width={90} />
             )}

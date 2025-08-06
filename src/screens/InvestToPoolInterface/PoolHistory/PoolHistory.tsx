@@ -27,9 +27,7 @@ const PoolHistory: React.FC<IProps> = () => {
         Pool history
       </Text>
       <SizedBox height={8} />
-      <Card
-        style={{ padding: 0, overflow: "auto", maxWidth: "calc(100vw - 32px)" }}
-      >
+      <Card style={{ padding: 0, overflow: "auto", maxWidth: "calc(100vw - 32px)" }}>
         <GridTable
           style={{ width: "fit-content", minWidth: "100%" }}
           desktopTemplate={"2fr 1fr 1fr"}
@@ -41,11 +39,7 @@ const PoolHistory: React.FC<IProps> = () => {
             <div>Time</div>
           </div>
           {vm.transactionsHistory == null ? (
-            <Skeleton
-              height={45}
-              count={3}
-              style={{ margin: "16px 24px", width: "calc(100% - 48px)" }}
-            />
+            <Skeleton height={45} count={3} style={{ margin: "16px 24px", width: "calc(100% - 48px)" }} />
           ) : (
             <>
               {vm.transactionsHistory.map((tr) => (

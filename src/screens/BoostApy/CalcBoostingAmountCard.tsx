@@ -24,8 +24,7 @@ const CalcBoostingAmountCard: React.FC<IProps> = () => {
   };
   const [domainError, setDomainError] = useState<string | null>(null);
   const checkDays = () => {
-    if (vm.days < 1 || vm.days > 365)
-      setDomainError("Should be from 1 to 365 days");
+    if (vm.days < 1 || vm.days > 365) setDomainError("Should be from 1 to 365 days");
     else setDomainError(null);
   };
   return (

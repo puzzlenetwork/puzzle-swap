@@ -24,8 +24,7 @@ const TooltipFeeInfo: React.FC = () => {
       <Text>
         Minimum to receive:{" "}
         <span style={{ color: "#8082C5" }}>
-          ~ {BN.formatUnits(vm.minimumToReceive, token1.decimals).toFormat(2)}{" "}
-          {token1.symbol}
+          ~ {BN.formatUnits(vm.minimumToReceive, token1.decimals).toFormat(2)} {token1.symbol}
         </span>
       </Text>
       <Text>

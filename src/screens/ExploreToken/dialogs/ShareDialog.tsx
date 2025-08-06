@@ -84,26 +84,19 @@ const ShareDialog: React.FC<IProps> = ({ ...rest }) => {
   const shareInfo = [
     {
       title: "Twitter",
-      onClick: () =>
-        window.open(
-          `https://twitter.com/intent/tweet?url=${link}&text=${text}`
-        ),
-      icon: <TwitterIcon />,
+      onClick: () => window.open(`https://twitter.com/intent/tweet?url=${link}&text=${text}`),
+      icon: <TwitterIcon />
     },
     {
       title: "Telegram",
-      onClick: () =>
-        window.open(`https://telegram.me/share/?url=${link}&text=${text}`),
-      icon: <TelegramIcon />,
+      onClick: () => window.open(`https://telegram.me/share/?url=${link}&text=${text}`),
+      icon: <TelegramIcon />
     },
     {
       title: "Facebook",
-      onClick: () =>
-        window.open(
-          `https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${text}`
-        ),
-      icon: <FacebookIcon />,
-    },
+      onClick: () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${text}`),
+      icon: <FacebookIcon />
+    }
   ];
 
   const handleCopyLink = () => {

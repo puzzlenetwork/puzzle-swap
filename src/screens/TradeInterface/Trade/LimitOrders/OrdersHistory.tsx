@@ -43,9 +43,7 @@ const OrderHistory: React.FC<IProps> = () => {
   return (
     <Root>
       {vm.orders.length === 0 && (
-        <Text textAlign="center">
-          Your orders will show up here. Create an order above this section!
-        </Text>
+        <Text textAlign="center">Your orders will show up here. Create an order above this section!</Text>
       )}
       {Object.entries(vm.groupedOrders()).map(([time, orders]) => (
         <Column key={time} crossAxisSize="max">
@@ -55,11 +53,7 @@ const OrderHistory: React.FC<IProps> = () => {
           <SizedBox height={8} />
           <Orders>
             {orders.map((o) => (
-              <Order
-                key={o.id}
-                onClick={() => vm.setOrderToDisplayDetails(o)}
-                {...o}
-              />
+              <Order key={o.id} onClick={() => vm.setOrderToDisplayDetails(o)} {...o} />
             ))}
           </Orders>
           <SizedBox height={24} />

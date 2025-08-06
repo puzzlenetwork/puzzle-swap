@@ -43,12 +43,7 @@ const NFTStakingImpl: React.FC = () => {
         {() => {
           const marketNftAmount = artworks?.length;
           const apy =
-            vm.stats != null
-              ? new BN(vm.stats.stakingApy)
-                  .plus(vm.stats.eagleApy)
-                  .toFormat(2)
-                  .concat(" %")
-              : "—";
+            vm.stats != null ? new BN(vm.stats.stakingApy).plus(vm.stats.eagleApy).toFormat(2).concat(" %") : "—";
           return (
             <Root>
               <GoBack link="/stake" text="Back to Staking" />
@@ -58,18 +53,14 @@ const NFTStakingImpl: React.FC = () => {
               </Text>
               <SizedBox height={8} />
               <Text type="secondary" className="title">
-                Stake Puzzle NFT to share the rewards pool from Puzzle
-                aggregator fees and boost your staking rewards up to
-                <b style={{ color: "#35A15A" }}> {apy}</b>. You can stake one of
-                each type of NFTs.
+                Stake Puzzle NFT to share the rewards pool from Puzzle aggregator fees and boost your staking rewards up
+                to
+                <b style={{ color: "#35A15A" }}> {apy}</b>. You can stake one of each type of NFTs.
               </Text>
               <Reward />
               <SizedBox height={40} />
               <Tabs
-                tabs={[
-                  { name: "Market", additionalInfo: marketNftAmount },
-                  { name: "On my wallet" },
-                ]}
+                tabs={[{ name: "Market", additionalInfo: marketNftAmount }, { name: "On my wallet" }]}
                 activeTab={vm.nftDisplayState}
                 setActive={vm.setNftDisplayState}
               />

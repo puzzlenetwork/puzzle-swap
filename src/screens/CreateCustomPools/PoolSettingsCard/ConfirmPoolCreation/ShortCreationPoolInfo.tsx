@@ -49,9 +49,7 @@ const ShortCreationPoolInfo: React.FC<IProps> = () => {
           <SizedBox width={8} />
           <Column>
             <Text weight={500}>{vm.title}</Text>
-            <Text type="secondary">
-              Swap fees: {vm.swapFee.div(10).toString()}%
-            </Text>
+            <Text type="secondary">Swap fees: {vm.swapFee.div(10).toString()}%</Text>
           </Column>
         </Row>
         <SizedBox height={16} />
@@ -59,9 +57,7 @@ const ShortCreationPoolInfo: React.FC<IProps> = () => {
           {vm.poolsAssets.map((token, index) => (
             <Tag key={index + "custom-fee"}>
               <span>{token.asset.symbol}&nbsp;</span>
-              <span style={{ color: theme.colors.primary650 }}>
-                {token.share.div(10).toFormat()}%
-              </span>
+              <span style={{ color: theme.colors.primary650 }}>{token.share.div(10).toFormat()}%</span>
             </Tag>
           ))}
         </Tokens>

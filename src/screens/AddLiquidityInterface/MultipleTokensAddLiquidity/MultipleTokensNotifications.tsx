@@ -30,11 +30,8 @@ const MultipleTokensNotifications: React.FC<IProps> = () => {
             type="warning"
             text={
               <Text size="medium">
-                You must have all assets to bring liquidity to the pool. Top up
-                empty balances or&nbsp;
-                <Link to={addOneTokenRoute}>
-                  provide liquidity with an {vm.baseToken.symbol} token.
-                </Link>
+                You must have all assets to bring liquidity to the pool. Top up empty balances or&nbsp;
+                <Link to={addOneTokenRoute}>provide liquidity with an {vm.baseToken.symbol} token.</Link>
               </Text>
             }
             style={{ margin: 24 }}
@@ -46,12 +43,7 @@ const MultipleTokensNotifications: React.FC<IProps> = () => {
               <Text size="medium">
                 You’ve reached the limit with {vm.minBalanceAsset?.symbol}
                 .&nbsp;
-                <Link
-                  to={buildBuyTokenRoute(
-                    `pools/${vm.poolDomain}`,
-                    vm.minBalanceAsset!.assetId
-                  )}
-                >
+                <Link to={buildBuyTokenRoute(`pools/${vm.poolDomain}`, vm.minBalanceAsset!.assetId)}>
                   &nbsp;Buy {vm.minBalanceAsset?.symbol}&nbsp;
                 </Link>
                 to deposit to this pool.

@@ -49,25 +49,17 @@ const SettingsHeader: React.FC<IProps> = ({ withSetting }) => {
           urlSearchParams.set("asset01", vm.assetId1);
           navigate({
             pathname: n === 0 ? ROUTES.TRADE : ROUTES.LIMIT_ORDER,
-            search: `?${urlSearchParams.toString()}`,
+            search: `?${urlSearchParams.toString()}`
           });
           vm.setActiveAction(n);
         }}
       />
       <IconsBlock mainAxisSize="fit-content">
         {withSetting != null && (
-          <Icon
-            src={settings}
-            alt="pic"
-            onClick={() => vm.setOpenedSettings(!vm.openedSettings)}
-          />
+          <Icon src={settings} alt="pic" onClick={() => vm.setOpenedSettings(!vm.openedSettings)} />
         )}
         <SizedBox width={8} />
-        <Icon
-          src={!vm.openedChart ? chart : nochart}
-          alt="pic"
-          onClick={() => vm.setOpenedChart(!vm.openedChart)}
-        />
+        <Icon src={!vm.openedChart ? chart : nochart} alt="pic" onClick={() => vm.setOpenedChart(!vm.openedChart)} />
       </IconsBlock>
     </Root>
   );

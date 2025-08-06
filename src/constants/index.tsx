@@ -32,26 +32,23 @@ export const ROUTES = {
   RANGES_DETAILS: "/ranges/:rangeAddress/details",
   RANGES_DEPOSIT: "/ranges/:rangeAddress/deposit",
   RANGES_DEPOSIT_ONE_TOKEN: "/ranges/:rangeAddress/depositOneToken",
-  RANGES_WITHDRAW: "/ranges/:rangeAddress/withdraw",
+  RANGES_WITHDRAW: "/ranges/:rangeAddress/withdraw"
 };
 
 export const PRODUCTS = {
   SWAP: "https://puzzleswap.org/",
   LEND: "https://lend.puzzleswap.org/",
   MARKET: "https://puzzlemarket.org/",
-  NODE: "https://lease.puzzleswap.org/",
+  NODE: "https://lease.puzzleswap.org/"
 };
 
 export const TOKEN_DETAILS_BY_SYMBOL: Record<string, string> = tokensDetails;
 
 export const TOKENS_LIST: Array<IToken> = Object.values(tokens).map((t) => ({
   ...t,
-  logo: tokenLogos[t.symbol],
+  logo: tokenLogos[t.symbol]
 }));
-export const TOKENS_BY_SYMBOL: Record<string, IToken> = TOKENS_LIST.reduce(
-  (acc, t) => ({ ...acc, [t.symbol]: t }),
-  {}
-);
+export const TOKENS_BY_SYMBOL: Record<string, IToken> = TOKENS_LIST.reduce((acc, t) => ({ ...acc, [t.symbol]: t }), {});
 export const TOKENS_BY_ASSET_ID: Record<string, IToken> = TOKENS_LIST.reduce(
   (acc, t) => ({ ...acc, [t.assetId]: t }),
   {}
@@ -68,7 +65,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     defaultAssetId1: TOKENS_BY_SYMBOL.XTN.assetId,
     tokens: [
       { ...TOKENS_BY_SYMBOL.TSN, share: 90, logo: tokenLogos.TSN },
-      { ...TOKENS_BY_SYMBOL.XTN, share: 10, logo: tokenLogos.XTN },
+      { ...TOKENS_BY_SYMBOL.XTN, share: 10, logo: tokenLogos.XTN }
     ],
     created_at: 0,
     fee_token_id: "",
@@ -81,7 +78,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: "",
+    version: ""
   },
   {
     domain: "pool10",
@@ -96,7 +93,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.WAVES, share: 25, logo: tokenLogos.WAVES },
       { ...TOKENS_BY_SYMBOL.BTC_WXG, share: 25, logo: tokenLogos.BTC_WXG },
       { ...TOKENS_BY_SYMBOL.ETH_WXG, share: 25, logo: tokenLogos.ETH_WXG },
-      { ...TOKENS_BY_SYMBOL.XTN, share: 25, logo: tokenLogos.XTN },
+      { ...TOKENS_BY_SYMBOL.XTN, share: 25, logo: tokenLogos.XTN }
     ],
     created_at: 0,
     fee_token_id: "",
@@ -109,7 +106,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: "",
+    version: ""
   },
   {
     domain: "nsbt",
@@ -123,7 +120,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     tokens: [
       { ...TOKENS_BY_SYMBOL.SNSBT, share: 75, logo: tokenLogos.SNSBT },
       { ...TOKENS_BY_SYMBOL.NSBT, share: 20, logo: tokenLogos.NSBT },
-      { ...TOKENS_BY_SYMBOL.XTN, share: 5, logo: tokenLogos.XTN },
+      { ...TOKENS_BY_SYMBOL.XTN, share: 5, logo: tokenLogos.XTN }
     ],
     created_at: 0,
     fee_token_id: "",
@@ -136,7 +133,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: "",
+    version: ""
   },
   // {
   //   domain: "vlad",
@@ -165,14 +162,14 @@ export const POOL_CONFIG: IPoolConfig[] = [
       {
         ...TOKENS_BY_SYMBOL.VIRES_USDT_LP,
         share: 30,
-        logo: tokenLogos.VIRES_USDT_LP,
+        logo: tokenLogos.VIRES_USDT_LP
       },
       {
         ...TOKENS_BY_SYMBOL.VIRES_USDC_LP,
         share: 30,
-        logo: tokenLogos.VIRES_USDC_LP,
+        logo: tokenLogos.VIRES_USDC_LP
       },
-      { ...TOKENS_BY_SYMBOL.XTN, share: 40, logo: tokenLogos.XTN },
+      { ...TOKENS_BY_SYMBOL.XTN, share: 40, logo: tokenLogos.XTN }
     ],
     created_at: 0,
     fee_token_id: "",
@@ -185,7 +182,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: "",
+    version: ""
   },
   {
     domain: "www",
@@ -200,7 +197,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.WX, share: 60, logo: tokenLogos.WX },
       { ...TOKENS_BY_SYMBOL.WCT, share: 10, logo: tokenLogos.WCT },
       { ...TOKENS_BY_SYMBOL.WEST, share: 10, logo: tokenLogos.WEST },
-      { ...TOKENS_BY_SYMBOL.XTN, share: 20, logo: tokenLogos.XTN },
+      { ...TOKENS_BY_SYMBOL.XTN, share: 20, logo: tokenLogos.XTN }
     ],
     created_at: 0,
     fee_token_id: "",
@@ -213,7 +210,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: "",
+    version: ""
   },
   {
     domain: "snsbttci",
@@ -228,7 +225,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.SNSBTTCI, share: 75, logo: tokenLogos.SNSBTTCI },
       { ...TOKENS_BY_SYMBOL.SNSBT, share: 10, logo: tokenLogos.SNSBT },
       { ...TOKENS_BY_SYMBOL.WAVES, share: 10, logo: tokenLogos.WAVES },
-      { ...TOKENS_BY_SYMBOL.XTN, share: 5, logo: tokenLogos.XTN },
+      { ...TOKENS_BY_SYMBOL.XTN, share: 5, logo: tokenLogos.XTN }
     ],
     created_at: 0,
     fee_token_id: "",
@@ -241,7 +238,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: "",
+    version: ""
   },
   {
     domain: "sheg",
@@ -256,7 +253,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.SHEG, share: 50, logo: tokenLogos.SHEG },
       { ...TOKENS_BY_SYMBOL.XTN, share: 25, logo: tokenLogos.XTN },
       { ...TOKENS_BY_SYMBOL.WAVES, share: 13, logo: tokenLogos.WAVES },
-      { ...TOKENS_BY_SYMBOL.EGG, share: 12, logo: tokenLogos.EGG },
+      { ...TOKENS_BY_SYMBOL.EGG, share: 12, logo: tokenLogos.EGG }
     ],
     created_at: 0,
     fee_token_id: "",
@@ -269,7 +266,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: "",
+    version: ""
   },
   {
     domain: "muna",
@@ -283,7 +280,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     tokens: [
       { ...TOKENS_BY_SYMBOL.MUNA, share: 50, logo: tokenLogos.MUNA },
       { ...TOKENS_BY_SYMBOL.BNB_WXG, share: 25, logo: tokenLogos.BNB_WXG },
-      { ...TOKENS_BY_SYMBOL.XTN, share: 25, logo: tokenLogos.XTN },
+      { ...TOKENS_BY_SYMBOL.XTN, share: 25, logo: tokenLogos.XTN }
     ],
     created_at: 0,
     fee_token_id: "",
@@ -296,7 +293,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: "",
+    version: ""
   },
   {
     domain: "winter",
@@ -313,7 +310,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.XTN, share: 20, logo: tokenLogos.XTN },
       { ...TOKENS_BY_SYMBOL.PUZZLE, share: 22, logo: tokenLogos.PUZZLE },
       { ...TOKENS_BY_SYMBOL.VIRES, share: 8, logo: tokenLogos.VIRES },
-      { ...TOKENS_BY_SYMBOL.EURN, share: 10, logo: tokenLogos.EURN },
+      { ...TOKENS_BY_SYMBOL.EURN, share: 10, logo: tokenLogos.EURN }
     ],
     created_at: 0,
     fee_token_id: "",
@@ -326,7 +323,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: "",
+    version: ""
   },
   {
     domain: "defi",
@@ -347,7 +344,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.SIGN, share: 5, logo: tokenLogos.SIGN },
       { ...TOKENS_BY_SYMBOL.PUZZLE, share: 20, logo: tokenLogos.PUZZLE },
       { ...TOKENS_BY_SYMBOL.USDT_WXG, share: 10, logo: tokenLogos.USDT_WXG },
-      { ...TOKENS_BY_SYMBOL.XTN, share: 15, logo: tokenLogos.XTN },
+      { ...TOKENS_BY_SYMBOL.XTN, share: 15, logo: tokenLogos.XTN }
     ],
     created_at: 0,
     fee_token_id: "",
@@ -360,7 +357,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: "",
+    version: ""
   },
   // {
   //   domain: "megapool",
@@ -397,29 +394,29 @@ export const POOL_CONFIG: IPoolConfig[] = [
       {
         ...TOKENS_BY_SYMBOL.DUXPLORER,
         share: 10,
-        logo: tokenLogos.DUXPLORER,
+        logo: tokenLogos.DUXPLORER
       },
       { ...TOKENS_BY_SYMBOL.MATH, share: 10, logo: tokenLogos.MATH },
       { ...TOKENS_BY_SYMBOL.TURTLE, share: 10, logo: tokenLogos.TURTLE },
       {
         ...TOKENS_BY_SYMBOL.EGGSEGGS,
         share: 10,
-        logo: tokenLogos.EGGSEGGS,
+        logo: tokenLogos.EGGSEGGS
       },
       {
         ...TOKENS_BY_SYMBOL.PESOLATINO,
         share: 10,
-        logo: tokenLogos.PESOLATINO,
+        logo: tokenLogos.PESOLATINO
       },
       { ...TOKENS_BY_SYMBOL.FOMO, share: 10, logo: tokenLogos.FOMO },
       { ...TOKENS_BY_SYMBOL.MUNDO, share: 10, logo: tokenLogos.MUNDO },
       {
         ...TOKENS_BY_SYMBOL.EGGPOINT,
         share: 10,
-        logo: tokenLogos.EGGPOINT,
+        logo: tokenLogos.EGGPOINT
       },
       { ...TOKENS_BY_SYMBOL.OLDEGG, share: 10, logo: tokenLogos.OLDEGG },
-      { ...TOKENS_BY_SYMBOL.XTN, share: 10, logo: tokenLogos.XTN },
+      { ...TOKENS_BY_SYMBOL.XTN, share: 10, logo: tokenLogos.XTN }
     ],
     created_at: 0,
     fee_token_id: "",
@@ -432,7 +429,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: "",
+    version: ""
   },
   {
     domain: "farms2",
@@ -452,7 +449,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
       { ...TOKENS_BY_SYMBOL.FORKLOG, share: 10, logo: tokenLogos.FORKLOG },
       { ...TOKENS_BY_SYMBOL.CGU, share: 10, logo: tokenLogos.CGU },
       { ...TOKENS_BY_SYMBOL.OLDEGG, share: 20, logo: tokenLogos.OLDEGG },
-      { ...TOKENS_BY_SYMBOL.XTN, share: 10, logo: tokenLogos.XTN },
+      { ...TOKENS_BY_SYMBOL.XTN, share: 10, logo: tokenLogos.XTN }
     ],
     created_at: 0,
     fee_token_id: "",
@@ -465,7 +462,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: "",
+    version: ""
   },
   {
     domain: "race",
@@ -479,7 +476,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     tokens: [
       { ...TOKENS_BY_SYMBOL.OLDEGG, share: 40, logo: tokenLogos.OLDEGG },
       { ...TOKENS_BY_SYMBOL.RACE, share: 40, logo: tokenLogos.RACE },
-      { ...TOKENS_BY_SYMBOL.XTN, share: 20, logo: tokenLogos.XTN },
+      { ...TOKENS_BY_SYMBOL.XTN, share: 20, logo: tokenLogos.XTN }
     ],
     created_at: 0,
     fee_token_id: "",
@@ -492,7 +489,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: "",
+    version: ""
   },
   {
     domain: "egg",
@@ -505,7 +502,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     defaultAssetId1: TOKENS_BY_SYMBOL.OLDEGG.assetId,
     tokens: [
       { ...TOKENS_BY_SYMBOL.OLDEGG, share: 80, logo: tokenLogos.OLDEGG },
-      { ...TOKENS_BY_SYMBOL.XTN, share: 20, logo: tokenLogos.XTN },
+      { ...TOKENS_BY_SYMBOL.XTN, share: 20, logo: tokenLogos.XTN }
     ],
     created_at: 0,
     fee_token_id: "",
@@ -518,7 +515,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: "",
+    version: ""
   },
   {
     domain: "puzzle",
@@ -531,7 +528,7 @@ export const POOL_CONFIG: IPoolConfig[] = [
     tokens: [
       { ...TOKENS_BY_SYMBOL.USDT_WXG, share: 10, logo: tokenLogos.USDT_WXG },
       { ...TOKENS_BY_SYMBOL.PUZZLE, share: 80, logo: tokenLogos.PUZZLE },
-      { ...TOKENS_BY_SYMBOL.XTN, share: 10, logo: tokenLogos.XTN },
+      { ...TOKENS_BY_SYMBOL.XTN, share: 10, logo: tokenLogos.XTN }
     ],
     created_at: 0,
     fee_token_id: "",
@@ -544,8 +541,8 @@ export const POOL_CONFIG: IPoolConfig[] = [
     owner: "",
     rebalances: [],
     swap_fee: 0,
-    version: "",
-  },
+    version: ""
+  }
 ];
 export const CONTRACT_ADDRESSES = {
   staking: "3PFTbywqxtFfukX3HyT881g4iW5K4QL3FAS",
@@ -560,34 +557,34 @@ export const CONTRACT_ADDRESSES = {
   // limitOrders: "3PPrfNMnk8z8QhZcqMyJk69mF65s2Rbz3B6", // old
   limitOrders: "3PFB6LJyShsCKEA1AU1U1WLbDazqyj6ZL9b", // new
   proxyLimitOrders: "3PM4Mn2iwQnUkeMxTJJAuriiVEGAcQwDU5H",
-  priceOracle: "3P8d1E1BLKoD52y3bQJ1bDTd2TD1gpaLn9t",
+  priceOracle: "3P8d1E1BLKoD52y3bQJ1bDTd2TD1gpaLn9t"
 };
 export const PUZZLE_NFTS = [
   {
     name: "Puzzle Surf",
     desc: "Puzzle Surf artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
-    image: nftsPics.SURF,
+    image: nftsPics.SURF
   },
   {
     name: "Puzzle Desert",
     desc: "Puzzle Desert artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
-    image: nftsPics.DESERT,
+    image: nftsPics.DESERT
   },
   {
     name: "Puzzle Airplane",
     desc: "Puzzle Airplane artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
-    image: nftsPics.AIRPLANE,
+    image: nftsPics.AIRPLANE
   },
   {
     name: "Puzzle Wheel",
     desc: "Puzzle Wheel artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
-    image: nftsPics.WHEEL,
+    image: nftsPics.WHEEL
   },
   {
     name: "Puzzle Khalifa",
     desc: "Puzzle Khalifa artefact can be used to launch a custom pool on Puzzle Swap (PuzzleSwap.org).",
-    image: nftsPics.KHALIFA,
-  },
+    image: nftsPics.KHALIFA
+  }
 ];
 
 export const NODE_URL = "https://nodes.wx.network ";

@@ -59,12 +59,7 @@ const ProductList: React.FC<IProps> = ({ title, links, ...rest }) => {
     <Root {...rest}>
       {links.map(({ icon, name, link, isExternalLink, isActive }, key) => (
         <RowLinks key={key}>
-          <img
-            src={icon}
-            width={24}
-            height={24}
-            style={{ opacity: isActive ? 0.4 : 1 }}
-          />
+          <img src={icon} width={24} height={24} style={{ opacity: isActive ? 0.4 : 1 }} />
           <StyledAnchor href={link} style={{ opacity: isActive ? 0.4 : 1 }}>
             {name}
           </StyledAnchor>

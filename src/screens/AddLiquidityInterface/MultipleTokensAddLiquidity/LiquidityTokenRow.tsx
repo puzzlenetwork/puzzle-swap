@@ -20,19 +20,9 @@ const Root = styled.div<{ warning: boolean }>`
     color: ${({ warning }) => warning && "#ed827e"};
   }
 `;
-const LiquidityTokenRow: React.FC<IProps> = ({
-  availableAmount,
-  depositAmount,
-  percent,
-  symbol,
-  logo,
-}) => {
+const LiquidityTokenRow: React.FC<IProps> = ({ availableAmount, depositAmount, percent, symbol, logo }) => {
   const available = availableAmount ? availableAmount.toFormat(4) : "-";
-  const deposit = depositAmount
-    ? depositAmount.isNaN()
-      ? "-"
-      : depositAmount.toFormat(4)
-    : "-";
+  const deposit = depositAmount ? (depositAmount.isNaN() ? "-" : depositAmount.toFormat(4)) : "-";
   const isLowMoney = availableAmount != null && availableAmount.eq(0);
   return (
     <Root className="gridRow" warning={isLowMoney}>
@@ -48,7 +38,7 @@ const LiquidityTokenRow: React.FC<IProps> = ({
             <span
               style={{
                 color: isLowMoney ? "#ed827e" : "#363870",
-                paddingLeft: 1,
+                paddingLeft: 1
               }}
             >
               {percent} %

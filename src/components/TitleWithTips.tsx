@@ -17,10 +17,7 @@ const TitleWithTips: React.FC<IProps> = ({ description, title, type, size }) => 
       <Text weight={500} type={type || "secondary"} size={size} style={{ width: "fit-content" }}>
         {title}
       </Text>
-      <Tooltip
-        containerStyles={{ display: "flex", alignItems: "center" }}
-        content={<Text>{description}</Text>}
-      >
+      <Tooltip containerStyles={{ display: "flex", alignItems: "center" }} content={<Text>{description}</Text>}>
         <InfoIcon style={{ marginLeft: 8 }} />
       </Tooltip>
     </Row>

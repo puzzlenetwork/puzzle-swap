@@ -5,10 +5,7 @@ import { observer } from "mobx-react-lite";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { useStores } from "@stores";
-import {
-  useWithdrawLiquidityVM,
-  WithdrawLiquidityVMProvider,
-} from "./WithdrawLiquidityVM";
+import { useWithdrawLiquidityVM, WithdrawLiquidityVMProvider } from "./WithdrawLiquidityVM";
 import ShortPoolInfoCard from "@components/ShortPoolInfoCard";
 import WithdrawLiquidityAmount from "./WithdrawLiquidityAmount";
 import WithdrawLiquidityTable from "./WithdrawLiquidityTable";
@@ -56,19 +53,13 @@ const WithdrawLiquidityInterfaceImpl = observer(() => {
           Withdraw liquidity
         </Text>
         <SizedBox height={4} />
-        <Text size="medium">
-          Select the percentage of assets you want to withdraw from the pool
-        </Text>
+        <Text size="medium">Select the percentage of assets you want to withdraw from the pool</Text>
         <SizedBox height={24} />
         <ShortPoolInfoCard
           title="From"
           poolLogo={vm.pool.logo}
           poolName={vm.pool.title}
-          apy={
-            vm.pool.statistics?.apr
-              ? `${new BN(vm.pool.statistics.apr).toFormat(2)} %`
-              : undefined
-          }
+          apy={vm.pool.statistics?.apr ? `${new BN(vm.pool.statistics.apr).toFormat(2)} %` : undefined}
           onChangePool={() => vm.setChangePoolModalOpen(true)}
         />
         <SizedBox height={24} />

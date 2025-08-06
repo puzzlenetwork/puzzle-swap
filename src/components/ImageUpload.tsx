@@ -49,10 +49,7 @@ const Root = styled.div`
 
 const Container = styled.div<{ image: string | null }>`
   border: 1px solid #f1f2fe;
-  ${({ image }) =>
-    image != null
-      ? `background-image: url(${image});`
-      : `background: #C6C9F4;`};
+  ${({ image }) => (image != null ? `background-image: url(${image});` : `background: #C6C9F4;`)};
   background-size: cover;
   background-position: center;
   border-radius: 12px;
@@ -74,14 +71,7 @@ const CloseButton = styled(Cross)`
   width: 20px;
 `;
 
-const ImageUpload: React.FC<IProps> = ({
-  onChange,
-  image,
-  fileName,
-  onFileNameChange,
-  fileSize,
-  onFileSizeChange,
-}) => {
+const ImageUpload: React.FC<IProps> = ({ onChange, image, fileName, onFileNameChange, fileSize, onFileSizeChange }) => {
   const { notificationStore } = useStores();
   const handleChange = async (v: React.ChangeEvent<HTMLInputElement>) => {
     const files = v.target.files;
@@ -102,21 +92,9 @@ const ImageUpload: React.FC<IProps> = ({
   return (
     <Root>
       <Container className="upload-btn-wrapper" image={image}>
-        {image == null && (
-          <img
-            src={plus}
-            style={{ top: 16, right: 16, position: "absolute" }}
-            alt="plus"
-          />
-        )}
+        {image == null && <img src={plus} style={{ top: 16, right: 16, position: "absolute" }} alt="plus" />}
         <div className="btn">
-          <input
-            style={{ zIndex: 2 }}
-            accept="image/*"
-            type="file"
-            name="file"
-            onChange={handleChange}
-          />
+          <input style={{ zIndex: 2 }} accept="image/*" type="file" name="file" onChange={handleChange} />
         </div>
       </Container>
       <SizedBox width={8} />

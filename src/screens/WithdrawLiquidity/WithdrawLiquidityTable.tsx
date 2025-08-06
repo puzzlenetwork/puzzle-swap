@@ -88,13 +88,7 @@ const WithdrawLiquidityTable: React.FC<IProps> = () => {
       </HideDesktop>
       <FixedMobileBlock>
         {!vm.loading ? (
-          <Button
-            fixed
-            disabled={
-              vm.percentToWithdraw.eq(0) || vm.totalAmountToWithdraw.eq(0)
-            }
-            onClick={vm.withdraw}
-          >
+          <Button fixed disabled={vm.percentToWithdraw.eq(0) || vm.totalAmountToWithdraw.eq(0)} onClick={vm.withdraw}>
             Withdraw {vm.totalAmountToWithdrawDisplay}
           </Button>
         ) : (

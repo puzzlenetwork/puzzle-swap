@@ -29,13 +29,9 @@ const TokenTags: React.FC<IProps> = ({ tokens, findBalanceByAssetId }) => {
     <Root>
       {tokensToDisplay.map(({ name, asset_id, share }, i) => {
         const assetBalance = findBalanceByAssetId && findBalanceByAssetId(asset_id);
-        const isActive =
-          assetBalance && assetBalance.balance && assetBalance.balance.gt(0);
+        const isActive = assetBalance && assetBalance.balance && assetBalance.balance.gt(0);
         return (
-          <Tag
-            key={asset_id + String(i)}
-            background={isActive ? undefined : undefined}
-          >
+          <Tag key={asset_id + String(i)} background={isActive ? undefined : undefined}>
             {name} {share} %
           </Tag>
         );

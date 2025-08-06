@@ -16,8 +16,7 @@ export default class StakeStore {
   public rootStore: RootStore;
 
   public stakedAccountPuzzle: BN | null = null;
-  public setStakedAccountPuzzle = (v: BN | null) =>
-    (this.stakedAccountPuzzle = v);
+  public setStakedAccountPuzzle = (v: BN | null) => (this.stakedAccountPuzzle = v);
 
   public loading: boolean = false;
   public setLoading = (v: boolean) => (this.loading = v);
@@ -57,32 +56,20 @@ export default class StakeStore {
     if (this.stakedAccountPuzzle != null) {
       this.setLoading(true);
     }
-    const addressStakedValue = await nodeService.nodeKeysRequest(
-      CONTRACT_ADDRESSES.staking,
-      `${address}_staked`
-    );
+    const addressStakedValue = await nodeService.nodeKeysRequest(CONTRACT_ADDRESSES.staking, `${address}_staked`);
     const addressStaked =
-      addressStakedValue && addressStakedValue?.length > 0
-        ? new BN(addressStakedValue[0].value)
-        : BN.ZERO;
+      addressStakedValue && addressStakedValue?.length > 0 ? new BN(addressStakedValue[0].value) : BN.ZERO;
     this.setStakedAccountPuzzle(addressStaked);
     this.setLoading(false);
   };
 
   get puzzleWallet() {
-    if (
-      this.stakedAccountPuzzle == null ||
-      this.rootStore.accountStore.address == null
-    )
-      return [];
+    if (this.stakedAccountPuzzle == null || this.rootStore.accountStore.address == null) return [];
     const { poolsStore } = this.rootStore;
     const puzzle = TOKENS_BY_SYMBOL.PUZZLE;
 
     if (this.stakedAccountPuzzle.eq(0)) return [];
-    const puzzleStakedAmount = BN.formatUnits(
-      this.stakedAccountPuzzle,
-      puzzle.decimals
-    );
+    const puzzleStakedAmount = BN.formatUnits(this.stakedAccountPuzzle, puzzle.decimals);
     const amount = puzzleStakedAmount?.toFormat(2) + ` ${puzzle.symbol}`;
     const puzzleRate = poolsStore.usdtRate(puzzle.assetId) ?? BN.ZERO;
     const usdnEquivalent = puzzleStakedAmount.times(puzzleRate);
@@ -92,7 +79,7 @@ export default class StakeStore {
       name: "Puzzle Staking",
       amount,
       nuclearValue: puzzleRate,
-      usdnEquivalent: usdnEquivalent,
+      usdnEquivalent: usdnEquivalent
     };
     return !usdnEquivalent.eq(0) ? [{ ...item }] : [];
   }

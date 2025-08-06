@@ -30,8 +30,7 @@ const InputContainer = styled.div<{
   invalid?: boolean;
   readOnly?: boolean;
 }>`
-  background: ${({ focused, theme }) =>
-    focused ? "#fffff" : theme.colors.primary100};
+  background: ${({ focused, theme }) => (focused ? "#fffff" : theme.colors.primary100)};
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -51,11 +50,7 @@ const InputContainer = styled.div<{
 
   border: 1px solid
     ${({ focused, readOnly, error, theme }) =>
-      error
-        ? theme.colors.error500
-        : focused && !readOnly
-        ? theme.colors.blue500
-        : theme.colors.primary100};
+      error ? theme.colors.error500 : focused && !readOnly ? theme.colors.blue500 : theme.colors.primary100};
 
   :hover {
     border-color: ${({ readOnly, focused, error, theme }) =>
@@ -75,22 +70,12 @@ const LightTokenInput: React.FC<IProps> = (props) => {
         <Text type="secondary" size="medium">
           Amount
         </Text>
-        <Text
-          type="secondary"
-          textAlign="right"
-          style={{ cursor: "pointer" }}
-          onClick={props.onMaxClick}
-          size="medium"
-        >
+        <Text type="secondary" textAlign="right" style={{ cursor: "pointer" }} onClick={props.onMaxClick} size="medium">
           MAX
         </Text>
       </Row>
       <SizedBox height={4} />
-      <InputContainer
-        focused={focused}
-        readOnly={!props.setAmount}
-        error={props.error}
-      >
+      <InputContainer focused={focused} readOnly={!props.setAmount} error={props.error}>
         <BigNumberInput
           renderInput={(props, ref) => (
             <AmountInput
@@ -113,12 +98,7 @@ const LightTokenInput: React.FC<IProps> = (props) => {
           placeholder="0.00"
           readOnly={!props.setAmount}
         />
-        <Text
-          style={{ whiteSpace: "nowrap" }}
-          type="secondary"
-          size="small"
-          fitContent
-        >
+        <Text style={{ whiteSpace: "nowrap" }} type="secondary" size="small" fitContent>
           {props.usdnEquivalent}
         </Text>
       </InputContainer>

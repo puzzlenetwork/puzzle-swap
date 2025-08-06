@@ -23,10 +23,17 @@ interface IProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
   onSelect: (key: IOption) => void;
 }
 
-const Root = styled.div<{ focused?: boolean, kind?: TSelectKind, textSize?: TSelectTextSize, fullWidth?: boolean }>`
+const Root = styled.div<{
+  focused?: boolean;
+  kind?: TSelectKind;
+  textSize?: TSelectTextSize;
+  fullWidth?: boolean;
+}>`
   display: flex;
   box-sizing: border-box;
-  ${({ kind, focused, theme }) => kind !== "text" && `
+  ${({ kind, focused, theme }) =>
+    kind !== "text" &&
+    `
     padding: 8px 8px 8px 12px;
     border-radius: 10px;
     background: ${focused ? theme.colors.white : theme.colors.primary100};
@@ -34,7 +41,9 @@ const Root = styled.div<{ focused?: boolean, kind?: TSelectKind, textSize?: TSel
       ${focused ? theme.colors.blue500 : theme.colors.primary100};
   `}
 
-  ${({ fullWidth }) => fullWidth && `
+  ${({ fullWidth }) =>
+    fullWidth &&
+    `
     width: 100%;
     justify-content: space-between;
   `}
@@ -50,7 +59,7 @@ const Root = styled.div<{ focused?: boolean, kind?: TSelectKind, textSize?: TSel
     }
   }};
   line-height: 24px;
-  color: ${({ kind, theme }) => kind === "text" ? theme.colors.primary650 : theme.colors.primary800};
+  color: ${({ kind, theme }) => (kind === "text" ? theme.colors.primary650 : theme.colors.primary800)};
   align-items: center;
   white-space: nowrap;
 
@@ -58,8 +67,7 @@ const Root = styled.div<{ focused?: boolean, kind?: TSelectKind, textSize?: TSel
 
   .menu-arrow {
     transition: 0.4s;
-    transform: ${({ focused }) =>
-      focused ? "rotate(-90deg)" : "rotate(90deg)"};
+    transform: ${({ focused }) => (focused ? "rotate(-90deg)" : "rotate(90deg)")};
   }
 `;
 const Option = styled.div<{ active?: boolean }>`
@@ -71,8 +79,7 @@ const Option = styled.div<{ active?: boolean }>`
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
-  color: ${({ active, theme }) =>
-    active ? theme.colors.select.selectedTextColor : theme.colors.primary800};
+  color: ${({ active, theme }) => (active ? theme.colors.select.selectedTextColor : theme.colors.primary800)};
   padding: 10px 12px 10px 22px;
   background: ${({ theme }) => `${theme.colors.white}`};
   margin: 0 -16px;
@@ -97,7 +104,7 @@ const Select: React.FC<IProps> = ({ options, selected, onSelect, ...rest }) => {
       config={{
         placement: "bottom-end",
         trigger: "click",
-        onVisibleChange: setFocused,
+        onVisibleChange: setFocused
       }}
       content={
         <Column crossAxisSize="max">
@@ -119,12 +126,7 @@ const Select: React.FC<IProps> = ({ options, selected, onSelect, ...rest }) => {
       }
       style={rest.fullWidth ? { width: "100%" } : {}}
     >
-      <Root
-        focused={focused}
-        onClick={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        {...rest}
-      >
+      <Root focused={focused} onClick={() => setFocused(true)} onBlur={() => setFocused(false)} {...rest}>
         {selected?.title ?? options[0].title}
         {!(rest.textSize === "medium") && <SizedBox width={10} />}
         <img src={arrowIcon} className="menu-arrow" alt="arrow" />

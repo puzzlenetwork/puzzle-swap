@@ -17,7 +17,7 @@ import RoundTokenIcon from "@src/components/RoundTokenIcon";
 import BN from "@src/utils/BN";
 import { ReactComponent as Autostaking } from "@src/assets/icons/autostaking.svg";
 import Tooltip from "@src/components/Tooltip";
-import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg"
+import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 
 interface IProps {}
 
@@ -54,30 +54,50 @@ const SelectsAssets: React.FC<IProps> = () => {
 
   const cols = [
     {
-      Header: () => (<Text size="medium" type="secondary" nowrap>Token</Text>), accessor: "token"
+      Header: () => (
+        <Text size="medium" type="secondary" nowrap>
+          Token
+        </Text>
+      ),
+      accessor: "token"
     },
     {
       Header: () => (
         <Tooltip content={"Given in base token"} config={{ placement: "top" }}>
           <Row alignItems="center" mainAxisSize="fit-content">
-            <Text size="medium" type="secondary" nowrap>Min ← Current → Max Price</Text>
+            <Text size="medium" type="secondary" nowrap>
+              Min ← Current → Max Price
+            </Text>
             <SizedBox width={4} />
             <InfoIcon />
           </Row>
         </Tooltip>
-      ), accessor: "price"
+      ),
+      accessor: "price"
     },
-    { Header: () => (<Text size="medium" type="secondary" nowrap>Max Sell-Off</Text>), accessor: "maxSellOff" },
-    { Header: () => (<Text size="medium" type="secondary" nowrap>Share</Text>), accessor: "share" },
+    {
+      Header: () => (
+        <Text size="medium" type="secondary" nowrap>
+          Max Sell-Off
+        </Text>
+      ),
+      accessor: "maxSellOff"
+    },
+    {
+      Header: () => (
+        <Text size="medium" type="secondary" nowrap>
+          Share
+        </Text>
+      ),
+      accessor: "share"
+    }
   ];
 
   const data = vm.rangeAssets.map((asset, index) => {
     return {
       token: (
         <Row mainAxisSize="fit-content" key={asset.asset.symbol}>
-          <RoundTokenIcon
-            src={asset.asset.logo}
-          />
+          <RoundTokenIcon src={asset.asset.logo} />
           <SizedBox width={8} />
           <Text type="primary" weight={500} size="medium" fitContent>
             {asset.asset.symbol}
@@ -98,13 +118,19 @@ const SelectsAssets: React.FC<IProps> = () => {
       ),
       price: (
         <Text type="primary" weight={500} size="medium">
-          {index === 0 ? "Base" :
-            (
-              (asset.minPrice ? `${BN.formatUnits(asset.minPrice, asset.asset.decimals).toAdaptiveFormat(true)} ← ` : "")
-              + (asset.initialPrice ? BN.formatUnits(asset.initialPrice, asset.asset.decimals).toAdaptiveFormat(true) : "-")
-              + (asset.maxPrice ? (asset.leverage?.lte(1) || !asset.maxPrice.isFinite()) ? " → ∞" : ` → ${BN.formatUnits(asset.maxPrice, asset.asset.decimals).toAdaptiveFormat(true)}` : "-")
-            )
-          }
+          {index === 0
+            ? "Base"
+            : (asset.minPrice
+                ? `${BN.formatUnits(asset.minPrice, asset.asset.decimals).toAdaptiveFormat(true)} ← `
+                : "") +
+              (asset.initialPrice
+                ? BN.formatUnits(asset.initialPrice, asset.asset.decimals).toAdaptiveFormat(true)
+                : "-") +
+              (asset.maxPrice
+                ? asset.leverage?.lte(1) || !asset.maxPrice.isFinite()
+                  ? " → ∞"
+                  : ` → ${BN.formatUnits(asset.maxPrice, asset.asset.decimals).toAdaptiveFormat(true)}`
+                : "-")}
         </Text>
       ),
       maxSellOff: (
@@ -117,7 +143,7 @@ const SelectsAssets: React.FC<IProps> = () => {
           {asset.share ? `${BN.formatUnits(asset.share, 1).toNumber()}%` : "-"}
         </Text>
       )
-    }
+    };
   });
 
   return (
@@ -137,12 +163,12 @@ const SelectsAssets: React.FC<IProps> = () => {
           changeAssetShareInRange={vm.changeAssetShareInRange}
           updateLockedState={vm.updateLockedState}
         />
-        
+
         <SizedBox height={12} />
         <SizedBoxStyled
           height={1}
           style={{
-            background: theme.colors.primary100,
+            background: theme.colors.primary100
           }}
         />
 
@@ -181,12 +207,7 @@ const SelectsAssets: React.FC<IProps> = () => {
         <SizedBox height={24} />
 
         {vm.rangeAssets.length < 10 && (
-          <Button
-            fixed
-            size="medium"
-            kind="secondary"
-            onClick={() => openAssetModal(true)}
-          >
+          <Button fixed size="medium" kind="secondary" onClick={() => openAssetModal(true)}>
             Add an asset
             <SizedBox width={10} />
             <Add />
@@ -205,10 +226,7 @@ const SelectsAssets: React.FC<IProps> = () => {
       </Text>
       <SizedBox height={8} />
       <Card style={{ width: "100%", padding: 0, overflow: "hidden" }}>
-        <Table
-          columns={cols}
-          data={data}
-        />
+        <Table columns={cols} data={data} />
       </Card>
     </Root>
   );

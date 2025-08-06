@@ -32,9 +32,7 @@ class ExploreVM {
 
   get assetsWithStats() {
     const { statisticsByAssetId } = this.rootStore.tokenStore;
-    return TOKENS_LIST.filter(({ assetId }) =>
-      Object.keys(statisticsByAssetId).includes(assetId)
-    );
+    return TOKENS_LIST.filter(({ assetId }) => Object.keys(statisticsByAssetId).includes(assetId));
   }
 
   get top3Gainers() {

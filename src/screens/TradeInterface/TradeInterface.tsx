@@ -35,12 +35,7 @@ const TradeInterfaceImpl: React.FC = observer(() => {
         {() => (
           <Root>
             {width && width > 880 && (
-              <TokensChartDesktop
-                height={485}
-                token0={vm.token0}
-                token1={vm.token1}
-                visible={vm.openedChart}
-              />
+              <TokensChartDesktop height={485} token0={vm.token0} token1={vm.token1} visible={vm.openedChart} />
             )}
             {width && width <= 880 && (
               <TokensChartMobile

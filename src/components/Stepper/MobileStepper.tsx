@@ -85,29 +85,13 @@ const IconContainer = styled.div<{ state: TStep }>`
     content: url(${doneIcon});
   }
 `;
-const MobileStepper: React.FC<IProps> = ({
-  steps,
-  activeStep,
-  onStepClick,
-  minStep,
-}) => {
+const MobileStepper: React.FC<IProps> = ({ steps, activeStep, onStepClick, minStep }) => {
   return (
     <Root>
-      <Row
-        alignItems="center"
-        justifyContent="center"
-        mainAxisSize="fit-content"
-        style={{ paddingLeft: 28 }}
-      >
+      <Row alignItems="center" justifyContent="center" mainAxisSize="fit-content" style={{ paddingLeft: 28 }}>
         {steps.map((name, step, array) => {
-          const state =
-            step === activeStep
-              ? "current"
-              : step > activeStep
-              ? "next"
-              : "previous";
-          const disabled =
-            activeStep === 3 ? true : minStep != null ? minStep < step : false;
+          const state = step === activeStep ? "current" : step > activeStep ? "next" : "previous";
+          const disabled = activeStep === 3 ? true : minStep != null ? minStep < step : false;
           return (
             <React.Fragment key={step + "mobile-step"}>
               <IconContainer
@@ -131,26 +115,11 @@ const MobileStepper: React.FC<IProps> = ({
         })}
       </Row>
       <SizedBox height={8} />
-      <Row
-        alignItems="center"
-        justifyContent="center"
-        mainAxisSize="fit-content"
-        style={{ whiteSpace: "pre-line" }}
-      >
+      <Row alignItems="center" justifyContent="center" mainAxisSize="fit-content" style={{ whiteSpace: "pre-line" }}>
         {steps.map((name, index) => {
-          const state =
-            index === activeStep
-              ? "current"
-              : index > activeStep
-              ? "next"
-              : "previous";
+          const state = index === activeStep ? "current" : index > activeStep ? "next" : "previous";
           return (
-            <TextContainer
-              size="small"
-              weight={500}
-              state={state}
-              key={index + "mobile-step-desc"}
-            >
+            <TextContainer size="small" weight={500} state={state} key={index + "mobile-step-desc"}>
               {name}
             </TextContainer>
           );

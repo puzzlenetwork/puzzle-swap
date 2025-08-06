@@ -66,20 +66,14 @@ const MyPoolBalance: React.FC<IProps> = () => {
             <Text textAlign="right" type="secondary" size="small">
               {vm.shareOfPool != null &&
                 !vm.shareOfPool.isNaN() &&
-                `Share of pool ${vm.shareOfPool
-                  ?.toFormat(6)
-                  .replace(/0+$/, "")}%`}
+                `Share of pool ${vm.shareOfPool?.toFormat(6).replace(/0+$/, "")}%`}
             </Text>
           </Column>
         </Header>
         <Divider style={{ margin: "16px 0" }} />
         <GridTable desktopTemplate="1fr 1fr" mobileTemplate="1fr 1fr">
           {vm.poolBalancesTable == null ? (
-            <Skeleton
-              height={48}
-              count={3}
-              style={{ margin: "4px 24px", width: "calc(100% - 48px)" }}
-            />
+            <Skeleton height={48} count={3} style={{ margin: "4px 24px", width: "calc(100% - 48px)" }} />
           ) : (
             vm.poolBalancesTable.map((token, i) => {
               const value = token.value.isNaN()
@@ -93,18 +87,10 @@ const MyPoolBalance: React.FC<IProps> = () => {
                 ? token.usdnEquivalent.toFormat(2)
                 : token.usdnEquivalent.toFormat(6);
               return (
-                <div
-                  className="gridRow"
-                  key={i}
-                  style={{ padding: "8px 0", alignItems: "center" }}
-                >
+                <div className="gridRow" key={i} style={{ padding: "8px 0", alignItems: "center" }}>
                   <Row alignItems="center">
                     {screenWidth && screenWidth >= 880 ? (
-                      <SquareTokenIcon
-                        size="small"
-                        src={token.logo}
-                        alt="logo"
-                      />
+                      <SquareTokenIcon size="small" src={token.logo} alt="logo" />
                     ) : (
                       <RoundTokenIcon src={token.logo} alt="logo" />
                     )}
@@ -119,31 +105,16 @@ const MyPoolBalance: React.FC<IProps> = () => {
                     </AdaptiveColumn>
                   </Row>
                   <AdaptiveRow>
-                    <Row
-                      style={{ width: "100%", textAlign: "end" }}
-                      className="mobile"
-                    >
+                    <Row style={{ width: "100%", textAlign: "end" }} className="mobile">
                       <Text size="medium">
-                        <span>
-                          {address !== null && !token.value.isNaN()
-                            ? value
-                            : "-"}
-                        </span>
+                        <span>{address !== null && !token.value.isNaN() ? value : "-"}</span>
                         <span style={{ color: "#8082C5" }}>
-                          {address !== null && !token.usdnEquivalent.isNaN()
-                            ? `($ ${usdn})`
-                            : "-"}
+                          {address !== null && !token.usdnEquivalent.isNaN() ? `($ ${usdn})` : "-"}
                         </span>
                       </Text>
                     </Row>
-                    <Column
-                      crossAxisSize="max"
-                      className="desktop"
-                      style={{ textAlign: "end" }}
-                    >
-                      <Text size="medium">
-                        {address !== null ? value : "-"}
-                      </Text>
+                    <Column crossAxisSize="max" className="desktop" style={{ textAlign: "end" }}>
+                      <Text size="medium">{address !== null ? value : "-"}</Text>
                       <Text size="small" type="secondary">
                         {address !== null ? `$ ${usdn}` : "-"}
                       </Text>
@@ -177,11 +148,7 @@ const MyPoolBalance: React.FC<IProps> = () => {
                 Connect your wallet to invest
               </Text>
               <SizedBox height={16} />
-              <Button
-                fixed
-                size="medium"
-                onClick={() => setLoginModalOpened(true)}
-              >
+              <Button fixed size="medium" onClick={() => setLoginModalOpened(true)}>
                 Connect wallet
               </Button>
             </Column>

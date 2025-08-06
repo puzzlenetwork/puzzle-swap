@@ -9,15 +9,9 @@ interface IProps {
 
 const Checkbox: React.FC<IProps> = ({ checked, onChange }) => {
   return checked ? (
-    <CheckedCheckbox
-      style={{ cursor: "pointer", width: 19, height: 16 }}
-      onClick={() => onChange(false)}
-    />
+    <CheckedCheckbox style={{ cursor: "pointer", width: 19, height: 16 }} onClick={() => onChange(false)} />
   ) : (
-    <NoCheckedCheckbox
-      style={{ cursor: "pointer", width: 19, height: 16 }}
-      onClick={() => onChange(true)}
-    />
+    <NoCheckedCheckbox style={{ cursor: "pointer", width: 19, height: 16 }} onClick={() => onChange(true)} />
   );
 };
 export default Checkbox;

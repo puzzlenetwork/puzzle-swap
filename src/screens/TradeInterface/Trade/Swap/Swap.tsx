@@ -48,7 +48,7 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
     if (assetId === vm.assetId1) {
       notificationStore.notify("You can't choose same assets", {
         type: "error",
-        title: "Warning",
+        title: "Warning"
       });
       return;
     }
@@ -56,7 +56,7 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
     urlSearchParams.set("asset0", assetId);
     navigate({
       pathname: window.location.pathname,
-      search: `?${urlSearchParams.toString()}`,
+      search: `?${urlSearchParams.toString()}`
     });
     vm.setAssetId0(assetId);
   };
@@ -65,7 +65,7 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
     if (assetId === vm.assetId0) {
       notificationStore.notify("You can't choose same assets", {
         type: "error",
-        title: "Warning",
+        title: "Warning"
       });
       return;
     }
@@ -73,15 +73,12 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
     urlSearchParams.set("asset1", assetId);
     navigate({
       pathname: window.location.pathname,
-      search: `?${urlSearchParams.toString()}`,
+      search: `?${urlSearchParams.toString()}`
     });
     vm.setAssetId1(assetId);
   };
 
-  const debounce = useMemo(
-    () => _.debounce((val: BN) => setAmount0(val), 1000),
-    []
-  );
+  const debounce = useMemo(() => _.debounce((val: BN) => setAmount0(val), 1000), []);
   const handleDebounce = useCallback(
     (val: BN) => {
       setAmount0(val);
@@ -101,11 +98,7 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
 
   return (
     <Root {...rest}>
-      <Card
-        style={{ position: "relative" }}
-        paddingDesktop="16px 24px"
-        paddingMobile="16px"
-      >
+      <Card style={{ position: "relative" }} paddingDesktop="16px 24px" paddingMobile="16px">
         <SettingsHeader withSetting />
         <Settings />
         <TokenInput
@@ -143,12 +136,8 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
             {vm.simpleRoute != null
               ? vm.simpleRoute.map((symbol, i) => (
                   <React.Fragment key={i}>
-                    <Text style={{ lineHeight: 0, whiteSpace: "nowrap" }}>
-                      {symbol}&nbsp;
-                    </Text>
-                    {i !== vm.simpleRoute!.length - 1 && (
-                      <ArrowIcon style={{ minWidth: 16 }} />
-                    )}
+                    <Text style={{ lineHeight: 0, whiteSpace: "nowrap" }}>{symbol}&nbsp;</Text>
+                    {i !== vm.simpleRoute!.length - 1 && <ArrowIcon style={{ minWidth: 16 }} />}
                   </React.Fragment>
                 ))
               : "—"}
@@ -158,14 +147,8 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
         </SwapDetailRow>
         <Divider />
         <SwapDetailRow title="Price impact">
-          <Row
-            alignItems="center"
-            mainAxisSize="fit-content"
-            justifyContent="flex-end"
-          >
-            {vm.priceImpact && (
-              <Text>~{vm.priceImpact.toFormat(4)}%&nbsp;</Text>
-            )}
+          <Row alignItems="center" mainAxisSize="fit-content" justifyContent="flex-end">
+            {vm.priceImpact && <Text>~{vm.priceImpact.toFormat(4)}%&nbsp;</Text>}
             {vm.token0 && !vm.amount0.isNaN() && (
               <Tooltip
                 containerStyles={{ display: "flex", alignItems: "center" }}
@@ -180,10 +163,7 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
       </Card>
       <SizedBox height={16} />
       <Details />
-      <RoutingModal
-        visible={vm.routingModalOpened}
-        onClose={() => vm.setRoutingModalState(false)}
-      />
+      <RoutingModal visible={vm.routingModalOpened} onClose={() => vm.setRoutingModalState(false)} />
     </Root>
   );
 };

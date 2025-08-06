@@ -35,8 +35,7 @@ const Root = styled.div<{
   .balance-group {
     width: 20px;
     height: 20px;
-    transform: ${({ balanceSort }) =>
-      balanceSort ? "scale(1)" : "scale(1, -1)"};
+    transform: ${({ balanceSort }) => (balanceSort ? "scale(1)" : "scale(1, -1)")};
   }
 
   .apy-group {
@@ -48,8 +47,7 @@ const Root = styled.div<{
   .liquidity-group {
     width: 20px;
     height: 20px;
-    transform: ${({ liquiditySort }) =>
-      liquiditySort ? "scale(1)" : "scale(1, -1)"};
+    transform: ${({ liquiditySort }) => (liquiditySort ? "scale(1)" : "scale(1, -1)")};
   }
 `;
 const Subtitle = styled(Text)`
@@ -73,8 +71,8 @@ const InvestImpl: React.FC<IProps> = () => {
             </Text>
             <SizedBox height={4} />
             <Subtitle size="medium" fitContent>
-              Unlike the old school AMM pools, megapools enable liquidity
-              provision in up to 10 tokens in order to maximize LP profit.
+              Unlike the old school AMM pools, megapools enable liquidity provision in up to 10 tokens in order to
+              maximize LP profit.
             </Subtitle>
             {accountStore.address != null && <AccountInvestBalance />}
             <SizedBox height={24} />

@@ -138,7 +138,8 @@ const tokenLogos: Record<string, string> = {
   EGGPOINT: eggPointLogo,
   EGG: eggLogo,
   NEWEGG: eggLogo,
-  OLDEGG: "https://raw.githubusercontent.com/puzzlenetwork/static/6b602561e02c0eb62bcdbb18ea4fefe3751d7a3b/EGG.8babd6c1fe27f3854782a2dbf47f91d1%201.svg",
+  OLDEGG:
+    "https://raw.githubusercontent.com/puzzlenetwork/static/6b602561e02c0eb62bcdbb18ea4fefe3751d7a3b/EGG.8babd6c1fe27f3854782a2dbf47f91d1%201.svg",
   XTN: usdnLogo,
   ENDO: endoLogo,
   MARVIN: marvinLogo,
@@ -226,8 +227,7 @@ const tokenLogos: Record<string, string> = {
   PETE: peteLogo,
   BAI: baiLogo,
   PZ_Old_Gold: oldgoldLogo,
-  PZ_Mega_Pete:
-    "https://images.wavesducks.com/api/images/DUCK-GGGGAAAA-GG.svg",
+  PZ_Mega_Pete: "https://images.wavesducks.com/api/images/DUCK-GGGGAAAA-GG.svg",
   USDT_POLY: usdtpolyLogo,
   USDT_PPT: usdtpptLogo,
   WHIRLPOOL: whirlpoolLogo,
@@ -239,10 +239,8 @@ const tokenLogos: Record<string, string> = {
   UNIT0: unit0Logo,
   PZ_5pool: pool5Logo,
   PZ_WEB: pzWebLogo,
-  PZ_WEBU:
-    "https://puzzleswop.s3.amazonaws.com/f63b754d-8dd8-40c4-83aa-3dd1429a4e18",
-  PZ_REWIND:
-    "https://puzzleswop.s3.amazonaws.com/fcf39537-9ead-4e17-bfd9-1330eb3f05ce",
+  PZ_WEBU: "https://puzzleswop.s3.amazonaws.com/f63b754d-8dd8-40c4-83aa-3dd1429a4e18",
+  PZ_REWIND: "https://puzzleswop.s3.amazonaws.com/fcf39537-9ead-4e17-bfd9-1330eb3f05ce",
   PZ_Units: pzUnitsLogo,
   PZ_BURN_XTN: pzBurnXtnLogo,
   PZ_BBB: pzBbbLogo,
@@ -279,13 +277,10 @@ const tokenLogos: Record<string, string> = {
   SANCHO:
     "https://s3.eu-central-1.amazonaws.com/memecity-prod/meme-city/bf7ee3ff-1805-4ec7-9398-daf06841c535.png?t=1744303065718",
 
-  WX_USDCUSDT_LP:
-    "https://waves.exchange/static/icons/assets/rZMQ6g31Lr7sPAaAoYc4U2PHCVauTuKUSzUbJtUyPZN.svg",
+  WX_USDCUSDT_LP: "https://waves.exchange/static/icons/assets/rZMQ6g31Lr7sPAaAoYc4U2PHCVauTuKUSzUbJtUyPZN.svg",
   AXLY: "https://waves.exchange/static/icons/assets/DcAbWMXrfMeooG1BrZ9ipiseFSVm7zxTs1XZKRp6DVeZ.svg",
-  USDC_PPT:
-    "https://waves.exchange/static/icons/assets/3ayH3PhWMkhFsySsUVcC8BvFf1QyxGB5BZuTPyVtmP4v.svg",
-  USDT_TRC:
-    "https://waves.exchange/static/icons/assets/DaErMEp76HtuvbbSYxDwLovRimaAwtEyQGFeHLQ3UWwh.svg",
+  USDC_PPT: "https://waves.exchange/static/icons/assets/3ayH3PhWMkhFsySsUVcC8BvFf1QyxGB5BZuTPyVtmP4v.svg",
+  USDT_TRC: "https://waves.exchange/static/icons/assets/DaErMEp76HtuvbbSYxDwLovRimaAwtEyQGFeHLQ3UWwh.svg",
   SPICE: "https://wavesducks.com/static/img/token/spice.svg",
   BNB: "https://wavescap.com/wp-content/uploads/asset-logo/66a1br3BrkoaJgP7yEar9hJcSTvJPoH6PYBLqscXcMGo.svg",
 
@@ -301,18 +296,13 @@ const tokenLogos: Record<string, string> = {
   TRUMP: "https://s2.coinmarketcap.com/static/img/coins/64x64/35336.png",
   MELANIA: "https://s2.coinmarketcap.com/static/img/coins/64x64/35347.png",
 
-  MEGAMEME:
-    "https://megameme-249514940b30.herokuapp.com/static/media/megameme.49817f851dcdada62613bf2e1f70f56d.svg",
+  MEGAMEME: "https://megameme-249514940b30.herokuapp.com/static/media/megameme.49817f851dcdada62613bf2e1f70f56d.svg",
 
-  CRV_WXG:
-    "https://r.wavesexplorer.com/assets/site/img/assets_logo/3KhNcHo4We1G5EWps7b1e5DTdLgWDzctc8S6ynu37KAb.svg",
-  SHIB_WXG:
-    "https://r.wavesexplorer.com/assets/site/img/assets_logo/GVxGPBtgVWMW1wHiFnfaCakbJ6sKgZgowJgW5Dqrd7JH.svg",
-  DAI_WXG:
-    "https://r.wavesexplorer.com/assets/site/img/assets_logo/8zUYbdB8Q6mDhpcXYv52ji8ycfj4SDX4gJXS7YY3dA4R.svg",
-  
-  USDC_ERC: usdcLogo,
+  CRV_WXG: "https://r.wavesexplorer.com/assets/site/img/assets_logo/3KhNcHo4We1G5EWps7b1e5DTdLgWDzctc8S6ynu37KAb.svg",
+  SHIB_WXG: "https://r.wavesexplorer.com/assets/site/img/assets_logo/GVxGPBtgVWMW1wHiFnfaCakbJ6sKgZgowJgW5Dqrd7JH.svg",
+  DAI_WXG: "https://r.wavesexplorer.com/assets/site/img/assets_logo/8zUYbdB8Q6mDhpcXYv52ji8ycfj4SDX4gJXS7YY3dA4R.svg",
 
+  USDC_ERC: usdcLogo
 };
 
 export default tokenLogos;

@@ -37,9 +37,7 @@ const AssetsBalances: React.FC<IProps> = () => {
       {vm.balances.length !== 0 ? (
         vm.balances.map((b) => {
           const rate = poolsStore.usdtRate(b.assetId)?.toFormat(2);
-          const rateChange = tokenStore.statistics.find(
-            ({ assetId }) => assetId === b.assetId
-          );
+          const rateChange = tokenStore.statistics.find(({ assetId }) => assetId === b.assetId);
           return (
             <InvestRow
               rateChange={rateChange?.change24H ?? BN.ZERO}

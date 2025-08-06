@@ -4,14 +4,7 @@ import { makeAutoObservable, reaction } from "mobx";
 import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import aggregatorService, { TCalcRoute } from "@src/services/aggregatorService";
-import {
-  CONTRACT_ADDRESSES,
-  EXPLORER_URL,
-  IToken,
-  ROUTES,
-  TOKENS_BY_ASSET_ID,
-  TOKENS_BY_SYMBOL,
-} from "@src/constants";
+import { CONTRACT_ADDRESSES, EXPLORER_URL, IToken, ROUTES, TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL } from "@src/constants";
 
 interface IProps {
   children: React.ReactNode;
@@ -59,10 +52,7 @@ export class SwapVM {
   price: BN = BN.ZERO;
   private _setPrice = (price: BN) => (this.price = price);
 
-  private _calculatePrice(
-    amount0: BN = this.amount0,
-    amount1: BN = this.amount1
-  ) {
+  private _calculatePrice(amount0: BN = this.amount0, amount1: BN = this.amount1) {
     const price = BN.formatUnits(amount1, this.token1.decimals)
       .div(BN.formatUnits(amount0, this.token0.decimals))
       .times(0.9971);
@@ -70,19 +60,16 @@ export class SwapVM {
   }
 
   parameters: string | null = null;
-  private _setParameters = (parameters: string | null) =>
-    (this.parameters = parameters);
+  private _setParameters = (parameters: string | null) => (this.parameters = parameters);
 
   synchronizing: boolean = false;
-  private _setSynchronizing = (synchronizing: boolean) =>
-    (this.synchronizing = synchronizing);
+  private _setSynchronizing = (synchronizing: boolean) => (this.synchronizing = synchronizing);
 
   loading: boolean = false;
   private _setLoading = (l: boolean) => (this.loading = l);
 
   priceImpact: BN = BN.ZERO;
-  private _setPriceImpact = (priceImpact: BN) =>
-    (this.priceImpact = priceImpact);
+  private _setPriceImpact = (priceImpact: BN) => (this.priceImpact = priceImpact);
 
   route: Array<TCalcRoute> = [];
   private _setRoute = (route: Array<TCalcRoute>) => (this.route = route);
@@ -101,25 +88,19 @@ export class SwapVM {
 
   get amount0MaxClickFunc(): (() => void) | undefined {
     const { token0, balance0 } = this;
-    return token0 != null && balance0 != null
-      ? () => this.setAmount0(balance0)
-      : undefined;
+    return token0 != null && balance0 != null ? () => this.setAmount0(balance0) : undefined;
   }
 
   get usdnEquivalent0() {
     const rate = this.rootStore.poolsStore.usdtRate(this.token0.assetId);
-    const value = BN.formatUnits(this.amount0, this.token0.decimals).times(
-      rate ?? BN.ZERO
-    );
+    const value = BN.formatUnits(this.amount0, this.token0.decimals).times(rate ?? BN.ZERO);
     const format = value.eq(0) ? 0 : value?.gt(0.0001) ? 2 : 4;
     return "$ " + value.toFormat(format);
   }
 
   get usdnEquivalent1() {
     const rate = this.rootStore.poolsStore.usdtRate(this.token1.assetId);
-    const value = BN.formatUnits(this.amount1, this.token1.decimals).times(
-      rate ?? BN.ZERO
-    );
+    const value = BN.formatUnits(this.amount1, this.token1.decimals).times(rate ?? BN.ZERO);
     const format = value.eq(0) ? 0 : value?.gt(0.0001) ? 2 : 4;
     return "$ " + value.toFormat(format);
   }
@@ -145,29 +126,15 @@ export class SwapVM {
     if (this.rejectAggregatorPromise != null) this.rejectAggregatorPromise();
     const promise = new Promise((resolve, reject) => {
       this.rejectAggregatorPromise = reject;
-      resolve(
-        aggregatorService.calc(
-          assetId0,
-          assetId1,
-          invalidAmount ? defaultAmount0 : amount0
-        )
-      );
+      resolve(aggregatorService.calc(assetId0, assetId1, invalidAmount ? defaultAmount0 : amount0));
     });
     promise
       .then((v: any) => {
         !invalidAmount && this._setAmount1(new BN(v.estimatedOut * 0.9971));
-        this._calculatePrice(
-          invalidAmount ? defaultAmount0 : amount0,
-          new BN(v.estimatedOut)
-        );
+        this._calculatePrice(invalidAmount ? defaultAmount0 : amount0, new BN(v.estimatedOut));
         this._setSynchronizing(false);
         !invalidAmount &&
-          this._setPriceImpact(
-            (new BN(v.priceImpact).gt(0)
-              ? new BN(v.priceImpact)
-              : BN.ZERO
-            ).times(100)
-          );
+          this._setPriceImpact((new BN(v.priceImpact).gt(0) ? new BN(v.priceImpact) : BN.ZERO).times(100));
         this._setParameters(!invalidAmount ? v.parameters : null);
         this._setRoute(v.routes);
         this._setAggregatedProfit(new BN(v.aggregatedProfit));
@@ -186,9 +153,7 @@ export class SwapVM {
   };
 
   get token0() {
-    return this.rootStore.accountStore.balances.find(
-      ({ assetId }) => assetId === this.assetId0
-    )!;
+    return this.rootStore.accountStore.balances.find(({ assetId }) => assetId === this.assetId0)!;
   }
 
   get balance0() {
@@ -196,17 +161,11 @@ export class SwapVM {
   }
 
   get token1() {
-    return this.rootStore.accountStore.balances.find(
-      ({ assetId }) => assetId === this.assetId1
-    )!;
+    return this.rootStore.accountStore.balances.find(({ assetId }) => assetId === this.assetId1)!;
   }
 
   get simpleRoute() {
-    if (
-      this.route == null ||
-      this.route.length <= 0 ||
-      this.route[0].exchanges.length <= 0
-    ) {
+    if (this.route == null || this.route.length <= 0 || this.route[0].exchanges.length <= 0) {
       return null;
     }
 
@@ -216,24 +175,18 @@ export class SwapVM {
         ...(i === 0 ? [e.from, e.to] : [e.to]).map((v) => {
           const asset = this.getBalanceByAssetId(v);
           return asset != null ? asset.symbol : "UNKNOWN";
-        }),
+        })
       ],
       []
     );
 
-    return simpleRoute.length < 4
-      ? simpleRoute
-      : [simpleRoute[0], "...", simpleRoute[simpleRoute.length - 1]];
+    return simpleRoute.length < 4 ? simpleRoute : [simpleRoute[0], "...", simpleRoute[simpleRoute.length - 1]];
   }
 
-  getBalanceByAssetId = (assetId: string) =>
-    this.rootStore.accountStore.balances.find((b) => assetId === b.assetId);
+  getBalanceByAssetId = (assetId: string) => this.rootStore.accountStore.balances.find((b) => assetId === b.assetId);
 
   get minimumToReceive(): BN {
-    const slippage =
-      JSON.parse(
-        localStorage.getItem("puzzle-user-settings") || '{"slippage": 1}'
-      )?.slippage || 1;
+    const slippage = JSON.parse(localStorage.getItem("puzzle-user-settings") || '{"slippage": 1}')?.slippage || 1;
     return this.amount1.times(new BN(100 - slippage).div(100));
   }
 
@@ -257,8 +210,8 @@ export class SwapVM {
         payment: [
           {
             assetId: token0.assetId === "WAVES" ? null : token0.assetId,
-            amount: amount0.toString(),
-          },
+            amount: amount0.toString()
+          }
         ],
         call: {
           function: "swap",
@@ -266,27 +219,24 @@ export class SwapVM {
             { type: "string", value: parameters },
             {
               type: "integer",
-              value: minimumToReceive.toFixed(0).toString(),
-            },
-          ],
-        },
+              value: minimumToReceive.toFixed(0).toString()
+            }
+          ]
+        }
       })
       .then((txId) => {
         txId &&
-          notificationStore.notify(
-            "You can view the details of it in Waves Explorer",
-            {
-              type: "success",
-              title: "Transaction is completed",
-              link: `${EXPLORER_URL}/transactions/${txId}`,
-              linkTitle: "View on Explorer",
-            }
-          );
+          notificationStore.notify("You can view the details of it in Waves Explorer", {
+            type: "success",
+            title: "Transaction is completed",
+            link: `${EXPLORER_URL}/transactions/${txId}`,
+            linkTitle: "View on Explorer"
+          });
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
           type: "error",
-          title: "Transaction is not completed",
+          title: "Transaction is not completed"
         });
       })
       .then(() => this._setLoading(false))
@@ -295,19 +245,12 @@ export class SwapVM {
 
   get totalLiquidity() {
     if (this.rootStore.poolsStore == null) return "";
-    const liq = this.rootStore.poolsStore.pools.reduce(
-      (acc, pool) => acc.plus(pool.globalLiquidity),
-      BN.ZERO
-    );
+    const liq = this.rootStore.poolsStore.pools.reduce((acc, pool) => acc.plus(pool.globalLiquidity), BN.ZERO);
     return liq.toFormat(2);
   }
 
   get schemaValues() {
-    if (
-      this.route == null ||
-      this.route.length <= 0 ||
-      this.route[0].exchanges.length <= 0
-    ) {
+    if (this.route == null || this.route.length <= 0 || this.route[0].exchanges.length <= 0) {
       return null;
     }
     return this.route.reduce<Array<ISchemaRoute>>((acc, v) => {
@@ -321,9 +264,7 @@ export class SwapVM {
         const type = v.type;
         return [...ac, { rate, token0, token1, type }];
       }, []);
-      const percent = this.amount0.eq(0)
-        ? new BN(100)
-        : new BN(v.in).times(new BN(100)).div(this.amount0);
+      const percent = this.amount0.eq(0) ? new BN(100) : new BN(v.in).times(new BN(100)).div(this.amount0);
       return [...acc, { percent: percent, exchanges }];
     }, []);
   }

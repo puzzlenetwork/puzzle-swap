@@ -53,54 +53,41 @@ const MobileNavBar: React.FC<IProps> = () => {
     {
       name: "Explore",
       link: ROUTES.EXPLORE,
-      icon: (
-        <Compass active={isRoutesEquals(ROUTES.EXPLORE, location.pathname)} />
-      ),
-      big: false,
+      icon: <Compass active={isRoutesEquals(ROUTES.EXPLORE, location.pathname)} />,
+      big: false
     },
     {
       name: "Pools",
       link: ROUTES.POOLS,
       icon: <Invest active={isRoutesEquals(ROUTES.POOLS, location.pathname)} />,
-      big: false,
+      big: false
     },
     {
       link: ROUTES.TRADE,
       icon: <Swap active={isRoutesEquals(ROUTES.TRADE, location.pathname)} />,
-      big: true,
+      big: true
     },
     {
       name: "Stake",
       link: ROUTES.STAKE,
       icon: <Stake active={isRoutesEquals(ROUTES.STAKE, location.pathname)} />,
-      big: false,
+      big: false
     },
     {
       name: "Ranges",
       link: ROUTES.RANGES,
       icon: <Ranges active={isRoutesEquals(ROUTES.RANGES, location.pathname)} />,
-      big: false,
-    },
+      big: false
+    }
   ];
   return (
     <Root>
       {menuItems.map(({ icon, name, big, link }, index) => (
-        <MenuItem
-          key={index}
-          onClick={() => (name === "NFT" ? window.open(link) : navigate(link))}
-        >
+        <MenuItem key={index} onClick={() => (name === "NFT" ? window.open(link) : navigate(link))}>
           {icon}
           {name != null && <SizedBox height={6} />}
           {name != null && (
-            <Text
-              size="small"
-              type={
-                isRoutesEquals(link, location.pathname)
-                  ? "primary"
-                  : "secondary"
-              }
-              fitContent
-            >
+            <Text size="small" type={isRoutesEquals(link, location.pathname) ? "primary" : "secondary"} fitContent>
               {name}
             </Text>
           )}

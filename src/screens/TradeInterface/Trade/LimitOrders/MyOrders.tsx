@@ -32,45 +32,29 @@ const MyOrders: React.FC<IProps> = () => {
       </Text>
       <SizedBox height={24} />
       <Row style={{ position: "relative" }}>
-        <Tabs
-          tabs={[{ name: "Open" }, { name: "History" }]}
-          activeTab={activeTab}
-          setActive={(v) => setActiveTab(v)}
-        />
-        {accountStore.address != null &&
-          activeTab === 0 &&
-          vm.isThereOpenedOrders && (
-            <Row
-              mainAxisSize="fit-content"
-              alignItems="center"
-              justifyContent="center"
-              style={{ cursor: "pointer", position: "absolute", right: 0 }}
-              onClick={handleCancelAll}
-            >
-              <CloseIcon style={{ height: 16, width: 16 }} />
-              <SizedBox width={2} />
-              <Text
-                size="medium"
-                weight={500}
-                type="blue500"
-                fitContent
-                onClick={() => vm.checkOrderCancel("", true)}
-              >
-                Cancel all
-              </Text>
-            </Row>
-          )}
+        <Tabs tabs={[{ name: "Open" }, { name: "History" }]} activeTab={activeTab} setActive={(v) => setActiveTab(v)} />
+        {accountStore.address != null && activeTab === 0 && vm.isThereOpenedOrders && (
+          <Row
+            mainAxisSize="fit-content"
+            alignItems="center"
+            justifyContent="center"
+            style={{ cursor: "pointer", position: "absolute", right: 0 }}
+            onClick={handleCancelAll}
+          >
+            <CloseIcon style={{ height: 16, width: 16 }} />
+            <SizedBox width={2} />
+            <Text size="medium" weight={500} type="blue500" fitContent onClick={() => vm.checkOrderCancel("", true)}>
+              Cancel all
+            </Text>
+          </Row>
+        )}
       </Row>
       <SizedBox height={40} />
       {accountStore.address == null ? (
         <Column justifyContent="center" alignItems="center" crossAxisSize="max">
           <Text fitContent>Connect your wallet to see your order history</Text>
           <SizedBox height={24} />
-          <Button
-            kind="secondary"
-            size="medium"
-            onClick={() => accountStore.setLoginModalOpened(true)}
-          >
+          <Button kind="secondary" size="medium" onClick={() => accountStore.setLoginModalOpened(true)}>
             Connect wallet
           </Button>
         </Column>

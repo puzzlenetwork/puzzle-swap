@@ -8,10 +8,7 @@ import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
 import { Column } from "@components/Flex";
 import Skeleton from "react-loading-skeleton";
-import {
-  IPaymentsArtefact,
-  useCreateCustomPoolsVM,
-} from "@screens/CreateCustomPools/CreateCustomPoolsVm";
+import { IPaymentsArtefact, useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
 import Button from "@components/Button";
 import { ReactComponent as Add } from "@src/assets/icons/add.svg";
 
@@ -33,10 +30,7 @@ const Wrap = styled.div`
   cursor: pointer;
 `;
 const NFTPic = styled.div<{ image: string }>`
-  ${({ image }) =>
-    image != null
-      ? `background-image: url(${image});`
-      : `background: #C6C9F4;`};
+  ${({ image }) => (image != null ? `background-image: url(${image});` : `background: #C6C9F4;`)};
   background-size: cover;
   background-position: center;
   border-radius: 12px;
@@ -53,11 +47,7 @@ const Tag = styled.div`
   bottom: 4px;
   left: 8px;
 `;
-const SelectNftDialog: React.FC<IProps> = ({
-  onNftClick,
-  children,
-  ...rest
-}) => {
+const SelectNftDialog: React.FC<IProps> = ({ onNftClick, children, ...rest }) => {
   const { nftStore } = useStores();
   // const { accountNFTs } = nftStore;
   const vm = useCreateCustomPoolsVM();
@@ -72,12 +62,7 @@ const SelectNftDialog: React.FC<IProps> = ({
           <Grid>
             {nftStore.nftForPoolCreation == null &&
               Array.from({ length: 2 }).map((_, index) => (
-                <Skeleton
-                  style={{ borderRadius: 8 }}
-                  height={152}
-                  width={152}
-                  key={index + "skeleton-row"}
-                />
+                <Skeleton style={{ borderRadius: 8 }} height={152} width={152} key={index + "skeleton-row"} />
               ))}
             {nftStore.nftForPoolCreation &&
               nftStore.nftForPoolCreation
@@ -89,7 +74,7 @@ const SelectNftDialog: React.FC<IProps> = ({
                       onNftClick({
                         name: name ?? "",
                         assetId: assetId ?? "",
-                        picture: imageLink,
+                        picture: imageLink
                       });
                       rest.onClose && rest.onClose({} as any);
                     }}
@@ -102,12 +87,7 @@ const SelectNftDialog: React.FC<IProps> = ({
           </Grid>
           <SizedBox height={16} />
           {nftStore.nftForPoolCreation?.length === 1 && (
-            <Button
-              fixed
-              kind="secondary"
-              size="medium"
-              onClick={handleBuyMore}
-            >
+            <Button fixed kind="secondary" size="medium" onClick={handleBuyMore}>
               Buy more
               <SizedBox width={12} />
               <Add />

@@ -19,11 +19,7 @@ const SwapButton: React.FC<IProps> = () => {
         </Button>
       );
 
-    case amount0 == null ||
-      token0 == null ||
-      amount1 == null ||
-      token1 == null ||
-      amount0.eq(0):
+    case amount0 == null || token0 == null || amount1 == null || token1 == null || amount0.eq(0):
       return (
         <Button disabled fixed>
           Enter an amount

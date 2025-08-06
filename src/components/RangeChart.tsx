@@ -9,7 +9,11 @@ import SizedBox from "./SizedBox";
 import styled from "@emotion/styled";
 
 interface IParams {
-  assetsWithLeverage: ({ assetId: string, leverage: number, relativeLeverage: number })[];
+  assetsWithLeverage: {
+    assetId: string;
+    leverage: number;
+    relativeLeverage: number;
+  }[];
   size: number;
   index?: number;
 }
@@ -18,7 +22,7 @@ const AssetsList = styled.div`
   display: grid;
   gap: 8px;
   grid-template-columns: repeat(2, 1fr);
-`
+`;
 
 const TokenIcon = styled(Img)`
   width: 20px;
@@ -33,18 +37,42 @@ const RangeChart = ({ assetsWithLeverage, size, index }: IParams) => {
   const halfBackgroundIcon = backgroundIconSize / 2;
 
   return (
-    <Tooltip config={{ placement: "bottom" }} content={
-      <Column crossAxisSize="max">
-        <Text size="medium">Range represents the ratio of actual liquidity to virtual liquidity. The farther a token’s point is from the center, the higher its actual liquidity.</Text>
-        <SizedBox height={10} />
-        <AssetsList>{
-          assetsWithLeverage
-            .map((asset) => ({ ...TOKENS_BY_ASSET_ID[asset.assetId], ...asset }))
-            .map(({ logo, symbol, leverage }, index) => <Row crossAxisSize="max" key={index}><TokenIcon src={logo} /><SizedBox width={6} /><Text size="medium">{symbol} - {leverage.toFixed(2)}%</Text></Row>)
-        }</AssetsList>
-      </Column>
-    }>
-      <RadarChart width={size} height={size} data={assetsWithLeverage} style={{ transform: assetsWithLeverage.length < 3 ? "rotate(-90deg)" : "" }}>
+    <Tooltip
+      config={{ placement: "bottom" }}
+      content={
+        <Column crossAxisSize="max">
+          <Text size="medium">
+            Range represents the ratio of actual liquidity to virtual liquidity. The farther a token’s point is from the
+            center, the higher its actual liquidity.
+          </Text>
+          <SizedBox height={10} />
+          <AssetsList>
+            {assetsWithLeverage
+              .map((asset) => ({
+                ...TOKENS_BY_ASSET_ID[asset.assetId],
+                ...asset
+              }))
+              .map(({ logo, symbol, leverage }, index) => (
+                <Row crossAxisSize="max" key={index}>
+                  <TokenIcon src={logo} />
+                  <SizedBox width={6} />
+                  <Text size="medium">
+                    {symbol} - {leverage.toFixed(2)}%
+                  </Text>
+                </Row>
+              ))}
+          </AssetsList>
+        </Column>
+      }
+    >
+      <RadarChart
+        width={size}
+        height={size}
+        data={assetsWithLeverage}
+        style={{
+          transform: assetsWithLeverage.length < 3 ? "rotate(-90deg)" : ""
+        }}
+      >
         <PolarGrid />
         <Radar
           dataKey="relativeLeverage"
@@ -52,36 +80,42 @@ const RangeChart = ({ assetsWithLeverage, size, index }: IParams) => {
             return (
               <>
                 <defs>
-                  <filter id={"blur" + index} x="-100%" y="-100%" width="300%" height="300%" color-interpolation-filters="sRGB">
+                  <filter
+                    id={"blur" + index}
+                    x="-100%"
+                    y="-100%"
+                    width="300%"
+                    height="300%"
+                    color-interpolation-filters="sRGB"
+                  >
                     <feGaussianBlur in="SourceGraphic" stdDeviation="12" />
                   </filter>
                 </defs>
                 <RadarWithImage
-                  imageElement={(
-                      <g filter={`url(#blur${index})`}>
-                        {props.points.map((point: any, i: any) => (
-                          <image
-                            href={TOKENS_BY_ASSET_ID[point.name].logo}
-                            width={backgroundIconSize}
-                            height={backgroundIconSize}
-                            x={point.x - halfBackgroundIcon}
-                            y={point.y - halfBackgroundIcon}
-                            key={i}
-                            style={{
-                              opacity: 0.9,
-                              borderRadius: halfBackgroundIcon // Note: SVG image does not support borderRadius directly
-                            }}
-                          />
-                        ))}
-                      </g>
-                    )
+                  imageElement={
+                    <g filter={`url(#blur${index})`}>
+                      {props.points.map((point: any, i: any) => (
+                        <image
+                          href={TOKENS_BY_ASSET_ID[point.name].logo}
+                          width={backgroundIconSize}
+                          height={backgroundIconSize}
+                          x={point.x - halfBackgroundIcon}
+                          y={point.y - halfBackgroundIcon}
+                          key={i}
+                          style={{
+                            opacity: 0.9,
+                            borderRadius: halfBackgroundIcon // Note: SVG image does not support borderRadius directly
+                          }}
+                        />
+                      ))}
+                    </g>
                   }
                   uniqueId={index}
                   useSvgImage
                   {...props}
                 />
               </>
-            )
+            );
           }}
           isAnimationActive={false}
         />
@@ -89,13 +123,21 @@ const RangeChart = ({ assetsWithLeverage, size, index }: IParams) => {
           dataKey="assetId"
           tick={(props) => (
             <foreignObject width={iconSize} height={iconSize} x={props.x - halfIcon} y={props.y - halfIcon}>
-              <Img src={TOKENS_BY_ASSET_ID[props.payload.value].logo} style={{ width: iconSize, height: iconSize, borderRadius: halfIcon, transform: assetsWithLeverage.length < 3 ? "rotate(90deg)" : "" }} />
+              <Img
+                src={TOKENS_BY_ASSET_ID[props.payload.value].logo}
+                style={{
+                  width: iconSize,
+                  height: iconSize,
+                  borderRadius: halfIcon,
+                  transform: assetsWithLeverage.length < 3 ? "rotate(90deg)" : ""
+                }}
+              />
             </foreignObject>
           )}
         />
       </RadarChart>
     </Tooltip>
-  )
-}
+  );
+};
 
 export default RangeChart;

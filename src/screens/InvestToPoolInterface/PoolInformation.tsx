@@ -35,15 +35,11 @@ const PoolInformation: React.FC<IProps> = () => {
   const valuesArray = [
     {
       title: "Liquidity",
-      value: data?.liquidity
-        ? "$" + new BN(vm.pool.globalLiquidity).toFormat(2)
-        : null,
+      value: data?.liquidity ? "$" + new BN(vm.pool.globalLiquidity).toFormat(2) : null
     },
     {
       title: "Monthly Volume", // TODO должно быть monthlyVolume
-      value: data?.totals?.volume_30d
-        ? "$" + new BN(data.totals.volume_30d).toFormat(2)
-        : null,
+      value: data?.totals?.volume_30d ? "$" + new BN(data.totals.volume_30d).toFormat(2) : null
     },
     {
       title: "Monthly Fees (LP + Owner)",
@@ -52,16 +48,14 @@ const PoolInformation: React.FC<IProps> = () => {
           new BN(data?.totals?.pool_fees_30d).toFormat(2) +
           " + $" +
           new BN(data?.totals?.owner_fees_30d).toFormat(2)
-        : null,
+        : null
       // value: new BN(data?.pool_fees ?? 0).plus(data?.owner_fees ?? 0).toFormat(2)
     },
     {
       title: "LP APY",
       value: data?.apr ? new BN(data.apr).toFormat(2) + " %" : null,
-      newValue: data?.boostedApy
-        ? new BN(data.boostedApy).plus(data.apr).toBigFormat(2) + " %"
-        : null,
-    },
+      newValue: data?.boostedApy ? new BN(data.boostedApy).plus(data.apr).toBigFormat(2) + " %" : null
+    }
   ];
   return (
     <Root>
@@ -74,27 +68,16 @@ const PoolInformation: React.FC<IProps> = () => {
           {value != null ? (
             newValue != null ? (
               <Row>
-                <Text
-                  fitContent
-                  style={{ fontSize: "20px", lineHeight: "24px" }}
-                  type="error"
-                  weight={500}
-                >
+                <Text fitContent style={{ fontSize: "20px", lineHeight: "24px" }} type="error" weight={500}>
                   {newValue}
                 </Text>
                 <SizedBox width={4} />
-                <Text
-                  fitContent
-                  type="secondary"
-                  style={{ textDecoration: "line-through" }}
-                >
+                <Text fitContent type="secondary" style={{ textDecoration: "line-through" }}>
                   {value}
                 </Text>
               </Row>
             ) : (
-              <Text style={{ fontSize: "20px", lineHeight: "24px" }}>
-                {value}
-              </Text>
+              <Text style={{ fontSize: "20px", lineHeight: "24px" }}>{value}</Text>
             )
           ) : (
             <Skeleton height={24} />

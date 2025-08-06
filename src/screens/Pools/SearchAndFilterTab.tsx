@@ -83,7 +83,7 @@ const categoriesOptions = [
   { title: "Stablecoins", key: "stable" },
   { title: "Common", key: "common" },
   { title: "PZ Indexes", key: "pz" },
-  { title: "Waves DeFi", key: "defi" },
+  { title: "Waves DeFi", key: "defi" }
   // { title: "Waves Ducks", key: "duck" },
   // {
   //   title: "Global coins",
@@ -120,8 +120,7 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
   const vm = useInvestVM();
   const { poolsStore } = useStores();
   const navigate = useNavigate();
-  const isFiltersChosen =
-    vm.poolCategoryFilter !== 0 || vm.customPoolFilter !== 0;
+  const isFiltersChosen = vm.poolCategoryFilter !== 0 || vm.customPoolFilter !== 0;
   const handleClearFilters = () => {
     vm.setPoolCategoryFilter(0);
     vm.setCustomPoolFilter(0);
@@ -156,34 +155,23 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
             options={poolsStore.versionOptions}
             selected={poolsStore.versionOptions[poolsStore.versionFilter]}
             onSelect={({ key }) => {
-              const index = poolsStore.versionOptions.findIndex(
-                (o) => o.key === key
-              );
+              const index = poolsStore.versionOptions.findIndex((o) => o.key === key);
               poolsStore.setVersionFilter(index);
             }}
           />
           <SizedBox width={12} />
           <Select
             options={poolsStore.volumeByTimestamp}
-            selected={
-              poolsStore.volumeByTimestamp[poolsStore.volumeByTimeFilter]
-            }
+            selected={poolsStore.volumeByTimestamp[poolsStore.volumeByTimeFilter]}
             onSelect={({ key }) => {
-              const index = poolsStore.volumeByTimestamp.findIndex(
-                (o) => o.key === key
-              );
+              const index = poolsStore.volumeByTimestamp.findIndex((o) => o.key === key);
               poolsStore.setVolumeByTimeFilter(index);
             }}
           />
           <SizedBox width={12} />
         </StyledRow>
         {isFiltersChosen && (
-          <ClearBtn
-            fitContent
-            weight={500}
-            type="blue500"
-            onClick={handleClearFilters}
-          >
+          <ClearBtn fitContent weight={500} type="blue500" onClick={handleClearFilters}>
             Clear all
           </ClearBtn>
         )}
@@ -191,11 +179,7 @@ const SearchAndFilterTab: React.FC<IProps> = () => {
       <SizedBox height={16} />
       {width && width <= 1080 && <Divider />}
       <Btn>
-        <Button
-          size="medium"
-          fixed={width != null && width <= 1080}
-          onClick={() => navigate(`${ROUTES.POOLS_CREATE}`)}
-        >
+        <Button size="medium" fixed={width != null && width <= 1080} onClick={() => navigate(`${ROUTES.POOLS_CREATE}`)}>
           <Img src={theme.images.icons.add} alt="add" />
           <SizedBox width={12} />
           Create a pool

@@ -5,10 +5,7 @@ import { observer } from "mobx-react-lite";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { useStores } from "@stores";
-import {
-  useWithdrawFromRangeVM,
-  WithdrawFromRangeVMProvider
-} from "./WithdrawFromRangeVM";
+import { useWithdrawFromRangeVM, WithdrawFromRangeVMProvider } from "./WithdrawFromRangeVM";
 import ShortPoolInfoCard from "@components/ShortPoolInfoCard";
 import WithdrawLiquidityAmount from "./WithdrawLiquidityAmount";
 import WithdrawLiquidityTable from "./WithdrawLiquidityTable";
@@ -44,18 +41,13 @@ const WithdrawFromRange = observer(() => {
   return (
     <Layout>
       <Root>
-        <GoBack
-          link={`/ranges/${vm.rangeAddress}/details`}
-          text={`Back to range ${vm.range.domain}`}
-        />
+        <GoBack link={`/ranges/${vm.rangeAddress}/details`} text={`Back to range ${vm.range.domain}`} />
         <SizedBox height={24} />
         <Text weight={500} size="large">
           Withdraw liquidity
         </Text>
         <SizedBox height={4} />
-        <Text size="medium">
-          Select the percentage of assets you want to withdraw from the pool
-        </Text>
+        <Text size="medium">Select the percentage of assets you want to withdraw from the pool</Text>
         <SizedBox height={24} />
         {accountStore.address != null ? (
           <>

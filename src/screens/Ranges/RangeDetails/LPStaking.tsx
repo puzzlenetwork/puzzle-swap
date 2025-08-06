@@ -25,7 +25,7 @@ const Root = styled(Card)`
   padding: 0 !important;
 `;
 
-const Title = styled(Text) <{ expanded?: boolean }>`
+const Title = styled(Text)<{ expanded?: boolean }>`
   display: flex;
   align-items: center;
   width: calc(100% - 48px);
@@ -74,19 +74,13 @@ const LPStaking: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const vm = useRangeDetailsInterfaceVM();
   const [expanded, setExpanded] = useState(false);
-  const activeTab = useMemo(
-    () => vm.stakeUnstakeAction === "stake",
-    [vm.stakeUnstakeAction]
-  )
+  const activeTab = useMemo(() => vm.stakeUnstakeAction === "stake", [vm.stakeUnstakeAction]);
   const handleChangeActiveTab = (value: number) => {
     vm.setStakeUnstakeAction(value === 0 ? "stake" : "unstake");
   };
 
   if (accountStore.address == null) return null;
-  const availableToStake = BN.formatUnits(
-    vm.indexTokenBalance.times(vm.range!.indexTokenRate),
-    vm.indexTokenDecimals
-  );
+  const availableToStake = BN.formatUnits(vm.indexTokenBalance.times(vm.range!.indexTokenRate), vm.indexTokenDecimals);
 
   return (
     <Root>
@@ -94,77 +88,78 @@ const LPStaking: React.FC<IProps> = () => {
         LP Staking
         <Tooltip
           containerStyles={{ display: "flex", alignItems: "center" }}
-          content={
-            <Text>
-              Stake and unstake PZ Index token, which represents the value of
-              your range share
-            </Text>
-          }
+          content={<Text>Stake and unstake PZ Index token, which represents the value of your range share</Text>}
         >
           <InfoIcon style={{ marginLeft: 8 }} />
         </Tooltip>
       </Title>
       <Body expanded={expanded}>
         <Information>
-          <SwitchButtons
-            values={["Stake", "Unstake"]}
-            active={activeTab ? 0 : 1}
-            onActivate={handleChangeActiveTab}
-          />
+          <SwitchButtons values={["Stake", "Unstake"]} active={activeTab ? 0 : 1} onActivate={handleChangeActiveTab} />
           <SizedBox height={16} />
-          {vm.stakeUnstakeAction === "unstake" && <Column>
-            <Text type="secondary" size="medium">
-              Staked balance
-            </Text>
-            <Text>
-              {(vm.lpData?.indexStaked ?? BN.ZERO).toFormat(2)} LP
-              <Text type="secondary" size="small" style={{ display: "inline" }}> / ${(vm.lpData?.providedUsd ?? BN.ZERO).toFormat(2)}</Text>
-            </Text>
-          </Column>}
-          {vm.stakeUnstakeAction === "stake" && <Column>
-            <Text nowrap type="secondary" size="medium">
-              Available to stake
-            </Text>
-            <Text>
-              {availableToStake.toFormat(2)} LP
-              <Text type="secondary" size="small" style={{ display: "inline" }}> / ${BN.formatUnits(vm.indexTokenBalance, vm.indexTokenDecimals).toFormat(2)}</Text>
-            </Text>
-          </Column>}
+          {vm.stakeUnstakeAction === "unstake" && (
+            <Column>
+              <Text type="secondary" size="medium">
+                Staked balance
+              </Text>
+              <Text>
+                {(vm.lpData?.indexStaked ?? BN.ZERO).toFormat(2)} LP
+                <Text type="secondary" size="small" style={{ display: "inline" }}>
+                  {" "}
+                  / ${(vm.lpData?.providedUsd ?? BN.ZERO).toFormat(2)}
+                </Text>
+              </Text>
+            </Column>
+          )}
+          {vm.stakeUnstakeAction === "stake" && (
+            <Column>
+              <Text nowrap type="secondary" size="medium">
+                Available to stake
+              </Text>
+              <Text>
+                {availableToStake.toFormat(2)} LP
+                <Text type="secondary" size="small" style={{ display: "inline" }}>
+                  {" "}
+                  / ${BN.formatUnits(vm.indexTokenBalance, vm.indexTokenDecimals).toFormat(2)}
+                </Text>
+              </Text>
+            </Column>
+          )}
         </Information>
 
         <Divider />
 
         <Actions crossAxisSize="max">
           <Row>
-            <Text size="medium" type="secondary">Use MAX</Text>
+            <Text size="medium" type="secondary">
+              Use MAX
+            </Text>
             <SizedBox width={16} />
-            <Switch value={vm.useMaxStakeUnstakeAmount} onChange={() => {vm.setUseMaxStakeUnstakeAmount(!vm.useMaxStakeUnstakeAmount)}} />
+            <Switch
+              value={vm.useMaxStakeUnstakeAmount}
+              onChange={() => {
+                vm.setUseMaxStakeUnstakeAmount(!vm.useMaxStakeUnstakeAmount);
+              }}
+            />
           </Row>
           <SizedBox height={16} />
           {!vm.useMaxStakeUnstakeAmount && (
             <>
-              <StakeUnstakeInput amount={vm.stakeUnstakeAmount} decimals={vm.indexTokenDecimals} setAmount={vm.setStakeUnstakeAmount} />
+              <StakeUnstakeInput
+                amount={vm.stakeUnstakeAmount}
+                decimals={vm.indexTokenDecimals}
+                setAmount={vm.setStakeUnstakeAmount}
+              />
               <SizedBox height={16} />
             </>
           )}
           {vm.stakeUnstakeAction === "unstake" && (
-            <Button
-              fixed
-              kind="secondary"
-              size="medium"
-              disabled={!vm.canUnstakeIndex}
-              onClick={vm.unstakeIndex}
-            >
+            <Button fixed kind="secondary" size="medium" disabled={!vm.canUnstakeIndex} onClick={vm.unstakeIndex}>
               Unstake
             </Button>
           )}
           {vm.stakeUnstakeAction === "stake" && (
-            <Button
-              fixed
-              size="medium"
-              disabled={!vm.canStakeIndex}
-              onClick={vm.stakeIndex}
-            >
+            <Button fixed size="medium" disabled={!vm.canStakeIndex} onClick={vm.stakeIndex}>
               Stake
             </Button>
           )}

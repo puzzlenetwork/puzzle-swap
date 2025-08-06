@@ -49,25 +49,18 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
   const shareInfo = [
     {
       title: "X",
-      onClick: () =>
-        window.open(
-          `https://x.com/intent/tweet?url=${link}&text=${text}`
-        ),
-      icon: <XIcon />,
+      onClick: () => window.open(`https://x.com/intent/tweet?url=${link}&text=${text}`),
+      icon: <XIcon />
     },
     {
       title: "Telegram",
-      onClick: () =>
-        window.open(`https://telegram.me/share/?url=${link}&text=${text}`),
-      icon: <TelegramIcon />,
+      onClick: () => window.open(`https://telegram.me/share/?url=${link}&text=${text}`),
+      icon: <TelegramIcon />
     },
     {
       title: "Facebook",
-      onClick: () =>
-        window.open(
-          `https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${text}`
-        ),
-      icon: <FacebookIcon />,
+      onClick: () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${text}`),
+      icon: <FacebookIcon />
     },
     {
       title: "Copy link",
@@ -76,16 +69,14 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
         notificationStore.notify("Link was copied");
         setOpenedShare(false);
       },
-      icon: <CopyIcon />,
-    },
+      icon: <CopyIcon />
+    }
   ];
   return (
     <>
       <Tooltip
         config={{ placement: "bottom-end", trigger: "click" }}
-        content={
-          <MoreRangeInformation setOpenedShare={setOpenedShare} />
-        }
+        content={<MoreRangeInformation setOpenedShare={setOpenedShare} />}
       >
         <Root>
           <StyledMoreIcon />
@@ -102,10 +93,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
         }}
         visible={isOpenedShare}
       >
-        <Column
-          crossAxisSize="max"
-          style={{ maxHeight: 352, padding: "10px 0" }}
-        >
+        <Column crossAxisSize="max" style={{ maxHeight: 352, padding: "10px 0" }}>
           {isOpenedShare &&
             shareInfo.map(({ title, onClick, icon }, index) => (
               <Button

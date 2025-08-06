@@ -1,11 +1,4 @@
-import {
-  RefObject,
-  useState,
-  useRef,
-  useEffect,
-  useCallback,
-  useLayoutEffect,
-} from "react";
+import { RefObject, useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
 import warning from "tiny-warning";
 import type { AssignableRef } from "./types";
 
@@ -14,9 +7,7 @@ type AnyFunction = (...args: any[]) => unknown;
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const noop = (): void => {};
 
-export function getElementHeight(
-  el: RefObject<HTMLElement> | { current?: { scrollHeight: number } }
-): string | number {
+export function getElementHeight(el: RefObject<HTMLElement> | { current?: { scrollHeight: number } }): string | number {
   if (!el?.current) {
     warning(
       true,
@@ -47,10 +38,7 @@ export function getAutoHeightDuration(height: number | string): number {
   return Math.round((4 + 15 * constant ** 0.25 + constant / 5) * 10);
 }
 
-export function assignRef<RefValueType = any>(
-  ref: AssignableRef<RefValueType> | null | undefined,
-  value: any
-) {
+export function assignRef<RefValueType = any>(ref: AssignableRef<RefValueType> | null | undefined, value: any) {
   if (ref == null) return;
   if (typeof ref === "function") {
     ref(value);
@@ -70,9 +58,7 @@ export function assignRef<RefValueType = any>(
  *
  * @param refs Refs to fork
  */
-export function mergeRefs<RefValueType = any>(
-  ...refs: (AssignableRef<RefValueType> | null | undefined)[]
-) {
+export function mergeRefs<RefValueType = any>(...refs: (AssignableRef<RefValueType> | null | undefined)[]) {
   if (refs.every((ref) => ref == null)) {
     return null;
   }
@@ -89,9 +75,7 @@ export function useControlledState(
 ): [boolean, React.Dispatch<React.SetStateAction<boolean>>] {
   const [stateExpanded, setStateExpanded] = useState(defaultExpanded || false);
   const initiallyControlled = useRef(isExpanded != null);
-  const expanded = initiallyControlled.current
-    ? (isExpanded as boolean)
-    : stateExpanded;
+  const expanded = initiallyControlled.current ? (isExpanded as boolean) : stateExpanded;
   const setExpanded = useCallback((n: any) => {
     if (!initiallyControlled.current) {
       setStateExpanded(n);
@@ -112,10 +96,7 @@ export function useControlledState(
   return [expanded, setExpanded];
 }
 
-export function useEffectAfterMount(
-  cb: () => void,
-  dependencies: unknown[]
-): void {
+export function useEffectAfterMount(cb: () => void, dependencies: unknown[]): void {
   const justMounted = useRef(true);
   // eslint-disable-next-line consistent-return
   useEffect(() => {
@@ -139,8 +120,7 @@ export function useEffectAfterMount(
  *
  * @see Docs https://reach.tech/auto-id
  */
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 let serverHandoffComplete = false;
 let id = 0;
 const genId = () => ++id;
@@ -190,9 +170,7 @@ export function usePaddingWarning(element: RefObject<HTMLElement>): void {
         return;
       }
       const { paddingTop, paddingBottom } = window.getComputedStyle(el.current);
-      const hasPadding =
-        (paddingTop && paddingTop !== "0px") ||
-        (paddingBottom && paddingBottom !== "0px");
+      const hasPadding = (paddingTop && paddingTop !== "0px") || (paddingBottom && paddingBottom !== "0px");
 
       warning(
         !hasPadding,

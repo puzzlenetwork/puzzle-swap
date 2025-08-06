@@ -18,9 +18,7 @@ const Landing: React.FC = () => {
   const navigate = useNavigate();
   useEffect(() => {
     navigate(ROUTES.TRADE);
-    window.location.replace(
-      "https://drive.google.com/file/d/1xhKigJ-sUEGaaL1vECOjYMCKBR5BhoBN/view?usp=sharing"
-    );
+    window.location.replace("https://drive.google.com/file/d/1xhKigJ-sUEGaaL1vECOjYMCKBR5BhoBN/view?usp=sharing");
   }, [navigate]);
   return (
     <Root>
