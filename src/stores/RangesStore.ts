@@ -57,6 +57,9 @@ export default class RangesStore {
   // If specified, filters ranges by user address (show only ones, with investments)
   userAddress?: string = undefined;
 
+  showPriceInUsd: boolean = false;
+  setShowPriceInUsd = (v: boolean) => (this.showPriceInUsd = v);
+
   // Methods for pagination
   setPagination = (pagination: { page: number; size: number }) => {
     this.pagination = pagination;

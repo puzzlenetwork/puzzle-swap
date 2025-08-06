@@ -27,12 +27,10 @@ class AllRangesVm {
   public rangesInfo: GlobalRangesInfo | null = null;
   private _setRangesInfo = (v: GlobalRangesInfo) => (this.rangesInfo = v);
 
-  public ranges: Range[] = [];
-  private _setRanges = (v: Range[]) => (this.ranges = v);
-
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     this.syncRanges();
+    this.syncFiltersWithRangesStore();
     when(
       () => this.rootStore.accountStore.address !== null,
       () => this.syncUserInvestedAmount(),
@@ -78,7 +76,10 @@ class AllRangesVm {
   }
 
   showPriceInUsd: boolean = false;
-  setShowPriceInUsd = (v: boolean) => (this.showPriceInUsd = v);
+  setShowPriceInUsd = (v: boolean) => {
+    this.showPriceInUsd = v
+    this.rootStore.rangesStore.setShowPriceInUsd(v);
+  };
 
   showOnlyActiveRanges: boolean = false;
   setShowOnlyActiveRanges = (v: boolean) => {
@@ -105,8 +106,9 @@ class AllRangesVm {
     this.searchValue = rangesStore.searchValue;
     this.rangesSorting = this.rangesSortings.findIndex(({ key }) => key === `${rangesStore.filter.sortBy}${rangesStore.filter.order === "asc" ? "A" : "D"}`) ?? 0;
     this.selectedStatsRange = this.statsRanges.findIndex(({ key }) => key === rangesStore.timeRange) ?? 0;
-    this.showOnlyActiveRanges = !!rangesStore.minLiquidity;
+    this.showOnlyActiveRanges = !!rangesStore.onlyActiveRanges;
     this.showOnlyUserRanges = !!rangesStore.userAddress;
+    this.showPriceInUsd = rangesStore.showPriceInUsd;
   }
 
   syncUserInvestedAmount = async () => {
