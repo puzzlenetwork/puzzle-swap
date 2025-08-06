@@ -433,39 +433,6 @@ class CreateRangeVm {
 
     const max = rawMax.isNaN() || rawMax.isZero() ? BN.parseUnits(P1, asset.asset.decimals) : rawMax;
 
-    //     console.log(`
-    // ${asset.asset.symbol} ${BN.formatUnits(min, asset.asset.decimals).toSmallFormat()} - ${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}:
-
-    // B0=${B0.toSmallFormat()}
-    // L0=${L0.toSmallFormat()}
-    // F0=${F0.toSmallFormat()}
-
-    // P1=${P1.toSmallFormat()}
-
-    // B1=${B1.toSmallFormat()}
-    // L1=${L1.toSmallFormat()}
-    // F1=${F1.toSmallFormat()}
-
-    // B0-F0=${B0.minus(F0).toSmallFormat()}
-    // (B0-F0)/B0=${B0.minus(F0).div(B0).toSmallFormat()}
-    // w0/w1=${w0.div(w1).toSmallFormat()}
-    // ((B0-F0)/B0)^(w0/w1+1)=${(B0.minus(F0).div(B0)).mathPow(w0.div(w1).plus(1)).toSmallFormat()}
-
-    // B1-F1=${B1.minus(F1).toSmallFormat()}
-    // B1/(B1-F1)=${B1.div(B1.minus(F1)).toSmallFormat()}
-    // w1/w0=${w1.div(w0).toSmallFormat()}
-    // (B1/(B1-F1))^(w1/w0+1)=${(B1.div(B1.minus(F1))).mathPow(w1.div(w0).plus(1)).toSmallFormat()}
-
-    // w0=${w0.toSmallFormat()}
-    // w1=${w1.toSmallFormat()}
-
-    // RawMin=${BN.formatUnits(rawMin, asset.asset.decimals).toSmallFormat()}
-    // Min=${BN.formatUnits(min, asset.asset.decimals).toSmallFormat()}
-
-    // RawMax=${BN.formatUnits(rawMax, asset.asset.decimals).toSmallFormat()}
-    // Max=${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}
-    // `)
-
     this.updateAssetMinPrice(assetId, min);
     this.updateAssetMaxPrice(assetId, max);
 
@@ -572,17 +539,6 @@ class CreateRangeVm {
       }
 
       const vBalancesStr = virtualBalances.join(",");
-
-      console.log("Init parameters:", {
-        assetIdsStr,
-        assetWeightsStr,
-        assetMaxSelloffStr,
-        baseTokenId,
-        domain: this.domain,
-        fee,
-        vBalancesStr,
-        payments
-      });
 
       // Call init function on the deployed contract
       const txId = await this.rootStore.accountStore.invoke({
@@ -693,8 +649,6 @@ class CreateRangeVm {
       // Generate random address for the new range contract
       const seed = randomSeed();
       const randomAddress = Address(seed, "W");
-      // console.log("🌱 Range contract address:", randomAddress);
-      // console.log("🌱 Seed:", seed);
 
       // Initial waves transfer for fees
       const transferTxId = await this.rootStore.accountStore.transfer({
@@ -743,9 +697,6 @@ class CreateRangeVm {
           )
         ]
       });
-
-      console.log("🌱 Range contract deployed at address:", randomAddress);
-      console.log("🌱 Deploy transaction ID:", deployScriptTx.id);
     } catch (e: any) {
       this.rootStore.notificationStore.notify("Cannot create range. Try to reload the page and try again.", {
         type: "error"
@@ -768,14 +719,6 @@ class CreateRangeVm {
         .times(i === 0 ? 1 : BN.formatUnits(initialPrice, asset.decimals))
         .times(leverage ?? 1)
         .times(baseToken.share.div(share));
-      //         console.log(`
-      // ${asset.symbol} ${value.toFormat(2)}
-      // \nF=${BN.formatUnits(tokenBalance.balance, asset.decimals).toFormat(2)}
-      // \nP=${i === 0 ? 1 : BN.formatUnits(initialPrice, asset.decimals).toFormat(2)}
-      // \nL=${leverage?.toFormat(2)}
-      // \nw=${share.div(1000).toFormat(2)}
-      // \nL0=${this.rangeAssets[0].leverage?.toFormat(2)}
-      // \n\nRes=${value.div(this.rangeAssets[0].leverage ?? 1).toFormat(2)}`)
       return {
         ...acc,
         [asset.assetId]: value
@@ -794,13 +737,6 @@ class CreateRangeVm {
     const baseToken = this.rangeAssets[0];
     const share = BN.formatUnits(baseToken.share, 3);
     const res = this.minVirtualBalanceOfBaseToken.div(baseToken.leverage ?? 1).div(share);
-    //     console.log(`
-    // Max to provide: ${res.toFormat(2)}
-
-    // min virtual balance: ${this.minVirtualBalanceOfBaseToken.toFormat(2)}
-
-    // By asset:
-    // ${Object.entries(this.correspondingVirtualBalanceOfBaseToken).map(([assetId, value]) => `${TOKENS_BY_ASSET_ID[assetId]?.symbol ?? assetId}: ${value.toFormat(2)}`).join("\n")}`);
     return res;
   }
 
@@ -818,15 +754,6 @@ class CreateRangeVm {
       const L1 = leverage ?? new BN(1);
       const F1 = B1.div(L1);
       const amountToProvide = F1.times(this.providedPercentOfPool.div(100));
-
-      //       console.log(`
-      // to provide ${asset.symbol}: ${amountToProvide.toFormat(2)}
-
-      // F1=${F1.toFormat(2)}
-      // w0/w1 = ${w0.div(w1).toFormat(2)}
-      // percent=${this.providedPercentOfPool.div(100).toFormat(2)}
-      // p=${p.toFormat(2)}
-      // `)
 
       return {
         ...acc,

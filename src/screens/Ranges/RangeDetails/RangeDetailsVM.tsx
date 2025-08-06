@@ -164,7 +164,6 @@ class RangeDetailsInterfaceVM {
 
     rangesService.getRangeByAddress(rangeAddress, { charts: true }).then((rangeData) => {
       if (!rangeData) return;
-      console.log("rangeData", rangeData);
       const newRange = new Range(rangeData);
       this.rootStore.rangesStore.updateRange(newRange);
       this.setHistory(rangeData.charts || []);
@@ -229,7 +228,6 @@ class RangeDetailsInterfaceVM {
       .getLPData(this.rangeAddress, this.rootStore.accountStore.address, true)
       .then((data) => {
         if (!data) return;
-        console.log("LPData", data);
         const newLPData = new LPData(data);
         this.setLPData(newLPData);
       })
@@ -318,7 +316,6 @@ class RangeDetailsInterfaceVM {
         }
       })
       .then((txId) => {
-        console.log("claimed", txId);
         notificationStore.notify(`Your rewards was claimed`, {
           type: "success",
           title: `Success`,

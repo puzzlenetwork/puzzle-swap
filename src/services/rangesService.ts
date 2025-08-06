@@ -11,6 +11,11 @@ export interface IGetRanges {
   userAddress?: string;
 }
 
+export interface IGetGlobalRangesInfo {
+  minLiquidity: number;
+  active?: boolean;
+}
+
 export interface IGetRange {
   startTime?: number;
   endTime?: number;
@@ -51,10 +56,13 @@ const rangesService = {
     const { data } = await axios.get(url);
     return { ranges: data.pools, totalItems: data.total };
   },
-  getGlobalRangesInfo: async (): Promise<IGlobalRangesInfoResponse> => {
+  getGlobalRangesInfo: async (params: IGetGlobalRangesInfo): Promise<IGlobalRangesInfoResponse> => {
     const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/global_info`;
     const paramsString = new URLSearchParams({
-      poolMode: "ranged"
+      poolMode: "ranged",
+    });
+    Object.entries(params).forEach(([key, value]) => {
+      value !== undefined && paramsString.append(key, value.toString());
     });
     const url = `${baseUrl}?${paramsString.toString()}`;
     const { data } = await axios.get(url);

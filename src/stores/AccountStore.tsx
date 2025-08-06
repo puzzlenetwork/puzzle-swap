@@ -324,12 +324,10 @@ class AccountStore {
       return null;
     }
     try {
-      // console.log(data);
       const ttx = this.signer.transfer({
         ...data,
         fee: this.isAccScripted ? 500000 : 100000
       });
-      // console.log("ttx of transfer", ttx);
       const txId = await ttx.broadcast().then((result: any) => (Array.isArray(result) ? result[0].id : result.id));
       await waitForTx(txId, {
         apiBase: NODE_URL

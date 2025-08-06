@@ -278,10 +278,6 @@ export default class PoolsStore {
       }
     }
 
-    // console.log(assetId, "POOL WITH PRICE", pool.contractAddress);
-    // console.log(pool.tokens);
-    // console.log("WAVES IN POOL???", (pool.tokens.some(({ assetId }) => assetId === waves)));
-
     if (pool.tokens.some(({ assetId }) => assetId === usdtppt)) {
       const priceInUsdt = pool.currentPrice(assetId, usdtppt, coefficient);
       return priceInUsdt != null ? priceInUsdt : null;

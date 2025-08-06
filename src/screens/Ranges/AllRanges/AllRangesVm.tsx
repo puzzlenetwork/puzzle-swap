@@ -84,6 +84,7 @@ class AllRangesVm {
   setShowOnlyActiveRanges = (v: boolean) => {
     this.showOnlyActiveRanges = v;
     this.rootStore.rangesStore.setOnlyActiveRanges(v ? true : undefined);
+    this.rootStore.rangesStore.setPagination({ page: 1, size: this.rootStore.rangesStore.pagination.size });
   };
 
   showOnlyUserRanges: boolean = false;
@@ -122,7 +123,9 @@ class AllRangesVm {
   };
 
   syncRanges = async () => {
-    rangesService.getGlobalRangesInfo().then((data) => {
+    rangesService.getGlobalRangesInfo({
+      minLiquidity: this.rootStore.rangesStore.minLiquidity,
+    }).then((data) => {
       const newRangesInfo = new GlobalRangesInfo(data);
       this._setRangesInfo(newRangesInfo);
     });
