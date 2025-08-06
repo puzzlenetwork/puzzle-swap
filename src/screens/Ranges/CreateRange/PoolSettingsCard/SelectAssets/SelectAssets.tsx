@@ -1,23 +1,23 @@
-import styled from "@emotion/styled";
-import React, { useMemo, useState } from "react";
-import Card from "@components/Card";
-import Text from "@components/Text";
-import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
-import { ReactComponent as Add } from "@src/assets/icons/add.svg";
-import { observer } from "mobx-react-lite";
-import { useCreateRangeVM } from "../../CreateRangeVm";
+import Card from "@components/Card";
+import SizedBox from "@components/SizedBox";
+import Text from "@components/Text";
 import TokenSelectModal from "@components/TokensSelectModal/TokenSelectModal";
 import { useTheme } from "@emotion/react";
-import RangeBaseTokenRow from "./RangeBaseTokenRow";
-import RangeTokenRow from "./RangeTokenRow";
-import Table from "@src/components/Table";
+import styled from "@emotion/styled";
+import { ReactComponent as Add } from "@src/assets/icons/add.svg";
+import { ReactComponent as Autostaking } from "@src/assets/icons/autostaking.svg";
+import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import { Row } from "@src/components/Flex";
 import RoundTokenIcon from "@src/components/RoundTokenIcon";
-import BN from "@src/utils/BN";
-import { ReactComponent as Autostaking } from "@src/assets/icons/autostaking.svg";
+import Table from "@src/components/Table";
 import Tooltip from "@src/components/Tooltip";
-import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
+import BN from "@src/utils/BN";
+import { observer } from "mobx-react-lite";
+import React, { useState } from "react";
+import { useCreateRangeVM } from "../../CreateRangeVm";
+import RangeBaseTokenRow from "./RangeBaseTokenRow";
+import RangeTokenRow from "./RangeTokenRow";
 
 interface IProps {}
 

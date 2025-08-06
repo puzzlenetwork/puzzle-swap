@@ -1,10 +1,9 @@
+import SizedBox from "@components/SizedBox";
 import styled from "@emotion/styled";
 import React from "react";
-import SizedBox from "@components/SizedBox";
 import AddLiquidityToRangeAmountSelector from "./AddLiquidityToRangeAmountSelector";
 import DepositComposition from "./DepositComposition";
 import YourPool from "./YourRange";
-import Notification from "@components/Notification";
 
 interface IProps {}
 

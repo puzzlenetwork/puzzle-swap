@@ -1,14 +1,11 @@
 import styled from "@emotion/styled";
 import React from "react";
 import SizedBox from "@components/SizedBox";
-import Divider from "@components/Divider";
 import Wallet from "@components/Wallet/Wallet";
-import Scrollbar from "@components/Scrollbar";
 import Text from "@components/Text";
 import { Column } from "../Flex";
 import { observer } from "mobx-react-lite";
 import { ROUTES } from "@src/constants";
-import DarkMode from "@components/Header/DarkMode";
 import { Anchor } from "../Anchor";
 import isRoutesEquals from "@src/utils/isRoutesEquals";
 import { useLocation } from "react-router-dom";

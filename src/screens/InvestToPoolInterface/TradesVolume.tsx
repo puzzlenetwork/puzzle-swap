@@ -1,15 +1,14 @@
-import styled from "@emotion/styled";
-import React from "react";
-import Text from "@components/Text";
 import Card from "@components/Card";
 import SizedBox from "@components/SizedBox";
+import Text from "@components/Text";
+import styled from "@emotion/styled";
 import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
-import { observer } from "mobx-react-lite";
-import { Line, LineChart, Tooltip, XAxis } from "recharts";
 import useWindowSize from "@src/hooks/useWindowSize";
-import dayjs from "dayjs";
 import BN from "@src/utils/BN";
-import poolsService from "@src/services/poolsService";
+import dayjs from "dayjs";
+import { observer } from "mobx-react-lite";
+import React from "react";
+import { Line, LineChart, Tooltip, XAxis } from "recharts";
 
 interface IProps {}
 

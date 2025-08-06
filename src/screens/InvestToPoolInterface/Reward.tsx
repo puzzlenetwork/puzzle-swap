@@ -1,20 +1,20 @@
-import styled from "@emotion/styled";
-import React from "react";
-import { useStores } from "@stores";
-import Text from "@components/Text";
-import SizedBox from "@components/SizedBox";
+import Button from "@components/Button";
 import Card from "@components/Card";
-import { observer } from "mobx-react-lite";
 import { Column, Row } from "@components/Flex";
+import Loading from "@components/Loading";
+import SizedBox from "@components/SizedBox";
+import Text from "@components/Text";
+import styled from "@emotion/styled";
 import income from "@src/assets/icons/income.svg";
 import wallet from "@src/assets/icons/wallet.svg";
-import Button from "@components/Button";
-import Loading from "@components/Loading";
-import { useInvestToPoolInterfaceVM } from "./InvestToPoolInterfaceVM";
-import BN from "@src/utils/BN";
-import Skeleton from "react-loading-skeleton";
-import dayjs from "dayjs";
 import { TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL } from "@src/constants";
+import BN from "@src/utils/BN";
+import { useStores } from "@stores";
+import dayjs from "dayjs";
+import { observer } from "mobx-react-lite";
+import React from "react";
+import Skeleton from "react-loading-skeleton";
+import { useInvestToPoolInterfaceVM } from "./InvestToPoolInterfaceVM";
 
 interface IProps {}
 
@@ -56,7 +56,8 @@ const Reward: React.FC<IProps> = () => {
   if (address == null) return null;
   const date = dayjs(vm.lastClaimDate?.toNumber() ?? 0);
   const format = date.format("D MMM YYYY");
-  const totalClaimed = BN.formatUnits(vm.totalClaimedReward ?? BN.ZERO, TOKENS_BY_SYMBOL.XTN.decimals).toFormat(2);
+  // TODO: fix this
+  // const totalClaimed = BN.formatUnits(vm.totalClaimedReward ?? BN.ZERO, TOKENS_BY_SYMBOL.XTN.decimals).toFormat(2);
   return (
     <Root>
       <Text weight={500} type="secondary">

@@ -1,21 +1,17 @@
-import styled from "@emotion/styled";
-import React from "react";
+import Button from "@components/Button";
+import GoBack from "@components/GoBack";
 import Layout from "@components/Layout";
-import { observer } from "mobx-react-lite";
-import Text from "@components/Text";
+import Loading from "@components/Loading";
 import SizedBox from "@components/SizedBox";
+import Text from "@components/Text";
+import styled from "@emotion/styled";
 import { useStores } from "@stores";
+import { observer } from "mobx-react-lite";
+import React from "react";
+import { useParams } from "react-router-dom";
 import { useWithdrawFromRangeVM, WithdrawFromRangeVMProvider } from "./WithdrawFromRangeVM";
-import ShortPoolInfoCard from "@components/ShortPoolInfoCard";
 import WithdrawLiquidityAmount from "./WithdrawLiquidityAmount";
 import WithdrawLiquidityTable from "./WithdrawLiquidityTable";
-import Button from "@components/Button";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
-import GoBack from "@components/GoBack";
-import Loading from "@components/Loading";
-import { ROUTES } from "@src/constants";
-import BN from "@src/utils/BN";
-import ChangePoolModal from "@src/components/ChangePoolModal";
 
 const Root = styled.div`
   display: flex;

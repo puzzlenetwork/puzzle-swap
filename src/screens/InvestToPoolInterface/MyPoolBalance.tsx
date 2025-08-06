@@ -1,21 +1,20 @@
-import styled from "@emotion/styled";
-import React from "react";
-import Text from "@components/Text";
-import SizedBox from "@components/SizedBox";
-import Card from "@components/Card";
 import Button from "@components/Button";
-import { AdaptiveColumn, AdaptiveRow, Column, Row } from "@src/components/Flex";
-import Divider from "@src/components/Divider";
-import { observer } from "mobx-react-lite";
+import Card from "@components/Card";
 import GridTable from "@components/GridTable";
-import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
-import SquareTokenIcon from "@components/SquareTokenIcon";
 import RoundTokenIcon from "@components/RoundTokenIcon";
+import SizedBox from "@components/SizedBox";
+import SquareTokenIcon from "@components/SquareTokenIcon";
+import Text from "@components/Text";
+import styled from "@emotion/styled";
+import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
+import Divider from "@src/components/Divider";
+import { AdaptiveColumn, AdaptiveRow, Column, Row } from "@src/components/Flex";
 import useWindowSize from "@src/hooks/useWindowSize";
-import { Link } from "react-router-dom";
 import { useStores } from "@stores";
+import { observer } from "mobx-react-lite";
+import React from "react";
 import Skeleton from "react-loading-skeleton";
-import BN from "@src/utils/BN";
+import { Link } from "react-router-dom";
 
 interface IProps {}
 

@@ -1,16 +1,15 @@
-import React, { useMemo } from "react";
-import { makeAutoObservable, reaction } from "mobx";
-import { RootStore, useStores } from "@stores";
-import { useVM } from "@src/hooks/useVM";
-import BN from "@src/utils/BN";
-import { CONTRACT_ADDRESSES, EXPLORER_URL, TOKENS_BY_SYMBOL } from "@src/constants";
-import makeNodeRequest from "@src/utils/makeNodeRequest";
-import nodeService, { INodeData } from "@src/services/nodeService";
-import { getStateByKey } from "@src/utils/getStateByKey";
 import { buildCancelOrderParams, IDialogNotificationProps } from "@components/Dialog/DialogNotification";
+import { CONTRACT_ADDRESSES, EXPLORER_URL, TOKENS_BY_SYMBOL } from "@src/constants";
+import { useVM } from "@src/hooks/useVM";
 import aggregatorService from "@src/services/aggregatorService";
+import nodeService, { INodeData } from "@src/services/nodeService";
+import BN from "@src/utils/BN";
+import { getStateByKey } from "@src/utils/getStateByKey";
+import makeNodeRequest from "@src/utils/makeNodeRequest";
+import { RootStore, useStores } from "@stores";
 import dayjs from "dayjs";
-import { slice } from "lodash";
+import { makeAutoObservable, reaction } from "mobx";
+import React, { useMemo } from "react";
 
 interface IProps {
   children: React.ReactNode;

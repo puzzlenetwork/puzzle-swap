@@ -15,7 +15,6 @@ interface IParams {
   maxTooltipContent?: string | JSX.Element;
 }
 
-const base = 2;
 const domainMin = 1;
 const domainMax = 500;
 

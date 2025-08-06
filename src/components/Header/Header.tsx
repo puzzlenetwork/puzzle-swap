@@ -10,7 +10,6 @@ import Wallet from "@components/Wallet/Wallet";
 import { observer } from "mobx-react-lite";
 import { PRODUCTS, ROUTES } from "@src/constants";
 import { Link, useLocation } from "react-router-dom";
-import { Anchor } from "@components/Anchor";
 import { useTheme } from "@emotion/react";
 import Tooltip from "@components/Tooltip";
 import LinkGroup from "@components/LinkGroup";

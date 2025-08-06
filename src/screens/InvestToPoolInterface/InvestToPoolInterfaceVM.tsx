@@ -1,15 +1,15 @@
-import React, { useMemo } from "react";
-import { useVM } from "@src/hooks/useVM";
-import { makeAutoObservable, reaction, when } from "mobx";
-import { RootStore, useStores } from "@stores";
-import BN from "@src/utils/BN";
-import { CONTRACT_ADDRESSES, EXPLORER_URL, NODE_URL, TOKENS_BY_ASSET_ID, ROUTES } from "@src/constants";
-import nodeService from "@src/services/nodeService";
-import { IHistory, ITransaction } from "@src/utils/types";
-import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
-import makeNodeRequest from "@src/utils/makeNodeRequest";
-import poolsService from "@src/services/poolsService";
+import { CONTRACT_ADDRESSES, EXPLORER_URL, NODE_URL, TOKENS_BY_ASSET_ID } from "@src/constants";
 import Pool from "@src/entities/Pool";
+import { useVM } from "@src/hooks/useVM";
+import nodeService from "@src/services/nodeService";
+import poolsService from "@src/services/poolsService";
+import BN from "@src/utils/BN";
+import makeNodeRequest from "@src/utils/makeNodeRequest";
+import { IHistory, ITransaction } from "@src/utils/types";
+import { RootStore, useStores } from "@stores";
+import { assetBalance } from "@waves/waves-transactions/dist/nodeInteraction";
+import { makeAutoObservable, reaction, when } from "mobx";
+import React, { useMemo } from "react";
 
 const ctx = React.createContext<InvestToPoolInterfaceVM | null>(null);
 

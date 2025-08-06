@@ -1,21 +1,21 @@
-import styled from "@emotion/styled";
-import React from "react";
-import Input from "@components/Input";
-import { observer } from "mobx-react-lite";
-import { useInvestVM } from "@screens/Pools/InvestVm";
-import Divider from "@src/components/Divider";
-import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
+import Img from "@components/Img";
+import Input from "@components/Input";
 import Select from "@components/Select";
-import useWindowSize from "@src/hooks/useWindowSize";
+import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
+import { useTheme } from "@emotion/react";
+import styled from "@emotion/styled";
+import { useInvestVM } from "@screens/Pools/InvestVm";
 import close from "@src/assets/icons/primaryBlue16CloseIcon.svg";
+import Divider from "@src/components/Divider";
 import { Row } from "@src/components/Flex";
 import { ROUTES } from "@src/constants";
-import { useNavigate } from "react-router-dom";
-import Img from "@components/Img";
-import { useTheme } from "@emotion/react";
+import useWindowSize from "@src/hooks/useWindowSize";
 import { useStores } from "@src/stores";
+import { observer } from "mobx-react-lite";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {}
 
@@ -78,18 +78,18 @@ const StyledRow = styled(Row)`
     flex-wrap: nowrap;
   }
 `;
-const categoriesOptions = [
-  { title: "All categories", key: "all" },
-  { title: "Stablecoins", key: "stable" },
-  { title: "Common", key: "common" },
-  { title: "PZ Indexes", key: "pz" },
-  { title: "Waves DeFi", key: "defi" }
-  // { title: "Waves Ducks", key: "duck" },
-  // {
-  //   title: "Global coins",
-  //   key: "global",
-  // },
-];
+// const categoriesOptions = [
+//   { title: "All categories", key: "all" },
+//   { title: "Stablecoins", key: "stable" },
+//   { title: "Common", key: "common" },
+//   { title: "PZ Indexes", key: "pz" },
+//   { title: "Waves DeFi", key: "defi" }
+//   // { title: "Waves Ducks", key: "duck" },
+//   // {
+//   //   title: "Global coins",
+//   //   key: "global",
+//   // },
+// ];
 
 const ClearBtn = styled(Text)`
   margin: 12px 12px 0 12px;

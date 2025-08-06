@@ -1,18 +1,18 @@
-import React, { useMemo } from "react";
-import { useVM } from "@src/hooks/useVM";
-import { makeAutoObservable, observable, reaction } from "mobx";
-import { RootStore, useStores } from "@stores";
-import { IToken, TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL, TOKENS_LIST } from "@src/constants";
-import BN from "@src/utils/BN";
-import { IDialogNotificationProps } from "@components/Dialog/DialogNotification";
-import Balance from "@src/entities/Balance";
 import Button from "@components/Button";
-import loadCreateRangeStateFromStorage, { IInitDataToStore } from "./utils/loadCreateRangeStateFromStorage";
+import { IDialogNotificationProps } from "@components/Dialog/DialogNotification";
+import { IToken, TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL, TOKENS_LIST } from "@src/constants";
+import { RANGE_CONTRACT_B64 } from "@src/constants/contracts";
+import Balance from "@src/entities/Balance";
+import { useVM } from "@src/hooks/useVM";
 import rangesService, { IStakingStatistics } from "@src/services/rangesService";
+import BN from "@src/utils/BN";
+import { RootStore, useStores } from "@stores";
 import { address as Address, randomSeed } from "@waves/ts-lib-crypto";
 import { broadcast, setScript, waitForTx } from "@waves/waves-transactions";
-import { RANGE_CONTRACT_B64 } from "@src/constants/contracts";
+import { makeAutoObservable, observable } from "mobx";
 import { generate } from "random-words";
+import React, { useMemo } from "react";
+import loadCreateRangeStateFromStorage, { IInitDataToStore } from "./utils/loadCreateRangeStateFromStorage";
 
 interface IProps {
   children: React.ReactNode;

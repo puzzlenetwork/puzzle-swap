@@ -6,7 +6,6 @@ import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import { useLocation, useNavigate } from "react-router-dom";
 import isRoutesEquals from "@src/utils/isRoutesEquals";
-import NFT from "./NFT";
 import Swap from "./Swap";
 import Invest from "./Invest";
 import Stake from "@components/MobileNavBar/Stake";

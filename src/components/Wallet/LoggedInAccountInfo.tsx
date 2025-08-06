@@ -1,16 +1,14 @@
-import styled from "@emotion/styled";
-import React, { useState } from "react";
 import { Row } from "@components/Flex";
-import { ReactComponent as WalletIcon } from "@src/assets/icons/pink-wallet.svg";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
-import arrowIcon from "@src/assets/icons/arrowRightBorderless.svg";
-import * as identityImg from "identity-img";
-import { useStores } from "@stores";
 import Tooltip from "@components/Tooltip";
+import styled from "@emotion/styled";
+import arrowIcon from "@src/assets/icons/arrowRightBorderless.svg";
+import { useStores } from "@stores";
+import * as identityImg from "identity-img";
 import { observer } from "mobx-react-lite";
+import React, { useState } from "react";
 import WalletActionsTooltip from "../WalletActionsTooltip";
-import DarkMode from "../Header/DarkMode";
 
 interface IProps {}
 

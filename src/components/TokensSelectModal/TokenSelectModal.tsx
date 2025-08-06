@@ -1,15 +1,15 @@
-import React, { createRef, useRef, useState } from "react";
-import useOnClickOutside from "@src/hooks/useOnClickOutside";
-import Dialog from "@components/Dialog";
-import Scrollbar from "@src/components/Scrollbar";
-import { Column } from "@src/components/Flex";
-import SizedBox from "@components/SizedBox";
-import { observer } from "mobx-react-lite";
-import Text from "@components/Text";
-import Balance from "@src/entities/Balance";
-import Input from "@components/Input";
 import ButtonsGroup from "@components/ButtonsGroup";
+import Dialog from "@components/Dialog";
+import Input from "@components/Input";
+import SizedBox from "@components/SizedBox";
+import Text from "@components/Text";
 import styled from "@emotion/styled";
+import { Column } from "@src/components/Flex";
+import Scrollbar from "@src/components/Scrollbar";
+import Balance from "@src/entities/Balance";
+import useOnClickOutside from "@src/hooks/useOnClickOutside";
+import { observer } from "mobx-react-lite";
+import React, { useRef, useState } from "react";
 import TokenInfo from "./TokenInfo";
 
 interface IProps {

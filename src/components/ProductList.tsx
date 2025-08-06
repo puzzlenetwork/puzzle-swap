@@ -1,10 +1,8 @@
-import styled from "@emotion/styled";
-import React, { HTMLAttributes } from "react";
-import { Link } from "react-router-dom";
-import Text from "@components/Text";
 import { Anchor } from "@components/Anchor";
-import { Row } from "./Flex";
+import styled from "@emotion/styled";
 import CheckIcon from "@src/assets/links/check.svg";
+import React, { HTMLAttributes } from "react";
+import { Row } from "./Flex";
 
 interface ILinkGroupItem {
   icon: string;
@@ -35,12 +33,6 @@ const Root = styled.div`
   }
 `;
 
-const StyledLink = styled(Link)`
-  font-size: 16px;
-  line-height: 24px;
-  color: ${({ theme }) => theme.colors.primary800};
-`;
-
 const StyledAnchor = styled(Anchor)`
   font-size: 16px;
   width: 120px;
@@ -59,11 +51,11 @@ const ProductList: React.FC<IProps> = ({ title, links, ...rest }) => {
     <Root {...rest}>
       {links.map(({ icon, name, link, isExternalLink, isActive }, key) => (
         <RowLinks key={key}>
-          <img src={icon} width={24} height={24} style={{ opacity: isActive ? 0.4 : 1 }} />
+          <img alt={name} src={icon} width={24} height={24} style={{ opacity: isActive ? 0.4 : 1 }} />
           <StyledAnchor href={link} style={{ opacity: isActive ? 0.4 : 1 }}>
             {name}
           </StyledAnchor>
-          {isActive ? <img src={CheckIcon} /> : <div></div>}
+          {isActive ? <img alt={name} src={CheckIcon} /> : <div></div>}
         </RowLinks>
       ))}
     </Root>
