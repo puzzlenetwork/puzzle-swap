@@ -56,6 +56,22 @@ const TokenInRangePreview = ({ asset, isBase, showInUsd, ...rest }: IParams & Re
 
   const isPriceValid = (asset.currentPrice.lte(asset.maxPrice) && asset.currentPrice.gte(asset.minPrice));
 
+  const minPrice = (
+    showInUsd
+      ? `$${asset.minPriceUsd.toSmallFormat()}`
+      : `${asset.minPrice.toSmallFormat()}`
+  );
+  const currentPrice = (
+    showInUsd
+      ? `$${asset.currentPriceUsd.toSmallFormat()}`
+      : `${asset.currentPrice.toSmallFormat()}`
+  );
+  const maxPrice = (
+    showInUsd
+      ? (asset.maxPriceUsd.isFinite() ? `$${asset.maxPriceUsd.toSmallFormat()}` : "∞")
+      : (asset.maxPrice.isFinite() ? `${asset.maxPrice.toSmallFormat()}` : "∞")
+  );
+
   return (
     <TokenCard kind={isPriceValid ? "secondary" : "error"} {...rest}>
       <Row>
@@ -66,17 +82,17 @@ const TokenInRangePreview = ({ asset, isBase, showInUsd, ...rest }: IParams & Re
       <SizedBox height={12} />
       <Row alignItems="center" justifyContent="start">
         <Text fitContent type={isPriceValid ? "secondary" : "error"} size="small" weight={500}>{
-          showInUsd ? `$${asset.minPriceUsd.toSmallFormat()}` : asset.minPrice.toSmallFormat()
+          minPrice
         }</Text>
         <SizedBox width={4} />
         <ArrowWithSuperText color={ isPriceValid ? theme.colors.primary650 : theme.colors.error500 }>
           <Text fitContent type={isPriceValid ? "secondary" : "error"} size="small" weight={500}>{
-            showInUsd ? `$${asset.currentPriceUsd.toSmallFormat()}` : asset.currentPrice.toSmallFormat()
+            currentPrice
           }</Text>
         </ArrowWithSuperText>
         <SizedBox width={4} />
         <Text fitContent type={isPriceValid ? "secondary" : "error"} size="small" weight={500}>{
-          showInUsd ? `$${asset.maxPriceUsd.toSmallFormat()}` : asset.maxPrice.toSmallFormat()
+          maxPrice
         }</Text>
       </Row>
     </TokenCard>
@@ -91,6 +107,23 @@ interface IWrapperParams {
 
 const TokenInRangePreviewWrapper = ({ asset, baseToken, showInUsd, ...rest }: IWrapperParams & React.HTMLAttributes<HTMLDivElement>) => {
   const isBase = asset.assetId === baseToken?.assetId;
+
+  const minPrice = (
+    showInUsd
+      ? `$${asset.minPriceUsd.toSmallFormat()}`
+      : `${asset.minPrice.toSmallFormat()} ${baseToken?.name}`
+  );
+  const currentPrice = (
+    showInUsd
+      ? `$${asset.currentPriceUsd.toSmallFormat()}`
+      : `${asset.currentPrice.toSmallFormat()} ${baseToken?.name}`
+  );
+  const maxPrice = (
+    showInUsd
+      ? (asset.maxPriceUsd.isFinite() ? `$${asset.maxPriceUsd.toSmallFormat()}` : "∞")
+      : (asset.maxPrice.isFinite() ? `${asset.maxPrice.toSmallFormat()} ${baseToken?.name}` : "∞")
+  );
+
   return isBase ? (
     <TokenInRangePreview asset={asset} isBase={true} showInUsd={showInUsd} {...rest} />
   ) : (
@@ -106,16 +139,16 @@ const TokenInRangePreviewWrapper = ({ asset, baseToken, showInUsd, ...rest }: IW
           <Text type="secondary" size="small" weight={500} nowrap>Current Price:</Text>
           <SizedBox width={4} />
             <Text size="small" fitContent weight={500} nowrap>{
-              showInUsd ? `$${asset.currentPriceUsd.toSmallFormat()}` : `${asset.currentPrice.toSmallFormat()} ${baseToken?.name}`
+              currentPrice
             }</Text>
         </Row>
         <Row alignItems="center">
           <Text type="secondary" size="small" weight={500} nowrap>Range:</Text>
           <SizedBox width={40} />
             <Text size="small" weight={500} nowrap>{
-              showInUsd ? `$${asset.minPriceUsd.toSmallFormat()}` : `${asset.minPrice.toSmallFormat()} ${baseToken?.name}`
+              minPrice
             } <span style={{ display: "inline", fontSize: "1.4rem" }}>⟷</span> {
-              showInUsd ? `$${asset.maxPriceUsd.toSmallFormat()}` : `${asset.maxPrice.toSmallFormat()} ${baseToken?.name}`
+              maxPrice
             }</Text>
         </Row>
       </Column>

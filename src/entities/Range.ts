@@ -17,6 +17,10 @@ export interface IRangeAssetResponse {
   min_price: number,
   max_price_usd: number,
   min_price_usd: number,
+  is_active: boolean,
+  leverage: number,
+  staked: boolean,
+  stake_apr: number,
   current_selloff: number,
   max_sell_allowed: number,
   selloff_start_balance: number,
@@ -123,6 +127,10 @@ export class RangeAsset {
   minPrice: BN;
   maxPriceUsd: BN;
   minPriceUsd: BN;
+  isActive: boolean;
+  leverage: BN;
+  staked: boolean;
+  stakeApr: BN;
   maxSellAllowed: BN | null;
   currentSelloff: BN;
   selloffStartBalance: BN;
@@ -147,6 +155,10 @@ export class RangeAsset {
     this.minPrice = new BN(params.min_price);
     this.maxPriceUsd = new BN(params.max_price_usd ?? Infinity);
     this.minPriceUsd = new BN(params.min_price_usd);
+    this.isActive = params.is_active;
+    this.leverage = new BN(params.leverage);
+    this.staked = params.staked;
+    this.stakeApr = new BN(params.stake_apr);
     this.maxSellAllowed = params.max_sell_allowed ? new BN(params.max_sell_allowed) : null;
     this.currentSelloff = new BN(params.current_selloff);
     this.selloffStartBalance = new BN(params.selloff_start_balance);
