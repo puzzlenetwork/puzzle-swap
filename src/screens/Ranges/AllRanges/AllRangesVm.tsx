@@ -83,7 +83,7 @@ class AllRangesVm {
   showOnlyActiveRanges: boolean = false;
   setShowOnlyActiveRanges = (v: boolean) => {
     this.showOnlyActiveRanges = v;
-    // this.rootStore.rangesStore.setMinLiquidity(v ? 1 : 0);
+    this.rootStore.rangesStore.setOnlyActiveRanges(v ? true : undefined);
   };
 
   showOnlyUserRanges: boolean = false;

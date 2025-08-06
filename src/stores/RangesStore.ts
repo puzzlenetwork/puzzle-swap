@@ -86,7 +86,7 @@ export default class RangesStore {
     this.syncRanges();
   }
 
-  setOnlyActiveRanges = (onlyActive: boolean) => {
+  setOnlyActiveRanges = (onlyActive: boolean | undefined) => {
     this.onlyActiveRanges = onlyActive;
     this.syncRanges();
   };

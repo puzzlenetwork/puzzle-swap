@@ -16,6 +16,7 @@ import BN from "@src/utils/BN";
 import Checkbox from "@src/components/Checkbox";
 import Select from "@src/components/Select";
 import Tag from "@src/components/Tag";
+import { ReactComponent as Autostaking } from "@src/assets/icons/autostaking.svg";
 
 interface IProps {
   isMobile?: boolean;
@@ -179,6 +180,14 @@ const RangeComposition: React.FC<IProps> = (props) => {
                 </Tooltip>
               </>
             )}
+            {a.staked && a.stakeApr?.gte(1) && (
+              <>
+                <SizedBox width={12} />
+                <Text type="success" fitContent>{a.stakeApr.toFormat(0)}%</Text>
+                <SizedBox width={4} />
+                <Autostaking />
+              </>
+            )}
           </Row>
         ),
         price: (relativeTokenAssetId === "USD") ? (
@@ -208,8 +217,12 @@ const RangeComposition: React.FC<IProps> = (props) => {
         ),
         balance: (
           <Row alignItems="center" justifyContent="center">
+            <Text fitContent type={a.isActive ? "primary" : "error"}>
+              {a.factBalance.toSmallFormat()}
+            </Text>
+            <SizedBox width={4} />
             <Text fitContent>
-              {a.factBalance.toSmallFormat()} /
+              /
             </Text>
             <SizedBox width={4} />
             <Text fitContent type="secondary">
