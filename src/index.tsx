@@ -15,7 +15,6 @@ import { BrowserRouter as Router } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import ThemeWrapper from "./themes/ThemeProvider";
-import './styles/customNotificationStyles.css';
 
 const relativeTime = require("dayjs/plugin/relativeTime");
 dayjs.extend(relativeTime);

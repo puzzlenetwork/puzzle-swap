@@ -72,14 +72,14 @@ class NotificationStore {
       message: content,
       type: type,
       insert: "top",
-      container: "top-left",
+      container: "top-right",
       slidingExit: {
         duration: 200,
         timingFunction: 'ease-out',
         delay: 0
       },
       dismiss: {
-        duration: opts.duration ?? 8000,
+        duration: opts.duration ?? 5000,
         onScreen: true,
         pauseOnHover: true,
         showIcon: opts.closable !== false
