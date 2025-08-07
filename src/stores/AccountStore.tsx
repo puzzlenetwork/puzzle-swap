@@ -319,7 +319,7 @@ class AccountStore {
     if (this.signer == null) {
       this.rootStore.notificationStore.notify("You need to login firstly", {
         title: "Error",
-        type: "error"
+        type: "warning"
       });
       return null;
     }
@@ -336,7 +336,7 @@ class AccountStore {
     } catch (e: any) {
       console.warn(e);
       this.rootStore.notificationStore.notify(e.toString(), {
-        type: "error",
+        type: "warning",
         title: "Transaction is not completed"
       });
       return null;
@@ -394,7 +394,7 @@ class AccountStore {
     if (this.signer == null) {
       this.rootStore.notificationStore.notify("You need to login firstly", {
         title: "Error",
-        type: "error"
+        type: "warning"
       });
       return null;
     }

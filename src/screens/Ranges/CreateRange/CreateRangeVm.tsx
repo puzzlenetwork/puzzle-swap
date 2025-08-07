@@ -314,7 +314,7 @@ class CreateRangeVm {
         "Change the assets you don’t have enough in wallet, or reset the whole composition.",
         {
           title: "Your max to provide is too low for this range composition",
-          type: "error",
+          type: "warning",
           onClickText: "Reset the composition",
           onClick: () => this.setDefaultRangeAssets()
         }
@@ -480,13 +480,13 @@ class CreateRangeVm {
   provideLiquidityToRange = async () => {
     const { address } = this.rootStore.accountStore;
     if (address === null) {
-      this.rootStore.notificationStore.notify("Please connect your wallet first", { type: "error" });
+      this.rootStore.notificationStore.notify("Please connect your wallet first", { type: "warning" });
       return;
     }
 
     if (this.deployedContractAddress === null) {
       this.rootStore.notificationStore.notify("No deployed contract found. Please deploy the range first.", {
-        type: "error"
+        type: "warning"
       });
       return;
     }
@@ -611,7 +611,7 @@ class CreateRangeVm {
     } catch (e: any) {
       console.error("Error providing liquidity to range:", e);
       this.setNotificationParams({
-        type: "error",
+        type: "warning",
         title: "Error: Couldn't provide liquidity",
         description: e.message ?? e.toString(),
         buttons: [
@@ -659,7 +659,7 @@ class CreateRangeVm {
 
       if (!transferTxId) {
         this.setNotificationParams({
-          type: "error",
+          type: "warning",
           title: "Error: Couldn't transfer WAVES for fees",
           description: "Please ensure you have enough WAVES in your wallet."
         });
@@ -699,7 +699,7 @@ class CreateRangeVm {
       });
     } catch (e: any) {
       this.rootStore.notificationStore.notify("Cannot create range. Try to reload the page and try again.", {
-        type: "error"
+        type: "warning"
       });
 
       console.error("Error creating range:", e);

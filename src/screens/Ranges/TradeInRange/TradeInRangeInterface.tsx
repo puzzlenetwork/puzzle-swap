@@ -21,6 +21,7 @@ import SwapButton from "./SwapButton";
 import SwitchTokensButton from "./SwitchTokensButton";
 import TooltipFeeInfo from "./TooltipFeeInfo";
 import { TradeInRangeVMProvider, useTradeInRangeVM } from "./TradeInRangeVM";
+import { NOTIFICATION_TYPE } from 'react-notifications-component';
 
 const Root = styled.div`
   display: flex;
@@ -60,7 +61,7 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
   const handleSetAssetId0 = (assetId: string) => {
     if (assetId === vm.assetId1) {
       notificationStore.notify("You can't choose same assets", {
-        type: "error",
+        type: "danger",
         title: "Warning"
       });
       return;
@@ -77,8 +78,8 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
   const handleSetAssetId1 = (assetId: string) => {
     if (assetId === vm.assetId0) {
       notificationStore.notify("You can't choose same assets", {
-        type: "error",
-        title: "Warning"
+        title: "Warning",
+        type: "danger"
       });
       return;
     }

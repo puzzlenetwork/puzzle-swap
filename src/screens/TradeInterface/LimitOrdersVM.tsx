@@ -270,7 +270,7 @@ class LimitOrdersVM {
       })
       .catch((e) =>
         this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
-          type: "error"
+          type: "warning"
         })
       )
       .finally(() => this.setLoading(false));
@@ -305,7 +305,7 @@ class LimitOrdersVM {
       .then(() => this.sync())
       .catch((e) =>
         this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
-          type: "error"
+          type: "warning"
         })
       )
       .finally(() => this.setLoading(false));
@@ -340,7 +340,7 @@ class LimitOrdersVM {
       .then(() => this.setLoading(false))
       .catch((e) =>
         this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
-          type: "error"
+          type: "warning"
         })
       )
       .finally(() => this.setLoading(false));
