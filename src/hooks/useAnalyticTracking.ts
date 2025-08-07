@@ -48,12 +48,16 @@ export function useAnalyticTracking(env: "development" | "production" = "develop
     })(window, document, "script", "dataLayer", "GTM-P7S4TWZM");
 
     // ---- Google Analytics ----
+
     const gaScript = document.createElement("script");
     gaScript.async = true;
     gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-5N1PSQ0TEV";
     document.head.appendChild(gaScript);
 
     window.dataLayer = window.dataLayer || [];
+    function gtag(...args: any[]) {
+      window.dataLayer.push(args);
+    }
     gtag("js", new Date());
     gtag("config", "G-5N1PSQ0TEV");
 
