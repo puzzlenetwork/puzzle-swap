@@ -71,7 +71,7 @@ body {
     cursor: pointer;
     display: flex;
     margin: 0;
-    padding-left: 28px;
+    padding-left: 40px;
     position: relative;
     background: ${theme.colors.white};
 }
@@ -113,8 +113,8 @@ body {
     content: "";
     display: block;
     position: absolute;
-    top: 16px;
-    left: 16px;
+    top: 18px;
+    left: 18px;
     width: 20px;
     height: 20px;
     background-size: contain;
@@ -132,6 +132,11 @@ body {
 
 .rnc__notification-item--danger::before {
     background-image: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="%23ED827E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 9L9 15" stroke="%23ED827E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 9L15 15" stroke="%23ED827E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+}
+
+.rnc__notification-content {
+    padding: 16px;
+    padding-left: 8px;
 }
 
 .rnc__notification-timer {
