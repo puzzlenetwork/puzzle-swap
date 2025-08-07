@@ -4,6 +4,11 @@ import { makeAutoObservable } from "mobx";
 import RootStore from "@stores/RootStore";
 // import getAlert, { closeAlertIcon } from "@src/utils/alertUtil";
 import { THEME_TYPE } from "@src/themes/ThemeProvider";
+import { Column } from '@components/Flex';
+import Text from "@components/Text";
+import React from 'react';
+import SizedBox from '@src/components/SizedBox';
+import { Link } from 'react-router-dom';
 
 export type TNotifyOptions = Partial<{
   duration: number;
@@ -63,13 +68,38 @@ class NotificationStore {
     makeAutoObservable(this);
   }
 
-  notify(content: string, opts: TNotifyOptions = {}) {
+  notify(content: string | React.ReactNode, opts: TNotifyOptions = {}) {
     console.log("notify", content, opts);
     const type = opts.type || "info";
 
+    const msg = opts.link ? (
+      <Column>
+        <Text size="small" type="secondary">
+          {content}
+        </Text>
+        <SizedBox height={12} />
+        <Link
+          to={opts.link}
+          onClick={opts.onClick}
+          target="_blank"
+          style={{ textDecoration: 'none' }}
+        >
+          <Text size="small" type="primary">
+            {opts.linkTitle}
+          </Text>
+        </Link>
+      </Column>
+    ) : (
+      <Column>
+        <Text size="small" type="secondary">
+          {content}
+        </Text>
+      </Column>
+    );
+
     Store.addNotification({
       title: opts.title || "Notification",
-      message: content,
+      message: msg,
       type: type,
       insert: "top",
       container: "top-right",
