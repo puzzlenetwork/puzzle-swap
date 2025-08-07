@@ -3,7 +3,7 @@ import 'react-notifications-component/dist/theme.css';
 import { makeAutoObservable } from "mobx";
 import RootStore from "@stores/RootStore";
 // import getAlert, { closeAlertIcon } from "@src/utils/alertUtil";
-import { THEME_TYPE } from "@src/themes/ThemeProvider";
+import { THEME_TYPE, themes } from "@src/themes/ThemeProvider";
 import { Column } from '@components/Flex';
 import Text from "@components/Text";
 import React from 'react';
@@ -25,51 +25,17 @@ export type TNotifyOptions = Partial<{
   style: { [key: string]: string | number };
 }>;
 
-const style = {
-  boxShadow: "0px 8px 24px rgba(54, 56, 112, 0.16)",
-  borderRadius: 12,
-  padding: 16
-};
-
-const styles = {
-  error: {
-    ...style
-  },
-  warning: {
-    ...style
-  },
-  info: {
-    ...style
-  },
-  success: {
-    ...style
-  }
-};
-
 class NotificationStore {
   public rootStore: RootStore;
   _instance?: any;
 
   constructor(rootStore: RootStore) {
-    const width = window.innerWidth;
-    const mobileStyle = {
-      top: 80,
-      right: 16,
-      left: 16,
-      zIndex: "1000000000000000000"
-    };
-    const desktopStyle = {
-      top: 96,
-      right: 16,
-      left: width - 320 - 16,
-      zIndex: "1000000000000000000"
-    };
     this.rootStore = rootStore;
     makeAutoObservable(this);
   }
 
   notify(content: string | React.ReactNode, opts: TNotifyOptions = {}) {
-    console.log("notify", content, opts);
+    const theme = themes[this.rootStore.accountStore.selectedTheme];
     const type = opts.type || "info";
 
     const msg = opts.link ? (
@@ -84,7 +50,7 @@ class NotificationStore {
           target="_blank"
           style={{ textDecoration: 'none' }}
         >
-          <Text size="small" type="primary">
+          <Text size="small" style={{ color: theme.colors.primary500 }}>
             {opts.linkTitle}
           </Text>
         </Link>
