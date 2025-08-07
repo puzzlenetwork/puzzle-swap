@@ -37,7 +37,6 @@ const WalletActionsTooltip: React.FC<IProps> = ({ address }) => {
   const { accountStore, notificationStore } = useStores();
 
   const handleCopyAddress = () => {
-    console.log("address", address);
     address && copy(address);
     notificationStore.notify("Your address was copied", {
       type: "success",
