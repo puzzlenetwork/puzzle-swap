@@ -169,6 +169,9 @@ const RangesTable: React.FC = () => {
                                       />
                                       <SizedBox width={6} />
                                       <Text size="medium" fitContent>{asset.name}</Text>
+                                      {index === 0 && (
+                                        <SizedBox width={80} />
+                                      )}
                                     </Row>
                                     <SizedBox height={8} />
                                     <Row>
