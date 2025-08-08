@@ -61,9 +61,9 @@ export default class RangesStore {
   setShowPriceInUsd = (v: boolean) => (this.showPriceInUsd = v);
 
   // Methods for pagination
-  setPagination = (pagination: { page: number; size: number }) => {
+  setPagination = async (pagination: { page: number; size: number }) => {
     this.pagination = pagination;
-    this.syncRanges();
+    await this.syncRanges();
   };
 
   setTotalItems = (items: number) => {
@@ -71,34 +71,34 @@ export default class RangesStore {
   };
 
   // Methods for filtering
-  setFilter = (filter: { sortBy: "fact_liquidity" | "earned" | "virtual_liquidity"; order: "asc" | "desc" }) => {
+  setFilter = async (filter: { sortBy: "fact_liquidity" | "earned" | "virtual_liquidity"; order: "asc" | "desc" }) => {
     this.filter = filter;
-    this.syncRanges();
+    await this.syncRanges();
   };
 
-  setTimeRange = (timeRange: "all" | "1d" | "7d" | "30d" | "90d" | "1y") => {
+  setTimeRange = async (timeRange: "all" | "1d" | "7d" | "30d" | "90d" | "1y") => {
     this.timeRange = timeRange;
-    this.syncRanges();
+    await this.syncRanges();
   };
 
-  setMinLiquidity = (minLiquidity: number) => {
+  setMinLiquidity = async (minLiquidity: number) => {
     this.minLiquidity = minLiquidity;
-    this.syncRanges();
+    await this.syncRanges();
   };
 
-  setOnlyActiveRanges = (onlyActive: boolean | undefined) => {
+  setOnlyActiveRanges = async (onlyActive: boolean | undefined) => {
     this.onlyActiveRanges = onlyActive;
-    this.syncRanges();
+    await this.syncRanges();
   };
 
-  setSearchValue = (value: string) => {
+  setSearchValue = async (value: string) => {
     this.searchValue = value;
-    this.syncRanges();
+    await this.syncRanges();
   };
 
-  setUserAddress = (value?: string) => {
+  setUserAddress = async (value?: string) => {
     this.userAddress = value;
-    this.syncRanges();
+    await this.syncRanges();
   };
 
   // Get pagination parameters for API calls
