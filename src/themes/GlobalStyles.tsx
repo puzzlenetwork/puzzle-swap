@@ -70,13 +70,14 @@ body {
     box-shadow: 0px 8px 24px 0px #36387029;
     cursor: pointer;
     display: flex;
-    margin: 0;
+    margin: 5px 0 0 0;
     padding-left: 40px;
     position: relative;
     background: ${theme.colors.white};
 }
 
 .rnc__notification-title {
+    margin-top: 0px;
     font-family: Roboto;
     font-weight: 500;
     font-size: 14px;

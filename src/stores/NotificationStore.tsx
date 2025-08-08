@@ -50,7 +50,7 @@ class NotificationStore {
           target="_blank"
           style={{ textDecoration: 'none' }}
         >
-          <Text size="small" style={{ color: theme.colors.primary500 }}>
+          <Text size="small" style={{ color: theme.colors.primary500, fontWeight: 500 }}>
             {opts.linkTitle}
           </Text>
         </Link>

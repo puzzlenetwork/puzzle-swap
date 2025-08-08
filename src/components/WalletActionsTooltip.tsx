@@ -44,6 +44,12 @@ const WalletActionsTooltip: React.FC<IProps> = ({ address }) => {
       link: "https://wavesexplorer.com/address/" + address,
       linkTitle: "View in Waves Explorer",
     });
+    notificationStore.notify("Your address was copied", {
+      type: "danger",
+      title: "Congratulations!",
+      link: "https://wavesexplorer.com/address/" + address,
+      linkTitle: "View in Waves Explorer", 
+    });
   };
   const handleLogout = () => accountStore.logout();
 
