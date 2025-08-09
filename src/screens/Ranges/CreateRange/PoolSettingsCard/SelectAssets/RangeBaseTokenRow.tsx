@@ -10,17 +10,9 @@ import { IRangeToken } from "../../CreateRangeVm";
 import Balance from "@src/entities/Balance";
 import { ReactComponent as Lock } from "@src/assets/icons/lock.svg";
 import { ReactComponent as Unlock } from "@src/assets/icons/unlock.svg";
-import { ReactComponent as Close } from "@src/assets/icons/smallClose.svg";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 import LogSliderWithImage from "@src/components/LogSliderWithImage";
-
-const StyledClose = styled(Close)`
-  margin-left: 10px;
-  width: 16px;
-  height: 16px;
-  opacity: 0.5;
-`;
 
 const StyledTable = styled.table`
   width: 100%;
@@ -151,7 +143,6 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
             ) : (
               <Unlock onClick={() => updateLockedState(token.asset.assetId, true)} style={{ cursor: "pointer" }} />
             )}
-            <StyledClose />
           </Row>
         </td>
       </tr>

@@ -64,13 +64,15 @@ const RangeChart = ({ assetsWithLeverage, size, index }: IParams) => {
           </AssetsList>
         </Column>
       }
+      style={{ cursor: "pointer" }}
     >
       <RadarChart
         width={size}
         height={size}
         data={assetsWithLeverage}
         style={{
-          transform: assetsWithLeverage.length < 3 ? "rotate(-90deg)" : ""
+          transform: assetsWithLeverage.length < 3 ? "rotate(-90deg)" : "",
+          cursor: "pointer",
         }}
       >
         <PolarGrid />

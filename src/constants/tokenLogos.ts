@@ -241,7 +241,7 @@ const tokenLogos: Record<string, string> = {
   PZ_WEB: pzWebLogo,
   PZ_WEBU: "https://puzzleswop.s3.amazonaws.com/f63b754d-8dd8-40c4-83aa-3dd1429a4e18",
   PZ_REWIND: "https://puzzleswop.s3.amazonaws.com/fcf39537-9ead-4e17-bfd9-1330eb3f05ce",
-  PZ_Units: pzUnitsLogo,
+  PZ_UNITS: pzUnitsLogo,
   PZ_BURN_XTN: pzBurnXtnLogo,
   PZ_BBB: pzBbbLogo,
   PZ_BURN_XTN_x_PPT: pzBurnXtnXPptLogo,
