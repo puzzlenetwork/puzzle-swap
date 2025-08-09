@@ -43,7 +43,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
   const vm = useRangeDetailsInterfaceVM();
   const [isOpenedShare, setOpenedShare] = useState(false);
   const link = `${window.location.origin}/ranges/${vm.range!.address}/details`;
-  const text = `Invest to ${vm.range!.domain} Puzzle Network range`;
+  const text = `Invest to ${vm.range!.domain} Puzzle Network range\n\nhttps://x.com/puzzle_network`;
   const shareInfo = [
     {
       title: "X",

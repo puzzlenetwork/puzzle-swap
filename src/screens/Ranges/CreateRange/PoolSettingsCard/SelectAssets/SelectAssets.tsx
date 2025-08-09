@@ -18,6 +18,8 @@ import React, { useState } from "react";
 import { useCreateRangeVM } from "../../CreateRangeVm";
 import RangeBaseTokenRow from "./RangeBaseTokenRow";
 import RangeTokenRow from "./RangeTokenRow";
+import Skeleton from "react-loading-skeleton";
+import Scrollbar from "@components/Scrollbar";
 
 interface IProps {}
 
@@ -32,17 +34,45 @@ const SizedBoxStyled = styled(SizedBox)`
   width: 100%;
   margin: 24px 0 24px -24px;
   @media (max-width: 560px) {
-    margin: 24px 0 24px -17px;
+    margin: 24px 0;
   }
 `;
 
 const StyledTable = styled.table`
   width: 100%;
+  border-collapse: collapse;
+
   tr {
     padding-top: 20px;
+  }
+
+  td {
+    padding: 0 5px;
+  }
+
+  @media (max-width: 880px) {
+    /* Switch table to block layout on small screens so cells stack and rows can wrap */
+    display: block;
+
+    thead {
+      display: none; /* hide header for compact mobile layout */
+    }
+
+    tbody,
+    tr,
+    td {
+      display: block;
+      width: 100% !important; /* override any width attributes on <td> */
+      box-sizing: border-box;
+    }
+
+    tr {
+      padding-top: 0;
+      margin: 12px 0; /* spacing between logical rows */
+    }
 
     td {
-      padding: 0 5px;
+      padding: 6px 0; /* increase vertical padding for readability */
     }
   }
 `;
@@ -116,21 +146,25 @@ const SelectsAssets: React.FC<IProps> = () => {
           )}
         </Row>
       ),
-      price: (
+      price: index === 0 ? (
         <Text type="primary" weight={500} size="medium">
-          {index === 0
-            ? "Base"
-            : (asset.minPrice
-                ? `${BN.formatUnits(asset.minPrice, asset.asset.decimals).toAdaptiveFormat(true)} ← `
-                : "") +
-              (asset.initialPrice
-                ? BN.formatUnits(asset.initialPrice, asset.asset.decimals).toAdaptiveFormat(true)
-                : "-") +
-              (asset.maxPrice
-                ? asset.leverage?.lte(1) || !asset.maxPrice.isFinite()
-                  ? " → ∞"
-                  : ` → ${BN.formatUnits(asset.maxPrice, asset.asset.decimals).toAdaptiveFormat(true)}`
-                : "-")}
+          Base
+        </Text>
+      ) : !asset.priceLoaded ? (
+        <Skeleton height={18} width={128} />
+      ) : (
+        <Text type="primary" weight={500} size="medium">
+          {(asset.minPrice
+            ? `${BN.formatUnits(asset.minPrice, asset.asset.decimals).toAdaptiveFormat(true)} ← `
+            : "") +
+            (asset.initialPrice
+              ? BN.formatUnits(asset.initialPrice, asset.asset.decimals).toAdaptiveFormat(true)
+              : "-") +
+            (asset.maxPrice
+              ? asset.leverage?.lte(1) || !asset.maxPrice.isFinite()
+                ? " → ∞"
+                : ` → ${BN.formatUnits(asset.maxPrice, asset.asset.decimals).toAdaptiveFormat(true)}`
+              : "-")}
         </Text>
       ),
       maxSellOff: (
@@ -164,7 +198,6 @@ const SelectsAssets: React.FC<IProps> = () => {
           updateLockedState={vm.updateLockedState}
         />
 
-        <SizedBox height={12} />
         <SizedBoxStyled
           height={1}
           style={{
@@ -226,7 +259,9 @@ const SelectsAssets: React.FC<IProps> = () => {
       </Text>
       <SizedBox height={8} />
       <Card style={{ width: "100%", padding: 0, overflow: "hidden" }}>
-        <Table columns={cols} data={data} />
+        <Scrollbar style={{ maxWidth: "calc(100vw - 32px)", borderRadius: 16 }}>
+          <Table columns={cols} data={data} />
+        </Scrollbar>
       </Card>
     </Root>
   );

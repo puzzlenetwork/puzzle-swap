@@ -30,6 +30,8 @@ const Root = styled.div`
   //justify-content: space-evenly;
   padding: 8px;
 
+  z-index: 10;
+
   & > * {
     cursor: pointer;
   }

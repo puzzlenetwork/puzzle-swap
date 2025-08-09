@@ -23,6 +23,47 @@ const StyledClose = styled(Close)`
   cursor: pointer;
 `;
 
+// Show labels only on mobile to replace hidden table headers
+const MobileLabel = styled(Text)`
+  display: none;
+  @media (max-width: 880px) {
+    display: block;
+    margin-bottom: 12px;
+  }
+`;
+
+// On small screens allow row content to wrap so the slider and controls stack nicely
+const WrappingRow = styled(Row)`
+  flex-wrap: wrap;
+  gap: 6px;
+  width: fit-content;
+  @media (min-width: 880px) {
+    flex-wrap: nowrap;
+    gap: 0;
+  }
+`;
+
+// Mobile-only row wrapper
+const ShowOnMobileTr = styled.tr`
+  display: none;
+  @media (max-width: 880px) {
+    display: block;
+  }
+`;
+
+// Hide specific cells on mobile
+const HiddenOnMobileTd = styled.td`
+  @media (max-width: 880px) {
+    display: none !important;
+  }
+`;
+
+const HiddenOnMobileTr = styled.tr`
+  @media (max-width: 880px) {
+    display: none !important;
+  }
+`;
+
 interface IParams {
   token: IRangeToken;
   tokensToAdd: Balance[];
@@ -52,12 +93,38 @@ const RangeTokenRow: React.FC<IParams> = ({
 }) => {
   return (
     <>
-      <tr style={{ height: 20 }} />
-      <tr>
-        <td width="10%">
-          <AssetSelector asset={token.asset} balances={tokensToAdd} onUpdateAsset={replaceAssetInRange} />
+      <HiddenOnMobileTr style={{ height: 20 }} />
+      {/* Mobile-only combined row: Asset selector + Share controls in one line */}
+      <ShowOnMobileTr>
+        <td colSpan={4}>
+          <Row alignItems="center" justifyContent="space-between" style={{ gap: 8, flexWrap: "nowrap" }}>
+            <AssetSelector asset={token.asset} balances={tokensToAdd} onUpdateAsset={replaceAssetInRange} />
+            <WrappingRow alignItems="center" justifyContent="flex-end" style={{ flexShrink: 0 }}>
+              <ShareTokenInput
+                amount={token.share}
+                onChange={(v) => changeAssetShareInRange(token.asset.assetId, v)}
+                disabled={token.locked}
+                maxValue={new BN(1000)}
+              />
+              <SizedBox width={10} />
+              {token.locked ? (
+                <Lock onClick={() => updateLockedState(token.asset.assetId, false)} style={{ cursor: "pointer" }} />
+              ) : (
+                <Unlock onClick={() => updateLockedState(token.asset.assetId, true)} style={{ cursor: "pointer" }} />
+              )}
+              <StyledClose onClick={() => deleteAssetFromRange(token.asset.assetId)} />
+            </WrappingRow>
+          </Row>
         </td>
+      </ShowOnMobileTr>
+      <tr>
+        <HiddenOnMobileTd width="10%">
+          <AssetSelector asset={token.asset} balances={tokensToAdd} onUpdateAsset={replaceAssetInRange} />
+        </HiddenOnMobileTd>
         <td colSpan={2} width="80%">
+          <MobileLabel type="primary" size="medium" weight={500}>
+            Leverage
+          </MobileLabel>
           <Row alignItems="center">
             <Text size="small" type="secondary" fitContent>
               1x
@@ -104,8 +171,8 @@ const RangeTokenRow: React.FC<IParams> = ({
             </Text>
           </Row>
         </td>
-        <td width="10%">
-          <Row alignItems="center" justifyContent="flex-end">
+        <HiddenOnMobileTd width="10%">
+          <WrappingRow alignItems="center" justifyContent="flex-end">
             <ShareTokenInput
               amount={token.share}
               onChange={(v) => changeAssetShareInRange(token.asset.assetId, v)}
@@ -119,18 +186,24 @@ const RangeTokenRow: React.FC<IParams> = ({
               <Unlock onClick={() => updateLockedState(token.asset.assetId, true)} style={{ cursor: "pointer" }} />
             )}
             <StyledClose onClick={() => deleteAssetFromRange(token.asset.assetId)} />
-          </Row>
-        </td>
+          </WrappingRow>
+        </HiddenOnMobileTd>
       </tr>
-      <tr style={{ height: 20 }} />
+      <HiddenOnMobileTr style={{ height: 20 }} />
       <tr>
         <td colSpan={2} width="50%">
+          <MobileLabel type="primary" size="medium" weight={500}>
+            Max Sell-Off
+          </MobileLabel>
           <MaxSellOffSelector
             value={token.maxSellOff}
             onUpdate={(value) => changeAssetMaxSellOffInRange(token.asset.assetId, value)}
           />
         </td>
         <td colSpan={2} width="50%">
+          <MobileLabel type="primary" size="medium" weight={500}>
+            Change Initial Price
+          </MobileLabel>
           <InitialPriceSelector
             asset={token}
             baseTokenSymbol={baseTokenSymbol}

@@ -14,7 +14,7 @@ interface IProps {
 const TitleWithTips: React.FC<IProps> = ({ description, title, type, size }) => {
   return (
     <Row alignItems="center">
-      <Text weight={500} type={type || "secondary"} size={size} style={{ width: "fit-content" }}>
+      <Text weight={500} type={type || "secondary"} size={size} style={{ width: "fit-content" }} nowrap>
         {title}
       </Text>
       <Tooltip containerStyles={{ display: "flex", alignItems: "center" }} content={<Text>{description}</Text>}>
