@@ -450,7 +450,7 @@ class CreateCustomPoolsVm {
               ),
               () => (
                 <Button
-                  key="Back to AllRanges"
+                  key="Back to Pools"
                   size="medium"
                   fixed
                   onClick={() => {
@@ -459,7 +459,7 @@ class CreateCustomPoolsVm {
                     window.open(ROUTES.POOLS);
                   }}
                 >
-                  Back to AllRanges
+                  Back to Pools
                 </Button>
               )
             ]

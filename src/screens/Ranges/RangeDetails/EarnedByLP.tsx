@@ -56,32 +56,30 @@ const EarnedByLP = () => {
 
   return (
     <Card paddingDesktop="16px 24px" paddingMobile="12px 16px">
-      <Text type="secondary" size="medium">
-        <Row alignItems="center">
-          <Text type="secondary" size="medium">
-            Earned by LP
-          </Text>
-          <Select
-            kind="text"
-            textSize="medium"
-            options={displayModes}
-            onSelect={({ key }) => {
-              vm.setRewardsDisplayMode(key as "all" | "fees" | "extra");
-            }}
-            selected={displayModes.find((o) => o.key === vm.rewardsDisplayMode) || displayModes[0]}
-          />
-          <SizedBox width={20} />
-          <Select
-            kind="text"
-            textSize="medium"
-            options={timeRanges}
-            onSelect={({ key }) => {
-              vm.setTimeRangeToDisplayRewards(key as "1d" | "7d" | "1m" | "3m" | "1y" | "all");
-            }}
-            selected={timeRanges.find((o) => o.key === vm.timeRangeToDisplayRewards) || timeRanges[0]}
-          />
-        </Row>
-      </Text>
+      <Row alignItems="center">
+        <Text type="secondary" size="medium">
+          Earned by LP
+        </Text>
+        <Select
+          kind="text"
+          textSize="medium"
+          options={displayModes}
+          onSelect={({ key }) => {
+            vm.setRewardsDisplayMode(key as "all" | "fees" | "extra");
+          }}
+          selected={displayModes.find((o) => o.key === vm.rewardsDisplayMode) || displayModes[0]}
+        />
+        <SizedBox width={20} />
+        <Select
+          kind="text"
+          textSize="medium"
+          options={timeRanges}
+          onSelect={({ key }) => {
+            vm.setTimeRangeToDisplayRewards(key as "1d" | "7d" | "1m" | "3m" | "1y" | "all");
+          }}
+          selected={timeRanges.find((o) => o.key === vm.timeRangeToDisplayRewards) || timeRanges[0]}
+        />
+      </Row>
       <SizedBox height={12} />
       <Row style={{ gap: "8px", flexWrap: "wrap" }}>
         {vm.LPRewardsToDisplay.map((item, index) => (

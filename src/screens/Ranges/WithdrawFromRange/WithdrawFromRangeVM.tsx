@@ -57,6 +57,7 @@ class WithdrawFromRangeVM {
       () => {
         this.updateUserIndexStaked();
         this.syncLPData();
+        this.syncTokensToWithdrawAmounts();
       }
     );
   }
@@ -75,6 +76,7 @@ class WithdrawFromRangeVM {
       if (!data) return;
       const newLPData = new LPData(data);
       this.setLPData(newLPData);
+      this.syncTokensToWithdrawAmounts();
     });
   };
 
@@ -101,33 +103,39 @@ class WithdrawFromRangeVM {
       }));
   }
 
-  get tokensToWithdrawAmounts(): Record<string, WithdrawToken> | null {
+  public tokensToWithdrawAmounts: Record<string, WithdrawToken> | null = null;
+  private _setTokensToWithdrawAmounts = (value: Record<string, WithdrawToken> | null) =>
+    (this.tokensToWithdrawAmounts = value);
+
+  public syncTokensToWithdrawAmounts = () => {
     if (this.userIndexStaked == null || this.lpData == null) return null;
-    return this.range.assets.reduce<Record<string, WithdrawToken>>((acc, { assetId }) => {
-      const userAssetData = this.lpData?.assetsData.find((asset) => asset.assetId === assetId);
-      if (!userAssetData)
+    return this._setTokensToWithdrawAmounts(
+      this.range.assets.reduce<Record<string, WithdrawToken>>((acc, { assetId }) => {
+        const userAssetData = this.lpData?.assetsData.find((asset) => asset.assetId === assetId);
+        if (!userAssetData)
+          return {
+            ...acc,
+            [assetId]: {
+              amount: BN.ZERO,
+              usdnEquivalent: BN.ZERO
+            }
+          };
+
+        const topToWithdraw = userAssetData.providedAmount;
+        const toWithdraw = topToWithdraw.times(this.percentToWithdraw).div(100);
+
+        const topUsdToWithdraw = userAssetData.providedAmountUsd;
+        const usdToWithdraw = topUsdToWithdraw.times(this.percentToWithdraw).div(100);
+
         return {
           ...acc,
           [assetId]: {
-            amount: BN.ZERO,
-            usdnEquivalent: BN.ZERO
+            amount: toWithdraw,
+            usdnEquivalent: usdToWithdraw
           }
         };
-
-      const topToWithdraw = userAssetData.providedAmount;
-      const toWithdraw = topToWithdraw.times(this.percentToWithdraw).div(100);
-
-      const topUsdToWithdraw = userAssetData.providedAmountUsd;
-      const usdToWithdraw = topUsdToWithdraw.times(this.percentToWithdraw).div(100);
-
-      return {
-        ...acc,
-        [assetId]: {
-          amount: toWithdraw,
-          usdnEquivalent: usdToWithdraw
-        }
-      };
-    }, {});
+      }, {})
+    );
   }
 
   get totalAmountToWithdraw(): BN {

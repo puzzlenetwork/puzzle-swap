@@ -25,13 +25,15 @@ const Root = styled(Card)`
   padding: 0 !important;
 `;
 
-const Title = styled(Text)<{ expanded?: boolean }>`
+const Title = styled.span<{ expanded?: boolean }>`
   display: flex;
   align-items: center;
   width: calc(100% - 48px);
   margin: 16px 24px;
   transition: 0.4s;
   position: relative;
+  weight: 500;
+  cursor: pointer;
   :after {
     position: absolute;
     top: 4px;
@@ -84,7 +86,7 @@ const LPStaking: React.FC<IProps> = () => {
 
   return (
     <Root>
-      <Title weight={500} expanded={expanded} onClick={() => setExpanded(!expanded)}>
+      <Title expanded={expanded} onClick={() => setExpanded(!expanded)}>
         LP Staking
         <Tooltip
           containerStyles={{ display: "flex", alignItems: "center" }}
@@ -102,13 +104,13 @@ const LPStaking: React.FC<IProps> = () => {
               <Text type="secondary" size="medium">
                 Staked balance
               </Text>
-              <Text>
-                {(vm.lpData?.indexStaked ?? BN.ZERO).toFormat(2)} LP
+              <Row alignItems="baseline">
+                <Text nowrap>{(vm.lpData?.indexStaked ?? BN.ZERO).toFormat(2, BN.ROUND_DOWN)} LP</Text>
+                <SizedBox width={4} />
                 <Text type="secondary" size="small" style={{ display: "inline" }}>
-                  {" "}
-                  / ${(vm.lpData?.providedUsd ?? BN.ZERO).toFormat(2)}
+                  / ${(vm.lpData?.providedUsd ?? BN.ZERO).toFormat(2, BN.ROUND_DOWN)}
                 </Text>
-              </Text>
+              </Row>
             </Column>
           )}
           {vm.stakeUnstakeAction === "stake" && (
@@ -116,13 +118,13 @@ const LPStaking: React.FC<IProps> = () => {
               <Text nowrap type="secondary" size="medium">
                 Available to stake
               </Text>
-              <Text>
-                {availableToStake.toFormat(2)} LP
+              <Row alignItems="baseline">
+                <Text nowrap>{availableToStake.toFormat(2, BN.ROUND_DOWN)} LP</Text>
+                <SizedBox width={4} />
                 <Text type="secondary" size="small" style={{ display: "inline" }}>
-                  {" "}
-                  / ${BN.formatUnits(vm.indexTokenBalance, vm.indexTokenDecimals).toFormat(2)}
+                  / ${BN.formatUnits(vm.indexTokenBalance, vm.indexTokenDecimals).toFormat(2, BN.ROUND_DOWN)}
                 </Text>
-              </Text>
+              </Row>
             </Column>
           )}
         </Information>

@@ -621,7 +621,7 @@ class CreateRangeVm {
                 this.setNotificationParams(null);
                 this.initialize(null);
                 localStorage.removeItem("puzzle-custom-range");
-                window.open(`/ranges/${this.deployedContractAddress}/invest`);
+                window.open(`/ranges/${this.deployedContractAddress}/details`);
               }}
               kind="secondary"
             >
@@ -630,7 +630,7 @@ class CreateRangeVm {
           ),
           () => (
             <Button
-              key="Back to AllRanges"
+              key="Back to Ranges"
               size="medium"
               fixed
               onClick={() => {
@@ -640,7 +640,7 @@ class CreateRangeVm {
                 window.open("/ranges");
               }}
             >
-              Back to AllRanges
+              Back to Ranges
             </Button>
           )
         ]

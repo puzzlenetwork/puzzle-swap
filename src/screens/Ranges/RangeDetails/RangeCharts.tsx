@@ -162,6 +162,7 @@ const RangeCharts: React.FC<IProps> = () => {
           />
           <Tooltip
             labelFormatter={(date) => (
+              // FIXME: raises hydration error because label uses <p></p>
               <Text type="secondary" size="small">
                 {dayjs(date).format("dddd, MMM DD")}
               </Text>

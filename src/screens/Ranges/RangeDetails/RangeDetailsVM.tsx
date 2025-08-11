@@ -151,11 +151,18 @@ class RangeDetailsInterfaceVM {
   public useMaxStakeUnstakeAmount: boolean = true;
   public setUseMaxStakeUnstakeAmount = (value: boolean) => (this.useMaxStakeUnstakeAmount = value);
 
-  public stakeUnstakeAmount: BN = BN.ZERO;
+  public stakeUnstakeAmount: BN = this.indexTokenBalance;
   public setStakeUnstakeAmount = (value: BN) => (this.stakeUnstakeAmount = value);
 
   public stakeUnstakeAction: "stake" | "unstake" = "stake";
-  public setStakeUnstakeAction = (value: "stake" | "unstake") => (this.stakeUnstakeAction = value);
+  public setStakeUnstakeAction = (value: "stake" | "unstake") => {
+    this.stakeUnstakeAction = value;
+    if (value === "stake") {
+      this.setStakeUnstakeAmount(this.indexTokenBalance);
+    } else if (value === "unstake") {
+      this.setStakeUnstakeAmount(BN.parseUnits(this.lpData!.indexStaked, this.indexTokenDecimals));
+    }
+  }
 
   constructor(rootStore: RootStore, rangeAddress: string) {
     this.rootStore = rootStore;
@@ -182,6 +189,7 @@ class RangeDetailsInterfaceVM {
             extraEarned: extraEarned
           }))
         );
+        this.syncIndexTokenInfo();
       }
     );
 
@@ -214,7 +222,12 @@ class RangeDetailsInterfaceVM {
     if (address == null) return;
     const balance = await assetBalance(this.range!.lpTokenId, address, NODE_URL);
     this.setIndexBalance(new BN(balance ?? 0));
-    const decimals = TOKENS_BY_ASSET_ID[this.range!.lpTokenId].decimals;
+    if (this.stakeUnstakeAction === "stake") {
+      this.setStakeUnstakeAmount(this.indexTokenBalance);
+    } else if (this.stakeUnstakeAction === "unstake") {
+      this.setStakeUnstakeAmount(BN.parseUnits(this.lpData!.indexStaked, this.indexTokenDecimals));
+    }
+    const decimals = TOKENS_BY_ASSET_ID[this.range!.lpTokenId]?.decimals ?? 8;
     decimals && this._setIndexTokenDecimals(decimals);
   };
 
