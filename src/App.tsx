@@ -110,7 +110,6 @@ const App: React.FC = () => {
         <Route path={ROUTES.RANGES_WITHDRAW} element={<WithdrawFromRange />} />
         <Route path={ROUTES.RANGES_CREATE} element={<CreateRange />} />
         <Route path={ROUTES.RANGES_TRADE} element={<TradeInRange />} />
-        <Route path={ROUTES.USER_RANGES} element={<div>USER_RANGES</div>} />
       </Routes>
       <WalletModal onClose={() => accountStore.setWalletModalOpened(false)} visible={accountStore.walletModalOpened} />
       <SendAssetModal
