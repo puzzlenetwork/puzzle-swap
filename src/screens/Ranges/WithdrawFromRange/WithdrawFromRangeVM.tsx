@@ -41,7 +41,10 @@ class WithdrawFromRangeVM {
   setLPData = (v: LPData) => (this.lpData = v);
 
   percentToWithdraw: BN = new BN(50);
-  setPercentToWithdraw = (value: number | number[]) => (this.percentToWithdraw = new BN(value.toString()));
+  setPercentToWithdraw = (value: number | number[]) => {
+    this.percentToWithdraw = new BN(value.toString());
+    this.syncTokensToWithdrawAmounts();
+  };
 
   public get range() {
     return this.rootStore.rangesStore.getRangeByAddress(this.rangeAddress)!;
@@ -67,6 +70,7 @@ class WithdrawFromRangeVM {
     const response = await this.range.contractKeysRequest(`${this.rootStore.accountStore.address}_indexStaked`);
     if (response != null && response.length > 0) {
       this.setUserIndexStaked(new BN(response[0].value));
+      this.syncTokensToWithdrawAmounts();
     }
   };
 

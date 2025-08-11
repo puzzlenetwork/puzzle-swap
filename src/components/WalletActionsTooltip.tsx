@@ -41,8 +41,8 @@ const WalletActionsTooltip: React.FC<IProps> = ({ address }) => {
     notificationStore.notify("Your address was copied", {
       type: "success",
       title: "Congratulations!",
-      link: "https://wavesexplorer.com/address/" + address,
-      linkTitle: "View in Waves Explorer",
+      link: `https://${EXPLORER_URL}/address/` + address,
+      linkTitle: "View in explorer",
     });
   };
   const handleLogout = () => accountStore.logout();
@@ -53,7 +53,7 @@ const WalletActionsTooltip: React.FC<IProps> = ({ address }) => {
         Copy address
       </Text>
       <Anchor style={{ padding: "10px 0" }} href={`${EXPLORER_URL}/address/${address}`}>
-        <Text>View in Waves Explorer</Text>
+        <Text>View in explorer</Text>
       </Anchor>
       <Divider className="divider" />
       <Text onClick={handleLogout} className="menu-item">

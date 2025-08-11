@@ -82,7 +82,8 @@ const LPStaking: React.FC<IProps> = () => {
   };
 
   if (accountStore.address == null) return null;
-  const availableToStake = BN.formatUnits(vm.indexTokenBalance.times(vm.range!.indexTokenRate), vm.indexTokenDecimals);
+  const availableToStake = BN.formatUnits(vm.indexTokenBalance, vm.indexTokenDecimals);
+  const availableToStakeUsd = BN.formatUnits(vm.indexTokenBalance.times(vm.range!.indexTokenRate), vm.indexTokenDecimals);
 
   return (
     <Root>
@@ -122,7 +123,7 @@ const LPStaking: React.FC<IProps> = () => {
                 <Text nowrap>{availableToStake.toFormat(2, BN.ROUND_DOWN)} LP</Text>
                 <SizedBox width={4} />
                 <Text type="secondary" size="small" style={{ display: "inline" }}>
-                  / ${BN.formatUnits(vm.indexTokenBalance, vm.indexTokenDecimals).toFormat(2, BN.ROUND_DOWN)}
+                  / ${availableToStakeUsd.toFormat(2, BN.ROUND_DOWN)}
                 </Text>
               </Row>
             </Column>

@@ -104,6 +104,7 @@ interface IParams {
   changeAssetShareInRange: (assetId: string, share: BN) => void;
   changeAssetLeverageInRange: (assetId: string, leverage: BN) => void;
   updateLockedState: (assetId: string, locked: boolean) => void;
+  shareError?: boolean;
 }
 
 const RangeBaseTokenRow: React.FC<IParams> = ({
@@ -114,7 +115,8 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
   replaceAssetInRange,
   changeAssetShareInRange,
   changeAssetLeverageInRange,
-  updateLockedState
+  updateLockedState,
+  shareError = false,
 }) => (
   <StyledTable>
     <thead>
@@ -161,6 +163,7 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
                 onChange={(v) => changeAssetShareInRange(token.asset.assetId, v)}
                 disabled={token.locked}
                 maxValue={new BN(1000)}
+                error={shareError}
               />
               <SizedBox width={10} />
               {token.locked ? (
@@ -233,6 +236,7 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
               onChange={(v) => changeAssetShareInRange(token.asset.assetId, v)}
               disabled={token.locked}
               maxValue={new BN(1000)}
+              error={shareError}
             />
             <SizedBox width={10} />
             {token.locked ? (

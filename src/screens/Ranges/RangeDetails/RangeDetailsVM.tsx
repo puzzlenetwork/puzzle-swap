@@ -160,7 +160,7 @@ class RangeDetailsInterfaceVM {
     if (value === "stake") {
       this.setStakeUnstakeAmount(this.indexTokenBalance);
     } else if (value === "unstake") {
-      this.setStakeUnstakeAmount(BN.parseUnits(this.lpData!.indexStaked, this.indexTokenDecimals));
+      this.lpData?.indexStaked && this.setStakeUnstakeAmount(BN.parseUnits(this.lpData.indexStaked, this.indexTokenDecimals));
     }
   }
 
@@ -379,7 +379,8 @@ class RangeDetailsInterfaceVM {
               value: unstakeAmount
             }
           ]
-        }
+        },
+        fee: !this.range?.lpTokenId ? 100500000 : 500000 // 0.1005 WAVES if the lp token was not issued
       })
       .then((txId) => {
         notificationStore.notify(`You have unstaked index token`, {

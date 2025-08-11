@@ -132,7 +132,7 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
             <Row alignItems="center" mainAxisSize="fit-content" justifyContent="flex-end">
               {vm.priceImpact && <Text>~{vm.priceImpact.toFormat(4)}%&nbsp;</Text>}
               {vm.token0 && !vm.amount0.isNaN() && (
-                <Tooltip content={<TooltipFeeInfo />} config={{ placement: "top", trigger: "click" }}>
+                <Tooltip content={<TooltipFeeInfo />} config={{ placement: "top" }}>
                   <InfoIcon />
                 </Tooltip>
               )}

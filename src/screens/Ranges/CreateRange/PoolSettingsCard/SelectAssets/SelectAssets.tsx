@@ -196,6 +196,7 @@ const SelectsAssets: React.FC<IProps> = () => {
           changeAssetLeverageInRange={vm.updateAssetLeverage}
           changeAssetShareInRange={vm.changeAssetShareInRange}
           updateLockedState={vm.updateLockedState}
+          shareError={vm.totalTokenShare.gt(1000) && vm.rangeAssets[0].share.gt(0) && !vm.rangeAssets[0].locked}
         />
 
         <SizedBoxStyled
@@ -231,6 +232,7 @@ const SelectsAssets: React.FC<IProps> = () => {
                   deleteAssetFromRange={vm.removeAssetFromRange}
                   baseTokenSymbol={vm.rangeAssets[0].asset.symbol}
                   isLast={index === vm.rangeAssets.length - 2}
+                  shareError={vm.totalTokenShare.gt(1000) && asset.share.gt(0) && !asset.locked}
                 />
               );
             })}

@@ -186,7 +186,7 @@ class MultiSwapVM {
         }
       })
       .then((txId) => {
-        notificationStore.notify("You can view the details of it in Waves Explorer", {
+        notificationStore.notify("You can view the details of it in explorer", {
           type: "success",
           title: "Transaction is completed",
           link: `${EXPLORER_URL}/transactions/${txId}`,

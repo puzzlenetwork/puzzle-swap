@@ -237,7 +237,7 @@ class CreateRangeVm {
     return (
       this.isAllTokensShareMoreThanFive &&
       this.rangeAssets.length > 1 &&
-      this.totalTakenShare.eq(1000) &&
+      this.totalTokenShare.eq(1000) &&
       this.areAllTokensPricesValid
     );
   }
@@ -262,7 +262,7 @@ class CreateRangeVm {
     return step === -1 ? this.step : step;
   }
 
-  get totalTakenShare(): BN {
+  get totalTokenShare(): BN {
     return this.rangeAssets.reduce((acc, v) => acc.plus(v.share), BN.ZERO);
   }
 
@@ -277,7 +277,7 @@ class CreateRangeVm {
     });
 
     // If sum != 1000, add difference to the first unlocked token, so the data is valid
-    const totalShare = this.totalTakenShare;
+    const totalShare = this.totalTokenShare;
     if (totalShare.lt(1000)) {
       const diff = new BN(1000).minus(totalShare);
       const firstUnlockedIndex = this.rangeAssets.findIndex((v) => !v.locked);

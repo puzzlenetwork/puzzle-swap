@@ -76,6 +76,7 @@ interface IParams {
   deleteAssetFromRange: (assetId: string) => void;
   baseTokenSymbol?: string;
   isLast?: boolean;
+  shareError?: boolean;
 }
 
 const RangeTokenRow: React.FC<IParams> = ({
@@ -89,7 +90,8 @@ const RangeTokenRow: React.FC<IParams> = ({
   changeAssetInitialPriceInRange,
   deleteAssetFromRange,
   baseTokenSymbol,
-  isLast
+  isLast,
+  shareError = false,
 }) => {
   return (
     <>
@@ -105,6 +107,7 @@ const RangeTokenRow: React.FC<IParams> = ({
                 onChange={(v) => changeAssetShareInRange(token.asset.assetId, v)}
                 disabled={token.locked}
                 maxValue={new BN(1000)}
+                error={shareError}
               />
               <SizedBox width={10} />
               {token.locked ? (
@@ -178,6 +181,7 @@ const RangeTokenRow: React.FC<IParams> = ({
               onChange={(v) => changeAssetShareInRange(token.asset.assetId, v)}
               disabled={token.locked}
               maxValue={new BN(1000)}
+              error={shareError}
             />
             <SizedBox width={10} />
             {token.locked ? (

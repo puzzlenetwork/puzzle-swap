@@ -88,7 +88,7 @@ const AccountNfts: React.FC<IProps> = () => {
                     <Row alignItems="center">
                       <LinkIcon />
                       <SizedBox width={8} />
-                      <Text>View on Waves Explorer</Text>
+                      <Text>View in explorer</Text>
                     </Row>
                   </Anchor>
                 </DetailsButton>
@@ -128,7 +128,7 @@ const AccountNfts: React.FC<IProps> = () => {
                     <Row alignItems="center">
                       <LinkIcon />
                       <SizedBox width={8} />
-                      <Text>View on Waves Explorer</Text>
+                      <Text>View in explorer</Text>
                     </Row>
                   </Anchor>
                 </DetailsButton>

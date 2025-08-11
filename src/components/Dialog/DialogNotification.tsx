@@ -119,7 +119,7 @@ export const buildSuccessLiquidityDialogParams = ({
       () => (
         <Anchor href={txLink} style={{ width: "100%" }}>
           <Button key="explorer" size="medium" kind="secondary" fixed>
-            View on Waves Explorer
+            View in explorer
           </Button>
         </Anchor>
       )
@@ -215,7 +215,7 @@ export const buildSuccessDepositToRangeDialogParams = ({
       () => (
         <Anchor href={txLink} style={{ width: "100%" }}>
           <Button key="explorer" size="medium" kind="secondary" fixed>
-            View on Waves Explorer
+            View in explorer
           </Button>
         </Anchor>
       )
