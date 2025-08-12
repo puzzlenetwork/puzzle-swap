@@ -9,6 +9,7 @@
     "@emotion/styled": "^11.14.0",
     "@ethersproject/bignumber": "^5.8.0",
     "@keeper-wallet/provider-keeper-mobile": "^1.1.14",
+    "@microsoft/clarity": "^1.0.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.16",
     "@svgr/webpack": "^5.5.0",
     "@testing-library/jest-dom": "^5.17.0",
