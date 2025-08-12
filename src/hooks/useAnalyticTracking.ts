@@ -25,6 +25,8 @@ export function useAnalyticTracking(env: "development" | "alpha" | "production" 
       default:
         projectId = "sq4e907m9a";
     }
+    console.log("projectId", projectId);
+    console.log("env", env);
 
     if (projectId !== "") {
       Clarity.init(projectId);
