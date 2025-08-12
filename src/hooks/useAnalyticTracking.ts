@@ -30,29 +30,17 @@ export function useAnalyticTracking(env: "development" | "production" = "develop
       }
     })(window, document, "clarity", "script", "sq4e907m9a");
 
-    // ---- Google Tag Manager ----
-    (function (w: any, d: Document, s: string, l: string, i: string) {
-      w[l] = w[l] || [];
-      w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-
-      const f = d.getElementsByTagName(s)[0];
-      const j = d.createElement(s) as HTMLScriptElement;
-      const dl = l !== "dataLayer" ? "&l=" + l : "";
-      j.async = true;
-      j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
-
-      if (f && f.parentNode) {
-        f.parentNode.insertBefore(j, f);
-      }
-    })(window, document, "script", "dataLayer", "GTM-P7S4TWZM");
-
     // ---- Google Analytics ----
+
     const gaScript = document.createElement("script");
     gaScript.async = true;
     gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-5N1PSQ0TEV";
     document.head.appendChild(gaScript);
 
     window.dataLayer = window.dataLayer || [];
+    function gtag(...args: any[]) {
+      window.dataLayer.push(args);
+    }
     gtag("js", new Date());
     gtag("config", "G-5N1PSQ0TEV");
 
