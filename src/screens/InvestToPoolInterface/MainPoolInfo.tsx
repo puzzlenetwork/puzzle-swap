@@ -11,7 +11,7 @@ import puzzleIcon from "@src/assets/icons/smallWhitePuzzle.svg";
 import link from "@src/assets/icons/whiteLink.svg";
 import bg from "@src/assets/puzzleBackground2.png";
 import { Column, Row } from "@src/components/Flex";
-import { ROUTES } from "@src/constants";
+import { EXPLORER_URL, ROUTES } from "@src/constants";
 import useWindowSize from "@src/hooks/useWindowSize";
 import { themes } from "@src/themes/ThemeProvider";
 import centerEllipsis from "@src/utils/centerEllipsis";
@@ -81,7 +81,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
   const { accountStore } = useStores();
   const navigate = useNavigate();
-  const handleSmartContractClick = () => window.open(`https://wscan.io/${vm.pool.address}`);
+  const handleSmartContractClick = () => window.open(`${EXPLORER_URL}/${vm.pool.address}`);
   const completePoolInitialization = () => {
     vm.prepareCompletePoolInitialization();
     navigate(ROUTES.POOLS_CREATE);
@@ -139,7 +139,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
               </Text>
               <Text type="light" size="medium">
                 {vm.pool.isCustom ? (
-                  <TextButton prefix={link} onClick={() => window.open(`https://wscan.io/${vm.pool?.owner}`)}>
+                  <TextButton prefix={link} onClick={() => window.open(`${EXPLORER_URL}/${vm.pool?.owner}`)}>
                     {centerEllipsis(vm.pool?.owner ?? "", 8)}
                   </TextButton>
                 ) : (

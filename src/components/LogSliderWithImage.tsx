@@ -83,7 +83,7 @@ const LogSliderWithImage: React.FC<IParams> = ({
 
     // Only trigger if we just reached the edge (not on initial load)
     const justReachedEdge =
-      (isAtMinEdge && previousSliderValue > domainMin) || (isAtMaxEdge && previousSliderValue < domainMax);
+      (isAtMinEdge && Math.round(previousSliderValue) > domainMin) || (isAtMaxEdge && Math.round(previousSliderValue) < domainMax);
 
     if ((hasMinTooltip || hasMaxTooltip) && justReachedEdge) {
       // Clear any existing timeout
@@ -137,7 +137,10 @@ const LogSliderWithImage: React.FC<IParams> = ({
   const getDisplayValue = () => {
     if (Math.round(currentSliderValue) <= domainMin) return "1x";
     if (Math.round(currentSliderValue) >= domainMax) return "∞";
-    return `${Math.round(currentSliderValue)}x`;
+    const scaleValue = scale(currentSliderValue);
+    const rounded =
+      scaleValue < 10 ? Math.round(scaleValue * 1e2) / 1e2 : Math.round(scaleValue);
+    return `${rounded}x`;
   };
 
   const getSpecialTooltipContent = useMemo(() => {

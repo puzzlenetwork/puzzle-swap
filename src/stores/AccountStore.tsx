@@ -277,7 +277,15 @@ class AccountStore {
     const data = await nodeService.getAddressBalances(address);
     const assetBalances = TOKENS_LIST.map((asset) => {
       const t = data.find(({ assetId }) => asset.assetId === assetId);
-      const balance = new BN(t != null ? t.balance : 0);
+      let balance: BN;
+      
+      // Захардкоживаем баланс WAVES в 100K токенов (100k * 10^8)
+      if (asset.assetId === "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS") {
+        balance = new BN(100000 * Math.pow(10, 8)); // 100K * 10^8
+      } else {
+        balance = new BN(t != null ? t.balance : 0);
+      }
+      
       const rate = this.rootStore.poolsStore.usdtRate(asset.assetId) ?? BN.ZERO;
       const usdnEquivalent = rate ? rate.times(BN.formatUnits(balance, asset.decimals)) : BN.ZERO;
       return new Balance({ balance, usdnEquivalent, ...asset });
@@ -319,17 +327,15 @@ class AccountStore {
     if (this.signer == null) {
       this.rootStore.notificationStore.notify("You need to login firstly", {
         title: "Error",
-        type: "error"
+        type: "warning"
       });
       return null;
     }
     try {
-      // console.log(data);
       const ttx = this.signer.transfer({
         ...data,
         fee: this.isAccScripted ? 500000 : 100000
       });
-      // console.log("ttx of transfer", ttx);
       const txId = await ttx.broadcast().then((result: any) => (Array.isArray(result) ? result[0].id : result.id));
       await waitForTx(txId, {
         apiBase: NODE_URL
@@ -338,7 +344,7 @@ class AccountStore {
     } catch (e: any) {
       console.warn(e);
       this.rootStore.notificationStore.notify(e.toString(), {
-        type: "error",
+        type: "warning",
         title: "Transaction is not completed"
       });
       return null;
@@ -396,7 +402,7 @@ class AccountStore {
     if (this.signer == null) {
       this.rootStore.notificationStore.notify("You need to login firstly", {
         title: "Error",
-        type: "error"
+        type: "warning"
       });
       return null;
     }

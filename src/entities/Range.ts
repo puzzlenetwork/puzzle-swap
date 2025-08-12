@@ -91,6 +91,7 @@ export interface IRangeParamsResponse {
   last_processed_txId: string;
   last_saved_time: number;
   layer_2_address: string;
+  is_active: boolean;
   liquidity: number;
   logo: string;
   lp_token_amount: number;
@@ -277,6 +278,7 @@ export class Range {
   lastProcessedTxId: string;
   lastSavedTime: number;
   layer2Address: string;
+  isActive: boolean;
   liquidity: BN;
   logo: string;
   lpTokenAmount: BN;
@@ -312,6 +314,7 @@ export class Range {
     this.lastProcessedTxId = params.last_processed_txId;
     this.lastSavedTime = params.last_saved_time;
     this.layer2Address = params.layer_2_address;
+    this.isActive = params.is_active;
     this.liquidity = new BN(params.liquidity);
     this.logo = params.logo;
     this.lpTokenAmount = new BN(params.lp_token_amount);

@@ -12,7 +12,6 @@ function gtag(...args: any[]) {
 
 export function useAnalyticTracking(env: "development" | "production" = "development") {
   useEffect(() => {
-    console.log("process.env.REACT_APP_ENV", process.env.REACT_APP_ENV);
     if (process.env.REACT_APP_ENV !== env) return;
 
     // ---- Microsoft Clarity ----
@@ -45,6 +44,11 @@ export function useAnalyticTracking(env: "development" | "production" = "develop
     gtag("js", new Date());
     gtag("config", "G-5N1PSQ0TEV");
 
-    console.log(`[Tracking] Microsoft Clarity + GA + GTM initialized in ${env} mode`);
+    // ---- GTM (noscript) ----
+    const noscript = document.createElement("noscript");
+    noscript.innerHTML = `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P7S4TWZM"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe>`;
+    document.body.appendChild(noscript);
+
   }, [env]);
 }

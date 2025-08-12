@@ -41,7 +41,10 @@ class WithdrawFromRangeVM {
   setLPData = (v: LPData) => (this.lpData = v);
 
   percentToWithdraw: BN = new BN(50);
-  setPercentToWithdraw = (value: number | number[]) => (this.percentToWithdraw = new BN(value.toString()));
+  setPercentToWithdraw = (value: number | number[]) => {
+    this.percentToWithdraw = new BN(value.toString());
+    this.syncTokensToWithdrawAmounts();
+  };
 
   public get range() {
     return this.rootStore.rangesStore.getRangeByAddress(this.rangeAddress)!;
@@ -57,6 +60,7 @@ class WithdrawFromRangeVM {
       () => {
         this.updateUserIndexStaked();
         this.syncLPData();
+        this.syncTokensToWithdrawAmounts();
       }
     );
   }
@@ -66,6 +70,7 @@ class WithdrawFromRangeVM {
     const response = await this.range.contractKeysRequest(`${this.rootStore.accountStore.address}_indexStaked`);
     if (response != null && response.length > 0) {
       this.setUserIndexStaked(new BN(response[0].value));
+      this.syncTokensToWithdrawAmounts();
     }
   };
 
@@ -73,9 +78,9 @@ class WithdrawFromRangeVM {
     if (!this.rootStore.accountStore.address) return;
     rangesService.getLPData(this.rangeAddress, this.rootStore.accountStore.address).then((data) => {
       if (!data) return;
-      console.log("LPData", data);
       const newLPData = new LPData(data);
       this.setLPData(newLPData);
+      this.syncTokensToWithdrawAmounts();
     });
   };
 
@@ -102,33 +107,39 @@ class WithdrawFromRangeVM {
       }));
   }
 
-  get tokensToWithdrawAmounts(): Record<string, WithdrawToken> | null {
+  public tokensToWithdrawAmounts: Record<string, WithdrawToken> | null = null;
+  private _setTokensToWithdrawAmounts = (value: Record<string, WithdrawToken> | null) =>
+    (this.tokensToWithdrawAmounts = value);
+
+  public syncTokensToWithdrawAmounts = () => {
     if (this.userIndexStaked == null || this.lpData == null) return null;
-    return this.range.assets.reduce<Record<string, WithdrawToken>>((acc, { assetId }) => {
-      const userAssetData = this.lpData?.assetsData.find((asset) => asset.assetId === assetId);
-      if (!userAssetData)
+    return this._setTokensToWithdrawAmounts(
+      this.range.assets.reduce<Record<string, WithdrawToken>>((acc, { assetId }) => {
+        const userAssetData = this.lpData?.assetsData.find((asset) => asset.assetId === assetId);
+        if (!userAssetData)
+          return {
+            ...acc,
+            [assetId]: {
+              amount: BN.ZERO,
+              usdnEquivalent: BN.ZERO
+            }
+          };
+
+        const topToWithdraw = userAssetData.providedAmount;
+        const toWithdraw = topToWithdraw.times(this.percentToWithdraw).div(100);
+
+        const topUsdToWithdraw = userAssetData.providedAmountUsd;
+        const usdToWithdraw = topUsdToWithdraw.times(this.percentToWithdraw).div(100);
+
         return {
           ...acc,
           [assetId]: {
-            amount: BN.ZERO,
-            usdnEquivalent: BN.ZERO
+            amount: toWithdraw,
+            usdnEquivalent: usdToWithdraw
           }
         };
-
-      const topToWithdraw = userAssetData.providedAmount;
-      const toWithdraw = topToWithdraw.times(this.percentToWithdraw).div(100);
-
-      const topUsdToWithdraw = userAssetData.providedAmountUsd;
-      const usdToWithdraw = topUsdToWithdraw.times(this.percentToWithdraw).div(100);
-
-      return {
-        ...acc,
-        [assetId]: {
-          amount: toWithdraw,
-          usdnEquivalent: usdToWithdraw
-        }
-      };
-    }, {});
+      }, {})
+    );
   }
 
   get totalAmountToWithdraw(): BN {
@@ -175,7 +186,7 @@ class WithdrawFromRangeVM {
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
-          type: "error",
+          type: "warning",
           title: "Transaction is not completed"
         });
       })

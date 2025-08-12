@@ -119,7 +119,7 @@ export const buildSuccessLiquidityDialogParams = ({
       () => (
         <Anchor href={txLink} style={{ width: "100%" }}>
           <Button key="explorer" size="medium" kind="secondary" fixed>
-            View on Waves Explorer
+            View in explorer
           </Button>
         </Anchor>
       )
@@ -141,7 +141,7 @@ export const buildErrorDialogParams = ({
   return {
     title,
     description,
-    type: "error",
+    type: "warning",
     buttons: [
       () => (
         <Button size="medium" fixed onClick={onTryAgain}>
@@ -215,7 +215,7 @@ export const buildSuccessDepositToRangeDialogParams = ({
       () => (
         <Anchor href={txLink} style={{ width: "100%" }}>
           <Button key="explorer" size="medium" kind="secondary" fixed>
-            View on Waves Explorer
+            View in explorer
           </Button>
         </Anchor>
       )

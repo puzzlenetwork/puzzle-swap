@@ -72,7 +72,7 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
   return (
     <Layout>
       <Root>
-        <GoBack link={ROUTES.RANGES} text="Back to Range list" />
+        <GoBack link={ROUTES.RANGES} text="Back to ranges list" />
         <SizedBox height={24} />
         {isMobile ? (
           <Column crossAxisSize="max">

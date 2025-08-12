@@ -41,7 +41,7 @@ class WalletVM {
         title: "Congratulations!"
       });
     } else {
-      notificationStore.notify("There is no address", { type: "error" });
+      notificationStore.notify("There is no address", { type: "warning" });
     }
   };
 

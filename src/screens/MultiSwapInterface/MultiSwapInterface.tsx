@@ -60,7 +60,7 @@ const MultiSwapInterfaceImpl: React.FC = observer(() => {
   const handleSetAssetId0 = (assetId: string) => {
     if (assetId === vm.assetId1) {
       notificationStore.notify("You can't choose same assets", {
-        type: "error",
+        type: "warning",
         title: "Warning"
       });
       return;
@@ -77,7 +77,7 @@ const MultiSwapInterfaceImpl: React.FC = observer(() => {
   const handleSetAssetId1 = (assetId: string) => {
     if (assetId === vm.assetId0) {
       notificationStore.notify("You can't choose same assets", {
-        type: "error",
+        type: "warning",
         title: "Warning"
       });
       return;

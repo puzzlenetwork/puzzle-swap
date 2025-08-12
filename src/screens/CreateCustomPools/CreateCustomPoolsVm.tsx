@@ -219,7 +219,7 @@ class CreateCustomPoolsVm {
         "Change the assets you don’t have enough in wallet, or reset the whole composition.",
         {
           title: "Your max to provide is too low for this pool composition",
-          type: "error",
+          type: "warning",
           onClickText: "Reset the composition",
           onClick: () => this.setDefaultPoolsAssets()
         }
@@ -407,13 +407,13 @@ class CreateCustomPoolsVm {
     const domain = this.domain;
     this.setNotificationParams(null);
     if (domain == null) {
-      this.rootStore.notificationStore.notify(`There is no pool domain, try to refresh the page`, { type: "error" });
+      this.rootStore.notificationStore.notify(`There is no pool domain, try to refresh the page`, { type: "warning" });
       return;
     }
     this._setLoading(true);
     const pool = await poolsService.getPoolByDomain(domain);
     if (pool == null) {
-      this.rootStore.notificationStore.notify(`Cannot find pool with domain ${domain}`, { type: "error" });
+      this.rootStore.notificationStore.notify(`Cannot find pool with domain ${domain}`, { type: "warning" });
       this._setLoading(false);
       return;
     }
@@ -450,7 +450,7 @@ class CreateCustomPoolsVm {
               ),
               () => (
                 <Button
-                  key="Back to AllRanges"
+                  key="Back to Pools"
                   size="medium"
                   fixed
                   onClick={() => {
@@ -459,7 +459,7 @@ class CreateCustomPoolsVm {
                     window.open(ROUTES.POOLS);
                   }}
                 >
-                  Back to AllRanges
+                  Back to Pools
                 </Button>
               )
             ]
@@ -530,7 +530,7 @@ class CreateCustomPoolsVm {
       }
       if (artefactOriginTransactionId == null) {
         this.rootStore.notificationStore.notify("Cannot find artefact origin txId. Try to reload the page", {
-          type: "error"
+          type: "warning"
         });
         this._setLoading(false);
         return;
@@ -556,7 +556,7 @@ class CreateCustomPoolsVm {
     } catch (e: any) {
       this._setLoading(false);
       this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
-        type: "error",
+        type: "warning",
         title: "Couldn't create pool"
       });
     }

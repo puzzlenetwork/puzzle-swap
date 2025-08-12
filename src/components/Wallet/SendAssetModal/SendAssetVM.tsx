@@ -105,7 +105,7 @@ class SendAssetVM {
             `${amount} ${assetToSend.symbol} were successfully sent to ${centerEllipsis(
               this.recipientAddress ?? "",
               6
-            )}. You can track the transaction on Waves Explorer.`,
+            )}. You can track the transaction in explorer.`,
             {
               type: "success",
               title: `Success`,
@@ -116,7 +116,7 @@ class SendAssetVM {
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
-          type: "error",
+          type: "warning",
           title: "Transaction is not completed"
         });
       })

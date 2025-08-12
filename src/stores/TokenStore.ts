@@ -53,7 +53,7 @@ export default class TokenStore {
     const assets = TOKENS_LIST.map(({ assetId }) => assetId);
     const stats = await wavesCapService.getAssetsStats(assets).catch((e) => {
       notificationStore.notify(e.message ?? e.toString(), {
-        type: "error"
+        type: "warning"
       });
       return [];
     });

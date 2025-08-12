@@ -151,11 +151,18 @@ class RangeDetailsInterfaceVM {
   public useMaxStakeUnstakeAmount: boolean = true;
   public setUseMaxStakeUnstakeAmount = (value: boolean) => (this.useMaxStakeUnstakeAmount = value);
 
-  public stakeUnstakeAmount: BN = BN.ZERO;
+  public stakeUnstakeAmount: BN = this.indexTokenBalance;
   public setStakeUnstakeAmount = (value: BN) => (this.stakeUnstakeAmount = value);
 
   public stakeUnstakeAction: "stake" | "unstake" = "stake";
-  public setStakeUnstakeAction = (value: "stake" | "unstake") => (this.stakeUnstakeAction = value);
+  public setStakeUnstakeAction = (value: "stake" | "unstake") => {
+    this.stakeUnstakeAction = value;
+    if (value === "stake") {
+      this.setStakeUnstakeAmount(this.indexTokenBalance);
+    } else if (value === "unstake") {
+      this.lpData?.indexStaked && this.setStakeUnstakeAmount(BN.parseUnits(this.lpData.indexStaked, this.indexTokenDecimals));
+    }
+  }
 
   constructor(rootStore: RootStore, rangeAddress: string) {
     this.rootStore = rootStore;
@@ -164,7 +171,6 @@ class RangeDetailsInterfaceVM {
 
     rangesService.getRangeByAddress(rangeAddress, { charts: true }).then((rangeData) => {
       if (!rangeData) return;
-      console.log("rangeData", rangeData);
       const newRange = new Range(rangeData);
       this.rootStore.rangesStore.updateRange(newRange);
       this.setHistory(rangeData.charts || []);
@@ -183,6 +189,7 @@ class RangeDetailsInterfaceVM {
             extraEarned: extraEarned
           }))
         );
+        this.syncIndexTokenInfo();
       }
     );
 
@@ -215,7 +222,12 @@ class RangeDetailsInterfaceVM {
     if (address == null) return;
     const balance = await assetBalance(this.range!.lpTokenId, address, NODE_URL);
     this.setIndexBalance(new BN(balance ?? 0));
-    const decimals = TOKENS_BY_ASSET_ID[this.range!.lpTokenId].decimals;
+    if (this.stakeUnstakeAction === "stake") {
+      this.setStakeUnstakeAmount(this.indexTokenBalance);
+    } else if (this.stakeUnstakeAction === "unstake") {
+      this.setStakeUnstakeAmount(BN.parseUnits(this.lpData!.indexStaked, this.indexTokenDecimals));
+    }
+    const decimals = TOKENS_BY_ASSET_ID[this.range!.lpTokenId]?.decimals ?? 8;
     decimals && this._setIndexTokenDecimals(decimals);
   };
 
@@ -229,7 +241,6 @@ class RangeDetailsInterfaceVM {
       .getLPData(this.rangeAddress, this.rootStore.accountStore.address, true)
       .then((data) => {
         if (!data) return;
-        console.log("LPData", data);
         const newLPData = new LPData(data);
         this.setLPData(newLPData);
       })
@@ -318,7 +329,6 @@ class RangeDetailsInterfaceVM {
         }
       })
       .then((txId) => {
-        console.log("claimed", txId);
         notificationStore.notify(`Your rewards was claimed`, {
           type: "success",
           title: `Success`,
@@ -329,7 +339,7 @@ class RangeDetailsInterfaceVM {
       .catch((e) => {
         console.error("claimRewards error", e);
         notificationStore.notify(e.message ?? JSON.stringify(e), {
-          type: "error",
+          type: "warning",
           title: "Transaction is not completed"
         });
       })
@@ -369,7 +379,8 @@ class RangeDetailsInterfaceVM {
               value: unstakeAmount
             }
           ]
-        }
+        },
+        fee: !this.range?.lpTokenId ? 100500000 : 500000 // 0.1005 WAVES if the lp token was not issued
       })
       .then((txId) => {
         notificationStore.notify(`You have unstaked index token`, {
@@ -383,7 +394,7 @@ class RangeDetailsInterfaceVM {
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
-          type: "error",
+          type: "warning",
           title: "Transaction is not completed"
         });
       })
@@ -431,7 +442,7 @@ class RangeDetailsInterfaceVM {
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
-          type: "error",
+          type: "warning",
           title: "Transaction is not completed"
         });
       })

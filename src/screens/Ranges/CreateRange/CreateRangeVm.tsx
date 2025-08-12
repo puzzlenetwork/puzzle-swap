@@ -29,6 +29,8 @@ export interface IRangeToken {
   apr?: BN;
   locked: boolean;
   share: BN;
+  // Select Assets step: UI loading flag for prices. False until initial/current price is resolved from tokenStore or user input
+  priceLoaded?: boolean;
 }
 
 const ctx = React.createContext<CreateRangeVm | null>(null);
@@ -66,14 +68,16 @@ class CreateRangeVm {
         share: new BN(500),
         initialPrice: new BN(1),
         currentPrice: new BN(1),
-        locked: false
+        locked: false,
+        priceLoaded: false
       }),
       observable({
         asset: TOKENS_BY_SYMBOL.PUZZLE,
         share: new BN(500),
         initialPrice: new BN(1),
         currentPrice: new BN(1),
-        locked: false
+        locked: false,
+        priceLoaded: false
       })
     ];
     this.syncCurrentPrices();
@@ -102,8 +106,15 @@ class CreateRangeVm {
 
   public baseTokenPrice!: BN;
   public setBaseTokenPrice = (val: BN) => {
+    // priceLoaded: mark base token as loaded when base price is determined
+    if (this.rangeAssets[0]) {
+      this.rangeAssets[0].priceLoaded = true;
+    }
+
     if (this.baseTokenPrice) {
       this.rangeAssets.slice(1).forEach(async (asset) => {
+        // priceLoaded: set false before recalculation against a new base price
+        asset.priceLoaded = false;
         const newInitialPrice = asset.initialPrice?.times(this.baseTokenPrice.div(val));
         newInitialPrice && this.updateAssetInitialPrice(asset.asset.assetId, newInitialPrice);
 
@@ -112,15 +123,21 @@ class CreateRangeVm {
           const newCurrentPrice = BN.parseUnits(currentPriceFromStore.div(val), asset.asset.decimals);
           this.updateAssetCurrentPrice(asset.asset.assetId, newCurrentPrice);
         }
+        // priceLoaded: done recalculating relative prices for this asset
+        asset.priceLoaded = true;
       });
     } else {
       this.rangeAssets.slice(1).forEach(async (asset) => {
+        // priceLoaded: set false before initial fetch from tokenStore
+        asset.priceLoaded = false;
         const currentPriceFromStore = await this.getTokenPrice(asset.asset.assetId);
         if (currentPriceFromStore) {
           const newInitialPrice = BN.parseUnits(currentPriceFromStore.div(val), asset.asset.decimals);
           this.updateAssetInitialPrice(asset.asset.assetId, newInitialPrice);
           this.updateAssetCurrentPrice(asset.asset.assetId, newInitialPrice);
         }
+        // priceLoaded: finished (fallbacks used if store value absent)
+        asset.priceLoaded = true;
       });
     }
     this.baseTokenPrice = val;
@@ -180,7 +197,8 @@ class CreateRangeVm {
             locked,
             initialPrice: new BN(1),
             currentPrice: new BN(1),
-            asset: TOKENS_BY_ASSET_ID[assetId]
+            asset: TOKENS_BY_ASSET_ID[assetId],
+            priceLoaded: false
           });
         });
         this.syncCurrentPrices();
@@ -219,7 +237,7 @@ class CreateRangeVm {
     return (
       this.isAllTokensShareMoreThanFive &&
       this.rangeAssets.length > 1 &&
-      this.totalTakenShare.eq(1000) &&
+      this.totalTokenShare.eq(1000) &&
       this.areAllTokensPricesValid
     );
   }
@@ -244,7 +262,7 @@ class CreateRangeVm {
     return step === -1 ? this.step : step;
   }
 
-  get totalTakenShare(): BN {
+  get totalTokenShare(): BN {
     return this.rangeAssets.reduce((acc, v) => acc.plus(v.share), BN.ZERO);
   }
 
@@ -259,7 +277,7 @@ class CreateRangeVm {
     });
 
     // If sum != 1000, add difference to the first unlocked token, so the data is valid
-    const totalShare = this.totalTakenShare;
+    const totalShare = this.totalTokenShare;
     if (totalShare.lt(1000)) {
       const diff = new BN(1000).minus(totalShare);
       const firstUnlockedIndex = this.rangeAssets.findIndex((v) => !v.locked);
@@ -291,30 +309,44 @@ class CreateRangeVm {
     const asset = balances?.find((b) => b.assetId === assetId);
     if (asset == null) return;
 
-    const initialPrice = await this.getTokenPrice(assetId);
-    const relativeInitialPrice = initialPrice.div(this.baseTokenPrice);
-
-    const apr = this.stakingStats.find((s) => s.asset_id === assetId)?.apr_1y;
-
+    // Insert placeholder entry so UI can show loading state immediately (priceLoaded drives Skeleton in Select Assets)
     this.rangeAssets.push(
       observable({
         asset: asset,
         share: BN.ZERO,
-        initialPrice: BN.parseUnits(relativeInitialPrice, asset.decimals),
-        currentPrice: BN.parseUnits(relativeInitialPrice, asset.decimals),
+        // leave prices temporary (will be calculated below)
+        initialPrice: undefined,
+        currentPrice: undefined,
         leverage: new BN(1),
-        apr: apr ? new BN(apr) : undefined,
-        locked: false
+        apr: this.stakingStats.find((s) => s.asset_id === assetId)?.apr_1y
+          ? new BN(this.stakingStats.find((s) => s.asset_id === assetId)!.apr_1y)
+          : undefined,
+        locked: false,
+        priceLoaded: false
       })
     );
+
+    // Calculate prices relative to base
+    try {
+      const initialPrice = await this.getTokenPrice(assetId);
+      const relativeInitialPrice = initialPrice.div(this.baseTokenPrice);
+      const parsed = BN.parseUnits(relativeInitialPrice, asset.decimals);
+      this.updateAssetInitialPrice(asset.assetId, parsed);
+      this.updateAssetCurrentPrice(asset.assetId, parsed);
+    } finally {
+      // priceLoaded: mark as loaded regardless of success; fallbacks will be used if needed
+      const idx = this.rangeAssets.findIndex((ra) => ra.asset.assetId === asset.assetId);
+      if (idx !== -1) this.rangeAssets[idx].priceLoaded = true;
+    }
+
     this.syncShares();
     this.syncMinMaxPriceByAssetId(assetId);
     if (this.maxToProvide.eq(0)) {
       this.rootStore.notificationStore.notify(
         "Change the assets you don’t have enough in wallet, or reset the whole composition.",
         {
-          title: "Your max to provide is too low for this range composition",
-          type: "error",
+          title: "Your max to provide is too low for this range composition",
+          type: "warning",
           onClickText: "Reset the composition",
           onClick: () => this.setDefaultRangeAssets()
         }
@@ -341,12 +373,16 @@ class CreateRangeVm {
     if (asset == null) return;
     this.rangeAssets[indexOfObject].asset = asset;
 
+    // priceLoaded: set false before recalculating prices for the replaced asset
+    this.rangeAssets[indexOfObject].priceLoaded = false;
+
     const currentPrice = await this.getTokenPrice(newAssetId);
     const apr = this.stakingStats.find((s) => s.asset_id === newAssetId)?.apr_1y;
     this.rangeAssets[indexOfObject].apr = apr ? new BN(apr) : undefined;
 
     if (indexOfObject === 0) {
       this.setBaseTokenPrice(currentPrice);
+      // base token will be marked loaded inside setBaseTokenPrice
     } else {
       const basePrice = await this.getTokenPrice(oldAssetId);
       this.rangeAssets[indexOfObject].initialPrice = BN.parseUnits(
@@ -358,6 +394,8 @@ class CreateRangeVm {
         indexOfObject === 0 ? currentPrice : currentPrice.div(basePrice),
         asset.decimals
       );
+      // priceLoaded: mark true after computing replacement prices (non-base)
+      this.rangeAssets[indexOfObject].priceLoaded = true;
     }
     this.syncMinMaxPriceByAssetId(newAssetId);
   };
@@ -382,6 +420,8 @@ class CreateRangeVm {
   updateAssetInitialPrice = (assetId: string, val: BN) => {
     const indexOfObject = this.rangeAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.rangeAssets[indexOfObject].initialPrice = val;
+    // priceLoaded: user provided a value, consider price resolved for UI
+    this.rangeAssets[indexOfObject].priceLoaded = true;
     this.syncMinMaxPriceByAssetId(assetId);
   };
 
@@ -433,39 +473,6 @@ class CreateRangeVm {
 
     const max = rawMax.isNaN() || rawMax.isZero() ? BN.parseUnits(P1, asset.asset.decimals) : rawMax;
 
-    //     console.log(`
-    // ${asset.asset.symbol} ${BN.formatUnits(min, asset.asset.decimals).toSmallFormat()} - ${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}:
-
-    // B0=${B0.toSmallFormat()}
-    // L0=${L0.toSmallFormat()}
-    // F0=${F0.toSmallFormat()}
-
-    // P1=${P1.toSmallFormat()}
-
-    // B1=${B1.toSmallFormat()}
-    // L1=${L1.toSmallFormat()}
-    // F1=${F1.toSmallFormat()}
-
-    // B0-F0=${B0.minus(F0).toSmallFormat()}
-    // (B0-F0)/B0=${B0.minus(F0).div(B0).toSmallFormat()}
-    // w0/w1=${w0.div(w1).toSmallFormat()}
-    // ((B0-F0)/B0)^(w0/w1+1)=${(B0.minus(F0).div(B0)).mathPow(w0.div(w1).plus(1)).toSmallFormat()}
-
-    // B1-F1=${B1.minus(F1).toSmallFormat()}
-    // B1/(B1-F1)=${B1.div(B1.minus(F1)).toSmallFormat()}
-    // w1/w0=${w1.div(w0).toSmallFormat()}
-    // (B1/(B1-F1))^(w1/w0+1)=${(B1.div(B1.minus(F1))).mathPow(w1.div(w0).plus(1)).toSmallFormat()}
-
-    // w0=${w0.toSmallFormat()}
-    // w1=${w1.toSmallFormat()}
-
-    // RawMin=${BN.formatUnits(rawMin, asset.asset.decimals).toSmallFormat()}
-    // Min=${BN.formatUnits(min, asset.asset.decimals).toSmallFormat()}
-
-    // RawMax=${BN.formatUnits(rawMax, asset.asset.decimals).toSmallFormat()}
-    // Max=${BN.formatUnits(max, asset.asset.decimals).toSmallFormat()}
-    // `)
-
     this.updateAssetMinPrice(assetId, min);
     this.updateAssetMaxPrice(assetId, max);
 
@@ -513,13 +520,13 @@ class CreateRangeVm {
   provideLiquidityToRange = async () => {
     const { address } = this.rootStore.accountStore;
     if (address === null) {
-      this.rootStore.notificationStore.notify("Please connect your wallet first", { type: "error" });
+      this.rootStore.notificationStore.notify("Please connect your wallet first", { type: "warning" });
       return;
     }
 
     if (this.deployedContractAddress === null) {
       this.rootStore.notificationStore.notify("No deployed contract found. Please deploy the range first.", {
-        type: "error"
+        type: "warning"
       });
       return;
     }
@@ -573,17 +580,6 @@ class CreateRangeVm {
 
       const vBalancesStr = virtualBalances.join(",");
 
-      console.log("Init parameters:", {
-        assetIdsStr,
-        assetWeightsStr,
-        assetMaxSelloffStr,
-        baseTokenId,
-        domain: this.domain,
-        fee,
-        vBalancesStr,
-        payments
-      });
-
       // Call init function on the deployed contract
       const txId = await this.rootStore.accountStore.invoke({
         dApp: this.deployedContractAddress,
@@ -625,7 +621,7 @@ class CreateRangeVm {
                 this.setNotificationParams(null);
                 this.initialize(null);
                 localStorage.removeItem("puzzle-custom-range");
-                window.open(`/ranges/${this.deployedContractAddress}/invest`);
+                window.open(`/ranges/${this.deployedContractAddress}/details`);
               }}
               kind="secondary"
             >
@@ -634,7 +630,7 @@ class CreateRangeVm {
           ),
           () => (
             <Button
-              key="Back to AllRanges"
+              key="Back to Ranges"
               size="medium"
               fixed
               onClick={() => {
@@ -644,7 +640,7 @@ class CreateRangeVm {
                 window.open("/ranges");
               }}
             >
-              Back to AllRanges
+              Back to Ranges
             </Button>
           )
         ]
@@ -655,7 +651,7 @@ class CreateRangeVm {
     } catch (e: any) {
       console.error("Error providing liquidity to range:", e);
       this.setNotificationParams({
-        type: "error",
+        type: "warning",
         title: "Error: Couldn't provide liquidity",
         description: e.message ?? e.toString(),
         buttons: [
@@ -693,8 +689,6 @@ class CreateRangeVm {
       // Generate random address for the new range contract
       const seed = randomSeed();
       const randomAddress = Address(seed, "W");
-      // console.log("🌱 Range contract address:", randomAddress);
-      // console.log("🌱 Seed:", seed);
 
       // Initial waves transfer for fees
       const transferTxId = await this.rootStore.accountStore.transfer({
@@ -705,7 +699,7 @@ class CreateRangeVm {
 
       if (!transferTxId) {
         this.setNotificationParams({
-          type: "error",
+          type: "warning",
           title: "Error: Couldn't transfer WAVES for fees",
           description: "Please ensure you have enough WAVES in your wallet."
         });
@@ -743,12 +737,9 @@ class CreateRangeVm {
           )
         ]
       });
-
-      console.log("🌱 Range contract deployed at address:", randomAddress);
-      console.log("🌱 Deploy transaction ID:", deployScriptTx.id);
     } catch (e: any) {
       this.rootStore.notificationStore.notify("Cannot create range. Try to reload the page and try again.", {
-        type: "error"
+        type: "warning"
       });
 
       console.error("Error creating range:", e);
@@ -768,14 +759,6 @@ class CreateRangeVm {
         .times(i === 0 ? 1 : BN.formatUnits(initialPrice, asset.decimals))
         .times(leverage ?? 1)
         .times(baseToken.share.div(share));
-      //         console.log(`
-      // ${asset.symbol} ${value.toFormat(2)}
-      // \nF=${BN.formatUnits(tokenBalance.balance, asset.decimals).toFormat(2)}
-      // \nP=${i === 0 ? 1 : BN.formatUnits(initialPrice, asset.decimals).toFormat(2)}
-      // \nL=${leverage?.toFormat(2)}
-      // \nw=${share.div(1000).toFormat(2)}
-      // \nL0=${this.rangeAssets[0].leverage?.toFormat(2)}
-      // \n\nRes=${value.div(this.rangeAssets[0].leverage ?? 1).toFormat(2)}`)
       return {
         ...acc,
         [asset.assetId]: value
@@ -794,13 +777,6 @@ class CreateRangeVm {
     const baseToken = this.rangeAssets[0];
     const share = BN.formatUnits(baseToken.share, 3);
     const res = this.minVirtualBalanceOfBaseToken.div(baseToken.leverage ?? 1).div(share);
-    //     console.log(`
-    // Max to provide: ${res.toFormat(2)}
-
-    // min virtual balance: ${this.minVirtualBalanceOfBaseToken.toFormat(2)}
-
-    // By asset:
-    // ${Object.entries(this.correspondingVirtualBalanceOfBaseToken).map(([assetId, value]) => `${TOKENS_BY_ASSET_ID[assetId]?.symbol ?? assetId}: ${value.toFormat(2)}`).join("\n")}`);
     return res;
   }
 
@@ -818,15 +794,6 @@ class CreateRangeVm {
       const L1 = leverage ?? new BN(1);
       const F1 = B1.div(L1);
       const amountToProvide = F1.times(this.providedPercentOfPool.div(100));
-
-      //       console.log(`
-      // to provide ${asset.symbol}: ${amountToProvide.toFormat(2)}
-
-      // F1=${F1.toFormat(2)}
-      // w0/w1 = ${w0.div(w1).toFormat(2)}
-      // percent=${this.providedPercentOfPool.div(100).toFormat(2)}
-      // p=${p.toFormat(2)}
-      // `)
 
       return {
         ...acc,
@@ -850,7 +817,7 @@ class CreateRangeVm {
   async getTokenPrice(assetId: string, tries = 0): Promise<BN> {
     const { tokenStore } = this.rootStore;
     if (tokenStore.initialized) {
-      return this.rootStore.tokenStore.statisticsByAssetId[assetId].currentPrice;
+      return this.rootStore.tokenStore.statisticsByAssetId[assetId]?.currentPrice ?? new BN(1);
     } else if (tries * 10 > 2000) {
       throw new Error("Timeout: tokenStore not initialized after 2 seconds");
     } else {
@@ -860,7 +827,11 @@ class CreateRangeVm {
   }
 
   async syncCurrentPrices() {
+    // priceLoaded: mark all as loading before syncing from tokenStore
+    this.rangeAssets.forEach((a) => (a.priceLoaded = false));
     const basePrice = await this.getTokenPrice(this.rangeAssets[0].asset.assetId);
     this.setBaseTokenPrice(basePrice);
+    // priceLoaded: ensure base token is flagged as loaded after base price update
+    if (this.rangeAssets[0]) this.rangeAssets[0].priceLoaded = true;
   }
 }

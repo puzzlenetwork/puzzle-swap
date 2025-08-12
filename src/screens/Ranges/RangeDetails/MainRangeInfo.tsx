@@ -98,11 +98,9 @@ const MainRangeInfo: React.FC<IProps> = ({ isMobile }) => {
             <Text type="purple300" size="medium" nowrap>
               Range Creator
             </Text>
-            <Text type="light" size="medium">
-              <TextButton prefix={link} onClick={() => window.open(`${WSCAN_EXPLORER_URL}${vm.range?.owner}`)}>
-                {centerEllipsis(vm.range?.owner ?? "", 8)}
-              </TextButton>
-            </Text>
+            <TextButton prefix={link} onClick={() => window.open(`${WSCAN_EXPLORER_URL}${vm.range?.owner}`)}>
+              {centerEllipsis(vm.range?.owner ?? "", 8)}
+            </TextButton>
           </Column>
           <SizedBox height={20} />
           <Row justifyContent="flex-end">

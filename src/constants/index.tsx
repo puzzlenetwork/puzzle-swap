@@ -28,7 +28,6 @@ export const ROUTES = {
   RANGES: "/ranges",
   RANGES_TRADE: "/ranges/:rangeAddress",
   RANGES_CREATE: "/ranges/create",
-  USER_RANGES: "/ranges/my",
   RANGES_DETAILS: "/ranges/:rangeAddress/details",
   RANGES_DEPOSIT: "/ranges/:rangeAddress/deposit",
   RANGES_DEPOSIT_ONE_TOKEN: "/ranges/:rangeAddress/depositOneToken",
@@ -588,7 +587,7 @@ export const PUZZLE_NFTS = [
 ];
 
 export const NODE_URL = "https://nodes.wx.network ";
-export const EXPLORER_URL = "https://new.wavesexplorer.com";
+export const EXPLORER_URL = "https://wscan.io";
 
 export interface IToken {
   assetId: string;

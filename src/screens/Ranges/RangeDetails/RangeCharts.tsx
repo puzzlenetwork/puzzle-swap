@@ -144,15 +144,17 @@ const RangeCharts: React.FC<IProps> = () => {
       </Row>
       <SizedBox height={8} />
       <Card>
-        <Row>
-          <Text type="secondary" size="medium" fitContent>
-            Total for period:
-          </Text>
-          <SizedBox width={8} />
-          <Text size="medium" fitContent>
-            ${vm.chartTotal.toFormat(2)}
-          </Text>
-        </Row>
+        {activeTab !== 2 && (
+          <Row>
+            <Text type="secondary" size="medium" fitContent>
+              Total for period:
+            </Text>
+            <SizedBox width={8} />
+            <Text size="medium" fitContent>
+              ${vm.chartTotal.toFormat(2)}
+            </Text>
+          </Row>
+        )}
         <LineChart width={chartWidth} height={240} data={vm.chartData}>
           <XAxis
             tickLine={false}
@@ -162,6 +164,7 @@ const RangeCharts: React.FC<IProps> = () => {
           />
           <Tooltip
             labelFormatter={(date) => (
+              // FIXME: raises hydration error because label uses <p></p>
               <Text type="secondary" size="small">
                 {dayjs(date).format("dddd, MMM DD")}
               </Text>

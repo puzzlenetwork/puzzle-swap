@@ -8,6 +8,17 @@ import { Row, Column } from "@src/components/Flex";
 import SquareTokenIcon from "@src/components/SquareTokenIcon";
 import { IRangeToken } from "../../CreateRangeVm";
 import PriceLimitInput from "./PriceLimitInput";
+import Skeleton from "react-loading-skeleton";
+import { observer } from "mobx-react-lite";
+import styled from "@emotion/styled";
+
+// Fixed-width slot for price text/Skeleton to avoid table layout shifts while loading
+const PriceSlot = styled.span`
+  display: inline-block;
+  min-width: 110px; /* keep consistent width for both Skeleton and final price */
+  text-align: left;
+  margin-left: 4px;
+`;
 
 interface IParams {
   asset: IRangeToken;
@@ -23,10 +34,19 @@ const InitialPriceSelector = ({ asset, value, onUpdate, baseTokenSymbol }: IPara
     setModalOpened(true);
   };
 
+  const formattedInitial = BN.formatUnits(value, asset.asset.decimals).toSmallFormat();
+
   return (
     <>
       <Button onClick={handleOpenModal} size="small" kind="secondary" fixed>
-        Initial Price: {BN.formatUnits(value, asset.asset.decimals).toSmallFormat()} {baseTokenSymbol}
+        Initial Price:
+        <PriceSlot>
+          {asset.priceLoaded ? (
+            `${formattedInitial} ${baseTokenSymbol}`
+          ) : (
+            <Skeleton width="100%" height={16} inline />
+          )}
+        </PriceSlot>
       </Button>
       <Dialog
         visible={modalOpened}
@@ -55,10 +75,14 @@ const InitialPriceSelector = ({ asset, value, onUpdate, baseTokenSymbol }: IPara
               {asset.asset.symbol}
             </Text>
           </Column>
-          {asset.currentPrice && asset.currentPrice.gt(0) && (
-            <Text size="medium" fitContent nowrap>
-              {BN.formatUnits(asset.currentPrice, asset.asset.decimals).toSmallFormat()} {baseTokenSymbol}
-            </Text>
+          {asset.priceLoaded ? (
+            asset.currentPrice && asset.currentPrice.gt(0) && (
+              <Text size="medium" fitContent nowrap>
+                {BN.formatUnits(asset.currentPrice, asset.asset.decimals).toSmallFormat()} {baseTokenSymbol}
+              </Text>
+            )
+          ) : (
+            <Skeleton width={80} height={18} />
           )}
         </Row>
         <SizedBox height={16} />
@@ -83,4 +107,4 @@ const InitialPriceSelector = ({ asset, value, onUpdate, baseTokenSymbol }: IPara
   );
 };
 
-export default InitialPriceSelector;
+export default observer(InitialPriceSelector);

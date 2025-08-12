@@ -40,7 +40,9 @@ class AllRangesVm {
   searchValue: string = "";
   setSearchValue = (v: string) => {
     this.searchValue = v;
-    this.rootStore.rangesStore.setSearchValue(v);
+    this.rootStore.rangesStore.setSearchValue(v).then(() => {
+      this.rootStore.rangesStore.setPagination({ page: 1, size: this.rootStore.rangesStore.pagination.size });
+    });
   };
 
   rangesSortings = [
@@ -57,6 +59,8 @@ class AllRangesVm {
     this.rootStore.rangesStore.setFilter({
       sortBy: this.rangesSortings[v].key.slice(0, -1) as "fact_liquidity" | "earned" | "virtual_liquidity",
       order: (this.rangesSortings[v].key.slice(-1) === "A" ? "asc" : "desc") as "asc" | "desc"
+    }).then(() => {
+      this.rootStore.rangesStore.setPagination({ page: 1, size: this.rootStore.rangesStore.pagination.size });
     });
   };
 
@@ -83,7 +87,9 @@ class AllRangesVm {
   showOnlyActiveRanges: boolean = false;
   setShowOnlyActiveRanges = (v: boolean) => {
     this.showOnlyActiveRanges = v;
-    this.rootStore.rangesStore.setOnlyActiveRanges(v ? true : undefined);
+    this.rootStore.rangesStore.setOnlyActiveRanges(v ? true : undefined).then(() => {
+      this.rootStore.rangesStore.setPagination({ page: 1, size: this.rootStore.rangesStore.pagination.size });
+    });
   };
 
   showOnlyUserRanges: boolean = false;
@@ -122,7 +128,9 @@ class AllRangesVm {
   };
 
   syncRanges = async () => {
-    rangesService.getGlobalRangesInfo().then((data) => {
+    rangesService.getGlobalRangesInfo({
+      minLiquidity: this.rootStore.rangesStore.minLiquidity,
+    }).then((data) => {
       const newRangesInfo = new GlobalRangesInfo(data);
       this._setRangesInfo(newRangesInfo);
     });

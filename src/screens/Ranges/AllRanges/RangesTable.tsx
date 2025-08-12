@@ -17,6 +17,10 @@ import TokenInRangePreview, { TokenCard } from "./TokenInRangePreview";
 import { useAllRangesVm } from "./AllRangesVm";
 import RangeNotFound from "./RangeNotFound";
 import useWindowSize from "@src/hooks/useWindowSize";
+import { ReactComponent as WarningIcon } from "@src/assets/icons/warning.svg";
+import { THEME_TYPE, themes } from "@src/themes/ThemeProvider";
+import Tooltip from "@src/components/Tooltip";
+import Img from "@src/components/Img";
 
 const GrayCard = styled(Card)`
   background: ${({ theme }) => theme.colors.primary100};
@@ -24,11 +28,23 @@ const GrayCard = styled(Card)`
   width: fit-content;
 `;
 
+const StyledTable = styled(Table)`
+  & td {
+    align-content: start;
+  }
+`
+
+const ColoredWarningIcon = styled(WarningIcon)<{ color: string }>`
+  & path {
+    stroke: ${({ color }) => color};
+  }
+`
+
 const RangesTable: React.FC = () => {
   const vm = useAllRangesVm();
   const navigate = useNavigate();
   const { width } = useWindowSize();
-  const { rangesStore } = useStores();
+  const { rangesStore, accountStore } = useStores();
   const [tableData, setTableData] = React.useState<any[]>([]);
 
   const columns = React.useMemo(
@@ -71,7 +87,7 @@ const RangesTable: React.FC = () => {
         (acc, range, index) => ({
           ...acc,
           [range.address]: (
-            <Row alignItems="center">
+            <Row alignItems="start">
               <GrayCard
                 paddingDesktop="4px"
                 paddingMobile="4px"
@@ -81,7 +97,7 @@ const RangesTable: React.FC = () => {
               </GrayCard>
               <SizedBox width={16} />
               <Column crossAxisSize="max" justifyContent="space-between">
-                <SizedBox height={20} />
+                <SizedBox height={10} />
                 <Text weight={500}>Range {range.domain}</Text>
                 <SizedBox height={8} />
                 <Row style={{ flexWrap: "wrap", gap: 4 }}>
@@ -109,7 +125,7 @@ const RangesTable: React.FC = () => {
                     </TokenCard>
                   )}
                 </Row>
-                <SizedBox height={20} />
+                <SizedBox height={10} />
               </Column>
             </Row>
           )
@@ -120,51 +136,137 @@ const RangesTable: React.FC = () => {
   );
 
   useMemo(() => {
-    const mappedData = rangesStore.ranges.map((range, index) => ({
-      onClick: () => navigate(`/ranges/${range.address}/details`),
-      range: rangePreviewByAddress[range.address],
-      liquidity: (
-        <Text nowrap fitContent>
-          ${range.liquidity.toFormat(2)} /{" "}
-          <Text type="secondary" size="medium" style={{ display: "inline" }}>
-            ${range.virtualLiquidity.toFormat(2)}
-          </Text>
-        </Text>
-      ),
-      periodFees: (
-        <Column alignItems="flex-end" crossAxisSize="max">
-          <Row style={{ gap: 4, flexWrap: "wrap", justifyContent: "flex-end" }}>
-            {Object.entries(range.periodStats.fees)
-              .filter(([_, { feesEarned, extraEarned }]) => feesEarned.plus(extraEarned).gt(0))
-              .map(([assetId, { feesEarned, extraEarned }], i) => {
-                const tokenInfo = TOKENS_BY_ASSET_ID[assetId] || {};
-                return (
-                  <TokenTag
-                    key={i}
-                    token={{ ...tokenInfo, decimals: 0 }}
-                    amount={feesEarned.plus(extraEarned)}
-                    size="small"
-                    iconRight
-                  />
-                );
-              })}
-          </Row>
-          <SizedBox height={10} />
-          <Text type="secondary" size="medium" textAlign="end">
-            ≈${range.totalFees.toFormat(2)}
-          </Text>
-        </Column>
-      )
-    }));
+    const mappedData = rangesStore.ranges
+      .map((range, index) => {
+        const lowLiquidityAssets = range.assets.filter((a) => !a.isActive);
+        return ({
+          onClick: () => navigate(`/ranges/${range.address}/details`),
+          range: rangePreviewByAddress[range.address],
+          liquidity: (
+            <Row mainAxisSize="fit-content" style={{ position: "relative" }}>
+              {lowLiquidityAssets?.length > 0 ? (
+                <>
+                  <Tooltip
+                    content={
+                      <Column style={{ minWidth: 200 }}>
+                        <Text type="error" size="small" fitContent style={{ position: "absolute", top: 8, right: 16 }} nowrap>
+                          Low Liquidity
+                        </Text>
+                        <Column crossAxisSize="max" style={{ gap: 8 }}>
+                          {
+                            lowLiquidityAssets
+                              .slice(0, 3)
+                              .map((asset, index) => (
+                                <React.Fragment key={index}>
+                                  <Column>
+                                    <Row>
+                                      <Img
+                                        src={TOKENS_BY_ASSET_ID[asset.assetId]?.logo}
+                                        alt={asset.name}
+                                        width="20px"
+                                        height="20px"
+                                        style={{ borderRadius: "10px" }}
+                                      />
+                                      <SizedBox width={6} />
+                                      <Text size="medium" fitContent>{asset.name}</Text>
+                                      {index === 0 && (
+                                        <SizedBox width={80} />
+                                      )}
+                                    </Row>
+                                    <SizedBox height={8} />
+                                    <Row>
+                                      <Text>
+                                        <Text type="error" style={{ display: "inline" }} fitContent>
+                                          ${asset.factBalanceUsd.toSmallFormat()}
+                                        </Text>
+                                        {" / "}
+                                        <Text type="secondary" style={{ display: "inline" }} size="medium" fitContent>
+                                          ${asset.balanceUsd.toSmallFormat()}
+                                        </Text>
+                                      </Text>
+                                    </Row>
+                                  </Column>
+                                  {index < lowLiquidityAssets.slice(0, 3).length - 1 && (
+                                    <>
+                                      <div style={{ width: "100%", height: "1px", backgroundColor: themes[accountStore.selectedTheme as THEME_TYPE].colors.primary100 }} />
+                                    </>
+                                  )}
+                                </React.Fragment>
+                              ))
+                          }
+                          {lowLiquidityAssets.length > 3 && (
+                            <Text type="secondary" weight={500} textAlign="center">+{lowLiquidityAssets.length - 3} More tokens</Text>
+                          )}
+                        </Column>
+                      </Column>
+                    }
+                    config={{
+                      placement: "top",
+                    }}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: -28,
+                    }}
+                  >
+                    <ColoredWarningIcon
+                      color={themes[accountStore.selectedTheme as THEME_TYPE].colors.error500}
+                    />
+                  </Tooltip>
+                  <Text nowrap fitContent>
+                    <Text type="error" style={{ display: "inline" }}>
+                      ${range.liquidity.toFormat(2)}
+                    </Text>{" / "}
+                    <Text type="secondary" size="medium" style={{ display: "inline" }}>
+                      ${range.virtualLiquidity.toFormat(2)}
+                    </Text>
+                  </Text>
+                </>
+              ) : (
+                <Text nowrap fitContent>
+                  ${range.liquidity.toFormat(2)} /{" "}
+                  <Text type="secondary" size="medium" style={{ display: "inline" }}>
+                    ${range.virtualLiquidity.toFormat(2)}
+                  </Text>
+                </Text>
+              )}
+            </Row>
+          ),
+          periodFees: (
+            <Column alignItems="flex-end" crossAxisSize="max">
+              <Row style={{ gap: 4, flexWrap: "wrap", justifyContent: "flex-end" }}>
+                {Object.entries(range.periodStats.fees)
+                  .filter(([_, { feesEarned, extraEarned }]) => feesEarned.plus(extraEarned).gt(0))
+                  .map(([assetId, { feesEarned, extraEarned }], i) => {
+                    const tokenInfo = TOKENS_BY_ASSET_ID[assetId] || {};
+                    return (
+                      <TokenTag
+                        key={i}
+                        token={{ ...tokenInfo, decimals: 0 }}
+                        amount={feesEarned.plus(extraEarned)}
+                        size="small"
+                        iconRight
+                      />
+                    );
+                  })}
+              </Row>
+              <SizedBox height={10} />
+              <Text type="secondary" size="medium" textAlign="end">
+                ≈${range.totalFees.toFormat(2)}
+              </Text>
+            </Column>
+          )
+        })
+      });
     setTableData(mappedData);
-  }, [rangesStore.ranges, rangePreviewByAddress, navigate]);
+  }, [rangesStore.ranges, rangePreviewByAddress, navigate, accountStore.selectedTheme]);
 
   return (
     <>
       {rangesStore.ranges.length > 0 ? (
         <>
           <Scrollbar style={{ maxWidth: "calc(100vw - 32px)", borderRadius: 16 }}>
-            <Table columns={columns} data={tableData} loading={rangesStore.loading} />
+            <StyledTable columns={columns} data={tableData} loading={rangesStore.loading} />
           </Scrollbar>
           <Pagination
             currentPage={rangesStore.pagination.page}
