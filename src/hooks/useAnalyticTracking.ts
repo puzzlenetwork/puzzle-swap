@@ -13,8 +13,8 @@ function gtag(...args: any[]) {
 
 export function useAnalyticTracking() {
   const env = process.env.REACT_APP_ENV;
+  if (!env || env === "production") { return; }
   useEffect(() => {
-    // Initialize Microsoft Clarity with environment-specific project IDs
     let projectId = "";
     switch (env) {
       case "development":
@@ -23,15 +23,10 @@ export function useAnalyticTracking() {
       case "alpha":
         projectId = "stpndbvdkq";
         break;
-      default:
-        projectId = "sq4e907m9a";
     }
     console.log("projectId", projectId);
     console.log("env", env);
-
-    if (projectId !== "") {
-      Clarity.init(projectId);
-    }
+    Clarity.init(projectId);
 
     // Google Analytics only for development environment
     if (env === "development") {
