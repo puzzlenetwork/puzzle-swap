@@ -11,7 +11,8 @@ function gtag(...args: any[]) {
   window.dataLayer.push(args);
 }
 
-export function useAnalyticTracking(env: "development" | "alpha" | "production" = "development") {
+export function useAnalyticTracking() {
+  const env = process.env.REACT_APP_ENV;
   useEffect(() => {
     // Initialize Microsoft Clarity with environment-specific project IDs
     let projectId = "";
