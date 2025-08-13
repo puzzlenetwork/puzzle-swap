@@ -135,7 +135,7 @@ const RangeBaseTokenRow: React.FC<IParams> = ({
               type="primary"
               size="medium"
               title="Leverage"
-              description="Leverage defines how much virtual balance a token can have compared to the amount you can actually add to this range. For accurate proportions, check the Share value in the Preview below."
+              description="Leverage defines how much virtual balance a token has compared to its real balance in the pool."
             />
           </ShowOnDesktop>
         </th>

@@ -20,8 +20,9 @@ import RangeBaseTokenRow from "./RangeBaseTokenRow";
 import RangeTokenRow from "./RangeTokenRow";
 import Skeleton from "react-loading-skeleton";
 import Scrollbar from "@components/Scrollbar";
+import Notification from "@components/Notification";
 
-interface IProps {}
+interface IProps { }
 
 const Root = styled.div`
   display: flex;
@@ -187,6 +188,11 @@ const SelectsAssets: React.FC<IProps> = () => {
       </Text>
       <SizedBox height={8} />
       <Card style={{ width: "100%" }}>
+        <Notification
+          type="info"
+          text={`After choosing the leverage take a look at the Preview table to check out the Min <-> Max price change, as Leverage impacts it directly.`}
+        />
+        <SizedBox height={24} />
         <RangeBaseTokenRow
           equalShares={vm.equalShares}
           setEqualShares={vm.setEqualShares}
