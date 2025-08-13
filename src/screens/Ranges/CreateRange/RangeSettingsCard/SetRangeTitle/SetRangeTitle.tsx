@@ -11,7 +11,7 @@ import BN from "@src/utils/BN";
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 import { useCreateRangeVM } from "../../CreateRangeVm";
-import ShareTokenInput from "../../PoolSettingsCard/SelectAssets/ShareTokenInput";
+import ShareTokenInput from "../SelectAssets/ShareTokenInput";
 
 interface IProps {}
 

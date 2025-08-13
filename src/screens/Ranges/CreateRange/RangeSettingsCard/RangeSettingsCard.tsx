@@ -22,7 +22,7 @@ const DesktopContinueBtn = styled.div`
     display: flex;
   }
 `;
-const PoolSettingsCard: React.FC<IProps> = () => {
+const RangeSettingsCard: React.FC<IProps> = () => {
   const vm = useCreateRangeVM();
   const currentStep = () => {
     switch (vm.step) {
@@ -57,4 +57,4 @@ const PoolSettingsCard: React.FC<IProps> = () => {
     </Root>
   );
 };
-export default observer(PoolSettingsCard);
+export default observer(RangeSettingsCard);

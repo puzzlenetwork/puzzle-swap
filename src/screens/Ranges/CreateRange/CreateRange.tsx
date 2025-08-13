@@ -6,7 +6,7 @@ import { CreateRangeVMProvider } from "./CreateRangeVm";
 import GoBack from "@components/GoBack";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import PoolSettingsCard from "./PoolSettingsCard";
+import PoolSettingsCard from "./RangeSettingsCard";
 import SummaryCard from "./SummaryCard";
 import CreateRangesStepper from "./CreateRangesStepper";
 import ContinueBtn from "./ContinueBtn";
