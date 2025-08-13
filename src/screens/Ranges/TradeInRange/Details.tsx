@@ -54,7 +54,7 @@ const Details: React.FC = () => {
           <Text>${vm.range.getVolume()?.toFormat(0)}</Text>
         </Column>
       </Row>
-      <Link to="invest">
+      <Link to="details">
         <Button className="button" kind="secondary">
           Invest
         </Button>
