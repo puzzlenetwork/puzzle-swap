@@ -455,7 +455,10 @@ class CreateRangeVm {
     if (asset == null) return undefined;
     const baseToken = this.rangeAssets[0];
 
-    const B0 = this.minVirtualBalanceOfBaseToken.lte(0) ? new BN(1) : this.minVirtualBalanceOfBaseToken;
+
+    // todo fix for 0 min virtual balance of base token
+    // const B0 = this.minVirtualBalanceOfBaseToken.lte(0) ? new BN(1) : this.minVirtualBalanceOfBaseToken;
+    const B0 = this.minVirtualBalanceOfBaseToken;
     const L0 = baseToken.leverage ?? new BN(1);
     const F0 = B0.div(L0);
 
