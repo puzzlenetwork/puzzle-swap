@@ -233,6 +233,10 @@ class CreateRangeVm {
     });
   }
 
+  get titleCorrect() {
+    return this.domain.length > 1 && this.domain.length < 14 && !/[^a-z0-9_-]/.test(this.domain);
+  }
+
   get correct0() {
     return (
       this.isAllTokensShareMoreThanFive &&
@@ -244,9 +248,7 @@ class CreateRangeVm {
 
   get correct1() {
     return (
-      this.domain.length > 1 &&
-      this.domain.length < 14 &&
-      !/[^a-z0-9_-]/.test(this.domain) &&
+      this.titleCorrect &&
       this.swapFee.gte(1) &&
       this.swapFee.lte(50)
     );
