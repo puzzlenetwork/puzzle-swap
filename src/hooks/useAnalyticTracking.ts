@@ -13,8 +13,13 @@ function gtag(...args: any[]) {
 
 export function useAnalyticTracking() {
   const env = process.env.REACT_APP_ENV;
-  if (!env || env === "production") { return; }
+  
   useEffect(() => {
+    // Если env не определен или production, не выполняем аналитику
+    if (!env || env === "production") { 
+      return; 
+    }
+    
     let projectId = "";
     switch (env) {
       case "development":
