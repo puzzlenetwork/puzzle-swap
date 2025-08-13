@@ -754,10 +754,13 @@ class CreateRangeVm {
     const { accountStore } = this.rootStore;
     const { findBalanceByAssetId } = accountStore;
     return this.rangeAssets.reduce<Record<string, BN>>((acc, { asset, share, initialPrice, leverage }, i) => {
-      const tokenBalance = findBalanceByAssetId(asset.assetId);
-      if (tokenBalance == null || tokenBalance.balance == null || initialPrice == null) return acc;
+      const rawBalance = findBalanceByAssetId(asset.assetId);
+      if (rawBalance == null || rawBalance.balance == null || initialPrice == null) return acc;
+      const tokenBalance = asset.assetId === "WAVES"
+        ? rawBalance.balance.minus(11e6) // reserve 0.11 WAVES for commissions
+        : rawBalance.balance;
       const baseToken = this.rangeAssets[0];
-      const value = BN.formatUnits(tokenBalance.balance, asset.decimals)
+      const value = BN.formatUnits(tokenBalance, asset.decimals)
         .times(i === 0 ? 1 : BN.formatUnits(initialPrice, asset.decimals))
         .times(leverage ?? 1)
         .times(baseToken.share.div(share));

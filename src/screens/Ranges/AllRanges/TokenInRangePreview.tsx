@@ -56,7 +56,11 @@ const TokenInRangePreview = ({ asset, isBase, showInUsd, ...rest }: IParams & Re
     );
   }
 
-  const isPriceValid = asset.currentPrice.lte(asset.maxPrice) && asset.currentPrice.gte(asset.minPrice);
+  // If the price limit is NaN, consider there is no limit -> any current price is valid
+  const isPriceValid = (
+    (asset.maxPrice.isNaN() || asset.currentPrice.lte(asset.maxPrice))
+    && (asset.minPrice.isNaN() || asset.currentPrice.gte(asset.minPrice))
+  );
 
   const minPrice = showInUsd ? `$${asset.minPriceUsd.toSmallFormat()}` : `${asset.minPrice.toSmallFormat()}`;
   const currentPrice = showInUsd
