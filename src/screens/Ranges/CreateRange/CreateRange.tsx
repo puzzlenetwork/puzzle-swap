@@ -6,7 +6,7 @@ import { CreateRangeVMProvider } from "./CreateRangeVm";
 import GoBack from "@components/GoBack";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import PoolSettingsCard from "./RangeSettingsCard";
+import RangeSettingsCard from "./RangeSettingsCard";
 import SummaryCard from "./SummaryCard";
 import CreateRangesStepper from "./CreateRangesStepper";
 import ContinueBtn from "./ContinueBtn";
@@ -65,7 +65,7 @@ const CreateRangeImpl: React.FC = () => {
             <SizedBox height={24} />
             <Grid>
               <CreateRangesStepper />
-              <PoolSettingsCard />
+              <RangeSettingsCard />
               <SummaryCard />
               <MobileContinueBtn>
                 <ContinueBtn />

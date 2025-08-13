@@ -185,7 +185,7 @@ const RangeComposition: React.FC<IProps> = (props) => {
               </Tooltip>
             </>
           )}
-          {a.staked && a.stakeApr?.gte(1) && (
+          {/* {a.staked && a.stakeApr?.gte(1) && (
             <Tooltip content={
               <Column>
                 <Text size="medium">Some tokens keep earning yield even</Text>
@@ -201,7 +201,7 @@ const RangeComposition: React.FC<IProps> = (props) => {
                 <Autostaking width={20} height={20} />
               </Row>
             </Tooltip>
-          )}
+          )} */}
         </Row>
       ),
       price:
