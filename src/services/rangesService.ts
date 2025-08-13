@@ -68,6 +68,20 @@ const rangesService = {
     const { data } = await axios.get(url);
     return data;
   },
+  // Lightweight availability probe for a specific range by address.
+  // Returns true when the endpoint responds with 200, false on 500 (not ready yet).
+  // Any other network error will be treated as not available for now (retry logic handled by caller).
+  pingRange: async (address: string): Promise<boolean> => {
+    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged`;
+    const url = `${baseUrl}/${address}/data`;
+    try {
+      const res = await axios.get(url);
+      return res.status === 200;
+    } catch (e: any) {
+      if (e?.response?.status === 500) return false;
+      return false;
+    }
+  },
   getRangeByAddress: async (address: string, params?: IGetRange): Promise<IRangeParamsResponse> => {
     const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged`;
     const rangeUrl = `${baseUrl}/${address}/data`;

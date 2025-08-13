@@ -1,4 +1,5 @@
 import Button from "@components/Button";
+import Spinner from "@components/Spinner";
 import { IDialogNotificationProps } from "@components/Dialog/DialogNotification";
 import { IToken, TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL, TOKENS_LIST } from "@src/constants";
 import { RANGE_CONTRACT_B64 } from "@src/constants/contracts";
@@ -614,22 +615,66 @@ class CreateRangeVm {
         description:
           "You have successfully provided initial liquidity. Your range is now active and ready for trading.",
         buttons: [
-          () => (
-            <Button
-              key="Go to Range page"
-              size="medium"
-              fixed
-              onClick={() => {
-                this.setNotificationParams(null);
-                this.initialize(null);
-                localStorage.removeItem("puzzle-custom-range");
-                window.open(`/ranges/${this.deployedContractAddress}/details`);
-              }}
-              kind="secondary"
-            >
-              Go to Range page
-            </Button>
-          ),
+          () => {
+            const address = this.deployedContractAddress!;
+            const GoToRangeWhenReady: React.FC = () => {
+              const [available, setAvailable] = React.useState(false);
+
+              React.useEffect(() => {
+                let disposed = false;
+                let timer: number | undefined;
+
+                const poll = async () => {
+                  try {
+                    const ok = await rangesService.pingRange(address);
+                    if (disposed) return;
+                    if (ok) {
+                      setAvailable(true);
+                    } else {
+                      timer = window.setTimeout(poll, 100);
+                    }
+                  } catch {
+                    // Treat any unexpected error as not available yet; retry
+                    if (!disposed) timer = window.setTimeout(poll, 100);
+                  }
+                };
+
+                // Start after 100ms as requested
+                timer = window.setTimeout(poll, 100);
+                return () => {
+                  disposed = true;
+                  if (timer != null) window.clearTimeout(timer);
+                };
+              }, []);
+
+              if (!available) {
+                return (
+                  <div style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", height: 40, borderRadius: 12 }}>
+                    <Spinner size={24} />
+                  </div>
+                );
+              }
+
+              return (
+                <Button
+                  key="Go to Range page"
+                  size="medium"
+                  fixed
+                  onClick={() => {
+                    this.setNotificationParams(null);
+                    this.initialize(null);
+                    localStorage.removeItem("puzzle-custom-range");
+                    window.open(`/ranges/${address}/details`);
+                  }}
+                  kind="secondary"
+                >
+                  Go to Range page
+                </Button>
+              );
+            };
+
+            return <GoToRangeWhenReady />;
+          },
           () => (
             <Button
               key="Back to Ranges"
