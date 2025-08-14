@@ -26,12 +26,12 @@ const Root = styled.div<{ closed: boolean }>`
   padding: ${({ closed }) => (closed ? "0px" : "0 48px")};
   transition: 0.5s;
   overflow: hidden;
-  background: #363870;
+  background: ${({ theme }) => theme.colors.primary800};
   box-sizing: border-box;
   font-size: 16px;
   line-height: 24px;
   text-align: center;
-  color: #c6c9f4;
+  color: ${({ theme }) => theme.colors.primary300};
   position: relative;
   white-space: nowrap;
 
@@ -49,11 +49,11 @@ const BoldText = styled.div`
   font-size: 16px;
   line-height: 24px;
   font-weight: 500;
-  color: #fff;
+  color: ${({ theme }) => theme.colors.white};
   padding: 0;
 
   :hover {
-    color: #c6c9f4;
+    color: ${({ theme }) => theme.colors.primary300};
   }
 `;
 

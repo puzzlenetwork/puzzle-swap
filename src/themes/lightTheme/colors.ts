@@ -8,6 +8,7 @@ const colors = {
   primary50: "#f8f8ff",
   white: "#FFFFFF",
   blue500: "#7075E9",
+  button: "#6563DD",
   success: "#35A15A",
   error: "#ED827E",
   success550: "#1F8943",

@@ -93,7 +93,6 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
         </Row>
         <SizedBox height={16} />
         <Notification
-          style={{ marginLeft: 8 }}
           type="info"
           text="Fee affects how much traders will pay when interacting with your Range. A higher fee can earn you more from volatile markets, but may reduce trading volume."
         />

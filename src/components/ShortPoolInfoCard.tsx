@@ -44,7 +44,7 @@ const Root = styled.div`
     }
 
     b {
-      color: #363870;
+      color: ${({ theme }) => theme.colors.primary800};
       font-weight: normal;
     }
   }

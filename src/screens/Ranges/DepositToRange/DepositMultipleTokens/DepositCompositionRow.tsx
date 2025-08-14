@@ -20,6 +20,11 @@ const Root = styled.div<{ warning: boolean }>`
     color: ${({ warning }) => warning && "#ed827e"};
   }
 `;
+
+const ShareText = styled.span<{ isLowMoney: boolean }>`
+  color: ${({ theme, isLowMoney }) => (isLowMoney ? "#ed827e" : theme.colors.primary800)};
+`;
+
 const DepositCompositionRow: React.FC<IProps> = ({ availableAmount, depositAmount, share, name, logo }) => {
   const available = availableAmount ? availableAmount.toFormat(4) : "-";
   const deposit = depositAmount.toFormat(4);
@@ -35,14 +40,9 @@ const DepositCompositionRow: React.FC<IProps> = ({ availableAmount, depositAmoun
           </Text>
           <Text fitContent type="secondary" size="small" className="text">
             <span>Share: </span>
-            <span
-              style={{
-                color: isLowMoney ? "#ed827e" : "#363870",
-                paddingLeft: 1
-              }}
-            >
+            <ShareText isLowMoney={isLowMoney}>
               {share.toFormat(2)} %
-            </span>
+            </ShareText>
           </Text>
         </Column>
       </Row>

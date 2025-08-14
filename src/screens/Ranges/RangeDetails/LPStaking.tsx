@@ -34,6 +34,8 @@ const Title = styled.span<{ expanded?: boolean }>`
   position: relative;
   weight: 500;
   cursor: pointer;
+  color: ${({ theme }) => theme.colors.primary800};
+
   :after {
     position: absolute;
     top: 4px;

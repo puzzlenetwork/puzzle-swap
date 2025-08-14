@@ -8,8 +8,10 @@ const Root = styled.button`
   align-items: center;
   justify-content: center;
   font-size: 12px;
-  color: #7075e9;
-  border: 1px solid #7075e9;
+  ${({ theme }) => `
+  color: ${theme.colors.blue500};
+  border: 1px solid ${theme.colors.blue500};
+`}
   box-sizing: border-box;
   border-radius: 6px;
   height: 24px;
