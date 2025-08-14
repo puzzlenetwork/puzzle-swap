@@ -23,7 +23,7 @@ export interface IRangeToken {
   asset: IToken;
   minPrice?: BN;
   maxPrice?: BN;
-  leverage?: BN;
+  leverage: BN;
   initialPrice?: BN;
   currentPrice?: BN;
   maxSellOff?: BN;
@@ -69,6 +69,7 @@ class CreateRangeVm {
         share: new BN(500),
         initialPrice: new BN(1),
         currentPrice: new BN(1),
+        leverage: new BN(1),
         locked: false,
         priceLoaded: false
       }),
@@ -77,6 +78,7 @@ class CreateRangeVm {
         share: new BN(500),
         initialPrice: new BN(1),
         currentPrice: new BN(1),
+        leverage: new BN(1),
         locked: false,
         priceLoaded: false
       })
@@ -192,14 +194,15 @@ class CreateRangeVm {
   initialize = (initData: IInitDataToStore | null) => {
     if (initData != null && initData.assets != null && initData.assets.length > 0) {
       if (initData.assets != null) {
-        this.rangeAssets = initData.assets?.map(({ assetId, share, locked }) => {
+        this.rangeAssets = initData.assets?.map(({ assetId, share, locked, leverage }) => {
           return observable({
             share: new BN(share).times(10),
             locked,
             initialPrice: new BN(1),
             currentPrice: new BN(1),
             asset: TOKENS_BY_ASSET_ID[assetId],
-            priceLoaded: false
+            priceLoaded: false,
+            leverage: new BN(leverage),
           });
         });
         this.syncCurrentPrices();
@@ -235,7 +238,7 @@ class CreateRangeVm {
   }
 
   get titleCorrect() {
-    return this.domain.length > 1 && this.domain.length < 14 && !/[^a-z0-9_-]/.test(this.domain);
+    return this.domain.length > 1 && this.domain.length < 14 && !/[^A-Za-z0-9_-\s\/]/.test(this.domain);
   }
 
   get correct0() {
@@ -385,20 +388,17 @@ class CreateRangeVm {
 
     if (indexOfObject === 0) {
       this.setBaseTokenPrice(currentPrice);
-      // base token will be marked loaded inside setBaseTokenPrice
     } else {
-      const basePrice = await this.getTokenPrice(oldAssetId);
-      this.rangeAssets[indexOfObject].initialPrice = BN.parseUnits(
+      const basePrice = this.baseTokenPrice;
+      this.updateAssetInitialPrice(newAssetId, BN.parseUnits(
         indexOfObject === 0 ? currentPrice : currentPrice.div(basePrice),
         asset.decimals
-      );
+      ));
 
-      this.rangeAssets[indexOfObject].currentPrice = BN.parseUnits(
+      this.updateAssetCurrentPrice(newAssetId, BN.parseUnits(
         indexOfObject === 0 ? currentPrice : currentPrice.div(basePrice),
         asset.decimals
-      );
-      // priceLoaded: mark true after computing replacement prices (non-base)
-      this.rangeAssets[indexOfObject].priceLoaded = true;
+      ));
     }
     this.syncMinMaxPriceByAssetId(newAssetId);
   };
@@ -423,6 +423,13 @@ class CreateRangeVm {
   updateAssetInitialPrice = (assetId: string, val: BN) => {
     const indexOfObject = this.rangeAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.rangeAssets[indexOfObject].initialPrice = val;
+    console.log(`
+Updated initial price for asset ${assetId}:
+${val.toSmallFormat()}
+
+Base token ${this.rangeAssets[0].asset.name.toString()}:
+${this.baseTokenPrice.toSmallFormat()}
+`);
     // priceLoaded: user provided a value, consider price resolved for UI
     this.rangeAssets[indexOfObject].priceLoaded = true;
     this.syncMinMaxPriceByAssetId(assetId);
@@ -457,8 +464,8 @@ class CreateRangeVm {
 
 
     // todo fix for 0 min virtual balance of base token
-    // const B0 = this.minVirtualBalanceOfBaseToken.lte(0) ? new BN(1) : this.minVirtualBalanceOfBaseToken;
-    const B0 = this.minVirtualBalanceOfBaseToken;
+    const B0 = this.minVirtualBalanceOfBaseToken.lte(0) ? new BN(1) : this.minVirtualBalanceOfBaseToken;
+    // const B0 = this.minVirtualBalanceOfBaseToken;
     const L0 = baseToken.leverage ?? new BN(1);
     const F0 = B0.div(L0);
 
@@ -511,7 +518,8 @@ class CreateRangeVm {
     const assets = this.rangeAssets.map((t) => ({
       assetId: t.asset?.assetId,
       locked: t.locked,
-      share: t.share.div(10).toNumber()
+      share: t.share.div(10).toNumber(),
+      leverage: t.leverage.toNumber()
     }));
     const state = {
       assets,
@@ -742,7 +750,7 @@ class CreateRangeVm {
 
       // Initial waves transfer for fees
       const transferTxId = await this.rootStore.accountStore.transfer({
-        amount: Number(0.1 * 1e8).toString(), // 0.1 WAVES for fees
+        amount: Number(0.05 * 1e8).toString(), // 0.05 WAVES for fees
         recipient: randomAddress,
         assetId: null
       });

@@ -2,6 +2,7 @@ export interface IRangeTokenToStore {
   assetId: string;
   share: number;
   locked: boolean;
+  leverage: number;
 }
 
 export interface IInitDataToStore {

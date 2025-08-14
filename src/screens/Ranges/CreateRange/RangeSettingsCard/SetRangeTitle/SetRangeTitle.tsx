@@ -100,6 +100,9 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
         {swapFeeError && (
           <Notification style={{ marginTop: 16 }} type="error" text="Swap fees for the range must be from 0.1% to 5%" />
         )}
+        {!vm.titleCorrect && (
+          <Notification style={{ marginTop: 16 }} type="error" text="Title must be between 2 and 13 symbols, and can only contain letters (A-Z, a-z), numbers (0-9), underscores (_), hyphens (-), slashes (/), and spaces." />
+        )}
       </Card>
     </Root>
   );
