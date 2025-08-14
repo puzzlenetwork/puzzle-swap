@@ -16,7 +16,6 @@ import BN from "@src/utils/BN";
 import Checkbox from "@src/components/Checkbox";
 import Select from "@src/components/Select";
 import Tag from "@src/components/Tag";
-import { ReactComponent as Autostaking } from "@src/assets/icons/autostaking.svg";
 
 interface IProps {
   isMobile?: boolean;
@@ -50,6 +49,8 @@ const RangeComposition: React.FC<IProps> = (props) => {
   const [showSellOff, setShowSellOff] = useState(props.isMobile ?? false);
   const [relativeTokenAssetId, setRelativeTokenAssetId] = useState<string>(vm.range!.baseTokenId);
   const [rateToRelativeToken, setRateToRelativeToken] = useState(new BN(1));
+
+  const hideShowSellOff = vm.range!.assets.every((a) => !a.maxSellAllowed || a.maxSellAllowed.isNaN());
 
   const handleChangeRelativeToken = (relativeAssetId: string) => {
     setRelativeTokenAssetId(relativeAssetId);
@@ -323,7 +324,7 @@ const RangeComposition: React.FC<IProps> = (props) => {
           Range composition
         </Text>
         <Row alignItems="baseline" mainAxisSize="fit-content">
-          {!props.isMobile && (
+          {!props.isMobile && !hideShowSellOff && (
             <Row alignItems="center" mainAxisSize="fit-content">
               <Text fitContent nowrap>
                 Show Sell-Off
@@ -377,7 +378,7 @@ const RangeComposition: React.FC<IProps> = (props) => {
             data={filteredTokens}
             style={{ whiteSpace: "nowrap" }}
             initialState={{
-              hiddenColumns: [!showSellOff && "selloff"]
+              hiddenColumns: [!(showSellOff || props.isMobile) && "selloff"]
             }}
           />
         )}

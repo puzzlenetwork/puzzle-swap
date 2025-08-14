@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import Text from "@src/components/Text";
 import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
 import { HTMLAttributes } from "react";
-import { Row } from "@src/components/Flex";
+import { Column } from "@src/components/Flex";
 
 const RangeLiquidity: React.FC<HTMLAttributes<HTMLElement>> = (props) => {
   const vm = useRangeDetailsInterfaceVM();
@@ -15,15 +15,14 @@ const RangeLiquidity: React.FC<HTMLAttributes<HTMLElement>> = (props) => {
         Fact / Virtual Liquidity
       </Text>
       <SizedBox height={12} />
-      <Row>
+      <Column>
         <Text fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px" }}>
           ${vm.range!.liquidity.toFormat(2)} /
         </Text>
-        <SizedBox width={4} />
         <Text type="secondary" fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px" }}>
           ${vm.range!.virtualLiquidity.toFormat(2)}
         </Text>
-      </Row>
+      </Column>
     </Card>
   );
 };
