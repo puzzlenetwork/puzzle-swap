@@ -98,6 +98,7 @@ class AllRangesVm {
     if (v) {
       const { address } = this.rootStore.accountStore;
       this.rootStore.rangesStore.setUserAddress(address ?? undefined);
+      this.rootStore.rangesStore.setMinLiquidity(address ? 0 : 1); // FIXME: may hurt minLiquidity logic
     } else {
       this.rootStore.rangesStore.setUserAddress(undefined);
     }
