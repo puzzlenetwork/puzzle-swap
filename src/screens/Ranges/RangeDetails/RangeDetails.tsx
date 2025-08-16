@@ -63,11 +63,8 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
   const { rangesStore } = useStores();
   const { width } = useWindowSize();
   const isMobile = !!(width && width < 880);
-  if (rangesStore.ranges.length === 0 && vm.range == null) {
+  if (vm.range === undefined) {
     return <Loading />;
-  }
-  if (rangesStore.ranges.length > 0 && vm.range == null) {
-    return <Navigate to={ROUTES.NOT_FOUND} />;
   }
   return (
     <Layout>
