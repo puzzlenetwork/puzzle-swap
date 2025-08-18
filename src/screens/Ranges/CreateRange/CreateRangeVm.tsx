@@ -237,8 +237,12 @@ class CreateRangeVm {
     });
   }
 
+  get hasTitle() {
+    return this.domain.length > 0;
+  }
+
   get titleCorrect() {
-    return this.domain.length > 1 && this.domain.length < 14 && !/[^A-Za-z0-9_-\s\/]/.test(this.domain);
+    return this.hasTitle && this.domain.length < 14 && !/[^A-Za-z0-9_-\s\/]/.test(this.domain);
   }
 
   get correct0() {
@@ -278,7 +282,7 @@ class CreateRangeVm {
     const averageUnlockedPercent = unlockedPercent.div(unlockedCount).div(10);
     this.rangeAssets.forEach((v, i) => {
       if (v.locked) return;
-      const percent = Math.round(averageUnlockedPercent.toNumber() * 10) / 10;
+      const percent = Math.floor(averageUnlockedPercent.toNumber() * 10) / 10;
       this.rangeAssets[i].share = new BN(percent).times(10);
     });
 

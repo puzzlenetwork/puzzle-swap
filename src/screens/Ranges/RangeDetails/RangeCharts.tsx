@@ -101,6 +101,10 @@ const RangeCharts: React.FC<IProps> = () => {
     }
   ];
 
+  const showExactTime = useMemo(() => {
+    return vm.chartData && vm.chartData.length <= (24 * 8);
+  }, [vm.chartData]);
+
   return (
     <Root disabled={vm.chartData == null || vm.chartData.length < 2}>
       <Row style={isMobile ? { flexDirection: "column", gap: 12 } : {}}>
@@ -166,7 +170,9 @@ const RangeCharts: React.FC<IProps> = () => {
             labelFormatter={(date) => (
               // FIXME: raises hydration error because label uses <p></p>
               <Text type="secondary" size="small">
-                {dayjs(date).format("dddd, MMM DD")}
+                {showExactTime
+                  ? dayjs(date).format("dddd, MMM DD HH:mm")
+                  : dayjs(date).format("dddd, MMM DD")}
               </Text>
             )}
             formatter={(value) => "$ " + new BN(`${value}`).toFormat(2)}

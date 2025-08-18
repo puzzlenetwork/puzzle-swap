@@ -187,7 +187,22 @@ class DepositToRangeVM {
     const balances = accountStore.assetBalances.filter((balance) =>
       this.range.assets.some((t) => t.assetId === balance.assetId)
     );
-    return balances.sort((a, b) => (a.usdnEquivalent!.gt(b.usdnEquivalent!) ? 1 : -1))[0];
+
+    return balances.sort((a, b) => {
+      const balanceA = a.balance ?? BN.ZERO;
+      const toDepositA = BN.parseUnits(this.tokensToDepositAmounts?.[a.assetId] ?? BN.ZERO, a.decimals);
+      const remainingA = balanceA.minus(toDepositA);
+      const tokenA = this.range.assets.find((t) => t.assetId === a.assetId);
+      const remainingUsdEquivalentA = remainingA.times(tokenA?.currentPrice ?? 1);
+
+      const balanceB = b.balance ?? BN.ZERO;
+      const toDepositB = BN.parseUnits(this.tokensToDepositAmounts?.[b.assetId] ?? BN.ZERO, b.decimals);
+      const remainingB = balanceB.minus(toDepositB);
+      const tokenB = this.range.assets.find((t) => t.assetId === b.assetId);
+      const remainingUsdEquivalentB = remainingB.times(tokenB?.currentPrice ?? 1);
+
+      return remainingUsdEquivalentA.gt(remainingUsdEquivalentB) ? 1 : -1;
+    })[0] as (Balance | null);
   }
 
   get zeroAssetBalances(): number | null {
