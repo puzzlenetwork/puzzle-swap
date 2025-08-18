@@ -590,7 +590,7 @@ export const PUZZLE_NFTS = [
   },
 ];
 
-export const NODE_URL = "https://nodes.wx.network ";
+export const NODE_URL = "https://nodes.wx.network";
 export const EXPLORER_URL = "https://new.wavesexplorer.com";
 
 export interface IToken {
