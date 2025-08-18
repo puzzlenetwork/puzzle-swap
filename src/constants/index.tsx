@@ -36,10 +36,10 @@ export const ROUTES = {
 };
 
 export const PRODUCTS = {
-  SWAP: "https://puzzleswap.org/",
-  LEND: "https://lend.puzzleswap.org/",
+  SWAP: "https://swap.puzzle.network/",
+  LEND: "https://lend.puzzle.network/",
   MARKET: "https://puzzlemarket.org/",
-  NODE: "https://lease.puzzleswap.org/",
+  NODE: "https://lease.puzzle.network/",
 };
 
 export const TOKEN_DETAILS_BY_SYMBOL: Record<string, string> = tokensDetails;
