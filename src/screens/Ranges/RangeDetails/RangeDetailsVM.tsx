@@ -170,9 +170,11 @@ class RangeDetailsInterfaceVM {
     makeAutoObservable(this);
 
     rangesService.getRangeByAddress(rangeAddress, { charts: true }).then((rangeData) => {
+      console.log("getRangeDetails", rangeData)
       if (!rangeData) return;
       const newRange = new Range(rangeData);
       this.rootStore.rangesStore.updateRange(newRange);
+      const _ = this.range; // trigger reactivity
       this.setHistory(rangeData.charts || []);
       this.updateBlockHeight();
     });
@@ -227,7 +229,8 @@ class RangeDetailsInterfaceVM {
     } else if (this.stakeUnstakeAction === "unstake") {
       this.setStakeUnstakeAmount(BN.parseUnits(this.lpData!.indexStaked, this.indexTokenDecimals));
     }
-    const decimals = TOKENS_BY_ASSET_ID[this.range!.lpTokenId]?.decimals ?? 8;
+    const lpTokenId = this.range?.lpTokenId;
+    const decimals = (lpTokenId && TOKENS_BY_ASSET_ID[lpTokenId]?.decimals) ?? 8;
     decimals && this._setIndexTokenDecimals(decimals);
   };
 
