@@ -14,6 +14,7 @@ interface IProps {}
 const Root = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 24px;
 `;
 
 const DesktopContinueBtn = styled.div`
@@ -39,7 +40,6 @@ const RangeSettingsCard: React.FC<IProps> = () => {
   return (
     <Root>
       {currentStep()}
-      <SizedBox height={24} />
       <DesktopContinueBtn>
         <ContinueBtn />
       </DesktopContinueBtn>

@@ -30,7 +30,6 @@ const Grid = styled.div`
   row-gap: 24px;
   @media (min-width: 880px) {
     grid-template-columns: 1fr 2fr 1fr;
-    row-gap: 0;
     column-gap: 40px;
   }
 `;
