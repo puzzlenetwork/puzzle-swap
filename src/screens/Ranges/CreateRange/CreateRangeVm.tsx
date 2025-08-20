@@ -450,7 +450,7 @@ ${this.baseTokenPrice.toSmallFormat()}
     this.rangeAssets[indexOfObject].maxPrice = val;
   };
 
-  updateAssetMaxSellOff = (assetId: string, val: BN) => {
+  updateAssetMaxSellOff = (assetId: string, val: BN | undefined) => {
     const indexOfObject = this.rangeAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.rangeAssets[indexOfObject].maxSellOff = val;
   };

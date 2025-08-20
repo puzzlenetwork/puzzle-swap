@@ -170,7 +170,6 @@ class RangeDetailsInterfaceVM {
     makeAutoObservable(this);
 
     rangesService.getRangeByAddress(rangeAddress, { charts: true }).then((rangeData) => {
-      console.log("getRangeDetails", rangeData)
       if (!rangeData) return;
       const newRange = new Range(rangeData);
       this.rootStore.rangesStore.updateRange(newRange);

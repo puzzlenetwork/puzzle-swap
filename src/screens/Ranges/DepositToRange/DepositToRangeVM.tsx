@@ -222,7 +222,7 @@ class DepositToRangeVM {
       const usdnEquivalent = toDeposit.times(token.currentPrice);
       return acc.plus(usdnEquivalent);
     }, BN.ZERO);
-    return !total.isNaN() ? "$ " + total.toFormat(total?.toNumber() > 0.001 ? 2 : 4) : null;
+    return !total.isNaN() ? total.toFormat(total?.toNumber() > 0.001 ? 2 : 4) + " " + this.range.assets[0].name : null;
   }
 
   get canDepositMultipleTokens() {

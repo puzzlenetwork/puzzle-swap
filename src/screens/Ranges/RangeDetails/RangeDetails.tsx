@@ -62,7 +62,7 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
   const vm = useRangeDetailsInterfaceVM();
   const { width } = useWindowSize();
   const isMobile = !!(width && width < 880);
-  console.log("range details debug", vm.range?.address, vm.range === undefined)
+  
   if (vm.range === undefined) {
     return <Loading />;
   }

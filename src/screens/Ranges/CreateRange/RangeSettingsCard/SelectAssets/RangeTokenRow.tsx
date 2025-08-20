@@ -71,7 +71,7 @@ interface IParams {
   changeAssetLeverageInRange: (assetId: string, leverage: BN) => void;
   changeAssetShareInRange: (assetId: string, share: BN) => void;
   updateLockedState: (assetId: string, locked: boolean) => void;
-  changeAssetMaxSellOffInRange: (assetId: string, maxSellOff: BN) => void;
+  changeAssetMaxSellOffInRange: (assetId: string, maxSellOff: BN | undefined) => void;
   changeAssetInitialPriceInRange: (assetId: string, initialPrice: BN) => void;
   deleteAssetFromRange: (assetId: string) => void;
   baseTokenSymbol?: string;

@@ -26,9 +26,14 @@ class AllRangesVm {
   public rangesInfo: GlobalRangesInfo | null = null;
   private _setRangesInfo = (v: GlobalRangesInfo) => (this.rangesInfo = v);
 
+  public loading = true;
+  private _setLoading = (l: boolean) => (this.loading = l);
+
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
-    this.syncRanges();
+    this.syncRanges().then(() => {
+      this._setLoading(false);
+    });
     this.syncFiltersWithRangesStore();
     when(
       () => this.rootStore.accountStore.address !== null,
@@ -39,9 +44,12 @@ class AllRangesVm {
 
   searchValue: string = "";
   setSearchValue = (v: string) => {
+    this._setLoading(true);
     this.searchValue = v;
     this.rootStore.rangesStore.setSearchValue(v).then(() => {
-      this.rootStore.rangesStore.setPagination({ page: 1, size: this.rootStore.rangesStore.pagination.size });
+      this.rootStore.rangesStore.setPagination({ page: 1, size: this.rootStore.rangesStore.pagination.size }).then(() => {
+        this._setLoading(false);
+      });
     });
   };
 
@@ -55,12 +63,15 @@ class AllRangesVm {
   ];
   rangesSorting: number = 0;
   setRangesSorting = (v: number) => {
+    this._setLoading(true);
     this.rangesSorting = v;
     this.rootStore.rangesStore.setFilter({
       sortBy: this.rangesSortings[v].key.slice(0, -1) as "fact_liquidity" | "earned" | "virtual_liquidity",
       order: (this.rangesSortings[v].key.slice(-1) === "A" ? "asc" : "desc") as "asc" | "desc"
     }).then(() => {
-      this.rootStore.rangesStore.setPagination({ page: 1, size: this.rootStore.rangesStore.pagination.size });
+      this.rootStore.rangesStore.setPagination({ page: 1, size: this.rootStore.rangesStore.pagination.size }).then(() => {
+        this._setLoading(false);
+      });
     });
   };
 
@@ -86,21 +97,29 @@ class AllRangesVm {
 
   showOnlyActiveRanges: boolean = false;
   setShowOnlyActiveRanges = (v: boolean) => {
+    this._setLoading(true);
     this.showOnlyActiveRanges = v;
     this.rootStore.rangesStore.setOnlyActiveRanges(v ? true : undefined).then(() => {
-      this.rootStore.rangesStore.setPagination({ page: 1, size: this.rootStore.rangesStore.pagination.size });
+      this.rootStore.rangesStore.setPagination({ page: 1, size: this.rootStore.rangesStore.pagination.size }).then(() => {
+        this._setLoading(false);
+      });
     });
   };
 
   showOnlyUserRanges: boolean = false;
   setShowOnlyUserRanges = (v: boolean) => {
+    this._setLoading(true);
     this.showOnlyUserRanges = v;
     if (v) {
       const { address } = this.rootStore.accountStore;
       this.rootStore.rangesStore.setUserAddress(address ?? undefined);
-      this.rootStore.rangesStore.setMinLiquidity(address ? 0 : 1); // FIXME: may hurt minLiquidity logic
+      this.rootStore.rangesStore.setMinLiquidity(address ? 0 : 1).then(() => {
+        this._setLoading(false);
+      }); // FIXME: may hurt minLiquidity logic
     } else {
-      this.rootStore.rangesStore.setUserAddress(undefined);
+      this.rootStore.rangesStore.setUserAddress(undefined).then(() => {
+        this._setLoading(false);
+      });
     }
   };
 
