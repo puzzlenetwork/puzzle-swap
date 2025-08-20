@@ -44,9 +44,9 @@ const MultipleTokensNotifications: React.FC<IProps> = () => {
                 You’ve reached the limit with {vm.minBalanceAsset?.symbol}
                 .&nbsp;
                 <Link to={buildBuyTokenRoute(`trade`, vm.minBalanceAsset!.assetId)}>
-                  &nbsp;Buy {vm.minBalanceAsset?.symbol}&nbsp;
+                  Buy {vm.minBalanceAsset?.symbol}
                 </Link>
-                to deposit to this range.
+                &nbsp;to deposit to this range.
               </Text>
             }
             style={{ margin: 24 }}

@@ -72,11 +72,14 @@ const DepositComposition: React.FC<IProps> = () => {
           })}
         </GridTable>
         <Divider />
-        <AdaptiveRowWithPadding justifyContent="space-between">
-          <Text fitContent>Total value</Text>
+        <AdaptiveRowWithPadding>
+          <Text>Total value</Text>
           <Text weight={500} fitContent nowrap>
-            {vm.maxToProvide.times(vm.providedPercentOfPool).div(100).toFormat(4)}
-            {` ${vm.rangeAssets[0].asset.symbol}`}
+            {vm.totalAmountToDepositStr}
+          </Text>
+          <SizedBox width={4} />
+          <Text weight={500} fitContent nowrap type="secondary">
+            ≈ $ {vm.totalAmountToDepositUsd?.toBigFormat(2) ?? "0.00"}
           </Text>
         </AdaptiveRowWithPadding>
       </Card>

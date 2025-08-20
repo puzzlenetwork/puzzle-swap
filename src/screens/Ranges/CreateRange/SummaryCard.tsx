@@ -76,10 +76,16 @@ const SummaryCard: React.FC<IProps> = () => {
         <Text type="secondary" fitContent>
           Max to provide
         </Text>
-        <Text weight={500} fitContent>
-          {vm.maxToProvide.toFormat(2)}
-          {` ${vm.rangeAssets[0].asset.symbol}`}
-        </Text>
+        <Row justifyContent="center">
+          <Text weight={500} fitContent>
+            {vm.maxToProvide.toSmallFormat()}
+            {` ${vm.rangeAssets[0].asset.symbol}`}
+          </Text>
+          <SizedBox width={4} />
+          <Text weight={500} type="secondary" fitContent>
+            {`≈ $ ${vm.maxToProvideUsd?.toBigFormat(2) ?? "0.00"}`}
+          </Text>
+        </Row>
         <SizedBox height={14} />
       </Card>
     </Root>

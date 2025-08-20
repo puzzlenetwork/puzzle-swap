@@ -17,17 +17,17 @@ interface IProps {
 
 const Root = styled.div<{ warning: boolean }>`
   .text {
-    color: ${({ warning }) => warning && "#ed827e"};
+    color: ${({ theme, warning }) => warning && theme.colors.error500};
   }
 `;
 
 const ShareText = styled.span<{ isLowMoney: boolean }>`
-  color: ${({ theme, isLowMoney }) => (isLowMoney ? "#ed827e" : theme.colors.primary800)};
+  color: ${({ theme, isLowMoney }) => (isLowMoney ? theme.colors.error500 : theme.colors.primary800)};
 `;
 
 const DepositCompositionRow: React.FC<IProps> = ({ availableAmount, depositAmount, share, name, logo }) => {
-  const available = availableAmount ? availableAmount.toFormat(4) : "-";
-  const deposit = depositAmount.toFormat(4);
+  const available = availableAmount ? availableAmount.toSmallFormat() : "-";
+  const deposit = depositAmount.toSmallFormat();
   const isLowMoney = availableAmount != null && availableAmount.eq(0);
   return (
     <Root className="gridRow" warning={isLowMoney}>

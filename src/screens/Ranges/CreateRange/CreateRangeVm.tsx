@@ -845,6 +845,10 @@ ${this.baseTokenPrice.toSmallFormat()}
     return res;
   }
 
+  get maxToProvideUsd(): BN {
+    return this.maxToProvide.times(this.baseTokenPrice);
+  }
+
   get assetsToProvide(): Record<string, BN> {
     const B0 = this.minVirtualBalanceOfBaseToken;
 
@@ -877,6 +881,29 @@ ${this.baseTokenPrice.toSmallFormat()}
         .toSignificant(0)
         .toString()
     }));
+  }
+
+  get totalAmountToDeposit(): BN {
+    const total = this.maxToProvide.times(this.providedPercentOfPool).div(100)
+    return total;
+  }
+
+  get totalAmountToDepositStr(): string {
+    const total = this.totalAmountToDeposit;
+    const baseToken = this.rangeAssets[0];
+    return total != null
+      ? total.toSmallFormat() + " " + baseToken?.asset.symbol
+      : "0.00 " + baseToken?.asset.symbol;
+  }
+
+  get totalAmountToDepositUsd(): BN | null {
+    const total = this.totalAmountToDeposit;
+    const baseToken = this.rangeAssets[0];
+    const baseTokenPrice = this.baseTokenPrice && !this.baseTokenPrice.isNaN()
+      ? this.baseTokenPrice
+      : (baseToken?.currentPrice ?? BN.ZERO);
+    const usdnEquivalent = total?.times(baseTokenPrice);
+    return usdnEquivalent ?? null;
   }
 
   async getTokenPrice(assetId: string, tries = 0): Promise<BN> {

@@ -98,10 +98,14 @@ const MultipleTokensAddLiquidity: React.FC<IProps> = () => {
           })}
         </GridTable>
         <Divider />
-        <AdaptiveRowWithPadding justifyContent="space-between">
-          <Text fitContent>Total value</Text>
+        <AdaptiveRowWithPadding>
+          <Text>Total value</Text>
           <Text weight={500} fitContent nowrap>
-            {vm.totalAmountToDeposit}
+            {vm.totalAmountToDepositStr}
+          </Text>
+          <SizedBox width={4} />
+          <Text weight={500} fitContent nowrap type="secondary">
+            ≈ $ {vm.totalAmountToDepositUsd?.toBigFormat(2) ?? "0.00"}
           </Text>
         </AdaptiveRowWithPadding>
       </Card>
@@ -113,7 +117,7 @@ const MultipleTokensAddLiquidity: React.FC<IProps> = () => {
       <FixedMobileBlock>
         {!vm.loading ? (
           <Button fixed disabled={!vm.canDepositMultipleTokens} onClick={vm.depositMultipleTokens}>
-            Deposit {vm.totalAmountToDeposit ?? "$ 0.0"}
+            Deposit {vm.totalAmountToDepositStr}
           </Button>
         ) : (
           <Button disabled fixed>
