@@ -10,7 +10,7 @@ import BN from "@src/utils/BN";
 import { RootStore, useStores } from "@stores";
 import { address as Address, randomSeed } from "@waves/ts-lib-crypto";
 import { broadcast, setScript, waitForTx } from "@waves/waves-transactions";
-import { makeAutoObservable, observable } from "mobx";
+import { makeAutoObservable, observable, reaction } from "mobx";
 import { generate } from "random-words";
 import React, { useMemo } from "react";
 import loadCreateRangeStateFromStorage, { IInitDataToStore } from "./utils/loadCreateRangeStateFromStorage";
@@ -32,6 +32,7 @@ export interface IRangeToken {
   share: BN;
   // Select Assets step: UI loading flag for prices. False until initial/current price is resolved from tokenStore or user input
   priceLoaded?: boolean;
+  inWallet?: BN;
 }
 
 const ctx = React.createContext<CreateRangeVm | null>(null);
@@ -156,8 +157,8 @@ class CreateRangeVm {
 
   maxStep: number = 0;
   step: number = 0;
-  setStep = (s: number, jump = false) => {
-    if (!jump) {
+  setStep = (s: number) => {
+    if (s > this.maxStep) {
       this.maxStep = s;
     }
     this.step = s;
@@ -178,10 +179,39 @@ class CreateRangeVm {
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
-    setInterval(this.saveSettings, 1000);
     const initData = loadCreateRangeStateFromStorage();
     this.initialize(initData);
     this.syncStakingStats();
+
+    reaction(
+      () => this.rootStore.accountStore.assetBalances && this.rootStore.accountStore.assetBalances.length,
+      () => this.syncInWallet()
+    )
+
+    reaction(
+      () => this.rootStore.accountStore.address,
+      () => this.syncInWallet()
+    )
+
+    reaction(
+      () => ({
+        assets: this.rangeAssets.map((t) => ({
+          assetId: t.asset?.assetId,
+          locked: t.locked,
+          share: t.share.div(10).toNumber(),
+          leverage: t.leverage.toNumber()
+        })),
+        title: this.domain,
+        step: this.step,
+        maxStep: this.maxStep,
+        swapFee: this.swapFee.div(10).toNumber(),
+        deployedContractAddress: this.deployedContractAddress ?? undefined,
+      }),
+      (state) => {
+        this.saveSettings(state);
+      },
+      { delay: 300 }
+    );
 
     // reaction(
     //   () => this.minVirtualBalanceOfBaseToken,
@@ -215,6 +245,7 @@ class CreateRangeVm {
       this.syncMinMaxPriceByAssetId(v.asset.assetId);
     });
 
+    this.deployedContractAddress = initData?.deployedContractAddress ?? null;
     this.domain = initData?.title ?? generate({ minLength: 2, maxLength: 6, exactly: 2, join: "-" });
     this.step = initData?.step ?? 0;
     this.maxStep = initData?.maxStep ?? 0;
@@ -242,7 +273,7 @@ class CreateRangeVm {
   }
 
   get titleCorrect() {
-    return this.hasTitle && this.domain.length < 14 && !/[^A-Za-z0-9_-\s\/]/.test(this.domain);
+  return this.hasTitle && this.domain.length < 14 && !/[^A-Za-z0-9_-\s\/]/.test(this.domain);
   }
 
   get correct0() {
@@ -427,13 +458,6 @@ class CreateRangeVm {
   updateAssetInitialPrice = (assetId: string, val: BN) => {
     const indexOfObject = this.rangeAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.rangeAssets[indexOfObject].initialPrice = val;
-    console.log(`
-Updated initial price for asset ${assetId}:
-${val.toSmallFormat()}
-
-Base token ${this.rangeAssets[0].asset.name.toString()}:
-${this.baseTokenPrice.toSmallFormat()}
-`);
     // priceLoaded: user provided a value, consider price resolved for UI
     this.rangeAssets[indexOfObject].priceLoaded = true;
     this.syncMinMaxPriceByAssetId(assetId);
@@ -518,21 +542,27 @@ ${this.baseTokenPrice.toSmallFormat()}
     return this.balances.filter((b) => !currentTokens.includes(b.assetId));
   }
 
-  saveSettings = () => {
+  saveSettings = (state?: IInitDataToStore) => {
+    if (state) {
+      console.trace("Saving range settings to localStorage...", state);
+      localStorage.setItem("puzzle-custom-range", JSON.stringify(state));
+      return;
+    }
     const assets = this.rangeAssets.map((t) => ({
       assetId: t.asset?.assetId,
       locked: t.locked,
       share: t.share.div(10).toNumber(),
       leverage: t.leverage.toNumber()
     }));
-    const state = {
+    const _state = {
       assets,
       title: this.domain,
       step: this.step,
       maxStep: this.maxStep,
-      swapFee: this.swapFee.div(10).toNumber()
+      swapFee: this.swapFee.div(10).toNumber(),
+      deployedContractAddress: this.deployedContractAddress,
     };
-    localStorage.setItem("puzzle-custom-range", JSON.stringify(state));
+    localStorage.setItem("puzzle-custom-range", JSON.stringify(_state));
   };
 
   provideLiquidityToRange = async () => {
@@ -733,6 +763,7 @@ ${this.baseTokenPrice.toSmallFormat()}
         ]
       });
     } finally {
+      this.saveSettings();
       this._setLoading(false);
     }
   };
@@ -771,7 +802,9 @@ ${this.baseTokenPrice.toSmallFormat()}
       // Deploy the range smart contract
       const deployScriptTx = await setScript({ script: RANGE_CONTRACT_B64, chainId: "W", fee: "4200000" }, seed);
       await broadcast(deployScriptTx, NODE_URL);
-      await waitForTx(deployScriptTx.id, { apiBase: NODE_URL });
+      try {
+        await waitForTx(deployScriptTx.id, { apiBase: NODE_URL });
+      } catch { }
 
       // Store the contract address for initialization in the next step
       this.setDeployedContractAddress(randomAddress);
@@ -806,6 +839,7 @@ ${this.baseTokenPrice.toSmallFormat()}
 
       console.error("Error creating range:", e);
     } finally {
+      this.saveSettings();
       this._setLoading(false);
     }
   };
@@ -817,7 +851,7 @@ ${this.baseTokenPrice.toSmallFormat()}
       const rawBalance = findBalanceByAssetId(asset.assetId);
       if (rawBalance == null || rawBalance.balance == null || initialPrice == null) return acc;
       const tokenBalance = asset.assetId === "WAVES"
-        ? rawBalance.balance.minus(11e6) // reserve 0.11 WAVES for commissions
+        ? rawBalance.balance.minus(this.deployedContractAddress ? 9e5 : 6e6) // reserve 0.05 + 0.001 WAVES for deploy and 0.009 WAVES for provide liquidity
         : rawBalance.balance;
       const baseToken = this.rangeAssets[0];
       const value = BN.formatUnits(tokenBalance, asset.decimals)
@@ -925,5 +959,40 @@ ${this.baseTokenPrice.toSmallFormat()}
     this.setBaseTokenPrice(basePrice);
     // priceLoaded: ensure base token is flagged as loaded after base price update
     if (this.rangeAssets[0]) this.rangeAssets[0].priceLoaded = true;
+  }
+
+  syncInWallet() {
+    const { accountStore } = this.rootStore;
+    console.log("syncInWallet");
+    this.rangeAssets.forEach((a) => {
+      const balance = accountStore.findBalanceByAssetId(a.asset.assetId)
+      if (balance?.balance)
+        a.inWallet = BN.formatUnits(balance?.balance, a.asset.decimals);
+    });
+  }
+
+  get minBalanceAsset(): IRangeToken {
+    const baseToken = this.rangeAssets[0];
+    const baseAssetId = baseToken.asset.assetId;
+    const basePrice = this.baseTokenPrice;
+    return this.rangeAssets.slice().map((t) => {
+      const toProvide = this.assetsToProvide?.[t.asset.assetId] ?? BN.ZERO;
+      const remaining = (t.inWallet ?? BN.ZERO).minus(toProvide).minus(t.asset.assetId === "WAVES" ? 0.009 : 0);
+      const price = (t.asset.assetId === baseAssetId)
+        ? basePrice ?? 1
+        : (t.currentPrice ? BN.formatUnits(t.currentPrice, t.asset.decimals).times(basePrice ?? 1) : 1);
+      const remainingUsdEquivalent = remaining.times(price);
+      console.log(`Asset: ${t.asset.symbol}, Remaining USD Equivalent: ${remainingUsdEquivalent.toSmallFormat()}`);
+      return {
+        ...t,
+        remainingUsdEquivalent
+      };
+    }).sort((a, b) => {
+      return a.remainingUsdEquivalent.gt(b.remainingUsdEquivalent) ? 1 : -1
+    })[0] as IRangeToken;
+  }
+
+  get zeroAssetBalances(): number | null {
+    return this.rangeAssets.filter(({ inWallet }) => !inWallet || inWallet.eq(0)).length;
   }
 }

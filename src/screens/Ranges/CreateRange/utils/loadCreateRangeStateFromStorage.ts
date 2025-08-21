@@ -7,12 +7,11 @@ export interface IRangeTokenToStore {
 
 export interface IInitDataToStore {
   assets: IRangeTokenToStore[];
-  share: string;
-  locked: boolean;
   title: string;
   maxStep: number | null;
   step: number | null;
   swapFee: number;
+  deployedContractAddress?: string;
 }
 
 export default function loadCreateRangeStateFromStorage() {
