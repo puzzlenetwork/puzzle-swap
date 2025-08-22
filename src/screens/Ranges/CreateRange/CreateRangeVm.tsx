@@ -514,7 +514,6 @@ class CreateRangeVm {
     const rawMax = BN.parseUnits(P1.times(B1.div(B1.minus(F1)).mathPow(w1.div(w0).plus(1))), asset.asset.decimals);
 
     const max = rawMax.isNaN() || rawMax.isZero() ? BN.parseUnits(P1, asset.asset.decimals) : rawMax;
-    console.trace("Min/Max prices updated:", { assetId, min, max });
 
     this.updateAssetMinPrice(assetId, min);
     this.updateAssetMaxPrice(assetId, max);
