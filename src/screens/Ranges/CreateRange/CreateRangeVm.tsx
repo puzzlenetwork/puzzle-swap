@@ -492,7 +492,8 @@ class CreateRangeVm {
 
 
     // todo fix for 0 min virtual balance of base token
-    const B0 = this.minVirtualBalanceOfBaseToken.lte(0) ? new BN(1) : this.minVirtualBalanceOfBaseToken;
+    const [rawB0] = this.minVirtualBalanceOfBaseToken;
+    const B0 = rawB0.lte(0) ? new BN(1) : rawB0;
     // const B0 = this.minVirtualBalanceOfBaseToken;
     const L0 = baseToken.leverage ?? new BN(1);
     const F0 = B0.div(L0);
@@ -513,6 +514,7 @@ class CreateRangeVm {
     const rawMax = BN.parseUnits(P1.times(B1.div(B1.minus(F1)).mathPow(w1.div(w0).plus(1))), asset.asset.decimals);
 
     const max = rawMax.isNaN() || rawMax.isZero() ? BN.parseUnits(P1, asset.asset.decimals) : rawMax;
+    console.trace("Min/Max prices updated:", { assetId, min, max });
 
     this.updateAssetMinPrice(assetId, min);
     this.updateAssetMaxPrice(assetId, max);
@@ -544,7 +546,6 @@ class CreateRangeVm {
 
   saveSettings = (state?: IInitDataToStore) => {
     if (state) {
-      console.trace("Saving range settings to localStorage...", state);
       localStorage.setItem("puzzle-custom-range", JSON.stringify(state));
       return;
     }
@@ -865,17 +866,19 @@ class CreateRangeVm {
     }, {} as Record<string, BN>);
   }
 
-  get minVirtualBalanceOfBaseToken(): BN {
-    return Object.values(this.correspondingVirtualBalanceOfBaseToken).reduce(
-      (acc, v, i) => (i === 0 ? v : BN.min(acc, v)),
-      BN.ZERO
+  get minVirtualBalanceOfBaseToken(): [BN, string] {
+    return Object.entries(this.correspondingVirtualBalanceOfBaseToken).reduce(
+      (acc, [assetId, v], i) => (i === 0 ? [v, assetId] : v.lt(acc[0]) ? [v, assetId] : acc),
+      [BN.ZERO, ""]
     );
   }
 
   get maxToProvide(): BN {
     const baseToken = this.rangeAssets[0];
     const share = BN.formatUnits(baseToken.share, 3);
-    const res = this.minVirtualBalanceOfBaseToken.div(baseToken.leverage ?? 1).div(share);
+    const [B0, minBalanceId] = this.minVirtualBalanceOfBaseToken;
+    const L = this.rangeAssets.find((v) => v.asset.assetId === minBalanceId)?.leverage ?? new BN(1);
+    const res = B0.div(L).div(share);
     return res;
   }
 
@@ -884,7 +887,7 @@ class CreateRangeVm {
   }
 
   get assetsToProvide(): Record<string, BN> {
-    const B0 = this.minVirtualBalanceOfBaseToken;
+    const [B0] = this.minVirtualBalanceOfBaseToken;
 
     const w0 = this.rangeAssets[0].share.div(10);
 
@@ -963,7 +966,6 @@ class CreateRangeVm {
 
   syncInWallet() {
     const { accountStore } = this.rootStore;
-    console.log("syncInWallet");
     this.rangeAssets.forEach((a) => {
       const balance = accountStore.findBalanceByAssetId(a.asset.assetId)
       if (balance?.balance)
@@ -982,7 +984,6 @@ class CreateRangeVm {
         ? basePrice ?? 1
         : (t.currentPrice ? BN.formatUnits(t.currentPrice, t.asset.decimals).times(basePrice ?? 1) : 1);
       const remainingUsdEquivalent = remaining.times(price);
-      console.log(`Asset: ${t.asset.symbol}, Remaining USD Equivalent: ${remainingUsdEquivalent.toSmallFormat()}`);
       return {
         ...t,
         remainingUsdEquivalent
