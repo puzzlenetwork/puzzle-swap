@@ -13,6 +13,7 @@ export interface IGetRanges {
 
 export interface IGetGlobalRangesInfo {
   minLiquidity: number;
+  userAddress?: string;
   active?: boolean;
 }
 

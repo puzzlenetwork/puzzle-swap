@@ -1,6 +1,6 @@
 import { GlobalRangesInfo } from "@src/entities/Range";
 import { useVM } from "@src/hooks/useVM";
-import rangesService from "@src/services/rangesService";
+import rangesService, { IGetGlobalRangesInfo } from "@src/services/rangesService";
 import BN from "@src/utils/BN";
 import { RootStore, useStores } from "@stores";
 import { makeAutoObservable, when } from "mobx";
@@ -24,7 +24,7 @@ class AllRangesVm {
   public rootStore: RootStore;
 
   public rangesInfo: GlobalRangesInfo | null = null;
-  private _setRangesInfo = (v: GlobalRangesInfo) => (this.rangesInfo = v);
+  private _setRangesInfo = (v: GlobalRangesInfo | null) => (this.rangesInfo = v);
 
   public loading = true;
   private _setLoading = (l: boolean) => (this.loading = l);
@@ -108,20 +108,29 @@ class AllRangesVm {
 
   showOnlyUserRanges: boolean = false;
   setShowOnlyUserRanges = (v: boolean) => {
-    this._setLoading(true);
     this.showOnlyUserRanges = v;
-    if (v) {
-      const { address } = this.rootStore.accountStore;
-      this.rootStore.rangesStore.setUserAddress(address ?? undefined);
-      this.rootStore.rangesStore.setMinLiquidity(address ? 0 : 1).then(() => {
-        this._setLoading(false);
-      }); // FIXME: may hurt minLiquidity logic
-    } else {
-      this.rootStore.rangesStore.setUserAddress(undefined).then(() => {
-        this._setLoading(false);
-      });
-    }
+    console.log("Setting showOnlyUserRanges to:", v);
+    this._setLoading(true);
+    this.handleShowOnlyUserRangesChange(v).then(() => {
+      this._setLoading(false);
+    });
   };
+  handleShowOnlyUserRangesChange = async (v: boolean) => {
+    console.log("Handling showOnlyUserRangesChange:", v);
+    return Promise.all([
+      (async () => {
+        console.log("In async function for handleShowOnlyUserRangesChange, v =", v);
+        if (v) {
+          const { address } = this.rootStore.accountStore;
+          await this.rootStore.rangesStore.setUserAddress(address ?? undefined);
+          await this.rootStore.rangesStore.setMinLiquidity(address ? 0 : 1);
+        } else {
+          await this.rootStore.rangesStore.setUserAddress(undefined);
+        }
+      })(),
+      this.syncRanges({ userAddress: v ? (this.rootStore.accountStore.address ?? undefined) : undefined }),
+    ]);
+  }
 
   userInvestedAmount: BN | null = null;
   setUserInvestedAmount = (v: number) => (this.userInvestedAmount = new BN(v));
@@ -147,9 +156,12 @@ class AllRangesVm {
     });
   };
 
-  syncRanges = async () => {
+  syncRanges = async (params?: Partial<IGetGlobalRangesInfo>) => {
+    this._setRangesInfo(null);
     rangesService.getGlobalRangesInfo({
       minLiquidity: this.rootStore.rangesStore.minLiquidity,
+      userAddress: this.rootStore.rangesStore.userAddress,
+      ...params
     }).then((data) => {
       const newRangesInfo = new GlobalRangesInfo(data);
       this._setRangesInfo(newRangesInfo);
