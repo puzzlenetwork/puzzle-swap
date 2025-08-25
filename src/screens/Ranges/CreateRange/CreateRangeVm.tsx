@@ -874,10 +874,11 @@ class CreateRangeVm {
 
   get maxToProvide(): BN {
     const baseToken = this.rangeAssets[0];
-    const share = BN.formatUnits(baseToken.share, 3);
-    const [B0, minBalanceId] = this.minVirtualBalanceOfBaseToken;
-    const L = this.rangeAssets.find((v) => v.asset.assetId === minBalanceId)?.leverage ?? new BN(1);
-    const res = B0.div(L).div(share);
+    const w0 = baseToken.share; // Note: here the value 100 means 10,0%
+    const [B0] = this.minVirtualBalanceOfBaseToken;
+    const res = this.rangeAssets.reduce<BN>((acc, { share: w, leverage: L }) => {
+      return acc.plus(B0.div(L).times(w.div(w0)));
+    }, BN.ZERO);
     return res;
   }
 

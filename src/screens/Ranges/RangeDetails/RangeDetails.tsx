@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import Layout from "@components/Layout";
 import { RangeDetailsInterfaceVMProvider, useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
@@ -7,10 +7,9 @@ import SizedBox from "@components/SizedBox";
 import { Column, Row } from "@src/components/Flex";
 import GoBack from "@components/GoBack";
 import MainRangeInfo from "./MainRangeInfo";
-import { Navigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Loading from "@components/Loading";
 import { ROUTES } from "@src/constants";
-import { useStores } from "@stores";
 import RangeCharts from "./RangeCharts";
 import RangeComposition from "./RangeComposition";
 import Reward from "./Reward";
@@ -21,6 +20,7 @@ import RangeChart from "@src/components/RangeChart";
 import useWindowSize from "@src/hooks/useWindowSize";
 import RangeLiquidity from "./RangeLiquidity";
 import EarnedByLP from "./EarnedByLP";
+import LowRangeLiquidityNotification from "@components/LowRangeLiquidityNotification";
 
 const Root = styled.div`
   display: flex;
@@ -62,7 +62,8 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
   const vm = useRangeDetailsInterfaceVM();
   const { width } = useWindowSize();
   const isMobile = !!(width && width < 880);
-  
+  const showLowRangeLiquidityNotification = useMemo(() => !vm.range?.liquidity || vm.range?.liquidity.lt(100), [vm.range?.liquidity]);
+
   if (vm.range === undefined) {
     return <Loading />;
   }
@@ -106,6 +107,7 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
           <MainBlock>
             {isMobile && (
               <Column crossAxisSize="max">
+                {showLowRangeLiquidityNotification && <LowRangeLiquidityNotification />}
                 <Reward />
                 <MyRangeBalance />
                 <LPStaking />
@@ -115,6 +117,7 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
             <RangeComposition isMobile={isMobile} />
           </MainBlock>
           <RightBlock>
+            {showLowRangeLiquidityNotification && <LowRangeLiquidityNotification />}
             <Reward />
             <MyRangeBalance />
             <LPStaking />
