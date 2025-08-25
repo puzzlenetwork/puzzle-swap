@@ -91,19 +91,19 @@ class CreateRangeVm {
     const mutatedAssets = this.rangeAssets.map((v) => {
       return {
         ...v,
-        leverage: v.leverage ? new BN(1).div(v.leverage) : new BN(1)
+        reversedLeverage: v.leverage ? new BN(1).div(v.leverage) : new BN(1)
       };
     });
     const maxLeverage = mutatedAssets.reduce((acc, v) => {
-      return BN.max(acc, v.leverage);
+      return BN.max(acc, v.reversedLeverage);
     }, BN.ZERO);
 
     return mutatedAssets.map((v) => {
       return {
         ...v.asset,
         ...v,
-        leverage: v.leverage.times(100).toNumber(),
-        relativeLeverage: v.leverage.div(maxLeverage).times(100).plus(10).toNumber()
+        reversedLeverage: v.reversedLeverage.times(100).toNumber(),
+        relativeReversedLeverage: v.reversedLeverage.div(maxLeverage).times(100).plus(10).toNumber()
       };
     });
   }

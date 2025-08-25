@@ -94,7 +94,7 @@ const RangesTable: React.FC = () => {
                 paddingMobile="4px"
                 onClick={width && width < 880 ? stopPropagation : undefined}
               >
-                <RangeChart assetsWithLeverage={range.assetsWithLeverage} size={120} index={index} />
+                <RangeChart assetsWithLeverage={range.assetsWithLeverage} size={120} uniqueId={index} />
               </GrayCard>
               <SizedBox width={16} />
               <Column crossAxisSize="max" justifyContent="space-between">
