@@ -94,6 +94,9 @@ export default class RangesStore {
   loading: boolean = false;
   setLoading = (loading: boolean) => (this.loading = loading);
 
+  investmentsLoading: boolean = false;
+  setInvestmentsLoading = (loading: boolean) => (this.investmentsLoading = loading);
+
   // Pagination state
   pagination = {
     page: 1,
@@ -204,13 +207,13 @@ export default class RangesStore {
       return;
     }
     try {
-      this.setLoading(true);
+      this.setInvestmentsLoading(true);
       const data = await rangesService.getUserInvestments(address);
       this.setInvestmentsData(data.map((item) => new ProvidedData(item)));
     } catch (error) {
       console.error("Error fetching investments:", error);
     } finally {
-      this.setLoading(false);
+      this.setInvestmentsLoading(false);
     }
   };
 }
