@@ -54,7 +54,8 @@ const DepositToRangeImpl = observer(() => {
         <Text weight={500} size="large">
           Deposit liquidity to Range {range.domain}
         </Text>
-        <SizedBox height={4} />
+        {/* TODO: Uncomment when deposit with single released */}
+        {/* <SizedBox height={4} />
         <Text size="medium">Select the method of adding liquidity and enter the amount to provide</Text>
         <SizedBox height={24} />
         <Text weight={500} type="secondary">
@@ -69,7 +70,7 @@ const DepositToRangeImpl = observer(() => {
               i === 1 ? navigate(depositOneTokenRoute) : navigate(depositRoute);
             }}
           />
-        </Card>
+        </Card> */}
         <SizedBox height={24} />
         {isDepositMultiple && <DepositMultipleTokens />}
         {isDepositSingle && <DepositSingleToken />}

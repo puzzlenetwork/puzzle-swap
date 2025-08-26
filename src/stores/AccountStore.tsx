@@ -288,6 +288,7 @@ class AccountStore {
 
     this.setAssetBalances(assetBalances);
     this.setAssetsBalancesLoading(false);
+    this.rootStore.rangesStore.syncInvestments();
   };
 
   ///------------------transfer

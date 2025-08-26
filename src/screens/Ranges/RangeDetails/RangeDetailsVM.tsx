@@ -346,6 +346,7 @@ class RangeDetailsInterfaceVM {
         });
       })
       .finally(() => {
+        this.rootStore.accountStore.updateAccountAssets(true);
         this._setLoading(false);
         this.syncLPData();
       });
@@ -400,7 +401,10 @@ class RangeDetailsInterfaceVM {
           title: "Transaction is not completed"
         });
       })
-      .finally(() => this._setLoading(false));
+      .finally(() => {
+        this.rootStore.accountStore.updateAccountAssets(true);
+        this._setLoading(false);
+      });
   };
 
   get canStakeIndex() {
@@ -448,6 +452,9 @@ class RangeDetailsInterfaceVM {
           title: "Transaction is not completed"
         });
       })
-      .finally(() => this._setLoading(false));
+      .finally(() => {
+        this.rootStore.accountStore.updateAccountAssets(true);
+        this._setLoading(false);
+      });
   };
 }

@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import { RootStore, useStores } from "@stores";
 import copy from "copy-to-clipboard";
 import Balance from "@src/entities/Balance";

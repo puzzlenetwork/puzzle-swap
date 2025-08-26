@@ -651,6 +651,8 @@ class CreateRangeVm {
         throw new Error("Transaction failed or was cancelled");
       }
 
+      this.rootStore.accountStore.updateAccountAssets(true);
+
       console.log("Range initialized successfully! Transaction ID:", txId);
 
       // Show success notification

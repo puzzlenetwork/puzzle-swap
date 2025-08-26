@@ -191,6 +191,8 @@ class WithdrawFromRangeVM {
         });
       })
       .then(() => {
+        console.log("Refresh user data");
+        this.rootStore.accountStore.updateAccountAssets(true);
         this.updateUserIndexStaked();
         this.syncLPData();
       })

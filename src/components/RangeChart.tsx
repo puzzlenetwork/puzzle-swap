@@ -117,7 +117,6 @@ const RangeChart: React.FC<IParams> = ({ assetsWithLeverage, size, uniqueId, cha
 };
 
 const RangeChartWrapper: React.FC<IParams> = ({ assetsWithLeverage, showTooltip = true, ...rest }: IParams) => {
-  console.log("RangeChartWrapper rendered", assetsWithLeverage);
   return showTooltip ? (
     <Tooltip
       config={{ placement: "bottom" }}
