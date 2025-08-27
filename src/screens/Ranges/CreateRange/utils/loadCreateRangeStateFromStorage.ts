@@ -3,7 +3,7 @@ export interface IRangeTokenToStore {
   share: number;
   locked: boolean;
   leverage: number;
-  initialPrice: number;
+  initialPrice: number | undefined;
 }
 
 export interface IInitDataToStore {

@@ -211,7 +211,7 @@ const RangeTokenRow: React.FC<IParams> = ({
           <InitialPriceSelector
             asset={token}
             baseTokenSymbol={baseTokenSymbol}
-            value={token.initialPrice || BN.ZERO}
+            value={token.initialPrice}
             onUpdate={(value) => changeAssetInitialPriceInRange(token.asset.assetId, value)}
           />
         </td>
