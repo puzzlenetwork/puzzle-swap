@@ -206,7 +206,7 @@ class CreateRangeVm {
           locked: t.locked,
           share: t.share.div(10).toNumber(),
           leverage: t.leverage.toNumber(),
-          initialPrice: t.initialPrice ? BN.formatUnits(t.initialPrice, t.asset.decimals).toNumber() : 1,
+          initialPrice: t.initialPrice ? BN.formatUnits(t.initialPrice, t.asset.decimals).toNumber() : undefined,
         })),
         title: this.domain,
         step: this.step,
@@ -235,7 +235,7 @@ class CreateRangeVm {
           return observable({
             share: new BN(share).times(10),
             locked,
-            initialPrice: new BN(initialPrice),
+            initialPrice: initialPrice ? new BN(initialPrice) : undefined,
             currentPrice: new BN(1),
             asset: TOKENS_BY_ASSET_ID[assetId],
             priceLoaded: false,
@@ -377,10 +377,15 @@ class CreateRangeVm {
     // Calculate prices relative to base
     try {
       const initialPrice = await this.getTokenPrice(assetId);
-      const relativeInitialPrice = initialPrice.div(this.baseTokenPrice);
-      const parsed = BN.parseUnits(relativeInitialPrice, asset.decimals);
-      this.updateAssetInitialPrice(asset.assetId, parsed);
-      this.updateAssetCurrentPrice(asset.assetId, parsed);
+      if (initialPrice) {
+        const relativeInitialPrice = initialPrice.div(this.baseTokenPrice);
+        const parsed = BN.parseUnits(relativeInitialPrice, asset.decimals);
+        this.updateAssetInitialPrice(asset.assetId, parsed);
+        this.updateAssetCurrentPrice(asset.assetId, parsed);
+      } else {
+        this.updateAssetInitialPrice(asset.assetId, undefined);
+        this.updateAssetCurrentPrice(asset.assetId, undefined);
+      }
     } finally {
       // priceLoaded: mark as loaded regardless of success; fallbacks will be used if needed
       const idx = this.rangeAssets.findIndex((ra) => ra.asset.assetId === asset.assetId);
@@ -424,7 +429,7 @@ class CreateRangeVm {
     // priceLoaded: set false before recalculating prices for the replaced asset
     this.rangeAssets[indexOfObject].priceLoaded = false;
 
-    const currentPrice = await this.getTokenPrice(newAssetId);
+    const currentPrice = await this.getTokenPrice(newAssetId) ?? new BN(1);
     const apr = this.stakingStats.find((s) => s.asset_id === newAssetId)?.apr_1y;
     this.rangeAssets[indexOfObject].apr = apr ? new BN(apr) : undefined;
 
@@ -462,7 +467,7 @@ class CreateRangeVm {
     this.rangeAssets[indexOfObject].minPrice = val;
   };
 
-  updateAssetInitialPrice = (assetId: string, val: BN) => {
+  updateAssetInitialPrice = (assetId: string, val: BN | undefined) => {
     const indexOfObject = this.rangeAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.rangeAssets[indexOfObject].initialPrice = val;
     // priceLoaded: user provided a value, consider price resolved for UI
@@ -470,7 +475,7 @@ class CreateRangeVm {
     this.syncMinMaxPriceByAssetId(assetId);
   };
 
-  updateAssetCurrentPrice = (assetId: string, val: BN) => {
+  updateAssetCurrentPrice = (assetId: string, val: BN | undefined) => {
     const indexOfObject = this.rangeAssets.findIndex(({ asset }) => asset.assetId === assetId);
     this.rangeAssets[indexOfObject].currentPrice = val;
     this.syncMinMaxPriceByAssetId(assetId);
@@ -560,7 +565,7 @@ class CreateRangeVm {
       locked: t.locked,
       share: t.share.div(10).toNumber(),
       leverage: t.leverage.toNumber(),
-      initialPrice: t.initialPrice?.toNumber() ?? 1,
+      initialPrice: t.initialPrice?.toNumber(),
     }));
     const _state = {
       assets,
@@ -948,10 +953,10 @@ class CreateRangeVm {
     return usdnEquivalent ?? null;
   }
 
-  async getTokenPrice(assetId: string, tries = 0): Promise<BN> {
+  async getTokenPrice(assetId: string, tries = 0): Promise<BN | undefined> {
     const { tokenStore } = this.rootStore;
     if (tokenStore.initialized) {
-      return this.rootStore.tokenStore.statisticsByAssetId[assetId]?.currentPrice ?? new BN(1);
+      return this.rootStore.tokenStore.statisticsByAssetId[assetId]?.currentPrice;
     } else if (tries * 10 > 2000) {
       throw new Error("Timeout: tokenStore not initialized after 2 seconds");
     } else {
@@ -964,7 +969,7 @@ class CreateRangeVm {
     // priceLoaded: mark all as loading before syncing from tokenStore
     this.rangeAssets.forEach((a) => (a.priceLoaded = false));
     const basePrice = await this.getTokenPrice(this.rangeAssets[0].asset.assetId);
-    this.setBaseTokenPrice(basePrice);
+    this.setBaseTokenPrice(basePrice ?? new BN(1));
     // priceLoaded: ensure base token is flagged as loaded after base price update
     if (this.rangeAssets[0]) this.rangeAssets[0].priceLoaded = true;
   }
