@@ -72,8 +72,8 @@ class CreateRangeVm {
       observable({
         asset: TOKENS_BY_SYMBOL.ROME,
         share: new BN(500),
-        initialPrice: BN.parseUnits(1, TOKENS_BY_SYMBOL.ROME.decimals),
-        currentPrice: BN.parseUnits(1, TOKENS_BY_SYMBOL.ROME.decimals),
+        initialPrice: new BN(1),
+        currentPrice: new BN(1),
         leverage: new BN(1),
         locked: false,
         priceLoaded: false
@@ -81,8 +81,8 @@ class CreateRangeVm {
       observable({
         asset: TOKENS_BY_SYMBOL.PUZZLE,
         share: new BN(500),
-        initialPrice: BN.parseUnits(1, TOKENS_BY_SYMBOL.PUZZLE.decimals),
-        currentPrice: BN.parseUnits(1, TOKENS_BY_SYMBOL.PUZZLE.decimals),
+        initialPrice: new BN(1),
+        currentPrice: new BN(1),
         leverage: new BN(1),
         locked: false,
         priceLoaded: false
