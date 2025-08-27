@@ -57,9 +57,7 @@ const BigNumberInput: React.FC<IBigNumberInputProps> = ({
       const parseInputValue = BN.parseUnits(inputValue || "0", decimals);
 
       if (!parseInputValue || !parseInputValue.eq(value)) {
-        setInputValue(
-          BN.formatUnits(value, decimals).toSignificant(6).toString()
-        );
+        setInputValue(BN.formatUnits(value, decimals).toSignificant(6).toString());
       }
     }
   }, [value, decimals, inputValue]);
@@ -94,10 +92,7 @@ const BigNumberInput: React.FC<IBigNumberInputProps> = ({
     }
 
     const newValue = BN.parseUnits(value, decimals);
-    const invalidValue =
-      newValue.isNaN() ||
-      (min && newValue.lt(min)) ||
-      (max && newValue.gt(max));
+    const invalidValue = newValue.isNaN() || (min && newValue.lt(min)) || (max && newValue.gt(max));
 
     if (invalidValue) {
       return;
@@ -114,14 +109,10 @@ const BigNumberInput: React.FC<IBigNumberInputProps> = ({
     type: "text",
     value: inputValue,
     readOnly,
-    disabled,
+    disabled
   };
 
-  return renderInput ? (
-    renderInput({ ...inputProps }, inputRef)
-  ) : (
-    <input {...inputProps} ref={inputRef} />
-  );
+  return renderInput ? renderInput({ ...inputProps }, inputRef) : <input {...inputProps} ref={inputRef} />;
 };
 
 export default BigNumberInput;

@@ -7,21 +7,8 @@ const Card = styled.div<{
   flexGrow?: number;
   paddingDesktop?: string;
   paddingMobile?: string;
-  justifyContent?:
-    | "start"
-    | "flex-end"
-    | "space-around"
-    | "space-between"
-    | "center";
-  alignItems?:
-    | "start"
-    | "end"
-    | "center"
-    | "inherit"
-    | "unset"
-    | "flex-end"
-    | "flex-start"
-    | "baseline";
+  justifyContent?: "start" | "flex-end" | "space-around" | "space-between" | "center";
+  alignItems?: "start" | "end" | "center" | "inherit" | "unset" | "flex-end" | "flex-start" | "baseline";
   flexDirection?: "column" | "row";
   type?: "white" | "dark" | "image";
   bordered?: boolean;
@@ -31,9 +18,8 @@ const Card = styled.div<{
   flex-grow: ${({ flexGrow }) => flexGrow ?? 0};
   justify-content: ${({ justifyContent }) => justifyContent ?? "default"};
   align-items: ${({ alignItems }) => alignItems ?? "default"};
-  max-width: ${({ maxWidth }) => maxWidth ? `${maxWidth}px` : "100%"};
-  ${({ bordered, theme }) =>
-    bordered && `border: 1px solid ${theme.colors.primary100};`};
+  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : "100%")};
+  ${({ bordered, theme }) => bordered && `border: 1px solid ${theme.colors.primary100};`};
   width: ${({ fitContent }) => (fitContent ? "fit-content" : "100%")};
   border: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
   border-radius: 16px;

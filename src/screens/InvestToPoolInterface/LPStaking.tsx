@@ -57,10 +57,7 @@ const LPStaking: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
   const [expanded, setExpanded] = useState(false);
   if (accountStore.address == null) return null;
-  const availableToStake = BN.formatUnits(
-    vm.indexTokenBalance.times(vm.pool.indexTokenRate),
-    8
-  );
+  const availableToStake = BN.formatUnits(vm.indexTokenBalance.times(vm.pool.indexTokenRate), 8);
 
   return (
     <Root onClick={() => setExpanded(!expanded)}>
@@ -68,12 +65,7 @@ const LPStaking: React.FC<IProps> = () => {
         LP Staking
         <Tooltip
           containerStyles={{ display: "flex", alignItems: "center" }}
-          content={
-            <Text>
-              Stake and unstake PZ Index token, which represents the value of
-              your pool share
-            </Text>
-          }
+          content={<Text>Stake and unstake PZ Index token, which represents the value of your pool share</Text>}
         >
           <InfoIcon style={{ marginLeft: 8 }} />
         </Tooltip>
@@ -86,10 +78,7 @@ const LPStaking: React.FC<IProps> = () => {
               Staked balance
             </Text>
             <Text nowrap>
-              $
-              {vm.totalProvidedLiquidityByAddress == null
-                ? "0.00"
-                : vm.totalProvidedLiquidityByAddress?.toFormat(2)}
+              ${vm.totalProvidedLiquidityByAddress == null ? "0.00" : vm.totalProvidedLiquidityByAddress?.toFormat(2)}
             </Text>
             <SizedBox height={16} />
             <Button
@@ -109,12 +98,7 @@ const LPStaking: React.FC<IProps> = () => {
             </Text>
             <Text>${availableToStake.toFormat(2)}</Text>
             <SizedBox height={16} />
-            <Button
-              fixed
-              size="medium"
-              disabled={!vm.canStakeIndex}
-              onClick={vm.stakeIndex}
-            >
+            <Button fixed size="medium" disabled={!vm.canStakeIndex} onClick={vm.stakeIndex}>
               Stake
             </Button>
           </Column>

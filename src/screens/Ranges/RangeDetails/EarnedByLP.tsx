@@ -15,56 +15,57 @@ const EarnedByLP = () => {
   const displayModes = [
     {
       key: "all",
-      title: "All Rewards",
+      title: "All Rewards"
     },
     {
       key: "fees",
-      title: "Earned Fees",
+      title: "Earned Fees"
     },
     {
       key: "extra",
-      title: "Extra Rewards",
-    },
+      title: "Extra Rewards"
+    }
   ];
 
   const timeRanges = [
     {
       key: "1d",
-      title: "Last Day",
+      title: "Last Day"
     },
     {
       key: "7d",
-      title: "Last Week",
+      title: "Last Week"
     },
     {
       key: "1m",
-      title: "Last Month",
+      title: "Last Month"
     },
     {
       key: "3m",
-      title: "Last 3 Months",
+      title: "Last 3 Months"
     },
     {
       key: "1y",
-      title: "Last Year",
+      title: "Last Year"
     },
     {
       key: "all",
-      title: "All Time",
-    },
-  ]
+      title: "All Time"
+    }
+  ];
 
   return (
     <Card paddingDesktop="16px 24px" paddingMobile="12px 16px">
-      <Text type="secondary" size="medium">
       <Row alignItems="center">
-        <Text type="secondary" size="medium">Earned by LP</Text>
+        <Text type="secondary" size="medium">
+          Earned by LP
+        </Text>
         <Select
           kind="text"
           textSize="medium"
           options={displayModes}
           onSelect={({ key }) => {
-            vm.setRewardsDisplayMode(key as ("all" | "fees" | "extra"));
+            vm.setRewardsDisplayMode(key as "all" | "fees" | "extra");
           }}
           selected={displayModes.find((o) => o.key === vm.rewardsDisplayMode) || displayModes[0]}
         />
@@ -74,20 +75,29 @@ const EarnedByLP = () => {
           textSize="medium"
           options={timeRanges}
           onSelect={({ key }) => {
-            vm.setTimeRangeToDisplayRewards(key as ("1d" | "7d" | "1m" | "3m" | "1y" | "all"));
+            vm.setTimeRangeToDisplayRewards(key as "1d" | "7d" | "1m" | "3m" | "1y" | "all");
           }}
           selected={timeRanges.find((o) => o.key === vm.timeRangeToDisplayRewards) || timeRanges[0]}
         />
       </Row>
-      </Text>
       <SizedBox height={12} />
       <Row style={{ gap: "8px", flexWrap: "wrap" }}>
         {vm.LPRewardsToDisplay.map((item, index) => (
-          <TokenTag token={{ ...TOKENS_BY_ASSET_ID[item.assetId], decimals: 0 }} amount={new BN(item.amount)} iconRight key={index} />
-        ))}  
+          <TokenTag
+            token={{ ...TOKENS_BY_ASSET_ID[item.assetId], decimals: 0 }}
+            amount={new BN(item.amount)}
+            iconRight
+            key={index}
+          />
+        ))}
+        {vm.LPRewardsToDisplay.length === 0 && (
+          <Text type="secondary">
+            No rewards yet
+          </Text>
+        )}
       </Row>
     </Card>
-  )
-}
+  );
+};
 
 export default observer(EarnedByLP);

@@ -1,17 +1,16 @@
-import React, { useMemo } from "react";
-import { useVM } from "@src/hooks/useVM";
-import { makeAutoObservable, when } from "mobx";
-import { RootStore, useStores } from "@stores";
-import BN from "@src/utils/BN";
-import Balance from "@src/entities/Balance";
-import { CONTRACT_ADDRESSES } from "@src/constants";
 import {
   buildErrorDialogParams,
   buildSuccessBoostParams,
-  IDialogNotificationProps,
+  IDialogNotificationProps
 } from "@components/Dialog/DialogNotification";
+import { CONTRACT_ADDRESSES } from "@src/constants";
+import Balance from "@src/entities/Balance";
+import { useVM } from "@src/hooks/useVM";
+import BN from "@src/utils/BN";
+import { RootStore, useStores } from "@stores";
 import dayjs from "dayjs";
-import poolsService from "@src/services/poolsService";
+import { makeAutoObservable, when } from "mobx";
+import React, { useMemo } from "react";
 
 const ctx = React.createContext<BoostApyVm | null>(null);
 
@@ -20,15 +19,9 @@ interface IProps {
   poolDomain: string;
 }
 
-export const BoostApyVmProvider: React.FC<IProps> = ({
-  poolDomain,
-  children,
-}) => {
+export const BoostApyVmProvider: React.FC<IProps> = ({ poolDomain, children }) => {
   const rootStore = useStores();
-  const store = useMemo(
-    () => new BoostApyVm(rootStore, poolDomain),
-    [rootStore, poolDomain]
-  );
+  const store = useMemo(() => new BoostApyVm(rootStore, poolDomain), [rootStore, poolDomain]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
 
@@ -67,8 +60,7 @@ class BoostApyVm {
   setAmount = (amount: BN) => (this.amount = amount);
 
   public notificationParams: IDialogNotificationProps | null = null;
-  public setNotificationParams = (params: IDialogNotificationProps | null) =>
-    (this.notificationParams = params);
+  public setNotificationParams = (params: IDialogNotificationProps | null) => (this.notificationParams = params);
 
   get token() {
     return this.pool?.tokens.find(({ assetId }) => assetId === this.assetId);
@@ -95,9 +87,7 @@ class BoostApyVm {
 
   get amountMaxClickFunc(): (() => void) | undefined {
     const { token, balance } = this;
-    return token != null && balance != null
-      ? () => this.setAmount(balance)
-      : undefined;
+    return token != null && balance != null ? () => this.setAmount(balance) : undefined;
   }
 
   get usdnEquivalent(): string {
@@ -106,9 +96,7 @@ class BoostApyVm {
     if (token == null || usdtRate == null) return "—";
     const result = usdtRate.times(BN.formatUnits(this.amount, token.decimals));
     if (!result.gt(0)) return "—";
-    return `~ ${usdtRate
-      .times(BN.formatUnits(this.amount, token.decimals))
-      .toFormat(2)} $`;
+    return `~ ${usdtRate.times(BN.formatUnits(this.amount, token.decimals)).toFormat(2)} $`;
   }
 
   get calcBoostedApy() {
@@ -116,12 +104,7 @@ class BoostApyVm {
       .usdtRate(this.assetId, 1)
       ?.times(BN.formatUnits(this.amount, this.token?.decimals));
 
-    if (
-      this.amount.eq(0) ||
-      this.days === 0 ||
-      this.pool?.globalLiquidity.eq(0)
-    )
-      return "0.00 %";
+    if (this.amount.eq(0) || this.days === 0 || this.pool?.globalLiquidity.eq(0)) return "0.00 %";
     const amount = usdnEquivalent?.div(this.pool.globalLiquidity).plus(1);
     const days = new BN(365).div(this.days);
     const percent = Math.pow(amount?.toNumber() ?? 1, days.toNumber());
@@ -131,11 +114,7 @@ class BoostApyVm {
 
   get isAllDataProvided() {
     return (
-      this.days > 0 &&
-      this.days <= 365 &&
-      !this.amount.eq(0) &&
-      !this.loading &&
-      this.amount.lte(this.balance ?? 0)
+      this.days > 0 && this.days <= 365 && !this.amount.eq(0) && !this.loading && this.amount.lte(this.balance ?? 0)
     );
   }
 
@@ -156,23 +135,23 @@ class BoostApyVm {
         payment: [
           {
             assetId: this.token.assetId === "WAVES" ? null : this.token.assetId,
-            amount: this.amount.toString(),
-          },
+            amount: this.amount.toString()
+          }
         ],
         call: {
           function: "addBoosting",
           args: [
             { type: "string", value: this.pool.address },
-            { type: "integer", value: this.days.toString() },
-          ],
-        },
+            { type: "integer", value: this.days.toString() }
+          ]
+        }
       })
       .then((txId) => {
         txId &&
           this.setNotificationParams(
             buildSuccessBoostParams({
               domain: this.poolDomain,
-              description: `${this.pool.title} APY boosted by ${this.calcBoostedApy} until ${this.formattedDays}`,
+              description: `${this.pool.title} APY boosted by ${this.calcBoostedApy} until ${this.formattedDays}`
             })
           );
       })
@@ -186,7 +165,7 @@ class BoostApyVm {
           buildErrorDialogParams({
             title: "Transaction is not completed",
             description: e.message ?? JSON.stringify(e),
-            onTryAgain: this.boost,
+            onTryAgain: this.boost
           })
         );
       })

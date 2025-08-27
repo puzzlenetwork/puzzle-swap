@@ -7,10 +7,7 @@ import SwapDetailRow from "@components/SwapDetailRow";
 import Card from "@components/Card";
 import Details from "@screens/MultiSwapInterface/Details";
 import Tooltip from "@components/Tooltip";
-import {
-  MultiSwapVMProvider,
-  useMultiSwapVM,
-} from "@screens/MultiSwapInterface/MultiSwapVM";
+import { MultiSwapVMProvider, useMultiSwapVM } from "@screens/MultiSwapInterface/MultiSwapVM";
 import { observer } from "mobx-react-lite";
 import Text from "@components/Text";
 import SwapButton from "@screens/MultiSwapInterface/SwapButton";
@@ -63,8 +60,8 @@ const MultiSwapInterfaceImpl: React.FC = observer(() => {
   const handleSetAssetId0 = (assetId: string) => {
     if (assetId === vm.assetId1) {
       notificationStore.notify("You can't choose same assets", {
-        type: "error",
-        title: "Warning",
+        type: "warning",
+        title: "Warning"
       });
       return;
     }
@@ -72,7 +69,7 @@ const MultiSwapInterfaceImpl: React.FC = observer(() => {
     urlSearchParams.set("asset0", assetId);
     navigate({
       pathname: window.location.pathname,
-      search: `?${urlSearchParams.toString()}`,
+      search: `?${urlSearchParams.toString()}`
     });
     vm.setAssetId0(assetId);
   };
@@ -80,8 +77,8 @@ const MultiSwapInterfaceImpl: React.FC = observer(() => {
   const handleSetAssetId1 = (assetId: string) => {
     if (assetId === vm.assetId0) {
       notificationStore.notify("You can't choose same assets", {
-        type: "error",
-        title: "Warning",
+        type: "warning",
+        title: "Warning"
       });
       return;
     }
@@ -89,7 +86,7 @@ const MultiSwapInterfaceImpl: React.FC = observer(() => {
     urlSearchParams.set("asset1", assetId);
     navigate({
       pathname: window.location.pathname,
-      search: `?${urlSearchParams.toString()}`,
+      search: `?${urlSearchParams.toString()}`
     });
     vm.setAssetId1(assetId);
   };
@@ -130,19 +127,10 @@ const MultiSwapInterfaceImpl: React.FC = observer(() => {
           <SwapButton />
           <SizedBox height={16} />
           <SwapDetailRow title="Price impact">
-            <Row
-              alignItems="center"
-              mainAxisSize="fit-content"
-              justifyContent="flex-end"
-            >
-              {vm.priceImpact && (
-                <Text>~{vm.priceImpact.toFormat(4)}%&nbsp;</Text>
-              )}
+            <Row alignItems="center" mainAxisSize="fit-content" justifyContent="flex-end">
+              {vm.priceImpact && <Text>~{vm.priceImpact.toFormat(4)}%&nbsp;</Text>}
               {vm.token0 && !vm.amount0.isNaN() && (
-                <Tooltip
-                  content={<TooltipFeeInfo />}
-                  config={{ placement: "top", trigger: "click" }}
-                >
+                <Tooltip content={<TooltipFeeInfo />} config={{ placement: "top", trigger: "click" }}>
                   <InfoIcon />
                 </Tooltip>
               )}
@@ -150,19 +138,10 @@ const MultiSwapInterfaceImpl: React.FC = observer(() => {
           </SwapDetailRow>
           <Divider />
           <SwapDetailRow title="Minimum to receive">
-            <Row
-              alignItems="center"
-              mainAxisSize="fit-content"
-              justifyContent="flex-end"
-            >
+            <Row alignItems="center" mainAxisSize="fit-content" justifyContent="flex-end">
               {vm.priceImpact && (
                 <Text nowrap>
-                  ~{" "}
-                  {BN.formatUnits(
-                    vm.minimumToReceive,
-                    vm.token1?.decimals
-                  ).toFormat(2)}{" "}
-                  {vm.token1?.symbol}
+                  ~ {BN.formatUnits(vm.minimumToReceive, vm.token1?.decimals).toFormat(2)} {vm.token1?.symbol}
                 </Text>
               )}
             </Row>

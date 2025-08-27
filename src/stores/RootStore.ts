@@ -41,6 +41,6 @@ export default class RootStore {
 
   serialize = (): ISerializedRootStore => ({
     accountStore: this.accountStore.serialize(),
-    tokenStore: this.tokenStore.serialize(),
+    tokenStore: this.tokenStore.serialize()
   });
 }

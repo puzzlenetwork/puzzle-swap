@@ -65,14 +65,14 @@ const categoriesOptions = [
   //   key: "global",
   // },
   { title: "Stablecoins", key: "stable" },
-  { title: "PZ Indexes", key: "pz" },
+  { title: "PZ Indexes", key: "pz" }
   // { title: "Waves DeFi", key: "defi" },
   // { title: "Waves Ducks", key: "duck" },
 ];
 const createdByOptions = [
   { title: "All tokens", key: "all" },
   { title: "Watchlist", key: "watchlist" },
-  { title: "I have on balance", key: "positiveBalance" },
+  { title: "I have on balance", key: "positiveBalance" }
 ];
 const InputWrapper = styled.div`
   display: flex;
@@ -99,8 +99,7 @@ const ClearBtn = styled(Text)`
 `;
 const SearchTab: React.FC = () => {
   const vm = useExploreVM();
-  const isFiltersChosen =
-    vm.tokenCategoryFilter !== 0 || vm.tokenUserFilter !== 0;
+  const isFiltersChosen = vm.tokenCategoryFilter !== 0 || vm.tokenUserFilter !== 0;
   const handleClearFilters = () => {
     vm.setTokenCategoryFilter(0);
     vm.setUserFilter(0);
@@ -129,12 +128,7 @@ const SearchTab: React.FC = () => {
           <SizedBox width={12} />
         </StyledRow>
         {isFiltersChosen && (
-          <ClearBtn
-            fitContent
-            weight={500}
-            type="blue500"
-            onClick={handleClearFilters}
-          >
+          <ClearBtn fitContent weight={500} type="blue500" onClick={handleClearFilters}>
             Clear all
           </ClearBtn>
         )}

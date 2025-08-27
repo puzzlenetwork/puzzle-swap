@@ -23,8 +23,7 @@ const Root = styled.div<{ withClickLogic?: boolean }>`
   padding: 10px 24px;
 
   :hover {
-    background: ${({ withClickLogic, theme }) =>
-      withClickLogic && `${theme.colors.primary100}`};
+    background: ${({ withClickLogic, theme }) => withClickLogic && `${theme.colors.primary100}`};
   }
 `;
 const DefaultIcon = styled.div`
@@ -66,11 +65,7 @@ const TokenInfo: React.FC<IProps> = ({ token, hidden, ...rest }) => {
     <Root {...rest}>
       {hidden && <Gradient />}
       <Row>
-        {token.logo ? (
-          <SquareTokenIcon size="small" src={token.logo} />
-        ) : (
-          <DefaultIcon />
-        )}
+        {token.logo ? <SquareTokenIcon size="small" src={token.logo} /> : <DefaultIcon />}
         <SizedBox width={8} />
         <Column>
           <Name>{token.name}</Name>
@@ -81,12 +76,7 @@ const TokenInfo: React.FC<IProps> = ({ token, hidden, ...rest }) => {
         <Text style={{ whiteSpace: "nowrap" }} textAlign="right">
           {token.formatBalance}
         </Text>
-        <Text
-          style={{ whiteSpace: "nowrap" }}
-          textAlign="right"
-          type="secondary"
-          size="small"
-        >
+        <Text style={{ whiteSpace: "nowrap" }} textAlign="right" type="secondary" size="small">
           {token.formatUsdnEquivalent}
         </Text>
       </Column>

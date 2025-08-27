@@ -44,20 +44,14 @@ const SelectArtefact: React.FC<IProps> = () => {
   const vm = useCreateCustomPoolsVM();
   return (
     <Root>
-      <Row
-        justifyContent="center"
-        alignItems="center"
-        onClick={() => setOpenNftDialog(true)}
-      >
+      <Row justifyContent="center" alignItems="center" onClick={() => setOpenNftDialog(true)}>
         <Row alignItems="center">
           <SquareTokenIcon src={vm.artefactToSpend?.picture ?? unknown} />
           <SizedBox width={8} />
           {vm.artefactToSpend == null ? (
             <Column>
               <Text weight={500}>Artefact is not selected</Text>
-              <Text type="secondary">
-                You have {nftStore.nftForPoolCreation?.length ?? 0} artefacts
-              </Text>
+              <Text type="secondary">You have {nftStore.nftForPoolCreation?.length ?? 0} artefacts</Text>
             </Column>
           ) : (
             <Column>

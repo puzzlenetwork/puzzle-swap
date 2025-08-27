@@ -57,19 +57,17 @@ const PoolComposition: React.FC<IProps> = () => {
               onClick={() => setValueSort(!valueSort)}
             />
           </Row>
-        ),
+        )
       },
       {
         Header: (
           <Tooltip
             config={{
-              trigger: "hover",
+              trigger: "hover"
             }}
             content={
               <Column>
-                <Text size="small">
-                  Target Share is the set percentage of each token{" "}
-                </Text>
+                <Text size="small">Target Share is the set percentage of each token </Text>
                 <Text size="small">defined when the pool was created.</Text>
               </Column>
             }
@@ -79,27 +77,19 @@ const PoolComposition: React.FC<IProps> = () => {
             </Row>
           </Tooltip>
         ),
-        accessor: "weight",
+        accessor: "weight"
       },
       {
         Header: (
           <Tooltip
             config={{
-              trigger: "hover",
+              trigger: "hover"
             }}
             content={
               <Column>
-                <Text size="small">
-                  Current Share is the actual percentage of the token
-                </Text>
-                <Text size="small">
-                  {" "}
-                  in the pool right now. It may slightly differ if prices
-                </Text>
-                <Text size="small">
-                  {" "}
-                  have not yet been balanced by arbitrage.
-                </Text>
+                <Text size="small">Current Share is the actual percentage of the token</Text>
+                <Text size="small"> in the pool right now. It may slightly differ if prices</Text>
+                <Text size="small"> have not yet been balanced by arbitrage.</Text>
               </Column>
             }
           >
@@ -108,8 +98,8 @@ const PoolComposition: React.FC<IProps> = () => {
             </Row>
           </Tooltip>
         ),
-        accessor: "realWeight",
-      },
+        accessor: "realWeight"
+      }
     ],
     [valueSort, theme.images.icons.group]
   );
@@ -139,7 +129,7 @@ const PoolComposition: React.FC<IProps> = () => {
         weight: `${a.share}%`,
         balance: `${a.parsedBalance.toFormat(4)}`,
         value: `$ ${a.value.toFormat(2)}`,
-        realWeight: `${a.value.div(totalValue).times(100).toFormat(2)}%`,
+        realWeight: `${a.value.div(totalValue).times(100).toFormat(2)}%`
       }));
     setFilteredTokens(data);
   }, [valueSort, vm.poolCompositionValues]);
@@ -153,16 +143,11 @@ const PoolComposition: React.FC<IProps> = () => {
       <Scrollbar
         style={{
           maxWidth: "calc(100vw - 32px)",
-          borderRadius: 16,
+          borderRadius: 16
         }}
       >
         {width && (
-          <Table
-            fitContent={width < 402}
-            columns={columns}
-            data={filteredTokens}
-            style={{ whiteSpace: "nowrap" }}
-          />
+          <Table fitContent={width < 402} columns={columns} data={filteredTokens} style={{ whiteSpace: "nowrap" }} />
         )}
       </Scrollbar>
       <SizedBox height={16} />

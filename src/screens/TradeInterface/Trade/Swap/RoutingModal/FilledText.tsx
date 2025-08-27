@@ -1,21 +1,8 @@
 import styled from "@emotion/styled";
 
 const FilledText = styled.div<{
-  alignItems?:
-    | "start"
-    | "end"
-    | "center"
-    | "inherit"
-    | "unset"
-    | "flex-end"
-    | "flex-start"
-    | "baseline";
-  justifyContent?:
-    | "start"
-    | "flex-end"
-    | "space-around"
-    | "space-between"
-    | "center";
+  alignItems?: "start" | "end" | "center" | "inherit" | "unset" | "flex-end" | "flex-start" | "baseline";
+  justifyContent?: "start" | "flex-end" | "space-around" | "space-between" | "center";
 }>`
   display: flex;
   align-items: ${({ alignItems }) => alignItems ?? "center"};

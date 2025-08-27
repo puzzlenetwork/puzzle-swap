@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import Layout from "@components/Layout";
 import {
   InvestToPoolInterfaceVMProvider,
-  useInvestToPoolInterfaceVM,
+  useInvestToPoolInterfaceVM
 } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
 import SizedBox from "@components/SizedBox";
 import PoolInformation from "@screens/InvestToPoolInterface/PoolInformation";
@@ -76,7 +76,7 @@ const InvestToPoolInterfaceImpl: React.FC = observer(() => {
   return (
     <Layout>
       <Root>
-        <GoBack link={ROUTES.POOLS} text="Back to All pools" />
+        <GoBack link={ROUTES.POOLS} text="Back to Pools list" />
         <SizedBox height={24} />
         <MainPoolInfo />
         <Boosting />

@@ -27,12 +27,15 @@ import Landing from "@screens/Landing";
 import Paper from "@screens/Paper";
 import LoginScreen from "./screens/LoginScreen";
 import { usePageTitle } from "./usePageTitle";
-// import AllRanges from "@screens/Ranges/AllRanges";
-// import RangeDetails from "@src/screens/Ranges/RangeDetails";
-// import DepositToRange from "./screens/Ranges/DepositToRange";
-// import WithdrawFromRange from "./screens/Ranges/WithdrawFromRange";
-// import CreateRange from "./screens/Ranges/CreateRange";
-// import TradeInRange from "./screens/Ranges/TradeInRange";
+import AllRanges from "@screens/Ranges/AllRanges";
+import RangeDetails from "@src/screens/Ranges/RangeDetails";
+import DepositToRange from "./screens/Ranges/DepositToRange";
+import WithdrawFromRange from "./screens/Ranges/WithdrawFromRange";
+import CreateRange from "./screens/Ranges/CreateRange";
+import TradeInRange from "./screens/Ranges/TradeInRange";
+import { useAnalyticTracking } from "./hooks/useAnalyticTracking";
+import { ReactNotifications } from 'react-notifications-component';
+import 'react-notifications-component/dist/theme.css';
 
 const Root = styled(Column)`
   width: 100%;
@@ -49,8 +52,10 @@ const MobileSpace = styled.div`
 const App: React.FC = () => {
   const { accountStore } = useStores();
   usePageTitle();
+  useAnalyticTracking();
   return (
     <Root>
+      <ReactNotifications />
       <LoginScreen />
       <Header />
       <Routes>
@@ -85,20 +90,11 @@ const App: React.FC = () => {
         <Route path={ROUTES.POOL_BOOST} element={<BoostApy />} />
 
         {/* Add liquidity routes */}
-        <Route
-          path={ROUTES.POOLS_ADD_LIQUIDITY}
-          element={<AddLiquidityInterface />}
-        />
-        <Route
-          path={ROUTES.POOLS_ADD_ONE_TOKEN}
-          element={<AddLiquidityInterface />}
-        />
+        <Route path={ROUTES.POOLS_ADD_LIQUIDITY} element={<AddLiquidityInterface />} />
+        <Route path={ROUTES.POOLS_ADD_ONE_TOKEN} element={<AddLiquidityInterface />} />
 
         {/* Withdraw liquidity routes */}
-        <Route
-          path={ROUTES.POOLS_WITHDRAW}
-          element={<WithdrawLiquidityInterface />}
-        />
+        <Route path={ROUTES.POOLS_WITHDRAW} element={<WithdrawLiquidityInterface />} />
 
         <Route path={ROUTES.ULTRASTAKE} element={<NFTStaking />} />
 
@@ -107,19 +103,15 @@ const App: React.FC = () => {
         <Route path="*" element={<NotFound />} />
 
         {/*Ranges block*/}
-        {/*<Route path={ROUTES.RANGES} element={<AllRanges />} />*/}
-        {/*<Route path={ROUTES.RANGES_DETAILS} element={<RangeDetails />} />*/}
-        {/*<Route path={ROUTES.RANGES_DEPOSIT} element={<DepositToRange />} />*/}
-        {/*<Route path={ROUTES.RANGES_DEPOSIT_ONE_TOKEN} element={<DepositToRange />} />*/}
-        {/*<Route path={ROUTES.RANGES_WITHDRAW} element={<WithdrawFromRange />} />*/}
-        {/*<Route path={ROUTES.RANGES_CREATE} element={<CreateRange />} />*/}
-        {/*<Route path={ROUTES.RANGES_TRADE} element={<TradeInRange />} />*/}
-        {/*<Route path={ROUTES.USER_RANGES} element={<div>USER_RANGES</div>} />*/}
+        <Route path={ROUTES.RANGES} element={<AllRanges />} />
+        <Route path={ROUTES.RANGES_DETAILS} element={<RangeDetails />} />
+        <Route path={ROUTES.RANGES_DEPOSIT} element={<DepositToRange />} />
+        <Route path={ROUTES.RANGES_DEPOSIT_ONE_TOKEN} element={<DepositToRange />} />
+        <Route path={ROUTES.RANGES_WITHDRAW} element={<WithdrawFromRange />} />
+        <Route path={ROUTES.RANGES_CREATE} element={<CreateRange />} />
+        <Route path={ROUTES.RANGES_TRADE} element={<TradeInRange />} />
       </Routes>
-      <WalletModal
-        onClose={() => accountStore.setWalletModalOpened(false)}
-        visible={accountStore.walletModalOpened}
-      />
+      <WalletModal onClose={() => accountStore.setWalletModalOpened(false)} visible={accountStore.walletModalOpened} />
       <SendAssetModal
         onClose={() => accountStore.setSendAssetModalOpened(false)}
         visible={accountStore.sendAssetModalOpened}

@@ -33,7 +33,7 @@ const Root = styled.div<{ type: "warning" | "info" | "error" }>`
   justify-content: flex-start;
 
   a {
-    color: #6563dd;
+    color: ${({ theme }) => theme.colors.button};
     text-decoration: underline;
   }
 `;

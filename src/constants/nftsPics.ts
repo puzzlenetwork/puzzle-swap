@@ -11,7 +11,7 @@ const nftsPics: Record<string, string> = {
   SURF: surf,
   KHALIFA: khalifa,
   AIRPLANE: airplane,
-  EAGLE: eagle,
+  EAGLE: eagle
 };
 
 export default nftsPics;

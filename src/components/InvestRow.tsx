@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { HTMLAttributes } from "react";
+import React, { HTMLAttributes, JSX } from "react";
 import { Column, Row } from "@src/components/Flex";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
@@ -8,7 +8,7 @@ import Skeleton from "react-loading-skeleton";
 import BN from "@src/utils/BN";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
-  logo?: string;
+  logo?: string | JSX.Element;
   topLeftInfo?: string;
   topRightInfo?: string;
   bottomLeftInfo?: string;
@@ -27,8 +27,7 @@ const Root = styled.div<{ withClickLogic?: boolean }>`
   padding: 8px 24px;
 
   :hover {
-    background: ${({ withClickLogic, theme }) =>
-      withClickLogic && `${theme.colors.primary100}`};
+    background: ${({ withClickLogic, theme }) => withClickLogic && `${theme.colors.primary100}`};
   }
 
   .green {
@@ -59,7 +58,15 @@ const InvestRow: React.FC<IProps> = ({
   return (
     <Root withClickLogic={withClickLogic} {...rest}>
       <Row>
-        {logo ? <SquareTokenIcon size="small" src={logo} /> : <DefaultIcon />}
+        {logo ? (
+          typeof logo === "string" ? (
+            <SquareTokenIcon size="small" src={logo} />
+          ) : (
+            logo
+          )
+        ) : (
+          <DefaultIcon />
+        )}
         <SizedBox width={8} />
         <Column>
           <Text weight={500} size="medium">
@@ -78,20 +85,10 @@ const InvestRow: React.FC<IProps> = ({
         </Column>
       </Row>
       <Column alignItems="flex-end">
-        <Text
-          weight={500}
-          size="medium"
-          style={{ whiteSpace: "nowrap" }}
-          textAlign="right"
-        >
+        <Text weight={500} size="medium" style={{ whiteSpace: "nowrap" }} textAlign="right">
           {topRightInfo}
         </Text>
-        <Text
-          style={{ whiteSpace: "nowrap" }}
-          textAlign="right"
-          type="secondary"
-          size="small"
-        >
+        <Text style={{ whiteSpace: "nowrap" }} textAlign="right" type="secondary" size="small">
           {bottomRightInfo}
         </Text>
       </Column>

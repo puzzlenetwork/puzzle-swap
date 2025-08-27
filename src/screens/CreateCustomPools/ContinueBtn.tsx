@@ -32,9 +32,7 @@ const ContinueBtn: React.FC = () => {
         <Button onClick={() => handleContinue(1)} fixed disabled={!vm.correct0}>
           {vm.poolsAssets.length === 1 && "Select assets"}
           {vm.poolsAssets.length > 1 &&
-            (vm.totalTakenShare.eq(1000)
-              ? "Continue"
-              : `Total share should be 100%, now ${stringShare}%`)}
+            (vm.totalTakenShare.eq(1000) ? "Continue" : `Total share should be 100%, now ${stringShare}%`)}
         </Button>
       );
     case 1:
@@ -46,20 +44,12 @@ const ContinueBtn: React.FC = () => {
     case 2:
       return (
         <Button onClick={vm.handleCreatePool} fixed disabled={!vm.correct2}>
-          {vm.isDomainPaid
-            ? "Continue"
-            : vm.artefactToSpend == null
-            ? "Select an artefact"
-            : "Continue"}
+          {vm.isDomainPaid ? "Continue" : vm.artefactToSpend == null ? "Select an artefact" : "Continue"}
         </Button>
       );
     case 3:
       return (
-        <Button
-          onClick={vm.provideLiquidityToPool}
-          disabled={!vm.correct3}
-          fixed
-        >
+        <Button onClick={vm.provideLiquidityToPool} disabled={!vm.correct3} fixed>
           {vm.correct3 ? "Continue" : "Enter amount to provide"}
         </Button>
       );

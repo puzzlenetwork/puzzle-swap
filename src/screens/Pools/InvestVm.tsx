@@ -1,11 +1,11 @@
-import React, { useMemo } from "react";
-import { useVM } from "@src/hooks/useVM";
-import { makeAutoObservable, reaction } from "mobx";
-import { RootStore, useStores } from "@stores";
-import Pool from "@src/entities/Pool";
-import BN from "@src/utils/BN";
-import poolService from "@src/services/poolsService";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
+import Pool from "@src/entities/Pool";
+import { useVM } from "@src/hooks/useVM";
+import poolService from "@src/services/poolsService";
+import BN from "@src/utils/BN";
+import { RootStore, useStores } from "@stores";
+import { makeAutoObservable } from "mobx";
+import React, { useMemo } from "react";
 interface IProps {
   children: React.ReactNode;
 }
@@ -39,14 +39,12 @@ class InvestVM {
   }
 
   syncCustomPools = async () => {
-    const { pools: poolsData, totalItems } = await poolService.getPools(
-      this.rootStore.poolsStore.paramsAllPools
-    );
+    const { pools: poolsData, totalItems } = await poolService.getPools(this.rootStore.poolsStore.paramsAllPools);
     this.rootStore.poolsStore.setTotalItems(totalItems);
     const pools = poolsData.map((p) => {
       const tokens = p.assets.map(({ asset_id, share }) => ({
         ...TOKENS_BY_ASSET_ID[asset_id],
-        share,
+        share
       }));
       return new Pool({ ...p, tokens });
     });
@@ -61,10 +59,7 @@ class InvestVM {
     console.log("starting investment calc");
     const { investedInPools } = this.rootStore.poolsStore;
     if (investedInPools == null) return null;
-    const value = investedInPools?.reduce(
-      (acc, v) => acc.plus(v.liquidityInUsdt),
-      BN.ZERO
-    );
+    const value = investedInPools?.reduce((acc, v) => acc.plus(v.liquidityInUsdt), BN.ZERO);
     console.log("investment calc finished", value.toString());
     return "$" + value?.toFormat(2);
   }

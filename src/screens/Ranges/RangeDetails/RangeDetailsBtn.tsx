@@ -1,21 +1,19 @@
-import styled from "@emotion/styled";
-import React, { JSX, useState } from "react";
-import Tooltip from "@components/Tooltip";
-import MoreRangeInformation from "./MoreRangeInformation";
-import { ReactComponent as MoreIcon } from "@src/assets/icons/dots.svg";
-import Dialog from "@components/Dialog";
-import { Column, Row } from "@components/Flex";
-import Text from "@components/Text";
-import Divider from "@components/Divider";
 import Button from "@components/Button";
+import Dialog from "@components/Dialog";
+import { Column } from "@components/Flex";
 import SizedBox from "@components/SizedBox";
-import { useStores } from "@stores";
-import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
-import copy from "copy-to-clipboard";
+import Tooltip from "@components/Tooltip";
+import styled from "@emotion/styled";
 import { ReactComponent as CopyIcon } from "@src/assets/icons/darkCopy.svg";
-import { ReactComponent as XIcon } from "@src/assets/links/x.svg";
-import { ReactComponent as TelegramIcon } from "@src/assets/icons/telegram.svg";
+import { ReactComponent as MoreIcon } from "@src/assets/icons/dots.svg";
 import { ReactComponent as FacebookIcon } from "@src/assets/icons/facebook.svg";
+import { ReactComponent as TelegramIcon } from "@src/assets/icons/telegram.svg";
+import { ReactComponent as XIcon } from "@src/assets/links/x.svg";
+import { useStores } from "@stores";
+import copy from "copy-to-clipboard";
+import React, { useState } from "react";
+import MoreRangeInformation from "./MoreRangeInformation";
+import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
 
 interface IProps {}
 
@@ -44,30 +42,23 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
   const { notificationStore } = useStores();
   const vm = useRangeDetailsInterfaceVM();
   const [isOpenedShare, setOpenedShare] = useState(false);
-  const link = `${window.location.origin}/ranges/${vm.range!.address}/details`;
-  const text = `Invest to ${vm.range!.domain} Puzzle Swap range`;
+  const link = vm.range ? `${window.location.origin}/ranges/${vm.range.address}/details` : `${window.location.origin}/ranges/`;
+  const text = `Invest to ${vm.range?.domain ?? ""} Puzzle Network range %0A%0Ahttps://x.com/puzzle_network`;
   const shareInfo = [
     {
       title: "X",
-      onClick: () =>
-        window.open(
-          `https://x.com/intent/tweet?url=${link}&text=${text}`
-        ),
-      icon: <XIcon />,
+      onClick: () => window.open(`https://x.com/intent/tweet?url=${link}&text=${text}`),
+      icon: <XIcon />
     },
     {
       title: "Telegram",
-      onClick: () =>
-        window.open(`https://telegram.me/share/?url=${link}&text=${text}`),
-      icon: <TelegramIcon />,
+      onClick: () => window.open(`https://telegram.me/share/?url=${link}&text=${text}`),
+      icon: <TelegramIcon />
     },
     {
       title: "Facebook",
-      onClick: () =>
-        window.open(
-          `https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${text}`
-        ),
-      icon: <FacebookIcon />,
+      onClick: () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${text}`),
+      icon: <FacebookIcon />
     },
     {
       title: "Copy link",
@@ -76,16 +67,14 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
         notificationStore.notify("Link was copied");
         setOpenedShare(false);
       },
-      icon: <CopyIcon />,
-    },
+      icon: <CopyIcon />
+    }
   ];
   return (
     <>
       <Tooltip
         config={{ placement: "bottom-end", trigger: "click" }}
-        content={
-          <MoreRangeInformation setOpenedShare={setOpenedShare} />
-        }
+        content={<MoreRangeInformation setOpenedShare={setOpenedShare} />}
       >
         <Root>
           <StyledMoreIcon />
@@ -93,17 +82,16 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
       </Tooltip>
       <Dialog
         style={{ maxWidth: 400 }}
-        bodyStyle={{ minHeight: 232 }}
+        styles={{
+          body: { minHeight: 232 }
+        }}
         title={"Share"}
         onClose={() => {
           setOpenedShare(false);
         }}
         visible={isOpenedShare}
       >
-        <Column
-          crossAxisSize="max"
-          style={{ maxHeight: 352, padding: "10px 0" }}
-        >
+        <Column crossAxisSize="max" style={{ maxHeight: 352, padding: "10px 0" }}>
           {isOpenedShare &&
             shareInfo.map(({ title, onClick, icon }, index) => (
               <Button

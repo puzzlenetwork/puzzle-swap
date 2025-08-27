@@ -27,18 +27,18 @@ const ExploreTokenPriceStatistics = () => {
         data={[
           {
             title: `${vm.asset?.symbol} price`,
-            value: `$${vm.statistics?.currentPrice?.toFormat(4)}`,
+            value: `$${vm.statistics?.currentPrice?.toFormat(4)}`
           },
           {
             title: "24h change",
             valueColor: changeColor,
-            value: vm.statistics?.changeStr,
+            value: vm.statistics?.changeStr
           },
           {
             title: "24h Low / 24h High",
             value: `$${low.toFormat(4)} / $ ${high.toFormat(4)}`,
-            loading: vm.chartLoading,
-          },
+            loading: vm.chartLoading
+          }
         ]}
       />
       <SizedBox height={24} />
@@ -47,20 +47,20 @@ const ExploreTokenPriceStatistics = () => {
         data={[
           {
             title: "Total supply",
-            value: vm.statistics?.totalSupply?.toFormat(2),
+            value: vm.statistics?.totalSupply?.toFormat(2)
           },
           {
             title: "Circulating supply",
-            value: vm.statistics?.circulatingSupply?.toFormat(2),
+            value: vm.statistics?.circulatingSupply?.toFormat(2)
           },
           ...(vm.asset.assetId === TOKENS_BY_SYMBOL.PUZZLE.assetId
             ? [
                 {
                   title: "Out of market",
-                  value: vm.statistics?.totalBurned?.toFormat(2),
-                },
+                  value: vm.statistics?.totalBurned?.toFormat(2)
+                }
               ]
-            : []),
+            : [])
         ]}
       />
       <SizedBox height={24} />
@@ -69,12 +69,12 @@ const ExploreTokenPriceStatistics = () => {
         data={[
           {
             title: "Fully diluted MC",
-            value: "$" + vm.statistics?.fullyDilutedMC?.toFormat(2),
+            value: "$" + vm.statistics?.fullyDilutedMC?.toFormat(2)
           },
           {
             title: "Market cap",
-            value: "$" + vm.statistics?.marketCap?.toFormat(2),
-          },
+            value: "$" + vm.statistics?.marketCap?.toFormat(2)
+          }
         ]}
       />
     </Card>

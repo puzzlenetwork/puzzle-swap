@@ -24,7 +24,7 @@ export enum LOGIN_TYPE {
   KEEPER = "KEEPER",
   KEEPER_MOBILE = "KEEPER_MOBILE",
   LEDGER = "LEDGER",
-  METAMASK = "METAMASK",
+  METAMASK = "METAMASK"
 }
 
 export interface IInvokeTxParams {
@@ -62,8 +62,7 @@ class AccountStore {
       this.setupWavesKeeper();
     }
     if (initState) {
-      initState.selectedTheme != null &&
-        (this.selectedTheme = initState.selectedTheme);
+      initState.selectedTheme != null && (this.selectedTheme = initState.selectedTheme);
       this.setLoginType(initState.loginType);
       if (initState.loginType === LOGIN_TYPE.KEEPER) {
         this.setupSynchronizationWithKeeper().then();
@@ -80,30 +79,24 @@ class AccountStore {
     setInterval(this.updateAccountAssets, 15 * 1000);
     reaction(
       () => this.address,
-      () =>
-        Promise.all([this.checkScriptedAccount(), this.updateAccountAssets()])
+      () => Promise.all([this.checkScriptedAccount(), this.updateAccountAssets()])
     );
   }
 
   selectedTheme: THEME_TYPE = THEME_TYPE.DARK_THEME;
 
   toggleTheme = (): void => {
-    this.selectedTheme =
-      this.selectedTheme === THEME_TYPE.LIGHT_THEME
-        ? THEME_TYPE.DARK_THEME
-        : THEME_TYPE.LIGHT_THEME;
+    this.selectedTheme = this.selectedTheme === THEME_TYPE.LIGHT_THEME ? THEME_TYPE.DARK_THEME : THEME_TYPE.LIGHT_THEME;
   };
 
   isAccScripted = false;
   setIsAccScripted = (v: boolean) => (this.isAccScripted = v);
 
   isWavesKeeperInstalled = false;
-  setWavesKeeperInstalled = (state: boolean) =>
-    (this.isWavesKeeperInstalled = state);
+  setWavesKeeperInstalled = (state: boolean) => (this.isWavesKeeperInstalled = state);
 
   assetsBalancesLoading = false;
-  setAssetsBalancesLoading = (state: boolean) =>
-    (this.assetsBalancesLoading = state);
+  setAssetsBalancesLoading = (state: boolean) => (this.assetsBalancesLoading = state);
 
   loginModalOpened: boolean = false;
   setLoginModalOpened = (state: boolean) => (this.loginModalOpened = state);
@@ -112,23 +105,19 @@ class AccountStore {
   setWalletModalOpened = (state: boolean) => (this.walletModalOpened = state);
 
   sendAssetModalOpened: boolean = false;
-  setSendAssetModalOpened = (state: boolean) =>
-    (this.sendAssetModalOpened = state);
+  setSendAssetModalOpened = (state: boolean) => (this.sendAssetModalOpened = state);
 
   assetToSend: Balance | null = null;
   setAssetToSend = (state: Balance | null) => (this.assetToSend = state);
 
   changePoolModalOpened: boolean = false;
-  setChangePoolModalOpened = (state: boolean) =>
-    (this.changePoolModalOpened = state);
+  setChangePoolModalOpened = (state: boolean) => (this.changePoolModalOpened = state);
 
   public assetBalances: Balance[] | null = null;
-  setAssetBalances = (assetBalances: Balance[] | null) =>
-    (this.assetBalances = assetBalances);
+  setAssetBalances = (assetBalances: Balance[] | null) => (this.assetBalances = assetBalances);
 
   findBalanceByAssetId = (assetId: string) =>
-    this.assetBalances &&
-    this.assetBalances.find((balance) => balance.assetId === assetId);
+    this.assetBalances && this.assetBalances.find((balance) => balance.assetId === assetId);
 
   public address: string | null = null;
   setAddress = (address: string | null) => (this.address = address);
@@ -164,10 +153,7 @@ class AccountStore {
         const result = await window?.WavesKeeper?.initialPromise
           .then((keeperApi: any) => keeperApi.publicState())
           .then(() => this.subscribeToKeeperUpdate())
-          .catch(
-            ({ code }: { code: string }) =>
-              code === "14" && this.subscribeToKeeperUpdate()
-          );
+          .catch(({ code }: { code: string }) => code === "14" && this.subscribeToKeeperUpdate());
         resolve(result);
       }, 500);
     });
@@ -186,13 +172,10 @@ class AccountStore {
           clearInterval(interval);
         }
 
-        const result = await window?.ethereum.on(
-          "accountsChanged",
-          (addresses: string[]) => {
-            addresses.length > 0 && this.setEthAddress(addresses[0]);
-            this.login(LOGIN_TYPE.METAMASK);
-          }
-        );
+        const result = await window?.ethereum.on("accountsChanged", (addresses: string[]) => {
+          addresses.length > 0 && this.setEthAddress(addresses[0]);
+          this.login(LOGIN_TYPE.METAMASK);
+        });
         resolve(result);
       }, 500);
     });
@@ -279,7 +262,7 @@ class AccountStore {
     selectedTheme: this.selectedTheme,
     address: this.address,
     ethAddress: this.ethAddress,
-    loginType: this.loginType,
+    loginType: this.loginType
   });
 
   updateAccountAssets = async (force = false) => {
@@ -295,10 +278,9 @@ class AccountStore {
     const assetBalances = TOKENS_LIST.map((asset) => {
       const t = data.find(({ assetId }) => asset.assetId === assetId);
       const balance = new BN(t != null ? t.balance : 0);
+
       const rate = this.rootStore.poolsStore.usdtRate(asset.assetId) ?? BN.ZERO;
-      const usdnEquivalent = rate
-        ? rate.times(BN.formatUnits(balance, asset.decimals))
-        : BN.ZERO;
+      const usdnEquivalent = rate ? rate.times(BN.formatUnits(balance, asset.decimals)) : BN.ZERO;
       return new Balance({ balance, usdnEquivalent, ...asset });
     });
     const newAddress = this.address;
@@ -306,6 +288,7 @@ class AccountStore {
 
     this.setAssetBalances(assetBalances);
     this.setAssetsBalancesLoading(false);
+    this.rootStore.rangesStore.syncInvestments();
   };
 
   ///------------------transfer
@@ -328,10 +311,7 @@ class AccountStore {
     return null;
   };
 
-  private transferWithSigner = async (
-    data: ITransferParams,
-    loginType: LOGIN_TYPE
-  ): Promise<string | null> => {
+  private transferWithSigner = async (data: ITransferParams, loginType: LOGIN_TYPE): Promise<string | null> => {
     if (loginType === LOGIN_TYPE.KEEPER_MOBILE) {
       this.showRequiredKeeperWalletMsg();
     }
@@ -341,58 +321,47 @@ class AccountStore {
     if (this.signer == null) {
       this.rootStore.notificationStore.notify("You need to login firstly", {
         title: "Error",
-        type: "error",
+        type: "warning"
       });
       return null;
     }
     try {
-      // console.log(data);
       const ttx = this.signer.transfer({
         ...data,
-        fee: this.isAccScripted ? 500000 : 100000,
+        fee: this.isAccScripted ? 500000 : 100000
       });
-      // console.log("ttx of transfer", ttx);
-      const txId = await ttx
-        .broadcast()
-        .then((result: any) =>
-          Array.isArray(result) ? result[0].id : result.id
-        );
+      const txId = await ttx.broadcast().then((result: any) => (Array.isArray(result) ? result[0].id : result.id));
       await waitForTx(txId, {
-        apiBase: NODE_URL,
+        apiBase: NODE_URL
       });
       return txId;
     } catch (e: any) {
       console.warn(e);
       this.rootStore.notificationStore.notify(e.toString(), {
-        type: "error",
-        title: "Transaction is not completed",
+        type: "warning",
+        title: "Transaction is not completed"
       });
       return null;
     }
   };
 
-  private transferWithKeeper = async (
-    data: ITransferParams
-  ): Promise<string | null> => {
-    const tokenAmount = BN.formatUnits(
-      data.amount,
-      this.assetToSend?.decimals
-    ).toString();
+  private transferWithKeeper = async (data: ITransferParams): Promise<string | null> => {
+    const tokenAmount = BN.formatUnits(data.amount, this.assetToSend?.decimals).toString();
     const tx = await (window as any).WavesKeeper.signAndPublishTransaction({
       type: 4,
       data: {
         amount: { tokens: tokenAmount, assetId: data.assetId },
         fee: {
           tokens: this.isAccScripted ? "0.005" : "0.001",
-          assetId: "WAVES",
+          assetId: "WAVES"
         },
-        recipient: data.recipient,
-      },
+        recipient: data.recipient
+      }
     } as any);
 
     const txId = JSON.parse(tx).id;
     await waitForTx(txId, {
-      apiBase: NODE_URL,
+      apiBase: NODE_URL
     });
     return txId;
   };
@@ -417,10 +386,7 @@ class AccountStore {
     return null;
   };
 
-  private invokeWithSigner = async (
-    txParams: IInvokeTxParams,
-    loginType: LOGIN_TYPE
-  ): Promise<string | null> => {
+  private invokeWithSigner = async (txParams: IInvokeTxParams, loginType: LOGIN_TYPE): Promise<string | null> => {
     if (loginType === LOGIN_TYPE.KEEPER_MOBILE) {
       this.showRequiredKeeperWalletMsg();
     }
@@ -430,54 +396,42 @@ class AccountStore {
     if (this.signer == null) {
       this.rootStore.notificationStore.notify("You need to login firstly", {
         title: "Error",
-        type: "error",
+        type: "warning"
       });
       return null;
     }
     const ttx = this.signer.invoke({
       dApp: txParams.dApp,
-      fee:
-        txParams.fee != null
-          ? txParams.fee
-          : this.isAccScripted
-          ? 900000
-          : 500000,
+      fee: txParams.fee != null ? txParams.fee : this.isAccScripted ? 900000 : 500000,
       payment: txParams.payment,
-      call: txParams.call,
+      call: txParams.call
     });
 
     const txId = await ttx.broadcast().then((tx: any) => tx.id);
     await waitForTx(txId, {
-      apiBase: NODE_URL,
+      apiBase: NODE_URL
     });
     return txId;
   };
 
-  private invokeWithKeeper = async (
-    txParams: IInvokeTxParams
-  ): Promise<string | null> => {
+  private invokeWithKeeper = async (txParams: IInvokeTxParams): Promise<string | null> => {
     const data = {
       fee: {
         assetId: "WAVES",
-        amount:
-          txParams.fee != null
-            ? txParams.fee
-            : this.isAccScripted
-            ? 900000
-            : 500000,
+        amount: txParams.fee != null ? txParams.fee : this.isAccScripted ? 900000 : 500000
       },
       dApp: txParams.dApp,
       call: txParams.call,
-      payment: txParams.payment,
+      payment: txParams.payment
     };
     const tx = await (window as any).WavesKeeper.signAndPublishTransaction({
       type: 16,
-      data,
+      data
     } as any);
 
     const txId = JSON.parse(tx).id;
     await waitForTx(txId, {
-      apiBase: NODE_URL,
+      apiBase: NODE_URL
     });
     return txId;
   };
@@ -496,9 +450,7 @@ class AccountStore {
   }
 
   get addressToDisplay(): string {
-    return this.ethAddress == null
-      ? centerEllipsis(this.address ?? "", 6)
-      : centerEllipsis(this.ethAddress ?? "", 10);
+    return this.ethAddress == null ? centerEllipsis(this.address ?? "", 6) : centerEllipsis(this.ethAddress ?? "", 10);
   }
 
   get signInMethod(): string {
@@ -516,19 +468,15 @@ class AccountStore {
   }
 
   public keeperWalletNotification: IDialogNotificationProps | null = null;
-  public setKeeperWalletNotification = (
-    params: IDialogNotificationProps | null
-  ) => (this.keeperWalletNotification = params);
+  public setKeeperWalletNotification = (params: IDialogNotificationProps | null) =>
+    (this.keeperWalletNotification = params);
 
   showRequiredKeeperWalletMsg = () => {
-    this.rootStore.notificationStore.notify(
-      "Please sign your transaction in Keeper Mobile App",
-      {
-        title: "Signature is required",
-        type: "info",
-        duration: 20,
-      }
-    );
+    this.rootStore.notificationStore.notify("Please sign your transaction in Keeper Mobile App", {
+      title: "Signature is required",
+      type: "info",
+      duration: 20
+    });
   };
 }
 

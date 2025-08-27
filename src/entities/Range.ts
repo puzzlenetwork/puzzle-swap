@@ -4,28 +4,32 @@ import { IHistory } from "@src/utils/types";
 import { makeAutoObservable } from "mobx";
 
 export interface IRangeAssetResponse {
-  asset_id: string,
-  balance: number,
-  balance_usd: number,
-  current_price: number,
-  current_price_usd: number,
-  extra_earned: number,
-  fact_balance: number,
-  fact_balance_usd: number,
-  fees_earned: number,
-  max_price: number,
-  min_price: number,
-  max_price_usd: number,
-  min_price_usd: number,
-  current_selloff: number,
-  max_sell_allowed: number,
-  selloff_start_balance: number,
-  selloff_start_height: number,
-  shutdown_buy: boolean,
-  shutdown_sell: boolean,
-  name: string,
-  real_balance: number,
-  share: number
+  asset_id: string;
+  balance: number;
+  balance_usd: number;
+  current_price: number;
+  current_price_usd: number;
+  extra_earned: number;
+  fact_balance: number;
+  fact_balance_usd: number;
+  fees_earned: number;
+  max_price: number;
+  min_price: number;
+  max_price_usd: number;
+  min_price_usd: number;
+  is_active: boolean;
+  leverage: number;
+  staked: boolean;
+  stake_apr: number;
+  current_selloff: number;
+  max_sell_allowed: number;
+  selloff_start_balance: number;
+  selloff_start_height: number;
+  shutdown_buy: boolean;
+  shutdown_sell: boolean;
+  name: string;
+  real_balance: number;
+  share: number;
 }
 
 export interface IRewardResponse {
@@ -50,25 +54,29 @@ export interface IStakedProvidersResponse {
   total_staked_providers: number;
 }
 
-export interface IStatsResponse {
+export interface IAssetFeesResponse {
+  fees_earned: number;
+  extra_earned: number;
+  total_earned: number;
+  total_earned_usd: number;
+}
+
+export interface IPeriodStatsResponse {
   time_range: string;
-  time_frame: string;
+  time_frame: "1d" | "7d" | "30d" | "90d" | "1y" | "all";
+  start_time: number;
+  end_time: number;
   apr: number;
   average_liquidity: number;
   average_virtual_liquidity: number;
+  average_lpamount: number;
   lp_price: number;
   claimed: number;
-  pool_fees: number;
   owner_fees: number;
   protocol_fees: number;
   volume: number;
-}
-
-export interface IPeriodFeesResponse {
-  [assetId: string]: {
-    fees_earned: number;
-    extra_earned: number;
-  };
+  total_fees_usd: number;
+  fees: Record<string, IAssetFeesResponse>;
 }
 
 export interface IRangeParamsResponse {
@@ -83,6 +91,7 @@ export interface IRangeParamsResponse {
   last_processed_txId: string;
   last_saved_time: number;
   layer_2_address: string;
+  is_active: boolean;
   liquidity: number;
   logo: string;
   lp_token_amount: number;
@@ -100,8 +109,7 @@ export interface IRangeParamsResponse {
   virtual_liquidity: number;
   staked_providers?: IStakedProvidersResponse;
   base_token_price: number;
-  stats: IStatsResponse;
-  period_fees: IPeriodFeesResponse;
+  period_stats: IPeriodStatsResponse;
   totals: Record<string, any>;
   charts?: IHistory[];
 }
@@ -120,6 +128,10 @@ export class RangeAsset {
   minPrice: BN;
   maxPriceUsd: BN;
   minPriceUsd: BN;
+  isActive: boolean;
+  leverage: BN;
+  staked: boolean;
+  stakeApr: BN;
   maxSellAllowed: BN | null;
   currentSelloff: BN;
   selloffStartBalance: BN;
@@ -142,8 +154,12 @@ export class RangeAsset {
     this.feesEarned = new BN(params.fees_earned);
     this.maxPrice = new BN(params.max_price);
     this.minPrice = new BN(params.min_price);
-    this.maxPriceUsd = new BN(params.max_price_usd);
+    this.maxPriceUsd = new BN(params.max_price_usd ?? Infinity);
     this.minPriceUsd = new BN(params.min_price_usd);
+    this.isActive = params.is_active;
+    this.leverage = new BN(params.leverage);
+    this.staked = params.staked;
+    this.stakeApr = new BN(params.stake_apr);
     this.maxSellAllowed = params.max_sell_allowed ? new BN(params.max_sell_allowed) : null;
     this.currentSelloff = new BN(params.current_selloff);
     this.selloffStartBalance = new BN(params.selloff_start_balance);
@@ -200,39 +216,54 @@ export class StakedProviders {
   }
 }
 
-export class RangeStats {
-  timeRange: string;
-  timeFrame: string;
-  apr: BN;
-  averageLiquidity: BN;
-  average_virtualLiquidity: BN;
-  lpPrice: BN;
-  claimed: BN;
-  poolFees: BN;
-  ownerFees: BN;
-  protocolFees: BN;
-  volume: BN;
-
-  constructor(params: IStatsResponse) {
-    this.timeRange = params.time_range;
-    this.timeFrame = params.time_frame;
-    this.apr = new BN(params.apr);
-    this.averageLiquidity = new BN(params.average_liquidity);
-    this.average_virtualLiquidity = new BN(params.average_virtual_liquidity);
-    this.lpPrice = new BN(params.lp_price);
-    this.claimed = new BN(params.claimed);
-    this.poolFees = new BN(params.pool_fees);
-    this.ownerFees = new BN(params.owner_fees);
-    this.protocolFees = new BN(params.protocol_fees);
-    this.volume = new BN(params.volume);
+export class AssetFees {
+  feesEarned: BN;
+  extraEarned: BN;
+  totalEarned: BN;
+  totalEarnedUsd: BN;
+  constructor(params: IAssetFeesResponse) {
+    this.feesEarned = new BN(params.fees_earned);
+    this.extraEarned = new BN(params.extra_earned);
+    this.totalEarned = this.feesEarned.plus(this.extraEarned);
+    this.totalEarnedUsd = new BN(params.total_earned_usd);
   }
 }
 
-export class PeriodFees {
-  [assetId: string]: {
-    feesEarned: number;
-    extraEarned: number;
-  };
+export class PeriodStats {
+  timeRange: string;
+  timeFrame: "1d" | "7d" | "30d" | "90d" | "1y" | "all";
+  startTime: BN;
+  endTime: BN;
+  apr: BN;
+  averageLiquidity: BN;
+  averageVirtualLiquidity: BN;
+  averageLpAmount: BN;
+  lpPrice: BN;
+  claimed: BN;
+  ownerFees: BN;
+  protocolFees: BN;
+  volume: BN;
+  totalFeesUsd: BN;
+  fees: Record<string, AssetFees>;
+
+  constructor(params: IPeriodStatsResponse) {
+    this.timeRange = params.time_range;
+    this.timeFrame = params.time_frame as "1d" | "7d" | "30d" | "90d" | "1y" | "all";
+    this.startTime = new BN(params.start_time);
+    this.endTime = new BN(params.end_time);
+    this.apr = new BN(params.apr);
+    this.averageLiquidity = new BN(params.average_liquidity);
+    this.averageVirtualLiquidity = new BN(params.average_virtual_liquidity);
+    this.averageLpAmount = new BN(params.average_lpamount);
+    this.lpPrice = new BN(params.lp_price);
+    this.claimed = new BN(params.claimed);
+    this.ownerFees = new BN(params.owner_fees);
+    this.protocolFees = new BN(params.protocol_fees);
+    this.volume = new BN(params.volume);
+    this.totalFeesUsd = new BN(params.total_fees_usd);
+
+    this.fees = Object.fromEntries(Object.entries(params.fees).map(([key, value]) => [key, new AssetFees(value)]));
+  }
 }
 
 export class Range {
@@ -247,6 +278,7 @@ export class Range {
   lastProcessedTxId: string;
   lastSavedTime: number;
   layer2Address: string;
+  isActive: boolean;
   liquidity: BN;
   logo: string;
   lpTokenAmount: BN;
@@ -264,8 +296,7 @@ export class Range {
   virtualLiquidity: BN;
   stakedProviders?: StakedProviders;
   baseTokenPrice: BN;
-  stats: RangeStats;
-  periodFees: PeriodFees;
+  periodStats: PeriodStats;
   totals: Record<string, any>;
   charts?: IHistory[];
 
@@ -283,6 +314,7 @@ export class Range {
     this.lastProcessedTxId = params.last_processed_txId;
     this.lastSavedTime = params.last_saved_time;
     this.layer2Address = params.layer_2_address;
+    this.isActive = params.is_active;
     this.liquidity = new BN(params.liquidity);
     this.logo = params.logo;
     this.lpTokenAmount = new BN(params.lp_token_amount);
@@ -300,14 +332,9 @@ export class Range {
     this.virtualLiquidity = new BN(params.virtual_liquidity);
     this.stakedProviders = params?.staked_providers ? new StakedProviders(params.staked_providers) : undefined;
     this.baseTokenPrice = new BN(params.base_token_price);
-    this.stats = new RangeStats(params.stats);
-    this.periodFees = params.period_fees? Object.entries(params.period_fees).reduce((acc, [assetId, { fees_earned, extra_earned }]) => {
-      acc[assetId] = { feesEarned: fees_earned, extraEarned: extra_earned };
-      return acc;
-    }, {} as PeriodFees) : {};
     this.totals = params.totals;
     this.charts = params.charts;
-
+    this.periodStats = new PeriodStats(params.period_stats);
     this.baseToken = this.assets.find((asset) => asset.assetId === this.baseTokenId);
     makeAutoObservable(this);
   }
@@ -318,31 +345,31 @@ export class Range {
   }
 
   getVolume() {
-    return this.stats?.volume ?? 0;
+    return this.periodStats?.volume ?? 0;
   }
 
   // Добавляйте методы по необходимости
 
   get indexTokenRate(): BN {
-    if (!this.lpTokenAmount)
-      return BN.ZERO;
+    if (!this.lpTokenAmount) return BN.ZERO;
     return new BN(this.liquidity).div(this.lpTokenAmount);
   }
 
   get assetsWithLeverage() {
     const withLeverage = this.assets.map(({ balance, factBalance, ...rest }) => ({
       ...rest,
-      leverage: factBalance.div(balance),
+      leverage: balance.div(factBalance),
+      reversedLeverage: factBalance.div(balance),
       balance,
-      factBalance,
+      factBalance
     }));
 
-    const maxLeverage = withLeverage.reduce((acc, { leverage }) => BN.max(acc, leverage), BN.ZERO);
+    const maxLeverage = withLeverage.reduce((acc, { reversedLeverage }) => BN.max(acc, reversedLeverage), BN.ZERO);
 
     return withLeverage.map((asset) => ({
       ...asset,
-      leverage: asset.leverage.times(100).toNumber(),
-      relativeLeverage: asset.leverage.div(maxLeverage).times(100).toNumber(),
+      reversedLeverage: asset.reversedLeverage.times(100).toNumber(),
+      relativeReversedLeverage: asset.reversedLeverage.div(maxLeverage).times(100).plus(10).toNumber()
     }));
   }
 
@@ -351,11 +378,10 @@ export class Range {
   }
 
   get totalFees() {
-    return this.stats.poolFees.plus(this.stats.ownerFees).plus(this.stats.protocolFees);
+    return this.periodStats.totalFeesUsd;
   }
 
-  contractKeysRequest = (keys: string[] | string) =>
-    nodeService.nodeKeysRequest(this.address, keys);
+  contractKeysRequest = (keys: string[] | string) => nodeService.nodeKeysRequest(this.address, keys);
 }
 
 export interface ILPDataAssetResponse {

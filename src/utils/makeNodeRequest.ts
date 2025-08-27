@@ -7,7 +7,7 @@ const mainnetNodes = [
   "https://nodes-puzzle.wavesnodes.com",
   "https://wavesducks.wavesnodes.com",
   "https://nodes.swop.fi",
-  "https://nodes.wavesnodes.com",
+  "https://nodes.wavesnodes.com"
 ];
 
 interface IParams {
@@ -15,23 +15,15 @@ interface IParams {
   postData?: any;
 }
 
-const makeNodeRequest = async (
-  request: string,
-  params?: IParams
-): Promise<any> => {
-  const nodes =
-    params?.chainId == null || params.chainId === "W"
-      ? mainnetNodes
-      : testnetNodes;
+const makeNodeRequest = async (request: string, params?: IParams): Promise<any> => {
+  const nodes = params?.chainId == null || params.chainId === "W" ? mainnetNodes : testnetNodes;
   return new Promise(async (resolve, reject) => {
     let nodeIndex = 0;
     let success = false;
     while (!success) {
       const url = nodes[nodeIndex] + request;
       try {
-        const response = await (params?.postData == null
-          ? axios.get(url)
-          : axios.post(url, params.postData));
+        const response = await (params?.postData == null ? axios.get(url) : axios.post(url, params.postData));
         success = true;
         resolve(response);
       } catch (reason) {

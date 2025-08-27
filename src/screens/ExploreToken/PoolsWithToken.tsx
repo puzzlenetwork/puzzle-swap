@@ -38,9 +38,7 @@ const PoolsWithToken: React.FC<IProps> = () => {
   useMemo(() => {
     setPools(
       poolsStore.pools
-        .filter(({ tokens }) =>
-          tokens.map((t) => t.assetId).includes(vm.asset.assetId)
-        )
+        .filter(({ tokens }) => tokens.map((t) => t.assetId).includes(vm.asset.assetId))
         .sort((a, b) => {
           if (a.statistics?.apr != null && b.statistics?.apr != null) {
             if (new BN(a.statistics.apr).lt(b.statistics.apr)) {
@@ -67,41 +65,28 @@ const PoolsWithToken: React.FC<IProps> = () => {
               <SizedBox width={8} />
               <Column crossAxisSize="max">
                 <Row alignItems="center">
-                  <Text
-                    fitContent
-                    style={{ whiteSpace: "nowrap" }}
-                    weight={500}
-                  >
+                  <Text fitContent style={{ whiteSpace: "nowrap" }} weight={500}>
                     {pool.title}
                   </Text>
                 </Row>
-                <TokenTags
-                  tokens={pool.assets ?? []}
-                  findBalanceByAssetId={accountStore.findBalanceByAssetId}
-                />
+                <TokenTags tokens={pool.assets ?? []} findBalanceByAssetId={accountStore.findBalanceByAssetId} />
               </Column>
             </Row>
           ),
           apy: new BN(pool.statistics?.apr ?? 0).toFormat(2) + " %",
-          value: "$ " + pool.globalLiquidity.toFormat(2),
+          value: "$ " + pool.globalLiquidity.toFormat(2)
         }))
     );
-  }, [
-    accountStore.findBalanceByAssetId,
-    navigate,
-    poolsStore.pools,
-    sortApy,
-    vm.asset.assetId,
-  ]);
+  }, [accountStore.findBalanceByAssetId, navigate, poolsStore.pools, sortApy, vm.asset.assetId]);
   const columns = React.useMemo(
     () => [
       {
         Header: "Pool name",
-        accessor: "poolName",
+        accessor: "poolName"
       },
       {
         Header: "Pool value",
-        accessor: "value",
+        accessor: "value"
       },
       {
         Header: () => (
@@ -118,8 +103,8 @@ const PoolsWithToken: React.FC<IProps> = () => {
             />
           </Row>
         ),
-        accessor: "apy",
-      },
+        accessor: "apy"
+      }
     ],
     [sortApy, theme.images.icons.group]
   );
@@ -137,7 +122,7 @@ const PoolsWithToken: React.FC<IProps> = () => {
           style={{
             whiteSpace: "nowrap",
             width: "fitContent",
-            minWidth: "fit-content",
+            minWidth: "fit-content"
           }}
           withHover
         />

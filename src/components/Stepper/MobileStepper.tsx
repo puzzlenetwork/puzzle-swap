@@ -41,7 +41,7 @@ const RopeContainer = styled.div`
 const Rope = styled.div<{ done: boolean }>`
   width: 56px;
   height: 2px;
-  background: ${({ done }) => (done ? "#F1F2FE" : "#C6C9F4")};
+  background: ${({ theme, done }) => (done ? theme.colors.primary100 : theme.colors.primary300)};
 `;
 const TextContainer = styled(Text)<{ state: TStep }>`
   text-align: center;
@@ -51,7 +51,7 @@ const TextContainer = styled(Text)<{ state: TStep }>`
     max-width: none;
   }
   font-weight: ${({ state }) => (state === "current" ? 500 : 400)};
-  color: ${({ state }) => (state === "next" ? "#8082C5" : "#363870")};
+  color: ${({ theme, state }) => (state === "next" ? theme.colors.primary650 : theme.colors.primary800)};
 `;
 const IconContainer = styled.div<{ state: TStep }>`
   display: flex;
@@ -63,12 +63,12 @@ const IconContainer = styled.div<{ state: TStep }>`
   flex-shrink: 0;
   transition: 0.4s;
   position: relative;
-  background: ${({ state }) => (state === "current" ? "#7075E9" : "#F1F2FE")};
+  background: ${({ theme, state }) => (state === "current" ? theme.colors.blue500 : theme.colors.primary100)};
 
-  ${({ state }) => (state === "previous" ? "background: #c6c9f4;" : "")}
+  ${({ theme, state }) => (state === "previous" ? `background: ${theme.colors.primary300};` : "")}
   & > p {
-    color: ${({ state }) => (state === "current" ? "#ffffff" : "#7075E9")};
-    ${({ state }) => (state === "previous" ? "color: #C6C9F4;" : "")}
+    color: ${({ theme, state }) => (state === "current" ? theme.colors.white : theme.colors.blue500)};
+    ${({ theme, state }) => (state === "previous" ? `color: ${theme.colors.primary300};` : "")}
   }
 
   ::after {
@@ -85,29 +85,13 @@ const IconContainer = styled.div<{ state: TStep }>`
     content: url(${doneIcon});
   }
 `;
-const MobileStepper: React.FC<IProps> = ({
-  steps,
-  activeStep,
-  onStepClick,
-  minStep,
-}) => {
+const MobileStepper: React.FC<IProps> = ({ steps, activeStep, onStepClick, minStep }) => {
   return (
     <Root>
-      <Row
-        alignItems="center"
-        justifyContent="center"
-        mainAxisSize="fit-content"
-        style={{ paddingLeft: 28 }}
-      >
+      <Row alignItems="center" justifyContent="center" mainAxisSize="fit-content" style={{ paddingLeft: 28 }}>
         {steps.map((name, step, array) => {
-          const state =
-            step === activeStep
-              ? "current"
-              : step > activeStep
-              ? "next"
-              : "previous";
-          const disabled =
-            activeStep === 3 ? true : minStep != null ? minStep < step : false;
+          const state = step === activeStep ? "current" : step > activeStep ? "next" : "previous";
+          const disabled = activeStep === 3 ? true : minStep != null ? minStep < step : false;
           return (
             <React.Fragment key={step + "mobile-step"}>
               <IconContainer
@@ -131,26 +115,11 @@ const MobileStepper: React.FC<IProps> = ({
         })}
       </Row>
       <SizedBox height={8} />
-      <Row
-        alignItems="center"
-        justifyContent="center"
-        mainAxisSize="fit-content"
-        style={{ whiteSpace: "pre-line" }}
-      >
+      <Row alignItems="center" justifyContent="center" mainAxisSize="fit-content" style={{ whiteSpace: "pre-line" }}>
         {steps.map((name, index) => {
-          const state =
-            index === activeStep
-              ? "current"
-              : index > activeStep
-              ? "next"
-              : "previous";
+          const state = index === activeStep ? "current" : index > activeStep ? "next" : "previous";
           return (
-            <TextContainer
-              size="small"
-              weight={500}
-              state={state}
-              key={index + "mobile-step-desc"}
-            >
+            <TextContainer size="small" weight={500} state={state} key={index + "mobile-step-desc"}>
               {name}
             </TextContainer>
           );

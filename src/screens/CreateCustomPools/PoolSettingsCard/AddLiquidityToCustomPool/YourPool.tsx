@@ -29,9 +29,7 @@ const YourPool: React.FC<IProps> = () => {
           <SizedBox width={8} />
           <Column>
             <Text weight={500}>{vm.title}</Text>
-            <Text type="secondary">
-              Swap fees: {vm.swapFee.div(10).toString()}%
-            </Text>
+            <Text type="secondary">Swap fees: {vm.swapFee.div(10).toString()}%</Text>
           </Column>
         </Row>
       </Card>

@@ -29,11 +29,7 @@ const LoggedOutRewardInfo: React.FC<IProps> = () => {
       <Text type="secondary" style={{ textAlign: "center" }} className="text">
         Connect your wallet to see your staking balance and reward
       </Text>
-      <Button
-        fixed
-        size="medium"
-        onClick={() => accountStore.setLoginModalOpened(true)}
-      >
+      <Button fixed size="medium" onClick={() => accountStore.setLoginModalOpened(true)}>
         Connect wallet
       </Button>
     </Root>

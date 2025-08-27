@@ -27,7 +27,7 @@ const COLORS = [
   "#CC3399",
   "#FF6600",
   "#FF9900",
-  "#FFCC00",
+  "#FFCC00"
 ];
 
 const Legend = styled.div`
@@ -43,10 +43,7 @@ const Legend = styled.div`
 const SummaryCard: React.FC<IProps> = () => {
   const vm = useCreateCustomPoolsVM();
   const data = vm.poolsAssets?.reduce<{ name: string; value: number }[]>(
-    (acc, { asset, share }) => [
-      ...acc,
-      { name: asset.symbol, value: share.toNumber() },
-    ],
+    (acc, { asset, share }) => [...acc, { name: asset.symbol, value: share.toNumber() }],
     []
   );
 
@@ -56,37 +53,17 @@ const SummaryCard: React.FC<IProps> = () => {
         Summary
       </Text>
       <SizedBox height={8} />
-      <Card
-        justifyContent="center"
-        alignItems="center"
-        paddingDesktop="0px"
-        paddingMobile="0px"
-      >
+      <Card justifyContent="center" alignItems="center" paddingDesktop="0px" paddingMobile="0px">
         <PieChart width={100} height={150}>
-          <Pie
-            data={data}
-            innerRadius={40}
-            outerRadius={50}
-            fill="#C6C9F4"
-            paddingAngle={2}
-            dataKey="value"
-          >
+          <Pie data={data} innerRadius={40} outerRadius={50} fill="#C6C9F4" paddingAngle={2} dataKey="value">
             {data.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
         </PieChart>
         <Legend>
           {data.map(({ name }, index) => (
-            <Row
-              key={index + "summary-card"}
-              justifyContent="center"
-              alignItems="center"
-              mainAxisSize="fit-content"
-            >
+            <Row key={index + "summary-card"} justifyContent="center" alignItems="center" mainAxisSize="fit-content">
               <Dot color={COLORS[index % COLORS.length]} />
               <SizedBox width={4} />
               <Text size="small" type="secondary" fitContent>
@@ -112,13 +89,7 @@ const SummaryCard: React.FC<IProps> = () => {
 export default observer(SummaryCard);
 
 const Dot: React.FC<{ color: string }> = ({ color }) => (
-  <svg
-    width="9"
-    height="8"
-    viewBox="0 0 9 8"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width="9" height="8" viewBox="0 0 9 8" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="4.5" cy="4" r="4" fill={color} />
   </svg>
 );

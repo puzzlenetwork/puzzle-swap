@@ -15,11 +15,7 @@ const TableRow: React.FC<IProps> = ({ v }) => {
     <tr key={v.assetId}>
       <td>
         <Row alignItems="center">
-          <img
-            style={{ width: 24, height: 24, borderRadius: "50%" }}
-            src={v.logo}
-            alt={v.name}
-          />
+          <img style={{ width: 24, height: 24, borderRadius: "50%" }} src={v.logo} alt={v.name} />
           <SizedBox width={8} />
           <Text className="tableText">{v.symbol}</Text>
         </Row>
@@ -31,11 +27,7 @@ const TableRow: React.FC<IProps> = ({ v }) => {
       </td>
       <td>
         <Link to="/trade">
-          <Button
-            className="tableText"
-            style={{ height: 40, padding: "0px 4px", width: "100%" }}
-            kind="secondary"
-          >
+          <Button className="tableText" style={{ height: 40, padding: "0px 4px", width: "100%" }} kind="secondary">
             Trade
           </Button>
         </Link>

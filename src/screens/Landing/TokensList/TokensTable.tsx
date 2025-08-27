@@ -76,7 +76,7 @@ const tokens = Object.entries(POOL_CONFIG).reduce(
     ...acc,
     ...tokens
       .filter((token) => acc.every(({ assetId }) => assetId !== token.assetId))
-      .map((t) => ({ ...t, poolId: id })),
+      .map((t) => ({ ...t, poolId: id }))
   ],
   [] as Array<IToken & { poolId: string }>
 );
@@ -92,7 +92,7 @@ const TokensTable: React.FC<IProps> = () => {
           tokens.reduce(
             (acc, { assetId }) => ({
               ...acc,
-              [assetId]: poolsStore.usdtRate(assetId)?.toFormat(2) ?? "0.00",
+              [assetId]: poolsStore.usdtRate(assetId)?.toFormat(2) ?? "0.00"
             }),
             {} as Record<string, string>
           )
@@ -118,14 +118,9 @@ const TokensTable: React.FC<IProps> = () => {
         </thead>
         <tbody>
           {(opened ? tokens : tokens.slice(0, 5)).map((v) => (
-            <TableRow
-              key={v.assetId}
-              v={{ ...v, balance: balances[v.assetId] ?? "0.00" }}
-            />
+            <TableRow key={v.assetId} v={{ ...v, balance: balances[v.assetId] ?? "0.00" }} />
           ))}
-          <ShowMoreButton onClick={() => setOpened((v) => !v)}>
-            {opened ? "Show less" : "Show  more"}
-          </ShowMoreButton>
+          <ShowMoreButton onClick={() => setOpened((v) => !v)}>{opened ? "Show less" : "Show  more"}</ShowMoreButton>
         </tbody>
       </Table>
     </Root>

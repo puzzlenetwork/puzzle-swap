@@ -32,15 +32,10 @@ const TokenName = styled.div`
 const Balance = styled.div`
   font-size: 14px;
   line-height: 20px;
-  color: #8082c5;
+  color: ${({ theme }) => theme.colors.primary650};
 `;
 
-const TokenSelect: React.FC<IProps> = ({
-  token,
-  selectable,
-  balance,
-  ...rest
-}) => {
+const TokenSelect: React.FC<IProps> = ({ token, selectable, balance, ...rest }) => {
   const theme = useTheme();
   return (
     <Root {...rest}>

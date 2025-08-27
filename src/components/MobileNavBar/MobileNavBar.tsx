@@ -6,11 +6,10 @@ import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import { useLocation, useNavigate } from "react-router-dom";
 import isRoutesEquals from "@src/utils/isRoutesEquals";
-import NFT from "./NFT";
 import Swap from "./Swap";
 import Invest from "./Invest";
 import Stake from "@components/MobileNavBar/Stake";
-// import Ranges from "@components/MobileNavBar/Ranges";
+import Ranges from "@components/MobileNavBar/Ranges";
 
 interface IProps {}
 
@@ -30,6 +29,8 @@ const Root = styled.div`
   border-top: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
   //justify-content: space-evenly;
   padding: 8px;
+
+  z-index: 10;
 
   & > * {
     cursor: pointer;
@@ -53,62 +54,41 @@ const MobileNavBar: React.FC<IProps> = () => {
     {
       name: "Explore",
       link: ROUTES.EXPLORE,
-      icon: (
-        <Compass active={isRoutesEquals(ROUTES.EXPLORE, location.pathname)} />
-      ),
-      big: false,
+      icon: <Compass active={isRoutesEquals(ROUTES.EXPLORE, location.pathname)} />,
+      big: false
     },
     {
       name: "Pools",
       link: ROUTES.POOLS,
       icon: <Invest active={isRoutesEquals(ROUTES.POOLS, location.pathname)} />,
-      big: false,
+      big: false
     },
     {
       link: ROUTES.TRADE,
       icon: <Swap active={isRoutesEquals(ROUTES.TRADE, location.pathname)} />,
-      big: true,
+      big: true
     },
     {
       name: "Stake",
       link: ROUTES.STAKE,
       icon: <Stake active={isRoutesEquals(ROUTES.STAKE, location.pathname)} />,
-      big: false,
+      big: false
     },
-    // {
-    //   name: "Ranges",
-    //   link: ROUTES.RANGES,
-    //   icon: <Ranges active={isRoutesEquals(ROUTES.RANGES, location.pathname)} />,
-    //   big: false,
-    // },
     {
-      name: "NFT",
-      link: ROUTES.ULTRASTAKE,
-      icon: (
-        <NFT active={isRoutesEquals(ROUTES.ULTRASTAKE, location.pathname)} />
-      ),
-      big: false,
-    },
+      name: "Ranges",
+      link: ROUTES.RANGES,
+      icon: <Ranges active={isRoutesEquals(ROUTES.RANGES, location.pathname)} />,
+      big: false
+    }
   ];
   return (
     <Root>
       {menuItems.map(({ icon, name, big, link }, index) => (
-        <MenuItem
-          key={index}
-          onClick={() => (name === "NFT" ? window.open(link) : navigate(link))}
-        >
+        <MenuItem key={index} onClick={() => (name === "NFT" ? window.open(link) : navigate(link))}>
           {icon}
           {name != null && <SizedBox height={6} />}
           {name != null && (
-            <Text
-              size="small"
-              type={
-                isRoutesEquals(link, location.pathname)
-                  ? "primary"
-                  : "secondary"
-              }
-              fitContent
-            >
+            <Text size="small" type={isRoutesEquals(link, location.pathname) ? "primary" : "secondary"} fitContent>
               {name}
             </Text>
           )}

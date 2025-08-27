@@ -55,23 +55,20 @@ class OldExploreVm {
   setAggregatorTradesHistory = (v: any[]) => (this.aggregatorTradesHistory = v);
 
   aggregatorTradesHistorySkip = 0;
-  setAggregatorTradesHistorySkip = (v: number) =>
-    (this.aggregatorTradesHistorySkip = v);
+  setAggregatorTradesHistorySkip = (v: number) => (this.aggregatorTradesHistorySkip = v);
 
   megaPolsInvestHistory: any[] = [];
   setMegaPoolsInvestHistory = (v: any[]) => (this.megaPolsInvestHistory = v);
 
   megaPolsInvestHistorySkip = 0;
-  setMegaPoolsInvestHistorySkip = (v: number) =>
-    (this.aggregatorTradesHistorySkip = v);
+  setMegaPoolsInvestHistorySkip = (v: number) => (this.aggregatorTradesHistorySkip = v);
 
   get tokenDetails() {
     return this.rootStore.tokenStore.statisticsByAssetId[this.assetId] ?? {};
   }
 
   selectedChartPeriod: keyof TChartDataRecord = "1d";
-  setSelectedChartPeriod = (v: keyof TChartDataRecord) =>
-    (this.selectedChartPeriod = v);
+  setSelectedChartPeriod = (v: keyof TChartDataRecord) => (this.selectedChartPeriod = v);
   chartData: TChartDataRecord = {};
   setChartData = (period: keyof TChartDataRecord, value: TChartData) =>
     (this.chartData = { ...this.chartData, [period]: value });
@@ -79,12 +76,10 @@ class OldExploreVm {
   get chart() {
     const { start, end, data } = this.chartData[this.selectedChartPeriod] ?? {};
     if (start == null || data == null || end == null) return [];
-    const step = +(
-      end.diff(dayjs(start), "milliseconds") / data.length
-    ).toFixed(0);
+    const step = +(end.diff(dayjs(start), "milliseconds") / data.length).toFixed(0);
     return data.map(([volume], i) => ({
       volume,
-      date: start.add(step * i, "milliseconds").toISOString(),
+      date: start.add(step * i, "milliseconds").toISOString()
     }));
   }
 
@@ -96,11 +91,7 @@ class OldExploreVm {
     const search = new URLSearchParams(window.location.search);
     this.assetId = search.get("assetId") ?? TOKENS_BY_SYMBOL.PUZZLE.assetId;
 
-    Promise.all([
-      this.syncChart(),
-      this.syncAggregatorTradesHistory(),
-      this.syncMegaPolsInvestHistory(),
-    ]).then();
+    Promise.all([this.syncChart(), this.syncAggregatorTradesHistory(), this.syncMegaPolsInvestHistory()]).then();
     reaction(() => this.selectedChartPeriod, this.syncChart);
   }
 
@@ -110,13 +101,10 @@ class OldExploreVm {
       ["func", "swap"],
       ["func", "swapWithReferral"],
       ["aggregator", true],
-      ["after", this.aggregatorTradesHistorySkip],
+      ["after", this.aggregatorTradesHistorySkip]
     ]);
     this.setAggregatorTradesHistorySkip(this.aggregatorTradesHistorySkip + 5);
-    this.setAggregatorTradesHistory([
-      ...this.aggregatorTradesHistory,
-      ...txs,
-    ] as any[]);
+    this.setAggregatorTradesHistory([...this.aggregatorTradesHistory, ...txs] as any[]);
     this.setLoading(false);
   };
   syncMegaPolsInvestHistory = async () => {
@@ -125,13 +113,10 @@ class OldExploreVm {
       ["func", "unstakeAndRedeemIndex"],
       ["func", "generateIndexAndStake"],
       ["func", "generateIndexWithOneTokenAndStake"],
-      ["after", this.megaPolsInvestHistorySkip],
+      ["after", this.megaPolsInvestHistorySkip]
     ]);
     this.setMegaPoolsInvestHistorySkip(this.megaPolsInvestHistorySkip + 5);
-    this.setMegaPoolsInvestHistory([
-      ...this.megaPolsInvestHistory,
-      ...txs,
-    ] as any[]);
+    this.setMegaPoolsInvestHistory([...this.megaPolsInvestHistory, ...txs] as any[]);
     this.setLoading(false);
   };
 
@@ -153,7 +138,7 @@ class OldExploreVm {
     this.setChartData(this.selectedChartPeriod, {
       ...data,
       start: dayjs(data.start),
-      end: dayjs(),
+      end: dayjs()
     });
     this.setChartLoading(false);
   };

@@ -16,14 +16,7 @@ interface IProps {
   change: BN;
 }
 
-const TokenInfo: React.FC<IProps> = ({
-  num,
-  assetId,
-  name,
-  change,
-  logo,
-  symbol,
-}) => {
+const TokenInfo: React.FC<IProps> = ({ num, assetId, name, change, logo, symbol }) => {
   return (
     <Row justifyContent="space-between">
       <Link to={ROUTES.EXPLORE_TOKEN.replace(":assetId", assetId)}>
@@ -45,12 +38,7 @@ const TokenInfo: React.FC<IProps> = ({
           </Row>
         </Row>
       </Link>
-      <Text
-        type={change.gt(0) ? "success" : "error"}
-        weight={500}
-        fitContent
-        style={{ flexWrap: "wrap" }}
-      >
+      <Text type={change.gt(0) ? "success" : "error"} weight={500} fitContent style={{ flexWrap: "wrap" }}>
         {change.toFormat(2)}%
       </Text>
     </Row>

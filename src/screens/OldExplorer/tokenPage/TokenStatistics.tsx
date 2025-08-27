@@ -41,21 +41,17 @@ const TokenStatistics: React.FC<IProps> = () => {
           data={[
             {
               title: `${vm.asset?.symbol} price`,
-              value: `$ ${vm.tokenDetails.currentPrice?.toFormat(2)}`,
+              value: `$ ${vm.tokenDetails.currentPrice?.toFormat(2)}`
             },
             {
               title: "24h change",
-              valueColor: vm.tokenDetails.change24H?.gte(0)
-                ? "#35A15A"
-                : "#ED827E",
-              value: `${
-                vm.tokenDetails.change24H?.gte(0) ? "+" : "-"
-              } ${vm.tokenDetails.change24H?.toFormat(2)} %`,
+              valueColor: vm.tokenDetails.change24H?.gte(0) ? "#35A15A" : "#ED827E",
+              value: `${vm.tokenDetails.change24H?.gte(0) ? "+" : "-"} ${vm.tokenDetails.change24H?.toFormat(2)} %`
             },
             {
               title: "24h Low / 24h High",
-              value: `$ ${vm.low24H.toFormat(2)} / $ ${vm.high24H.toFormat(2)}`,
-            },
+              value: `$ ${vm.low24H.toFormat(2)} / $ ${vm.high24H.toFormat(2)}`
+            }
           ]}
         />
       </StyledCard>
@@ -65,16 +61,16 @@ const TokenStatistics: React.FC<IProps> = () => {
           data={[
             {
               title: "Total supply",
-              value: vm.tokenDetails.totalSupply?.toFormat(2),
+              value: vm.tokenDetails.totalSupply?.toFormat(2)
             },
             {
               title: "Circulating supply",
-              value: vm.tokenDetails.circulatingSupply?.toFormat(2),
+              value: vm.tokenDetails.circulatingSupply?.toFormat(2)
             },
             {
               title: "Total burned",
-              value: vm.tokenDetails.totalBurned?.toFormat(2),
-            },
+              value: vm.tokenDetails.totalBurned?.toFormat(2)
+            }
           ]}
         />
       </StyledCard>
@@ -84,12 +80,12 @@ const TokenStatistics: React.FC<IProps> = () => {
           data={[
             {
               title: "Fully diluted MC",
-              value: vm.tokenDetails.fullyDilutedMC?.toFormat(2),
+              value: vm.tokenDetails.fullyDilutedMC?.toFormat(2)
             },
             {
               title: "Market cap",
-              value: vm.tokenDetails.marketCap?.toFormat(2),
-            },
+              value: vm.tokenDetails.marketCap?.toFormat(2)
+            }
           ]}
         />
       </StyledCard>

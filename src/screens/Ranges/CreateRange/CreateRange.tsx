@@ -6,7 +6,7 @@ import { CreateRangeVMProvider } from "./CreateRangeVm";
 import GoBack from "@components/GoBack";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import PoolSettingsCard from "./PoolSettingsCard";
+import RangeSettingsCard from "./RangeSettingsCard";
 import SummaryCard from "./SummaryCard";
 import CreateRangesStepper from "./CreateRangesStepper";
 import ContinueBtn from "./ContinueBtn";
@@ -30,7 +30,6 @@ const Grid = styled.div`
   row-gap: 24px;
   @media (min-width: 880px) {
     grid-template-columns: 1fr 2fr 1fr;
-    row-gap: 0;
     column-gap: 40px;
   }
 `;
@@ -59,13 +58,13 @@ const CreateRangeImpl: React.FC = () => {
             </Text>
             <SizedBox height={8} />
             <Subtitle size="medium">
-              Create a custom Range with any token combination and optimize your liquidity
-              distribution. As the Range owner, you’ll also earn a share of all fees generated within it.
+              Create a custom Range with any token combination and optimize your liquidity distribution. As the Range
+              owner, you’ll also earn a share of all fees generated within it.
             </Subtitle>
             <SizedBox height={24} />
             <Grid>
               <CreateRangesStepper />
-              <PoolSettingsCard />
+              <RangeSettingsCard />
               <SummaryCard />
               <MobileContinueBtn>
                 <ContinueBtn />

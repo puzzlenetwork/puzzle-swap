@@ -41,9 +41,7 @@ const MarketNfts: React.FC<IProps> = () => {
               }
             />
           ))
-        : Array.from({ length: 2 }).map((v, index) => (
-            <ArtefactSkeleton key={index} />
-          ))}
+        : Array.from({ length: 2 }).map((v, index) => <ArtefactSkeleton key={index} />)}
     </Root>
   );
 };

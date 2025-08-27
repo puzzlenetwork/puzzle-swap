@@ -3,10 +3,7 @@ import Layout from "@components/Layout";
 import { TOKENS_BY_SYMBOL } from "@src/constants";
 import ExploreTokenPage from "./tokenPage/ExploreTokenPage";
 import ExploreProtocolPage from "./protocolPage/ExploreProtocolPage";
-import {
-  OldExploreVMProvider,
-  useOldExploreVM,
-} from "@screens/OldExplorer/OldExploreVm";
+import { OldExploreVMProvider, useOldExploreVM } from "@screens/OldExplorer/OldExploreVm";
 
 interface IProps {}
 
@@ -17,11 +14,7 @@ const OldExplorerImpl: React.FC<IProps> = () => {
   useEffect(() => {
     vm.setAssetId(assetId ?? TOKENS_BY_SYMBOL.PUZZLE.assetId);
   }, [assetId, vm]);
-  return (
-    <Layout>
-      {assetId != null ? <ExploreTokenPage /> : <ExploreProtocolPage />}
-    </Layout>
-  );
+  return <Layout>{assetId != null ? <ExploreTokenPage /> : <ExploreProtocolPage />}</Layout>;
 };
 
 const OldExplorer: React.FC<IProps> = () => (

@@ -13,12 +13,7 @@ const StakeUnstake: React.FC<IProps> = () => {
   const vm = useStakingVM();
   return (
     <Card style={{ marginTop: 24 }}>
-      <SwitchButtons
-        values={["Stake", "Unstake"]}
-        active={vm.action}
-        onActivate={vm.setAction}
-        border
-      />
+      <SwitchButtons values={["Stake", "Unstake"]} active={vm.action} onActivate={vm.setAction} border />
       <SizedBox height={24} />
       {vm.action === 0 ? <Stake /> : <UnStake />}
     </Card>

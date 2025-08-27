@@ -6,6 +6,7 @@ import Card from "@components/Card";
 import { useCreateRangeVM } from "../../CreateRangeVm";
 import { observer } from "mobx-react-lite";
 import Slider from "@components/Slider";
+import { Row } from "@src/components/Flex";
 
 interface IProps {}
 
@@ -19,7 +20,7 @@ const AddLiquidityToRangeAmountSelector: React.FC<IProps> = () => {
   const providedUsd = useMemo(
     () => vm.maxToProvide.times(vm.providedPercentOfPool).div(100),
     [vm.maxToProvide, vm.providedPercentOfPool]
-  )
+  );
   return (
     <Root>
       <Text style={{ width: "100%" }} weight={500} type="secondary">
@@ -31,10 +32,15 @@ const AddLiquidityToRangeAmountSelector: React.FC<IProps> = () => {
           Select the percentage of your assets
         </Text>
         <SizedBox height={16} />
-        <Text type="primary" size="large" style={{ textAlign: "center" }}>
-          {`${vm.providedPercentOfPool}% `}
-          <span style={{ color: "#8082C5" }}>{`($${providedUsd.toFormat(2)})`}</span>
-        </Text>
+        <Row justifyContent="center" style={{ flexWrap: "wrap" }}>
+          <Text type="primary" size="large" fitContent>
+            {`${vm.providedPercentOfPool}%`}
+          </Text>
+          <SizedBox width={18} />
+          <Text type="secondary" size="large" fitContent nowrap>
+            {`(${vm.totalAmountToDepositStr} ≈ $ ${vm.totalAmountToDepositUsd?.toBigFormat(2)})`}
+          </Text>
+        </Row>
         <SizedBox height={16} />
         <Slider
           min={0}

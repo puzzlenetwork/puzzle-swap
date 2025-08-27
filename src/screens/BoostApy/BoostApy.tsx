@@ -4,10 +4,7 @@ import Layout from "@components/Layout";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { Observer } from "mobx-react-lite";
-import {
-  BoostApyVmProvider,
-  useBoostApyVm,
-} from "@screens/BoostApy/BoostApyVm";
+import { BoostApyVmProvider, useBoostApyVm } from "@screens/BoostApy/BoostApyVm";
 import GoBack from "@components/GoBack";
 import { useParams } from "react-router-dom";
 import CalcBoostingAmountCard from "./CalcBoostingAmountCard";
@@ -65,26 +62,15 @@ const BoostApyImpl: React.FC<IProps> = () => {
               title: "Boosted APY",
               value: (
                 <Row mainAxisSize="fit-content" alignItems="center">
-                  <Text
-                    fitContent
-                    crossed
-                    type="secondary"
-                    size="small"
-                    ellipsis={150}
-                  >
+                  <Text fitContent crossed type="secondary" size="small" ellipsis={150}>
                     {new BN(vm.pool?.statistics?.apr ?? 0).toFormat(2) + " %"}
                   </Text>
                   <SizedBox width={2} />
-                  <Text
-                    fitContent
-                    weight={500}
-                    style={{ maxWidth: "150" }}
-                    ellipsis={150}
-                  >
+                  <Text fitContent weight={500} style={{ maxWidth: "150" }} ellipsis={150}>
                     {vm.calcBoostedApy}
                   </Text>
                 </Row>
-              ),
+              )
             },
             {
               title: "Boosting end date",
@@ -92,7 +78,7 @@ const BoostApyImpl: React.FC<IProps> = () => {
                 <Text fitContent type="secondary">
                   {vm.formattedDays}
                 </Text>
-              ),
+              )
             },
             {
               title: "Transaction fee",
@@ -100,25 +86,21 @@ const BoostApyImpl: React.FC<IProps> = () => {
                 <Text fitContent type="secondary">
                   0.005 WAVES
                 </Text>
-              ),
-            },
+              )
+            }
           ];
           return (
             <Layout>
               <Root>
-                <GoBack
-                  link={`/pools/${vm.pool?.domain}/invest`}
-                  text={`Back to ${vm.pool?.title}`}
-                />
+                <GoBack link={`/pools/${vm.pool?.domain}/invest`} text={`Back to ${vm.pool?.title}`} />
                 <SizedBox height={24} />
                 <Text weight={500} size="large">
                   BoostApy in Puzzle Mega Pools
                 </Text>
                 <SizedBox height={8} />
                 <Subtitle size="medium" fitContent>
-                  Select the boosting period, the token and its amount. During
-                  this period, the additional reward will be paid evenly to pool
-                  investors.
+                  Select the boosting period, the token and its amount. During this period, the additional reward will
+                  be paid evenly to pool investors.
                 </Subtitle>
                 <SizedBox height={24} />
                 <CalcBoostingAmountCard />
@@ -136,19 +118,12 @@ const BoostApyImpl: React.FC<IProps> = () => {
                       ))}
                     </Details>
                     <SizedBox height={24} />
-                    <Button
-                      fixed
-                      disabled={!vm.isAllDataProvided}
-                      onClick={vm.boost}
-                    >
+                    <Button fixed disabled={!vm.isAllDataProvided} onClick={vm.boost}>
                       {vm.isAllDataProvided ? "Boost" : "Fill the form"}
                     </Button>
                   </>
                 ) : (
-                  <Button
-                    onClick={() => accountStore.setLoginModalOpened(true)}
-                    fixed
-                  >
+                  <Button onClick={() => accountStore.setLoginModalOpened(true)} fixed>
                     Connect wallet
                   </Button>
                 )}

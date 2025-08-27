@@ -27,19 +27,12 @@ const Wallet: React.FC<IProps> = () => {
         <>
           <DarkMode />
           {accountStore.address != null && (
-            <WalletIcon
-              onClick={() => accountStore.setWalletModalOpened(true)}
-              style={{ cursor: "pointer" }}
-            />
+            <WalletIcon onClick={() => accountStore.setWalletModalOpened(true)} style={{ cursor: "pointer" }} />
           )}
         </>
       </Row>
       {address == null ? (
-        <Button
-          size="medium"
-          onClick={() => accountStore.setLoginModalOpened(true)}
-          fixed
-        >
+        <Button size="medium" onClick={() => accountStore.setLoginModalOpened(true)} fixed>
           Connect wallet
         </Button>
       ) : (

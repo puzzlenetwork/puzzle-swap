@@ -17,8 +17,7 @@ const Root = styled(Row)<{ border?: boolean }>`
   box-sizing: border-box;
   border-radius: 12px;
   transition: all 0.3s ease;
-  border: ${({ border, theme }) =>
-    border && `1px solid ${theme.colors.primary100}`};
+  border: ${({ border, theme }) => border && `1px solid ${theme.colors.primary100}`};
 `;
 
 const Item = styled.div<{ active?: boolean }>`
@@ -28,28 +27,20 @@ const Item = styled.div<{ active?: boolean }>`
   justify-content: center;
   padding: 0 16px;
   flex: 1;
-  background: ${({ active, theme }) =>
-    active ? theme.colors.white : theme.colors.primary100};
+  background: ${({ active, theme }) => (active ? theme.colors.white : theme.colors.primary100)};
   width: 100%;
   height: 100%;
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
-  color: ${({ active, theme }) =>
-    active ? theme.colors.blue500 : theme.colors.primary650};
-  ${({ active }) =>
-    active && "box-shadow: 0 8px 24px rgba(54, 56, 112, 0.16); z-index: 1"};
+  color: ${({ active, theme }) => (active ? theme.colors.blue500 : theme.colors.primary650)};
+  ${({ active }) => active && "box-shadow: 0 8px 24px rgba(54, 56, 112, 0.16); z-index: 1"};
 
   border-radius: 10px;
   cursor: pointer;
 `;
 
-const SwitchButtons: React.FC<IProps> = ({
-  values,
-  active,
-  onActivate,
-  border,
-}) => {
+const SwitchButtons: React.FC<IProps> = ({ values, active, onActivate, border }) => {
   return (
     <Root border={border}>
       <Item active={active === 0} onClick={() => onActivate(0)}>

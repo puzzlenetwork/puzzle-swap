@@ -18,15 +18,9 @@ interface IProps {
   rangeAddress: string;
 }
 
-export const RangeDetailsInterfaceVMProvider: React.FC<IProps> = ({
-  rangeAddress,
-  children,
-}) => {
+export const RangeDetailsInterfaceVMProvider: React.FC<IProps> = ({ rangeAddress, children }) => {
   const rootStore = useStores();
-  const store = useMemo(
-    () => new RangeDetailsInterfaceVM(rootStore, rangeAddress),
-    [rootStore, rangeAddress]
-  );
+  const store = useMemo(() => new RangeDetailsInterfaceVM(rootStore, rangeAddress), [rootStore, rangeAddress]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
 
@@ -42,7 +36,7 @@ class RangeDetailsInterfaceVM {
 
   loading: boolean = false;
   private _setLoading = (l: boolean) => (this.loading = l);
-  
+
   history: IHistory[] = [];
   setHistory = (v: IHistory[]) => (this.history = v);
 
@@ -55,27 +49,55 @@ class RangeDetailsInterfaceVM {
   public lpData: LPData | null = null;
   setLPData = (v: LPData) => (this.lpData = v);
 
-  public rewardsDisplayMode: ("all" | "fees" | "extra") = "all";
+  public rewardsDisplayMode: "all" | "fees" | "extra" = "all";
   public setRewardsDisplayMode = (value: "all" | "fees" | "extra") => (this.rewardsDisplayMode = value);
 
-  public timeRangeToDisplayRewards: ("1d" | "7d" | "1m" | "3m" | "1y" | "all") = "all";
-  private _setTimeRangeToDisplayRewards = (value: ("1d" | "7d" | "1m" | "3m" | "1y" | "all")) => (this.timeRangeToDisplayRewards = value);
-  public setTimeRangeToDisplayRewards = (value: ("1d" | "7d" | "1m" | "3m" | "1y" | "all")) => {
+  public timeRangeToDisplayRewards: "1d" | "7d" | "1m" | "3m" | "1y" | "all" = "all";
+  private _setTimeRangeToDisplayRewards = (value: "1d" | "7d" | "1m" | "3m" | "1y" | "all") =>
+    (this.timeRangeToDisplayRewards = value);
+  public setTimeRangeToDisplayRewards = (value: "1d" | "7d" | "1m" | "3m" | "1y" | "all") => {
     this._setTimeRangeToDisplayRewards(value);
     this.syncLPRewards(value);
   };
 
-  public lpRewardsByTime: Record<("1d" | "7d" | "1m" | "3m" | "1y" | "all"), { assetId: string, feesEarned: BN, extraEarned: BN }[]> = {} as Record<("1d" | "7d" | "1m" | "3m" | "1y" | "all"), { assetId: string, feesEarned: BN, extraEarned: BN }[]>;
-  public updatelpRewardsByTime = (key: ("1d" | "7d" | "1m" | "3m" | "1y" | "all"), value: { assetId: string, feesEarned: BN, extraEarned: BN }[]) => (this.lpRewardsByTime[key] = value);
+  public lpRewardsByTime: Record<
+    "1d" | "7d" | "1m" | "3m" | "1y" | "all",
+    { assetId: string; feesEarned: BN; extraEarned: BN }[]
+  > = {} as Record<"1d" | "7d" | "1m" | "3m" | "1y" | "all", { assetId: string; feesEarned: BN; extraEarned: BN }[]>;
+  public updatelpRewardsByTime = (
+    key: "1d" | "7d" | "1m" | "3m" | "1y" | "all",
+    value: { assetId: string; feesEarned: BN; extraEarned: BN }[]
+  ) => (this.lpRewardsByTime[key] = value);
 
-  public get LPRewardsToDisplay(): {assetId: string, amount: BN}[] {
+  public get LPRewardsToDisplay(): { assetId: string; amount: BN }[] {
     switch (this.rewardsDisplayMode) {
       case "all":
-        return this.lpRewardsByTime[this.timeRangeToDisplayRewards]?.map(({ assetId, feesEarned, extraEarned }) => ({ assetId, amount: feesEarned.plus(extraEarned) })).filter(({ amount }) => amount.gt(0)) ?? [];
+        return (
+          this.lpRewardsByTime[this.timeRangeToDisplayRewards]
+            ?.map(({ assetId, feesEarned, extraEarned }) => ({
+              assetId,
+              amount: feesEarned.plus(extraEarned)
+            }))
+            .filter(({ amount }) => amount.gt(0)) ?? []
+        );
       case "fees":
-        return this.lpRewardsByTime[this.timeRangeToDisplayRewards]?.map(({ assetId, feesEarned }) => ({ assetId, amount: feesEarned })).filter(({ amount }) => amount.gt(0)) ?? [];
+        return (
+          this.lpRewardsByTime[this.timeRangeToDisplayRewards]
+            ?.map(({ assetId, feesEarned }) => ({
+              assetId,
+              amount: feesEarned
+            }))
+            .filter(({ amount }) => amount.gt(0)) ?? []
+        );
       case "extra":
-        return this.lpRewardsByTime[this.timeRangeToDisplayRewards]?.map(({ assetId, extraEarned }) => ({ assetId, amount: extraEarned })).filter(({ amount }) => amount.gt(0)) ?? [];
+        return (
+          this.lpRewardsByTime[this.timeRangeToDisplayRewards]
+            ?.map(({ assetId, extraEarned }) => ({
+              assetId,
+              amount: extraEarned
+            }))
+            .filter(({ amount }) => amount.gt(0)) ?? []
+        );
       default:
         return [];
     }
@@ -84,33 +106,38 @@ class RangeDetailsInterfaceVM {
   public chartDataLoaded: IHistory[] | null = null;
   public setChartDataLoaded = (value: IHistory[]) => (this.chartDataLoaded = value);
 
-  public chartDataKey: ("volume" | "fees" | "liquidity") = "volume";
+  public chartDataKey: "volume" | "fees" | "liquidity" = "volume";
   public setChartDataKey = (value: "volume" | "fees" | "liquidity") => (this.chartDataKey = value);
 
   public get chartData() {
-    return (this.chartDataLoaded ?? this.range?.charts)?.map(({ owner_fees, protocol_fees, time, ...rest }) => ({
-      fees: owner_fees + protocol_fees,
-      time: time * 1000,
-      ...rest
-    })).sort((a, b) => (a.time < b.time ? -1 : 1)) || [];
+    return (
+      (this.chartDataLoaded ?? this.range?.charts)
+        ?.map(({ owner_fees, protocol_fees, time, ...rest }) => ({
+          fees: owner_fees + protocol_fees,
+          time: time * 1000,
+          ...rest
+        }))
+        .sort((a, b) => (a.time < b.time ? -1 : 1)) || []
+    );
   }
 
-  public chartDataRange: ("1d" | "7d" | "1m" | "3m" | "1y" | "all") = "all";
-  public setChartDataRange = (range: ("1d" | "7d" | "1m" | "3m" | "1y" | "all")) => {
+  public chartDataRange: "1d" | "7d" | "1m" | "3m" | "1y" | "all" = "all";
+  public setChartDataRange = (range: "1d" | "7d" | "1m" | "3m" | "1y" | "all") => {
     this.chartDataRange = range;
     this.syncChartData(range);
-  }
+  };
 
   public get chartTotal(): BN {
+    const postfix = this.chartDataRange === "1m" ? "30d" : this.chartDataRange === "3m" ? "90d" : this.chartDataRange;
     switch (this.chartDataKey) {
       case "volume":
-        return new BN(this.range!.totals["volume_all"] ?? 0);
+        return new BN(this.range?.totals[`volume_${postfix}`] ?? 0);
       case "fees":
-        return new BN((this.range!.totals["pool_fees_all"] ?? 0) + (this.range!.totals["owner_fees_all"] ?? 0) + (this.range!.totals["protocol_fees_all"] ?? 0));
+        return new BN(this.range?.totals[`pool_fees_${postfix}`] ?? 0);
       case "liquidity":
-        return new BN(this.range!.liquidity ?? 0);
+        return new BN(this.range?.totals[`liquidity_${postfix}`] ?? 0);
     }
-    return new BN(this.range!.totals[this.chartDataKey] ?? 0)
+    return new BN(this.range?.totals[`${this.chartDataKey}_${postfix}`] ?? 0);
   }
 
   public currentBlockHeight: number = 0;
@@ -124,43 +151,58 @@ class RangeDetailsInterfaceVM {
   public useMaxStakeUnstakeAmount: boolean = true;
   public setUseMaxStakeUnstakeAmount = (value: boolean) => (this.useMaxStakeUnstakeAmount = value);
 
-  public stakeUnstakeAmount: BN = BN.ZERO;
+  public stakeUnstakeAmount: BN = this.indexTokenBalance;
   public setStakeUnstakeAmount = (value: BN) => (this.stakeUnstakeAmount = value);
 
   public stakeUnstakeAction: "stake" | "unstake" = "stake";
-  public setStakeUnstakeAction = (value: "stake" | "unstake") => (this.stakeUnstakeAction = value);
+  public setStakeUnstakeAction = (value: "stake" | "unstake") => {
+    this.stakeUnstakeAction = value;
+    if (value === "stake") {
+      this.setStakeUnstakeAmount(this.indexTokenBalance);
+    } else if (value === "unstake") {
+      this.lpData?.indexStaked && this.setStakeUnstakeAmount(BN.parseUnits(this.lpData.indexStaked, this.indexTokenDecimals));
+    }
+  }
 
   constructor(rootStore: RootStore, rangeAddress: string) {
     this.rootStore = rootStore;
     this.rangeAddress = rangeAddress;
     makeAutoObservable(this);
-    
-    rangesService.getRangeByAddress(rangeAddress, { charts: true })
-      .then((rangeData) => {
-        if (!rangeData) return;
-        console.log("rangeData", rangeData);
-        const newRange = new Range(rangeData);
-        this.rootStore.rangesStore.updateRange(newRange);
-        this.setHistory(rangeData.charts || []);
-        this.updateBlockHeight();
-      });
+
+    rangesService.getRangeByAddress(rangeAddress, { charts: true }).then((rangeData) => {
+      if (!rangeData) return;
+      const newRange = new Range(rangeData);
+      this.rootStore.rangesStore.updateRange(newRange);
+      const _ = this.range; // trigger reactivity
+      this.setHistory(rangeData.charts || []);
+      this.updateBlockHeight();
+    });
     this.syncChartData("all");
-    
+
     when(
       () => this.range != null,
       () => {
-        this.updatelpRewardsByTime("all", this.range!.assets.map(({ assetId, feesEarned, extraEarned }) => ({ assetId, feesEarned: feesEarned, extraEarned: extraEarned })));
-      })
-    
+        this.updatelpRewardsByTime(
+          "all",
+          this.range!.assets.map(({ assetId, feesEarned, extraEarned }) => ({
+            assetId,
+            feesEarned: feesEarned,
+            extraEarned: extraEarned
+          }))
+        );
+        this.syncIndexTokenInfo();
+      }
+    );
+
     when(
       () => this.range != null && this.rootStore.accountStore.address != null,
       () => {
         this.syncLPData();
       }
-    )
+    );
   }
 
-  convertTimeRange = (timeRange: ("1d" | "7d" | "1m" | "3m" | "1y" | "all")): [number, number] => {
+  convertTimeRange = (timeRange: "1d" | "7d" | "1m" | "3m" | "1y" | "all"): [number, number] => {
     if (timeRange === "all") {
       return [0, dayjs().unix()];
     }
@@ -169,56 +211,84 @@ class RangeDetailsInterfaceVM {
       "7d": [7, "days"],
       "1m": [1, "months"],
       "3m": [3, "months"],
-      "1y": [1, "years"],
+      "1y": [1, "years"]
     };
     const startTime = dayjs().subtract(periods[timeRange][0], periods[timeRange][1]).unix();
     const endTime = dayjs().unix();
     return [startTime, endTime];
-  }
+  };
 
   syncIndexTokenInfo = async () => {
     const { address } = this.rootStore.accountStore;
     if (address == null) return;
     const balance = await assetBalance(this.range!.lpTokenId, address, NODE_URL);
     this.setIndexBalance(new BN(balance ?? 0));
-    const decimals = TOKENS_BY_ASSET_ID[this.range!.lpTokenId].decimals;
-    decimals &&this._setIndexTokenDecimals(decimals);
+    if (this.stakeUnstakeAction === "stake") {
+      this.setStakeUnstakeAmount(this.indexTokenBalance);
+    } else if (this.stakeUnstakeAction === "unstake") {
+      this.setStakeUnstakeAmount(BN.parseUnits(this.lpData!.indexStaked, this.indexTokenDecimals));
+    }
+    const lpTokenId = this.range?.lpTokenId;
+    const decimals = (lpTokenId && TOKENS_BY_ASSET_ID[lpTokenId]?.decimals) ?? 8;
+    decimals && this._setIndexTokenDecimals(decimals);
   };
+
+  public isLPDataLoading = false;
+  public setIsLPDataLoading = (value: boolean) => (this.isLPDataLoading = value);
 
   public syncLPData = async () => {
     if (!this.rootStore.accountStore.address) return;
-    rangesService.getLPData(this.rangeAddress, this.rootStore.accountStore.address)
+    this.setIsLPDataLoading(true);
+    rangesService
+      .getLPData(this.rangeAddress, this.rootStore.accountStore.address, true)
       .then((data) => {
         if (!data) return;
-        console.log("LPData", data)
         const newLPData = new LPData(data);
         this.setLPData(newLPData);
       })
-  }
+      .finally(() => {
+        this.setIsLPDataLoading(false);
+      });
+  };
 
-  public syncLPRewards = async (period: ("1d" | "7d" | "1m" | "3m" | "1y" | "all")) => {
+  public syncLPRewards = async (period: "1d" | "7d" | "1m" | "3m" | "1y" | "all") => {
     if (period === "all") {
       rangesService.getRangeByAddress(this.rangeAddress).then((rangeData: IRangeParamsResponse) => {
         if (!rangeData) return;
-        this.updatelpRewardsByTime(period, Object.entries(rangeData.period_fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
-      })
-      return;
-    };
-    const [startTime, endTime] = this.convertTimeRange(period);
-    rangesService.getRangeByAddress(this.rangeAddress, { startTime, endTime }).then((rangeData: IRangeParamsResponse) => {
-      if (!rangeData) return;
-      this.updatelpRewardsByTime(period, Object.entries(rangeData.period_fees).map(([assetId, fees]) => ({ assetId, extraEarned: new BN(fees.extra_earned), feesEarned: new BN(fees.fees_earned) })));
-    })
-  }
-
-  public syncChartData = async (period: ("1d" | "7d" | "1m" | "3m" | "1y" | "all")) => {
-    const [startTime, endTime] = this.convertTimeRange(period);
-    rangesService.getChartData(this.rangeAddress, { startTime, endTime })
-      .then((data) => {
-        if (!data) return;
-        this.setChartDataLoaded(data);
+        this.updatelpRewardsByTime(
+          period,
+          Object.entries(rangeData.period_stats.fees).map(([assetId, fees]) => ({
+            assetId,
+            extraEarned: new BN(fees.extra_earned),
+            feesEarned: new BN(fees.fees_earned)
+          }))
+        );
       });
-  }
+      return;
+    }
+    const [startTime, endTime] = this.convertTimeRange(period);
+    rangesService
+      .getRangeByAddress(this.rangeAddress, { startTime, endTime })
+      .then((rangeData: IRangeParamsResponse) => {
+        if (!rangeData) return;
+        this.updatelpRewardsByTime(
+          period,
+          Object.entries(rangeData.period_stats.fees).map(([assetId, fees]) => ({
+            assetId,
+            extraEarned: new BN(fees.extra_earned),
+            feesEarned: new BN(fees.fees_earned)
+          }))
+        );
+      });
+  };
+
+  public syncChartData = async (period: "1d" | "7d" | "1m" | "3m" | "1y" | "all") => {
+    const [startTime, endTime] = this.convertTimeRange(period);
+    rangesService.getChartData(this.rangeAddress, { startTime, endTime }).then((data) => {
+      if (!data) return;
+      this.setChartDataLoaded(data);
+    });
+  };
 
   get rangeBalancesTable() {
     if (this.range?.assets == null) return null;
@@ -228,32 +298,27 @@ class RangeDetailsInterfaceVM {
       .map((token) => {
         if (this.lpData == null) {
           return { ...token, usdnEquivalent: BN.ZERO, value: BN.ZERO };
-        };
+        }
         const tokenInLP = this.lpData.assetsData.find((a) => a.assetId === token.assetId);
         if (tokenInLP == null) {
           return { ...token, usdnEquivalent: BN.ZERO, value: BN.ZERO };
-        };
+        }
         const userAmount = tokenInLP.providedAmount;
         const userUsdnEquivalent = tokenInLP.providedAmountUsd;
         return {
           ...token,
           usdnEquivalent: userUsdnEquivalent,
-          value: userAmount,
-        }
+          value: userAmount
+        };
       });
   }
 
   get canClaimRewards() {
-    return !(
-      this.lpData?.unclaimedUsd == null
-      || this.lpData.unclaimedUsd.eq(0)
-      || this.loading
-    );
+    return !(this.lpData?.unclaimedUsd == null || this.lpData.unclaimedUsd.eq(0) || this.loading);
   }
 
   claimRewards = async () => {
-    if (this.lpData?.unclaimedUsd == null || this.lpData.unclaimedUsd.eq(0))
-      return;
+    if (this.lpData?.unclaimedUsd == null || this.lpData.unclaimedUsd.eq(0)) return;
     this._setLoading(true);
     const { accountStore, notificationStore } = this.rootStore;
     accountStore
@@ -262,46 +327,49 @@ class RangeDetailsInterfaceVM {
         payment: [],
         call: {
           function: "claimIndexRewards",
-          args: [],
-        },
+          args: []
+        }
       })
       .then((txId) => {
         notificationStore.notify(`Your rewards was claimed`, {
           type: "success",
           title: `Success`,
           link: `${EXPLORER_URL}/transactions/${txId}`,
-          linkTitle: "View on Explorer",
+          linkTitle: "View on Explorer"
         });
       })
       .catch((e) => {
+        console.error("claimRewards error", e);
         notificationStore.notify(e.message ?? JSON.stringify(e), {
-          type: "error",
-          title: "Transaction is not completed",
+          type: "warning",
+          title: "Transaction is not completed"
         });
       })
-      .finally(() => this._setLoading(false));
+      .finally(() => {
+        this.rootStore.accountStore.updateAccountAssets(true);
+        this._setLoading(false);
+        this.syncLPData();
+      });
   };
 
   get canUnstakeIndex() {
     return (
-      this.lpData
-      && this.lpData.indexStaked
-      && this.lpData.indexStaked.gt(0)
-      && (
-        this.useMaxStakeUnstakeAmount
-        || (
-          this.stakeUnstakeAmount.gt(0)
-          && BN.formatUnits(this.stakeUnstakeAmount, this.indexTokenDecimals).lte(this.lpData.indexStaked)
-        )
-      )
+      this.lpData &&
+      this.lpData.indexStaked &&
+      this.lpData.indexStaked.gt(0) &&
+      (this.useMaxStakeUnstakeAmount ||
+        (this.stakeUnstakeAmount.gt(0) &&
+          BN.formatUnits(this.stakeUnstakeAmount, this.indexTokenDecimals).lte(this.lpData.indexStaked)))
     );
   }
-  
+
   unstakeIndex = async () => {
     if (!this.canUnstakeIndex) return;
     this._setLoading(true);
     const { accountStore, notificationStore } = this.rootStore;
-    const unstakeAmount = this.useMaxStakeUnstakeAmount ? BN.parseUnits(this.lpData!.indexStaked, this.indexTokenDecimals).toString() : this.stakeUnstakeAmount.toString();
+    const unstakeAmount = this.useMaxStakeUnstakeAmount
+      ? BN.parseUnits(this.lpData!.indexStaked, this.indexTokenDecimals).toString()
+      : this.stakeUnstakeAmount.toString();
     accountStore
       .invoke({
         dApp: this.range!.address,
@@ -311,42 +379,41 @@ class RangeDetailsInterfaceVM {
           args: [
             {
               type: "integer",
-              value: unstakeAmount,
-            },
-          ],
+              value: unstakeAmount
+            }
+          ]
         },
+        fee: !this.range?.lpTokenId ? 100500000 : 500000 // 0.1005 WAVES if the lp token was not issued
       })
       .then((txId) => {
         notificationStore.notify(`You have unstaked index token`, {
           type: "success",
           title: `Success`,
           link: `${EXPLORER_URL}/transactions/${txId}`,
-          linkTitle: "View on Explorer",
+          linkTitle: "View on Explorer"
         });
         this.syncIndexTokenInfo();
         this.syncLPData();
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
-          type: "error",
-          title: "Transaction is not completed",
+          type: "warning",
+          title: "Transaction is not completed"
         });
       })
-      .finally(() => this._setLoading(false));
+      .finally(() => {
+        this.rootStore.accountStore.updateAccountAssets(true);
+        this._setLoading(false);
+      });
   };
 
   get canStakeIndex() {
     return (
-      this.indexTokenBalance
-      && this.indexTokenBalance.gt(0)
-      && (
-        this.useMaxStakeUnstakeAmount
-        || (
-          this.stakeUnstakeAmount.gt(0)
-          && this.stakeUnstakeAmount.lte(this.indexTokenBalance)
-        )
-      )
-    )
+      this.indexTokenBalance &&
+      this.indexTokenBalance.gt(0) &&
+      (this.useMaxStakeUnstakeAmount ||
+        (this.stakeUnstakeAmount.gt(0) && this.stakeUnstakeAmount.lte(this.indexTokenBalance)))
+    );
   }
 
   stakeIndex = async () => {
@@ -359,30 +426,35 @@ class RangeDetailsInterfaceVM {
         payment: [
           {
             assetId: this.range!.lpTokenId === "WAVES" ? null : this.range!.lpTokenId,
-            amount: this.useMaxStakeUnstakeAmount ? this.indexTokenBalance.toString() : this.stakeUnstakeAmount.toString(),
-          },
+            amount: this.useMaxStakeUnstakeAmount
+              ? this.indexTokenBalance.toString()
+              : this.stakeUnstakeAmount.toString()
+          }
         ],
         call: {
           function: "stakeIndex",
-          args: [],
-        },
+          args: []
+        }
       })
       .then((txId) => {
         notificationStore.notify(`Your have staked index token`, {
           type: "success",
           title: `Success`,
           link: `${EXPLORER_URL}/transactions/${txId}`,
-          linkTitle: "View on Explorer",
+          linkTitle: "View on Explorer"
         });
         this.syncIndexTokenInfo();
         this.syncLPData();
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
-          type: "error",
-          title: "Transaction is not completed",
+          type: "warning",
+          title: "Transaction is not completed"
         });
       })
-      .finally(() => this._setLoading(false));
+      .finally(() => {
+        this.rootStore.accountStore.updateAccountAssets(true);
+        this._setLoading(false);
+      });
   };
 }

@@ -1,22 +1,108 @@
 import { RootStore } from "./index";
-import { makeAutoObservable } from "mobx";
-import rangesService from "@src/services/rangesService";
+import { makeAutoObservable, reaction } from "mobx";
+import rangesService, { IProvidedAssetResponse, IProvidedResponse } from "@src/services/rangesService";
 import { Range } from "@src/entities/Range";
-import { sortBy } from "lodash";
+import BN from "@src/utils/BN";
+
+export class IProvidedAsset {
+  assetId: string;
+  name: string;
+  leverage: BN;
+  earnedAmount: BN;
+  earnedAmountUsd: BN;
+  providedAmount: BN;
+  providedAmountUsd: BN;
+
+  constructor(params: IProvidedAssetResponse) {
+    this.assetId = params.asset_id;
+    this.name = params.name;
+    this.leverage = new BN(params.leverage);
+    this.earnedAmount = new BN(params.earned_amount);
+    this.earnedAmountUsd = new BN(params.earned_amount_usd);
+    this.providedAmount = new BN(params.provided_amount);
+    this.providedAmountUsd = new BN(params.provided_amount_usd);
+  }
+}
+
+export class ProvidedData {
+  providerAddress: string;
+  poolAddress: string;
+  poolMode: string;
+  indexStaked: BN;
+  share: BN;
+  providedUsd: BN;
+  claimedUsd: BN;
+  unclaimedUsd: BN;
+  lpTokenId?: string;
+  lpTokenPrice: BN;
+  lpTokenMarketPrice: BN;
+  lpTokenName?: string;
+  lpTokenDomain: string;
+  assetsData: IProvidedAsset[];
+
+  constructor(params: IProvidedResponse) {
+    this.providerAddress = params.provider_address;
+    this.poolAddress = params.pool_address;
+    this.poolMode = params.pool_mode;
+    this.indexStaked = new BN(params.index_staked);
+    this.share = new BN(params.share);
+    this.providedUsd = new BN(params.provided_usd);
+    this.claimedUsd = new BN(params.claimed_usd);
+    this.unclaimedUsd = new BN(params.unclaimed_usd);
+    this.lpTokenId = params.lp_token_id;
+    this.lpTokenPrice = new BN(params.lp_token_price);
+    this.lpTokenMarketPrice = new BN(params.lp_token_market_price);
+    this.lpTokenName = params.lp_token_name;
+    this.lpTokenDomain = params.lp_token_domain;
+    this.assetsData = params.assets_data.map((item) => new IProvidedAsset(item));
+  }
+}
 
 export default class RangesStore {
+  rangesPaginationSize = 10;
   constructor(rootStore: RootStore) {
-    console.log("constructor of ranges tore");
     this.rootStore = rootStore;
     makeAutoObservable(this);
     this.syncRanges();
+    this.syncInvestments();
+    this.syncUserInvestedAmount();
+
+    reaction(
+      () => this.rootStore.accountStore.address,
+      () => {
+        this.userAddress = undefined;
+        this.syncRanges();
+        this.syncInvestments();
+        this.syncUserInvestedAmount();
+      }
+    )
+    // Re-sync invested amount when balances change (e.g. after deposit/withdraw)
+    reaction(
+      () => [this.rootStore.accountStore.address, this.rootStore.accountStore.assetBalances],
+      () => {
+        this.syncUserInvestedAmount();
+      }
+    );
   }
 
   public rootStore: RootStore;
 
+  allRanges: Range[] = [];
+  updateInAllRanges = (range: Range) => {
+    const index = this.allRanges.findIndex((r) => r.address === range.address);
+    if (index !== -1) {
+      this.allRanges[index] = range;
+    } else {
+      this.allRanges.push(range);
+    }
+  };
+
   // Ranges data
   ranges: Range[] = [];
-  setRanges = (ranges: Range[]) => (this.ranges = ranges);
+  setRanges = (ranges: Range[]) => {
+    this.ranges = ranges;
+    ranges.forEach((range) => this.updateInAllRanges(range));
+  };
   updateRange = (range: Range) => {
     const index = this.ranges.findIndex((r) => r.address === range.address);
     if (index !== -1) {
@@ -24,15 +110,20 @@ export default class RangesStore {
     } else {
       this.ranges.push(range);
     }
-  }
-  getRangeByAddress = (address: string) => this.ranges.find((range) => range.address === address);
+    this.updateInAllRanges(range);
+  };
+  getRangeByAddress = (address: string) => this.allRanges.find((range) => range.address === address);
 
   loading: boolean = false;
+  setLoading = (loading: boolean) => (this.loading = loading);
+
+  investmentsLoading: boolean = false;
+  setInvestmentsLoading = (loading: boolean) => (this.investmentsLoading = loading);
 
   // Pagination state
   pagination = {
     page: 1,
-    size: 10,
+    size: this.rangesPaginationSize
   };
 
   // Total number of ranges
@@ -41,21 +132,29 @@ export default class RangesStore {
   // Filter state
   filter = {
     sortBy: "fact_liquidity" as "fact_liquidity" | "earned" | "virtual_liquidity",
-    order: "desc" as "asc" | "desc",
+    order: "desc" as "asc" | "desc"
   };
 
   // Time range to show statistics
   timeRange = "all" as "all" | "1d" | "7d" | "30d" | "90d" | "1y";
 
-  minLiquidity = 0;
+  minLiquidity = 1;
+
+  onlyActiveRanges: boolean | undefined = undefined;
 
   // Search value
   searchValue = "";
 
+  // If specified, filters ranges by user address (show only ones, with investments)
+  userAddress?: string = undefined;
+
+  showPriceInUsd: boolean = false;
+  setShowPriceInUsd = (v: boolean) => (this.showPriceInUsd = v);
+
   // Methods for pagination
-  setPagination = (pagination: { page: number; size: number }) => {
+  setPagination = async (pagination: { page: number; size: number }) => {
     this.pagination = pagination;
-    this.syncRanges();
+    await this.syncRanges();
   };
 
   setTotalItems = (items: number) => {
@@ -63,27 +162,34 @@ export default class RangesStore {
   };
 
   // Methods for filtering
-  setFilter = (filter: {
-    sortBy: "fact_liquidity" | "earned" | "virtual_liquidity";
-    order: "asc" | "desc";
-  }) => {
+  setFilter = async (filter: { sortBy: "fact_liquidity" | "earned" | "virtual_liquidity"; order: "asc" | "desc" }) => {
     this.filter = filter;
-    this.syncRanges();
+    await this.syncRanges();
   };
 
-  setTimeRange = (timeRange: "all" | "1d" | "7d" | "30d" | "90d" | "1y") => {
+  setTimeRange = async (timeRange: "all" | "1d" | "7d" | "30d" | "90d" | "1y") => {
     this.timeRange = timeRange;
-    this.syncRanges();
-  }
+    await this.syncRanges();
+  };
 
-  setMinLiquidity = (minLiquidity: number) => {
+  setMinLiquidity = async (minLiquidity: number) => {
     this.minLiquidity = minLiquidity;
-    this.syncRanges();
-  }
+    await this.syncRanges();
+  };
 
-  setSearchValue = (value: string) => {
+  setOnlyActiveRanges = async (onlyActive: boolean | undefined) => {
+    this.onlyActiveRanges = onlyActive;
+    await this.syncRanges();
+  };
+
+  setSearchValue = async (value: string) => {
     this.searchValue = value;
-    this.syncRanges();
+    await this.syncRanges();
+  };
+
+  setUserAddress = async (value?: string) => {
+    this.userAddress = value;
+    await this.syncRanges();
   };
 
   // Get pagination parameters for API calls
@@ -96,22 +202,60 @@ export default class RangesStore {
       timeRange: this.timeRange,
       title: this.searchValue,
       minLiquidity: this.minLiquidity,
+      active: this.onlyActiveRanges,
+      userAddress: this.userAddress
     };
   }
 
   // Sync ranges from API
   syncRanges = async () => {
     try {
-      this.loading = true;
-      console.log("syncRanges");
+      this.setLoading(true);
       const { ranges, totalItems } = await rangesService.getRanges(this.paginationParams);
-      console.log("ranges", ranges);
-      this.ranges = ranges.map((range) => new Range(range));
+      this.setRanges(ranges.map((range) => new Range(range)));
       this.setTotalItems(totalItems);
     } catch (error) {
       console.error("Error fetching ranges:", error);
     } finally {
-      this.loading = false;
+      this.setLoading(false);
+    }
+  };
+
+  investmentsData: ProvidedData[] = [];
+  setInvestmentsData = (data: ProvidedData[]) => (this.investmentsData = data);
+  syncInvestments = async () => {
+    const { address } = this.rootStore.accountStore;
+    if (!address) {
+      this.setInvestmentsData([]);
+      return;
+    }
+    try {
+      this.setInvestmentsLoading(true);
+      const data = await rangesService.getUserInvestments(address);
+      this.setInvestmentsData(data.map((item) => new ProvidedData(item)));
+    } catch (error) {
+      console.error("Error fetching investments:", error);
+    } finally {
+      this.setInvestmentsLoading(false);
+    }
+  };
+
+  // --- User total invested amount (USD) ---
+  userInvestedAmount: BN | null = null;
+  setUserInvestedAmount = (v: number) => {
+    this.userInvestedAmount = new BN(v);
+  };
+  syncUserInvestedAmount = async () => {
+    const { address } = this.rootStore.accountStore;
+    if (!address) {
+      this.userInvestedAmount = null;
+      return;
+    }
+    try {
+      const amount = await rangesService.getUserTotalProvided(address);
+      this.setUserInvestedAmount(amount);
+    } catch (error) {
+      console.error("Error fetching user invested amount:", error);
     }
   };
 }

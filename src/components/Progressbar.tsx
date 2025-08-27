@@ -9,8 +9,7 @@ interface IProps {
 const Root = styled.div<{ red?: boolean }>`
   width: 100%;
   height: 8px;
-  background: ${({ theme, red }) =>
-    red ? theme.colors.error100 : theme.colors.primary100};
+  background: ${({ theme, red }) => (red ? theme.colors.error100 : theme.colors.primary100)};
   border-radius: 4px;
 
   .progress {

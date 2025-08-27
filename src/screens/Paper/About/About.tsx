@@ -38,26 +38,24 @@ const advantages = [
     title: "Mega pools",
     subtitle:
       "Trade up to 10 tokens in one pool without extra fees and lower slippage risks. Any token can be exchanged to any other.",
-    icon: <Adv1 />,
+    icon: <Adv1 />
   },
   {
     title: "Portfolio pools",
     subtitle:
       "Create a custom trading pool and provide liquidity from your portfolio with any token which is suitable for you.",
-    icon: <Adv2 />,
+    icon: <Adv2 />
   },
   {
     title: "Fair routing",
-    subtitle:
-      "Suitable routing service between custom pools and AMM-exchanges on Waves — trade with the best fare.",
-    icon: <Adv3 />,
+    subtitle: "Suitable routing service between custom pools and AMM-exchanges on Waves — trade with the best fare.",
+    icon: <Adv3 />
   },
   {
     title: "Trading abonnements",
-    subtitle:
-      "Purchase atonement with PUZZLE to pay less fees if you are a regular user.",
-    icon: <Adv4 />,
-  },
+    subtitle: "Purchase atonement with PUZZLE to pay less fees if you are a regular user.",
+    icon: <Adv4 />
+  }
 ];
 
 const Advantages = styled.div`

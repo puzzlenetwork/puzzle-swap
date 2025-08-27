@@ -31,10 +31,7 @@ const Green = styled.div`
   z-index: 3;
 `;
 const Nft = styled.div<{ image: string }>`
-  ${({ image }) =>
-    image != null
-      ? `background-image: url(${image});`
-      : `background: #C6C9F4;`};
+  ${({ image }) => (image != null ? `background-image: url(${image});` : `background: #C6C9F4;`)};
   background-size: cover;
   background-position: center;
   position: absolute;

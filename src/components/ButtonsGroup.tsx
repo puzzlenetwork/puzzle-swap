@@ -11,10 +11,8 @@ const Root = styled.div`
   display: flex;
 `;
 const Btn = styled.div<{ active?: boolean }>`
-  background: ${({ active, theme }) =>
-    active ? theme.colors.blue500 : theme.colors.white};
-  color: ${({ active, theme }) =>
-    active ? theme.colors.white : theme.colors.primary800};
+  background: ${({ active, theme }) => (active ? theme.colors.blue500 : theme.colors.white)};
+  color: ${({ active, theme }) => (active ? theme.colors.white : theme.colors.primary800)};
   border: 1px solid ${({ theme }) => theme.colors.primary100};
 
   border-radius: 6px;
@@ -30,11 +28,7 @@ const ButtonsGroup: React.FC<IProps> = ({ values, active, onClick }) => {
   return (
     <Root>
       {values.map((v, index) => (
-        <Btn
-          key={index}
-          onClick={() => onClick(index)}
-          active={active === index}
-        >
+        <Btn key={index} onClick={() => onClick(index)} active={active === index}>
           {v}
         </Btn>
       ))}

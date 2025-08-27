@@ -21,16 +21,7 @@ const Root = styled.div`
   align-items: center;
 `;
 
-const Order: React.FC<IProps> = ({
-  fulfilled0,
-  amount1,
-  amount0,
-  token1,
-  token0,
-  status,
-  onCancel,
-  onClick,
-}) => {
+const Order: React.FC<IProps> = ({ fulfilled0, amount1, amount0, token1, token0, status, onCancel, onClick }) => {
   const theme = useTheme();
   const t0 = TOKENS_BY_ASSET_ID[token0];
   const t1 = TOKENS_BY_ASSET_ID[token1];
@@ -43,10 +34,7 @@ const Order: React.FC<IProps> = ({
   return (
     <Root>
       <Row alignItems="center" onClick={onClick} style={{ cursor: "pointer" }}>
-        <CircularProgressbar
-          percent={percent.toNumber()}
-          red={status === "canceled"}
-        />
+        <CircularProgressbar percent={percent.toNumber()} red={status === "canceled"} />
         <SizedBox width={10} />
         <Column>
           <Row alignItems="center">
@@ -54,11 +42,7 @@ const Order: React.FC<IProps> = ({
               {am0.toFormat(2)} {t0.symbol}
             </Text>
             <SizedBox width={2} />
-            <Img
-              height="16px"
-              width="16px"
-              src={theme.images.icons.orderRightArrow}
-            />
+            <Img height="16px" width="16px" src={theme.images.icons.orderRightArrow} />
             <SizedBox width={2} />
             <Text size="medium" fitContent weight={500}>
               {am1.toFormat(2)} {t1.symbol}

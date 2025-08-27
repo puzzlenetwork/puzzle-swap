@@ -30,7 +30,7 @@ const CreatePoolsStepper: React.FC<IProps> = () => {
     "Select the composition",
     "Set up a title \nand an icon",
     "Confirm pool creation",
-    "Add your \nliquidity",
+    "Add your \nliquidity"
   ];
   const vm = useCreateCustomPoolsVM();
 

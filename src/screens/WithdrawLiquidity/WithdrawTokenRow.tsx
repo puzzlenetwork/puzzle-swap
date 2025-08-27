@@ -14,21 +14,9 @@ interface IProps {
   logo: string;
 }
 
-const WithdrawTokenRow: React.FC<IProps> = ({
-  withdrawUsdnEquivalent,
-  withdrawAmount,
-  percent,
-  symbol,
-  logo,
-}) => {
-  const available = withdrawUsdnEquivalent
-    ? withdrawUsdnEquivalent.toFormat(4)
-    : "-";
-  const deposit = withdrawAmount
-    ? withdrawAmount.isNaN()
-      ? "-"
-      : withdrawAmount.toFormat(4)
-    : "-";
+const WithdrawTokenRow: React.FC<IProps> = ({ withdrawUsdnEquivalent, withdrawAmount, percent, symbol, logo }) => {
+  const available = withdrawUsdnEquivalent ? withdrawUsdnEquivalent.toFormat(4) : "-";
+  const deposit = withdrawAmount ? (withdrawAmount.isNaN() ? "-" : withdrawAmount.toFormat(4)) : "-";
   return (
     <div className="gridRow">
       <Row alignItems="center" mainAxisSize="fit-content">

@@ -32,26 +32,14 @@ const RopeContainer = styled.div`
 const Rope = styled.div<{ done: boolean }>`
   width: 1px;
   height: 12px;
-  background: ${({ done, theme }) =>
-    done ? theme.colors.primary100 : theme.colors.primary300};
+  background: ${({ done, theme }) => (done ? theme.colors.primary100 : theme.colors.primary300)};
 `;
 
-const Stepper: React.FC<IProps> = ({
-  steps,
-  activeStep,
-  onStepClick,
-  minStep,
-  onReset,
-}) => {
+const Stepper: React.FC<IProps> = ({ steps, activeStep, onStepClick, minStep, onReset }) => {
   return (
     <Root>
       {steps.map((name, step, array) => {
-        const state =
-          step === activeStep
-            ? "current"
-            : step > activeStep
-            ? "next"
-            : "previous";
+        const state = step === activeStep ? "current" : step > activeStep ? "next" : "previous";
         return (
           <React.Fragment key={step + "step-step"}>
             <DesktopStep
@@ -60,13 +48,7 @@ const Stepper: React.FC<IProps> = ({
               state={state}
               index={step}
               key={step + name + "_step"}
-              disabled={
-                activeStep === 3
-                  ? true
-                  : minStep != null
-                  ? minStep < step
-                  : false
-              }
+              disabled={activeStep === 3 ? true : minStep != null ? minStep < step : false}
             />
             {step !== array.length - 1 && (
               <RopeContainer>

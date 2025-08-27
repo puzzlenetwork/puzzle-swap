@@ -31,7 +31,7 @@ const AggregatorHistory: React.FC<IProps> = () => {
       { Header: "Rate", accessor: "rate" },
       { Header: "Account", accessor: "account" },
       { Header: "Pool", accessor: "poolName" },
-      { Header: "Time", accessor: "time" },
+      { Header: "Time", accessor: "time" }
     ],
     []
   );
@@ -48,25 +48,18 @@ const AggregatorHistory: React.FC<IProps> = () => {
                 TOKENS_BY_ASSET_ID[v.payment[0].assetId ?? "WAVES"].decimals
               )}
               token1={TOKENS_BY_ASSET_ID[v.call.args[0].value]}
-              amount1={BN.formatUnits(
-                v.call.args[1].value,
-                TOKENS_BY_ASSET_ID[v.call.args[0].value]?.decimals
-              )}
+              amount1={BN.formatUnits(v.call.args[1].value, TOKENS_BY_ASSET_ID[v.call.args[0].value]?.decimals)}
             />
           ),
           rate: (() => {
             const sIn = TOKENS_BY_ASSET_ID[v.call.args[0].value];
             const sOut = TOKENS_BY_ASSET_ID[v.payment[0].assetId];
-            const amount = BN.formatUnits(
-              new BN(v.call.args[1].value).div(v.payment[0].amount),
-              sIn?.decimals
-            );
+            const amount = BN.formatUnits(new BN(v.call.args[1].value).div(v.payment[0].amount), sIn?.decimals);
             return `1 ${sIn?.symbol} = ${amount.toString()} ${sOut?.symbol}`;
           })(),
           account: <Text type="blue500">{centerEllipsis(v.sender, 6)}</Text>,
-          poolName: poolsStore.pools.find(({ domain }) => v.domain === domain)
-            ?.title,
-          time: (dayjs(v.timestamp) as any).fromNow(),
+          poolName: poolsStore.pools.find(({ domain }) => v.domain === domain)?.title,
+          time: (dayjs(v.timestamp) as any).fromNow()
         };
       })
     );
@@ -74,10 +67,7 @@ const AggregatorHistory: React.FC<IProps> = () => {
   if (tr.length === 0) return null;
   return (
     <Root>
-      <TitleWithTips
-        title="Aggregator trades history"
-        description="Aggregator trades history"
-      />
+      <TitleWithTips title="Aggregator trades history" description="Aggregator trades history" />
       <SizedBox height={8} />
       <Scrollbar style={{ maxWidth: "calc(100vw - 32px)", borderRadius: 16 }}>
         <Table

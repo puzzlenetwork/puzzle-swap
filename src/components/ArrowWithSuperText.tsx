@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import ScalableArrow from './ScalableArrow';
+import React, { useEffect, useRef, useState } from "react";
+import ScalableArrow from "./ScalableArrow";
 
 type ArrowWithSuperTextProps = {
   children: React.ReactNode;
@@ -20,7 +20,14 @@ const ArrowWithSuperText: React.FC<ArrowWithSuperTextProps> = ({ children, color
   const arrowLength = childWidth + 20;
 
   return (
-    <div style={{ display: 'inline-flex', position: 'relative', width: arrowLength, height: 6 }}>
+    <div
+      style={{
+        display: "inline-flex",
+        position: "relative",
+        width: arrowLength,
+        height: 6
+      }}
+    >
       {/* ScalableArrow */}
       <ScalableArrow length={arrowLength} color={color} />
 
@@ -28,10 +35,10 @@ const ArrowWithSuperText: React.FC<ArrowWithSuperTextProps> = ({ children, color
       <div
         ref={ref}
         style={{
-          position: 'absolute',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          bottom: `50%`,
+          position: "absolute",
+          left: "50%",
+          transform: "translateX(-50%)",
+          bottom: `50%`
         }}
       >
         {children}

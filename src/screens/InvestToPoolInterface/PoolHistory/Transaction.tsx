@@ -32,7 +32,7 @@ const Transaction: React.FC<IProps> = ({
   usdtRate,
   payment,
   height,
-  currentHeight,
+  currentHeight
 }) => {
   if (
     ![
@@ -41,17 +41,13 @@ const Transaction: React.FC<IProps> = ({
       "generateIndexAndStake",
       "generateIndexWithOneTokenAndStake",
       "unstakeAndRedeemIndex",
-      "claimIndexRewards",
+      "claimIndexRewards"
     ].some((v) => v === call?.function)
   ) {
     return null;
   }
 
-  if (
-    payment == null ||
-    typeof payment === "undefined" ||
-    payment.length === 0
-  ) {
+  if (payment == null || typeof payment === "undefined" || payment.length === 0) {
     console.log("no payment for transaction", id);
     return null;
   }
@@ -64,8 +60,7 @@ const Transaction: React.FC<IProps> = ({
       case "swapWithReferral":
         const token0 = TOKENS_BY_ASSET_ID[payment[0].assetId ?? "WAVES"];
         const amount0 = new BN(payment[0].amount);
-        const token1 =
-          TOKENS_BY_ASSET_ID[stateChanges.transfers[0]?.asset ?? ""];
+        const token1 = TOKENS_BY_ASSET_ID[stateChanges.transfers[0]?.asset ?? ""];
         const am1 = stateChanges.transfers[0]?.amount;
         const amount1 = new BN(am1);
         amount = token1 != null ? BN.formatUnits(am1, token1?.decimals) : null;
@@ -75,86 +70,60 @@ const Transaction: React.FC<IProps> = ({
         } else {
           amount = null;
         }
-        return amount ? (
-          <Swap
-            token0={token0}
-            amount0={amount0}
-            token1={token1}
-            amount1={amount1}
-          />
-        ) : null;
+        return amount ? <Swap token0={token0} amount0={amount0} token1={token1} amount1={amount1} /> : null;
       case "generateIndexAndStake":
         const addedTokens = payment.map(({ assetId, amount }) => ({
           amount: new BN(amount),
-          ...TOKENS_BY_ASSET_ID[assetId ?? "WAVES"],
+          ...TOKENS_BY_ASSET_ID[assetId ?? "WAVES"]
         }));
-        const totalAddedUsdn = addedTokens.reduce(
-          (acc, { assetId, amount, decimals }) => {
-            const rate = usdtRate(assetId, 1) ?? BN.ZERO;
-            const am = BN.formatUnits(amount, decimals);
-            return acc.plus(am.times(rate));
-          },
-          BN.ZERO
-        );
+        const totalAddedUsdn = addedTokens.reduce((acc, { assetId, amount, decimals }) => {
+          const rate = usdtRate(assetId, 1) ?? BN.ZERO;
+          const am = BN.formatUnits(amount, decimals);
+          return acc.plus(am.times(rate));
+        }, BN.ZERO);
         amount = totalAddedUsdn;
         return <PoolAction tokens={addedTokens} action="add" />;
       case "generateIndexWithOneTokenAndStake":
         const oneToken = {
           amount: new BN(payment[0].amount),
-          ...TOKENS_BY_ASSET_ID[payment[0].assetId ?? "WAVES"],
+          ...TOKENS_BY_ASSET_ID[payment[0].assetId ?? "WAVES"]
         };
         const am = BN.formatUnits(oneToken.amount, oneToken.decimals);
         const rate = usdtRate(oneToken.assetId, 1) ?? BN.ZERO;
         amount = am.times(rate);
         return <PoolAction tokens={[oneToken]} action="add" />;
       case "unstakeAndRedeemIndex":
-        const removedTokens =
-          stateChanges.invokes[1].stateChanges.transfers.map(
-            ({ asset, amount }) => ({
-              amount: new BN(amount),
-              ...TOKENS_BY_ASSET_ID[asset ?? "WAVES"],
-            })
-          );
-        const totalRemovedTokenUsdn = removedTokens.reduce(
-          (acc, { assetId, amount, decimals }) => {
-            const tokenAmount = BN.formatUnits(amount, decimals);
-            const rate = usdtRate(assetId, 1) ?? BN.ZERO;
-            return acc.plus(rate.times(tokenAmount));
-          },
-          BN.ZERO
-        );
+        const removedTokens = stateChanges.invokes[1].stateChanges.transfers.map(({ asset, amount }) => ({
+          amount: new BN(amount),
+          ...TOKENS_BY_ASSET_ID[asset ?? "WAVES"]
+        }));
+        const totalRemovedTokenUsdn = removedTokens.reduce((acc, { assetId, amount, decimals }) => {
+          const tokenAmount = BN.formatUnits(amount, decimals);
+          const rate = usdtRate(assetId, 1) ?? BN.ZERO;
+          return acc.plus(rate.times(tokenAmount));
+        }, BN.ZERO);
         amount = totalRemovedTokenUsdn;
         return <PoolAction tokens={removedTokens} action="remove" />;
       case "claimIndexRewards":
-        const claimedTokens = stateChanges.transfers.map(
-          ({ asset, amount }) => ({
-            amount: new BN(amount),
-            ...TOKENS_BY_ASSET_ID[asset ?? "WAVES"],
-          })
-        );
-        const totalClaimedUsdn = claimedTokens.reduce(
-          (acc, { assetId, amount, decimals }) => {
-            const rate = usdtRate(assetId, 1) ?? BN.ZERO;
-            const am = BN.formatUnits(amount, decimals);
-            return acc.plus(rate.times(am));
-          },
-          BN.ZERO
-        );
+        const claimedTokens = stateChanges.transfers.map(({ asset, amount }) => ({
+          amount: new BN(amount),
+          ...TOKENS_BY_ASSET_ID[asset ?? "WAVES"]
+        }));
+        const totalClaimedUsdn = claimedTokens.reduce((acc, { assetId, amount, decimals }) => {
+          const rate = usdtRate(assetId, 1) ?? BN.ZERO;
+          const am = BN.formatUnits(amount, decimals);
+          return acc.plus(rate.times(am));
+        }, BN.ZERO);
         amount = totalClaimedUsdn;
         return <PoolAction tokens={claimedTokens} action="claim" />;
       default:
         return null;
     }
   };
-  const minutes =
-    currentHeight == null ? 0 : new BN(currentHeight).minus(height).toNumber();
+  const minutes = currentHeight == null ? 0 : new BN(currentHeight).minus(height).toNumber();
   const details = draw();
   return details != null ? (
-    <Root
-      className="gridRow"
-      alignItems="center"
-      onClick={() => window.open(`${EXPLORER_URL}/transactions/${id}`)}
-    >
+    <Root className="gridRow" alignItems="center" onClick={() => window.open(`${EXPLORER_URL}/transactions/${id}`)}>
       <Row alignItems="center">{details}</Row>
       <Text fitContent nowrap>
         ${amount.isNaN() ? "0.00" : +amount?.toFormat(2)}

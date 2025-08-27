@@ -33,11 +33,7 @@ const LimitOrders: React.FC<IProps> = ({ ...rest }) => {
   const vm = useLimitOrdersVM();
   return (
     <Root {...rest}>
-      <Card
-        style={{ position: "relative" }}
-        paddingDesktop="16px 24px"
-        paddingMobile="16px"
-      >
+      <Card style={{ position: "relative" }} paddingDesktop="16px 24px" paddingMobile="16px">
         <SettingsHeader />
         <Tokens />
         <SizedBox height={16} />
@@ -59,10 +55,7 @@ const LimitOrders: React.FC<IProps> = ({ ...rest }) => {
         style={{ maxWidth: 360 }}
         visible={vm.notificationParams != null}
       />
-      <OrderDetailsModal
-        visible={vm.orderToDisplayDetails != null}
-        onClose={() => vm.setOrderToDisplayDetails(null)}
-      />
+      <OrderDetailsModal visible={vm.orderToDisplayDetails != null} onClose={() => vm.setOrderToDisplayDetails(null)} />
     </Root>
   );
 };

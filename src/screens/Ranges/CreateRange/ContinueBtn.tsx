@@ -27,25 +27,23 @@ const ContinueBtn: React.FC = () => {
 
   switch (vm.step) {
     case 0:
-      const stringShare = vm.totalTakenShare.div(10).toFormat(1);
+      const stringShare = vm.totalTokenShare.div(10).toFormat(1);
       return (
         <Button onClick={() => handleContinue(1)} fixed disabled={!vm.correct0}>
           {vm.rangeAssets.length === 1 && "Select assets"}
           {vm.rangeAssets.length > 1 &&
-            (vm.totalTakenShare.eq(1000)
-              ? "Continue"
-              : `Total share should be 100%, now ${stringShare}%`)}
+            (vm.totalTokenShare.eq(1000) ? "Continue" : `Total share should be 100%, now ${stringShare}%`)}
         </Button>
       );
     case 1:
       return (
-        <Button onClick={() => handleContinue(2)} fixed disabled={!vm.correct1}>
-          {vm.correct1 ? "Continue" : "Fill in all fields"}
+        <Button onClick={vm.createRange} fixed disabled={!vm.correct1}>
+          {vm.correct1 ? "Deploy Smart Contract" : (vm.titleCorrect ? "Fill in all fields" : vm.hasTitle ? "Invalid title" : "Enter the title")}
         </Button>
       );
     case 2:
       return (
-        <Button onClick={vm.provideLiquidityToPool} fixed disabled={!vm.correct2}>
+        <Button onClick={vm.provideLiquidityToRange} fixed disabled={!vm.correct2}>
           {vm.correct2 ? "Continue" : "Enter the amount to provide"}
         </Button>
       );

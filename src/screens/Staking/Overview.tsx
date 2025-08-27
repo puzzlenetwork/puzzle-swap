@@ -1,16 +1,13 @@
-import styled from "@emotion/styled";
-import React from "react";
-import Text from "@components/Text";
 import Card from "@components/Card";
 import SizedBox from "@components/SizedBox";
-import { Column } from "@src/components/Flex";
-import { observer } from "mobx-react-lite";
+import Text from "@components/Text";
+import styled from "@emotion/styled";
 import { useStakingVM } from "@screens/Staking/StakingVM";
-import Skeleton from "react-loading-skeleton";
+import { Column } from "@src/components/Flex";
 import { useStores } from "@stores";
-import { Line, LineChart, Tooltip, XAxis } from "recharts";
-import dayjs from "dayjs";
-import BN from "@src/utils/BN";
+import { observer } from "mobx-react-lite";
+import React from "react";
+import Skeleton from "react-loading-skeleton";
 
 const Root = styled.div`
   display: flex;
@@ -31,11 +28,11 @@ const Overview: React.FC = () => {
   const vm = useStakingVM();
   const { stakeStore } = useStores();
 
-  const data = [
-    { date: 123001230, value: 1000 },
-    { date: 123005230, value: 1000 },
-    { date: 123005230, value: 1000 },
-  ];
+  // const data = [
+  //   { date: 123001230, value: 1000 },
+  //   { date: 123005230, value: 1000 },
+  //   { date: 123005230, value: 1000 }
+  // ];
 
   return (
     <Root>
@@ -66,9 +63,7 @@ const Overview: React.FC = () => {
             ) : vm.shareOfTotalStake.eq(0) ? (
               "0.00 %"
             ) : (
-              vm.shareOfTotalStake
-                .toFormat(vm.shareOfTotalStake.lte(0.01) ? 6 : 2)
-                .concat(" %")
+              vm.shareOfTotalStake.toFormat(vm.shareOfTotalStake.lte(0.01) ? 6 : 2).concat(" %")
             )}
           </Text>
         </Column>

@@ -13,52 +13,47 @@ interface IProps {
   rangeAddress: string;
 }
 
-export const TradeInRangeVMProvider: React.FC<IProps> = ({
-  rangeAddress,
-  children,
-}) => {
+export const TradeInRangeVMProvider: React.FC<IProps> = ({ rangeAddress, children }) => {
   const rootStore = useStores();
-  const store = useMemo(
-    () => new TradeInRangeVM(rootStore, rangeAddress),
-    [rootStore, rangeAddress]
-  );
+  const store = useMemo(() => new TradeInRangeVM(rootStore, rangeAddress), [rootStore, rangeAddress]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
 
 export const useTradeInRangeVM = () => useVM(ctx);
 
 class TradeInRangeVM {
-  constructor(
-    private rootStore: RootStore,
-    public readonly rangeAddress: string
-  ) {
+  constructor(private rootStore: RootStore, public readonly rangeAddress: string) {
     makeAutoObservable(this);
     when(
-      () => this.defaultAssetId0 != null && this.defaultAssetId1 != null,
+      () => this.range != null && this.defaultAssetId0 != null && this.defaultAssetId1 != null,
       () => {
-        this.setAssetId0(this.defaultAssetId0);
-        this.setAssetId1(this.defaultAssetId1);
+        this.setAssetId0(this.defaultAssetId0!);
+        this.setAssetId1(this.defaultAssetId1!);
       }
     );
   }
 
   public get range() {
-    return this.rootStore.rangesStore.getRangeByAddress(this.rangeAddress)!;
+    return this.rootStore.rangesStore.getRangeByAddress(this.rangeAddress);
   }
 
   public get defaultAssetId0() {
-    return this.range.baseTokenId;
+    return this.range?.baseTokenId;
   }
 
   public get defaultAssetId1() {
-    return this.range.assets[1].assetId;
+    return this.range?.assets[1].assetId;
   }
 
   assetId0: string = "";
   setAssetId0 = (assetId: string) => (this.assetId0 = assetId);
 
   get token0() {
-    return { ...TOKENS_BY_ASSET_ID[this.assetId0], ...this.range.assets.find(({ assetId }) => assetId === this.assetId0) };
+    if (!this.range) return null;
+    return {
+      ...TOKENS_BY_ASSET_ID[this.assetId0],
+      ...this.range.assets.find(({ assetId }) => assetId === this.assetId0)
+    };
   }
 
   get balance0() {
@@ -67,9 +62,7 @@ class TradeInRangeVM {
 
   get amount0MaxClickFunc(): (() => void) | undefined {
     const { token0, balance0 } = this;
-    return token0 != null && balance0 != null
-      ? () => this.setAmount0(balance0)
-      : undefined;
+    return token0 != null && balance0 != null ? () => this.setAmount0(balance0) : undefined;
   }
 
   amount0: BN = BN.ZERO;
@@ -82,16 +75,13 @@ class TradeInRangeVM {
     const { token0 } = this;
     const usdtRate = this.rootStore.poolsStore.usdtRate(this.assetId0, 1);
     if (token0 == null || usdtRate == null) return "—";
-    const result = usdtRate.times(
-      BN.formatUnits(this.amount0, token0.decimals)
-    );
+    const result = usdtRate.times(BN.formatUnits(this.amount0, token0.decimals));
     if (!result.gt(0)) return "—";
-    return `~ ${usdtRate
-      .times(BN.formatUnits(this.amount0, token0.decimals))
-      .toFormat(2)} $`;
+    return `~ ${usdtRate.times(BN.formatUnits(this.amount0, token0.decimals)).toFormat(2)} $`;
   }
 
   get liquidityOfToken0() {
+    if (!this.range) return null;
     return this.range.assets.find(({ assetId }) => assetId === this.assetId0)?.balance ?? BN.ZERO;
   }
 
@@ -99,24 +89,28 @@ class TradeInRangeVM {
   setAssetId1 = (assetId: string) => (this.assetId1 = assetId);
 
   get token1() {
-    return { ...TOKENS_BY_ASSET_ID[this.assetId1], ...this.range.assets.find(({ assetId }) => assetId === this.assetId1) };
+    if (!this.range) return null;
+    return {
+      ...TOKENS_BY_ASSET_ID[this.assetId1],
+      ...this.range.assets.find(({ assetId }) => assetId === this.assetId1)
+    };
   }
 
   get liquidityOfToken1() {
+    if (!this.range) return null;
     return this.range.assets.find(({ assetId }) => assetId === this.assetId1)?.balance ?? BN.ZERO;
   }
 
   get rate() {
-    return (
-      this.liquidityOfToken1.div(this.token1?.share ?? 1)
-      .div(this.liquidityOfToken0.div(this.token0?.share ?? 1))
-    );
+    return this.liquidityOfToken1
+      ?.div(this.token1?.share ?? 1)
+      .div(this.liquidityOfToken0?.div(this.token0?.share ?? 1) || 1);
   }
 
   get priceImpact() {
     //100 * (Price(0,1) / (Amount0/Amount1))
     const rate = this.rate;
-    if (this.token1 == null || this.token0 == null || rate.eq(BN.ZERO)) {
+    if (this.token1 == null || this.token0 == null || !rate || rate.eq(BN.ZERO)) {
       return null;
     }
     const amount0 = BN.formatUnits(this.amount0, this.token0.decimals);
@@ -152,7 +146,7 @@ class TradeInRangeVM {
   get amount1() {
     const { liquidityOfToken0: l0, liquidityOfToken1: l1 } = this;
     const { token1, token0, amount0 } = this;
-    if (l0 == null || l1 == null || token1.share == null || token0.share == null) {
+    if (!this.range || l0 == null || l1 == null || token1?.share == null || token0?.share == null) {
       return BN.ZERO;
     }
     const share0 = new BN(token0.share);
@@ -163,12 +157,7 @@ class TradeInRangeVM {
       const base = l0.div(l0.plus(BN.formatUnits(amount0, token0.decimals))).toNumber();
       const rightPart = new BN(1).minus(Math.pow(base, power));
 
-      return BN.parseUnits(
-        l1
-          .times(rightPart)
-          .times(new BN(100).minus(this.range.swapFee).div(100)),
-        token1.decimals
-      );
+      return BN.parseUnits(l1.times(rightPart).times(new BN(100).minus(this.range.swapFee).div(100)), token1.decimals);
     } catch (e) {
       return BN.ZERO;
     }
@@ -178,20 +167,13 @@ class TradeInRangeVM {
     const { token1 } = this;
     const usdtRate = this.rootStore.poolsStore.usdtRate(this.assetId1, 1);
     if (token1 == null || usdtRate == null) return "—";
-    const result = usdtRate.times(
-      BN.formatUnits(this.amount1, token1.decimals)
-    );
+    const result = usdtRate.times(BN.formatUnits(this.amount1, token1.decimals));
     if (!result.gt(0)) return "—";
-    return `~ ${usdtRate
-      .times(BN.formatUnits(this.amount1, token1.decimals))
-      .toFormat(2)} $`;
+    return `~ ${usdtRate.times(BN.formatUnits(this.amount1, token1.decimals)).toFormat(2)} $`;
   }
 
   get minimumToReceive(): BN {
-    const slippage =
-      JSON.parse(
-        localStorage.getItem("puzzle-user-settings") || '{"slippage": 1}'
-      )?.slippage || 1;
+    const slippage = JSON.parse(localStorage.getItem("puzzle-user-settings") || '{"slippage": 1}')?.slippage || 1;
     return this.amount1.times(new BN(100 - slippage).div(100));
   }
 
@@ -206,10 +188,9 @@ class TradeInRangeVM {
         dApp: this.rangeAddress,
         payment: [
           {
-            assetId:
-              this.token0.assetId === "WAVES" ? null : this.token0.assetId,
-            amount: this.amount0.toString(),
-          },
+            assetId: this.token0.assetId === "WAVES" ? null : this.token0.assetId,
+            amount: this.amount0.toString()
+          }
         ],
         call: {
           function: "swap",
@@ -217,26 +198,23 @@ class TradeInRangeVM {
             { type: "string", value: this.token1.assetId },
             {
               type: "integer",
-              value: this.minimumToReceive.toFixed(0).toString(),
-            },
-          ],
-        },
+              value: this.minimumToReceive.toFixed(0).toString()
+            }
+          ]
+        }
       })
       .then((txId) => {
-        notificationStore.notify(
-          "You can view the details of it in Waves Explorer",
-          {
-            type: "success",
-            title: "Transaction is completed",
-            link: `${EXPLORER_URL}/transactions/${txId}`,
-            linkTitle: "View on Explorer",
-          }
-        );
+        notificationStore.notify("You can view the details of it in explorer", {
+          type: "success",
+          title: "Transaction is completed",
+          link: `${EXPLORER_URL}/transactions/${txId}`,
+          linkTitle: "View on Explorer"
+        });
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
-          type: "error",
-          title: "Transaction is not completed",
+          type: "warning",
+          title: "Transaction is not completed"
         });
       })
       .finally(() => this._setLoading(false));

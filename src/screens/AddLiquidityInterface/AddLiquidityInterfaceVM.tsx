@@ -8,7 +8,7 @@ import {
   buildErrorDialogParams,
   buildSuccessLiquidityDialogParams,
   buildWarningLiquidityDialogParams,
-  IDialogNotificationProps,
+  IDialogNotificationProps
 } from "@components/Dialog/DialogNotification";
 import Pool from "@src/entities/Pool";
 
@@ -19,15 +19,9 @@ interface IProps {
   poolDomain: string;
 }
 
-export const AddLiquidityInterfaceVMProvider: React.FC<IProps> = ({
-  poolDomain,
-  children,
-}) => {
+export const AddLiquidityInterfaceVMProvider: React.FC<IProps> = ({ poolDomain, children }) => {
   const rootStore = useStores();
-  const store = useMemo(
-    () => new AddLiquidityInterfaceVM(rootStore, poolDomain),
-    [rootStore, poolDomain]
-  );
+  const store = useMemo(() => new AddLiquidityInterfaceVM(rootStore, poolDomain), [rootStore, poolDomain]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
 
@@ -40,19 +34,16 @@ class AddLiquidityInterfaceVM {
   public setBaseTokenAmount = (value: BN) => (this.baseTokenAmount = value);
 
   public changePoolModalOpen: boolean = false;
-  setChangePoolModalOpen = (value: boolean) =>
-    (this.changePoolModalOpen = value);
+  setChangePoolModalOpen = (value: boolean) => (this.changePoolModalOpen = value);
 
   loading: boolean = false;
   private _setLoading = (l: boolean) => (this.loading = l);
 
   public notificationParams: IDialogNotificationProps | null = null;
-  public setNotificationParams = (params: IDialogNotificationProps | null) =>
-    (this.notificationParams = params);
+  public setNotificationParams = (params: IDialogNotificationProps | null) => (this.notificationParams = params);
 
   providedPercentOfPool: BN = new BN(50);
-  setProvidedPercentOfPool = (value: number | number[]) =>
-    (this.providedPercentOfPool = new BN(value.toString()));
+  setProvidedPercentOfPool = (value: number | number[]) => (this.providedPercentOfPool = new BN(value.toString()));
 
   private _pool: Pool | null = null;
   private _setPool = (pool: Pool) => (this._pool = pool);
@@ -70,9 +61,7 @@ class AddLiquidityInterfaceVM {
     when(
       () => this.rootStore.poolsStore.customPools.length > 0,
       () => {
-        const pool = this.rootStore.poolsStore.customPools.find(
-          ({ domain }) => domain === this.poolDomain
-        );
+        const pool = this.rootStore.poolsStore.customPools.find(({ domain }) => domain === this.poolDomain);
         pool && this._setPool(pool);
         this.setInitialized(true);
       }
@@ -106,9 +95,7 @@ class AddLiquidityInterfaceVM {
     return BN.min(
       ...this.pool.tokens.map(({ assetId }) => {
         const asset = this.rootStore.accountStore.findBalanceByAssetId(assetId);
-        return this.pool!.globalPoolTokenAmount.times(
-          asset?.balance ?? BN.ZERO
-        ).div(this.pool!.liquidity[assetId]);
+        return this.pool!.globalPoolTokenAmount.times(asset?.balance ?? BN.ZERO).div(this.pool!.liquidity[assetId]);
       })
     );
   }
@@ -127,9 +114,7 @@ class AddLiquidityInterfaceVM {
     const balances = accountStore.assetBalances.filter((balance) =>
       this.pool!.tokens.some((t) => t.assetId === balance.assetId)
     );
-    return balances.sort((a, b) =>
-      a.usdnEquivalent!.gt(b.usdnEquivalent!) ? 1 : -1
-    )[0];
+    return balances.sort((a, b) => (a.usdnEquivalent!.gt(b.usdnEquivalent!) ? 1 : -1))[0];
   }
 
   get zeroAssetBalances(): number | null {
@@ -145,11 +130,8 @@ class AddLiquidityInterfaceVM {
     if (this.pool == null) return null;
 
     return this.pool.tokens.reduce<Record<string, BN>>((acc, { assetId }) => {
-      const tokenBalance =
-        (this.pool && this.pool.liquidity[assetId]) ?? BN.ZERO;
-      const dk = this.pool!.globalPoolTokenAmount.plus(
-        this.minPIssued ?? BN.ZERO
-      )
+      const tokenBalance = (this.pool && this.pool.liquidity[assetId]) ?? BN.ZERO;
+      const dk = this.pool!.globalPoolTokenAmount.plus(this.minPIssued ?? BN.ZERO)
         .div(this.pool!.globalPoolTokenAmount)
         .minus(new BN(1))
         .times(tokenBalance)
@@ -157,15 +139,14 @@ class AddLiquidityInterfaceVM {
         .times(0.01);
       return {
         ...acc,
-        [assetId]: dk,
+        [assetId]: dk
       };
     }, {});
   }
 
   get baseTokenAmountUsdnEquivalent() {
     if (this.baseToken == null) return "";
-    const rate =
-      this.rootStore.poolsStore.usdtRate(this.baseToken.assetId, 1) ?? BN.ZERO;
+    const rate = this.rootStore.poolsStore.usdtRate(this.baseToken.assetId, 1) ?? BN.ZERO;
     const value = rate.times(this.baseTokenAmount);
     return "~ " + BN.formatUnits(value, this.baseToken.decimals).toFixed(2);
   }
@@ -174,24 +155,16 @@ class AddLiquidityInterfaceVM {
     const tokensToDepositAmounts = this.tokensToDepositAmounts;
     if (tokensToDepositAmounts == null || this.pool == null) return null;
     const total = this.pool.tokens.reduce<BN>((acc, token) => {
-      const rate =
-        this.rootStore.poolsStore.usdtRate(token.assetId, 1) ?? BN.ZERO;
+      const rate = this.rootStore.poolsStore.usdtRate(token.assetId, 1) ?? BN.ZERO;
       const balance = tokensToDepositAmounts[token.assetId];
-      const usdnEquivalent = BN.formatUnits(
-        balance.times(rate),
-        token.decimals
-      );
+      const usdnEquivalent = BN.formatUnits(balance.times(rate), token.decimals);
       return acc.plus(usdnEquivalent);
     }, BN.ZERO);
-    return !total.isNaN()
-      ? "$ " + total.toFormat(total?.toNumber() > 0.001 ? 2 : 4)
-      : null;
+    return !total.isNaN() ? "$ " + total.toFormat(total?.toNumber() > 0.001 ? 2 : 4) : null;
   }
 
   get baseTokenBalance() {
-    return this.rootStore.accountStore.findBalanceByAssetId(
-      this.baseToken.assetId
-    );
+    return this.rootStore.accountStore.findBalanceByAssetId(this.baseToken.assetId);
   }
 
   get canDepositBaseToken(): boolean {
@@ -204,8 +177,7 @@ class AddLiquidityInterfaceVM {
   depositMultiply = async () => {
     const { accountStore } = this.rootStore;
     if (this.pool?.address == null) return;
-    if (this.tokensToDepositAmounts == null || this.pool.layer2Address == null)
-      return;
+    if (this.tokensToDepositAmounts == null || this.pool.layer2Address == null) return;
     this._setLoading(true);
     this.setNotificationParams(null);
     const payment = Object.entries(this.tokensToDepositAmounts).reduce(
@@ -213,8 +185,8 @@ class AddLiquidityInterfaceVM {
         ...acc,
         {
           assetId: assetId === "WAVES" ? null : assetId,
-          amount: value.toSignificant(0).toString(),
-        },
+          amount: value.toSignificant(0).toString()
+        }
       ],
       [] as Array<{ assetId: string | null; amount: string }>
     );
@@ -225,10 +197,8 @@ class AddLiquidityInterfaceVM {
         payment,
         call: {
           function: "generateIndexAndStake",
-          args: this.pool.isCustom
-            ? [{ type: "string", value: this.pool.address }]
-            : [],
-        },
+          args: this.pool.isCustom ? [{ type: "string", value: this.pool.address }] : []
+        }
       })
       .then((txId) => {
         txId &&
@@ -236,7 +206,7 @@ class AddLiquidityInterfaceVM {
             buildSuccessLiquidityDialogParams({
               accountStore,
               poolDomain: this.poolDomain,
-              txId: txId,
+              txId: txId
             })
           );
       })
@@ -246,7 +216,7 @@ class AddLiquidityInterfaceVM {
           buildErrorDialogParams({
             title: "Transaction is not completed",
             description: e.message ?? JSON.stringify(e),
-            onTryAgain: this.depositMultiply,
+            onTryAgain: this.depositMultiply
           })
         );
       })
@@ -256,18 +226,13 @@ class AddLiquidityInterfaceVM {
 
   onMaxBaseTokenClick = () => {
     const userTokenBalance = this.baseTokenBalance;
-    userTokenBalance &&
-      userTokenBalance.balance &&
-      this.setBaseTokenAmount(userTokenBalance.balance);
+    userTokenBalance && userTokenBalance.balance && this.setBaseTokenAmount(userTokenBalance.balance);
   };
 
   showHighSlippageWarning = () => {
     const slippagePercent = this.baseTokenSlippage;
     const { baseToken, baseTokenAmount } = this;
-    const slippage = BN.formatUnits(
-      baseTokenAmount.times(slippagePercent),
-      baseToken.decimals
-    ).toFormat(2);
+    const slippage = BN.formatUnits(baseTokenAmount.times(slippagePercent), baseToken.decimals).toFormat(2);
     const formatSlippagePercent = slippagePercent.times(100).toFormat(2);
     this.setNotificationParams(
       buildWarningLiquidityDialogParams({
@@ -275,25 +240,20 @@ class AddLiquidityInterfaceVM {
         description: `You might lose up to ${slippage} ${baseToken.symbol} (${formatSlippagePercent} % of the total amount) on this operation due to slippage. We recommend to cancel this operation and use several transactions to split your deposit to smaller parts.`,
         onContinue: this.depositBaseToken,
         continueText: "Add liquidity",
-        onCancel: () => this.setNotificationParams(null),
+        onCancel: () => this.setNotificationParams(null)
       })
     );
   };
 
   get baseTokenSlippage(): BN {
     const { pool, baseToken } = this;
-    if (pool == null || pool.liquidity == null || baseToken == null)
-      return BN.ZERO;
+    if (pool == null || pool.liquidity == null || baseToken == null) return BN.ZERO;
     const liquidity = pool.liquidity[this.baseToken.assetId];
     return new BN(1).minus(liquidity.div(liquidity.plus(this.baseTokenAmount)));
   }
 
   depositBaseToken = async () => {
-    if (
-      this.pool?.address == null ||
-      this.pool.layer2Address == null ||
-      !this.canDepositBaseToken
-    ) {
+    if (this.pool?.address == null || this.pool.layer2Address == null || !this.canDepositBaseToken) {
       this.setNotificationParams(null);
       return;
     }
@@ -306,15 +266,13 @@ class AddLiquidityInterfaceVM {
         payment: [
           {
             assetId: this.baseToken.assetId,
-            amount: this.baseTokenAmount.toString(),
-          },
+            amount: this.baseTokenAmount.toString()
+          }
         ],
         call: {
           function: "generateIndexWithOneTokenAndStake",
-          args: this.pool.isCustom
-            ? [{ type: "string", value: this.pool.address }]
-            : [],
-        },
+          args: this.pool.isCustom ? [{ type: "string", value: this.pool.address }] : []
+        }
       })
       .then((txId) => {
         txId &&
@@ -322,7 +280,7 @@ class AddLiquidityInterfaceVM {
             buildSuccessLiquidityDialogParams({
               accountStore,
               poolDomain: this.poolDomain,
-              txId: txId ?? "",
+              txId: txId ?? ""
             })
           );
       })
@@ -331,7 +289,7 @@ class AddLiquidityInterfaceVM {
           buildErrorDialogParams({
             title: "Transaction is not completed",
             description: e.message + ` ${e.data}` ?? JSON.stringify(e),
-            onTryAgain: this.depositBaseToken,
+            onTryAgain: this.depositBaseToken
           })
         );
       })

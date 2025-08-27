@@ -73,13 +73,10 @@ const nodeService = {
     const { data } = await makeNodeRequest(url);
     return data;
   },
-  evaluate: async (
-    address: string,
-    expression: string
-  ): Promise<IEvaluateScript> => {
+  evaluate: async (address: string, expression: string): Promise<IEvaluateScript> => {
     const url = `/utils/script/evaluate/${address}`;
     const { data } = await makeNodeRequest(url, {
-      postData: { expr: expression },
+      postData: { expr: expression }
     });
     return data;
   },
@@ -96,24 +93,16 @@ const nodeService = {
       await Promise.all([
         makeNodeRequest(assetsUrl).then(({ data }) => data),
         makeNodeRequest(wavesUrl).then(({ data }) => ({
-          balances: [{ balance: data.available, assetId: "WAVES" }],
-        })),
+          balances: [{ balance: data.available, assetId: "WAVES" }]
+        }))
       ])
-    ).reduce<{ assetId: string; balance: number }[]>(
-      (acc, { balances }) => [...acc, ...balances],
-      []
-    );
+    ).reduce<{ assetId: string; balance: number }[]>((acc, { balances }) => [...acc, ...balances], []);
   },
-  nodeKeysRequest: async (
-    contract: string,
-    keys: string[] | string
-  ): Promise<INodeData[]> => {
+  nodeKeysRequest: async (contract: string, keys: string[] | string): Promise<INodeData[]> => {
     const searchKeys = typeof keys === "string" ? [keys] : keys;
     const search = new URLSearchParams(searchKeys?.map((s) => ["key", s]));
     const keysArray = search.toString();
-    const response = await makeNodeRequest(
-      `/addresses/data/${contract}?${keysArray}`
-    );
+    const response = await makeNodeRequest(`/addresses/data/${contract}?${keysArray}`);
     if (response.data) {
       return response.data;
     } else {
@@ -121,19 +110,14 @@ const nodeService = {
     }
   },
   getNFTPictures: async (): Promise<INodeData[]> => {
-    const response = await makeNodeRequest(
-      `/addresses/data/${CONTRACT_ADDRESSES.nfts}?matches=nft_(.*)_image`
-    );
+    const response = await makeNodeRequest(`/addresses/data/${CONTRACT_ADDRESSES.nfts}?matches=nft_(.*)_image`);
     if (response.data) {
       return response.data;
     } else {
       return [];
     }
   },
-  nodeMatchRequest: async (
-    contract: string,
-    match: string
-  ): Promise<INodeData[]> => {
+  nodeMatchRequest: async (contract: string, match: string): Promise<INodeData[]> => {
     const url = `/addresses/data/${contract}?matches=${match}`;
     const response: { data: INodeData[] } = await makeNodeRequest(url);
     if (response.data) {
@@ -151,18 +135,12 @@ const nodeService = {
       return null;
     }
   },
-  transactions: async (
-    address: string,
-    limit = 10,
-    after?: string
-  ): Promise<ITransaction[] | null> => {
+  transactions: async (address: string, limit = 10, after?: string): Promise<ITransaction[] | null> => {
     const urlSearchParams = new URLSearchParams();
     if (after != null) {
       urlSearchParams.set("after", after);
     }
-    const url = `/transactions/address/${address}/limit/${limit}?${
-      after != null ? urlSearchParams.toString() : ""
-    }`;
+    const url = `/transactions/address/${address}/limit/${limit}?${after != null ? urlSearchParams.toString() : ""}`;
     const response: { data: [ITransaction[]] } = await makeNodeRequest(url);
     if (response.data[0]) {
       return response.data[0];
@@ -178,7 +156,7 @@ const nodeService = {
     } else {
       return null;
     }
-  },
+  }
 };
 
 export default nodeService;

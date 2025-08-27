@@ -4,13 +4,7 @@ import Text from "@components/Text";
 import Card from "@components/Card";
 import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
-import {
-  Line,
-  LineChart,
-  Tooltip as RechartsTooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Line, LineChart, Tooltip as RechartsTooltip, XAxis, YAxis } from "recharts";
 import useWindowSize from "@src/hooks/useWindowSize";
 import dayjs from "dayjs";
 import { Row } from "@src/components/Flex";
@@ -121,7 +115,7 @@ const ageButtons = [
   { title: "1M", value: "1m" },
   { title: "3M", value: "3m" },
   { title: "1Y", value: "1y" },
-  { title: "All", value: "all" },
+  { title: "All", value: "all" }
 ];
 const PriceChart: React.FC<IProps> = () => {
   const vm = useOldExploreVM();
@@ -133,11 +127,7 @@ const PriceChart: React.FC<IProps> = () => {
     <Root>
       <TitleWrapper>
         <TitleWithTips
-          title={
-            vm.asset?.symbol != null
-              ? `${vm.asset?.symbol} price chart`
-              : "Price chart"
-          }
+          title={vm.asset?.symbol != null ? `${vm.asset?.symbol} price chart` : "Price chart"}
           description=" Base token is used to provide liquidity with single asset. Also most of the LP rewards will be accumulated in this token."
         />
         <ChartAgeButtonsWrapper>
@@ -145,9 +135,7 @@ const PriceChart: React.FC<IProps> = () => {
             <ChartAgeButton
               key={value}
               selected={vm.selectedChartPeriod === value}
-              onClick={() =>
-                vm.setSelectedChartPeriod(value as keyof TChartDataRecord)
-              }
+              onClick={() => vm.setSelectedChartPeriod(value as keyof TChartDataRecord)}
             >
               {title}
             </ChartAgeButton>
@@ -178,16 +166,10 @@ const PriceChart: React.FC<IProps> = () => {
               formatter={(value) => "$ " + new BN(`${value}`).toFormat(2)}
               contentStyle={{
                 border: "none",
-                filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))",
+                filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))"
               }}
             />
-            <Line
-              dot={false}
-              type="monotone"
-              dataKey="volume"
-              stroke="#7075E9"
-              strokeWidth={2}
-            />
+            <Line dot={false} type="monotone" dataKey="volume" stroke="#7075E9" strokeWidth={2} />
           </LineChart>
         </StyledCard>
       )}

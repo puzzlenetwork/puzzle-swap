@@ -24,10 +24,7 @@ const Root = styled.div`
 
 const DetailsButton: React.FC<IProps> = ({ children, ...rest }) => {
   return (
-    <Tooltip
-      config={{ placement: "bottom-end", trigger: "click" }}
-      content={<div>{children}</div>}
-    >
+    <Tooltip config={{ placement: "bottom-end", trigger: "click" }} content={<div>{children}</div>}>
       <Root {...rest}>
         <img src={dots} alt="dots" />
       </Root>

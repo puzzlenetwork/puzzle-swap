@@ -72,9 +72,7 @@ const Footer: React.FC<IProps> = () => {
           <Text
             secondary
             onClick={() => {
-              accountStore.address == null
-                ? accountStore.setLoginModalOpened(true)
-                : accountStore.logout();
+              accountStore.address == null ? accountStore.setLoginModalOpened(true) : accountStore.logout();
             }}
           >
             {accountStore.address == null ? "Login" : "Logout"}

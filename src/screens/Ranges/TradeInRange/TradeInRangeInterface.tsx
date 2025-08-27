@@ -1,29 +1,27 @@
-import styled from "@emotion/styled";
-import React, { useEffect, useMemo } from "react";
-import SizedBox from "@components/SizedBox";
-import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
-import { Row } from "@components/Flex";
-import SwapDetailRow from "@components/SwapDetailRow";
 import Card from "@components/Card";
-import Details from "./Details";
-import Tooltip from "@components/Tooltip";
-import {
-  TradeInRangeVMProvider,
-  useTradeInRangeVM,
-} from "./TradeInRangeVM";
-import { observer } from "mobx-react-lite";
-import Text from "@components/Text";
-import SwapButton from "./SwapButton";
-import TooltipFeeInfo from "./TooltipFeeInfo";
-import BN from "@src/utils/BN";
-import Layout from "@components/Layout";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
-import TokenInput from "@src/components/TokenInput";
-import Loading from "@components/Loading";
-import { ROUTES, TOKENS_BY_ASSET_ID } from "@src/constants";
-import { useStores } from "@stores";
 import Divider from "@components/Divider";
+import { Row } from "@components/Flex";
+import Layout from "@components/Layout";
+import Loading from "@components/Loading";
+import SizedBox from "@components/SizedBox";
+import SwapDetailRow from "@components/SwapDetailRow";
+import Text from "@components/Text";
+import Tooltip from "@components/Tooltip";
+import styled from "@emotion/styled";
+import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
+import TokenInput from "@src/components/TokenInput";
+import { TOKENS_BY_ASSET_ID } from "@src/constants";
+import BN from "@src/utils/BN";
+import { useStores } from "@stores";
+import { observer } from "mobx-react-lite";
+import React, { useEffect, useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import Details from "./Details";
+import SwapButton from "./SwapButton";
 import SwitchTokensButton from "./SwitchTokensButton";
+import TooltipFeeInfo from "./TooltipFeeInfo";
+import { TradeInRangeVMProvider, useTradeInRangeVM } from "./TradeInRangeVM";
+import { NOTIFICATION_TYPE } from 'react-notifications-component';
 
 const Root = styled.div`
   display: flex;
@@ -63,8 +61,8 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
   const handleSetAssetId0 = (assetId: string) => {
     if (assetId === vm.assetId1) {
       notificationStore.notify("You can't choose same assets", {
-        type: "error",
-        title: "Warning",
+        type: "danger",
+        title: "Warning"
       });
       return;
     }
@@ -72,7 +70,7 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
     urlSearchParams.set("asset0", assetId);
     navigate({
       pathname: window.location.pathname,
-      search: `?${urlSearchParams.toString()}`,
+      search: `?${urlSearchParams.toString()}`
     });
     vm.setAssetId0(assetId);
   };
@@ -80,8 +78,8 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
   const handleSetAssetId1 = (assetId: string) => {
     if (assetId === vm.assetId0) {
       notificationStore.notify("You can't choose same assets", {
-        type: "error",
         title: "Warning",
+        type: "danger"
       });
       return;
     }
@@ -89,18 +87,15 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
     urlSearchParams.set("asset1", assetId);
     navigate({
       pathname: window.location.pathname,
-      search: `?${urlSearchParams.toString()}`,
+      search: `?${urlSearchParams.toString()}`
     });
     vm.setAssetId1(assetId);
   };
 
-  const minToRecieve = useMemo(
-    () => {
-      if (vm.token1 == null || vm.amount1.isNaN()) return null;
-      return `~ ${BN.formatUnits(vm.minimumToReceive, vm.token1.decimals).toFormat(2)} ${vm.token1.name}`;
-    },
-    [vm.token1, vm.amount1, vm.minimumToReceive]
-  );
+  const minToRecieve = useMemo(() => {
+    if (vm.token1 == null || vm.amount1.isNaN()) return null;
+    return `~ ${BN.formatUnits(vm.minimumToReceive, vm.token1.decimals).toFormat(2)} ${vm.token1.name}`;
+  }, [vm.token1, vm.amount1, vm.minimumToReceive]);
 
   if (vm.range == null) {
     return <Loading />;
@@ -134,19 +129,10 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
           <SwapButton />
           <SizedBox height={16} />
           <SwapDetailRow title="Price impact">
-            <Row
-              alignItems="center"
-              mainAxisSize="fit-content"
-              justifyContent="flex-end"
-            >
-              {vm.priceImpact && (
-                <Text>~{vm.priceImpact.toFormat(4)}%&nbsp;</Text>
-              )}
+            <Row alignItems="center" mainAxisSize="fit-content" justifyContent="flex-end">
+              {vm.priceImpact && <Text>~{vm.priceImpact.toFormat(4)}%&nbsp;</Text>}
               {vm.token0 && !vm.amount0.isNaN() && (
-                <Tooltip
-                  content={<TooltipFeeInfo />}
-                  config={{ placement: "top", trigger: "click" }}
-                >
+                <Tooltip content={<TooltipFeeInfo />} config={{ placement: "top" }}>
                   <InfoIcon />
                 </Tooltip>
               )}
@@ -154,16 +140,8 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
           </SwapDetailRow>
           <Divider />
           <SwapDetailRow title="Minimum to receive">
-            <Row
-              alignItems="center"
-              mainAxisSize="fit-content"
-              justifyContent="flex-end"
-            >
-              {vm.priceImpact && (
-                <Text nowrap>
-                  {minToRecieve}
-                </Text>
-              )}
+            <Row alignItems="center" mainAxisSize="fit-content" justifyContent="flex-end">
+              {vm.priceImpact && <Text nowrap>{minToRecieve}</Text>}
             </Row>
           </SwapDetailRow>
         </Card>

@@ -30,26 +30,14 @@ const Fav = styled.img`
   height: 24px;
   cursor: pointer;
 `;
-const MobileTokenTableRow: React.FC<IProps> = ({
-  token,
-  fav,
-  handleWatchListChange,
-  rate,
-  change,
-}) => {
+const MobileTokenTableRow: React.FC<IProps> = ({ token, fav, handleWatchListChange, rate, change }) => {
   const navigate = useNavigate();
   return (
     <Root className="gridRow">
       <Row alignItems="center">
-        <Fav
-          src={fav ? starred : star}
-          onClick={() => handleWatchListChange(token.assetId)}
-        />
+        <Fav src={fav ? starred : star} onClick={() => handleWatchListChange(token.assetId)} />
         <SizedBox width={18} />
-        <Row
-          onClick={() => navigate(`/explore/token/${token.assetId}`)}
-          style={{ cursor: "pointer" }}
-        >
+        <Row onClick={() => navigate(`/explore/token/${token.assetId}`)} style={{ cursor: "pointer" }}>
           <SquareTokenIcon src={tokenLogos[token.symbol]} size="small" />
           <SizedBox width={18} />
           <Column>
@@ -61,15 +49,8 @@ const MobileTokenTableRow: React.FC<IProps> = ({
         </Row>
       </Row>
       <Column justifyContent="flex-end" crossAxisSize="max">
-        <Text textAlign="end">
-          $ {rate?.gte(0.0001) ? rate?.toFormat(4) : rate?.toFormat(8)}
-        </Text>
-        <Text
-          textAlign="end"
-          nowrap
-          type={change?.gt(0) ? "success" : "error"}
-          size="small"
-        >
+        <Text textAlign="end">$ {rate?.gte(0.0001) ? rate?.toFormat(4) : rate?.toFormat(8)}</Text>
+        <Text textAlign="end" nowrap type={change?.gt(0) ? "success" : "error"} size="small">
           {change?.toFormat(2)}%
         </Text>
       </Column>

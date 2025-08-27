@@ -44,16 +44,11 @@ class SendAssetVM {
   };
 
   get recipientError() {
-    return (
-      this.recipientAddress.length > 0 &&
-      !this.recipientAddress.startsWith("3P")
-    );
+    return this.recipientAddress.length > 0 && !this.recipientAddress.startsWith("3P");
   }
 
   get amountError() {
-    return this.amount.gt(
-      this.rootStore.accountStore.assetToSend?.balance ?? 0
-    );
+    return this.amount.gt(this.rootStore.accountStore.assetToSend?.balance ?? 0);
   }
 
   get recipientErrorText() {
@@ -75,12 +70,9 @@ class SendAssetVM {
     const { assetToSend } = this.rootStore.accountStore;
     if (this.recipientAddress.length === 0) return "Enter address";
     if (this.loading) return "In progress...";
-    if (this.amount.gt(assetToSend?.balance ?? 0))
-      return `Insufficient ${assetToSend?.symbol} balance`;
+    if (this.amount.gt(assetToSend?.balance ?? 0)) return `Insufficient ${assetToSend?.symbol} balance`;
     if (this.amount.eq(0)) return "Enter amount";
-    return `Send ${BN.formatUnits(this.amount, assetToSend?.decimals)} ${
-      assetToSend?.symbol
-    }`;
+    return `Send ${BN.formatUnits(this.amount, assetToSend?.decimals)} ${assetToSend?.symbol}`;
   }
 
   get assetToSendUsdnEquivalent() {
@@ -102,7 +94,7 @@ class SendAssetVM {
     const data = {
       recipient: this.recipientAddress,
       amount: this.amount.toString(),
-      assetId: assetToSend.assetId === "WAVES" ? null : assetToSend.assetId,
+      assetId: assetToSend.assetId === "WAVES" ? null : assetToSend.assetId
     };
     this._setLoading(true);
     accountStore
@@ -110,24 +102,22 @@ class SendAssetVM {
       .then((txId) => {
         txId &&
           notificationStore.notify(
-            `${amount} ${
-              assetToSend.symbol
-            } were successfully sent to ${centerEllipsis(
+            `${amount} ${assetToSend.symbol} were successfully sent to ${centerEllipsis(
               this.recipientAddress ?? "",
               6
-            )}. You can track the transaction on Waves Explorer.`,
+            )}. You can track the transaction in explorer.`,
             {
               type: "success",
               title: `Success`,
               link: `${EXPLORER_URL}/transactions/${txId}`,
-              linkTitle: "View on Explorer",
+              linkTitle: "View on Explorer"
             }
           );
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
-          type: "error",
-          title: "Transaction is not completed",
+          type: "warning",
+          title: "Transaction is not completed"
         });
       })
       .then(() => this.rootStore.accountStore.updateAccountAssets(true))

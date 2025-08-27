@@ -1,13 +1,14 @@
 import styled from "@emotion/styled";
 
 type TButtonType = "primary" | "secondary" | "danger";
-type TButtonSize = "medium" | "large";
+type TButtonSize = "small" | "medium" | "large";
 
 const Button = styled.button<{
   kind?: TButtonType;
   size?: TButtonSize;
   fixed?: boolean;
 }>`
+  cursor: pointer;
   white-space: nowrap;
   display: flex;
   justify-content: center;
@@ -31,8 +32,14 @@ const Button = styled.button<{
   border-radius: 12px;
   box-shadow: none;
   font-weight: 500;
-  font-size: 16px;
-  line-height: 24px;
+  ${({ size }) => {
+    switch (size) {
+      case "small":
+        return "font-size: 14px; line-height: 20px;";
+      default:
+        return "font-size: 16px; line-height: 24px;";
+    }
+  }}
 
   width: ${({ fixed }) => (fixed ? "100%" : "fit-content")};
   transition: 0.4s;
@@ -41,11 +48,11 @@ const Button = styled.button<{
     (() => {
       switch (kind) {
         case "primary":
-          return `background: ${theme.colors.blue500}; color:#fffff;`;
+          return `background: ${theme.colors.blue500}; color: ${theme.colors.white};`;
         case "secondary":
-          return `background: ${theme.colors.white}; color:${theme.colors.blue500};`;
+          return `background: ${theme.colors.white}; color: ${theme.colors.blue500};`;
         case "danger":
-          return `background: ${theme.colors.error500}; color: #fff;`;
+          return `background: ${theme.colors.error500}; color: ${theme.colors.white};`;
         default:
           return `background: ${theme.colors.blue500}; color:${theme.colors.white};`;
       }
@@ -53,6 +60,8 @@ const Button = styled.button<{
   ${({ size }) =>
     (() => {
       switch (size) {
+        case "small":
+          return "padding: 6px 16px; height: 40px;";
         case "medium":
           return "padding: 0 20px; height: 40px;";
         case "large":
@@ -67,13 +76,13 @@ const Button = styled.button<{
       (() => {
         switch (kind) {
           case "primary":
-            return `background: #6563dd ;border: 1px solid #6563dd;`;
+            return `background: ${theme.colors.button}; border: 1px solid ${theme.colors.button};`;
           case "secondary":
-            return `background: ${theme.colors.primary100}; border: 1px solid ${theme.colors.primary100}; color: #6563DD;`;
+            return `background: ${theme.colors.primary100}; border: 1px solid ${theme.colors.primary100}; color: ${theme.colors.button};`;
           case "danger":
             return `background: ${theme.colors.error550}; border: 1px solid ${theme.colors.error550};`;
           default:
-            return `background: #6563dd; border: 1px solid #6563dd;`;
+            return `background: ${theme.colors.button}; border: 1px solid ${theme.colors.button};`;
         }
       })()}
   }

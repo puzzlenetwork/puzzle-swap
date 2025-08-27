@@ -4,10 +4,7 @@ import Layout from "@components/Layout";
 import { observer } from "mobx-react-lite";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import {
-  AddLiquidityInterfaceVMProvider,
-  useAddLiquidityInterfaceVM,
-} from "./AddLiquidityInterfaceVM";
+import { AddLiquidityInterfaceVMProvider, useAddLiquidityInterfaceVM } from "./AddLiquidityInterfaceVM";
 import MultipleTokensAddLiquidity from "./MultipleTokensAddLiquidity";
 import BaseTokenAddLiquidityAmount from "./BaseTokenAddLiquidityAmount";
 import ShortPoolInfoCard from "@components/ShortPoolInfoCard";
@@ -57,28 +54,19 @@ const AddLiquidityInterfaceImpl = observer(() => {
   return (
     <Layout>
       <Root>
-        <GoBack
-          link={`/pools/${vm.poolDomain}/invest`}
-          text="Back to Pool Info"
-        />
+        <GoBack link={`/pools/${vm.poolDomain}/invest`} text="Back to Pool Info" />
         <SizedBox height={24} />
         <Text weight={500} size="large">
           Deposit liquidity
         </Text>
         <SizedBox height={4} />
-        <Text size="medium">
-          Select the method of adding liquidity and enter the value
-        </Text>
+        <Text size="medium">Select the method of adding liquidity and enter the value</Text>
         <SizedBox height={24} />
         <ShortPoolInfoCard
           title="To"
           poolLogo={pool?.logo}
           poolName={pool?.title}
-          apy={
-            pool?.statistics?.apr
-              ? `${new BN(pool?.statistics?.apr).toFormat(2)} %`
-              : undefined
-          }
+          apy={pool?.statistics?.apr ? `${new BN(pool?.statistics?.apr).toFormat(2)} %` : undefined}
           onChangePool={() => vm.setChangePoolModalOpen(true)}
         />
         <SizedBox height={24} />
@@ -91,19 +79,13 @@ const AddLiquidityInterfaceImpl = observer(() => {
             values={["Multiple tokens", `${vm.baseToken.symbol} Token`]}
             active={activeTab}
             onActivate={(i) => {
-              i === 1
-                ? navigate(addOneTokenRoute)
-                : navigate(addLiquidityRoute);
+              i === 1 ? navigate(addOneTokenRoute) : navigate(addLiquidityRoute);
             }}
           />
         </Card>
         <SizedBox height={24} />
-        {window.location.pathname.includes(addLiquidityRoute) && (
-          <MultipleTokensAddLiquidity />
-        )}
-        {window.location.pathname.includes(addOneTokenRoute) && (
-          <BaseTokenAddLiquidityAmount />
-        )}
+        {window.location.pathname.includes(addLiquidityRoute) && <MultipleTokensAddLiquidity />}
+        {window.location.pathname.includes(addOneTokenRoute) && <BaseTokenAddLiquidityAmount />}
         <DialogNotification
           onClose={() => vm.setNotificationParams(null)}
           title={vm.notificationParams?.title ?? ""}
@@ -118,13 +100,7 @@ const AddLiquidityInterfaceImpl = observer(() => {
           activePoolId={vm.poolDomain}
           onClose={() => vm.setChangePoolModalOpen(false)}
           visible={vm.changePoolModalOpen}
-          onChange={(id) =>
-            navigate(
-              activeTab === 1
-                ? `/pools/${id}/addOneToken`
-                : `/pools/${id}/addLiquidity`
-            )
-          }
+          onChange={(id) => navigate(activeTab === 1 ? `/pools/${id}/addOneToken` : `/pools/${id}/addLiquidity`)}
         />
       </Root>
     </Layout>

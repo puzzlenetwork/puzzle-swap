@@ -40,18 +40,11 @@ const PoolAction: React.FC<IProps> = ({ tokens, action }) => {
       {action === "claim" && <Img src={claim} alt="claim" />}
       <SizedBox width={8} />
       <Container>
-        {tokens
-          .slice(0, hidden ? 3 : tokens.length)
-          .map(({ amount, ...token }) => (
-            <TokenTag key={token.assetId} token={token} amount={amount} />
-          ))}
+        {tokens.slice(0, hidden ? 3 : tokens.length).map(({ amount, ...token }) => (
+          <TokenTag key={token.assetId} token={token} amount={amount} />
+        ))}
         {tokens.length > 3 && (
-          <Text
-            weight={500}
-            type="secondary"
-            style={{ cursor: "pointer" }}
-            onClick={() => setHidden(!hidden)}
-          >
+          <Text weight={500} type="secondary" style={{ cursor: "pointer" }} onClick={() => setHidden(!hidden)}>
             {hidden ? `+ ${tokens.length - 3} more` : "Hide"}
           </Text>
         )}

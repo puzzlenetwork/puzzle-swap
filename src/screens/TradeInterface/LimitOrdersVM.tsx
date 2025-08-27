@@ -1,23 +1,15 @@
-import React, { useMemo } from "react";
-import { makeAutoObservable, reaction } from "mobx";
-import { RootStore, useStores } from "@stores";
+import { buildCancelOrderParams, IDialogNotificationProps } from "@components/Dialog/DialogNotification";
+import { CONTRACT_ADDRESSES, EXPLORER_URL, TOKENS_BY_SYMBOL } from "@src/constants";
 import { useVM } from "@src/hooks/useVM";
-import BN from "@src/utils/BN";
-import {
-  CONTRACT_ADDRESSES,
-  EXPLORER_URL,
-  TOKENS_BY_SYMBOL,
-} from "@src/constants";
-import makeNodeRequest from "@src/utils/makeNodeRequest";
-import nodeService, { INodeData } from "@src/services/nodeService";
-import { getStateByKey } from "@src/utils/getStateByKey";
-import {
-  buildCancelOrderParams,
-  IDialogNotificationProps,
-} from "@components/Dialog/DialogNotification";
 import aggregatorService from "@src/services/aggregatorService";
+import nodeService, { INodeData } from "@src/services/nodeService";
+import BN from "@src/utils/BN";
+import { getStateByKey } from "@src/utils/getStateByKey";
+import makeNodeRequest from "@src/utils/makeNodeRequest";
+import { RootStore, useStores } from "@stores";
 import dayjs from "dayjs";
-import { slice } from "lodash";
+import { makeAutoObservable, reaction } from "mobx";
+import React, { useMemo } from "react";
 
 interface IProps {
   children: React.ReactNode;
@@ -42,7 +34,7 @@ const getOrderStateKeys = (orderId: string) => [
   `order_${orderId}_fulfilled1`,
   `order_${orderId}_status`,
   `order_${orderId}_timestamp`,
-  `order_${orderId}_txId`,
+  `order_${orderId}_txId`
 ];
 
 export interface IOrder {
@@ -91,12 +83,10 @@ class LimitOrdersVM {
   setAssetId1 = (assetId: string) => (this.assetId1 = assetId);
 
   amountSettings: 0 | 1 = 0;
-  toggleAmountSettings = () =>
-    (this.amountSettings = this.amountSettings === 0 ? 1 : 0);
+  toggleAmountSettings = () => (this.amountSettings = this.amountSettings === 0 ? 1 : 0);
 
   priceSettings: 0 | 1 = 0;
-  togglePriceSettings = () =>
-    (this.priceSettings = this.priceSettings === 0 ? 1 : 0);
+  togglePriceSettings = () => (this.priceSettings = this.priceSettings === 0 ? 1 : 0);
 
   get amountToken() {
     return this.amountSettings === 0 ? this.token0 : this.token1;
@@ -179,12 +169,10 @@ class LimitOrdersVM {
   };
 
   public notificationParams: IDialogNotificationProps | null = null;
-  public setNotificationParams = (params: IDialogNotificationProps | null) =>
-    (this.notificationParams = params);
+  public setNotificationParams = (params: IDialogNotificationProps | null) => (this.notificationParams = params);
 
   orderToDisplayDetails: IOrder | null = null;
-  setOrderToDisplayDetails = (v: IOrder | null) =>
-    (this.orderToDisplayDetails = v);
+  setOrderToDisplayDetails = (v: IOrder | null) => (this.orderToDisplayDetails = v);
 
   sync = async () => {
     if (this.rootStore.accountStore == null) return;
@@ -196,10 +184,7 @@ class LimitOrdersVM {
     const orderIdList: string[] = data[0].value.toString().split(",");
     if (orderIdList.length === 0) return;
 
-    const keys = orderIdList.reduce(
-      (acc, id) => [...acc, ...getOrderStateKeys(id)],
-      [] as string[]
-    );
+    const keys = orderIdList.reduce((acc, id) => [...acc, ...getOrderStateKeys(id)], [] as string[]);
 
     // Новый подход: разбиваем ключи на чанки по 1000 и делаем все запросы
     const chunkSize = 1000;
@@ -208,13 +193,13 @@ class LimitOrdersVM {
       chunks.push(keys.slice(i, i + chunkSize));
     }
 
-    
     const allData = await Promise.all(
-      chunks.map(chunk =>
-        makeNodeRequest(
-          `/addresses/data/${CONTRACT_ADDRESSES.limitOrders}`,
-          { postData: { keys: chunk } }
-        ).then(resp => resp.data).catch(() => [])
+      chunks.map((chunk) =>
+        makeNodeRequest(`/addresses/data/${CONTRACT_ADDRESSES.limitOrders}`, {
+          postData: { keys: chunk }
+        })
+          .then((resp) => resp.data)
+          .catch(() => [])
       )
     );
 
@@ -228,21 +213,15 @@ class LimitOrdersVM {
       timestamp: getStateByKey(ordersData, `order_${id}_timestamp`) ?? 0,
       amount1: new BN(getStateByKey(ordersData, `order_${id}_amount1`) ?? 0),
       token1: getStateByKey(ordersData, `order_${id}_token1`) ?? "",
-      fulfilled0: new BN(
-        getStateByKey(ordersData, `order_${id}_fulfilled0`) ?? 0
-      ),
-      fulfilled1: new BN(
-        getStateByKey(ordersData, `order_${id}_fulfilled1`) ?? 0
-      ),
-      status: getStateByKey(ordersData, `order_${id}_status`) ?? "closed",
+      fulfilled0: new BN(getStateByKey(ordersData, `order_${id}_fulfilled0`) ?? 0),
+      fulfilled1: new BN(getStateByKey(ordersData, `order_${id}_fulfilled1`) ?? 0),
+      status: getStateByKey(ordersData, `order_${id}_status`) ?? "closed"
     }));
     this.setOrders(orders as IOrder[]);
   };
 
   get token0() {
-    return this.rootStore.accountStore.balances.find(
-      ({ assetId }) => assetId === this.assetId0
-    )!;
+    return this.rootStore.accountStore.balances.find(({ assetId }) => assetId === this.assetId0)!;
   }
 
   get balance0() {
@@ -254,9 +233,7 @@ class LimitOrdersVM {
   }
 
   get token1() {
-    return this.rootStore.accountStore.balances.find(
-      ({ assetId }) => assetId === this.assetId1
-    )!;
+    return this.rootStore.accountStore.balances.find(({ assetId }) => assetId === this.assetId1)!;
   }
 
   createOrder = async () => {
@@ -267,29 +244,24 @@ class LimitOrdersVM {
     return this.rootStore.accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.limitOrders,
-        payment: [
-          { assetId: this.amountToken.assetId, amount: this.amount.toFixed(0) },
-        ],
+        payment: [{ assetId: this.amountToken.assetId, amount: this.amount.toFixed(0) }],
         call: {
           function: "createOrder",
           args: [
             { type: "string", value: this.totalToken.assetId },
-            { type: "integer", value: this.total.toFixed(0).toString() },
-          ],
-        },
+            { type: "integer", value: this.total.toFixed(0).toString() }
+          ]
+        }
       })
       .then(
         (txId) =>
           txId &&
-          this.rootStore.notificationStore.notify(
-            `You can find your active order in the open orders section`,
-            {
-              type: "success",
-              title: `Order has been placed`,
-              link: `${EXPLORER_URL}/transactions/${txId}`,
-              linkTitle: "View on Explorer",
-            }
-          )
+          this.rootStore.notificationStore.notify(`You can find your active order in the open orders section`, {
+            type: "success",
+            title: `Order has been placed`,
+            link: `${EXPLORER_URL}/transactions/${txId}`,
+            linkTitle: "View on Explorer"
+          })
       )
       .then(() => this.sync())
       .then(() => {
@@ -298,7 +270,7 @@ class LimitOrdersVM {
       })
       .catch((e) =>
         this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
-          type: "error",
+          type: "warning"
         })
       )
       .finally(() => this.setLoading(false));
@@ -316,27 +288,24 @@ class LimitOrdersVM {
           function: "cancelOrder",
           args: [
             { type: "string", value: orderId },
-            { type: "string", value: "" },
-          ],
-        },
+            { type: "string", value: "" }
+          ]
+        }
       })
       .then(
         (txId) =>
           txId &&
-          this.rootStore.notificationStore.notify(
-            `You can find your cancelled orders in orders history`,
-            {
-              type: "success",
-              title: `Order has been cancelled`,
-              link: `${EXPLORER_URL}/transactions/${txId}`,
-              linkTitle: "View on Explorer",
-            }
-          )
+          this.rootStore.notificationStore.notify(`You can find your cancelled orders in orders history`, {
+            type: "success",
+            title: `Order has been cancelled`,
+            link: `${EXPLORER_URL}/transactions/${txId}`,
+            linkTitle: "View on Explorer"
+          })
       )
       .then(() => this.sync())
       .catch((e) =>
         this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
-          type: "error",
+          type: "warning"
         })
       )
       .finally(() => this.setLoading(false));
@@ -344,9 +313,7 @@ class LimitOrdersVM {
 
   cancelAllOrders = async () => {
     this.setLoading(true);
-    const activeOrders = this.orders.filter(
-      ({ status }) => status === "active"
-    );
+    const activeOrders = this.orders.filter(({ status }) => status === "active");
     if (activeOrders.length === 0) return;
     const ordersToCancel = activeOrders.map(({ id }) => id).join(",");
     this.setNotificationParams(null);
@@ -356,27 +323,24 @@ class LimitOrdersVM {
         dApp: CONTRACT_ADDRESSES.proxyLimitOrders,
         call: {
           function: "cancelMany",
-          args: [{ type: "string", value: ordersToCancel }],
-        },
+          args: [{ type: "string", value: ordersToCancel }]
+        }
       })
       .then(
         (txId) =>
           txId &&
-          this.rootStore.notificationStore.notify(
-            `You can find your cancelled orders in orders history`,
-            {
-              type: "success",
-              title: `Orders has been cancelled`,
-              link: `${EXPLORER_URL}/transactions/${txId}`,
-              linkTitle: "View on Explorer",
-            }
-          )
+          this.rootStore.notificationStore.notify(`You can find your cancelled orders in orders history`, {
+            type: "success",
+            title: `Orders has been cancelled`,
+            link: `${EXPLORER_URL}/transactions/${txId}`,
+            linkTitle: "View on Explorer"
+          })
       )
       .then(() => this.sync())
       .then(() => this.setLoading(false))
       .catch((e) =>
         this.rootStore.notificationStore.notify(e.message ?? e.toString(), {
-          type: "error",
+          type: "warning"
         })
       )
       .finally(() => this.setLoading(false));
@@ -385,10 +349,9 @@ class LimitOrdersVM {
   checkOrderCancel = async (id?: string, many?: boolean) => {
     this.setNotificationParams(
       buildCancelOrderParams({
-        onOrderCancel: () =>
-          many ? this.cancelAllOrders() : this.cancelOrder(id ?? ""),
+        onOrderCancel: () => (many ? this.cancelAllOrders() : this.cancelOrder(id ?? "")),
         many,
-        onCancel: () => this.setNotificationParams(null),
+        onCancel: () => this.setNotificationParams(null)
       })
     );
   };
@@ -396,10 +359,9 @@ class LimitOrdersVM {
   checkOrderDetails = (id?: string, many?: boolean) => {
     this.setNotificationParams(
       buildCancelOrderParams({
-        onOrderCancel: () =>
-          many ? this.cancelAllOrders() : this.cancelOrder(id ?? ""),
+        onOrderCancel: () => (many ? this.cancelAllOrders() : this.cancelOrder(id ?? "")),
         many,
-        onCancel: () => this.setNotificationParams(null),
+        onCancel: () => this.setNotificationParams(null)
       })
     );
   };
@@ -408,15 +370,10 @@ class LimitOrdersVM {
     const orders = opened
       ? this.orders.filter((v) => v.status === "active")
       : this.orders.filter((v) => v.status !== "active");
-    const sorted = orders
-      .slice()
-      .sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1));
+    const sorted = orders.slice().sort((a, b) => (a.timestamp < b.timestamp ? 1 : -1));
     if (sorted.length === 0) return {};
     return sorted.reduce((acc, order) => {
-      const day = dayjs(order.timestamp)
-        .startOf("day")
-        .format("MMM DD, YYYY")
-        .toString();
+      const day = dayjs(order.timestamp).startOf("day").format("MMM DD, YYYY").toString();
       Array.isArray(acc[day]) ? acc[day].push(order) : (acc[day] = [order]);
       return acc;
     }, {} as Record<string, Array<IOrder>>);
@@ -433,25 +390,19 @@ class LimitOrdersVM {
   };
 
   get amountDollEq() {
-    const v = this.rootStore.poolsStore
-      .usdtRate(this.amountToken.assetId)
-      ?.times(this.amount);
+    const v = this.rootStore.poolsStore.usdtRate(this.amountToken.assetId)?.times(this.amount);
     if (v == null) return "$ 0.00";
     return `$ ${BN.formatUnits(v, this.amountToken.decimals).toFormat(2)}`;
   }
 
   get priceDollEq() {
-    const v = this.rootStore.poolsStore
-      .usdtRate(this.priceToken.assetId)
-      ?.times(this.price);
+    const v = this.rootStore.poolsStore.usdtRate(this.priceToken.assetId)?.times(this.price);
     if (v == null) return "$ 0.00";
     return `$ ${BN.formatUnits(v, this.priceToken.decimals).toFormat(2)}`;
   }
 
   get totalDollEq() {
-    const v = this.rootStore.poolsStore
-      .usdtRate(this.totalToken.assetId)
-      ?.times(this.total);
+    const v = this.rootStore.poolsStore.usdtRate(this.totalToken.assetId)?.times(this.total);
     if (v == null) return "$ 0.00";
     return `$ ${BN.formatUnits(v, this.totalToken.decimals).toFormat(2)}`;
   }

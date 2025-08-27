@@ -10,7 +10,6 @@ import Wallet from "@components/Wallet/Wallet";
 import { observer } from "mobx-react-lite";
 import { PRODUCTS, ROUTES } from "@src/constants";
 import { Link, useLocation } from "react-router-dom";
-import { Anchor } from "@components/Anchor";
 import { useTheme } from "@emotion/react";
 import Tooltip from "@components/Tooltip";
 import LinkGroup from "@components/LinkGroup";
@@ -80,15 +79,12 @@ const MenuItem = styled.div<{ selected?: boolean }>`
   font-size: 16px;
   line-height: 24px;
   box-sizing: border-box;
-  border-bottom: 4px solid
-    ${({ selected, theme }) =>
-      selected ? theme.colors.blue500 : "transparent"};
+  border-bottom: 4px solid ${({ selected, theme }) => (selected ? theme.colors.blue500 : "transparent")};
   height: 100%;
   margin: 0 9px;
 
   a {
-    color: ${({ selected, theme }) =>
-      selected ? theme.colors.primary800 : theme.colors.primary650};
+    color: ${({ selected, theme }) => (selected ? theme.colors.primary800 : theme.colors.primary650)};
   }
 
   &:hover {
@@ -130,8 +126,7 @@ const BurgerMenu = styled.div<{ expanded: boolean }>`
   border: 1px solid ${({ theme }) => theme.colors.primary100};
   border-radius: 10px;
   cursor: pointer;
-  background: ${({ expanded, theme }) =>
-    expanded ? theme.colors.primary100 : theme.colors.white};
+  background: ${({ expanded, theme }) => (expanded ? theme.colors.primary100 : theme.colors.white)};
 
   :hover {
     background: ${({ theme }) => theme.colors.primary100};
@@ -173,8 +168,8 @@ const Header: React.FC<IProps> = () => {
     { name: "Explore", link: ROUTES.EXPLORE },
     { name: "Trade", link: ROUTES.TRADE },
     { name: "Pools", link: ROUTES.POOLS },
-    // { name: "Ranges", link: ROUTES.RANGES },
-    { name: "Stake", link: ROUTES.STAKE },
+    { name: "Ranges", link: ROUTES.RANGES },
+    { name: "Stake", link: ROUTES.STAKE }
   ];
 
   const products = [
@@ -182,34 +177,34 @@ const Header: React.FC<IProps> = () => {
       name: "Puzzle Swap",
       link: PRODUCTS.SWAP,
       icon: SwapIcon,
-      isActive: true,
+      isActive: true
     },
     { name: "Puzzle Lend", link: PRODUCTS.LEND, icon: LendIcon },
     { name: "Puzzle Market", link: PRODUCTS.MARKET, icon: MarketIcon },
-    { name: "Puzzle Node", link: PRODUCTS.NODE, icon: NodeIcon },
+    { name: "Puzzle Node", link: PRODUCTS.NODE, icon: NodeIcon }
   ];
 
   const communityLinks = [
     {
       icon: <TelegramIcon className={isDarkTheme ? "theme_icon" : ""} />,
       link: "https://t.me/puzzle_network",
-      isExternalLink: true,
+      isExternalLink: true
     },
     {
       icon: <XIcon className={isDarkTheme ? "theme_icon" : ""} />,
       link: "https://twitter.com/puzzle_network",
-      isExternalLink: true,
+      isExternalLink: true
     },
     {
       icon: <MediumIcon />,
       link: "https://medium.com/@puzzlenetwork",
-      isExternalLink: true,
+      isExternalLink: true
     },
     {
       icon: <GithubIcon />,
       link: "https://github.com/puzzlenetwork",
-      isExternalLink: true,
-    },
+      isExternalLink: true
+    }
   ];
 
   const communityMenu = [
@@ -217,23 +212,19 @@ const Header: React.FC<IProps> = () => {
       icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""} />,
       name: "Notifications bot",
       link: "https://t.me/puzzle_swap",
-      isExternalLink: true,
+      isExternalLink: true
     },
     {
       icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""} />,
       name: "Alerts bot",
       link: "https://t.me/puzzle_alerts_bot",
-      isExternalLink: true,
-    },
+      isExternalLink: true
+    }
   ];
   return (
     <Root>
       <Mobile>
-        <MobileMenu
-          opened={mobileMenuOpened}
-          onClose={() => toggleMenu(false)}
-          {...{ bannerClosed }}
-        />
+        <MobileMenu opened={mobileMenuOpened} onClose={() => toggleMenu(false)} {...{ bannerClosed }} />
       </Mobile>
       {/*<Banner closed={bannerClosed} setClosed={setBannerClosed} />*/}
 
@@ -243,23 +234,15 @@ const Header: React.FC<IProps> = () => {
             config={{
               placement: "bottom-start",
               trigger: "click",
-              onVisibleChange: setIsTooltipOpen,
+              onVisibleChange: setIsTooltipOpen
             }}
             content={
               <Column crossAxisSize="max">
                 <ProductList title="" links={products} />
-                <SizedBox
-                  height={1}
-                  style={{ width: "100%", background: "#F1F2FE" }}
-                />
+                <SizedBox height={1} style={{ width: "100%", background: "#F1F2FE" }} />
                 <RowLinks>
                   {communityLinks.map((el) => (
-                    <a
-                      key={el.link}
-                      href={el.link}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
+                    <a key={el.link} href={el.link} target="_blank" rel="noreferrer">
                       {el.icon}
                     </a>
                   ))}
@@ -273,7 +256,7 @@ const Header: React.FC<IProps> = () => {
                 style={{
                   cursor: "pointer",
                   transform: isTooltipOpen ? "rotate(180deg)" : "none",
-                  transition: "transform 0.3s ease",
+                  transition: "transform 0.3s ease"
                 }}
               />
             </Row>
@@ -281,10 +264,7 @@ const Header: React.FC<IProps> = () => {
           <Desktop>
             <SizedBox width={2} />
             {menuItems.map(({ name, link }) => (
-              <MenuItem
-                key={name}
-                selected={isRoutesEquals(link, location.pathname)}
-              >
+              <MenuItem key={name} selected={isRoutesEquals(link, location.pathname)}>
                 <Link to={link} target={link[0] === "/" ? "_self" : "_blank"}>
                   <Row style={{ gap: 8 }}>{name}</Row>
                 </Link>
@@ -294,10 +274,7 @@ const Header: React.FC<IProps> = () => {
         </Row>
         <Mobile>
           {accountStore.address != null && !mobileMenuOpened && (
-            <WalletIcon
-              onClick={() => accountStore.setWalletModalOpened(true)}
-              style={{ cursor: "pointer" }}
-            />
+            <WalletIcon onClick={() => accountStore.setWalletModalOpened(true)} style={{ cursor: "pointer" }} />
           )}
           <SizedBox width={16} />
           <img
@@ -312,7 +289,7 @@ const Header: React.FC<IProps> = () => {
           <Tooltip
             config={{
               placement: "bottom-start",
-              trigger: "click",
+              trigger: "click"
             }}
             content={
               <Column crossAxisSize="max">
@@ -322,12 +299,7 @@ const Header: React.FC<IProps> = () => {
             }
           >
             <BurgerMenu expanded={false}>
-              <img
-                onClick={() => toggleMenu(!mobileMenuOpened)}
-                className="icon"
-                src={MenuIcon}
-                alt="menuControl"
-              />
+              <img onClick={() => toggleMenu(!mobileMenuOpened)} className="icon" src={MenuIcon} alt="menuControl" />
             </BurgerMenu>
           </Tooltip>
         </Desktop>

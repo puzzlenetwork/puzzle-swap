@@ -17,18 +17,17 @@ interface IProps {
 
 const Root = styled.div<{ warning: boolean }>`
   .text {
-    color: ${({ warning }) => warning && "#ed827e"};
+    color: ${({ theme, warning }) => warning && theme.colors.error500};
   }
 `;
-const DepositCompositionRow: React.FC<IProps> = ({
-  availableAmount,
-  depositAmount,
-  share,
-  name,
-  logo,
-}) => {
-  const available = availableAmount ? availableAmount.toFormat(4) : "-";
-  const deposit = depositAmount.toFormat(4);
+
+const ShareText = styled.span<{ isLowMoney: boolean }>`
+  color: ${({ theme, isLowMoney }) => (isLowMoney ? theme.colors.error500 : theme.colors.primary800)};
+`;
+
+const DepositCompositionRow: React.FC<IProps> = ({ availableAmount, depositAmount, share, name, logo }) => {
+  const available = availableAmount ? availableAmount.toSmallFormat() : "-";
+  const deposit = depositAmount.toSmallFormat();
   const isLowMoney = availableAmount != null && availableAmount.eq(0);
   return (
     <Root className="gridRow" warning={isLowMoney}>
@@ -41,14 +40,9 @@ const DepositCompositionRow: React.FC<IProps> = ({
           </Text>
           <Text fitContent type="secondary" size="small" className="text">
             <span>Share: </span>
-            <span
-              style={{
-                color: isLowMoney ? "#ed827e" : "#363870",
-                paddingLeft: 1,
-              }}
-            >
+            <ShareText isLowMoney={isLowMoney}>
               {share.toFormat(2)} %
-            </span>
+            </ShareText>
           </Text>
         </Column>
       </Row>

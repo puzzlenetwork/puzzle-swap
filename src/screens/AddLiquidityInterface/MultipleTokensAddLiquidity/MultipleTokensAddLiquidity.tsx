@@ -78,17 +78,10 @@ const MultipleTokensAddLiquidity: React.FC<IProps> = () => {
           <MultipleTokensNotifications />
           {tokens.map((token, i) => {
             const balance = accountStore.findBalanceByAssetId(token.assetId);
-            const available =
-              balance &&
-              balance.balance &&
-              BN.formatUnits(balance?.balance, token.decimals);
+            const available = balance && balance.balance && BN.formatUnits(balance?.balance, token.decimals);
 
             const depositAmount =
-              vm.tokensToDepositAmounts &&
-              BN.formatUnits(
-                vm.tokensToDepositAmounts[token.assetId],
-                token.decimals
-              );
+              vm.tokensToDepositAmounts && BN.formatUnits(vm.tokensToDepositAmounts[token.assetId], token.decimals);
             return (
               <LiquidityTokenRow
                 symbol={token.symbol}
@@ -116,11 +109,7 @@ const MultipleTokensAddLiquidity: React.FC<IProps> = () => {
       </HideDesktop>
       <FixedMobileBlock>
         {!vm.loading ? (
-          <Button
-            fixed
-            disabled={!vm.canMultipleDeposit}
-            onClick={vm.depositMultiply}
-          >
+          <Button fixed disabled={!vm.canMultipleDeposit} onClick={vm.depositMultiply}>
             Deposit {vm.totalAmountToDeposit ?? "$ 0.0"}
           </Button>
         ) : (

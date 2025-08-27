@@ -1,20 +1,17 @@
-import styled from "@emotion/styled";
-import React, { useCallback, useEffect, useState } from "react";
 import Card from "@components/Card";
-import Text from "@components/Text";
-import SizedBox from "@components/SizedBox";
 import Input from "@components/Input";
-import { useCreateRangeVM } from "../../CreateRangeVm";
-import { observer } from "mobx-react-lite";
-import { Row } from "@src/components/Flex";
-import ShareTokenInput from "../../PoolSettingsCard/SelectAssets/ShareTokenInput";
-import Notification from "@src/components/Notification";
-import ImageUpload from "@components/ImageUpload";
-import BN from "@src/utils/BN";
-import poolService from "@src/services/poolsService";
-import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
+import SizedBox from "@components/SizedBox";
+import Text from "@components/Text";
 import Tooltip from "@components/Tooltip";
-import { POOL_CONFIG } from "@src/constants";
+import styled from "@emotion/styled";
+import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
+import { Row } from "@src/components/Flex";
+import Notification from "@src/components/Notification";
+import BN from "@src/utils/BN";
+import { observer } from "mobx-react-lite";
+import React, { useState } from "react";
+import { useCreateRangeVM } from "../../CreateRangeVm";
+import ShareTokenInput from "../SelectAssets/ShareTokenInput";
 
 interface IProps {}
 
@@ -30,13 +27,9 @@ const Tag = styled.div<{ active?: boolean }>`
   justify-content: center;
   align-items: center;
   padding: 8px 20px;
-  color: ${({ active, theme }) =>
-    active ? theme.colors.white : theme.colors.primary800};
-  background: ${({ active, theme }) =>
-    active ? theme.colors.blue500 : theme.colors.white};
-  border: 1px solid
-    ${({ active, theme }) =>
-      active ? theme.colors.blue500 : theme.colors.primary100};
+  color: ${({ active, theme }) => (active ? theme.colors.white : theme.colors.primary800)};
+  background: ${({ active, theme }) => (active ? theme.colors.blue500 : theme.colors.white)};
+  border: 1px solid ${({ active, theme }) => (active ? theme.colors.blue500 : theme.colors.primary100)};
   box-sizing: border-box;
   border-radius: 10px;
   cursor: pointer;
@@ -45,9 +38,7 @@ const Tag = styled.div<{ active?: boolean }>`
 const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
   const vm = useCreateRangeVM();
   const swapFeeError = vm.swapFee.gt(50) || vm.swapFee.lt(1);
-  const [customPercent, setCustomPercent] = useState<BN>(
-    vm.swapFee ?? new BN(10)
-  );
+  const [customPercent, setCustomPercent] = useState<BN>(vm.swapFee ?? new BN(10));
   const handleChangeCustomPercent = (v: BN) => {
     setCustomPercent(v);
     vm.setSwapFee(v);
@@ -56,7 +47,7 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
   return (
     <Root>
       <Text type="secondary" weight={500}>
-        Pool Settings
+        Range Settings
       </Text>
       <SizedBox height={8} />
       <Card>
@@ -64,11 +55,7 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
           Title of the range
         </Text>
         <SizedBox height={4} />
-        <Input
-          value={vm.domain}
-          onChange={(e) => vm.setDomain(e.target.value)}
-          placeholder="Enter the title…"
-        />
+        <Input value={vm.domain} onChange={(e) => vm.setDomain(e.target.value)} placeholder="Enter the title…" />
         <SizedBox height={16} />
         <Row mainAxisSize="fit-content" alignItems="center">
           <Text type="secondary" size="medium">
@@ -104,12 +91,16 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
             onChange={handleChangeCustomPercent}
           />
         </Row>
+        <SizedBox height={16} />
+        <Notification
+          type="info"
+          text="Fee affects how much traders will pay when interacting with your Range. A higher fee can earn you more from volatile markets, but may reduce trading volume."
+        />
         {swapFeeError && (
-          <Notification
-            style={{ marginTop: 16 }}
-            type="error"
-            text="Swap fees for the range must be from 0.1% to 5%"
-          />
+          <Notification style={{ marginTop: 16 }} type="error" text="Swap fees for the range must be from 0.1% to 5%" />
+        )}
+        {!vm.titleCorrect && (
+          <Notification style={{ marginTop: 16 }} type="error" text="Title must be between 1 and 13 symbols, and can only contain letters (A-Z, a-z), numbers (0-9), underscores (_), hyphens (-), slashes (/), and spaces." />
         )}
       </Card>
     </Root>

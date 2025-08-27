@@ -40,20 +40,9 @@ const LoginScreenHeader: React.FC<IProps> = () => {
   return (
     <Root>
       <a href="/">
-        <Logo
-          src={
-            width && width >= 1280
-              ? themes.darkTheme.images.icons.logo
-              : theme.images.icons.logo
-          }
-          alt="logo"
-        />
+        <Logo src={width && width >= 1280 ? themes.darkTheme.images.icons.logo : theme.images.icons.logo} alt="logo" />
       </a>
-      <CloseButton
-        size="medium"
-        kind="secondary"
-        onClick={() => accountStore.setLoginModalOpened(false)}
-      >
+      <CloseButton size="medium" kind="secondary" onClick={() => accountStore.setLoginModalOpened(false)}>
         <CloseIcon />
       </CloseButton>
     </Root>

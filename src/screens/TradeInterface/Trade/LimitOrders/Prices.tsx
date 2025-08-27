@@ -70,9 +70,7 @@ const Prices: React.FC<IProps> = () => {
         <SizedBox height={4} />
         <LimitTokenInput
           prefix={vm.amountSettings === 0 ? vm.token0.symbol : vm.token1.symbol}
-          decimals={
-            vm.amountSettings === 0 ? vm.token0.decimals : vm.token1.decimals
-          }
+          decimals={vm.amountSettings === 0 ? vm.token0.decimals : vm.token1.decimals}
           amount={vm.amount}
           setAmount={(v) => vm.setAmount(v, true)}
           usdnEquivalent={vm.amountDollEq}
@@ -114,9 +112,7 @@ const Prices: React.FC<IProps> = () => {
         <LimitTokenInput
           placeholder={vm.loading ? "..." : "0.00"}
           prefix={vm.priceSettings === 0 ? vm.token1.symbol : vm.token0.symbol}
-          decimals={
-            vm.priceSettings === 0 ? vm.token1.decimals : vm.token0.decimals
-          }
+          decimals={vm.priceSettings === 0 ? vm.token1.decimals : vm.token0.decimals}
           amount={vm.price}
           setAmount={(v) => vm.setPrice(v, true)}
           usdnEquivalent={vm.priceDollEq}
@@ -133,9 +129,7 @@ const Prices: React.FC<IProps> = () => {
         <SizedBox height={4} />
         <LimitTokenInput
           prefix={vm.amountSettings === 0 ? vm.token1.symbol : vm.token0.symbol}
-          decimals={
-            vm.amountSettings === 0 ? vm.token1.decimals : vm.token0.decimals
-          }
+          decimals={vm.amountSettings === 0 ? vm.token1.decimals : vm.token0.decimals}
           amount={vm.total}
           usdnEquivalent={vm.totalDollEq}
           error={vm.totalError}

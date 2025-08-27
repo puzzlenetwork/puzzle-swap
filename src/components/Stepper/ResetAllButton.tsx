@@ -9,7 +9,7 @@ const Root = styled.button`
   justify-content: flex-start;
 
   path {
-    fill: #7075e9;
+    fill: ${({ theme }) => theme.colors.blue500};
   }
   font-weight: 500;
   font-size: 16px;
@@ -18,13 +18,13 @@ const Root = styled.button`
   display: flex;
   align-items: center;
   cursor: pointer;
-  color: #7075e9;
+  color: ${({ theme }) => theme.colors.blue500};
   background: transparent;
   height: auto;
   border: none;
   padding: 0;
   :hover {
-    color: #7075e9;
+    color: ${({ theme }) => theme.colors.blue500};
     background: transparent;
     border: none;
   }

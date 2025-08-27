@@ -1,9 +1,8 @@
+import Loading from "@components/Loading";
+import Text from "@components/Text";
+import styled from "@emotion/styled";
 import React from "react";
 import { TableProps, useTable } from "react-table";
-import styled from "@emotion/styled";
-import Text from "@components/Text";
-import Loading from "@components/Loading";
-import { position } from "polished";
 
 interface IProps extends TableProps {
   columns: any[];
@@ -36,8 +35,7 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
 
       :hover {
         ${({ hovered }) => hovered && "cursor: pointer;"};
-        ${({ hovered, theme }) =>
-          hovered && `background: ${theme.colors.primary50};`};
+        ${({ hovered, theme }) => hovered && `background: ${theme.colors.primary50};`};
       }
 
       :last-child {
@@ -88,17 +86,17 @@ const Table: React.FC<IProps> = ({
   loading,
   ...rest
 }) => {
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data, initialState });
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
+    columns,
+    data,
+    initialState
+  });
   return (
     <Root {...rest} hovered={withHover} fitContent={fitContent}>
       <table {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup, index) => (
-            <tr
-              {...headerGroup.getHeaderGroupProps()}
-              key={index + "tr-header"}
-            >
+            <tr {...headerGroup.getHeaderGroupProps()} key={index + "tr-header"}>
               {headerGroup.headers.map((column, index) => (
                 <th {...column.getHeaderProps()} key={index + "th"}>
                   {column.render("Header")}
@@ -114,15 +112,11 @@ const Table: React.FC<IProps> = ({
               <tr
                 style={{
                   opacity: row.original.disabled ? 0.5 : 1,
-                  cursor: row.original.disabled ? "not-allowed" : "pointer",
+                  cursor: row.original.disabled ? "not-allowed" : "pointer"
                 }}
                 {...row.getRowProps()}
                 key={i + "tr"}
-                onClick={() =>
-                  !row.original.disabled &&
-                  row.original.onClick &&
-                  row.original.onClick()
-                }
+                onClick={() => !row.original.disabled && row.original.onClick && row.original.onClick()}
               >
                 {row.cells.map((cell, index) => (
                   <td {...cell.getCellProps()} key={index + "td"}>

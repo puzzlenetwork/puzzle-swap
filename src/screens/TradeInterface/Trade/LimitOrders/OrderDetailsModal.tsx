@@ -63,27 +63,16 @@ const OrderDetailsModal: React.FC<IProps> = ({ ...rest }) => {
     { key: "From", value: `${am0.toFormat(2)} ${token0?.symbol}` },
     { key: "Price", value: `${price.toFormat(2)} ${token1?.symbol}` },
     { key: "To", value: `${am1.toFormat(2)} ${token1?.symbol}` },
-    { key: "Transaction fee", value: "0.005 WAVES" },
+    { key: "Transaction fee", value: "0.005 WAVES" }
   ];
 
   return (
     <Dialog style={{ maxWidth: 360 }} title="Order details" {...rest}>
       <SizedBox height={24} />
       <Column crossAxisSize="max">
-        <Row
-          justifyContent="center"
-          style={{ position: "relative", height: 40 }}
-        >
-          <Icon
-            src={token0?.logo}
-            alt="token0"
-            style={{ position: "absolute", right: "calc(50% - 10px)" }}
-          />
-          <Icon
-            src={token1?.logo}
-            alt="token1"
-            style={{ position: "absolute", right: "calc(50% - 40px)" }}
-          />
+        <Row justifyContent="center" style={{ position: "relative", height: 40 }}>
+          <Icon src={token0?.logo} alt="token0" style={{ position: "absolute", right: "calc(50% - 10px)" }} />
+          <Icon src={token1?.logo} alt="token1" style={{ position: "absolute", right: "calc(50% - 40px)" }} />
         </Row>
         <SizedBox height={12} />
         <Row justifyContent="center" alignItems="center">
@@ -91,11 +80,7 @@ const OrderDetailsModal: React.FC<IProps> = ({ ...rest }) => {
             {am0.toFormat(2)} {token0?.symbol}
           </Text>
           <SizedBox width={2} />
-          <Img
-            height="16px"
-            width="16px"
-            src={theme.images.icons.orderRightArrow}
-          />
+          <Img height="16px" width="16px" src={theme.images.icons.orderRightArrow} />
           <SizedBox width={2} />
           <Text size="medium" fitContent weight={500}>
             {am1.toFormat(2)} {token1?.symbol}
@@ -117,10 +102,7 @@ const OrderDetailsModal: React.FC<IProps> = ({ ...rest }) => {
             </Text>
           </Row>
           <SizedBox height={8} />
-          <Progressbar
-            red={order?.status === "canceled"}
-            percent={percent?.toNumber() ?? 0}
-          />
+          <Progressbar red={order?.status === "canceled"} percent={percent?.toNumber() ?? 0} />
         </Column>
         <SizedBox height={24} />
         <Details crossAxisSize="max">
@@ -138,24 +120,16 @@ const OrderDetailsModal: React.FC<IProps> = ({ ...rest }) => {
         <SizedBox height={34} />
         <Column crossAxisSize="max" justifyContent="center">
           {order?.status === "active" && (
-            <Btn
-              size="medium"
-              fixed
-              kind="danger"
-              onClick={() => checkOrderCancel(order?.id)}
-            >
+            <Btn size="medium" fixed kind="danger" onClick={() => checkOrderCancel(order?.id)}>
               <Img src={cross} alt="add" />
               <SizedBox width={12} />
               Cancel order
             </Btn>
           )}
           {order?.txId && (
-            <Anchor
-              style={{ paddingTop: 12, width: "100%" }}
-              href={`${EXPLORER_URL}/transactions/${order.txId}`}
-            >
+            <Anchor style={{ paddingTop: 12, width: "100%" }} href={`${EXPLORER_URL}/transactions/${order.txId}`}>
               <Text weight={500} textAlign="center" type="blue500">
-                View in Waves Explorer
+                View in explorer
               </Text>
             </Anchor>
           )}

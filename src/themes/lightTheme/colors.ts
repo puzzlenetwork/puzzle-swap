@@ -1,12 +1,14 @@
 const colors = {
   primary800: "#363870",
   primary650: "#8082C5",
+  primary500: "#7075E9",
   primary300: "#C6C9F4",
   primary200: "#DDE0FF",
   primary100: "#F1F2FE",
   primary50: "#f8f8ff",
   white: "#FFFFFF",
   blue500: "#7075E9",
+  button: "#6563DD",
   success: "#35A15A",
   error: "#ED827E",
   success550: "#1F8943",
@@ -17,23 +19,21 @@ const colors = {
   error100: "#FCF0EF",
   attention550: "#D9916E",
   attention500: "#EDAA8A",
-  attention100: "#FCF4F1",
+  attention100: "#FCF4F1"
 };
 // eslint-disable-next-line
 export default {
   ...colors,
   card: {
-    background: colors.white,
+    background: colors.white
   },
   icon: {
-    borderColor: colors.primary100,
+    borderColor: colors.primary100
   },
   select: {
-    selectedTextColor: "#3638708F",
+    selectedTextColor: "#3638708F"
   },
   gradient: "rgba(255, 255, 255, 0.5)",
-  tokenDescGradient:
-    "linear-gradient(180deg, rgba(248, 248, 255, 0) 0%, #f8f8ff 100%)",
-  noNftGradient:
-    "-webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(241, 242, 254, 1) 57.65%);",
+  tokenDescGradient: "linear-gradient(180deg, rgba(248, 248, 255, 0) 0%, #f8f8ff 100%)",
+  noNftGradient: "-webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(241, 242, 254, 1) 57.65%);"
 };

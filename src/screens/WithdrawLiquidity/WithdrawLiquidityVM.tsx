@@ -12,15 +12,9 @@ interface IProps {
 
 const ctx = React.createContext<WithdrawLiquidityVM | null>(null);
 
-export const WithdrawLiquidityVMProvider: React.FC<IProps> = ({
-  poolDomain,
-  children,
-}) => {
+export const WithdrawLiquidityVMProvider: React.FC<IProps> = ({ poolDomain, children }) => {
   const rootStore = useStores();
-  const store = useMemo(
-    () => new WithdrawLiquidityVM(rootStore, poolDomain),
-    [rootStore, poolDomain]
-  );
+  const store = useMemo(() => new WithdrawLiquidityVM(rootStore, poolDomain), [rootStore, poolDomain]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
 
@@ -42,12 +36,10 @@ class WithdrawLiquidityVM {
   private _setLoading = (l: boolean) => (this.loading = l);
 
   public changePoolModalOpen: boolean = false;
-  setChangePoolModalOpen = (value: boolean) =>
-    (this.changePoolModalOpen = value);
+  setChangePoolModalOpen = (value: boolean) => (this.changePoolModalOpen = value);
 
   percentToWithdraw: BN = new BN(50);
-  setPercentToWithdraw = (value: number | number[]) =>
-    (this.percentToWithdraw = new BN(value.toString()));
+  setPercentToWithdraw = (value: number | number[]) => (this.percentToWithdraw = new BN(value.toString()));
 
   public get pool() {
     return this.rootStore.poolsStore.getPoolByDomain(this.poolDomain)!;
@@ -66,66 +58,51 @@ class WithdrawLiquidityVM {
 
   updateUserIndexStaked = async () => {
     if (this.rootStore.accountStore.address == null) return;
-    const response = await this.pool.contractKeysRequest(
-      `${this.rootStore.accountStore.address}_indexStaked`
-    );
+    const response = await this.pool.contractKeysRequest(`${this.rootStore.accountStore.address}_indexStaked`);
     if (response != null && response.length > 0) {
       this.setUserIndexStaked(new BN(response[0].value));
     }
+    const __ = this.tokensToWithdrawAmounts;
+    const _ = this.totalAmountToWithdrawDisplay;
   };
 
   get withdrawCompositionTokens(): any[] {
     if (this.pool.tokens == null) return [];
-    return this.pool.tokens.reduce<(IToken & { withdraw: BN; inUsdn: BN })[]>(
-      (acc, token) => {
-        const withdraw =
-          (this &&
-            this.tokensToWithdrawAmounts &&
-            this.tokensToWithdrawAmounts[token.assetId].amount) ??
-          BN.ZERO;
-        const inUsdn =
-          (this &&
-            this.tokensToWithdrawAmounts &&
-            this.tokensToWithdrawAmounts[token.assetId].usdnEquivalent) ??
-          BN.ZERO;
-        return [
-          ...acc,
-          {
-            ...token,
-            withdraw,
-            inUsdn,
-          },
-        ];
-      },
-      []
-    );
+    return this.pool.tokens.reduce<(IToken & { withdraw: BN; inUsdn: BN })[]>((acc, token) => {
+      const withdraw =
+        (this && this.tokensToWithdrawAmounts && this.tokensToWithdrawAmounts[token.assetId].amount) ?? BN.ZERO;
+      const inUsdn =
+        (this && this.tokensToWithdrawAmounts && this.tokensToWithdrawAmounts[token.assetId].usdnEquivalent) ?? BN.ZERO;
+      return [
+        ...acc,
+        {
+          ...token,
+          withdraw,
+          inUsdn
+        }
+      ];
+    }, []);
   }
 
   get tokensToWithdrawAmounts(): Record<string, WithdrawToken> | null {
     if (this.pool == null || this.userIndexStaked == null) return null;
-    return this.pool.tokens.reduce<Record<string, WithdrawToken>>(
-      (acc, { assetId, decimals }) => {
-        const top = this.pool.liquidity[assetId]
-          .times(this.percentToWithdraw)
-          .times(0.01)
-          .times(this.userIndexStaked ?? BN.ZERO);
-        const tokenAmountToGet = top.div(this.pool.globalPoolTokenAmount);
-        const parserAmount = BN.formatUnits(tokenAmountToGet, decimals);
-        const rate = this.rootStore.poolsStore.usdtRate(assetId, 1) ?? BN.ZERO;
-        const usdnEquivalent = BN.formatUnits(
-          tokenAmountToGet.times(rate),
-          decimals
-        );
-        return {
-          ...acc,
-          [assetId]: {
-            amount: parserAmount,
-            usdnEquivalent: usdnEquivalent,
-          },
-        };
-      },
-      {}
-    );
+    return this.pool.tokens.reduce<Record<string, WithdrawToken>>((acc, { assetId, decimals }) => {
+      const top = this.pool.liquidity[assetId]
+        .times(this.percentToWithdraw)
+        .times(0.01)
+        .times(this.userIndexStaked ?? BN.ZERO);
+      const tokenAmountToGet = top.div(this.pool.globalPoolTokenAmount);
+      const parserAmount = BN.formatUnits(tokenAmountToGet, decimals);
+      const rate = this.rootStore.poolsStore.usdtRate(assetId, 1) ?? BN.ZERO;
+      const usdnEquivalent = BN.formatUnits(tokenAmountToGet.times(rate), decimals);
+      return {
+        ...acc,
+        [assetId]: {
+          amount: parserAmount,
+          usdnEquivalent: usdnEquivalent
+        }
+      };
+    }, {});
   }
 
   get totalAmountToWithdraw(): BN {
@@ -148,16 +125,12 @@ class WithdrawLiquidityVM {
     if (this.userIndexStaked == null) return;
 
     this._setLoading(true);
-    const value = this.userIndexStaked
-      .times(0.01)
-      .times(this.percentToWithdraw)
-      .toSignificant(0)
-      .toString();
+    const value = this.userIndexStaked.times(0.01).times(this.percentToWithdraw).toSignificant(0).toString();
 
     const args = this.pool.isCustom
       ? [
           { type: "integer", value },
-          { type: "string", value: this.pool.address },
+          { type: "string", value: this.pool.address }
         ]
       : [{ type: "integer", value }];
 
@@ -167,28 +140,30 @@ class WithdrawLiquidityVM {
         payment: [],
         call: {
           function: "unstakeAndRedeemIndex",
-          args: args as Array<{ type: "integer" | "string"; value: string }>,
-        },
+          args: args as Array<{ type: "integer" | "string"; value: string }>
+        }
       })
       .then((txId) => {
         txId &&
-          notificationStore.notify(
-            `Liquidity is successfully withdrawn from the ${this.pool?.title}.`,
-            {
-              type: "success",
-              title: "Successfully withdrawn",
-              link: `${EXPLORER_URL}/transactions/${txId}`,
-              linkTitle: "View on Explorer",
-            }
-          );
+          notificationStore.notify(`Liquidity is successfully withdrawn from the ${this.pool?.title}.`, {
+            type: "success",
+            title: "Successfully withdrawn",
+            link: `${EXPLORER_URL}/transactions/${txId}`,
+            linkTitle: "View on Explorer"
+          });
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
-          type: "error",
-          title: "Transaction is not completed",
+          type: "warning",
+          title: "Transaction is not completed"
         });
       })
-      .then(this.updateUserIndexStaked)
+      .then(() => {
+        this.rootStore.accountStore.updateAccountAssets(true);
+        this.updateUserIndexStaked();
+        this.rootStore.rangesStore.syncUserInvestedAmount();
+        this.rootStore.rangesStore.syncRanges();
+      })
       .finally(() => this._setLoading(false));
   };
 }

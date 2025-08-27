@@ -5,10 +5,7 @@ import { ReactComponent as SearchIcon } from "@src/assets/icons/search.svg";
 
 interface IProps
   extends Omit<
-    React.DetailedHTMLProps<
-      React.InputHTMLAttributes<HTMLInputElement>,
-      HTMLInputElement
-    >,
+    React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
     "onChange" | "prefix"
   > {
   icon?: string;
@@ -24,30 +21,33 @@ interface IProps
   flexGrow?: number;
 }
 
-const Root = styled.div<{ focused?: boolean; error?: boolean; white?: boolean, flexGrow?: number }>`
-  ${({ flexGrow }) => flexGrow ? `
+const Root = styled.div<{
+  focused?: boolean;
+  error?: boolean;
+  white?: boolean;
+  flexGrow?: number;
+}>`
+  ${({ flexGrow }) =>
+    flexGrow
+      ? `
     display: flex;
     flex-grow: ${flexGrow};
-  ` : `
+  `
+      : `
     width: 100%;
   `}
 
   background: ${({ focused }) => (focused ? "#fffff" : "#f1f2fe")};
 
   background: ${({ theme, focused, white }) =>
-    focused ? theme.colors.white : (white ? theme.colors.white : theme.colors.primary100)};
+    focused ? theme.colors.white : white ? theme.colors.white : theme.colors.primary100};
 
   border: 1px solid
     ${({ focused, error, theme }) =>
-      error
-        ? `${theme.colors.error550}`
-        : focused
-        ? `${theme.colors.blue500}`
-        : `${theme.colors.primary100}`};
+      error ? `${theme.colors.error550}` : focused ? `${theme.colors.blue500}` : `${theme.colors.primary100}`};
 
   :hover {
-    border-color: ${({ focused, error }) =>
-      error ? "#ED827E" : !focused ? "#C6C9F4" : "#7075E9"};
+    border-color: ${({ focused, error }) => (error ? "#ED827E" : !focused ? "#C6C9F4" : "#7075E9")};
   }
 
   align-items: center;
@@ -63,8 +63,7 @@ const Root = styled.div<{ focused?: boolean; error?: boolean; white?: boolean, f
   input {
     padding: 0;
     width: 100%;
-    color: ${({ focused, theme }) =>
-      focused ? `${theme.colors.primary800}` : `${theme.colors.primary650}`};
+    color: ${({ focused, theme }) => (focused ? `${theme.colors.primary800}` : `${theme.colors.primary650}`)};
     outline: none;
     border: none;
     background-color: transparent;

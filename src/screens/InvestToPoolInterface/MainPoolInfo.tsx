@@ -1,24 +1,24 @@
+import Button from "@components/Button";
+import SizedBox from "@components/SizedBox";
+import SquareTokenIcon from "@components/SquareTokenIcon";
+import Text from "@components/Text";
+import TextButton from "@components/TextButton";
 import styled from "@emotion/styled";
-import React from "react";
-import bg from "@src/assets/puzzleBackground2.png";
+import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
+import TransparentDetailsBtn from "@screens/InvestToPoolInterface/TransparentDetailsBtn";
 import customBg from "@src/assets/customPuzzleBg.png";
 import puzzleIcon from "@src/assets/icons/smallWhitePuzzle.svg";
 import link from "@src/assets/icons/whiteLink.svg";
-import Text from "@components/Text";
+import bg from "@src/assets/puzzleBackground2.png";
 import { Column, Row } from "@src/components/Flex";
-import { observer } from "mobx-react-lite";
-import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
-import SizedBox from "@components/SizedBox";
-import Button from "@components/Button";
-import TransparentDetailsBtn from "@screens/InvestToPoolInterface/TransparentDetailsBtn";
-import { useNavigate } from "react-router-dom";
-import centerEllipsis from "@src/utils/centerEllipsis";
-import TextButton from "@components/TextButton";
 import { EXPLORER_URL, ROUTES } from "@src/constants";
-import { useStores } from "@stores";
-import SquareTokenIcon from "@components/SquareTokenIcon";
 import useWindowSize from "@src/hooks/useWindowSize";
 import { themes } from "@src/themes/ThemeProvider";
+import centerEllipsis from "@src/utils/centerEllipsis";
+import { useStores } from "@stores";
+import { observer } from "mobx-react-lite";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {}
 
@@ -45,8 +45,7 @@ const Links = styled.div<{ isCustom?: boolean }>`
   display: grid;
   column-gap: 8px;
   @media (min-width: 880px) {
-    grid-template-columns: ${({ isCustom }) =>
-      isCustom ? "1fr 1fr 1fr 3fr" : "1fr 1fr 4fr 1fr"};
+    grid-template-columns: ${({ isCustom }) => (isCustom ? "1fr 1fr 1fr 3fr" : "1fr 1fr 4fr 1fr")};
     grid-template-rows: 1fr;
     padding-top: 44px;
   }
@@ -73,17 +72,16 @@ const Title = styled(Text)`
 `;
 
 const AdaptiveButton = styled(Button)`
-    width: fit-content;
-    @media (max-width: 880px) {
-      width: 100%;
-    }
-`
+  width: fit-content;
+  @media (max-width: 880px) {
+    width: 100%;
+  }
+`;
 const MainPoolInfo: React.FC<IProps> = () => {
   const vm = useInvestToPoolInterfaceVM();
   const { accountStore } = useStores();
   const navigate = useNavigate();
-  const handleSmartContractClick = () =>
-    window.open(`https://wscan.io/${vm.pool.address}`);
+  const handleSmartContractClick = () => window.open(`${EXPLORER_URL}/${vm.pool.address}`);
   const completePoolInitialization = () => {
     vm.prepareCompletePoolInitialization();
     navigate(ROUTES.POOLS_CREATE);
@@ -141,12 +139,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
               </Text>
               <Text type="light" size="medium">
                 {vm.pool.isCustom ? (
-                  <TextButton
-                    prefix={link}
-                    onClick={() =>
-                      window.open(`https://wscan.io/${vm.pool?.owner}`)
-                    }
-                  >
+                  <TextButton prefix={link} onClick={() => window.open(`${EXPLORER_URL}/${vm.pool?.owner}`)}>
                     {centerEllipsis(vm.pool?.owner ?? "", 8)}
                   </TextButton>
                 ) : (
@@ -158,12 +151,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
             <SizedBox height={16} />
             <Row justifyContent="flex-end">
               {vm.pool.statistics == null ? (
-                <AdaptiveButton
-                  fixed
-                  size="medium"
-                  style={{ marginRight: 8 }}
-                  onClick={completePoolInitialization}
-                >
+                <AdaptiveButton fixed size="medium" style={{ marginRight: 8 }} onClick={completePoolInitialization}>
                   Complete pool initialization
                 </AdaptiveButton>
               ) : (

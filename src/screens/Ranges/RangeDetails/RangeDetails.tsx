@@ -1,19 +1,14 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import Layout from "@components/Layout";
-import {
-  RangeDetailsInterfaceVMProvider,
-  useRangeDetailsInterfaceVM,
-} from "./RangeDetailsVM";
+import { RangeDetailsInterfaceVMProvider, useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
 import SizedBox from "@components/SizedBox";
 import { Column, Row } from "@src/components/Flex";
 import GoBack from "@components/GoBack";
 import MainRangeInfo from "./MainRangeInfo";
-import { Navigate, useParams } from "react-router-dom";
-import Loading from "@components/Loading";
+import { useParams } from "react-router-dom";
 import { ROUTES } from "@src/constants";
-import { useStores } from "@stores";
 import RangeCharts from "./RangeCharts";
 import RangeComposition from "./RangeComposition";
 import Reward from "./Reward";
@@ -24,6 +19,8 @@ import RangeChart from "@src/components/RangeChart";
 import useWindowSize from "@src/hooks/useWindowSize";
 import RangeLiquidity from "./RangeLiquidity";
 import EarnedByLP from "./EarnedByLP";
+import LowRangeLiquidityNotification from "@components/LowRangeLiquidityNotification";
+import Spinner from "@src/components/Spinner";
 
 const Root = styled.div`
   display: flex;
@@ -63,64 +60,70 @@ const Body = styled.div`
 `;
 const RangeDetailsInterfaceImpl: React.FC = observer(() => {
   const vm = useRangeDetailsInterfaceVM();
-  const { rangesStore } = useStores();
   const { width } = useWindowSize();
   const isMobile = !!(width && width < 880);
-  if (rangesStore.ranges.length === 0 && vm.range == null) {
-    return <Loading />;
-  }
-  if (rangesStore.ranges.length > 0 && vm.range == null) {
-    return <Navigate to={ROUTES.NOT_FOUND} />;
-  }
+  const showLowRangeLiquidityNotification = useMemo(() => vm.range && (!vm.range.liquidity || vm.range.liquidity.lt(100)), [vm.range?.liquidity]);
+
+  // if (!vm.range) return <></>;
   return (
     <Layout>
       <Root>
-        <GoBack link={ROUTES.RANGES} text="Back to Range list" />
+        <GoBack link={ROUTES.RANGES} text="Back to ranges list" />
         <SizedBox height={24} />
-        {
-          isMobile ? (
-            <Column crossAxisSize="max">
-              <MainRangeInfo isMobile />
-              <SizedBox height={20} />
-              <Row>
-                <Card style={{ width: "auto", padding: "4px" }}>
-                  <RangeChart range={vm.range!} size={120} />
-                </Card>
-                <SizedBox width={12} />
-                <RangeLiquidity style={{ height: "130px", padding: "16px 20px" }} />
-              </Row>
-              <SizedBox height={12} />
+        {isMobile ? (
+          <Column crossAxisSize="max">
+            <MainRangeInfo isMobile />
+            <SizedBox height={20} />
+            <Row>
+              <Card style={{ width: "auto", padding: "4px" }}>
+                {vm.range ? (
+                  <RangeChart assetsWithLeverage={vm.range.assetsWithLeverage} size={120} />
+                ) : (
+                  <Spinner style={{ width: 94, height: 94, margin: 10 }} />
+                )}
+              </Card>
+              <SizedBox width={12} />
+              <RangeLiquidity style={{ height: "130px", padding: "16px 20px" }} />
+            </Row>
+            <SizedBox height={12} />
+            <EarnedByLP />
+          </Column>
+        ) : (
+          <Column crossAxisSize="max">
+            <Row>
+              <MainRangeInfo />
+              <SizedBox width={20} />
+              <Card style={{ width: "auto", padding: "19px" }}>
+                {vm.range ? (
+                  <RangeChart assetsWithLeverage={vm.range.assetsWithLeverage} size={160} />
+                ) : (
+                  <Spinner style={{ width: 134, height: 134, margin: 10 }} />
+                )}
+              </Card>
+            </Row>
+            <SizedBox height={20} />
+            <Row alignItems="stretch">
+              <RangeLiquidity />
+              <SizedBox width={12} />
               <EarnedByLP />
-            </Column>
-          ) : (
-            <Column crossAxisSize="max">
-              <Row>
-                <MainRangeInfo />
-                <SizedBox width={20} />
-                <Card style={{ width: "auto", padding: "19px" }}>
-                  <RangeChart range={vm.range!} size={160} />
-                </Card>
-              </Row>
-              <SizedBox height={20} />
-              <Row alignItems="stretch">
-                <RangeLiquidity />
-                <SizedBox width={12} />
-                <EarnedByLP />
-              </Row>
-            </Column>
-          )
-        }
+            </Row>
+          </Column>
+        )}
         <Body>
           <MainBlock>
-            {isMobile && <Column crossAxisSize="max">
-              <Reward />
-              <MyRangeBalance />
-              <LPStaking />
-            </Column>}
+            {isMobile && (
+              <Column crossAxisSize="max">
+                {showLowRangeLiquidityNotification && <LowRangeLiquidityNotification />}
+                <Reward />
+                <MyRangeBalance />
+                <LPStaking />
+              </Column>
+            )}
             <RangeCharts />
             <RangeComposition isMobile={isMobile} />
           </MainBlock>
           <RightBlock>
+            {showLowRangeLiquidityNotification && <LowRangeLiquidityNotification />}
             <Reward />
             <MyRangeBalance />
             <LPStaking />

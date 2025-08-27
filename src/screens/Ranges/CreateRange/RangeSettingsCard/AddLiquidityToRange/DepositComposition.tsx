@@ -12,6 +12,7 @@ import AddTokenRow from "./AddTokenRow";
 import { Row } from "@components/Flex";
 import { observer } from "mobx-react-lite";
 import Notification from "@components/Notification";
+import LowBalanceNotifications from "./LowBalanceNotifications";
 
 interface IProps {}
 
@@ -53,25 +54,15 @@ const DepositComposition: React.FC<IProps> = () => {
       <SizedBox height={8} />
       <Card paddingMobile="0" paddingDesktop="8px 0">
         <GridTable desktopTemplate={"1fr 1fr"} mobileTemplate={"1fr 1fr"}>
+          <LowBalanceNotifications />
           {vm.rangeAssets.map((token, i) => {
-            const balance = accountStore.findBalanceByAssetId(
-              token.asset.assetId
-            );
-            const available =
-              (balance &&
-              balance.balance &&
-              BN.formatUnits(balance?.balance, token.asset.decimals))
-              ?? BN.ZERO;
-            const depositAmount = vm.maxToProvide
-              .times(vm.providedPercentOfPool)
-              .div(100)
-              .times(token.share.div(100).div(10));
+            const depositAmount = vm.assetsToProvide[token.asset.assetId];
             return (
               <AddTokenRow
                 symbol={token.asset.symbol}
                 key={i}
-                availableAmount={available}
-                depositPrefix="$"
+                availableAmount={token.inWallet ?? BN.ZERO}
+                depositPrefix=""
                 depositAmount={depositAmount}
                 percent={token.share.div(10).toNumber()}
                 logo={token.asset.logo}
@@ -80,14 +71,14 @@ const DepositComposition: React.FC<IProps> = () => {
           })}
         </GridTable>
         <Divider />
-        <AdaptiveRowWithPadding justifyContent="space-between">
-          <Text fitContent>Total value</Text>
+        <AdaptiveRowWithPadding>
+          <Text>Total value</Text>
           <Text weight={500} fitContent nowrap>
-            $
-            {vm.maxToProvide
-              .times(vm.providedPercentOfPool)
-              .div(100)
-              .toFormat(4)}
+            {vm.totalAmountToDepositStr}
+          </Text>
+          <SizedBox width={4} />
+          <Text weight={500} fitContent nowrap type="secondary">
+            ≈ $ {vm.totalAmountToDepositUsd?.toBigFormat(2) ?? "0.00"}
           </Text>
         </AdaptiveRowWithPadding>
       </Card>

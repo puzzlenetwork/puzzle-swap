@@ -40,8 +40,7 @@ const SelectsAssets: React.FC<IProps> = () => {
   const [addAssetModal, openAssetModal] = useState(false);
   const vm = useCreateCustomPoolsVM();
   const theme = useTheme();
-  const minShareNotification =
-    "Please note that minimal share of token should be 5 %";
+  const minShareNotification = "Please note that minimal share of token should be 5 %";
   const assetNotification =
     "Please note that the pool must include a ROME, PUZZLE, XTN, USDT or WAVES asset with at least 2% of pool weight and the maximum of 10 different assets.";
   return (
@@ -71,8 +70,8 @@ const SelectsAssets: React.FC<IProps> = () => {
             containerStyles={{ display: "flex", alignItems: "center" }}
             content={
               <Text>
-                Base token is used to provide liquidity with single asset. Also
-                most of the LP rewards will be accumulated in this token.
+                Base token is used to provide liquidity with single asset. Also most of the LP rewards will be
+                accumulated in this token.
               </Text>
             }
           >
@@ -100,7 +99,7 @@ const SelectsAssets: React.FC<IProps> = () => {
         <SizedBoxStyled
           height={1}
           style={{
-            background: theme.colors.primary100,
+            background: theme.colors.primary100
           }}
         />
         <Text style={{ width: "fit-content" }} weight={500}>
@@ -126,12 +125,7 @@ const SelectsAssets: React.FC<IProps> = () => {
           })}
         </Grid>
         {vm.poolsAssets.length < 10 && (
-          <Button
-            fixed
-            size="medium"
-            kind="secondary"
-            onClick={() => openAssetModal(true)}
-          >
+          <Button fixed size="medium" kind="secondary" onClick={() => openAssetModal(true)}>
             Add an asset
             <SizedBox width={10} />
             <Add />

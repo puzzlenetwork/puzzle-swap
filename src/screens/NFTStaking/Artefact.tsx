@@ -41,13 +41,7 @@ const Buttons = styled.div`
   display: flex;
 `;
 
-const Artefact: React.FC<IProps> = ({
-  name,
-  apy,
-  imageLink,
-  marketPrice,
-  buttons,
-}) => {
+const Artefact: React.FC<IProps> = ({ name, apy, imageLink, marketPrice, buttons }) => {
   const boostApy = new BN(apy ?? 0);
   const price = new BN(marketPrice ?? 0);
   const [squareRef, { width }] = useElementSize();

@@ -27,40 +27,24 @@ const Tab = styled.div<{ active?: boolean }>`
   padding-bottom: 12px;
   border-bottom: 4px solid #7075e9;
   cursor: pointer;
-  border-bottom: ${({ active, theme }) =>
-    active ? `4px solid ${theme.colors.blue500}` : "4px solid transparent"};
+  border-bottom: ${({ active, theme }) => (active ? `4px solid ${theme.colors.blue500}` : "4px solid transparent")};
   margin-bottom: -1px;
   user-select: none;
   transition: 0.4s;
   :hover {
-    border-bottom: ${({ active, theme }) =>
-      !active && `4px solid ${theme.colors.primary300}`}
+    border-bottom: ${({ active, theme }) => !active && `4px solid ${theme.colors.primary300}`}
   }
 }
 `;
-const Tabs: React.FC<IProps> = ({
-  tabs,
-  activeTab,
-  setActive,
-  style,
-  tabStyle,
-  textStyle,
-}) => {
+const Tabs: React.FC<IProps> = ({ tabs, activeTab, setActive, style, tabStyle, textStyle }) => {
   return (
     <Root style={style}>
       {tabs.map(({ additionalInfo, name }, index) => (
-        <Tab
-          key={index}
-          active={index === activeTab}
-          onClick={() => setActive(index)}
-          style={tabStyle}
-        >
+        <Tab key={index} active={index === activeTab} onClick={() => setActive(index)} style={tabStyle}>
           <Text weight={500} style={textStyle} type={index === activeTab ? "primary" : "secondary"}>
             {name}
             {additionalInfo != null && additionalInfo !== 0 && (
-              <span style={{ color: "#8082C5", marginLeft: 10 }}>
-                {additionalInfo}
-              </span>
+              <span style={{ color: "#8082C5", marginLeft: 10 }}>{additionalInfo}</span>
             )}
           </Text>
         </Tab>

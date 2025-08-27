@@ -26,20 +26,12 @@ const Icon = styled.img`
 `;
 const LoggedInRewardInfo: React.FC = () => {
   const vm = useStakingVM();
-  const availableToClaim =
-    vm.availableToClaim != null
-      ? BN.formatUnits(vm.availableToClaim, 20)
-      : null;
+  const availableToClaim = vm.availableToClaim != null ? BN.formatUnits(vm.availableToClaim, 20) : null;
   const claimedUSDNReward =
-    vm.claimedRewardInUSDN != null
-      ? BN.formatUnits(vm.claimedRewardInUSDN, TOKENS_BY_SYMBOL.XTN.decimals)
-      : null;
+    vm.claimedRewardInUSDN != null ? BN.formatUnits(vm.claimedRewardInUSDN, TOKENS_BY_SYMBOL.XTN.decimals) : null;
   const claimedPuzzleReward =
     vm.claimedRewardInPuzzle != null
-      ? BN.formatUnits(
-          vm.claimedRewardInPuzzle,
-          TOKENS_BY_SYMBOL.PUZZLE.decimals
-        )
+      ? BN.formatUnits(vm.claimedRewardInPuzzle, TOKENS_BY_SYMBOL.PUZZLE.decimals)
       : null;
   const date = dayjs(vm.lastClaimDate?.toNumber() ?? 0);
   const format = date.format("D MMM YYYY");
@@ -56,9 +48,7 @@ const LoggedInRewardInfo: React.FC = () => {
             <Column>
               <Text weight={500}>
                 {claimedUSDNReward != null ? (
-                  claimedUSDNReward
-                    .toFormat(claimedUSDNReward.gte(0.01) ? 2 : 6)
-                    .concat(" XTN")
+                  claimedUSDNReward.toFormat(claimedUSDNReward.gte(0.01) ? 2 : 6).concat(" XTN")
                 ) : (
                   <Skeleton height={16} width={110} />
                 )}
@@ -66,13 +56,7 @@ const LoggedInRewardInfo: React.FC = () => {
               <Text weight={500}>
                 {claimedPuzzleReward != null ? (
                   claimedPuzzleReward
-                    .toFormat(
-                      claimedPuzzleReward.eq(0)
-                        ? 2
-                        : claimedPuzzleReward.gte(0.01)
-                        ? 2
-                        : 6
-                    )
+                    .toFormat(claimedPuzzleReward.eq(0) ? 2 : claimedPuzzleReward.gte(0.01) ? 2 : 6)
                     .concat(" PUZZLE")
                 ) : (
                   <Skeleton height={16} width={110} />
@@ -100,9 +84,7 @@ const LoggedInRewardInfo: React.FC = () => {
               availableToClaim.eq(0) ? (
                 "0.00 PUZZLE"
               ) : (
-                availableToClaim
-                  .toFormat(availableToClaim.gte(0.01) ? 8 : 6)
-                  .concat(" PUZZLE")
+                availableToClaim.toFormat(availableToClaim.gte(0.01) ? 8 : 6).concat(" PUZZLE")
               )
             ) : (
               <Skeleton height={16} width={110} />
@@ -112,12 +94,7 @@ const LoggedInRewardInfo: React.FC = () => {
       </Row>
       <SizedBox height={18} />
       {!vm.loading ? (
-        <Button
-          fixed
-          size="medium"
-          onClick={vm.claimReward}
-          disabled={!vm.canClaim}
-        >
+        <Button fixed size="medium" onClick={vm.claimReward} disabled={!vm.canClaim}>
           Claim reward
         </Button>
       ) : (

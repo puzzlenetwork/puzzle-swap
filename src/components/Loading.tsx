@@ -16,13 +16,8 @@ const Loading: React.FC<IProps> = ({ big, ...rest }) => {
     return () => clearInterval(interval);
   });
   return (
-    <span
-      {...rest}
-      style={{ width: 10, color: theme.colors.primary100, ...rest.style }}
-    >
-      {big
-        ? Array.from({ length }, () => "●").join("")
-        : Array.from({ length }, () => ".").join("")}
+    <span {...rest} style={{ width: 10, color: theme.colors.primary100, ...rest.style }}>
+      {big ? Array.from({ length }, () => "●").join("") : Array.from({ length }, () => ".").join("")}
     </span>
   );
 };

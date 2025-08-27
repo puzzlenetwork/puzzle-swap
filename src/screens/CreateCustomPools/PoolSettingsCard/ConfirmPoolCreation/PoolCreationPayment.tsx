@@ -6,7 +6,7 @@ import SizedBox from "@components/SizedBox";
 import Card from "@components/Card";
 import NoPayment from "./NoPayment";
 import SelectArtefact, {
-  SelectArtefactSkeleton,
+  SelectArtefactSkeleton
 } from "@screens/CreateCustomPools/PoolSettingsCard/ConfirmPoolCreation/SelectArtefact";
 import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
 import Notification from "@components/Notification";
@@ -30,20 +30,14 @@ const PoolCreationPayment: React.FC<IProps> = () => {
     vm.checkIfDomainIsPaidWithCurrentUser();
   }, [vm]);
   const paymentMethod = () => {
-    if (
-      nftStore.accountNFTs == null ||
-      nftStore.totalPuzzleNftsAmount == null ||
-      !isFinite(vm.puzzleNFTPrice ?? 0)
-    )
+    if (nftStore.accountNFTs == null || nftStore.totalPuzzleNftsAmount == null || !isFinite(vm.puzzleNFTPrice ?? 0))
       return <SelectArtefactSkeleton />;
     if (vm.isDomainPaid) return <Text>You have already paid for domain </Text>;
     if (vm.isThereArtefacts) return <SelectArtefact />;
     if (
       puzzleBalance &&
       vm.puzzleNFTPrice != null &&
-      puzzleBalance?.balance?.lt(
-        BN.parseUnits(vm.puzzleNFTPrice, puzzleBalance.decimals)
-      )
+      puzzleBalance?.balance?.lt(BN.parseUnits(vm.puzzleNFTPrice, puzzleBalance.decimals))
     ) {
       return (
         <div style={{ width: "100%" }}>

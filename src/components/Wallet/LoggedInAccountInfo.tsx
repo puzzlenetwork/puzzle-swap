@@ -1,16 +1,14 @@
-import styled from "@emotion/styled";
-import React, { useState } from "react";
 import { Row } from "@components/Flex";
-import { ReactComponent as WalletIcon } from "@src/assets/icons/pink-wallet.svg";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
-import arrowIcon from "@src/assets/icons/arrowRightBorderless.svg";
-import * as identityImg from "identity-img";
-import { useStores } from "@stores";
 import Tooltip from "@components/Tooltip";
+import styled from "@emotion/styled";
+import arrowIcon from "@src/assets/icons/arrowRightBorderless.svg";
+import { useStores } from "@stores";
+import * as identityImg from "identity-img";
 import { observer } from "mobx-react-lite";
+import React, { useState } from "react";
 import WalletActionsTooltip from "../WalletActionsTooltip";
-import DarkMode from "../Header/DarkMode";
 
 interface IProps {}
 
@@ -39,8 +37,7 @@ const AddressContainer = styled.div<{ expanded: boolean }>`
   border: 1px solid ${({ theme }) => theme.colors.primary100};
   border-radius: 10px;
   cursor: pointer;
-  background: ${({ expanded, theme }) =>
-    expanded ? theme.colors.primary100 : theme.colors.white};
+  background: ${({ expanded, theme }) => (expanded ? theme.colors.primary100 : theme.colors.white)};
 
   :hover {
     background: ${({ theme }) => theme.colors.primary100};
@@ -56,8 +53,7 @@ const AddressContainer = styled.div<{ expanded: boolean }>`
 
   .menu-arrow {
     transition: 0.4s;
-    transform: ${({ expanded }) =>
-      expanded ? "rotate(-90deg)" : "rotate(90deg)"};
+    transform: ${({ expanded }) => (expanded ? "rotate(-90deg)" : "rotate(90deg)")};
   }
 `;
 
@@ -72,7 +68,7 @@ const LoggedInAccountInfo: React.FC<IProps> = () => {
         config={{
           placement: "bottom-end",
           trigger: "click",
-          onVisibleChange: setAccountOpened,
+          onVisibleChange: setAccountOpened
         }}
         content={<WalletActionsTooltip address={address!} />}
       >
