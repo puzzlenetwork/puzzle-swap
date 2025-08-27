@@ -65,6 +65,7 @@ export default class RangesStore {
     makeAutoObservable(this);
     this.syncRanges();
     this.syncInvestments();
+    this.syncUserInvestedAmount();
 
     reaction(
       () => this.rootStore.accountStore.address,
@@ -72,8 +73,16 @@ export default class RangesStore {
         this.userAddress = undefined;
         this.syncRanges();
         this.syncInvestments();
+        this.syncUserInvestedAmount();
       }
     )
+    // Re-sync invested amount when balances change (e.g. after deposit/withdraw)
+    reaction(
+      () => [this.rootStore.accountStore.address, this.rootStore.accountStore.assetBalances],
+      () => {
+        this.syncUserInvestedAmount();
+      }
+    );
   }
 
   public rootStore: RootStore;
@@ -228,6 +237,25 @@ export default class RangesStore {
       console.error("Error fetching investments:", error);
     } finally {
       this.setInvestmentsLoading(false);
+    }
+  };
+
+  // --- User total invested amount (USD) ---
+  userInvestedAmount: BN | null = null;
+  setUserInvestedAmount = (v: number) => {
+    this.userInvestedAmount = new BN(v);
+  };
+  syncUserInvestedAmount = async () => {
+    const { address } = this.rootStore.accountStore;
+    if (!address) {
+      this.userInvestedAmount = null;
+      return;
+    }
+    try {
+      const amount = await rangesService.getUserTotalProvided(address);
+      this.setUserInvestedAmount(amount);
+    } catch (error) {
+      console.error("Error fetching user invested amount:", error);
     }
   };
 }

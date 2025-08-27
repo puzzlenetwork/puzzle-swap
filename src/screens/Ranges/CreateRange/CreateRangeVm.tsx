@@ -15,6 +15,10 @@ import { generate } from "random-words";
 import React, { useMemo } from "react";
 import loadCreateRangeStateFromStorage, { IInitDataToStore } from "./utils/loadCreateRangeStateFromStorage";
 
+export const feeToDeploy = new BN(0.042e8);
+export const transactionFeeToDeploy = new BN(0.001e8);
+export const feeToProvideLiquidity = new BN(0.005e8);
+
 interface IProps {
   children: React.ReactNode;
 }
@@ -68,8 +72,8 @@ class CreateRangeVm {
       observable({
         asset: TOKENS_BY_SYMBOL.ROME,
         share: new BN(500),
-        initialPrice: new BN(1),
-        currentPrice: new BN(1),
+        initialPrice: BN.parseUnits(1, TOKENS_BY_SYMBOL.ROME.decimals),
+        currentPrice: BN.parseUnits(1, TOKENS_BY_SYMBOL.ROME.decimals),
         leverage: new BN(1),
         locked: false,
         priceLoaded: false
@@ -77,8 +81,8 @@ class CreateRangeVm {
       observable({
         asset: TOKENS_BY_SYMBOL.PUZZLE,
         share: new BN(500),
-        initialPrice: new BN(1),
-        currentPrice: new BN(1),
+        initialPrice: BN.parseUnits(1, TOKENS_BY_SYMBOL.PUZZLE.decimals),
+        currentPrice: BN.parseUnits(1, TOKENS_BY_SYMBOL.PUZZLE.decimals),
         leverage: new BN(1),
         locked: false,
         priceLoaded: false
@@ -108,7 +112,7 @@ class CreateRangeVm {
     });
   }
 
-  public baseTokenPrice!: BN;
+  public baseTokenPrice: BN = new BN(1e8);
   public setBaseTokenPrice = (val: BN) => {
     // priceLoaded: mark base token as loaded when base price is determined
     if (this.rangeAssets[0]) {
@@ -183,6 +187,8 @@ class CreateRangeVm {
     this.initialize(initData);
     this.syncStakingStats();
 
+    this.syncInWallet();
+
     reaction(
       () => this.rootStore.accountStore.assetBalances && this.rootStore.accountStore.assetBalances.length,
       () => this.syncInWallet()
@@ -199,7 +205,8 @@ class CreateRangeVm {
           assetId: t.asset?.assetId,
           locked: t.locked,
           share: t.share.div(10).toNumber(),
-          leverage: t.leverage.toNumber()
+          leverage: t.leverage.toNumber(),
+          initialPrice: t.initialPrice ? BN.formatUnits(t.initialPrice, t.asset.decimals).toNumber() : 1,
         })),
         title: this.domain,
         step: this.step,
@@ -224,11 +231,11 @@ class CreateRangeVm {
   initialize = (initData: IInitDataToStore | null) => {
     if (initData != null && initData.assets != null && initData.assets.length > 0) {
       if (initData.assets != null) {
-        this.rangeAssets = initData.assets?.map(({ assetId, share, locked, leverage }) => {
+        this.rangeAssets = initData.assets?.map(({ assetId, share, locked, leverage, initialPrice }) => {
           return observable({
             share: new BN(share).times(10),
             locked,
-            initialPrice: new BN(1),
+            initialPrice: new BN(initialPrice),
             currentPrice: new BN(1),
             asset: TOKENS_BY_ASSET_ID[assetId],
             priceLoaded: false,
@@ -552,7 +559,8 @@ class CreateRangeVm {
       assetId: t.asset?.assetId,
       locked: t.locked,
       share: t.share.div(10).toNumber(),
-      leverage: t.leverage.toNumber()
+      leverage: t.leverage.toNumber(),
+      initialPrice: t.initialPrice?.toNumber() ?? 1,
     }));
     const _state = {
       assets,
@@ -632,7 +640,7 @@ class CreateRangeVm {
       const txId = await this.rootStore.accountStore.invoke({
         dApp: this.deployedContractAddress,
         payment: payments,
-        fee: 900000,
+        fee: feeToProvideLiquidity.toNumber(),
         call: {
           function: "init",
           args: [
@@ -694,25 +702,20 @@ class CreateRangeVm {
                 };
               }, []);
 
-              if (!available) {
-                return (
-                  <div style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", height: 40, borderRadius: 12 }}>
-                    <Spinner size={24} />
-                  </div>
-                );
-              }
-
               return (
                 <Button
                   key="Go to Range page"
                   size="medium"
                   fixed
                   onClick={() => {
+                    if (!available) return;
                     this.setNotificationParams(null);
                     this.initialize(null);
                     localStorage.removeItem("puzzle-custom-range");
                     window.open(`/ranges/${address}/details`);
                   }}
+                  title={available ? "Go to Range page" : "Range is being deployed"}
+                  disabled={!available}
                   kind="secondary"
                 >
                   Go to Range page
@@ -787,7 +790,7 @@ class CreateRangeVm {
 
       // Initial waves transfer for fees
       const transferTxId = await this.rootStore.accountStore.transfer({
-        amount: Number(0.05 * 1e8).toString(), // 0.05 WAVES for fees
+        amount: feeToDeploy.toNumber().toString(),
         recipient: randomAddress,
         assetId: null
       });
@@ -853,7 +856,7 @@ class CreateRangeVm {
       const rawBalance = findBalanceByAssetId(asset.assetId);
       if (rawBalance == null || rawBalance.balance == null || initialPrice == null) return acc;
       const tokenBalance = asset.assetId === "WAVES"
-        ? rawBalance.balance.minus(this.deployedContractAddress ? 9e5 : 6e6) // reserve 0.05 + 0.001 WAVES for deploy and 0.009 WAVES for provide liquidity
+        ? rawBalance.balance.minus(this.deployedContractAddress ? feeToProvideLiquidity : feeToDeploy.plus(transactionFeeToDeploy).plus(feeToProvideLiquidity)) // reserve 0.042 + 0.001 WAVES for deploy and 0.005 WAVES for provide liquidity
         : rawBalance.balance;
       const baseToken = this.rangeAssets[0];
       const value = BN.formatUnits(tokenBalance, asset.decimals)
@@ -981,7 +984,8 @@ class CreateRangeVm {
     const basePrice = this.baseTokenPrice;
     return this.rangeAssets.slice().map((t) => {
       const toProvide = this.assetsToProvide?.[t.asset.assetId] ?? BN.ZERO;
-      const remaining = (t.inWallet ?? BN.ZERO).minus(toProvide).minus(t.asset.assetId === "WAVES" ? 0.009 : 0);
+      const remainingRaw = (t.inWallet ?? BN.ZERO).minus(toProvide);
+      const remaining = t.asset.assetId === "WAVES" ? remainingRaw.minus(this.deployedContractAddress ? feeToProvideLiquidity : feeToDeploy.plus(transactionFeeToDeploy).plus(feeToProvideLiquidity)) : remainingRaw;
       const price = (t.asset.assetId === baseAssetId)
         ? basePrice ?? 1
         : (t.currentPrice ? BN.formatUnits(t.currentPrice, t.asset.decimals).times(basePrice ?? 1) : 1);

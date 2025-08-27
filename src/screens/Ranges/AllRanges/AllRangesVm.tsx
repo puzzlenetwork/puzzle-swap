@@ -3,7 +3,7 @@ import { useVM } from "@src/hooks/useVM";
 import rangesService, { IGetGlobalRangesInfo } from "@src/services/rangesService";
 import BN from "@src/utils/BN";
 import { RootStore, useStores } from "@stores";
-import { makeAutoObservable, reaction, when } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import React, { useMemo } from "react";
 
 interface IProps {
@@ -37,8 +37,16 @@ class AllRangesVm {
     this.syncFiltersWithRangesStore();
 
     reaction(
-      () => [this.rootStore.accountStore.address, this.rootStore.accountStore.assetBalances],
-      () => this.syncUserInvestedAmount()
+      () => this.rootStore.accountStore.address,
+      () => this.rootStore.rangesStore.syncUserInvestedAmount(),
+    )
+
+    reaction(
+      () => this.rootStore.rangesStore.userInvestedAmount,
+      (val) => {
+        this.userInvestedAmount = val;
+      },
+      { fireImmediately: true }
     );
 
     makeAutoObservable(this);
@@ -135,7 +143,6 @@ class AllRangesVm {
   }
 
   userInvestedAmount: BN | null = null;
-  setUserInvestedAmount = (v: number) => (this.userInvestedAmount = new BN(v));
 
   syncFiltersWithRangesStore = () => {
     const rangesStore = this.rootStore.rangesStore;
@@ -148,14 +155,6 @@ class AllRangesVm {
     this.showOnlyActiveRanges = !!rangesStore.onlyActiveRanges;
     this.showOnlyUserRanges = !!rangesStore.userAddress;
     this.showPriceInUsd = rangesStore.showPriceInUsd;
-  };
-
-  syncUserInvestedAmount = async () => {
-    const { address } = this.rootStore.accountStore;
-    if (!address) return;
-    rangesService.getUserTotalProvided(address).then((amount) => {
-      this.setUserInvestedAmount(amount);
-    });
   };
 
   syncRanges = async (params?: Partial<IGetGlobalRangesInfo>) => {

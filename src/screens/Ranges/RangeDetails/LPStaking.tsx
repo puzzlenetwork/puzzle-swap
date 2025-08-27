@@ -159,12 +159,12 @@ const LPStaking: React.FC<IProps> = () => {
             </>
           )}
           {vm.stakeUnstakeAction === "unstake" && (
-            <Button fixed kind="secondary" size="medium" disabled={!vm.canUnstakeIndex} onClick={vm.unstakeIndex}>
+            <Button fixed kind="secondary" size="medium" disabled={!vm.canUnstakeIndex || vm.loading} onClick={vm.unstakeIndex}>
               Unstake
             </Button>
           )}
           {vm.stakeUnstakeAction === "stake" && (
-            <Button fixed size="medium" disabled={!vm.canStakeIndex} onClick={vm.stakeIndex}>
+            <Button fixed size="medium" disabled={!vm.canStakeIndex || vm.loading} onClick={vm.stakeIndex}>
               Stake
             </Button>
           )}

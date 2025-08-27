@@ -305,7 +305,11 @@ class DepositToRangeVM {
           })
         );
       })
-      .then(() => accountStore.updateAccountAssets(true))
+      .then(() => {
+        accountStore.updateAccountAssets(true);
+        this.rootStore.rangesStore.syncUserInvestedAmount();
+        this.rootStore.rangesStore.syncRanges();
+      })
       .finally(() => this._setLoading(false));
   };
 }
