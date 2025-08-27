@@ -237,7 +237,7 @@ class CreateRangeVm {
             share: new BN(share).times(10),
             locked,
             initialPrice: initialPrice ? new BN(initialPrice) : undefined,
-            currentPrice: new BN(1),
+            currentPrice: undefined,
             asset: asset,
             priceLoaded: true,
             leverage: new BN(leverage),
