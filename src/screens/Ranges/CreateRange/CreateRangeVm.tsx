@@ -424,28 +424,35 @@ class CreateRangeVm {
     const indexOfObject = this.rangeAssets.findIndex(({ asset }) => asset.assetId === oldAssetId);
     const asset = this.tokensToAdd?.find((b) => b.assetId === newAssetId);
     if (asset == null) return;
+
+    const currentPrice = await this.getTokenPrice(newAssetId);
+
+    if (indexOfObject === 0 && !currentPrice) {
+      this.rootStore.notificationStore.notify("Currently this token can't be a base.", { type: "danger" });
+      return;
+    }
+
     this.rangeAssets[indexOfObject].asset = asset;
 
     // priceLoaded: set false before recalculating prices for the replaced asset
     this.rangeAssets[indexOfObject].priceLoaded = false;
 
-    const currentPrice = await this.getTokenPrice(newAssetId) ?? new BN(1);
     const apr = this.stakingStats.find((s) => s.asset_id === newAssetId)?.apr_1y;
     this.rangeAssets[indexOfObject].apr = apr ? new BN(apr) : undefined;
 
     if (indexOfObject === 0) {
-      this.setBaseTokenPrice(currentPrice);
+      this.setBaseTokenPrice(currentPrice!);
     } else {
       const basePrice = this.baseTokenPrice;
-      this.updateAssetInitialPrice(newAssetId, BN.parseUnits(
+      this.updateAssetInitialPrice(newAssetId, currentPrice ? BN.parseUnits(
         indexOfObject === 0 ? currentPrice : currentPrice.div(basePrice),
         asset.decimals
-      ));
+      ) : undefined);
 
-      this.updateAssetCurrentPrice(newAssetId, BN.parseUnits(
+      this.updateAssetCurrentPrice(newAssetId, currentPrice ? BN.parseUnits(
         indexOfObject === 0 ? currentPrice : currentPrice.div(basePrice),
         asset.decimals
-      ));
+      ) : undefined);
     }
     this.syncMinMaxPriceByAssetId(newAssetId);
   };
