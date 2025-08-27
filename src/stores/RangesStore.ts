@@ -78,9 +78,22 @@ export default class RangesStore {
 
   public rootStore: RootStore;
 
+  allRanges: Range[] = [];
+  updateInAllRanges = (range: Range) => {
+    const index = this.allRanges.findIndex((r) => r.address === range.address);
+    if (index !== -1) {
+      this.allRanges[index] = range;
+    } else {
+      this.allRanges.push(range);
+    }
+  };
+
   // Ranges data
   ranges: Range[] = [];
-  setRanges = (ranges: Range[]) => (this.ranges = ranges);
+  setRanges = (ranges: Range[]) => {
+    this.ranges = ranges;
+    ranges.forEach((range) => this.updateInAllRanges(range));
+  };
   updateRange = (range: Range) => {
     const index = this.ranges.findIndex((r) => r.address === range.address);
     if (index !== -1) {
@@ -88,8 +101,9 @@ export default class RangesStore {
     } else {
       this.ranges.push(range);
     }
+    this.updateInAllRanges(range);
   };
-  getRangeByAddress = (address: string) => this.ranges.find((range) => range.address === address);
+  getRangeByAddress = (address: string) => this.allRanges.find((range) => range.address === address);
 
   loading: boolean = false;
   setLoading = (loading: boolean) => (this.loading = loading);

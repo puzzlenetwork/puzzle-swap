@@ -8,7 +8,6 @@ import { Column, Row } from "@src/components/Flex";
 import GoBack from "@components/GoBack";
 import MainRangeInfo from "./MainRangeInfo";
 import { useParams } from "react-router-dom";
-import Loading from "@components/Loading";
 import { ROUTES } from "@src/constants";
 import RangeCharts from "./RangeCharts";
 import RangeComposition from "./RangeComposition";
@@ -21,6 +20,7 @@ import useWindowSize from "@src/hooks/useWindowSize";
 import RangeLiquidity from "./RangeLiquidity";
 import EarnedByLP from "./EarnedByLP";
 import LowRangeLiquidityNotification from "@components/LowRangeLiquidityNotification";
+import Spinner from "@src/components/Spinner";
 
 const Root = styled.div`
   display: flex;
@@ -62,11 +62,9 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
   const vm = useRangeDetailsInterfaceVM();
   const { width } = useWindowSize();
   const isMobile = !!(width && width < 880);
-  const showLowRangeLiquidityNotification = useMemo(() => !vm.range?.liquidity || vm.range?.liquidity.lt(100), [vm.range?.liquidity]);
+  const showLowRangeLiquidityNotification = useMemo(() => vm.range && (!vm.range.liquidity || vm.range.liquidity.lt(100)), [vm.range?.liquidity]);
 
-  if (vm.range === undefined) {
-    return <Loading />;
-  }
+  // if (!vm.range) return <></>;
   return (
     <Layout>
       <Root>
@@ -78,7 +76,11 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
             <SizedBox height={20} />
             <Row>
               <Card style={{ width: "auto", padding: "4px" }}>
-                <RangeChart assetsWithLeverage={vm.range!.assetsWithLeverage} size={120} />
+                {vm.range ? (
+                  <RangeChart assetsWithLeverage={vm.range.assetsWithLeverage} size={120} />
+                ) : (
+                  <Spinner style={{ width: 94, height: 94, margin: 10 }} />
+                )}
               </Card>
               <SizedBox width={12} />
               <RangeLiquidity style={{ height: "130px", padding: "16px 20px" }} />
@@ -92,7 +94,11 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
               <MainRangeInfo />
               <SizedBox width={20} />
               <Card style={{ width: "auto", padding: "19px" }}>
-                <RangeChart assetsWithLeverage={vm.range!.assetsWithLeverage} size={160} />
+                {vm.range ? (
+                  <RangeChart assetsWithLeverage={vm.range.assetsWithLeverage} size={160} />
+                ) : (
+                  <Spinner style={{ width: 134, height: 134, margin: 10 }} />
+                )}
               </Card>
             </Row>
             <SizedBox height={20} />

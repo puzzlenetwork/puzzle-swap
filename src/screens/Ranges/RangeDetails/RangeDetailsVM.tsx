@@ -131,13 +131,13 @@ class RangeDetailsInterfaceVM {
     const postfix = this.chartDataRange === "1m" ? "30d" : this.chartDataRange === "3m" ? "90d" : this.chartDataRange;
     switch (this.chartDataKey) {
       case "volume":
-        return new BN(this.range!.totals[`volume_${postfix}`] ?? 0);
+        return new BN(this.range?.totals[`volume_${postfix}`] ?? 0);
       case "fees":
-        return new BN(this.range!.totals[`pool_fees_${postfix}`] ?? 0);
+        return new BN(this.range?.totals[`pool_fees_${postfix}`] ?? 0);
       case "liquidity":
-        return new BN(this.range!.totals[`liquidity_${postfix}`] ?? 0);
+        return new BN(this.range?.totals[`liquidity_${postfix}`] ?? 0);
     }
-    return new BN(this.range!.totals[`${this.chartDataKey}_${postfix}`] ?? 0);
+    return new BN(this.range?.totals[`${this.chartDataKey}_${postfix}`] ?? 0);
   }
 
   public currentBlockHeight: number = 0;

@@ -3,7 +3,7 @@ import { useVM } from "@src/hooks/useVM";
 import rangesService, { IGetGlobalRangesInfo } from "@src/services/rangesService";
 import BN from "@src/utils/BN";
 import { RootStore, useStores } from "@stores";
-import { makeAutoObservable, when } from "mobx";
+import { makeAutoObservable, reaction, when } from "mobx";
 import React, { useMemo } from "react";
 
 interface IProps {
@@ -35,10 +35,12 @@ class AllRangesVm {
       this._setLoading(false);
     });
     this.syncFiltersWithRangesStore();
-    when(
-      () => this.rootStore.accountStore.address !== null,
+
+    reaction(
+      () => [this.rootStore.accountStore.address, this.rootStore.accountStore.assetBalances],
       () => this.syncUserInvestedAmount()
     );
+
     makeAutoObservable(this);
   }
 

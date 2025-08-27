@@ -6,6 +6,7 @@ import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
 import { HTMLAttributes } from "react";
 import { Column } from "@src/components/Flex";
 import styled from "@emotion/styled";
+import Skeleton from "react-loading-skeleton";
 
 const AdaptiveFlex = styled(Column)`
   @media (min-width: 880px) {
@@ -24,11 +25,11 @@ const RangeLiquidity: React.FC<HTMLAttributes<HTMLElement>> = (props) => {
       <SizedBox height={12} />
       <AdaptiveFlex>
         <Text fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px" }}>
-          ${vm.range!.liquidity.toFormat(2)} /
+          {vm.range ? `$${vm.range.liquidity.toFormat(2)} /` : <Skeleton width={120} height={24} />}
         </Text>
         <SizedBox width={4} />
         <Text type="secondary" fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px" }}>
-          ${vm.range!.virtualLiquidity.toFormat(2)}
+          {vm.range ? `$${vm.range.virtualLiquidity.toFormat(2)}` : <Skeleton width={120} height={24} />}
         </Text>
       </AdaptiveFlex>
     </Card>

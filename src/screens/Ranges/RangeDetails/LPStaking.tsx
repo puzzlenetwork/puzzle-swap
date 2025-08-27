@@ -85,7 +85,7 @@ const LPStaking: React.FC<IProps> = () => {
 
   if (accountStore.address == null) return null;
   const availableToStake = BN.formatUnits(vm.indexTokenBalance, vm.indexTokenDecimals);
-  const availableToStakeUsd = BN.formatUnits(vm.indexTokenBalance.times(vm.range!.indexTokenRate), vm.indexTokenDecimals);
+  const availableToStakeUsd = BN.formatUnits(vm.indexTokenBalance.times(vm.range?.indexTokenRate ?? 1), vm.indexTokenDecimals);
 
   return (
     <Root>
