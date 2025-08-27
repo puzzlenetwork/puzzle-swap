@@ -72,8 +72,8 @@ class CreateRangeVm {
       observable({
         asset: TOKENS_BY_SYMBOL.ROME,
         share: new BN(500),
-        initialPrice: new BN(1),
-        currentPrice: new BN(1),
+        initialPrice: undefined,
+        currentPrice: undefined,
         leverage: new BN(1),
         locked: false,
         priceLoaded: false
@@ -81,8 +81,8 @@ class CreateRangeVm {
       observable({
         asset: TOKENS_BY_SYMBOL.PUZZLE,
         share: new BN(500),
-        initialPrice: new BN(1),
-        currentPrice: new BN(1),
+        initialPrice: undefined,
+        currentPrice: undefined,
         leverage: new BN(1),
         locked: false,
         priceLoaded: false
@@ -112,7 +112,7 @@ class CreateRangeVm {
     });
   }
 
-  public baseTokenPrice: BN = new BN(1e8);
+  public baseTokenPrice: BN | null = null;
   public setBaseTokenPrice = (val: BN) => {
     // priceLoaded: mark base token as loaded when base price is determined
     if (this.rangeAssets[0]) {
@@ -123,7 +123,7 @@ class CreateRangeVm {
       this.rangeAssets.slice(1).forEach(async (asset) => {
         // priceLoaded: set false before recalculation against a new base price
         asset.priceLoaded = false;
-        const newInitialPrice = asset.initialPrice?.times(this.baseTokenPrice.div(val));
+        const newInitialPrice = asset.initialPrice?.times(this.baseTokenPrice!.div(val));
         newInitialPrice && this.updateAssetInitialPrice(asset.asset.assetId, newInitialPrice);
 
         const currentPriceFromStore = await this.getTokenPrice(asset.asset.assetId);
@@ -206,7 +206,7 @@ class CreateRangeVm {
           locked: t.locked,
           share: t.share.div(10).toNumber(),
           leverage: t.leverage.toNumber(),
-          initialPrice: t.initialPrice ? BN.formatUnits(t.initialPrice, t.asset.decimals).toNumber() : undefined,
+          initialPrice: t.initialPrice ? (t.initialPrice).toNumber() : undefined,
         })),
         title: this.domain,
         step: this.step,
@@ -232,17 +232,18 @@ class CreateRangeVm {
     if (initData != null && initData.assets != null && initData.assets.length > 0) {
       if (initData.assets != null) {
         this.rangeAssets = initData.assets?.map(({ assetId, share, locked, leverage, initialPrice }) => {
+          const asset = TOKENS_BY_ASSET_ID[assetId];
           return observable({
             share: new BN(share).times(10),
             locked,
             initialPrice: initialPrice ? new BN(initialPrice) : undefined,
             currentPrice: new BN(1),
-            asset: TOKENS_BY_ASSET_ID[assetId],
-            priceLoaded: false,
+            asset: asset,
+            priceLoaded: true,
             leverage: new BN(leverage),
           });
         });
-        this.syncCurrentPrices();
+        this.baseTokenPrice = new BN(initData.assets[0]?.initialPrice || 1);
       }
     } else {
       this.setDefaultRangeAssets();
@@ -377,7 +378,7 @@ class CreateRangeVm {
     // Calculate prices relative to base
     try {
       const initialPrice = await this.getTokenPrice(assetId);
-      if (initialPrice) {
+      if (initialPrice && this.baseTokenPrice) {
         const relativeInitialPrice = initialPrice.div(this.baseTokenPrice);
         const parsed = BN.parseUnits(relativeInitialPrice, asset.decimals);
         this.updateAssetInitialPrice(asset.assetId, parsed);
@@ -444,6 +445,7 @@ class CreateRangeVm {
       this.setBaseTokenPrice(currentPrice!);
     } else {
       const basePrice = this.baseTokenPrice;
+      if (!basePrice) return;
       this.updateAssetInitialPrice(newAssetId, currentPrice ? BN.parseUnits(
         indexOfObject === 0 ? currentPrice : currentPrice.div(basePrice),
         asset.decimals
@@ -900,7 +902,7 @@ class CreateRangeVm {
   }
 
   get maxToProvideUsd(): BN {
-    return this.maxToProvide.times(this.baseTokenPrice);
+    return this.baseTokenPrice ? this.maxToProvide.times(this.baseTokenPrice) : this.maxToProvide;
   }
 
   get assetsToProvide(): Record<string, BN> {
@@ -973,6 +975,7 @@ class CreateRangeVm {
   }
 
   async syncCurrentPrices() {
+    console.log("Sync current prices")
     // priceLoaded: mark all as loading before syncing from tokenStore
     this.rangeAssets.forEach((a) => (a.priceLoaded = false));
     const basePrice = await this.getTokenPrice(this.rangeAssets[0].asset.assetId);
