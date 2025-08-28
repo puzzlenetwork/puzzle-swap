@@ -965,7 +965,7 @@ class CreateRangeVm {
   async getTokenPrice(assetId: string, tries = 0): Promise<BN | undefined> {
     const { tokenStore } = this.rootStore;
     if (tokenStore.initialized) {
-      return this.rootStore.tokenStore.statisticsByAssetId[assetId]?.currentPrice;
+      return this.rootStore.tokenStore.statisticsFromBackendByAssetId[assetId]?.price;
     } else if (tries * 10 > 2000) {
       throw new Error("Timeout: tokenStore not initialized after 2 seconds");
     } else {
