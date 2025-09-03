@@ -11,11 +11,14 @@ import styled from "@emotion/styled";
 interface IParams {
   assetsWithLeverage: {
     assetId: string;
-    leverage: number;
-    relativeLeverage: number;
+    reversedLeverage: number;
+    relativeReversedLeverage: number;
   }[];
   size: number;
-  index?: number;
+  uniqueId?: string | number;
+  chartStyle?: React.CSSProperties;
+  filterDeviation?: number;
+  showTooltip?: boolean;
 }
 
 const AssetsList = styled.div`
@@ -30,13 +33,91 @@ const TokenIcon = styled(Img)`
   border-radius: 50%;
 `;
 
-const RangeChart = ({ assetsWithLeverage, size, index }: IParams) => {
+const RangeChart: React.FC<IParams> = ({ assetsWithLeverage, size, uniqueId, chartStyle, filterDeviation = 12 }: IParams) => {
   const iconSize = size / 7.5;
   const halfIcon = iconSize / 2;
   const backgroundIconSize = size / 2;
   const halfBackgroundIcon = backgroundIconSize / 2;
 
   return (
+    <RadarChart
+      width={size}
+      height={size}
+      data={assetsWithLeverage}
+      style={{
+        transform: assetsWithLeverage.length < 3 ? "rotate(-90deg)" : "",
+        cursor: "pointer",
+        ...chartStyle,
+      }}
+    >
+      <PolarGrid />
+      <Radar
+        dataKey="relativeReversedLeverage"
+        shape={(props) => {
+          return (
+            <>
+              <defs>
+                <filter
+                  id={"blur" + uniqueId}
+                  x="-100%"
+                  y="-100%"
+                  width="300%"
+                  height="300%"
+                  colorInterpolationFilters="sRGB"
+                >
+                  <feGaussianBlur in="SourceGraphic" stdDeviation={filterDeviation} />
+                </filter>
+              </defs>
+              <RadarWithImage
+                imageElement={
+                  <g filter={`url(#blur${uniqueId})`}>
+                    {props.points.map((point: any, i: any) => (
+                      <image
+                        href={TOKENS_BY_ASSET_ID[point.name].logo}
+                        width={backgroundIconSize}
+                        height={backgroundIconSize}
+                        x={point.x - halfBackgroundIcon}
+                        y={point.y - halfBackgroundIcon}
+                        key={i}
+                        style={{
+                          opacity: 0.9,
+                          borderRadius: halfBackgroundIcon // Note: SVG image does not support borderRadius directly
+                        }}
+                      />
+                    ))}
+                  </g>
+                }
+                uniqueId={uniqueId}
+                useSvgImage
+                {...props}
+              />
+            </>
+          );
+        }}
+        isAnimationActive={false}
+      />
+      <PolarAngleAxis
+        dataKey="assetId"
+        tick={(props) => (
+          <foreignObject width={iconSize} height={iconSize} x={props.x - halfIcon} y={props.y - halfIcon}>
+            <Img
+              src={TOKENS_BY_ASSET_ID[props.payload.value].logo}
+              style={{
+                width: iconSize,
+                height: iconSize,
+                borderRadius: halfIcon,
+                transform: assetsWithLeverage.length < 3 ? "rotate(90deg)" : ""
+              }}
+            />
+          </foreignObject>
+        )}
+      />
+    </RadarChart>
+  );
+};
+
+const RangeChartWrapper: React.FC<IParams> = ({ assetsWithLeverage, showTooltip = true, ...rest }: IParams) => {
+  return showTooltip ? (
     <Tooltip
       config={{ placement: "bottom" }}
       content={
@@ -52,12 +133,12 @@ const RangeChart = ({ assetsWithLeverage, size, index }: IParams) => {
                 ...TOKENS_BY_ASSET_ID[asset.assetId],
                 ...asset
               }))
-              .map(({ logo, symbol, leverage }, index) => (
+              .map(({ logo, symbol, reversedLeverage }, index) => (
                 <Row crossAxisSize="max" key={index}>
                   <TokenIcon src={logo} />
                   <SizedBox width={6} />
                   <Text size="medium">
-                    {symbol} - {leverage.toFixed(2)}%
+                    {symbol} - {reversedLeverage.toFixed(2)}
                   </Text>
                 </Row>
               ))}
@@ -66,80 +147,17 @@ const RangeChart = ({ assetsWithLeverage, size, index }: IParams) => {
       }
       style={{ cursor: "pointer" }}
     >
-      <RadarChart
-        width={size}
-        height={size}
-        data={assetsWithLeverage}
-        style={{
-          transform: assetsWithLeverage.length < 3 ? "rotate(-90deg)" : "",
-          cursor: "pointer",
-        }}
-      >
-        <PolarGrid />
-        <Radar
-          dataKey="relativeLeverage"
-          shape={(props) => {
-            return (
-              <>
-                <defs>
-                  <filter
-                    id={"blur" + index}
-                    x="-100%"
-                    y="-100%"
-                    width="300%"
-                    height="300%"
-                    colorInterpolationFilters="sRGB"
-                  >
-                    <feGaussianBlur in="SourceGraphic" stdDeviation="12" />
-                  </filter>
-                </defs>
-                <RadarWithImage
-                  imageElement={
-                    <g filter={`url(#blur${index})`}>
-                      {props.points.map((point: any, i: any) => (
-                        <image
-                          href={TOKENS_BY_ASSET_ID[point.name].logo}
-                          width={backgroundIconSize}
-                          height={backgroundIconSize}
-                          x={point.x - halfBackgroundIcon}
-                          y={point.y - halfBackgroundIcon}
-                          key={i}
-                          style={{
-                            opacity: 0.9,
-                            borderRadius: halfBackgroundIcon // Note: SVG image does not support borderRadius directly
-                          }}
-                        />
-                      ))}
-                    </g>
-                  }
-                  uniqueId={index}
-                  useSvgImage
-                  {...props}
-                />
-              </>
-            );
-          }}
-          isAnimationActive={false}
-        />
-        <PolarAngleAxis
-          dataKey="assetId"
-          tick={(props) => (
-            <foreignObject width={iconSize} height={iconSize} x={props.x - halfIcon} y={props.y - halfIcon}>
-              <Img
-                src={TOKENS_BY_ASSET_ID[props.payload.value].logo}
-                style={{
-                  width: iconSize,
-                  height: iconSize,
-                  borderRadius: halfIcon,
-                  transform: assetsWithLeverage.length < 3 ? "rotate(90deg)" : ""
-                }}
-              />
-            </foreignObject>
-          )}
-        />
-      </RadarChart>
+      <RangeChart
+        assetsWithLeverage={assetsWithLeverage}
+        {...rest}
+      />
     </Tooltip>
+  ) : (
+      <RangeChart
+        assetsWithLeverage={assetsWithLeverage}
+        {...rest}
+      />
   );
-};
+}
 
-export default RangeChart;
+export default RangeChartWrapper;

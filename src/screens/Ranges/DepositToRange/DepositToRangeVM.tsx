@@ -11,6 +11,7 @@ import { IToken, TOKENS_BY_ASSET_ID } from "@src/constants";
 import { Range } from "@src/entities/Range";
 import BN from "@src/utils/BN";
 import Balance from "@src/entities/Balance";
+import rangesService from "@src/services/rangesService";
 
 const ctx = React.createContext<DepositToRangeVM | null>(null);
 
@@ -59,6 +60,12 @@ class DepositToRangeVM {
     this.rootStore = rootStore;
     this.rangeAddress = rangeAddress;
     makeAutoObservable(this);
+
+    rangesService.getRangeByAddress(rangeAddress, { charts: true }).then((rangeData) => {
+      const range = new Range(rangeData);
+      this.rootStore.rangesStore.updateRange(range);
+      const _ = this.range; // trigger reactivity
+    });
 
     when(
       () => this.range != null,
@@ -187,7 +194,22 @@ class DepositToRangeVM {
     const balances = accountStore.assetBalances.filter((balance) =>
       this.range.assets.some((t) => t.assetId === balance.assetId)
     );
-    return balances.sort((a, b) => (a.usdnEquivalent!.gt(b.usdnEquivalent!) ? 1 : -1))[0];
+
+    return balances.sort((a, b) => {
+      const balanceA = a.balance ?? BN.ZERO;
+      const toDepositA = BN.parseUnits(this.tokensToDepositAmounts?.[a.assetId] ?? BN.ZERO, a.decimals);
+      const remainingA = balanceA.minus(toDepositA);
+      const tokenA = this.range.assets.find((t) => t.assetId === a.assetId);
+      const remainingUsdEquivalentA = remainingA.times(tokenA?.currentPrice ?? 1);
+
+      const balanceB = b.balance ?? BN.ZERO;
+      const toDepositB = BN.parseUnits(this.tokensToDepositAmounts?.[b.assetId] ?? BN.ZERO, b.decimals);
+      const remainingB = balanceB.minus(toDepositB);
+      const tokenB = this.range.assets.find((t) => t.assetId === b.assetId);
+      const remainingUsdEquivalentB = remainingB.times(tokenB?.currentPrice ?? 1);
+
+      return remainingUsdEquivalentA.gt(remainingUsdEquivalentB) ? 1 : -1;
+    })[0] as (Balance | null);
   }
 
   get zeroAssetBalances(): number | null {
@@ -199,7 +221,7 @@ class DepositToRangeVM {
     return balances.filter(({ balance }) => balance && balance.eq(0)).length;
   }
 
-  get totalAmountToDeposit(): string | null {
+  get totalAmountToDeposit(): BN | null {
     const tokensToDepositAmounts = this.tokensToDepositAmounts;
     if (tokensToDepositAmounts == null || this.range == null) return null;
     const total = this.range.assets.reduce<BN>((acc, token) => {
@@ -207,7 +229,27 @@ class DepositToRangeVM {
       const usdnEquivalent = toDeposit.times(token.currentPrice);
       return acc.plus(usdnEquivalent);
     }, BN.ZERO);
-    return !total.isNaN() ? "$ " + total.toFormat(total?.toNumber() > 0.001 ? 2 : 4) : null;
+    if (total.isNaN())
+      return null;
+    return total;
+  }
+
+  get totalAmountToDepositStr(): string {
+    const total = this.totalAmountToDeposit;
+    const baseToken = this.range.assets[0];
+    return total != null
+      ? total.toSmallFormat() + " " + baseToken?.name
+      : "0.00 " + baseToken?.name;
+  }
+
+  get totalAmountToDepositUsd(): BN | null {
+    const total = this.totalAmountToDeposit;
+    const baseToken = this.range.assets[0];
+    const baseTokenPrice = this.range.baseTokenPrice.isNaN()
+      ? (baseToken?.currentPriceUsd ?? BN.ZERO)
+      : this.range.baseTokenPrice;
+    const usdnEquivalent = total?.times(baseTokenPrice);
+    return usdnEquivalent ?? null;
   }
 
   get canDepositMultipleTokens() {
@@ -263,7 +305,11 @@ class DepositToRangeVM {
           })
         );
       })
-      .then(() => accountStore.updateAccountAssets(true))
+      .then(() => {
+        accountStore.updateAccountAssets(true);
+        this.rootStore.rangesStore.syncUserInvestedAmount();
+        this.rootStore.rangesStore.syncRanges();
+      })
       .finally(() => this._setLoading(false));
   };
 }

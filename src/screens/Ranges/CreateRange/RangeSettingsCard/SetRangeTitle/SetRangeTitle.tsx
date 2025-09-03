@@ -11,7 +11,7 @@ import BN from "@src/utils/BN";
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 import { useCreateRangeVM } from "../../CreateRangeVm";
-import ShareTokenInput from "../../PoolSettingsCard/SelectAssets/ShareTokenInput";
+import ShareTokenInput from "../SelectAssets/ShareTokenInput";
 
 interface IProps {}
 
@@ -93,12 +93,14 @@ const TitleAndDomainPoolSetting: React.FC<IProps> = () => {
         </Row>
         <SizedBox height={16} />
         <Notification
-          style={{ marginLeft: 8 }}
           type="info"
           text="Fee affects how much traders will pay when interacting with your Range. A higher fee can earn you more from volatile markets, but may reduce trading volume."
         />
         {swapFeeError && (
           <Notification style={{ marginTop: 16 }} type="error" text="Swap fees for the range must be from 0.1% to 5%" />
+        )}
+        {!vm.titleCorrect && (
+          <Notification style={{ marginTop: 16 }} type="error" text="Title must be between 1 and 13 symbols, and can only contain letters (A-Z, a-z), numbers (0-9), underscores (_), hyphens (-), slashes (/), and spaces." />
         )}
       </Card>
     </Root>

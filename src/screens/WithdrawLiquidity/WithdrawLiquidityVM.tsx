@@ -62,6 +62,8 @@ class WithdrawLiquidityVM {
     if (response != null && response.length > 0) {
       this.setUserIndexStaked(new BN(response[0].value));
     }
+    const __ = this.tokensToWithdrawAmounts;
+    const _ = this.totalAmountToWithdrawDisplay;
   };
 
   get withdrawCompositionTokens(): any[] {
@@ -156,7 +158,12 @@ class WithdrawLiquidityVM {
           title: "Transaction is not completed"
         });
       })
-      .then(this.updateUserIndexStaked)
+      .then(() => {
+        this.rootStore.accountStore.updateAccountAssets(true);
+        this.updateUserIndexStaked();
+        this.rootStore.rangesStore.syncUserInvestedAmount();
+        this.rootStore.rangesStore.syncRanges();
+      })
       .finally(() => this._setLoading(false));
   };
 }

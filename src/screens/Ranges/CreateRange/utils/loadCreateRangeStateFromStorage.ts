@@ -2,16 +2,17 @@ export interface IRangeTokenToStore {
   assetId: string;
   share: number;
   locked: boolean;
+  leverage: number;
+  initialPrice: number | undefined;
 }
 
 export interface IInitDataToStore {
   assets: IRangeTokenToStore[];
-  share: string;
-  locked: boolean;
   title: string;
   maxStep: number | null;
   step: number | null;
   swapFee: number;
+  deployedContractAddress?: string;
 }
 
 export default function loadCreateRangeStateFromStorage() {

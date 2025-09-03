@@ -52,7 +52,7 @@ const MobileSpace = styled.div`
 const App: React.FC = () => {
   const { accountStore } = useStores();
   usePageTitle();
-  useAnalyticTracking("development");
+  useAnalyticTracking();
   return (
     <Root>
       <ReactNotifications />

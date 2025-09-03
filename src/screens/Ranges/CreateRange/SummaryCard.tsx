@@ -7,8 +7,10 @@ import { Row } from "@src/components/Flex";
 import RangeChart from "@src/components/RangeChart";
 import RoundTokenIcon from "@src/components/RoundTokenIcon";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useMemo } from "react";
 import { useCreateRangeVM } from "./CreateRangeVm";
+import LowRangeLiquidityNotification from "@src/components/LowRangeLiquidityNotification";
+import DepositComposition from "./RangeSettingsCard/AddLiquidityToRange/DepositComposition";
 
 interface IProps {}
 
@@ -38,11 +40,8 @@ const GrayCard = styled(Card)`
 
 const SummaryCard: React.FC<IProps> = () => {
   const vm = useCreateRangeVM();
-  // TODO: fix this
-  // const data = vm.rangeAssets?.reduce<{ name: string; value: number }[]>(
-  //   (acc, { asset, share }) => [...acc, { name: asset.symbol, value: share.toNumber() }],
-  //   []
-  // );
+
+  const showLowRangeLiquidityNotification = useMemo(() => vm.maxToProvideUsd.lt(100), [vm.maxToProvideUsd]);
 
   return (
     <Root>
@@ -76,12 +75,19 @@ const SummaryCard: React.FC<IProps> = () => {
         <Text type="secondary" fitContent>
           Max to provide
         </Text>
-        <Text weight={500} fitContent>
-          {vm.maxToProvide.toFormat(2)}
-          {` ${vm.rangeAssets[0].asset.symbol}`}
-        </Text>
+        <Row justifyContent="center">
+          <Text weight={500} fitContent>
+            {vm.maxToProvide.toSmallFormat()}
+            {` ${vm.rangeAssets[0].asset.symbol}`}
+          </Text>
+          <SizedBox width={4} />
+          <Text weight={500} type="secondary" fitContent>
+            {`≈ $ ${vm.maxToProvideUsd?.toBigFormat(2) ?? "0.00"}`}
+          </Text>
+        </Row>
         <SizedBox height={14} />
       </Card>
+      {showLowRangeLiquidityNotification && <LowRangeLiquidityNotification />}
     </Root>
   );
 };

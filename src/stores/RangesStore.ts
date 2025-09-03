@@ -1,7 +1,62 @@
 import { RootStore } from "./index";
-import { makeAutoObservable } from "mobx";
-import rangesService from "@src/services/rangesService";
+import { makeAutoObservable, reaction } from "mobx";
+import rangesService, { IProvidedAssetResponse, IProvidedResponse } from "@src/services/rangesService";
 import { Range } from "@src/entities/Range";
+import BN from "@src/utils/BN";
+
+export class IProvidedAsset {
+  assetId: string;
+  name: string;
+  leverage: BN;
+  earnedAmount: BN;
+  earnedAmountUsd: BN;
+  providedAmount: BN;
+  providedAmountUsd: BN;
+
+  constructor(params: IProvidedAssetResponse) {
+    this.assetId = params.asset_id;
+    this.name = params.name;
+    this.leverage = new BN(params.leverage);
+    this.earnedAmount = new BN(params.earned_amount);
+    this.earnedAmountUsd = new BN(params.earned_amount_usd);
+    this.providedAmount = new BN(params.provided_amount);
+    this.providedAmountUsd = new BN(params.provided_amount_usd);
+  }
+}
+
+export class ProvidedData {
+  providerAddress: string;
+  poolAddress: string;
+  poolMode: string;
+  indexStaked: BN;
+  share: BN;
+  providedUsd: BN;
+  claimedUsd: BN;
+  unclaimedUsd: BN;
+  lpTokenId?: string;
+  lpTokenPrice: BN;
+  lpTokenMarketPrice: BN;
+  lpTokenName?: string;
+  lpTokenDomain: string;
+  assetsData: IProvidedAsset[];
+
+  constructor(params: IProvidedResponse) {
+    this.providerAddress = params.provider_address;
+    this.poolAddress = params.pool_address;
+    this.poolMode = params.pool_mode;
+    this.indexStaked = new BN(params.index_staked);
+    this.share = new BN(params.share);
+    this.providedUsd = new BN(params.provided_usd);
+    this.claimedUsd = new BN(params.claimed_usd);
+    this.unclaimedUsd = new BN(params.unclaimed_usd);
+    this.lpTokenId = params.lp_token_id;
+    this.lpTokenPrice = new BN(params.lp_token_price);
+    this.lpTokenMarketPrice = new BN(params.lp_token_market_price);
+    this.lpTokenName = params.lp_token_name;
+    this.lpTokenDomain = params.lp_token_domain;
+    this.assetsData = params.assets_data.map((item) => new IProvidedAsset(item));
+  }
+}
 
 export default class RangesStore {
   rangesPaginationSize = 10;
@@ -9,13 +64,45 @@ export default class RangesStore {
     this.rootStore = rootStore;
     makeAutoObservable(this);
     this.syncRanges();
+    this.syncInvestments();
+    this.syncUserInvestedAmount();
+
+    reaction(
+      () => this.rootStore.accountStore.address,
+      () => {
+        this.userAddress = undefined;
+        this.syncRanges();
+        this.syncInvestments();
+        this.syncUserInvestedAmount();
+      }
+    )
+    // Re-sync invested amount when balances change (e.g. after deposit/withdraw)
+    reaction(
+      () => [this.rootStore.accountStore.address, this.rootStore.accountStore.assetBalances],
+      () => {
+        this.syncUserInvestedAmount();
+      }
+    );
   }
 
   public rootStore: RootStore;
 
+  allRanges: Range[] = [];
+  updateInAllRanges = (range: Range) => {
+    const index = this.allRanges.findIndex((r) => r.address === range.address);
+    if (index !== -1) {
+      this.allRanges[index] = range;
+    } else {
+      this.allRanges.push(range);
+    }
+  };
+
   // Ranges data
   ranges: Range[] = [];
-  setRanges = (ranges: Range[]) => (this.ranges = ranges);
+  setRanges = (ranges: Range[]) => {
+    this.ranges = ranges;
+    ranges.forEach((range) => this.updateInAllRanges(range));
+  };
   updateRange = (range: Range) => {
     const index = this.ranges.findIndex((r) => r.address === range.address);
     if (index !== -1) {
@@ -23,11 +110,15 @@ export default class RangesStore {
     } else {
       this.ranges.push(range);
     }
+    this.updateInAllRanges(range);
   };
-  getRangeByAddress = (address: string) => this.ranges.find((range) => range.address === address);
+  getRangeByAddress = (address: string) => this.allRanges.find((range) => range.address === address);
 
   loading: boolean = false;
   setLoading = (loading: boolean) => (this.loading = loading);
+
+  investmentsLoading: boolean = false;
+  setInvestmentsLoading = (loading: boolean) => (this.investmentsLoading = loading);
 
   // Pagination state
   pagination = {
@@ -127,6 +218,44 @@ export default class RangesStore {
       console.error("Error fetching ranges:", error);
     } finally {
       this.setLoading(false);
+    }
+  };
+
+  investmentsData: ProvidedData[] = [];
+  setInvestmentsData = (data: ProvidedData[]) => (this.investmentsData = data);
+  syncInvestments = async () => {
+    const { address } = this.rootStore.accountStore;
+    if (!address) {
+      this.setInvestmentsData([]);
+      return;
+    }
+    try {
+      this.setInvestmentsLoading(true);
+      const data = await rangesService.getUserInvestments(address);
+      this.setInvestmentsData(data.map((item) => new ProvidedData(item)));
+    } catch (error) {
+      console.error("Error fetching investments:", error);
+    } finally {
+      this.setInvestmentsLoading(false);
+    }
+  };
+
+  // --- User total invested amount (USD) ---
+  userInvestedAmount: BN | null = null;
+  setUserInvestedAmount = (v: number) => {
+    this.userInvestedAmount = new BN(v);
+  };
+  syncUserInvestedAmount = async () => {
+    const { address } = this.rootStore.accountStore;
+    if (!address) {
+      this.userInvestedAmount = null;
+      return;
+    }
+    try {
+      const amount = await rangesService.getUserTotalProvided(address);
+      this.setUserInvestedAmount(amount);
+    } catch (error) {
+      console.error("Error fetching user invested amount:", error);
     }
   };
 }

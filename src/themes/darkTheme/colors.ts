@@ -6,6 +6,7 @@ const colors = {
   primary100: "#F1F2FE",
   primary50: "#f8f8ff",
   blue500: "#7075E9",
+  button: "#6563DD",
   success: "#35A15A",
   success550: "#1F8943",
   success500: "#35A15A",

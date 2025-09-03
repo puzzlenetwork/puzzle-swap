@@ -191,8 +191,11 @@ class WithdrawFromRangeVM {
         });
       })
       .then(() => {
+        this.rootStore.accountStore.updateAccountAssets(true);
         this.updateUserIndexStaked();
-        this.syncLPData();
+        this.syncLPData().then(
+          () => this.syncTokensToWithdrawAmounts(),
+        )
       })
       .finally(() => this._setLoading(false));
   };

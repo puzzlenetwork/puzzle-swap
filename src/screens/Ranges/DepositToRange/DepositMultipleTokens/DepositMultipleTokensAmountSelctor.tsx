@@ -6,6 +6,7 @@ import Card from "@components/Card";
 import Slider from "@components/Slider";
 import { useDepositToRangeVM } from "../DepositToRangeVM";
 import { observer } from "mobx-react-lite";
+import { Row } from "@src/components/Flex";
 
 interface IProps {}
 
@@ -27,10 +28,15 @@ const MultipleTokensAddLiquidityAmount: React.FC<IProps> = () => {
           Select the percentage of your assets
         </Text>
         <SizedBox height={16} />
-        <Text type="primary" size="large" style={{ textAlign: "center" }}>
-          {`${vm.percentToDeposit}% `}
-          {vm.totalAmountToDeposit && <span style={{ color: "#8082C5" }}>{`(${vm.totalAmountToDeposit})`}</span>}
-        </Text>
+        <Row justifyContent="center" style={{ flexWrap: "wrap" }}>
+          <Text type="primary" size="large" fitContent>
+            {`${vm.percentToDeposit}% `}
+          </Text>
+          <SizedBox width={18} />
+          <Text type="secondary" size="large" fitContent nowrap>
+            {`(${vm.totalAmountToDepositStr} ≈ $ ${vm.totalAmountToDepositUsd?.toBigFormat(2)})`}
+          </Text>
+        </Row>
         <SizedBox height={16} />
         <Slider
           min={0}

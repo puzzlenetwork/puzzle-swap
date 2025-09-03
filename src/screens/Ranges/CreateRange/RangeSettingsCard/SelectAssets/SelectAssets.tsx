@@ -133,7 +133,7 @@ const SelectsAssets: React.FC<IProps> = () => {
           <Text type="primary" weight={500} size="medium" fitContent>
             {asset.asset.symbol}
           </Text>
-          {asset.apr && (
+          {/* {asset.apr && (
             <Tooltip content="Some tokens keep earning yield even while inside a range.">
               <Row mainAxisSize="fit-content">
                 <SizedBox width={8} />
@@ -144,7 +144,7 @@ const SelectsAssets: React.FC<IProps> = () => {
                 <Autostaking width={20} height={20} />
               </Row>
             </Tooltip>
-          )}
+          )} */}
         </Row>
       ),
       price: index === 0 ? (

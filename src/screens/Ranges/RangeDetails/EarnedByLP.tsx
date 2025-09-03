@@ -90,6 +90,11 @@ const EarnedByLP = () => {
             key={index}
           />
         ))}
+        {vm.LPRewardsToDisplay.length === 0 && (
+          <Text type="secondary">
+            No rewards yet
+          </Text>
+        )}
       </Row>
     </Card>
   );

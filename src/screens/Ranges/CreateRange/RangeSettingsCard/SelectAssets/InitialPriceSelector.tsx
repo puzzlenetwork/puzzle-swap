@@ -22,7 +22,7 @@ const PriceSlot = styled.span`
 
 interface IParams {
   asset: IRangeToken;
-  value: BN;
+  value: BN | undefined;
   onUpdate: (v: BN) => void;
   baseTokenSymbol?: string;
 }
@@ -34,11 +34,11 @@ const InitialPriceSelector = ({ asset, value, onUpdate, baseTokenSymbol }: IPara
     setModalOpened(true);
   };
 
-  const formattedInitial = BN.formatUnits(value, asset.asset.decimals).toSmallFormat();
+  const formattedInitial = value ? BN.formatUnits(value, asset.asset.decimals).toSmallFormat() : "N/A";
 
   return (
     <>
-      <Button onClick={handleOpenModal} size="small" kind="secondary" fixed>
+      <Button onClick={handleOpenModal} size="small" kind={value ? "secondary" : "danger"} fixed>
         Initial Price:
         <PriceSlot>
           {asset.priceLoaded ? (
@@ -89,7 +89,7 @@ const InitialPriceSelector = ({ asset, value, onUpdate, baseTokenSymbol }: IPara
         <Text type="secondary">Change Initial Price</Text>
         <SizedBox height={8} />
         <PriceLimitInput
-          amount={value}
+          amount={value ?? new BN(0)}
           decimals={asset.asset.decimals}
           onChange={(v) => onUpdate(v)}
           placeholder={

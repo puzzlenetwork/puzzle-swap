@@ -131,13 +131,13 @@ class RangeDetailsInterfaceVM {
     const postfix = this.chartDataRange === "1m" ? "30d" : this.chartDataRange === "3m" ? "90d" : this.chartDataRange;
     switch (this.chartDataKey) {
       case "volume":
-        return new BN(this.range!.totals[`volume_${postfix}`] ?? 0);
+        return new BN(this.range?.totals[`volume_${postfix}`] ?? 0);
       case "fees":
-        return new BN(this.range!.totals[`pool_fees_${postfix}`] ?? 0);
+        return new BN(this.range?.totals[`pool_fees_${postfix}`] ?? 0);
       case "liquidity":
-        return new BN(this.range!.totals[`liquidity_${postfix}`] ?? 0);
+        return new BN(this.range?.totals[`liquidity_${postfix}`] ?? 0);
     }
-    return new BN(this.range!.totals[`${this.chartDataKey}_${postfix}`] ?? 0);
+    return new BN(this.range?.totals[`${this.chartDataKey}_${postfix}`] ?? 0);
   }
 
   public currentBlockHeight: number = 0;
@@ -173,6 +173,7 @@ class RangeDetailsInterfaceVM {
       if (!rangeData) return;
       const newRange = new Range(rangeData);
       this.rootStore.rangesStore.updateRange(newRange);
+      const _ = this.range; // trigger reactivity
       this.setHistory(rangeData.charts || []);
       this.updateBlockHeight();
     });
@@ -227,7 +228,8 @@ class RangeDetailsInterfaceVM {
     } else if (this.stakeUnstakeAction === "unstake") {
       this.setStakeUnstakeAmount(BN.parseUnits(this.lpData!.indexStaked, this.indexTokenDecimals));
     }
-    const decimals = TOKENS_BY_ASSET_ID[this.range!.lpTokenId]?.decimals ?? 8;
+    const lpTokenId = this.range?.lpTokenId;
+    const decimals = (lpTokenId && TOKENS_BY_ASSET_ID[lpTokenId]?.decimals) ?? 8;
     decimals && this._setIndexTokenDecimals(decimals);
   };
 
@@ -344,6 +346,7 @@ class RangeDetailsInterfaceVM {
         });
       })
       .finally(() => {
+        this.rootStore.accountStore.updateAccountAssets(true);
         this._setLoading(false);
         this.syncLPData();
       });
@@ -398,7 +401,10 @@ class RangeDetailsInterfaceVM {
           title: "Transaction is not completed"
         });
       })
-      .finally(() => this._setLoading(false));
+      .finally(() => {
+        this.rootStore.accountStore.updateAccountAssets(true);
+        this._setLoading(false);
+      });
   };
 
   get canStakeIndex() {
@@ -446,6 +452,9 @@ class RangeDetailsInterfaceVM {
           title: "Transaction is not completed"
         });
       })
-      .finally(() => this._setLoading(false));
+      .finally(() => {
+        this.rootStore.accountStore.updateAccountAssets(true);
+        this._setLoading(false);
+      });
   };
 }

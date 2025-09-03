@@ -21,6 +21,7 @@ import { ReactComponent as WarningIcon } from "@src/assets/icons/warning.svg";
 import { THEME_TYPE, themes } from "@src/themes/ThemeProvider";
 import Tooltip from "@src/components/Tooltip";
 import Img from "@src/components/Img";
+import Skeleton from "react-loading-skeleton";
 
 const GrayCard = styled(Card)`
   background: ${({ theme }) => theme.colors.primary100};
@@ -93,7 +94,7 @@ const RangesTable: React.FC = () => {
                 paddingMobile="4px"
                 onClick={width && width < 880 ? stopPropagation : undefined}
               >
-                <RangeChart assetsWithLeverage={range.assetsWithLeverage} size={120} index={index} />
+                <RangeChart assetsWithLeverage={range.assetsWithLeverage} size={120} uniqueId={index} />
               </GrayCard>
               <SizedBox width={16} />
               <Column crossAxisSize="max" justifyContent="space-between">
@@ -261,32 +262,79 @@ const RangesTable: React.FC = () => {
     setTableData(mappedData);
   }, [rangesStore.ranges, rangePreviewByAddress, navigate, accountStore.selectedTheme]);
 
+  const skeletonData = Array.from({ length: 10 }, (_, i) => ({
+    range: (
+      <Row alignItems="start" key={i}>
+        <GrayCard
+          paddingDesktop="4px"
+          paddingMobile="4px"
+        >
+          <div style={{ width: 120, height: 120 }} />
+        </GrayCard>
+        <SizedBox width={16} />
+        <Column crossAxisSize="max" justifyContent="space-between">
+          <SizedBox height={10} />
+          <Skeleton width={120} height={24} />
+          <SizedBox height={8} />
+          <Row style={{ flexWrap: "wrap", gap: 4 }}>
+            <Skeleton width={100} height={76} />
+            <Skeleton width={100} height={76} />
+          </Row>
+          <SizedBox height={10} />
+        </Column>
+      </Row>
+    ),
+    liquidity: (
+      <Skeleton width={160} height={24} />
+    ),
+    periodFees: (
+      <Column alignItems="flex-end" crossAxisSize="max">
+        <Row style={{ gap: 4, flexWrap: "wrap", justifyContent: "flex-end" }}>
+          <Skeleton width={80} height={24} />
+          <Skeleton width={80} height={24} />
+        </Row>
+        <SizedBox height={10} />
+        <Text type="secondary" size="medium" textAlign="end">
+          <Skeleton width={64} height={24} />
+        </Text>
+      </Column>
+    ),
+  }));
+
   return (
     <>
-      {rangesStore.ranges.length > 0 ? (
-        <>
+      {
+        rangesStore.loading ? (
           <Scrollbar style={{ maxWidth: "calc(100vw - 32px)", borderRadius: 16 }}>
-            <StyledTable columns={columns} data={tableData} loading={rangesStore.loading} />
+            <StyledTable columns={columns} data={skeletonData} loading={rangesStore.loading} />
           </Scrollbar>
-          <Pagination
-            currentPage={rangesStore.pagination.page}
-            lengthData={rangesStore.totalItems}
-            limit={rangesStore.rangesPaginationSize}
-            onChange={changePage}
-          />
-        </>
-      ) : (
-        <RangeNotFound
-          onClear={() => {
-            vm.setSearchValue("");
-            vm.setRangesSorting(0);
-            vm.setSelectedStatsRange(0);
-            vm.setShowOnlyActiveRanges(false);
-            vm.setShowPriceInUsd(false);
-          }}
-          searchValue={vm.searchValue}
-        />
-      )}
+        ) : (
+          rangesStore.ranges.length > 0 ? (
+            <>
+              <Scrollbar style={{ maxWidth: "calc(100vw - 32px)", borderRadius: 16 }}>
+                <StyledTable columns={columns} data={tableData} loading={rangesStore.loading} />
+              </Scrollbar>
+              <Pagination
+                currentPage={rangesStore.pagination.page}
+                lengthData={rangesStore.totalItems}
+                limit={rangesStore.rangesPaginationSize}
+                onChange={changePage}
+              />
+            </>
+          ) : (
+            <RangeNotFound
+              onClear={() => {
+                vm.setSearchValue("");
+                vm.setRangesSorting(0);
+                vm.setSelectedStatsRange(0);
+                vm.setShowOnlyActiveRanges(false);
+                vm.setShowPriceInUsd(false);
+              }}
+              searchValue={vm.searchValue}
+            />
+          )
+        )
+      }
     </>
   );
 };

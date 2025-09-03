@@ -34,6 +34,8 @@ const Title = styled.span<{ expanded?: boolean }>`
   position: relative;
   weight: 500;
   cursor: pointer;
+  color: ${({ theme }) => theme.colors.primary800};
+
   :after {
     position: absolute;
     top: 4px;
@@ -83,7 +85,7 @@ const LPStaking: React.FC<IProps> = () => {
 
   if (accountStore.address == null) return null;
   const availableToStake = BN.formatUnits(vm.indexTokenBalance, vm.indexTokenDecimals);
-  const availableToStakeUsd = BN.formatUnits(vm.indexTokenBalance.times(vm.range!.indexTokenRate), vm.indexTokenDecimals);
+  const availableToStakeUsd = BN.formatUnits(vm.indexTokenBalance.times(vm.range?.indexTokenRate ?? 1), vm.indexTokenDecimals);
 
   return (
     <Root>
@@ -157,12 +159,12 @@ const LPStaking: React.FC<IProps> = () => {
             </>
           )}
           {vm.stakeUnstakeAction === "unstake" && (
-            <Button fixed kind="secondary" size="medium" disabled={!vm.canUnstakeIndex} onClick={vm.unstakeIndex}>
+            <Button fixed kind="secondary" size="medium" disabled={!vm.canUnstakeIndex || vm.loading} onClick={vm.unstakeIndex}>
               Unstake
             </Button>
           )}
           {vm.stakeUnstakeAction === "stake" && (
-            <Button fixed size="medium" disabled={!vm.canStakeIndex} onClick={vm.stakeIndex}>
+            <Button fixed size="medium" disabled={!vm.canStakeIndex || vm.loading} onClick={vm.stakeIndex}>
               Stake
             </Button>
           )}

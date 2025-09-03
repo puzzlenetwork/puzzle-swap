@@ -6,20 +6,20 @@ export const ScrollbarRoot = styled.span`
     z-index: 999;
 
     & > .ps__thumb-y {
-      background-color: #f1f2fe;
+      background-color: ${({ theme }) => theme.colors.primary100};
       width: 6px !important;
 
       &:hover {
-        background-color: #f1f2fe;
+        background-color: ${({ theme }) => theme.colors.primary100};
       }
     }
 
     & > .ps__thumb-x {
-      background-color: #f1f2fe;
+      background-color: ${({ theme }) => theme.colors.primary100};
       height: 6px !important;
 
       &:hover {
-        background-color: #f1f2fe;
+        background-color: ${({ theme }) => theme.colors.primary100};
       }
     }
 
@@ -30,7 +30,7 @@ export const ScrollbarRoot = styled.span`
 
       & > .ps__thumb-y,
       & > .ps__thumb-x {
-        background-color: #f1f2fe;
+        background-color: ${({ theme }) => theme.colors.primary100};
       }
     }
   }

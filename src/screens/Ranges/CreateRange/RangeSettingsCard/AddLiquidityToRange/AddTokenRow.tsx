@@ -37,10 +37,10 @@ const AddTokenRow: React.FC<IProps> = ({ availableAmount, depositAmount, percent
       <Column style={{ width: "100%", textAlign: "end" }}>
         <Text nowrap className="text">
           {depositPrefix}
-          {depositAmount.toFormat(4)}
+          {depositAmount.toSmallFormat()}
         </Text>
         <Text type="secondary" size="small" className="text">
-          Available: {availableAmount.toFormat(4)}
+          Available: {availableAmount.toSmallFormat()}
         </Text>
       </Column>
     </Root>

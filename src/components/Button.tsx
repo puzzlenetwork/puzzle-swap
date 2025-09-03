@@ -48,11 +48,11 @@ const Button = styled.button<{
     (() => {
       switch (kind) {
         case "primary":
-          return `background: ${theme.colors.blue500}; color:#fffff;`;
+          return `background: ${theme.colors.blue500}; color: ${theme.colors.white};`;
         case "secondary":
-          return `background: ${theme.colors.white}; color:${theme.colors.blue500};`;
+          return `background: ${theme.colors.white}; color: ${theme.colors.blue500};`;
         case "danger":
-          return `background: ${theme.colors.error500}; color: #fff;`;
+          return `background: ${theme.colors.error500}; color: ${theme.colors.white};`;
         default:
           return `background: ${theme.colors.blue500}; color:${theme.colors.white};`;
       }
@@ -76,13 +76,13 @@ const Button = styled.button<{
       (() => {
         switch (kind) {
           case "primary":
-            return `background: #6563dd ;border: 1px solid #6563dd;`;
+            return `background: ${theme.colors.button}; border: 1px solid ${theme.colors.button};`;
           case "secondary":
-            return `background: ${theme.colors.primary100}; border: 1px solid ${theme.colors.primary100}; color: #6563DD;`;
+            return `background: ${theme.colors.primary100}; border: 1px solid ${theme.colors.primary100}; color: ${theme.colors.button};`;
           case "danger":
             return `background: ${theme.colors.error550}; border: 1px solid ${theme.colors.error550};`;
           default:
-            return `background: #6563dd; border: 1px solid #6563dd;`;
+            return `background: ${theme.colors.button}; border: 1px solid ${theme.colors.button};`;
         }
       })()}
   }

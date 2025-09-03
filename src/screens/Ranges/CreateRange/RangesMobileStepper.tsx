@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 import Text from "@components/Text";
-import { Row } from "../Flex";
+import { Row } from "@components/Flex";
 import SizedBox from "@components/SizedBox";
 import doneIcon from "@src/assets/icons/done.svg";
 
@@ -11,7 +11,7 @@ interface IProps {
   steps: string[];
   activeStep: number;
   onStepClick: (step: number) => void;
-  minStep?: number;
+  maxStep?: number;
 }
 
 const Root = styled.div`
@@ -85,13 +85,13 @@ const IconContainer = styled.div<{ state: TStep }>`
     content: url(${doneIcon});
   }
 `;
-const MobileStepper: React.FC<IProps> = ({ steps, activeStep, onStepClick, minStep }) => {
+const MobileStepper: React.FC<IProps> = ({ steps, activeStep, onStepClick, maxStep }) => {
   return (
     <Root>
       <Row alignItems="center" justifyContent="center" mainAxisSize="fit-content" style={{ paddingLeft: 28 }}>
         {steps.map((name, step, array) => {
           const state = step === activeStep ? "current" : step > activeStep ? "next" : "previous";
-          const disabled = activeStep === 3 ? true : minStep != null ? minStep < step : false;
+          const disabled = maxStep != null ? maxStep < step : false;
           return (
             <React.Fragment key={step + "mobile-step"}>
               <IconContainer

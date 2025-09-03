@@ -5,8 +5,8 @@ import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { useCreateRangeVM } from "./CreateRangeVm";
 import { observer } from "mobx-react-lite";
-import DesktopStepper from "@src/components/Stepper/DesktopStepper";
-import MobileStepper from "@components/Stepper/MobileStepper";
+import DesktopStepper from "./RangesDesktopStepper";
+import MobileStepper from "./RangesMobileStepper";
 import { Row } from "@src/components/Flex";
 import ResetAllButton from "@components/Stepper/ResetAllButton";
 
@@ -42,15 +42,15 @@ const CreateRangesStepper: React.FC<IProps> = () => {
         <DesktopStepper
           activeStep={vm.step}
           steps={steps}
-          onStepClick={(s) => vm.maxStep >= s && vm.setStep(s, true)}
-          minStep={vm.minStep}
+          onStepClick={(s) => vm.maxStep >= s && vm.setStep(s)}
+          maxStep={vm.maxStep}
           onReset={vm.reset}
         />
         <MobileStepper
           activeStep={vm.step}
           steps={steps}
-          onStepClick={(s) => vm.maxStep >= s && vm.setStep(s, true)}
-          minStep={vm.minStep}
+          onStepClick={(s) => vm.maxStep >= s && vm.setStep(s)}
+          maxStep={vm.maxStep}
         />
       </Card>
     </Root>

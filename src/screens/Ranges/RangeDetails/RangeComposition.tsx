@@ -16,7 +16,6 @@ import BN from "@src/utils/BN";
 import Checkbox from "@src/components/Checkbox";
 import Select from "@src/components/Select";
 import Tag from "@src/components/Tag";
-import { ReactComponent as Autostaking } from "@src/assets/icons/autostaking.svg";
 
 interface IProps {
   isMobile?: boolean;
@@ -48,16 +47,18 @@ const RangeComposition: React.FC<IProps> = (props) => {
   const [filteredTokens, setFilteredTokens] = useState<any[]>([]);
   const [balanceSort, setValueSort] = useState(true);
   const [showSellOff, setShowSellOff] = useState(props.isMobile ?? false);
-  const [relativeTokenAssetId, setRelativeTokenAssetId] = useState<string>(vm.range!.baseTokenId);
+  const [relativeTokenAssetId, setRelativeTokenAssetId] = useState<string>(vm.range?.baseTokenId ?? "");
   const [rateToRelativeToken, setRateToRelativeToken] = useState(new BN(1));
+
+  const hideShowSellOff = vm.range?.assets.every((a) => !a.maxSellAllowed || a.maxSellAllowed.isNaN());
 
   const handleChangeRelativeToken = (relativeAssetId: string) => {
     setRelativeTokenAssetId(relativeAssetId);
-    const baseTokenPrice = vm.range!.assets.find((a) => a.assetId === vm.range!.baseTokenId)?.currentPrice;
+    const baseTokenPrice = vm.range?.assets.find((a) => a.assetId === vm.range?.baseTokenId)?.currentPrice;
     const relativePrice =
       relativeAssetId === "USD"
-        ? vm.range!.baseTokenPrice
-        : vm.range!.assets.find((a) => a.assetId === relativeAssetId)?.currentPrice;
+        ? vm.range?.baseTokenPrice
+        : vm.range?.assets.find((a) => a.assetId === relativeAssetId)?.currentPrice;
     if (!!baseTokenPrice && !!relativePrice) setRateToRelativeToken(baseTokenPrice.div(relativePrice));
   };
 
@@ -122,8 +123,8 @@ const RangeComposition: React.FC<IProps> = (props) => {
     [balanceSort, theme.images.icons.group, showSellOff]
   );
   useMemo(() => {
-    const tokens = vm
-      .range!.assets.slice()
+    const tokens = (vm.range?.assets ?? [])
+      .slice()
       .sort((a, b) => {
         // // Stick base token to the top
         // if (a.asset_id === vm.range!.baseTokenId) {
@@ -185,7 +186,7 @@ const RangeComposition: React.FC<IProps> = (props) => {
               </Tooltip>
             </>
           )}
-          {a.staked && a.stakeApr?.gte(1) && (
+          {/* {a.staked && a.stakeApr?.gte(1) && (
             <Tooltip content={
               <Column>
                 <Text size="medium">Some tokens keep earning yield even</Text>
@@ -201,7 +202,7 @@ const RangeComposition: React.FC<IProps> = (props) => {
                 <Autostaking width={20} height={20} />
               </Row>
             </Tooltip>
-          )}
+          )} */}
         </Row>
       ),
       price:
@@ -323,7 +324,7 @@ const RangeComposition: React.FC<IProps> = (props) => {
           Range composition
         </Text>
         <Row alignItems="baseline" mainAxisSize="fit-content">
-          {!props.isMobile && (
+          {!props.isMobile && !hideShowSellOff && (
             <Row alignItems="center" mainAxisSize="fit-content">
               <Text fitContent nowrap>
                 Show Sell-Off
@@ -345,7 +346,7 @@ const RangeComposition: React.FC<IProps> = (props) => {
                 key: "USD",
                 title: "USD"
               },
-              ...vm.range!.assets.map((asset) => ({
+              ...(vm.range?.assets ?? []).map((asset) => ({
                 key: asset.assetId,
                 title: asset.name
               }))
@@ -353,7 +354,7 @@ const RangeComposition: React.FC<IProps> = (props) => {
             onSelect={({ key }) => handleChangeRelativeToken(key)}
             selected={{
               key: relativeTokenAssetId,
-              title: relativeTokenAssetId === "USD" ? "USD" : TOKENS_BY_ASSET_ID[relativeTokenAssetId].name
+              title: relativeTokenAssetId === "USD" ? "USD" : TOKENS_BY_ASSET_ID[relativeTokenAssetId]?.name
             }}
           />
         </Row>
@@ -377,7 +378,7 @@ const RangeComposition: React.FC<IProps> = (props) => {
             data={filteredTokens}
             style={{ whiteSpace: "nowrap" }}
             initialState={{
-              hiddenColumns: [!showSellOff && "selloff"]
+              hiddenColumns: [!(showSellOff || props.isMobile) && "selloff"]
             }}
           />
         )}

@@ -146,7 +146,7 @@ const AllRangesImpl: React.FC<IProps> = () => {
                         </Text>
                       </Column>
                       {vm.userInvestedAmount.gt(0) && (
-                        <Button onClick={() => vm.setShowOnlyUserRanges(!vm.showOnlyUserRanges)} size="medium">
+                        <Button onClick={() => !vm.loading && vm.setShowOnlyUserRanges(!vm.showOnlyUserRanges)} size="medium" disabled={vm.loading}>
                           {vm.showOnlyUserRanges ? "All Ranges" : "My Ranges"}
                         </Button>
                       )}

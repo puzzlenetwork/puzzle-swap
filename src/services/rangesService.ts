@@ -13,6 +13,7 @@ export interface IGetRanges {
 
 export interface IGetGlobalRangesInfo {
   minLiquidity: number;
+  userAddress?: string;
   active?: boolean;
 }
 
@@ -45,6 +46,33 @@ export interface IStakingStatistics {
   apr_1y: number;
 }
 
+export interface IProvidedAssetResponse {
+  asset_id: string;
+  name: string;
+  leverage: number;
+  earned_amount: number;
+  earned_amount_usd: number;
+  provided_amount: number;
+  provided_amount_usd: number;
+}
+
+export interface IProvidedResponse {
+  provider_address: string;
+  pool_address: string;
+  pool_mode: string;
+  index_staked: number;
+  share: number;
+  provided_usd: number;
+  claimed_usd: number;
+  unclaimed_usd: number;
+  lp_token_id?: string;
+  lp_token_price: number;
+  lp_token_market_price: number;
+  lp_token_name?: string;
+  lp_token_domain: string;
+  assets_data: IProvidedAssetResponse[];
+}
+
 const rangesService = {
   getRanges: async (params: IGetRanges): Promise<IGetRangesResponse> => {
     const paramsString = new URLSearchParams();
@@ -67,6 +95,20 @@ const rangesService = {
     const url = `${baseUrl}?${paramsString.toString()}`;
     const { data } = await axios.get(url);
     return data;
+  },
+  // Lightweight availability probe for a specific range by address.
+  // Returns true when the endpoint responds with 200, false on 500 (not ready yet).
+  // Any other network error will be treated as not available for now (retry logic handled by caller).
+  pingRange: async (address: string): Promise<boolean> => {
+    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged`;
+    const url = `${baseUrl}/${address}/data`;
+    try {
+      const res = await axios.get(url);
+      return res.status === 200;
+    } catch (e: any) {
+      if (e?.response?.status === 500) return false;
+      return false;
+    }
   },
   getRangeByAddress: async (address: string, params?: IGetRange): Promise<IRangeParamsResponse> => {
     const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged`;
@@ -109,6 +151,18 @@ const rangesService = {
     const url = `${baseUrl}?${paramsString.toString()}`;
     const { data } = await axios.get(url);
     return data.total_provided_usd;
+  },
+  getUserInvestments: async (userAddress: string): Promise<IProvidedResponse[]> => {
+    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/provided_data`;
+    const paramsString = new URLSearchParams({
+      userAddress: userAddress,
+      poolMode: "ranged",
+      page: "1",
+      size: "500"
+    });
+    const url = `${baseUrl}?${paramsString.toString()}`;
+    const { data } = await axios.get(url);
+    return data.data;
   },
   getStakingStatistics: async (group?: "common" | "index"): Promise<IStakingStatistics[]> => {
     const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/aprs`;

@@ -3,6 +3,7 @@ import { makeAutoObservable } from "mobx";
 import { TOKENS_BY_ASSET_ID, TOKENS_LIST } from "@src/constants";
 import wavesCapService from "@src/services/wavesCapService";
 import BN from "@src/utils/BN";
+import tokensService, { TokenStatisticsFromBackend } from "@src/services/tokensService";
 
 export interface ISerializedTokenStore {
   watchList: string[];
@@ -93,12 +94,36 @@ export default class TokenStore {
     this.setStatistics(statistics);
   };
 
+  initializedFromBackend: boolean = false;
+  private setInitializedFromBackend = (v: boolean) => (this.initializedFromBackend = v);
+
+  statisticsFromBackend: Array<TokenStatisticsFromBackend> = [];
+  private setStatisticsFromBackend = (v: Array<TokenStatisticsFromBackend>) => (this.statisticsFromBackend = v);
+
+  get statisticsFromBackendByAssetId() {
+    return this.statisticsFromBackend.reduce(
+      (acc, stats) => ({ ...acc, [stats.assetId]: stats }),
+      {} as Record<string, TokenStatisticsFromBackend>
+    );
+  }
+
+  private syncTokenStatisticsFromBackend = async () => {
+    const rawStats = await tokensService.getRanges();
+    const stats = rawStats.map((stat) => new TokenStatisticsFromBackend(stat));
+
+    this.setStatisticsFromBackend(stats);
+  }
+
   constructor(rootStore: RootStore, initState?: ISerializedTokenStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
     this.watchList = initState?.watchList ?? [];
-    Promise.all([this.syncTokenStatistics()]).then(() => this.setInitialized(true));
+    Promise.all([
+      this.syncTokenStatistics().then(() => this.setInitialized(true)),
+      this.syncTokenStatisticsFromBackend().then(() => this.setInitializedFromBackend(true)),
+    ]);
     setInterval(this.syncTokenStatistics, 60 * 1000);
+    setInterval(this.syncTokenStatisticsFromBackend, 60 * 1000);
   }
 
   serialize = (): ISerializedTokenStore => ({

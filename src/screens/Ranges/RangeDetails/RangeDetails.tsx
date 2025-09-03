@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import Layout from "@components/Layout";
 import { RangeDetailsInterfaceVMProvider, useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
@@ -7,10 +7,8 @@ import SizedBox from "@components/SizedBox";
 import { Column, Row } from "@src/components/Flex";
 import GoBack from "@components/GoBack";
 import MainRangeInfo from "./MainRangeInfo";
-import { Navigate, useParams } from "react-router-dom";
-import Loading from "@components/Loading";
+import { useParams } from "react-router-dom";
 import { ROUTES } from "@src/constants";
-import { useStores } from "@stores";
 import RangeCharts from "./RangeCharts";
 import RangeComposition from "./RangeComposition";
 import Reward from "./Reward";
@@ -21,6 +19,8 @@ import RangeChart from "@src/components/RangeChart";
 import useWindowSize from "@src/hooks/useWindowSize";
 import RangeLiquidity from "./RangeLiquidity";
 import EarnedByLP from "./EarnedByLP";
+import LowRangeLiquidityNotification from "@components/LowRangeLiquidityNotification";
+import Spinner from "@src/components/Spinner";
 
 const Root = styled.div`
   display: flex;
@@ -60,15 +60,11 @@ const Body = styled.div`
 `;
 const RangeDetailsInterfaceImpl: React.FC = observer(() => {
   const vm = useRangeDetailsInterfaceVM();
-  const { rangesStore } = useStores();
   const { width } = useWindowSize();
   const isMobile = !!(width && width < 880);
-  if (rangesStore.ranges.length === 0 && vm.range == null) {
-    return <Loading />;
-  }
-  if (rangesStore.ranges.length > 0 && vm.range == null) {
-    return <Navigate to={ROUTES.NOT_FOUND} />;
-  }
+  const showLowRangeLiquidityNotification = useMemo(() => vm.range && (!vm.range.liquidity || vm.range.liquidity.lt(100)), [vm.range?.liquidity]);
+
+  // if (!vm.range) return <></>;
   return (
     <Layout>
       <Root>
@@ -80,7 +76,11 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
             <SizedBox height={20} />
             <Row>
               <Card style={{ width: "auto", padding: "4px" }}>
-                <RangeChart assetsWithLeverage={vm.range!.assetsWithLeverage} size={120} />
+                {vm.range ? (
+                  <RangeChart assetsWithLeverage={vm.range.assetsWithLeverage} size={120} />
+                ) : (
+                  <Spinner style={{ width: 94, height: 94, margin: 10 }} />
+                )}
               </Card>
               <SizedBox width={12} />
               <RangeLiquidity style={{ height: "130px", padding: "16px 20px" }} />
@@ -94,7 +94,11 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
               <MainRangeInfo />
               <SizedBox width={20} />
               <Card style={{ width: "auto", padding: "19px" }}>
-                <RangeChart assetsWithLeverage={vm.range!.assetsWithLeverage} size={160} />
+                {vm.range ? (
+                  <RangeChart assetsWithLeverage={vm.range.assetsWithLeverage} size={160} />
+                ) : (
+                  <Spinner style={{ width: 134, height: 134, margin: 10 }} />
+                )}
               </Card>
             </Row>
             <SizedBox height={20} />
@@ -109,6 +113,7 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
           <MainBlock>
             {isMobile && (
               <Column crossAxisSize="max">
+                {showLowRangeLiquidityNotification && <LowRangeLiquidityNotification />}
                 <Reward />
                 <MyRangeBalance />
                 <LPStaking />
@@ -118,6 +123,7 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
             <RangeComposition isMobile={isMobile} />
           </MainBlock>
           <RightBlock>
+            {showLowRangeLiquidityNotification && <LowRangeLiquidityNotification />}
             <Reward />
             <MyRangeBalance />
             <LPStaking />

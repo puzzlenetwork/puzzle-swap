@@ -358,17 +358,18 @@ export class Range {
   get assetsWithLeverage() {
     const withLeverage = this.assets.map(({ balance, factBalance, ...rest }) => ({
       ...rest,
-      leverage: factBalance.div(balance),
+      leverage: balance.div(factBalance),
+      reversedLeverage: factBalance.div(balance),
       balance,
       factBalance
     }));
 
-    const maxLeverage = withLeverage.reduce((acc, { leverage }) => BN.max(acc, leverage), BN.ZERO);
+    const maxLeverage = withLeverage.reduce((acc, { reversedLeverage }) => BN.max(acc, reversedLeverage), BN.ZERO);
 
     return withLeverage.map((asset) => ({
       ...asset,
-      leverage: asset.leverage.times(100).toNumber(),
-      relativeLeverage: asset.leverage.div(maxLeverage).times(100).plus(10).toNumber()
+      reversedLeverage: asset.reversedLeverage.times(100).toNumber(),
+      relativeReversedLeverage: asset.reversedLeverage.div(maxLeverage).times(100).plus(10).toNumber()
     }));
   }
 

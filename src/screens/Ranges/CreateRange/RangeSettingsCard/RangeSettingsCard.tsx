@@ -14,6 +14,7 @@ interface IProps {}
 const Root = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 24px;
 `;
 
 const DesktopContinueBtn = styled.div`
@@ -22,7 +23,7 @@ const DesktopContinueBtn = styled.div`
     display: flex;
   }
 `;
-const PoolSettingsCard: React.FC<IProps> = () => {
+const RangeSettingsCard: React.FC<IProps> = () => {
   const vm = useCreateRangeVM();
   const currentStep = () => {
     switch (vm.step) {
@@ -39,7 +40,6 @@ const PoolSettingsCard: React.FC<IProps> = () => {
   return (
     <Root>
       {currentStep()}
-      <SizedBox height={24} />
       <DesktopContinueBtn>
         <ContinueBtn />
       </DesktopContinueBtn>
@@ -57,4 +57,4 @@ const PoolSettingsCard: React.FC<IProps> = () => {
     </Root>
   );
 };
-export default observer(PoolSettingsCard);
+export default observer(RangeSettingsCard);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, JSX } from "react";
+import React, { useState, useEffect, useMemo, JSX, useCallback, useRef } from "react";
 import styled from "@emotion/styled";
 import { scalePow } from "d3-scale";
 import Slider from "rc-slider";
@@ -61,18 +61,40 @@ const LogSliderWithImage: React.FC<IParams> = ({
   minTooltipContent,
   maxTooltipContent
 }) => {
-  const scale = scalePow().exponent(3).domain([domainMin, domainMax]).range([min, max]);
+  // Memoize scale so its identity is stable across renders unless min/max change
+  const scale = useMemo(() => scalePow().exponent(3).domain([domainMin, domainMax]).range([min, max]), [min, max]);
 
-  const [currentSliderValue, setCurrentSliderValue] = useState(() => scale.invert(value));
+  const clampedSliderValue = useCallback((value: number): number => {
+    return Math.round(Math.max(domainMin, Math.min(domainMax, value)));
+  }, []);
+
+  const clampedValue = useCallback((value: number): number => {
+    return Math.max(min, Math.min(max, value));
+  }, [min, max]);
+
+  const getSliderValue = useCallback((value: number): number => {
+    return clampedSliderValue(scale.invert(value));
+  }, [clampedSliderValue, scale]);
+
+  const getValue = useCallback((sliderValue: number): number => {
+    return clampedValue(scale(sliderValue));
+  }, [clampedValue, scale]);
+
+  const [currentSliderValue, setCurrentSliderValue] = useState(getSliderValue(value));
+  // Track last scaled value we emitted to parent to suppress duplicate feedback loops
+  const lastEmittedScaledRef = useRef<number>(value);
   const [showAutoTooltip, setShowAutoTooltip] = useState(false);
   const [autoTooltipTimeoutId, setAutoTooltipTimeoutId] = useState<NodeJS.Timeout | null>(null);
-  const [previousSliderValue, setPreviousSliderValue] = useState(() => scale.invert(value));
+  const [previousSliderValue, setPreviousSliderValue] = useState(getSliderValue(value));
   const [isHandleHovered, setIsHandleHovered] = useState(false);
 
   // Update slider value when prop changes
   useEffect(() => {
-    setCurrentSliderValue(scale.invert(value));
-  }, [value, scale]);
+    const next = getSliderValue(value);
+    setCurrentSliderValue((prev) => {
+      return Math.abs(prev - next) >= 0.5 ? next : prev; // only update when integer step effectively changed
+    });
+  }, [value, getSliderValue]);
 
   // Auto-trigger tooltip for edge cases
   useEffect(() => {
@@ -124,9 +146,15 @@ const LogSliderWithImage: React.FC<IParams> = ({
 
   const handleChange = (v: number | number[]) => {
     const sliderValue = v as number;
-    const scaledValue = scale(sliderValue);
-    setCurrentSliderValue(sliderValue);
-    onChange(scaledValue);
+    // Only update local state if visual slider position actually moved to a different (integer) slot
+    setCurrentSliderValue((prev) => (Math.abs(prev - sliderValue) >= 0.5 ? sliderValue : prev));
+
+    const scaledValue = getValue(sliderValue);
+    // Emit to parent only if scaled value changed meaningfully (raw inequality guard)
+    if (Math.abs(lastEmittedScaledRef.current - scaledValue) >= 1e-9) {
+      lastEmittedScaledRef.current = scaledValue;
+      onChange(scaledValue);
+    }
   };
 
   const getTooltipPosition = () => {
@@ -137,7 +165,7 @@ const LogSliderWithImage: React.FC<IParams> = ({
   const getDisplayValue = () => {
     if (Math.round(currentSliderValue) <= domainMin) return "1x";
     if (Math.round(currentSliderValue) >= domainMax) return "∞";
-    const scaleValue = scale(currentSliderValue);
+    const scaleValue = getValue(currentSliderValue);
     const rounded =
       scaleValue < 10 ? Math.round(scaleValue * 1e2) / 1e2 : Math.round(scaleValue);
     return `${rounded}x`;

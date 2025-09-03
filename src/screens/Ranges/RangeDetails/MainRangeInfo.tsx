@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import TextButton from "@components/TextButton";
 import { themes } from "@src/themes/ThemeProvider";
+import Skeleton from "react-loading-skeleton";
 
 interface IProps {
   isMobile?: boolean;
@@ -32,7 +33,7 @@ const ShortInfo = styled.div<{ pic: string }>`
   }
   row-gap: 16px;
 `;
-const Links = styled.div<{ isCustom?: boolean }>`
+const Links = styled.div`
   width: 100%;
   padding-top: 32px;
   display: flex;
@@ -68,7 +69,7 @@ const WSCAN_EXPLORER_URL = "https://wscan.io/";
 const MainRangeInfo: React.FC<IProps> = ({ isMobile }) => {
   const vm = useRangeDetailsInterfaceVM();
   const navigate = useNavigate();
-  const handleSmartContractClick = () => window.open(`${WSCAN_EXPLORER_URL}${vm.range!.address}`);
+  const handleSmartContractClick = () => vm.range && window.open(`${WSCAN_EXPLORER_URL}${vm.range.address}`);
   const whiteText = { color: themes.lightTheme.colors.white };
   return (
     <ShortInfo pic={bg}>
@@ -76,21 +77,21 @@ const MainRangeInfo: React.FC<IProps> = ({ isMobile }) => {
         <Hat>
           <Column>
             <Title size="large" weight={500} style={whiteText}>
-              Range {vm.range!.domain}
+              Range {vm.range?.domain}
             </Title>
             <SizedBox height={4} />
             <Text type="purple300" size="medium">
-              Trade fees: {vm.range!.swapFee.toFormat(2)}%
+              Trade fees: {vm.range ? `${vm.range.swapFee.toFormat(2)}%` : <Skeleton width={36} height={16} />}
             </Text>
           </Column>
         </Hat>
-        <Links isCustom={vm.range!.isCustom}>
+        <Links>
           <Column>
             <Text type="purple300" size="medium">
               Smart Contract
             </Text>
             <TextButton prefix={link} onClick={handleSmartContractClick}>
-              {centerEllipsis(vm.range?.address ?? "", 8)}
+              {vm.range ? centerEllipsis(vm.range.address ?? "", 8) : <Skeleton width={84} height={16} />}
             </TextButton>
           </Column>
           <SizedBox width={24} height={16} />
@@ -98,8 +99,8 @@ const MainRangeInfo: React.FC<IProps> = ({ isMobile }) => {
             <Text type="purple300" size="medium" nowrap>
               Range Creator
             </Text>
-            <TextButton prefix={link} onClick={() => window.open(`${WSCAN_EXPLORER_URL}${vm.range?.owner}`)}>
-              {centerEllipsis(vm.range?.owner ?? "", 8)}
+            <TextButton prefix={link} onClick={() => vm.range && window.open(`${WSCAN_EXPLORER_URL}${vm.range.owner}`)}>
+              {vm.range ? centerEllipsis(vm.range.owner ?? "", 8) : <Skeleton width={84} height={16} />}
             </TextButton>
           </Column>
           <SizedBox height={20} />
@@ -108,7 +109,8 @@ const MainRangeInfo: React.FC<IProps> = ({ isMobile }) => {
               fixed={isMobile}
               size="medium"
               style={{ marginRight: 8 }}
-              onClick={() => navigate(`/ranges/${vm.range!.address}`)}
+              onClick={() => vm.range && navigate(`/ranges/${vm.range.address}`)}
+              disabled={!vm.range}
             >
               Trade
             </Button>

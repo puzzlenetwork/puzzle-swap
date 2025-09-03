@@ -1,25 +1,46 @@
 import Button from "@src/components/Button";
 import Dialog from "@src/components/Dialog";
 import BN from "@src/utils/BN";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Text from "@src/components/Text";
 import SizedBox from "@src/components/SizedBox";
 import Slider from "@components/Slider";
 
 interface IParams {
   value?: BN;
-  onUpdate?: (v: BN) => void;
+  onUpdate?: (v: BN | undefined) => void;
 }
 
 const MaxSellOffSelector = ({ value, onUpdate }: IParams) => {
+  const maxValue = 500; // Maximum value for the slider
+
   const [modalOpened, setModalOpened] = useState(false);
+  const [sliderValue, setSliderValue] = useState(value ?? new BN(100));
+
+  // change slider value when prop changes
+  useEffect(() => {
+    setSliderValue(value ?? new BN(100));
+  }, [value]);
 
   const handleOpenModal = () => {
     setModalOpened(true);
     !value && onUpdate && onUpdate(new BN(100)); // Default value if not set
   };
 
-  const maxValue = 500; // Maximum value for the slider
+  const handleChangeSlider = (value: number | number[]) => {
+    setSliderValue(new BN(value.toString()));
+  };
+
+  const handleSubmit = () => {
+    onUpdate && onUpdate(sliderValue);
+    setModalOpened(false);
+  };
+
+  const handleRemove = () => {
+    onUpdate && onUpdate(undefined);
+    setSliderValue(new BN(100));
+    setModalOpened(false);
+  };
 
   return (
     <>
@@ -30,7 +51,7 @@ const MaxSellOffSelector = ({ value, onUpdate }: IParams) => {
         visible={modalOpened}
         style={{ maxWidth: "360px" }}
         styles={{
-          body: { minHeight: "232px" }
+          body: { paddingBottom: "16px" }
         }}
         onClose={() => setModalOpened(false)}
         title="Add Max Sell-Off (Optional)"
@@ -40,21 +61,25 @@ const MaxSellOffSelector = ({ value, onUpdate }: IParams) => {
         </Text>
         <SizedBox height={24} />
         <Text type="primary" size="large" style={{ textAlign: "center" }}>
-          {(value ?? new BN(100)).toNumber()}%
+          {sliderValue.toNumber()}%
         </Text>
         <SizedBox height={16} />
         <Slider
           min={0}
           max={maxValue}
           step={1}
-          value={(value ?? new BN(100)).toNumber()}
+          value={sliderValue.toNumber()}
           onChange={(v: number | number[]) => {
-            onUpdate && onUpdate(new BN(v.toString()));
+            handleChangeSlider(v);
           }}
         />
         <SizedBox height={24} />
-        <Button onClick={() => setModalOpened(false)} size="medium" fixed>
+        <Button onClick={handleSubmit} size="medium" fixed>
           Confirm
+        </Button>
+        <SizedBox height={8} />
+        <Button onClick={handleRemove} size="medium" fixed kind="secondary">
+          Remove
         </Button>
       </Dialog>
     </>

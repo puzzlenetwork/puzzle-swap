@@ -277,15 +277,8 @@ class AccountStore {
     const data = await nodeService.getAddressBalances(address);
     const assetBalances = TOKENS_LIST.map((asset) => {
       const t = data.find(({ assetId }) => asset.assetId === assetId);
-      let balance: BN;
-      
-      // Захардкоживаем баланс WAVES в 100K токенов (100k * 10^8)
-      if (asset.assetId === "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS") {
-        balance = new BN(100000 * Math.pow(10, 8)); // 100K * 10^8
-      } else {
-        balance = new BN(t != null ? t.balance : 0);
-      }
-      
+      const balance = new BN(t != null ? t.balance : 0);
+
       const rate = this.rootStore.poolsStore.usdtRate(asset.assetId) ?? BN.ZERO;
       const usdnEquivalent = rate ? rate.times(BN.formatUnits(balance, asset.decimals)) : BN.ZERO;
       return new Balance({ balance, usdnEquivalent, ...asset });
@@ -295,6 +288,7 @@ class AccountStore {
 
     this.setAssetBalances(assetBalances);
     this.setAssetsBalancesLoading(false);
+    this.rootStore.rangesStore.syncInvestments();
   };
 
   ///------------------transfer

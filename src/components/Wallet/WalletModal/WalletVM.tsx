@@ -1,11 +1,13 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import { RootStore, useStores } from "@stores";
 import copy from "copy-to-clipboard";
 import Balance from "@src/entities/Balance";
 import BN from "@src/utils/BN";
 import { ROUTES, TOKENS_LIST } from "@src/constants";
+import RangeChart from "@src/components/RangeChart";
+import Card from "@src/components/Card";
 
 interface IProps {
   children: React.ReactNode;
@@ -80,7 +82,7 @@ class WalletVM {
     return balancesAmount.plus(BN.ZERO).toFormat(2);
   }
 
-  get investments() {
+  get poolsInvestments() {
     const { poolsStore, stakeStore } = this.rootStore;
     const poolsData =
       poolsStore.investedInPools
@@ -106,7 +108,59 @@ class WalletVM {
         usdnEquivalent: new BN(marketPrice ?? 0)
       };
     });
-    return [...stakedNftData, ...poolsData, ...stakeStore.puzzleWallet].sort((a, b) =>
+    return [...stakedNftData, ...poolsData, ...stakeStore.puzzleWallet];
+  }
+
+  get rangesInvestments() {
+    const { rangesStore } = this.rootStore;
+    return rangesStore.investmentsData
+      .filter((item) => item.providedUsd.gt(0))
+      .map(({ poolAddress, indexStaked, lpTokenName, lpTokenDomain, lpTokenPrice, providedUsd, assetsData }, index) => {
+        const lpName = lpTokenName ?? `PR ${lpTokenDomain}`;
+        const formattedAmount = `${indexStaked?.toSmallFormat()} ${lpName}`;
+
+        const assetsWithReverseLeverage = assetsData.map(({ leverage, ...rest }) => ({
+          ...rest,
+          reversedLeverage: new BN(1).div(leverage),
+        }));
+        const maxLeverage = assetsWithReverseLeverage.reduce((max, asset) => (asset.reversedLeverage.gt(max) ? asset.reversedLeverage : max), new BN(0));
+        const transformedAssetsData = assetsWithReverseLeverage.map((asset) => ({
+          ...asset,
+          reversedLeverage: asset.reversedLeverage.times(100).toNumber(),
+          relativeReversedLeverage: asset.reversedLeverage.div(maxLeverage).times(100).plus(10).toNumber()
+        }));
+        return {
+          onClickPath: `/ranges/${poolAddress}/details`,
+          logo: (
+            <Card style={{
+              width: 40,
+              height: 40,
+              padding: 0,
+              borderRadius: 8,
+            }}>
+              <RangeChart
+                assetsWithLeverage={transformedAssetsData}
+                size={1000}
+                chartStyle={{
+                  width: 38,
+                  height: 38,
+                }}
+                filterDeviation={12*(1000/80)}
+                showTooltip={false}
+                uniqueId={`-inwallet-${index}`}
+              />
+            </Card>
+          ),
+          name: `Range ${lpTokenDomain}`,
+          amount: formattedAmount,
+          nuclearValue: lpTokenPrice,
+          usdnEquivalent: providedUsd
+        }
+      });
+  }
+
+  get investments() {
+    return [...this.poolsInvestments, ...this.rangesInvestments].sort((a, b) =>
       a.usdnEquivalent.gt(b.usdnEquivalent) ? -1 : 1
     );
   }
