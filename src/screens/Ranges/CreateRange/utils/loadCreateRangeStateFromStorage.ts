@@ -4,6 +4,7 @@ export interface IRangeTokenToStore {
   locked: boolean;
   leverage: number;
   initialPrice: number | undefined;
+  maxSellOff: number | undefined;
 }
 
 export interface IInitDataToStore {

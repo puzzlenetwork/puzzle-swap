@@ -207,6 +207,7 @@ class CreateRangeVm {
           share: t.share.div(10).toNumber(),
           leverage: t.leverage.toNumber(),
           initialPrice: t.initialPrice ? (t.initialPrice).toNumber() : undefined,
+          maxSellOff: t.maxSellOff?.toNumber(),
         })),
         title: this.domain,
         step: this.step,
@@ -231,10 +232,11 @@ class CreateRangeVm {
   initialize = (initData: IInitDataToStore | null) => {
     if (initData != null && initData.assets != null && initData.assets.length > 0) {
       if (initData.assets != null) {
-        this.rangeAssets = initData.assets?.map(({ assetId, share, locked, leverage, initialPrice }) => {
+        this.rangeAssets = initData.assets?.map(({ assetId, share, locked, leverage, initialPrice, maxSellOff }) => {
           const asset = TOKENS_BY_ASSET_ID[assetId];
           return observable({
             share: new BN(share).times(10),
+            maxSellOff: maxSellOff ? new BN(maxSellOff) : undefined,
             locked,
             initialPrice: initialPrice ? new BN(initialPrice) : undefined,
             currentPrice: undefined,
@@ -575,6 +577,7 @@ class CreateRangeVm {
       share: t.share.div(10).toNumber(),
       leverage: t.leverage.toNumber(),
       initialPrice: t.initialPrice?.toNumber(),
+      maxSellOff: t.maxSellOff?.toNumber(),
     }));
     const _state = {
       assets,
