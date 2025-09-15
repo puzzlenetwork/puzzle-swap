@@ -301,6 +301,7 @@ const tokenLogos: Record<string, string> = {
   CRV_WXG: "https://r.wavesexplorer.com/assets/site/img/assets_logo/3KhNcHo4We1G5EWps7b1e5DTdLgWDzctc8S6ynu37KAb.svg",
   SHIB_WXG: "https://r.wavesexplorer.com/assets/site/img/assets_logo/GVxGPBtgVWMW1wHiFnfaCakbJ6sKgZgowJgW5Dqrd7JH.svg",
   DAI_WXG: "https://r.wavesexplorer.com/assets/site/img/assets_logo/8zUYbdB8Q6mDhpcXYv52ji8ycfj4SDX4gJXS7YY3dA4R.svg",
+  AURA: "https://wx.network/static/icons/assets/8BrtpekrprCfkqTyZ8vLGoKnvLtUscApws8U9Qusv56M.svg",
 
   USDC_ERC: usdcLogo
 };
