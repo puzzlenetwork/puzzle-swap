@@ -87,20 +87,6 @@ class InvestToPoolInterfaceVM {
     this.rootStore = rootStore;
     makeAutoObservable(this);
 
-    poolsService.getPoolByDomain(poolDomain).then((poolData) => {
-      if (!poolData) return;
-      const newPool = new Pool({
-        ...poolData,
-        isCustom: true,
-        address: poolData.contractAddress,
-        base_token_id: poolData.baseTokenId,
-        tokens: poolData.assets.map((asset) => ({
-          ...TOKENS_BY_ASSET_ID[asset.asset_id],
-          share: asset.share
-        }))
-      });
-      this.rootStore.poolsStore.setPools([...this.rootStore.poolsStore.pools, newPool]);
-    });
 
     when(() => this.pool.isCustom === true, this.loadNFTPaymentInfo);
     when(
