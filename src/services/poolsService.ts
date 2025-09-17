@@ -27,6 +27,15 @@ interface ICreatePoolData {
   artefactOriginTransactionId: string;
 }
 
+interface IPoolAssetFromServer {
+  _id: string;
+  assetId: string;
+  share: number;
+  balance?: number;
+  real_balance?: number;
+  name?: string;
+}
+
 interface IPoolSettings {
   domain: string;
   isCustom?: boolean;
@@ -34,7 +43,7 @@ interface IPoolSettings {
   layer2Address?: string;
   baseTokenId: string;
   title: string;
-  assets: Array<IAssetConfig>;
+  assets: Array<IPoolAssetFromServer>;
   logo: string;
   artefactOriginTransactionId?: string;
   owner: string;

@@ -97,7 +97,10 @@ const PoolsTable: React.FC = () => {
   useMemo(() => {
     const filteredSortedData = vm.pools
       .filter(({ domain }: { domain: string }) => domain !== "puzzle")
-      .filter(({ globalLiquidity }) => globalLiquidity.gt(new BN(20)))
+      .filter(({ statistics }) => {
+        const liquidity = statistics?.liquidity ? new BN(statistics.liquidity) : new BN(0);
+        return liquidity.gt(new BN(20));
+      })
       .filter((pool) => {
         if (!poolsStore.showEmptyBalances) {
           const data = poolsStore.investedInPools?.find((v) => pool.domain === v.pool.domain);
