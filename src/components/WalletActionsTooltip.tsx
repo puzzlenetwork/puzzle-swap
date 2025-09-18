@@ -41,7 +41,7 @@ const WalletActionsTooltip: React.FC<IProps> = ({ address }) => {
     notificationStore.notify("Your address was copied", {
       type: "success",
       title: "Congratulations!",
-      link: `https://${EXPLORER_URL}/address/` + address,
+      link: `${EXPLORER_URL}/` + address,
       linkTitle: "View in explorer",
     });
   };
@@ -52,7 +52,7 @@ const WalletActionsTooltip: React.FC<IProps> = ({ address }) => {
       <Text onClick={handleCopyAddress} className="menu-item">
         Copy address
       </Text>
-      <Anchor style={{ padding: "10px 0" }} href={`${EXPLORER_URL}/address/${address}`}>
+      <Anchor style={{ padding: "10px 0" }} href={`${EXPLORER_URL}/${address}`}>
         <Text>View in explorer</Text>
       </Anchor>
       <Divider className="divider" />

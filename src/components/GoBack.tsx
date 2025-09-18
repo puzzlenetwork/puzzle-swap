@@ -22,7 +22,7 @@ const Root = styled(Row)`
 
 const GoBack: React.FC<IProps> = ({ link, text }) => {
   return (
-    <Link to={link} style={{ display: "block", width: "fit-content" }}>
+    <Link to={link} style={{ display: "block", width: "100%" }}>
       <Root alignItems="center" mainAxisSize="fit-content">
         <img src={arrow} alt="back" />
         <SizedBox width={8} />

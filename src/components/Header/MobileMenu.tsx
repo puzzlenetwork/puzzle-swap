@@ -82,7 +82,7 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
   const toolsMenu = [
     {
       name: "Notifications bot",
-      link: "https://t.me/puzzle_swap",
+      link: "https://t.me/PuzzleSwap_Trades",
       outer: true,
       icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""} />
     },

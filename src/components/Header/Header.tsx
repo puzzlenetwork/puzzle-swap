@@ -211,7 +211,7 @@ const Header: React.FC<IProps> = () => {
     {
       icon: <RobotIcon className={isDarkTheme ? "theme_icon" : ""} />,
       name: "Notifications bot",
-      link: "https://t.me/puzzle_swap",
+      link: "https://t.me/PuzzleSwap_Trades",
       isExternalLink: true
     },
     {

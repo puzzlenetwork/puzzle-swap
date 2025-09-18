@@ -138,7 +138,7 @@ const RangeChartWrapper: React.FC<IParams> = ({ assetsWithLeverage, showTooltip 
                   <TokenIcon src={logo} />
                   <SizedBox width={6} />
                   <Text size="medium">
-                    {symbol} - {reversedLeverage.toFixed(2)}
+                    {symbol} - {reversedLeverage.toFixed(2)}%
                   </Text>
                 </Row>
               ))}

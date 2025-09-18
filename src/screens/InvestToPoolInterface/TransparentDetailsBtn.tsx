@@ -66,7 +66,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
           size="medium"
           prefix={linkIcon}
           kind="secondary"
-          onClick={() => window.open(`${EXPLORER_URL}/address/${vm.pool.address}`)}
+          onClick={() => window.open(`${EXPLORER_URL}/${vm.pool.address}`)}
         >
           View on Explorer
         </TextButton>

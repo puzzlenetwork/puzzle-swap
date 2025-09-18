@@ -17,7 +17,7 @@ const Root = styled(Card)`
   max-width: 560px;
   @media (min-width: 560px) {
     align-items: center;
-    flex-direction: row;
+    flex-direction: column;
     padding: 22px 32px;
   }
 
@@ -25,10 +25,16 @@ const Root = styled(Card)`
     width: 100%;
     margin-top: 12px;
     height: 40px;
-    @media (min-width: 560px) {
-      max-width: 120px;
-    }
   }
+`
+  const RowButton = styled(Row)`
+    gap: 10px;
+    display: flex;
+    width: 100%;
+    
+    a {
+      flex: 1;
+    }
 `;
 
 const Details: React.FC = () => {
@@ -51,11 +57,18 @@ const Details: React.FC = () => {
           <Text>$ {poolsStore.globalVolume.toFormat(2)}</Text>
         </Column>
       </Row>
-      <Link to={ROUTES.POOLS}>
-        <Button className="button" kind="secondary">
-          Pools
-        </Button>
-      </Link>
+      <RowButton>
+        <Link to={ROUTES.POOLS}>
+          <Button className="button" kind="secondary">
+            Pools
+          </Button>
+        </Link>
+        <Link to={ROUTES.RANGES}>
+          <Button className="button" kind="secondary">
+            Ranges
+          </Button>
+        </Link>
+      </RowButton>
     </Root>
   );
 };

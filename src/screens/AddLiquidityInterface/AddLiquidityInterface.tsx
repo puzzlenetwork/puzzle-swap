@@ -36,6 +36,10 @@ const Root = styled.div`
   }
 `;
 
+const LeftAlignedGoBack = styled(GoBack)`
+  align-self: flex-start;
+`;
+
 const AddLiquidityInterfaceImpl = observer(() => {
   const vm = useAddLiquidityInterfaceVM();
   const pool = vm.pool;
@@ -54,7 +58,7 @@ const AddLiquidityInterfaceImpl = observer(() => {
   return (
     <Layout>
       <Root>
-        <GoBack link={`/pools/${vm.poolDomain}/invest`} text="Back to Pool Info" />
+        <LeftAlignedGoBack link={`/pools/${vm.poolDomain}/invest`} text="Back to Pool Info" />
         <SizedBox height={24} />
         <Text weight={500} size="large">
           Deposit liquidity
