@@ -11,6 +11,7 @@ import {
   IDialogNotificationProps
 } from "@components/Dialog/DialogNotification";
 import Pool from "@src/entities/Pool";
+import { CONTRACT_ADDRESSES } from "@src/constants";
 
 const ctx = React.createContext<AddLiquidityInterfaceVM | null>(null);
 
@@ -212,7 +213,7 @@ class AddLiquidityInterfaceVM {
 
     accountStore
       .invoke({
-        dApp: this.pool.layer2Address,
+        dApp: CONTRACT_ADDRESSES.layer2,
         payment,
         call: {
           function: "generateIndexAndStake",
@@ -279,10 +280,10 @@ class AddLiquidityInterfaceVM {
     const { accountStore } = this.rootStore;
     this._setLoading(true);
     this.setNotificationParams(null);
-    
+    console.log("this.", this.baseToken);
     return accountStore
       .invoke({
-        dApp: this.pool.layer2Address,
+        dApp: CONTRACT_ADDRESSES.layer2,
         payment: [
           {
             assetId: this.baseToken.assetId,
