@@ -62,7 +62,7 @@ const WithdrawLiquidityTable: React.FC<IProps> = () => {
         <GridTable desktopTemplate="1fr 1fr" mobileTemplate="1fr 1fr">
           {vm.withdrawCompositionTokens
             .sort((a, b) => (a.inUsdn!.gt(b.inUsdn!) ? -1 : 1))
-            .map(({ symbol, inUsdn, withdraw, share, logo }) => (
+            .map(({ symbol, inUsdn, withdraw, share, logo, decimals }) => (
               <WithdrawTokenRow
                 key={symbol}
                 symbol={symbol}
@@ -70,6 +70,7 @@ const WithdrawLiquidityTable: React.FC<IProps> = () => {
                 withdrawAmount={withdraw}
                 percent={share.toNumber()}
                 logo={logo}
+                decimals={decimals}
               />
             ))}
         </GridTable>

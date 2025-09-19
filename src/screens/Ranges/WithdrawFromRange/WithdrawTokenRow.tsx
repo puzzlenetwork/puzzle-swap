@@ -12,11 +12,12 @@ interface IProps {
   percent: number;
   symbol: string;
   logo: string;
+  decimals?: number;
 }
 
-const WithdrawTokenRow: React.FC<IProps> = ({ withdrawUsdnEquivalent, withdrawAmount, percent, symbol, logo }) => {
-  const available = withdrawUsdnEquivalent ? withdrawUsdnEquivalent.toFormat(4) : "-";
-  const deposit = withdrawAmount ? (withdrawAmount.isNaN() ? "-" : withdrawAmount.toFormat(4)) : "-";
+const WithdrawTokenRow: React.FC<IProps> = ({ withdrawUsdnEquivalent, withdrawAmount, percent, symbol, logo, decimals = 4 }) => {
+  const available = withdrawUsdnEquivalent ? withdrawUsdnEquivalent.toFormat(2) : "-";
+  const deposit = withdrawAmount ? (withdrawAmount.isNaN() ? "-" : withdrawAmount.toFormat(decimals)) : "-";
   return (
     <div className="gridRow">
       <Row alignItems="center" mainAxisSize="fit-content">

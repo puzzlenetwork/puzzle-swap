@@ -391,8 +391,10 @@ class InvestToPoolInterfaceVM {
           link: `${EXPLORER_URL}/transactions/${txId}`,
           linkTitle: "View on Explorer"
         });
-        this.getAddressActivityInfo();
         this.syncIndexTokenInfo();
+        this.getAddressActivityInfo();
+        this.updatePoolTokenBalances();
+        this.rootStore.poolsStore.updatePoolsState();
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
@@ -401,7 +403,15 @@ class InvestToPoolInterfaceVM {
         });
       })
       .then(this.calcRewards)
-      .finally(() => this._setLoading(false));
+      .finally(() => {
+        this.rootStore.accountStore.updateAccountAssets(true);
+        this._setLoading(false);
+        setTimeout(() => {
+          this.syncIndexTokenInfo();
+          this.getAddressActivityInfo();
+          this.calcRewards();
+        }, 3000);
+      });
   };
 
   get canStakeIndex() {
