@@ -392,6 +392,26 @@ class RangeDetailsInterfaceVM {
           link: `${EXPLORER_URL}/transactions/${txId}`,
           linkTitle: "View on Explorer"
         });
+        
+        // Мгновенно обновляем staked balance
+        if (this.lpData) {
+          if (this.useMaxStakeUnstakeAmount) {
+            this.lpData.indexStaked = BN.ZERO;
+            this.lpData.providedUsd = BN.ZERO;
+          } else {
+            const unstakeAmountFormatted = BN.formatUnits(this.stakeUnstakeAmount, this.indexTokenDecimals);
+            const ratio = unstakeAmountFormatted.div(this.lpData.indexStaked);
+            
+            this.lpData.indexStaked = this.lpData.indexStaked.minus(unstakeAmountFormatted);
+            this.lpData.providedUsd = this.lpData.providedUsd.times(new BN(1).minus(ratio));
+            
+            if (this.lpData.indexStaked.lt(0)) {
+              this.lpData.indexStaked = BN.ZERO;
+              this.lpData.providedUsd = BN.ZERO;
+            }
+          }
+        }
+        
         this.syncIndexTokenInfo();
         this.syncLPData();
       })

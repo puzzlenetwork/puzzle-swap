@@ -43,12 +43,13 @@ const BaseTokenAddLiquidityAmount: React.FC<IProps> = () => {
       <SizedBox height={8} />
       <Card>
         <TokenInput
-          selectable={false}
+          selectable={true}
           decimals={vm.baseToken.decimals}
           amount={vm.baseTokenAmount}
           setAmount={vm.setBaseTokenAmount}
           assetId={vm.baseToken.assetId}
-          balances={vm.balances ?? []}
+          setAssetId={vm.setSelectedTokenId}
+          balances={vm.poolTokenBalances ?? []}
           onMaxClick={vm.onMaxBaseTokenClick}
           usdnEquivalent={vm.baseTokenAmountUsdnEquivalent}
         />
@@ -57,10 +58,10 @@ const BaseTokenAddLiquidityAmount: React.FC<IProps> = () => {
           <Notification
             type="warning"
             text={
-              <div>
+              <Text>
                 Your {vm.baseToken.symbol} balance is too low to deposit.{" "}
                 <Link to={buyBaseTokenRoute}>Buy {vm.baseToken.symbol}</Link> to deposit.
-              </div>
+              </Text>
             }
           />
         ) : (

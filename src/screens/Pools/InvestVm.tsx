@@ -56,11 +56,9 @@ class InvestVM {
   }
 
   get totalInvestmentBalance(): string | null {
-    console.log("starting investment calc");
     const { investedInPools } = this.rootStore.poolsStore;
     if (investedInPools == null) return null;
     const value = investedInPools?.reduce((acc, v) => acc.plus(v.liquidityInUsdt), BN.ZERO);
-    console.log("investment calc finished", value.toString());
     return "$" + value?.toFormat(2);
   }
 }

@@ -33,6 +33,12 @@ class AddLiquidityInterfaceVM {
   public baseTokenAmount: BN = BN.ZERO;
   public setBaseTokenAmount = (value: BN) => (this.baseTokenAmount = value);
 
+  public selectedTokenId: string | null = null;
+  public setSelectedTokenId = (assetId: string) => {
+    this.selectedTokenId = assetId;
+    this.baseTokenAmount = BN.ZERO;
+  };
+
   public changePoolModalOpen: boolean = false;
   setChangePoolModalOpen = (value: boolean) => (this.changePoolModalOpen = value);
 
@@ -62,12 +68,22 @@ class AddLiquidityInterfaceVM {
       () => this.rootStore.poolsStore.customPools.length > 0,
       () => {
         const pool = this.rootStore.poolsStore.customPools.find(({ domain }) => domain === this.poolDomain);
-        pool && this._setPool(pool);
+        if (pool) {
+          this._setPool(pool);
+          this.selectedTokenId = pool.base_token_id;
+        }
         this.setInitialized(true);
       }
     );
 
     makeAutoObservable(this);
+  }
+
+  public get poolTokenBalances() {
+    const { accountStore } = this.rootStore;
+    return this.pool?.tokens
+      ?.map((token) => accountStore.findBalanceByAssetId(token.assetId))
+      .filter((balance) => balance != null) as Balance[];
   }
 
   public get balances() {
@@ -86,6 +102,9 @@ class AddLiquidityInterfaceVM {
   }
 
   public get baseToken() {
+    if (this.selectedTokenId) {
+      return this.pool!.getAssetById(this.selectedTokenId)!;
+    }
     return this.pool!.getAssetById(this.pool!.base_token_id)!;
   }
 
@@ -260,6 +279,7 @@ class AddLiquidityInterfaceVM {
     const { accountStore } = this.rootStore;
     this._setLoading(true);
     this.setNotificationParams(null);
+    
     return accountStore
       .invoke({
         dApp: this.pool.layer2Address,
@@ -275,25 +295,33 @@ class AddLiquidityInterfaceVM {
         }
       })
       .then((txId) => {
-        txId &&
-          this.setNotificationParams(
-            buildSuccessLiquidityDialogParams({
-              accountStore,
-              poolDomain: this.poolDomain,
-              txId: txId ?? ""
-            })
-          );
+        if (txId) this.handleDepositSuccess(txId);
       })
       .catch((e) => {
         this.setNotificationParams(
           buildErrorDialogParams({
-            title: "Transaction is not completed",
-            description: e.message + ` ${e.data}` ?? JSON.stringify(e),
+            title: "Smart Contract Error",
+            description: `Error: ${e.message || e.toString()}\n\nThis error needs to be addressed by the smart contract developer. The contract may not support single token deposits for non-base tokens yet.`,
             onTryAgain: this.depositBaseToken
           })
         );
       })
-      .then(() => accountStore.updateAccountAssets(true))
-      .finally(() => this._setLoading(false));
+      .finally(this.handleDepositFinally);
+  }
+
+  private handleDepositSuccess = (txId: string) => {
+    this.setNotificationParams(
+      buildSuccessLiquidityDialogParams({
+        accountStore: this.rootStore.accountStore,
+        poolDomain: this.poolDomain,
+        txId: txId ?? ""
+      })
+    );
+  }
+
+
+  private handleDepositFinally = () => {
+    this.rootStore.accountStore.updateAccountAssets(true);
+    this._setLoading(false);
   };
 }

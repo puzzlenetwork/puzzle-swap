@@ -27,6 +27,10 @@ const TokenName = styled.div`
   font-size: 16px;
   line-height: 24px;
   color: ${({ theme }) => theme.colors.primary800};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
 `;
 
 const Balance = styled.div`
@@ -47,7 +51,6 @@ const TokenSelect: React.FC<IProps> = ({ token, selectable, balance, ...rest }) 
           <Balance>{balance ?? "—"}</Balance>
         </Column>
       </Row>
-      {/*{selectable && <ArrowDownIcon />}*/}
       {selectable && <Img src={theme.images.icons.arrowDown} alt="arrow" />}
     </Root>
   );

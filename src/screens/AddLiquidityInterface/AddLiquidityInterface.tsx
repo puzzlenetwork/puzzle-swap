@@ -80,7 +80,7 @@ const AddLiquidityInterfaceImpl = observer(() => {
         <SizedBox height={8} />
         <Card>
           <SwitchButtons
-            values={["Multiple tokens", `${vm.baseToken.symbol} Token`]}
+            values={["Multiple tokens", "Single token"]}
             active={activeTab}
             onActivate={(i) => {
               i === 1 ? navigate(addOneTokenRoute) : navigate(addLiquidityRoute);
