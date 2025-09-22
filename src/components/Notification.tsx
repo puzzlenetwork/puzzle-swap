@@ -15,6 +15,7 @@ interface IProps extends HTMLAttributes<HTMLDivElement> {
 const Root = styled.div<{ type: "warning" | "info" | "error" }>`
   display: flex;
   flex-direction: row;
+  align-items: center;
   ${({ type, theme }) =>
     (() => {
       switch (type) {

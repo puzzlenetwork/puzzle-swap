@@ -78,6 +78,22 @@ class InvestToPoolInterfaceVM {
   history: IHistory[] = [];
   setHistory = (v: IHistory[]) => (this.history = v);
 
+  public useMaxStakeUnstakeAmount: boolean = true;
+  public setUseMaxStakeUnstakeAmount = (value: boolean) => (this.useMaxStakeUnstakeAmount = value);
+
+  public stakeUnstakeAmount: BN = BN.ZERO;
+  public setStakeUnstakeAmount = (value: BN) => (this.stakeUnstakeAmount = value);
+
+  public stakeUnstakeAction: "stake" | "unstake" = "stake";
+  public setStakeUnstakeAction = (value: "stake" | "unstake") => {
+    this.stakeUnstakeAction = value;
+    if (value === "stake") {
+      this.setStakeUnstakeAmount(this.indexTokenBalance);
+    } else if (value === "unstake") {
+      this.userIndexStaked && this.setStakeUnstakeAmount(this.userIndexStaked);
+    }
+  };
+
   public get pool() {
     return this.rootStore.poolsStore.getPoolByDomain(this.poolDomain)!;
   }
@@ -365,11 +381,23 @@ class InvestToPoolInterfaceVM {
     v && this.setTransactionsHistory([...transactionsHistory, ...v]);
   };
 
+  get canUnstakeIndex() {
+    return (
+      this.userIndexStaked != null &&
+      !this.userIndexStaked.eq(0) &&
+      (this.useMaxStakeUnstakeAmount ||
+        (this.stakeUnstakeAmount.gt(0) && this.stakeUnstakeAmount.lte(this.userIndexStaked)))
+    );
+  }
+
   unstakeIndex = async () => {
-    if (this.userIndexStaked == null || this.userIndexStaked?.eq(0)) return;
+    if (!this.canUnstakeIndex) return;
     if (this.pool.layer2Address == null) return;
     this._setLoading(true);
     const { accountStore, notificationStore } = this.rootStore;
+    const unstakeAmount = this.useMaxStakeUnstakeAmount
+      ? this.userIndexStaked?.toString() ?? "0"
+      : this.stakeUnstakeAmount.toString();
     accountStore
       .invoke({
         dApp: this.pool.address,
@@ -379,7 +407,7 @@ class InvestToPoolInterfaceVM {
           args: [
             {
               type: "integer",
-              value: this.userIndexStaked?.toString()
+              value: unstakeAmount
             }
           ]
         }
@@ -395,6 +423,8 @@ class InvestToPoolInterfaceVM {
         this.getAddressActivityInfo();
         this.updatePoolTokenBalances();
         this.rootStore.poolsStore.updatePoolsState();
+        this.setStakeUnstakeAmount(BN.ZERO);
+        this.setUseMaxStakeUnstakeAmount(true);
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
@@ -415,7 +445,11 @@ class InvestToPoolInterfaceVM {
   };
 
   get canStakeIndex() {
-    return !this.indexTokenBalance.eq(0);
+    return (
+      !this.indexTokenBalance.eq(0) &&
+      (this.useMaxStakeUnstakeAmount ||
+        (this.stakeUnstakeAmount.gt(0) && this.stakeUnstakeAmount.lte(this.indexTokenBalance)))
+    );
   }
 
   stakeIndex = async () => {
@@ -423,13 +457,16 @@ class InvestToPoolInterfaceVM {
     this._setLoading(true);
     const { accountStore, notificationStore } = this.rootStore;
     if (this.indexTokenId == null) return;
+    const stakeAmount = this.useMaxStakeUnstakeAmount
+      ? this.indexTokenBalance.toString()
+      : this.stakeUnstakeAmount.toString();
     accountStore
       .invoke({
         dApp: this.pool.address,
         payment: [
           {
             assetId: this.indexTokenId === "WAVES" ? null : this.indexTokenId,
-            amount: this.indexTokenBalance.toString()
+            amount: stakeAmount
           }
         ],
         call: {
@@ -449,6 +486,8 @@ class InvestToPoolInterfaceVM {
         });
         this.getAddressActivityInfo();
         this.syncIndexTokenInfo();
+        this.setStakeUnstakeAmount(BN.ZERO);
+        this.setUseMaxStakeUnstakeAmount(true);
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {

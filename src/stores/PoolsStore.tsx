@@ -254,8 +254,10 @@ export default class PoolsStore {
 
   usdtRate = (assetId: string, coefficient = 1): BN | null => {
     if (this.tokensList) {
-      const token = this.tokensList.filter((token: { assetId: string }) => token.assetId === assetId)[0];
-      if (token?.lastPrice) return new BN(token.lastPrice);
+      const token = this.tokensList.find((token: { assetId: string }) => token.assetId === assetId);
+      if (token?.lastPrice) {
+        return new BN(token.lastPrice).times(coefficient);
+      }
     }
 
     const usdn = TOKENS_BY_SYMBOL.XTN.assetId;
@@ -294,7 +296,6 @@ export default class PoolsStore {
       const priceInUsdt = pool.currentPrice(assetId, usdt, coefficient);
       return priceInUsdt != null ? priceInUsdt.times(pool._usdtRate) : null;
     } else {
-      //todo check all tokens like this
       return new BN(startPrice ?? 1);
     }
   };
@@ -375,7 +376,7 @@ export default class PoolsStore {
     });
 
   private syncTokensFromPy = async () => {
-    const res = await fetch(`${process.env.REACT_APP_AGG_API}/stats/v1/statistics/tokens?allowed=true`);
+    const res = await fetch(`${process.env.REACT_APP_AGG_API}/stats/v1/statistics/tokens?allowed=false`);
     if (!res.ok) {
       throw new Error("Failed to fetch data");
     }

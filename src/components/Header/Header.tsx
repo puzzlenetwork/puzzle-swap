@@ -263,13 +263,18 @@ const Header: React.FC<IProps> = () => {
           </Tooltip>
           <Desktop>
             <SizedBox width={2} />
-            {menuItems.map(({ name, link }) => (
-              <MenuItem key={name} selected={isRoutesEquals(link, location.pathname)}>
-                <Link to={link} target={link[0] === "/" ? "_self" : "_blank"}>
-                  <Row style={{ gap: 8 }}>{name}</Row>
-                </Link>
-              </MenuItem>
-            ))}
+            {menuItems.map(({ name, link }) => {
+              const isSelected = name === "Trade" 
+                ? (isRoutesEquals(link, location.pathname) || isRoutesEquals(ROUTES.LIMIT_ORDER, location.pathname))
+                : isRoutesEquals(link, location.pathname);
+              return (
+                <MenuItem key={name} selected={isSelected}>
+                  <Link to={link} target={link[0] === "/" ? "_self" : "_blank"}>
+                    <Row style={{ gap: 8 }}>{name}</Row>
+                  </Link>
+                </MenuItem>
+              );
+            })}
           </Desktop>
         </Row>
         <Mobile>

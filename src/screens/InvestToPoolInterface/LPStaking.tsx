@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import Text from "@components/Text";
 import { useInvestToPoolInterfaceVM } from "@screens/InvestToPoolInterface/InvestToPoolInterfaceVM";
@@ -12,21 +12,30 @@ import Tooltip from "@components/Tooltip";
 import SizedBox from "@components/SizedBox";
 import { Column, Row } from "@components/Flex";
 import Button from "@components/Button";
+import Divider from "@src/components/Divider";
+import Switch from "@src/components/Switch";
+import StakeUnstakeInput from "./StakeUnstakeInput";
+import SwitchButtons from "@src/components/SwitchButtons";
 
 interface IProps {}
 
 const Root = styled(Card)`
   width: 100%;
   margin-top: 24px;
-  padding: 16px 24px !important;
+  padding: 0 !important;
 `;
 
-const Title = styled(Text)<{ expanded?: boolean }>`
+const Title = styled.span<{ expanded?: boolean }>`
   display: flex;
   align-items: center;
-  width: 100%;
+  width: calc(100% - 48px);
+  margin: 16px 24px;
   transition: 0.4s;
   position: relative;
+  weight: 500;
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.primary800};
+
   :after {
     position: absolute;
     top: 4px;
@@ -49,19 +58,38 @@ const Body = styled(Column)<{ expanded?: boolean }>`
   transition: 0.4s;
   overflow: hidden;
   width: 100%;
-  height: ${({ expanded }) => (expanded ? 116 : 0)}px;
+  height: ${({ expanded }) => (expanded ? "auto" : 0)};
+`;
+
+const Information = styled(Column)`
+  width: 100%;
+  padding: 16px 24px;
+  padding-top: 0;
+  box-sizing: border-box;
+`;
+
+const Actions = styled(Column)`
+  padding: 16px 24px;
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 const LPStaking: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   const vm = useInvestToPoolInterfaceVM();
   const [expanded, setExpanded] = useState(false);
+  const activeTab = useMemo(() => vm.stakeUnstakeAction === "stake", [vm.stakeUnstakeAction]);
+  const handleChangeActiveTab = (value: number) => {
+    vm.setStakeUnstakeAction(value === 0 ? "stake" : "unstake");
+  };
+
   if (accountStore.address == null) return null;
-  const availableToStake = BN.formatUnits(vm.indexTokenBalance.times(vm.pool.indexTokenRate), 8);
+  const availableToStakeLP = BN.formatUnits(vm.indexTokenBalance, 8);
+  const availableToStakeUsd = BN.formatUnits(vm.indexTokenBalance.times(vm.pool.indexTokenRate), 8);
 
   return (
-    <Root onClick={() => setExpanded(!expanded)}>
-      <Title weight={500} expanded={expanded}>
+    <Root>
+      <Title expanded={expanded} onClick={() => setExpanded(!expanded)}>
         LP Staking
         <Tooltip
           containerStyles={{ display: "flex", alignItems: "center" }}
@@ -71,38 +99,85 @@ const LPStaking: React.FC<IProps> = () => {
         </Tooltip>
       </Title>
       <Body expanded={expanded}>
-        <SizedBox height={16} />
-        <Row>
-          <Column crossAxisSize="max">
-            <Text type="secondary" size="medium">
-              Staked balance
+        <Information>
+          <SwitchButtons values={["Stake", "Unstake"]} active={activeTab ? 0 : 1} onActivate={handleChangeActiveTab} />
+          <SizedBox height={16} />
+          {vm.stakeUnstakeAction === "unstake" && (
+            <Column>
+              <Text type="secondary" size="medium">
+                Staked balance
+              </Text>
+              <Row alignItems="baseline">
+                <Text nowrap>{(() => {
+                  const stakedLP = BN.formatUnits(vm.userIndexStaked ?? BN.ZERO, 8);
+                  if (stakedLP.eq(0)) return stakedLP.toFormat(2, BN.ROUND_DOWN);
+                  const formatted = stakedLP.toFormat(8, BN.ROUND_DOWN);
+                  return formatted.replace(/\.?0+$/, '');
+                })()} LP</Text>
+                <SizedBox width={4} />
+                <Text type="secondary" size="small" style={{ display: "inline" }}>
+                  / ${vm.totalProvidedLiquidityByAddress == null ? "0.00" : vm.totalProvidedLiquidityByAddress?.toFormat(2)}
+                </Text>
+              </Row>
+            </Column>
+          )}
+          {vm.stakeUnstakeAction === "stake" && (
+            <Column>
+              <Text nowrap type="secondary" size="medium">
+                Available to stake
+              </Text>
+              <Row alignItems="baseline">
+                <Text nowrap>{(() => {
+                  if (availableToStakeLP.eq(0)) return availableToStakeLP.toFormat(2, BN.ROUND_DOWN);
+                  const formatted = availableToStakeLP.toFormat(8, BN.ROUND_DOWN);
+                  return formatted.replace(/\.?0+$/, '');
+                })()} LP</Text>
+                <SizedBox width={4} />
+                <Text type="secondary" size="small" style={{ display: "inline" }}>
+                  / ${availableToStakeUsd.toFormat(2, BN.ROUND_DOWN)}
+                </Text>
+              </Row>
+            </Column>
+          )}
+        </Information>
+
+        <Divider />
+
+        <Actions crossAxisSize="max">
+          <Row>
+            <Text size="medium" type="secondary">
+              Use MAX
             </Text>
-            <Text nowrap>
-              ${vm.totalProvidedLiquidityByAddress == null ? "0.00" : vm.totalProvidedLiquidityByAddress?.toFormat(2)}
-            </Text>
-            <SizedBox height={16} />
-            <Button
-              fixed
-              kind="secondary"
-              size="medium"
-              disabled={vm.userIndexStaked == null || vm.userIndexStaked?.eq(0)}
-              onClick={vm.unstakeIndex}
-            >
+            <SizedBox width={16} />
+            <Switch
+              value={vm.useMaxStakeUnstakeAmount}
+              onChange={() => {
+                vm.setUseMaxStakeUnstakeAmount(!vm.useMaxStakeUnstakeAmount);
+              }}
+            />
+          </Row>
+          <SizedBox height={16} />
+          {!vm.useMaxStakeUnstakeAmount && (
+            <>
+              <StakeUnstakeInput
+                amount={vm.stakeUnstakeAmount}
+                decimals={8}
+                setAmount={vm.setStakeUnstakeAmount}
+              />
+              <SizedBox height={16} />
+            </>
+          )}
+          {vm.stakeUnstakeAction === "unstake" && (
+            <Button fixed kind="secondary" size="medium" disabled={!vm.canUnstakeIndex || vm.loading} onClick={vm.unstakeIndex}>
               Unstake
             </Button>
-          </Column>
-          <SizedBox width={8} />
-          <Column crossAxisSize="max">
-            <Text nowrap type="secondary" size="medium">
-              Available to stake
-            </Text>
-            <Text>${availableToStake.toFormat(2)}</Text>
-            <SizedBox height={16} />
-            <Button fixed size="medium" disabled={!vm.canStakeIndex} onClick={vm.stakeIndex}>
+          )}
+          {vm.stakeUnstakeAction === "stake" && (
+            <Button fixed size="medium" disabled={!vm.canStakeIndex || vm.loading} onClick={vm.stakeIndex}>
               Stake
             </Button>
-          </Column>
-        </Row>
+          )}
+        </Actions>
       </Body>
     </Root>
   );

@@ -53,7 +53,7 @@ const Details: React.FC = () => {
       {vm.pool.domain !== "puzzle" && (
         <Link to="invest">
           <Button className="button" kind="secondary">
-            Invest
+            Details
           </Button>
         </Link>
       )}

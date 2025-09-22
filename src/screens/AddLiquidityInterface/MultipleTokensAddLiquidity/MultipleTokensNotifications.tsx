@@ -16,16 +16,9 @@ const MultipleTokensNotifications: React.FC<IProps> = () => {
   const addOneTokenRoute = `/pools/${vm.poolDomain}/addOneToken`;
   return (
     <>
-      {vm.providedPercentOfPool.eq(100)! && !minBalance.eq(0) && (
-        <Notification
-          type="info"
-          text={`You’ve reached the limit with ${minBalanceAsset?.symbol}.`}
-          style={{ margin: 24 }}
-        />
-      )}
       {vm.minBalanceAsset &&
         minBalance.eq(0) &&
-        (vm.zeroAssetBalances != null && vm.zeroAssetBalances >= 2 ? (
+        vm.zeroAssetBalances != null && vm.zeroAssetBalances >= 2 && (
           <Notification
             type="warning"
             text={
@@ -36,22 +29,24 @@ const MultipleTokensNotifications: React.FC<IProps> = () => {
             }
             style={{ margin: 24 }}
           />
-        ) : (
-          <Notification
-            type="warning"
-            text={
-              <Text size="medium">
-                You’ve reached the limit with {vm.minBalanceAsset?.symbol}
-                .&nbsp;
-                <Link to={buildBuyTokenRoute(`pools/${vm.poolDomain}`, vm.minBalanceAsset!.assetId)}>
-                  &nbsp;Buy {vm.minBalanceAsset?.symbol}&nbsp;
-                </Link>
-                to deposit to this pool.
-              </Text>
-            }
-            style={{ margin: 24 }}
-          />
-        ))}
+        )}
+      {((vm.providedPercentOfPool.eq(100) && !minBalance.eq(0)) ||
+        (vm.minBalanceAsset && minBalance.eq(0) && (vm.zeroAssetBalances == null || vm.zeroAssetBalances < 2))) && (
+        <Notification
+          type="warning"
+          text={
+            <Text size="medium">
+              You've reached the limit with {vm.minBalanceAsset?.symbol}
+              .&nbsp;
+              <Link to={buildBuyTokenRoute(`pools/${vm.poolDomain}`, vm.minBalanceAsset!.assetId)}>
+                &nbsp;Buy {vm.minBalanceAsset?.symbol}&nbsp;
+              </Link>
+              to deposit to this pool.
+            </Text>
+          }
+          style={{ margin: 24 }}
+        />
+      )}
     </>
   );
 };
