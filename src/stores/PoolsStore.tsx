@@ -376,7 +376,7 @@ export default class PoolsStore {
     });
 
   private syncTokensFromPy = async () => {
-    const res = await fetch(`${process.env.REACT_APP_AGG_API}/stats/v1/statistics/tokens?allowed=false`);
+    const res = await fetch(`${process.env.REACT_APP_AGG_API}/stats/v1/statistics/tokens?allowed=true`);
     if (!res.ok) {
       throw new Error("Failed to fetch data");
     }
