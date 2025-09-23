@@ -16,7 +16,23 @@ interface IParams {
 }
 
 const makeNodeRequest = async (request: string, params?: IParams): Promise<any> => {
-  const nodes = params?.chainId == null || params.chainId === "W" ? mainnetNodes : testnetNodes;
+  const userSettings = localStorage.getItem("puzzle-user-settings");
+  const customNode = userSettings ? JSON.parse(userSettings)?.customNode : null;
+  
+  let nodes: string[];
+  if (customNode && customNode.trim()) {
+    let nodeUrl = customNode.trim();
+    if (!nodeUrl.startsWith('http://') && !nodeUrl.startsWith('https://')) {
+      nodeUrl = 'https://' + nodeUrl;
+    }
+    if (nodeUrl.endsWith('/')) {
+      nodeUrl = nodeUrl.slice(0, -1);
+    }
+    nodes = [nodeUrl];
+  } else {
+    nodes = params?.chainId == null || params.chainId === "W" ? mainnetNodes : testnetNodes;
+  }
+  
   return new Promise(async (resolve, reject) => {
     let nodeIndex = 0;
     let success = false;
