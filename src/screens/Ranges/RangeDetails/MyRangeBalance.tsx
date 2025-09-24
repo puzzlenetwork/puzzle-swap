@@ -134,13 +134,13 @@ const MyRangeBalance: React.FC<IProps> = () => {
         <Buttons>
           {address != null ? (
             <>
-              <Link to={vm.range ? `/ranges/${vm.range.address}/withdraw` : ""}>
+              <Link to={vm.range ? `/ranges/${vm.range.domain}/withdraw` : ""}>
                 <Button fixed size="medium" kind="secondary">
                   Withdraw
                 </Button>
               </Link>
               <SizedBox width={8} />
-              <Link to={vm.range ? `/ranges/${vm.range.address}/deposit` : ""}>
+              <Link to={vm.range ? `/ranges/${vm.range.domain}/deposit` : ""}>
                 <Button fixed size="medium">
                   Deposit
                 </Button>

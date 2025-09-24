@@ -10,6 +10,7 @@ import GoBack from "@components/GoBack";
 import Card from "@components/Card";
 import SwitchButtons from "@components/SwitchButtons";
 import { useNavigate, useParams } from "react-router-dom";
+import { useStores } from "@stores";
 import Loading from "@components/Loading";
 import DepositSingleToken from "./DepositSingleToken";
 import DepositMultipleTokens from "./DepositMultipleTokens";
@@ -33,8 +34,8 @@ const Root = styled.div`
 const DepositToRangeImpl = observer(() => {
   const vm = useDepositToRangeVM();
   const range = vm.range;
-  const depositRoute = `/ranges/${vm.rangeAddress}/deposit`;
-  const depositOneTokenRoute = `/ranges/${vm.rangeAddress}/depositonetoken`;
+  const depositRoute = `/ranges/${range.domain}/deposit`;
+  const depositOneTokenRoute = `/ranges/${range.domain}/depositonetoken`;
   const navigate = useNavigate();
   const activeTab = window.location.pathname.includes(depositOneTokenRoute) ? 1 : 0;
 
@@ -49,7 +50,7 @@ const DepositToRangeImpl = observer(() => {
   return (
     <Layout>
       <Root>
-        <GoBack link={`/ranges/${vm.rangeAddress}/details`} text={`Back to range ${range.domain}`} />
+        <GoBack link={`/ranges/${range.domain}/details`} text={`Back to range ${range.domain}`} />
         <SizedBox height={24} />
         <Text weight={500} size="large">
           Deposit liquidity to Range {range.domain}
@@ -90,9 +91,13 @@ const DepositToRangeImpl = observer(() => {
 });
 
 const DepositToRange: React.FC = () => {
-  const { rangeAddress } = useParams<{ rangeAddress: string }>();
+  const { rangeDomain } = useParams<{ rangeDomain: string }>();
+  const { rangesStore } = useStores();
+  const range = rangesStore.getRangeByDomain(rangeDomain ?? "");
+  const rangeAddress = range?.address ?? "";
+  
   return (
-    <DepositToRangeVMProvider rangeAddress={rangeAddress ?? ""}>
+    <DepositToRangeVMProvider rangeAddress={rangeAddress}>
       <DepositToRangeImpl />
     </DepositToRangeVMProvider>
   );

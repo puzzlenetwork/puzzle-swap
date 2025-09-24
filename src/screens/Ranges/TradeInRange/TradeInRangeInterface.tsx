@@ -153,9 +153,13 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
 });
 
 const TradeInRangeInterface: React.FC = () => {
-  const { rangeAddress } = useParams<{ rangeAddress: string }>();
+  const { rangeDomain } = useParams<{ rangeDomain: string }>();
+  const { rangesStore } = useStores();
+  const range = rangesStore.getRangeByDomain(rangeDomain ?? "");
+  const rangeAddress = range?.address ?? "";
+  
   return (
-    <TradeInRangeVMProvider rangeAddress={rangeAddress ?? ""}>
+    <TradeInRangeVMProvider rangeAddress={rangeAddress}>
       <TradeInRangeInterfaceImpl />
     </TradeInRangeVMProvider>
   );

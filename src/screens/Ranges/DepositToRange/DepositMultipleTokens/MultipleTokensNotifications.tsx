@@ -13,7 +13,7 @@ const MultipleTokensNotifications: React.FC<IProps> = () => {
   const vm = useDepositToRangeVM();
   const minBalanceAsset = vm.minBalanceAsset;
   const minBalance = minBalanceAsset?.balance ?? new BN(1);
-  const addOneTokenRoute = `/ranges/${vm.rangeAddress}/depositOneToken`;
+  const addOneTokenRoute = `/ranges/${vm.range.domain}/depositOneToken`;
   return (
     <>
       {vm.percentToDeposit.eq(100)! && !minBalance.eq(0) && (

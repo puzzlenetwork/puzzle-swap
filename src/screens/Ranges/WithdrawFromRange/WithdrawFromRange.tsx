@@ -37,7 +37,7 @@ const WithdrawFromRange = observer(() => {
   return (
     <Layout>
       <Root>
-        <GoBack link={`/ranges/${vm.rangeAddress}/details`} text={`Back to range ${vm.range.domain}`} />
+        <GoBack link={`/ranges/${vm.range.domain}/details`} text={`Back to range ${vm.range.domain}`} />
         <SizedBox height={24} />
         <Text weight={500} size="large">
           Withdraw liquidity
@@ -62,9 +62,13 @@ const WithdrawFromRange = observer(() => {
 });
 
 const WithdrawLiquidityInterface: React.FC = () => {
-  const { rangeAddress } = useParams<{ rangeAddress: string }>();
+  const { rangeDomain } = useParams<{ rangeDomain: string }>();
+  const { rangesStore } = useStores();
+  const range = rangesStore.getRangeByDomain(rangeDomain ?? "");
+  const rangeAddress = range?.address ?? "";
+  
   return (
-    <WithdrawFromRangeVMProvider rangeAddress={rangeAddress ?? ""}>
+    <WithdrawFromRangeVMProvider rangeAddress={rangeAddress}>
       <WithdrawFromRange />
     </WithdrawFromRangeVMProvider>
   );

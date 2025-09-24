@@ -26,13 +26,13 @@ export const ROUTES = {
   POOL_BOOST: "/pools/:poolDomain/boost",
   //ranges block
   RANGES: "/ranges",
-  RANGES_TRADE: "/ranges/:rangeAddress",
+  RANGES_TRADE: "/ranges/:rangeDomain",
   RANGES_CREATE: "/ranges/create",
   USER_RANGES: "/ranges/my",
-  RANGES_DETAILS: "/ranges/:rangeAddress/details",
-  RANGES_DEPOSIT: "/ranges/:rangeAddress/deposit",
-  RANGES_DEPOSIT_ONE_TOKEN: "/ranges/:rangeAddress/depositOneToken",
-  RANGES_WITHDRAW: "/ranges/:rangeAddress/withdraw",
+  RANGES_DETAILS: "/ranges/:rangeDomain/details",
+  RANGES_DEPOSIT: "/ranges/:rangeDomain/deposit",
+  RANGES_DEPOSIT_ONE_TOKEN: "/ranges/:rangeDomain/depositOneToken",
+  RANGES_WITHDRAW: "/ranges/:rangeDomain/withdraw",
 };
 
 export const PRODUCTS = {
