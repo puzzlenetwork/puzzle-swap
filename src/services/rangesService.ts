@@ -1,5 +1,6 @@
 import { IGlobalRangesInfoResponse, ILPDataResponse, IRangeParamsResponse } from "@src/entities/Range";
 import { IHistory } from "@src/utils/types";
+import { getBackendApiUrl } from "@src/constants/api";
 import axios from "axios";
 
 export interface IGetRanges {
@@ -79,13 +80,13 @@ const rangesService = {
     Object.entries(params).forEach(([key, value]) => {
       value !== undefined && paramsString.append(key, value.toString());
     });
-    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged`;
+    const baseUrl = `${getBackendApiUrl()}/stats/v1/statistics/pools/ranged`;
     const url = `${baseUrl}?${paramsString.toString()}`;
     const { data } = await axios.get(url);
     return { ranges: data.pools, totalItems: data.total };
   },
   getGlobalRangesInfo: async (params: IGetGlobalRangesInfo): Promise<IGlobalRangesInfoResponse> => {
-    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/global_info`;
+    const baseUrl = `${getBackendApiUrl()}/stats/v1/statistics/pools/global_info`;
     const paramsString = new URLSearchParams({
       poolMode: "ranged",
     });
@@ -100,7 +101,7 @@ const rangesService = {
   // Returns true when the endpoint responds with 200, false on 500 (not ready yet).
   // Any other network error will be treated as not available for now (retry logic handled by caller).
   pingRange: async (address: string): Promise<boolean> => {
-    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged`;
+    const baseUrl = `${getBackendApiUrl()}/stats/v1/statistics/pools/ranged`;
     const url = `${baseUrl}/${address}/data`;
     try {
       const res = await axios.get(url);
@@ -111,7 +112,7 @@ const rangesService = {
     }
   },
   getRangeByAddress: async (address: string, params?: IGetRange): Promise<IRangeParamsResponse> => {
-    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged`;
+    const baseUrl = `${getBackendApiUrl()}/stats/v1/statistics/pools/ranged`;
     const rangeUrl = `${baseUrl}/${address}/data`;
     const paramsString = params ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : "";
     const url = `${rangeUrl}${paramsString}`;
@@ -119,7 +120,7 @@ const rangesService = {
     return data;
   },
   getLPData: async (address: string, userAddress: string, force?: boolean): Promise<ILPDataResponse> => {
-    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/provided_data`;
+    const baseUrl = `${getBackendApiUrl()}/stats/v1/statistics/pools/provided_data`;
     const paramsString = new URLSearchParams({
       poolAddress: address,
       userAddress: userAddress,
@@ -133,7 +134,7 @@ const rangesService = {
     return data.data[0];
   },
   getChartData: async (address: string, params?: IGetChartData): Promise<IHistory[]> => {
-    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/ranged`;
+    const baseUrl = `${getBackendApiUrl()}/stats/v1/statistics/pools/ranged`;
     const rangeUrl = `${baseUrl}/${address}/charts`;
     const paramsString = params ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : "";
     const url = `${rangeUrl}${paramsString}`;
@@ -141,7 +142,7 @@ const rangesService = {
     return data.charts;
   },
   getUserTotalProvided: async (userAddress: string): Promise<number> => {
-    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/provided_data`;
+    const baseUrl = `${getBackendApiUrl()}/stats/v1/statistics/pools/provided_data`;
     const paramsString = new URLSearchParams({
       userAddress: userAddress,
       poolMode: "ranged",
@@ -153,7 +154,7 @@ const rangesService = {
     return data.total_provided_usd;
   },
   getUserInvestments: async (userAddress: string): Promise<IProvidedResponse[]> => {
-    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/provided_data`;
+    const baseUrl = `${getBackendApiUrl()}/stats/v1/statistics/pools/provided_data`;
     const paramsString = new URLSearchParams({
       userAddress: userAddress,
       poolMode: "ranged",
@@ -165,7 +166,7 @@ const rangesService = {
     return data.data;
   },
   getStakingStatistics: async (group?: "common" | "index"): Promise<IStakingStatistics[]> => {
-    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/aprs`;
+    const baseUrl = `${getBackendApiUrl()}/stats/v1/statistics/pools/aprs`;
     const paramsString = new URLSearchParams({
       page: "1",
       size: "500",

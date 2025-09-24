@@ -1,5 +1,6 @@
 import axios from "axios";
 import BN from "@src/utils/BN";
+import { getBackendApiUrl } from "@src/constants/api";
 
 export type TCalcRouteExchangeItem = {
   amountIn: number;
@@ -26,7 +27,7 @@ export interface ICalcResponse {
 const aggregatorService = {
   calc: async (assetId0: string, assetId1: string, amount: BN): Promise<ICalcResponse> => {
     const url = `${
-      process.env.REACT_APP_AGG_API
+      getBackendApiUrl()
     }/aggregator/calc?token0=${assetId0}&token1=${assetId1}&amountIn=${amount.toString()}`;
     const { data } = await axios.get(url, {
       headers: {

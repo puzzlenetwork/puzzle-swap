@@ -12,6 +12,7 @@ import { ReactComponent as Close } from "@src/assets/icons/darkClose.svg";
 import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import { ReactComponent as SuccessIcon } from "@src/assets/icons/success.svg";
 import { ReactComponent as ErrorIcon } from "@src/assets/icons/error.svg";
+import { normalizeUrl } from "@src/constants/api";
 import { Column, Row } from "@src/components/Flex";
 import Tooltip from "@src/components/Tooltip";
 import BN from "@src/utils/BN";
@@ -24,6 +25,7 @@ interface IProps {}
 interface ISettingsStorageData {
   slippage: number;
   customNode?: string;
+  backendUrl?: string;
 }
 
 const Root = styled(Card)<{ expanded: boolean }>`
@@ -67,9 +69,18 @@ const NodeInputRow = styled.div`
   align-items: flex-start;
   gap: 8px;
   
+  .input-container {
+    flex: 1;
+    min-width: 300px;
+  }
+  
   @media (max-width: 480px) {
     flex-direction: column;
     align-items: stretch;
+    
+    .input-container {
+      min-width: unset;
+    }
   }
 `;
 
@@ -178,9 +189,12 @@ const Settings: React.FC<IProps> = () => {
   const initialSlippage = new BN(initData ? initData.slippage : 1).times(10);
   const [slippage, setSlippage] = useState(initialSlippage);
   const [customNode, setCustomNode] = useState(initData?.customNode || "");
+  const [backendUrl, setBackendUrl] = useState(initData?.backendUrl || "");
   const [testStatus, setTestStatus] = useState<"idle" | "testing" | "success" | "error">("idle");
   const [testMessage, setTestMessage] = useState("");
-  const isSomethingChanged = slippage.eq(initialSlippage) && customNode === (initData?.customNode || "");
+  const [backendTestStatus, setBackendTestStatus] = useState<"idle" | "testing" | "success" | "error">("idle");
+  const [backendTestMessage, setBackendTestMessage] = useState("");
+  const isSomethingChanged = slippage.eq(initialSlippage) && customNode === (initData?.customNode || "") && backendUrl === (initData?.backendUrl || "");
   const handleClose = () => vm.setOpenedSettings(false);
   const validateSlippage = (v: number) =>
     // assuming that slippage is a number in [0,100] as required for percentage
@@ -191,7 +205,8 @@ const Settings: React.FC<IProps> = () => {
       JSON.stringify({
         ...initData,
         slippage: validateSlippage(slippage.div(10).toNumber()),
-        customNode: customNode.trim()
+        customNode: customNode.trim(),
+        backendUrl: backendUrl.trim()
       })
     );
     handleClose();
@@ -199,8 +214,11 @@ const Settings: React.FC<IProps> = () => {
   const handleReset = () => {
     setSlippage(initialSlippage);
     setCustomNode(initData?.customNode || "");
+    setBackendUrl(initData?.backendUrl || "");
     setTestStatus("idle");
     setTestMessage("");
+    setBackendTestStatus("idle");
+    setBackendTestMessage("");
     handleClose();
   };
 
@@ -215,13 +233,7 @@ const Settings: React.FC<IProps> = () => {
     setTestMessage("");
 
     try {
-      let nodeUrl = customNode.trim();
-      if (!nodeUrl.startsWith('http://') && !nodeUrl.startsWith('https://')) {
-        nodeUrl = 'https://' + nodeUrl;
-      }
-      if (nodeUrl.endsWith('/')) {
-        nodeUrl = nodeUrl.slice(0, -1);
-      }
+      const nodeUrl = normalizeUrl(customNode);
 
       const response = await axios.get(`${nodeUrl}/blocks/height`, {
         timeout: 10000
@@ -247,6 +259,44 @@ const Settings: React.FC<IProps> = () => {
       }
     }
   };
+
+  const testBackendConnection = async () => {
+    if (!backendUrl.trim()) {
+      setBackendTestStatus("error");
+      setBackendTestMessage("Please enter a backend URL first");
+      return;
+    }
+
+    setBackendTestStatus("testing");
+    setBackendTestMessage("");
+
+    try {
+      const testBackendUrl = normalizeUrl(backendUrl);
+
+      const response = await axios.get(`${testBackendUrl}/pools/data`, {
+        timeout: 10000
+      });
+
+      if (response.data) {
+        setBackendTestStatus("success");
+        setBackendTestMessage("Connection successful! Backend is reachable");
+      } else {
+        setBackendTestStatus("error");
+        setBackendTestMessage("Invalid response from backend");
+      }
+    } catch (error: any) {
+      setBackendTestStatus("error");
+      if (error.code === 'ECONNABORTED') {
+        setBackendTestMessage("Connection timeout");
+      } else if (error.response) {
+        setBackendTestMessage(`HTTP ${error.response.status}: ${error.response.statusText}`);
+      } else if (error.request) {
+        setBackendTestMessage("Network error - unable to reach backend");
+      } else {
+        setBackendTestMessage("Connection failed");
+      }
+    }
+  };
   return (
     <Root expanded={vm.openedSettings} paddingDesktop="16px 24px" paddingMobile="16px" justifyContent="space-between">
       {/*header*/}
@@ -261,7 +311,7 @@ const Settings: React.FC<IProps> = () => {
         <Text weight={500}>Settings</Text>
         <Close onClick={handleClose} style={{ cursor: "pointer" }} />
       </Row>
-      <SizedBox height={24} />
+      <SizedBox height={12} />
       {/*body*/}
       <Column mainAxisSize="stretch">
         <Column crossAxisSize="max">
@@ -321,17 +371,19 @@ const Settings: React.FC<IProps> = () => {
           <SizedBox height={8} />
           <NodeTestContainer>
             <NodeInputRow>
-              <Input
-                value={customNode}
-                onChange={(e) => {
-                  setCustomNode(e.target.value);
-                  setTestStatus("idle");
-                  setTestMessage("");
-                }}
-                placeholder="https://your-node.example.com"
-                description=""
-                flexGrow={1}
-              />
+              <div className="input-container">
+                <Input
+                  value={customNode}
+                  onChange={(e) => {
+                    setCustomNode(e.target.value);
+                    setTestStatus("idle");
+                    setTestMessage("");
+                  }}
+                  placeholder="https://your-node.example.com"
+                  description=""
+                  flexGrow={1}
+                />
+              </div>
               <TestButton
                 size="medium"
                 kind="secondary"
@@ -371,7 +423,79 @@ const Settings: React.FC<IProps> = () => {
             )}
           </NodeTestContainer>
         </Column>
-        <SizedBox height={24} />
+        <SizedBox height={12} />
+        <Column crossAxisSize="max">
+          <Tooltip
+            config={{ placement: "bottom-end", trigger: "click" }}
+            content={
+              <Text>
+                Specify a custom backend URL to send API requests to your own backend instead of the default one. Leave empty to use default backend.
+              </Text>
+            }
+          >
+            <Row alignItems="center">
+              <Text fitContent weight={500}>
+                Backend URL
+              </Text>
+              <InfoIcon style={{ marginLeft: 8 }} />
+            </Row>
+          </Tooltip>
+          <SizedBox height={8} />
+          <NodeTestContainer>
+            <NodeInputRow>
+              <div className="input-container">
+                <Input
+                  value={backendUrl}
+                  onChange={(e) => {
+                    setBackendUrl(e.target.value);
+                    setBackendTestStatus("idle");
+                    setBackendTestMessage("");
+                  }}
+                  placeholder="https://stage2.puzzle.name"
+                  description=""
+                  flexGrow={1}
+                />
+              </div>
+              <TestButton
+                size="medium"
+                kind="secondary"
+                onClick={testBackendConnection}
+                disabled={backendTestStatus === "testing" || !backendUrl.trim()}
+                status={backendTestStatus}
+              >
+                {backendTestStatus === "testing" ? (
+                  <>
+                    Testing<LoadingDots />
+                  </>
+                ) : backendTestStatus === "success" ? (
+                  "Success"
+                ) : backendTestStatus === "error" ? (
+                  "Failed"
+                ) : (
+                  "Test"
+                )}
+              </TestButton>
+            </NodeInputRow>
+            
+            {backendTestMessage && (
+              <StatusMessage type={backendTestStatus === "success" ? "success" : "error"}>
+                {backendTestStatus === "success" ? (
+                  <SuccessIcon width={16} height={16} />
+                ) : (
+                  <ErrorIcon width={16} height={16} />
+                )}
+                <span>{backendTestMessage}</span>
+              </StatusMessage>
+            )}
+            
+            {!backendUrl.trim() && (
+              <Text size="small" type="secondary" style={{ opacity: 0.7 }}>
+                Leave empty to use default backend from environment
+              </Text>
+            )}
+          </NodeTestContainer>
+        </Column>
+        <SizedBox height={12} />
       </Column>
       {/*footer*/}
       <Row

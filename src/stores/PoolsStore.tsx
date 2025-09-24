@@ -5,6 +5,7 @@ import BN from "@src/utils/BN";
 import { CONTRACT_ADDRESSES, POOL_CONFIG, TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL } from "@src/constants";
 import poolService, { IGetPools } from "@src/services/poolsService";
 import nodeService from "@src/services/nodeService";
+import { getBackendApiUrl } from "@src/constants/api";
 
 export type TPoolState = {
   state: IData[];
@@ -375,7 +376,7 @@ export default class PoolsStore {
     });
 
   private syncTokensFromPy = async () => {
-    const res = await fetch(`${process.env.REACT_APP_AGG_API}/stats/v1/statistics/tokens?allowed=true`);
+    const res = await fetch(`${getBackendApiUrl()}/stats/v1/statistics/tokens?allowed=true`);
     if (!res.ok) {
       throw new Error("Failed to fetch data");
     }

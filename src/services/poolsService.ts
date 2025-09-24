@@ -2,6 +2,7 @@ import axios from "axios";
 import { TPoolState } from "@stores/PoolsStore";
 import { IBoostings, IPoolConfig, IPoolStats } from "@src/constants";
 import { IHistory } from "@src/utils/types";
+import { getBackendApiUrl } from "@src/constants/api";
 
 export interface IAssetConfig {
   asset_id: string;
@@ -70,7 +71,7 @@ const poolService = {
     const params = new URLSearchParams({
       timeRange: "all"
     });
-    const req = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/${address}/charts?${params.toString()}`;
+    const req = `${getBackendApiUrl()}/stats/v1/statistics/pools/${address}/charts?${params.toString()}`;
     const { data } = await axios.get(req);
     return data;
   },
@@ -115,7 +116,7 @@ const poolService = {
       params.append(key, value);
     });
     const { data: statsData } = await axios.get(
-      `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/all?${params.toString()}`
+      `${getBackendApiUrl()}/stats/v1/statistics/pools/all?${params.toString()}`
     );
     return { pools: statsData.pools, totalItems: statsData.total };
   },
@@ -124,7 +125,7 @@ const poolService = {
     return data;
   },
   getPoolsStateByUserAddress: async (address?: string | null): Promise<TPoolState[]> => {
-    const req = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/pools/datastorage`;
+    const req = `${getBackendApiUrl()}/stats/v1/statistics/pools/datastorage`;
     const { data } = await axios.get(req);
     return data;
   },

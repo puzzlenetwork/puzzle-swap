@@ -1,6 +1,7 @@
 import { IGlobalRangesInfoResponse, ILPDataResponse, IRangeParamsResponse } from "@src/entities/Range";
 import BN from "@src/utils/BN";
 import { IHistory } from "@src/utils/types";
+import { getBackendApiUrl } from "@src/constants/api";
 import axios from "axios";
 
 export interface IGetTokensStats {
@@ -45,7 +46,7 @@ export class TokenStatisticsFromBackend {
 
 const tokensService = {
   getRanges: async (params?: IGetTokensStats): Promise<IBackendTokenStatsResponse[]> => {
-    const baseUrl = `${process.env.REACT_APP_AGG_API}/stats/v1/statistics/tokens`;
+    const baseUrl = `${getBackendApiUrl()}/stats/v1/statistics/tokens`;
     const paramsString = params ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : "";
     const url = `${baseUrl}${paramsString}`;
     const { data } = await axios.get(url);
