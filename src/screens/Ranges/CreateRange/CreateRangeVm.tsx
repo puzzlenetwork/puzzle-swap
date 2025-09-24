@@ -61,6 +61,8 @@ class CreateRangeVm {
   public rootStore: RootStore;
 
   loading: boolean = false;
+  private priceCache = new Map<string, { price: BN; timestamp: number }>();
+  private readonly CACHE_DURATION = 30000;
   private _setLoading = (l: boolean) => (this.loading = l);
 
   public notificationParams: IDialogNotificationProps | null = null;
@@ -700,16 +702,14 @@ class CreateRangeVm {
                     if (ok) {
                       setAvailable(true);
                     } else {
-                      timer = window.setTimeout(poll, 100);
+                      timer = window.setTimeout(poll, 10000);
                     }
                   } catch {
-                    // Treat any unexpected error as not available yet; retry
-                    if (!disposed) timer = window.setTimeout(poll, 100);
+                    if (!disposed) timer = window.setTimeout(poll, 10000);
                   }
                 };
 
-                // Start after 100ms as requested
-                timer = window.setTimeout(poll, 100);
+                timer = window.setTimeout(poll, 10000);
                 return () => {
                   disposed = true;
                   if (timer != null) window.clearTimeout(timer);
@@ -822,7 +822,7 @@ class CreateRangeVm {
       const deployScriptTx = await setScript({ script: RANGE_CONTRACT_B64, chainId: "W", fee: "4200000" }, seed);
       await broadcast(deployScriptTx, NODE_URL);
       try {
-        await waitForTx(deployScriptTx.id, { apiBase: NODE_URL });
+        await this.waitForTxThrottled(deployScriptTx.id, { apiBase: NODE_URL });
       } catch { }
 
       // Store the contract address for initialization in the next step
@@ -962,14 +962,43 @@ class CreateRangeVm {
     return usdnEquivalent ?? null;
   }
 
+  private async waitForTxThrottled(txId: string, options: any, intervalMs = 10000): Promise<any> {
+    let attempts = 0;
+    const maxAttempts = 60;
+    
+    while (attempts < maxAttempts) {
+      try {
+        const result = await waitForTx(txId, { ...options, timeout: 5000 });
+        return result;
+      } catch (error) {
+        attempts++;
+        if (attempts >= maxAttempts) {
+          throw error;
+        }
+        await new Promise((resolve) => setTimeout(resolve, intervalMs));
+      }
+    }
+  }
+
   async getTokenPrice(assetId: string, tries = 0): Promise<BN | undefined> {
+    const now = Date.now();
+    const cached = this.priceCache.get(assetId);
+    
+    if (cached && (now - cached.timestamp) < this.CACHE_DURATION) {
+      return cached.price;
+    }
+
     const { tokenStore } = this.rootStore;
     if (tokenStore.initialized) {
-      return this.rootStore.tokenStore.statisticsFromBackendByAssetId[assetId]?.price;
-    } else if (tries * 10 > 2000) {
-      throw new Error("Timeout: tokenStore not initialized after 2 seconds");
+      const price = this.rootStore.tokenStore.statisticsFromBackendByAssetId[assetId]?.price;
+      if (price) {
+        this.priceCache.set(assetId, { price, timestamp: now });
+      }
+      return price;
+    } else if (tries * 1000 > 20000) {
+      throw new Error("Timeout: tokenStore not initialized after 20 seconds");
     } else {
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       return this.getTokenPrice(assetId, tries + 1);
     }
   }
