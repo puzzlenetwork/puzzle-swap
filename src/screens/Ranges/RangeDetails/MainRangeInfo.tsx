@@ -109,7 +109,7 @@ const MainRangeInfo: React.FC<IProps> = ({ isMobile }) => {
               fixed={isMobile}
               size="medium"
               style={{ marginRight: 8 }}
-              onClick={() => vm.range && navigate(`/ranges/${vm.range.address}`)}
+              onClick={() => vm.range && navigate(`/ranges/${vm.range.domain}`)}
               disabled={!vm.range}
             >
               Trade

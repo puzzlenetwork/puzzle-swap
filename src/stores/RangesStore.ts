@@ -113,6 +113,7 @@ export default class RangesStore {
     this.updateInAllRanges(range);
   };
   getRangeByAddress = (address: string) => this.allRanges.find((range) => range.address === address);
+  getRangeByDomain = (domain: string) => this.allRanges.find((range) => range.domain === domain);
 
   loading: boolean = false;
   setLoading = (loading: boolean) => (this.loading = loading);

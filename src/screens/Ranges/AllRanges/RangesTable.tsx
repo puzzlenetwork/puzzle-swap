@@ -141,7 +141,7 @@ const RangesTable: React.FC = () => {
       .map((range, index) => {
         const lowLiquidityAssets = range.assets.filter((a) => !a.isActive);
         return ({
-          onClick: () => navigate(`/ranges/${range.address}/details`),
+          onClick: () => navigate(`/ranges/${range.domain}/details`),
           range: rangePreviewByAddress[range.address],
           liquidity: (
             <Row mainAxisSize="fit-content" style={{ position: "relative" }}>

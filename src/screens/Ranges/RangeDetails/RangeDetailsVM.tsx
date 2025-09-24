@@ -15,12 +15,12 @@ const ctx = React.createContext<RangeDetailsInterfaceVM | null>(null);
 
 interface IProps {
   children: React.ReactNode;
-  rangeAddress: string;
+  rangeDomain: string;
 }
 
-export const RangeDetailsInterfaceVMProvider: React.FC<IProps> = ({ rangeAddress, children }) => {
+export const RangeDetailsInterfaceVMProvider: React.FC<IProps> = ({ rangeDomain, children }) => {
   const rootStore = useStores();
-  const store = useMemo(() => new RangeDetailsInterfaceVM(rootStore, rangeAddress), [rootStore, rangeAddress]);
+  const store = useMemo(() => new RangeDetailsInterfaceVM(rootStore, rangeDomain), [rootStore, rangeDomain]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
 
@@ -29,10 +29,35 @@ export const useRangeDetailsInterfaceVM = () => useVM(ctx);
 class RangeDetailsInterfaceVM {
   private rootStore: RootStore;
 
-  private rangeAddress: string;
+  private rangeDomain: string;
   public get range() {
-    return this.rootStore.rangesStore.getRangeByAddress(this.rangeAddress);
+    return this.rootStore.rangesStore.getRangeByDomain(this.rangeDomain);
   }
+  
+  public get rangeAddress(): string {
+    return this.range?.address || '';
+  }
+  
+  private loadRangeData = async () => {
+    // First try to get range by domain from store
+    let range = this.range;
+    if (!range) {
+      // If range not in store, load all ranges first
+      await this.rootStore.rangesStore.syncRanges();
+      range = this.range;
+    }
+    
+    if (range) {
+      rangesService.getRangeByAddress(range.address, { charts: true }).then((rangeData) => {
+        if (!rangeData) return;
+        const newRange = new Range(rangeData);
+        this.rootStore.rangesStore.updateRange(newRange);
+        const _ = this.range; // trigger reactivity
+        this.setHistory(rangeData.charts || []);
+        this.updateBlockHeight();
+      });
+    }
+  };
 
   loading: boolean = false;
   private _setLoading = (l: boolean) => (this.loading = l);
@@ -164,19 +189,13 @@ class RangeDetailsInterfaceVM {
     }
   }
 
-  constructor(rootStore: RootStore, rangeAddress: string) {
+  constructor(rootStore: RootStore, rangeDomain: string) {
     this.rootStore = rootStore;
-    this.rangeAddress = rangeAddress;
+    this.rangeDomain = rangeDomain;
     makeAutoObservable(this);
 
-    rangesService.getRangeByAddress(rangeAddress, { charts: true }).then((rangeData) => {
-      if (!rangeData) return;
-      const newRange = new Range(rangeData);
-      this.rootStore.rangesStore.updateRange(newRange);
-      const _ = this.range; // trigger reactivity
-      this.setHistory(rangeData.charts || []);
-      this.updateBlockHeight();
-    });
+    // Load range data when domain is available
+    this.loadRangeData();
     this.syncChartData("all");
 
     when(

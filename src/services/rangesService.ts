@@ -101,8 +101,11 @@ const rangesService = {
   // Returns true when the endpoint responds with 200, false on 500 (not ready yet).
   // Any other network error will be treated as not available for now (retry logic handled by caller).
   pingRange: async (address: string): Promise<boolean> => {
+    if (!address || address.trim() === '') {
+      return false;
+    }
     const baseUrl = `${getBackendApiUrl()}/stats/v1/statistics/pools/ranged`;
-    const url = `${baseUrl}/${address}/data`;
+    const url = `${baseUrl}/${address.trim()}/data`;
     try {
       const res = await axios.get(url);
       return res.status === 200;
@@ -112,17 +115,23 @@ const rangesService = {
     }
   },
   getRangeByAddress: async (address: string, params?: IGetRange): Promise<IRangeParamsResponse> => {
+    if (!address || address.trim() === '') {
+      throw new Error('Range address is required');
+    }
     const baseUrl = `${getBackendApiUrl()}/stats/v1/statistics/pools/ranged`;
-    const rangeUrl = `${baseUrl}/${address}/data`;
+    const rangeUrl = `${baseUrl}/${address.trim()}/data`;
     const paramsString = params ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : "";
     const url = `${rangeUrl}${paramsString}`;
     const { data } = await axios.get(url);
     return data;
   },
   getLPData: async (address: string, userAddress: string, force?: boolean): Promise<ILPDataResponse> => {
+    if (!address || address.trim() === '') {
+      throw new Error('Range address is required');
+    }
     const baseUrl = `${getBackendApiUrl()}/stats/v1/statistics/pools/provided_data`;
     const paramsString = new URLSearchParams({
-      poolAddress: address,
+      poolAddress: address.trim(),
       userAddress: userAddress,
       poolMode: "ranged",
       page: "1",
@@ -134,8 +143,11 @@ const rangesService = {
     return data.data[0];
   },
   getChartData: async (address: string, params?: IGetChartData): Promise<IHistory[]> => {
+    if (!address || address.trim() === '') {
+      throw new Error('Range address is required');
+    }
     const baseUrl = `${getBackendApiUrl()}/stats/v1/statistics/pools/ranged`;
-    const rangeUrl = `${baseUrl}/${address}/charts`;
+    const rangeUrl = `${baseUrl}/${address.trim()}/charts`;
     const paramsString = params ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : "";
     const url = `${rangeUrl}${paramsString}`;
     const { data } = await axios.get(url);
