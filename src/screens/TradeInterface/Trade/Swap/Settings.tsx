@@ -223,6 +223,8 @@ const Settings: React.FC<IProps> = () => {
   };
 
   const testNodeConnection = async () => {
+    setBackendTestStatus("idle");
+    setBackendTestMessage("");
     if (!customNode.trim()) {
       setTestStatus("error");
       setTestMessage("Please enter a node URL first");
@@ -261,6 +263,8 @@ const Settings: React.FC<IProps> = () => {
   };
 
   const testBackendConnection = async () => {
+    setTestStatus("idle")
+    setTestMessage("");
     if (!backendUrl.trim()) {
       setBackendTestStatus("error");
       setBackendTestMessage("Please enter a backend URL first");
@@ -451,7 +455,7 @@ const Settings: React.FC<IProps> = () => {
                     setBackendTestStatus("idle");
                     setBackendTestMessage("");
                   }}
-                  placeholder="https://stage2.puzzle.name"
+                  placeholder="https://your-node.example.com"
                   description=""
                   flexGrow={1}
                 />
