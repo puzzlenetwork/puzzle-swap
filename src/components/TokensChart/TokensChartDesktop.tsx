@@ -10,8 +10,8 @@ import { IToken } from "@src/constants";
 import TokensChart from "@components/TokensChart/TokensChart";
 import { TokenChartVMProvider, useTokenChartVM } from "@components/TokensChart/TokenChartVM";
 import LearnMoreTokenChartButtons from "@components/TokensChart/LearnMoreTokenChartButtons";
-import MyOrders from "@screens/TradeInterface/Trade/LimitOrders/MyOrders";
-import { useSwapVM } from "@screens/TradeInterface/SwapVM";
+import MyOrders from "@screens/Trade/Trade/LimitOrders/MyOrders";
+import { useSwapVM } from "@screens/Trade/SwapVM";
 import useCollapse from "@components/Collapse";
 
 interface IProps {
