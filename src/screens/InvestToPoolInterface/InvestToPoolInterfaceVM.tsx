@@ -223,7 +223,7 @@ class InvestToPoolInterfaceVM {
       if (!pool?.assets) return [];
       const asset = pool?.assets.find((el: any) => el.asset_id === token.assetId);
       const balance = new BN(asset?.balance ?? BN.ZERO);
-      const rate = this.rootStore.poolsStore.usdtRate(token.assetId);
+      const rate = this.getTokenPriceFromAPI(token.assetId);
       return [
         ...acc,
         {
@@ -235,6 +235,48 @@ class InvestToPoolInterfaceVM {
       ];
     }, []);
   }
+
+  private tokenPricesCache: Record<string, number> = {};
+  private tokenPricesCacheTime: number = 0;
+  private readonly CACHE_DURATION = 60000; // 1 minute
+
+  private getTokenPriceFromAPI = (assetId: string): BN => {
+    const now = Date.now();
+    
+    // Return cached price if still valid
+    if (now - this.tokenPricesCacheTime < this.CACHE_DURATION && this.tokenPricesCache[assetId]) {
+      return new BN(this.tokenPricesCache[assetId]);
+    }
+
+    // If cache is expired or empty, fetch new prices
+    if (now - this.tokenPricesCacheTime >= this.CACHE_DURATION) {
+      this.fetchTokenPrices().catch(console.error);
+    }
+
+    // Return cached price or fallback to old method
+    return new BN(this.tokenPricesCache[assetId] || this.rootStore.poolsStore.usdtRate(assetId) || 0);
+  };
+
+  private fetchTokenPrices = async () => {
+    try {
+      const response = await fetch('https://swapapi.puzzleswap.org/stats/v1/statistics/tokens?allowed=false');
+      if (response.ok) {
+        const tokens = await response.json();
+        const pricesMap: Record<string, number> = {};
+        
+        tokens.forEach((token: any) => {
+          if (token.asset_id && token.price) {
+            pricesMap[token.asset_id] = token.price;
+          }
+        });
+        
+        this.tokenPricesCache = pricesMap;
+        this.tokenPricesCacheTime = Date.now();
+      }
+    } catch (error) {
+      console.error('Failed to fetch token prices:', error);
+    }
+  };
 
   get totalProvidedLiquidityByAddress() {
     if (this.rootStore.accountStore.address == null || this.userIndexStaked == null) return BN.ZERO;
