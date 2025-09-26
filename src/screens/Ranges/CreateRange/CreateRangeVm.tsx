@@ -13,6 +13,7 @@ import { broadcast, setScript, waitForTx } from "@waves/waves-transactions";
 import { makeAutoObservable, observable, reaction } from "mobx";
 import { generate } from "random-words";
 import React, { useMemo } from "react";
+import { domainToUrlSafe } from "@src/utils/rangeUrlUtils";
 import loadCreateRangeStateFromStorage, { IInitDataToStore } from "./utils/loadCreateRangeStateFromStorage";
 
 export const feeToDeploy = new BN(0.042e8);
@@ -744,7 +745,7 @@ class CreateRangeVm {
                     this.setNotificationParams(null);
                     this.initialize(null);
                     localStorage.removeItem("puzzle-custom-range");
-                    window.open(`/ranges/${this.domain}/details`);
+                    window.open(`/ranges/${domainToUrlSafe(this.domain)}/details`);
                   }}
                   title={available ? "Go to Range page" : "Range is being deployed"}
                   disabled={!available}

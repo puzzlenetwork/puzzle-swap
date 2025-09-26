@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import Button from "@components/Button";
 import { AccountStore } from "@stores";
 import { Anchor } from "@components/Anchor";
+import { domainToUrlSafe } from "@src/utils/rangeUrlUtils";
 import SuccessNft from "@components/Dialog/SuccessNft";
 import { EXPLORER_URL } from "@src/constants";
 
@@ -199,7 +200,7 @@ export const buildSuccessDepositToRangeDialogParams = ({
 }: TBuildSuccessDepositToRangeDialogParamsProps): IDialogNotificationProps => {
   const txLink = `${EXPLORER_URL}/transactions/${txId}`;
   const range = accountStore.rootStore.rangesStore.getRangeByAddress(rangeAddress);
-  const rangeLink = `/ranges/${range?.domain || rangeAddress}/details`;
+  const rangeLink = `/ranges/${range?.domain ? domainToUrlSafe(range.domain) : rangeAddress}/details`;
   return {
     title: "Successfully deposited",
     description: `Liquidity successfully provided to the range ${range?.domain}. You can track your reward on the range page.`,

@@ -13,6 +13,7 @@ import { Column, Row } from "@src/components/Flex";
 import Card from "@src/components/Card";
 import styled from "@emotion/styled";
 import TokenTag from "@src/components/TokenTag";
+import { domainToUrlSafe } from "@src/utils/rangeUrlUtils";
 import TokenInRangePreview, { TokenCard } from "./TokenInRangePreview";
 import { useAllRangesVm } from "./AllRangesVm";
 import RangeNotFound from "./RangeNotFound";
@@ -141,7 +142,7 @@ const RangesTable: React.FC = () => {
       .map((range, index) => {
         const lowLiquidityAssets = range.assets.filter((a) => !a.isActive);
         return ({
-          onClick: () => navigate(`/ranges/${range.domain}/details`),
+          onClick: () => navigate(`/ranges/${domainToUrlSafe(range.domain)}/details`),
           range: rangePreviewByAddress[range.address],
           liquidity: (
             <Row mainAxisSize="fit-content" style={{ position: "relative" }}>
