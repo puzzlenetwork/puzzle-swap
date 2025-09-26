@@ -27,7 +27,6 @@ const Container = styled(Card)`
 const Overview: React.FC = () => {
   const vm = useStakingVM();
   const { stakeStore } = useStores();
-  console.log("stakeStore", stakeStore.puzzleTokenStats)
   // const data = [
   //   { date: 123001230, value: 1000 },
   //   { date: 123005230, value: 1000 },

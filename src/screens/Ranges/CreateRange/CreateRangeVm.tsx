@@ -78,7 +78,8 @@ class CreateRangeVm {
         currentPrice: undefined,
         leverage: new BN(1),
         locked: false,
-        priceLoaded: false
+        priceLoaded: false,
+        inWallet: undefined, // Will be synced after initialization
       }),
       observable({
         asset: TOKENS_BY_SYMBOL.PUZZLE,
@@ -87,7 +88,8 @@ class CreateRangeVm {
         currentPrice: undefined,
         leverage: new BN(1),
         locked: false,
-        priceLoaded: false
+        priceLoaded: false,
+        inWallet: undefined, // Will be synced after initialization
       })
     ];
     this.syncCurrentPrices();
@@ -245,6 +247,7 @@ class CreateRangeVm {
             asset: asset,
             priceLoaded: true,
             leverage: new BN(leverage),
+            inWallet: undefined, // Always reset inWallet, will be synced below
           });
         });
         this.baseTokenPrice = new BN(initData.assets[0]?.initialPrice || 1);
@@ -261,6 +264,10 @@ class CreateRangeVm {
     this.domain = initData?.title ?? generate({ minLength: 2, maxLength: 6, exactly: 2, join: "-" });
     this.step = initData?.step ?? 0;
     this.maxStep = initData?.maxStep ?? 0;
+    
+    // Sync wallet balances after initialization
+    this.syncInWallet();
+    
     this.saveSettings();
   };
 
@@ -375,7 +382,8 @@ class CreateRangeVm {
           ? new BN(this.stakingStats.find((s) => s.asset_id === assetId)!.apr_1y)
           : undefined,
         locked: false,
-        priceLoaded: false
+        priceLoaded: false,
+        inWallet: undefined, // Will be synced automatically
       })
     );
 
@@ -399,9 +407,11 @@ class CreateRangeVm {
 
     this.syncShares();
     this.syncMinMaxPriceByAssetId(assetId);
+    // Sync wallet balances for the new asset
+    this.syncInWallet();
     if (this.maxToProvide.eq(0)) {
       this.rootStore.notificationStore.notify(
-        "Change the assets you don’t have enough in wallet, or reset the whole composition.",
+        "Change the assets you don't have enough in wallet, or reset the whole composition.",
         {
           title: "Your max to provide is too low for this range composition",
           type: "warning",
@@ -441,6 +451,9 @@ class CreateRangeVm {
 
     // priceLoaded: set false before recalculating prices for the replaced asset
     this.rangeAssets[indexOfObject].priceLoaded = false;
+    
+    // Reset inWallet to ensure it gets synced for the new asset
+    this.rangeAssets[indexOfObject].inWallet = undefined;
 
     const apr = this.stakingStats.find((s) => s.asset_id === newAssetId)?.apr_1y;
     this.rangeAssets[indexOfObject].apr = apr ? new BN(apr) : undefined;
@@ -461,6 +474,8 @@ class CreateRangeVm {
       ) : undefined);
     }
     this.syncMinMaxPriceByAssetId(newAssetId);
+    // Sync wallet balances for the replaced asset
+    this.syncInWallet();
   };
 
   updateAssetLeverage = (assetId: string, v: BN) => {
