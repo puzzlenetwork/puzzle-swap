@@ -27,13 +27,12 @@ const Container = styled(Card)`
 const Overview: React.FC = () => {
   const vm = useStakingVM();
   const { stakeStore } = useStores();
-
+  console.log("stakeStore", stakeStore.puzzleTokenStats)
   // const data = [
   //   { date: 123001230, value: 1000 },
   //   { date: 123005230, value: 1000 },
   //   { date: 123005230, value: 1000 }
   // ];
-
   return (
     <Root>
       <Text weight={500} type="secondary">
@@ -43,13 +42,13 @@ const Overview: React.FC = () => {
       <Container>
         <Column justifyContent="space-between">
           <Text type="secondary" size="small">
-            Weekly based APY
+            Staking APY (weekly / monthly / yearly)
           </Text>
           <Text style={{ fontSize: 20 }}>
-            {stakeStore.stats?.stakingApy != null ? (
-              stakeStore.stats.stakingApy.toFormat(2).concat(" %")
+            {stakeStore.puzzleTokenStats?.general_info != null ? (
+              `${stakeStore.puzzleTokenStats.general_info.apr_7d.toFixed(2)}% / ${stakeStore.puzzleTokenStats.general_info.apr_30d.toFixed(2)}% / ${stakeStore.puzzleTokenStats.general_info.apr_365d.toFixed(2)}%`
             ) : (
-              <Skeleton height={20} width={110} />
+              <Skeleton height={20} width={250} />
             )}
           </Text>
         </Column>
