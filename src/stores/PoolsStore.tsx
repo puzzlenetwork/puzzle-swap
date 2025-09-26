@@ -69,7 +69,7 @@ export default class PoolsStore {
         this.syncPuzzleRate(),
         this.syncCustomPools()
       ]);
-    }, 15 * 1000);
+    }, 30 * 1000);
     reaction(
       () => [this.volumeByTimeFilter],
       async () => {
