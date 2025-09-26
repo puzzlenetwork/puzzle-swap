@@ -8,7 +8,7 @@ import Table from "@components/Table";
 import { useStores } from "@stores";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import dayjs from "dayjs";
-import PoolAction from "@screens/InvestToPoolInterface/PoolHistory/PoolAction";
+import PoolAction from "@screens/Pools/PoolInvest/PoolHistory/PoolAction";
 import BN from "@src/utils/BN";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import { useOldExploreVM } from "@screens/OldExplorer/OldExploreVm";

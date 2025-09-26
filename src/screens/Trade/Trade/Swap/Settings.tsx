@@ -6,7 +6,7 @@ import Text from "@components/Text";
 import TextButton from "@components/TextButton";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import ShareTokenInput from "@screens/CreateCustomPools/PoolSettingsCard/SelectAssets/ShareTokenInput";
+import ShareTokenInput from "@screens/Pools/CreatePool/PoolSettingsCard/SelectAssets/ShareTokenInput";
 import { useSwapVM } from "@screens/Trade/SwapVM";
 import { ReactComponent as Close } from "@src/assets/icons/darkClose.svg";
 import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";

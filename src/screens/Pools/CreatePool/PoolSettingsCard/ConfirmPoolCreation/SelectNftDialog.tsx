@@ -8,7 +8,7 @@ import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
 import { Column } from "@components/Flex";
 import Skeleton from "react-loading-skeleton";
-import { IPaymentsArtefact, useCreateCustomPoolsVM } from "./CreateCustomPoolsVm";
+import { IPaymentsArtefact, useCreateCustomPoolsVM } from "../../CreateCustomPoolsVm";
 import Button from "@components/Button";
 import { ReactComponent as Add } from "@src/assets/icons/add.svg";
 

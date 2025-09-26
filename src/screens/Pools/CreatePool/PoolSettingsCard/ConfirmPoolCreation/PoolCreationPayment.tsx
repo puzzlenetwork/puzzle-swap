@@ -7,8 +7,8 @@ import Card from "@components/Card";
 import NoPayment from "./NoPayment";
 import SelectArtefact, {
   SelectArtefactSkeleton
-} from "./PoolSettingsCard/ConfirmPoolCreation/SelectArtefact";
-import { useCreateCustomPoolsVM } from "./CreateCustomPoolsVm";
+} from "./SelectArtefact";
+import { useCreateCustomPoolsVM } from "../../CreateCustomPoolsVm";
 import Notification from "@components/Notification";
 import { useStores } from "@stores";
 import BN from "@src/utils/BN";

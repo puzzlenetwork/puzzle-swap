@@ -9,8 +9,8 @@ import dayjs from "dayjs";
 import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
 import BN from "@src/utils/BN";
 import { EXPLORER_URL, TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL } from "@src/constants";
-import PoolAction from "@screens/InvestToPoolInterface/PoolHistory/PoolAction";
-import Swap from "@screens/InvestToPoolInterface/PoolHistory/Swap";
+import PoolAction from "@screens/Pools/PoolInvest/PoolHistory/PoolAction";
+import Swap from "@screens/Pools/PoolInvest/PoolHistory/Swap";
 
 interface IProps {}
 

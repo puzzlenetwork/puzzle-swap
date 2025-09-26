@@ -11,7 +11,7 @@ import { ReactComponent as Lock } from "@src/assets/icons/lock.svg";
 import { ReactComponent as Unlock } from "@src/assets/icons/unlock.svg";
 import { ReactComponent as Close } from "@src/assets/icons/smallClose.svg";
 import { Row } from "@src/components/Flex";
-import ShareTokenInput from "./PoolSettingsCard/SelectAssets/ShareTokenInput";
+import ShareTokenInput from "./ShareTokenInput";
 import BN from "@src/utils/BN";
 
 interface IProps {

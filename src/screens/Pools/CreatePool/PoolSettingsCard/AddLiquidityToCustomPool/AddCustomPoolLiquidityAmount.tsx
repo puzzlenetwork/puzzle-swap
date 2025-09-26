@@ -3,7 +3,7 @@ import React from "react";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import Card from "@components/Card";
-import { useCreateCustomPoolsVM } from "./CreateCustomPoolsVm";
+import { useCreateCustomPoolsVM } from "../../CreateCustomPoolsVm";
 import { observer } from "mobx-react-lite";
 import Slider from "@components/Slider";
 

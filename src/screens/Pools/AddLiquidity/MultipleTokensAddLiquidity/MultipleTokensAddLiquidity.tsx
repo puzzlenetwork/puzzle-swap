@@ -8,7 +8,7 @@ import { observer } from "mobx-react-lite";
 import MultipleTokensAddLiquidityAmount from "./MultipleTokensAddLiquidityAmount";
 import { Row } from "@components/Flex";
 import GridTable from "@components/GridTable";
-import { useAddLiquidityInterfaceVM } from "./AddLiquidityInterfaceVM";
+import { useAddLiquidityInterfaceVM } from "../AddLiquidityInterfaceVM";
 import Divider from "@components/Divider";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";

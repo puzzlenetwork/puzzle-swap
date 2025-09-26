@@ -4,7 +4,7 @@ import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import Card from "@components/Card";
 import Slider from "@components/Slider";
-import { useAddLiquidityInterfaceVM } from "./AddLiquidityInterfaceVM";
+import { useAddLiquidityInterfaceVM } from "../AddLiquidityInterfaceVM";
 import { observer } from "mobx-react-lite";
 
 interface IProps {}

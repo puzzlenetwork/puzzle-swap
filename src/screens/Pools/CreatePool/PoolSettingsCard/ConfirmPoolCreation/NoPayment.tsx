@@ -3,7 +3,7 @@ import React from "react";
 import Button from "@components/Button";
 import Text from "@components/Text";
 import { Column } from "@components/Flex";
-import { useCreateCustomPoolsVM } from "./CreateCustomPoolsVm";
+import { useCreateCustomPoolsVM } from "../../CreateCustomPoolsVm";
 import { observer } from "mobx-react-lite";
 import Loading from "@src/components/Loading";
 import { useStores } from "@stores";

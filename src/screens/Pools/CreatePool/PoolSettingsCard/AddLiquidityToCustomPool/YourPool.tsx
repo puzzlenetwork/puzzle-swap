@@ -5,7 +5,7 @@ import SizedBox from "@components/SizedBox";
 import Card from "@components/Card";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import { Column, Row } from "@components/Flex";
-import { useCreateCustomPoolsVM } from "./CreateCustomPoolsVm";
+import { useCreateCustomPoolsVM } from "../../CreateCustomPoolsVm";
 import { observer } from "mobx-react-lite";
 
 interface IProps {}

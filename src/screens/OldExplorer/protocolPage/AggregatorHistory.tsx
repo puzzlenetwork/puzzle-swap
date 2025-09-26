@@ -8,7 +8,7 @@ import Table from "@components/Table";
 import { observer } from "mobx-react-lite";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import dayjs from "dayjs";
-import Swap from "@screens/InvestToPoolInterface/PoolHistory/Swap";
+import Swap from "@screens/Pools/PoolInvest/PoolHistory/Swap";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
