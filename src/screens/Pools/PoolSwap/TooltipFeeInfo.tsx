@@ -3,10 +3,10 @@ import { Column } from "@components/Flex";
 import Text from "@components/Text";
 import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
-import { useMultiSwapVM } from "@screens/MultiSwapInterface/MultiSwapVM";
+import { usePoolSwapVM } from "./PoolSwapVM";
 
 const TooltipFeeInfo: React.FC = () => {
-  const vm = useMultiSwapVM();
+  const vm = usePoolSwapVM();
   const token1 = vm.token1!;
   const amount = BN.formatUnits(vm.amount1, token1.decimals);
   return (

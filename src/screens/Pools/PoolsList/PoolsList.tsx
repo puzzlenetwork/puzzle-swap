@@ -3,11 +3,11 @@ import React from "react";
 import Layout from "@components/Layout";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import SearchAndFilterTab from "@screens/Pools/SearchAndFilterTab";
+import SearchAndFilterTab from "./SearchAndFilterTab";
 import { InvestVMProvider } from "./InvestVm";
 import { Observer } from "mobx-react-lite";
 import { useStores } from "@stores";
-import AccountInvestBalance from "@screens/Pools/AccountInvestBalance";
+import AccountInvestBalance from "./AccountInvestBalance";
 import PoolsTable from "./PoolsTable";
 
 interface IProps {}

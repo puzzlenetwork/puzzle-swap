@@ -2,14 +2,14 @@ import styled from "@emotion/styled";
 import React from "react";
 import { Observer } from "mobx-react-lite";
 import Layout from "@components/Layout";
-import { CreateCustomPoolsVMProvider } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
+import { CreateCustomPoolsVMProvider } from "./CreateCustomPoolsVm";
 import GoBack from "@components/GoBack";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import PoolSettingsCard from "@screens/CreateCustomPools/PoolSettingsCard";
-import SummaryCard from "@screens/CreateCustomPools/SummaryCard";
-import CreatePoolsStepper from "@screens/CreateCustomPools/CreatePoolsStepper";
-import ContinueBtn from "@screens/CreateCustomPools/ContinueBtn";
+import PoolSettingsCard from "./PoolSettingsCard";
+import SummaryCard from "./SummaryCard";
+import CreatePoolsStepper from "./CreatePoolsStepper";
+import ContinueBtn from "./ContinueBtn";
 import { ROUTES } from "@src/constants";
 
 const Root = styled.div`

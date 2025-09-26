@@ -3,7 +3,7 @@ import Notification from "@components/Notification";
 import { Link } from "react-router-dom";
 import buildBuyTokenRoute from "@src/utils/buildBuyTokenRoute";
 import { observer } from "mobx-react-lite";
-import { useAddLiquidityInterfaceVM } from "@screens/AddLiquidityInterface/AddLiquidityInterfaceVM";
+import { useAddLiquidityInterfaceVM } from "./AddLiquidityInterfaceVM";
 import BN from "@src/utils/BN";
 import Text from "@components/Text";
 

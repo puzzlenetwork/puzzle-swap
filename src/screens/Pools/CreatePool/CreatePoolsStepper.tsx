@@ -3,7 +3,7 @@ import React from "react";
 import Card from "@components/Card";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
+import { useCreateCustomPoolsVM } from "./CreateCustomPoolsVm";
 import { observer } from "mobx-react-lite";
 import DesktopStepper from "@src/components/Stepper/DesktopStepper";
 import MobileStepper from "@components/Stepper/MobileStepper";

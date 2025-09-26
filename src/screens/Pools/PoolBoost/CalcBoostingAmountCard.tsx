@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useBoostApyVm } from "@screens/BoostApy/BoostApyVm";
+import { useBoostApyVm } from "./BoostApyVm";
 import Card from "@components/Card";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";

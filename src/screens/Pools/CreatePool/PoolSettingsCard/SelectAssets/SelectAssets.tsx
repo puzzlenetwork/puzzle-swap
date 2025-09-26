@@ -7,7 +7,7 @@ import Notification from "@components/Notification";
 import Button from "@components/Button";
 import { ReactComponent as Add } from "@src/assets/icons/add.svg";
 import { observer } from "mobx-react-lite";
-import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
+import { useCreateCustomPoolsVM } from "./CreateCustomPoolsVm";
 import TokenCompositionRow from "./TokenCompositionRow";
 import TokenSelectModal from "@components/TokensSelectModal/TokenSelectModal";
 import Tooltip from "@components/Tooltip";

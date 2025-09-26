@@ -2,14 +2,14 @@ import React from "react";
 import { useStores } from "@stores";
 import Button from "@components/Button";
 import { observer } from "mobx-react-lite";
-import { useMultiSwapVM } from "@screens/MultiSwapInterface/MultiSwapVM";
+import { usePoolSwapVM } from "./PoolSwapVM";
 import Loading from "@components/Loading";
 
 interface IProps {}
 
 const SwapButton: React.FC<IProps> = () => {
   const { accountStore } = useStores();
-  const vm = useMultiSwapVM();
+  const vm = usePoolSwapVM();
   const { amount0, balance0, token0, amount1, token1, loading } = vm;
   switch (true) {
     case accountStore.address == null:

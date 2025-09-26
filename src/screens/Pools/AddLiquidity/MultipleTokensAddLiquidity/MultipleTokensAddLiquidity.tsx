@@ -8,12 +8,12 @@ import { observer } from "mobx-react-lite";
 import MultipleTokensAddLiquidityAmount from "./MultipleTokensAddLiquidityAmount";
 import { Row } from "@components/Flex";
 import GridTable from "@components/GridTable";
-import { useAddLiquidityInterfaceVM } from "@screens/AddLiquidityInterface/AddLiquidityInterfaceVM";
+import { useAddLiquidityInterfaceVM } from "./AddLiquidityInterfaceVM";
 import Divider from "@components/Divider";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
-import LiquidityTokenRow from "@screens/AddLiquidityInterface/MultipleTokensAddLiquidity/LiquidityTokenRow";
-import MultipleTokensNotifications from "@screens/AddLiquidityInterface/MultipleTokensAddLiquidity/MultipleTokensNotifications";
+import LiquidityTokenRow from "./LiquidityTokenRow";
+import MultipleTokensNotifications from "./MultipleTokensNotifications";
 import Loading from "@components/Loading";
 
 interface IProps {}

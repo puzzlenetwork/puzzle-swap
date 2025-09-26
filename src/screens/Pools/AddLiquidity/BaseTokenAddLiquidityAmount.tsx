@@ -4,7 +4,7 @@ import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import Card from "@components/Card";
 import { observer } from "mobx-react-lite";
-import { useAddLiquidityInterfaceVM } from "@screens/AddLiquidityInterface/AddLiquidityInterfaceVM";
+import { useAddLiquidityInterfaceVM } from "./AddLiquidityInterfaceVM";
 import { useStores } from "@stores";
 import Button from "@components/Button";
 import Notification from "@components/Notification";

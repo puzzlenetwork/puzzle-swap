@@ -1,3 +1,3 @@
-import AddLiquidityInterface from "./AddLiquidityInterface";
+import AddLiquidity from "./AddLiquidity";
 
-export default AddLiquidityInterface;
+export default AddLiquidity;

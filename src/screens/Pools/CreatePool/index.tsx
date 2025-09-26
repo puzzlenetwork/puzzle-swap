@@ -1,3 +1,3 @@
-import CreateCustomPools from "./CreateCustomPools";
+import CreatePool from "./CreatePool";
 
-export default CreateCustomPools;
+export default CreatePool;

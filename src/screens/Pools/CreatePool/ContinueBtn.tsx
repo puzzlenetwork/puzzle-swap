@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "@components/Button";
-import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
+import { useCreateCustomPoolsVM } from "./CreateCustomPoolsVm";
 import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
 import Loading from "@components/Loading";

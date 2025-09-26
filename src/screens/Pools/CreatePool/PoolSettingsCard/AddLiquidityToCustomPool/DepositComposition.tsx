@@ -6,7 +6,7 @@ import Notification from "@components/Notification";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import styled from "@emotion/styled";
-import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
+import { useCreateCustomPoolsVM } from "./CreateCustomPoolsVm";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";

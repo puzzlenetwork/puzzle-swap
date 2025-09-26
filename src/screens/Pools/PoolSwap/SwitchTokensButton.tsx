@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React, { HTMLAttributes, useState } from "react";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
-import { useMultiSwapVM } from "@screens/MultiSwapInterface/MultiSwapVM";
+import { usePoolSwapVM } from "./PoolSwapVM";
 import { useTheme } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
 import BN from "@src/utils/BN";
@@ -25,7 +25,7 @@ const buildRateStr = (symbol0: string | undefined, symbol1: string | undefined, 
 
 const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
   const [switched, setSwitched] = useState(false);
-  const vm = useMultiSwapVM();
+  const vm = usePoolSwapVM();
   const theme = useTheme();
   const { token0, token1, amount0, amount1, rate } = vm;
   const navigate = useNavigate();

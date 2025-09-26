@@ -1,3 +1,3 @@
-import BoostApy from "./BoostApy";
+import PoolBoost from "./PoolBoost";
 
-export default BoostApy;
+export default PoolBoost;

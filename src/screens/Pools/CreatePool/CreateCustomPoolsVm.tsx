@@ -23,8 +23,8 @@ import poolsService from "@src/services/poolsService";
 import Balance from "@src/entities/Balance";
 import { toFile } from "@src/utils/files";
 import bucketService from "@src/services/bucketService";
-import loadCreatePoolStateFromStorage from "@screens/CreateCustomPools/utils/loadCreatePoolStateFromStorage";
-import checkDomainPaid from "@screens/CreateCustomPools/utils/checkDomainPaid";
+import loadCreatePoolStateFromStorage from "./utils/loadCreatePoolStateFromStorage";
+import checkDomainPaid from "./utils/checkDomainPaid";
 import Button from "@components/Button";
 import getDomainPaymentArtefactId from "@src/utils/getDomainPaymentArtefactId";
 

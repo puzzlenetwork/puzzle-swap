@@ -6,11 +6,10 @@ import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 // import darkIncome from "@src/assets/icons/darkIncome.svg";
 // import darkWallet from "@src/assets/icons/darkWallet.svg";
-import { useInvestVM } from "@screens/Pools/InvestVm";
 import Skeleton from "react-loading-skeleton";
 import { observer } from "mobx-react-lite";
 import { themes } from "@src/themes/ThemeProvider";
-
+import { useInvestVM } from "./InvestVm";
 interface IProps {}
 
 const Root = styled.div<{ pic: string }>`

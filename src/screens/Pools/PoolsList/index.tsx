@@ -1,3 +1,3 @@
-import Pools from "./Pools";
+import PoolsList from "./PoolsList";
 
-export default Pools;
+export default PoolsList;

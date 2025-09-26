@@ -6,7 +6,7 @@ import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { useInvestVM } from "@screens/Pools/InvestVm";
+import { useInvestVM } from "./InvestVm";
 import close from "@src/assets/icons/primaryBlue16CloseIcon.svg";
 import Divider from "@src/components/Divider";
 import { Row } from "@src/components/Flex";

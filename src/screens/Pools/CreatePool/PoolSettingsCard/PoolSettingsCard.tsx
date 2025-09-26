@@ -1,13 +1,13 @@
 import React from "react";
-import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
+import { useCreateCustomPoolsVM } from "./CreateCustomPoolsVm";
 import { observer } from "mobx-react-lite";
 import SelectAssets from "./SelectAssets";
 import ConfirmPoolCreation from "./ConfirmPoolCreation";
 import TitleAndDomainPoolSetting from "./TitleAndDomailPoolSetting";
 import styled from "@emotion/styled";
-import ContinueBtn from "@screens/CreateCustomPools/ContinueBtn";
+import ContinueBtn from "./ContinueBtn";
 import SizedBox from "@components/SizedBox";
-import AddLiquidityToCustomPool from "@screens/CreateCustomPools/PoolSettingsCard/AddLiquidityToCustomPool";
+import AddLiquidityToCustomPool from "./PoolSettingsCard/AddLiquidityToCustomPool";
 import DialogNotification from "@components/Dialog/DialogNotification";
 
 interface IProps {}

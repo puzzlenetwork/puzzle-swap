@@ -4,7 +4,7 @@ import Layout from "@components/Layout";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { Observer } from "mobx-react-lite";
-import { BoostApyVmProvider, useBoostApyVm } from "@screens/BoostApy/BoostApyVm";
+import { BoostApyVmProvider, useBoostApyVm } from "./BoostApyVm";
 import GoBack from "@components/GoBack";
 import { useParams } from "react-router-dom";
 import CalcBoostingAmountCard from "./CalcBoostingAmountCard";

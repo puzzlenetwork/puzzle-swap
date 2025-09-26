@@ -6,7 +6,7 @@ import SizedBox from "@components/SizedBox";
 import Card from "@components/Card";
 import { Column, Row } from "@components/Flex";
 import SquareTokenIcon from "@components/SquareTokenIcon";
-import { useCreateCustomPoolsVM } from "@screens/CreateCustomPools/CreateCustomPoolsVm";
+import { useCreateCustomPoolsVM } from "./CreateCustomPoolsVm";
 import { useTheme } from "@emotion/react";
 
 interface IProps {}

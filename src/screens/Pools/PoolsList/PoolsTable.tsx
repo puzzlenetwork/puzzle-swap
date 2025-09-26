@@ -1,13 +1,13 @@
 import React, { useMemo, useState } from "react";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
-import PoolNotFound from "@screens/Pools/PoolNotFound";
+import PoolNotFound from "./PoolNotFound";
 import { useStores } from "@src/stores";
-import { useInvestVM } from "@screens/Pools/InvestVm";
+import { useInvestVM } from "./InvestVm";
 import SizedBox from "@components/SizedBox";
 import { tokenCategoriesEnum } from "@components/TokensSelectModal/TokenSelectModal";
 import Table from "@src/components/Table";
-import TokenTags from "@screens/Pools/TokenTags";
+import TokenTags from "./TokenTags";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import Scrollbar from "@components/Scrollbar";
 import { observer } from "mobx-react-lite";

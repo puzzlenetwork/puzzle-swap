@@ -3,7 +3,7 @@ import React from "react";
 import Card from "@components/Card";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
-import { useMultiSwapVM } from "@screens/MultiSwapInterface/MultiSwapVM";
+import { usePoolSwapVM } from "./PoolSwapVM";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
 import Button from "@src/components/Button";
@@ -29,7 +29,7 @@ const Root = styled(Card)`
 `;
 
 const Details: React.FC = () => {
-  const vm = useMultiSwapVM();
+  const vm = usePoolSwapVM();
   if (vm.pool == null) return null;
   const { globalLiquidity, globalVolume, domain } = vm.pool;
   return (

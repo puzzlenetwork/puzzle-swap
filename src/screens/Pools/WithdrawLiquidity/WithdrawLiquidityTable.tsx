@@ -8,7 +8,7 @@ import Divider from "@components/Divider";
 import Button from "@components/Button";
 import { Row } from "@components/Flex";
 import WithdrawTokenRow from "./WithdrawTokenRow";
-import { useWithdrawLiquidityVM } from "@screens/WithdrawLiquidity/WithdrawLiquidityVM";
+import { useWithdrawLiquidityVM } from "./WithdrawLiquidityVM";
 import { observer } from "mobx-react-lite";
 import Loading from "@components/Loading";
 
