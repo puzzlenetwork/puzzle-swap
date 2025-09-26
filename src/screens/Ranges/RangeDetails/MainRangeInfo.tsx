@@ -10,6 +10,7 @@ import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
 import TransparentDetailsBtn from "./RangeDetailsBtn";
 import { useNavigate } from "react-router-dom";
+import { domainToUrlSafe } from "@src/utils/rangeUrlUtils";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import TextButton from "@components/TextButton";
 import { themes } from "@src/themes/ThemeProvider";
@@ -109,7 +110,7 @@ const MainRangeInfo: React.FC<IProps> = ({ isMobile }) => {
               fixed={isMobile}
               size="medium"
               style={{ marginRight: 8 }}
-              onClick={() => vm.range && navigate(`/ranges/${vm.range.domain}`)}
+              onClick={() => vm.range && navigate(`/ranges/${domainToUrlSafe(vm.range.domain)}`)}
               disabled={!vm.range}
             >
               Trade

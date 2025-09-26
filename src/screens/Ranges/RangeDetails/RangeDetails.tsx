@@ -10,6 +10,7 @@ import MainRangeInfo from "./MainRangeInfo";
 import { useParams } from "react-router-dom";
 import { ROUTES } from "@src/constants";
 import { useStores } from "@stores";
+import { urlSafeToOriginalDomain } from "@src/utils/rangeUrlUtils";
 import RangeCharts from "./RangeCharts";
 import RangeComposition from "./RangeComposition";
 import Reward from "./Reward";
@@ -138,11 +139,12 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
 const RangeDetailsInterface: React.FC = () => {
   const { rangeDomain } = useParams<{ rangeDomain: string }>();
   const { rangesStore } = useStores();
-  const range = rangesStore.getRangeByDomain(rangeDomain ?? "");
+  const originalDomain = rangeDomain ? urlSafeToOriginalDomain(rangeDomain) : "";
+  const range = rangesStore.getRangeByDomain(originalDomain);
   const rangeAddress = range?.address ?? "";
   
   return (
-    <RangeDetailsInterfaceVMProvider rangeDomain={rangeDomain ?? ""}>
+    <RangeDetailsInterfaceVMProvider rangeDomain={originalDomain}>
       <RangeDetailsInterfaceImpl />
     </RangeDetailsInterfaceVMProvider>
   );

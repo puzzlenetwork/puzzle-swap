@@ -16,6 +16,7 @@ import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { urlSafeToOriginalDomain } from "@src/utils/rangeUrlUtils";
 import Details from "./Details";
 import SwapButton from "./SwapButton";
 import SwitchTokensButton from "./SwitchTokensButton";
@@ -155,7 +156,8 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
 const TradeInRangeInterface: React.FC = () => {
   const { rangeDomain } = useParams<{ rangeDomain: string }>();
   const { rangesStore } = useStores();
-  const range = rangesStore.getRangeByDomain(rangeDomain ?? "");
+  const originalDomain = rangeDomain ? urlSafeToOriginalDomain(rangeDomain) : "";
+  const range = rangesStore.getRangeByDomain(originalDomain);
   const rangeAddress = range?.address ?? "";
   
   return (
