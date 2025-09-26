@@ -113,6 +113,9 @@ export default class PoolsStore {
   public usdnRate: BN = BN.ZERO;
   public setUsdnRate = (value: BN) => (this.usdnRate = value);
 
+  public romeRate: BN = BN.ZERO;
+  public setRomeRate = (value: BN) => (this.romeRate = value);
+
   public _usdtRate: BN = BN.ZERO;
   public setUsdtRate = (value: BN) => (this._usdtRate = value);
 
@@ -265,6 +268,7 @@ export default class PoolsStore {
     const usdt = TOKENS_BY_SYMBOL.USDT_WXG.assetId;
     const puzzle = TOKENS_BY_SYMBOL.PUZZLE.assetId;
     const waves = TOKENS_BY_SYMBOL.WAVES.assetId;
+    const rome = TOKENS_BY_SYMBOL.ROME.assetId;
     const usdtppt = TOKENS_BY_SYMBOL.USDT.assetId;
 
     const pool = this.pools.find(
@@ -287,6 +291,9 @@ export default class PoolsStore {
     } else if (pool.tokens.some(({ assetId }) => assetId === waves)) {
       const priceInWaves = pool.currentPrice(assetId, "WAVES", coefficient);
       return priceInWaves != null ? priceInWaves.times(pool.wavesRate) : null;
+    } else if (pool.tokens.some(({ assetId }) => assetId === rome)) {
+      const priceInRome = pool.currentPrice(assetId, rome, coefficient);
+      return priceInRome != null ? priceInRome.times(pool.romeRate) : null;
     } else if (pool.tokens.some(({ assetId }) => assetId === puzzle)) {
       const priceInPuzzle = pool.currentPrice(assetId, puzzle, coefficient);
       return priceInPuzzle != null ? priceInPuzzle.times(pool.puzzleRate) : null;
@@ -399,22 +406,26 @@ export default class PoolsStore {
       `${TOKENS_BY_SYMBOL.PUZZLE.assetId}_twap5B`,
       `${TOKENS_BY_SYMBOL.XTN.assetId}_twap5B`,
       `${TOKENS_BY_SYMBOL.WAVES.assetId}_twap5B`,
-      `${TOKENS_BY_SYMBOL.USDT_WXG.assetId}_twap5B`
+      `${TOKENS_BY_SYMBOL.USDT_WXG.assetId}_twap5B`,
+      `${TOKENS_BY_SYMBOL.ROME.assetId}_twap5B`
     ]);
 
     const puzzleRate = priceResponse != null ? BN.formatUnits(priceResponse[0].value, 6) : BN.ZERO;
     const usdnRate = priceResponse != null ? BN.formatUnits(priceResponse[1].value, 6) : BN.ZERO;
     const wavesRate = priceResponse != null ? BN.formatUnits(priceResponse[2].value, 6) : BN.ZERO;
     const _usdtRate = priceResponse != null ? BN.formatUnits(priceResponse[3].value, 6) : BN.ZERO;
+    const romeRate = priceResponse != null ? BN.formatUnits(priceResponse[4].value, 6) : BN.ZERO;
     this.setPuzzleRate(puzzleRate);
     this.setUsdnRate(usdnRate);
     this.setWavesRate(wavesRate);
     this.setUsdtRate(_usdtRate);
+    this.setRomeRate(romeRate);
     this.pools.forEach((pool) => {
       pool.setPuzzleRate(puzzleRate);
       pool.setUsdnRate(usdnRate);
       pool.setWavesRate(wavesRate);
       pool.setUsdtRate(_usdtRate);
+      pool.setRomeRate(romeRate);
     });
   };
 }

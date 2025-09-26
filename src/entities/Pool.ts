@@ -79,6 +79,9 @@ class Pool implements IPoolConfig {
   public usdnRate: BN = BN.ZERO;
   public setUsdnRate = (value: BN) => (this.usdnRate = value);
 
+  public romeRate: BN = BN.ZERO;
+  public setRomeRate = (value: BN) => (this.romeRate = value);
+
   public wavesRate: BN = BN.ZERO;
   public setWavesRate = (value: BN) => (this.wavesRate = value);
 
@@ -147,24 +150,24 @@ class Pool implements IPoolConfig {
     }
     const usdtAsset = this.tokens.find(({ assetId }) => assetId === "34N9YcEETLWn93qYQ64EsP1x89tSruJU44RrEMSXXEPJ")!;
     const usdtLiquidity = this.liquidity[usdtAsset?.assetId];
+    // Добавляем ROME как отдельный актив для расчёта globalLiquidityByUSDT
+    const usdnAsset = this.tokens.find(({ symbol }) => symbol === "XTN");
+    const usdnLiquidity = usdnAsset ? this.liquidity[usdnAsset.assetId] : undefined;
 
-    const usdnAsset = this.tokens.find(({ symbol }) => symbol === "XTN")!;
-    const usdnLiquidity = this.liquidity[usdnAsset?.assetId];
+    const romeAsset = this.tokens.find(({ symbol }) => symbol === "ROME");
+    const romeLiquidity = romeAsset ? this.liquidity[romeAsset.assetId] : undefined;
 
-    const puzzleAsset = this.tokens.find(({ symbol }) => symbol === "PUZZLE")!;
-    const puzzleLiquidity = this.liquidity[puzzleAsset?.assetId];
+    const wavesAsset = this.tokens.find(({ symbol }) => symbol === "WAVES");
+    const wavesLiquidity = wavesAsset ? this.liquidity[wavesAsset.assetId] : undefined;
 
-    const wavesAsset = this.tokens.find(({ symbol }) => symbol === "WAVES")!;
-    const wavesLiquidity = this.liquidity[wavesAsset?.assetId];
-
-    const usdtPptAsset = this.tokens.find(({ assetId }) => assetId === "9wc3LXNA4TEBsXyKtoLE9mrbDD7WMHXvXrCjZvabLAsi")!;
-    const usdtPptLiquidity = this.liquidity[usdtPptAsset?.assetId];
+    const usdtPptAsset = this.tokens.find(({ assetId }) => assetId === "9wc3LXNA4TEBsXyKtoLE9mrbDD7WMHXvXrCjZvabLAsi");
+    const usdtPptLiquidity = usdtPptAsset ? this.liquidity[usdtPptAsset.assetId] : undefined;
 
     let globalLiquidityByUSDT = null;
     if (usdtAsset && usdtLiquidity) {
       globalLiquidityByUSDT = new BN(usdtLiquidity).div(usdtAsset.share).times(this._usdtRate).times(100).div(1e6);
-    } else if (puzzleAsset && puzzleLiquidity) {
-      globalLiquidityByUSDT = new BN(puzzleLiquidity).div(puzzleAsset.share).times(100).times(this.puzzleRate).div(1e8);
+    } else if (romeAsset && romeLiquidity) {
+      globalLiquidityByUSDT = new BN(romeLiquidity).div(romeAsset.share).times(100).times(this.romeRate).div(1e6);
     } else if (usdnAsset && usdnLiquidity) {
       globalLiquidityByUSDT = new BN(usdnLiquidity).div(usdnAsset.share).times(100).times(this.usdnRate).div(1e6);
     } else if (wavesAsset && wavesLiquidity) {
@@ -172,6 +175,7 @@ class Pool implements IPoolConfig {
     } else if (usdtPptAsset && usdtPptLiquidity) {
       globalLiquidityByUSDT = new BN(usdtPptLiquidity).div(usdtPptAsset.share).times(100).div(1e6);
     }
+    // console.log("globalLiquidityByUSDT", globalLiquidityByUSDT.toString())
     this.setGlobalLiquidityByUSDT(globalLiquidityByUSDT);
   };
 

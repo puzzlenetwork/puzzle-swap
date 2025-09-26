@@ -280,7 +280,11 @@ class InvestToPoolInterfaceVM {
 
   get totalProvidedLiquidityByAddress() {
     if (this.rootStore.accountStore.address == null || this.userIndexStaked == null) return BN.ZERO;
+    console.log("userIndexStaked", this.userIndexStaked.toString());
+    console.log("this.pool.globalPoolTokenAmount", this.pool.globalPoolTokenAmount.toString());
+    console.log("this.pool.globalLiquidity.toString()", this.pool.globalLiquidity.toString());
     const liquidityInUsdt = this.pool.globalLiquidity.times(this.userIndexStaked).div(this.pool.globalPoolTokenAmount);
+    console.log("!", liquidityInUsdt.toString())
     return liquidityInUsdt.isNaN() ? BN.ZERO : liquidityInUsdt;
   }
 
