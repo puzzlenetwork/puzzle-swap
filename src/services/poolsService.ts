@@ -18,6 +18,16 @@ export interface IStakingStatsResponse {
   eagleApy: string;
 }
 
+export interface IPuzzleTokenStatsResponse {
+  general_info: {
+    apr_7d: number;
+    apr_30d: number;
+    apr_365d: number;
+    apr_average: number;
+  };
+  charts: any;
+}
+
 interface ICreatePoolData {
   domain: string;
   image: string;
@@ -122,6 +132,10 @@ const poolService = {
   },
   getStats: async (): Promise<IStakingStatsResponse> => {
     const { data } = await axios.get(`${process.env.REACT_APP_API_BASE}/api/v1/stats`);
+    return data;
+  },
+  getPuzzleTokenStats: async (): Promise<IPuzzleTokenStatsResponse> => {
+    const { data } = await axios.get(`${getBackendApiUrl()}/stats/v1/statistics/puzzletoken`);
     return data;
   },
   getPoolsStateByUserAddress: async (address?: string | null): Promise<TPoolState[]> => {

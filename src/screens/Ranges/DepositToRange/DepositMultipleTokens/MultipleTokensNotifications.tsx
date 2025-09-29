@@ -6,6 +6,7 @@ import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
 import Text from "@components/Text";
 import { useDepositToRangeVM } from "../DepositToRangeVM";
+import { domainToUrlSafe } from "@src/utils/rangeUrlUtils";
 
 interface IProps {}
 
@@ -13,7 +14,7 @@ const MultipleTokensNotifications: React.FC<IProps> = () => {
   const vm = useDepositToRangeVM();
   const minBalanceAsset = vm.minBalanceAsset;
   const minBalance = minBalanceAsset?.balance ?? new BN(1);
-  const addOneTokenRoute = `/ranges/${vm.range.domain}/depositOneToken`;
+  const addOneTokenRoute = `/ranges/${domainToUrlSafe(vm.range.domain)}/depositOneToken`;
   return (
     <>
       {vm.percentToDeposit.eq(100)! && !minBalance.eq(0) && (

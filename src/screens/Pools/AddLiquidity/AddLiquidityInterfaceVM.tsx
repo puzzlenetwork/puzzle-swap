@@ -280,7 +280,6 @@ class AddLiquidityInterfaceVM {
     const { accountStore } = this.rootStore;
     this._setLoading(true);
     this.setNotificationParams(null);
-    console.log("this.", this.baseToken);
     return accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.layer2,

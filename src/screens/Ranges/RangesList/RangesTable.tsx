@@ -22,6 +22,7 @@ import { THEME_TYPE, themes } from "@src/themes/ThemeProvider";
 import Tooltip from "@src/components/Tooltip";
 import Img from "@src/components/Img";
 import Skeleton from "react-loading-skeleton";
+import { domainToUrlSafe } from "@src/utils/rangeUrlUtils";
 
 const GrayCard = styled(Card)`
   background: ${({ theme }) => theme.colors.primary100};
@@ -141,7 +142,7 @@ const RangesTable: React.FC = () => {
       .map((range, index) => {
         const lowLiquidityAssets = range.assets.filter((a) => !a.isActive);
         return ({
-          onClick: () => navigate(`/ranges/${range.domain}/details`),
+          onClick: () => navigate(`/ranges/${domainToUrlSafe(range.domain)}/details`),
           range: rangePreviewByAddress[range.address],
           liquidity: (
             <Row mainAxisSize="fit-content" style={{ position: "relative" }}>

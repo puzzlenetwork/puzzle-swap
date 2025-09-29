@@ -4,7 +4,7 @@ import SwitchButtons from "@components/SwitchButtons";
 import { observer } from "mobx-react-lite";
 import { useStakingVM } from "@screens/Stake/StakingVM";
 import SizedBox from "@components/SizedBox";
-import Stake from "@screens/Stake/Stake";
+import StakeForm from "@screens/Stake/StakeForm";
 import UnStake from "@screens/Stake/UnStake";
 
 interface IProps {}
@@ -15,7 +15,7 @@ const StakeUnstake: React.FC<IProps> = () => {
     <Card style={{ marginTop: 24 }}>
       <SwitchButtons values={["Stake", "Unstake"]} active={vm.action} onActivate={vm.setAction} border />
       <SizedBox height={24} />
-      {vm.action === 0 ? <Stake /> : <UnStake />}
+      {vm.action === 0 ? <StakeForm /> : <UnStake />}
     </Card>
   );
 };

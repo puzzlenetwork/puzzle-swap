@@ -12,6 +12,7 @@ import { useParams } from "react-router-dom";
 import { useWithdrawFromRangeVM, WithdrawFromRangeVMProvider } from "./WithdrawFromRangeVM";
 import WithdrawLiquidityAmount from "./WithdrawLiquidityAmount";
 import WithdrawLiquidityTable from "./WithdrawLiquidityTable";
+import { domainToUrlSafe, urlSafeToOriginalDomain } from "@src/utils/rangeUrlUtils";
 
 const Root = styled.div`
   display: flex;
@@ -37,7 +38,7 @@ const WithdrawFromRange = observer(() => {
   return (
     <Layout>
       <Root>
-        <GoBack link={`/ranges/${vm.range.domain}/details`} text={`Back to range ${vm.range.domain}`} />
+        <GoBack link={`/ranges/${domainToUrlSafe(vm.range.domain)}/details`} text={`Back to range ${vm.range.domain}`} />
         <SizedBox height={24} />
         <Text weight={500} size="large">
           Withdraw liquidity
@@ -63,8 +64,9 @@ const WithdrawFromRange = observer(() => {
 
 const WithdrawLiquidityInterface: React.FC = () => {
   const { rangeDomain } = useParams<{ rangeDomain: string }>();
+  const decodedRangeDomain = rangeDomain ? urlSafeToOriginalDomain(rangeDomain) : "";
   const { rangesStore } = useStores();
-  const range = rangesStore.getRangeByDomain(rangeDomain ?? "");
+  const range = rangesStore.getRangeByDomain(decodedRangeDomain);
   const rangeAddress = range?.address ?? "";
   
   return (

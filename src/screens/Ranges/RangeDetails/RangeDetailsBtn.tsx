@@ -14,6 +14,7 @@ import copy from "copy-to-clipboard";
 import React, { useState } from "react";
 import MoreRangeInformation from "./MoreRangeInformation";
 import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
+import { domainToUrlSafe } from "@src/utils/rangeUrlUtils";
 
 interface IProps {}
 
@@ -42,7 +43,7 @@ const TransparentDetailsBtn: React.FC<IProps> = () => {
   const { notificationStore } = useStores();
   const vm = useRangeDetailsInterfaceVM();
   const [isOpenedShare, setOpenedShare] = useState(false);
-  const link = vm.range ? `${window.location.origin}/ranges/${vm.range.domain}/details` : `${window.location.origin}/ranges/`;
+  const link = vm.range ? `${window.location.origin}/ranges/${domainToUrlSafe(vm.range.domain)}/details` : `${window.location.origin}/ranges/`;
   const text = `Invest to ${vm.range?.domain ?? ""} Puzzle Network range %0A%0Ahttps://x.com/puzzle_network`;
   const shareInfo = [
     {

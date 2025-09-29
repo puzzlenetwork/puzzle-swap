@@ -113,7 +113,24 @@ export default class RangesStore {
     this.updateInAllRanges(range);
   };
   getRangeByAddress = (address: string) => this.allRanges.find((range) => range.address === address);
-  getRangeByDomain = (domain: string) => this.allRanges.find((range) => range.domain === domain);
+  getRangeByDomain = (domain: string) => {
+    const input = domain?.trim();
+    if (!input) return undefined;
+
+    const normalize = (v: string) => v.trim().toLowerCase();
+    const variants = new Set<string>();
+    variants.add(normalize(input));
+    variants.add(normalize(input.replace(/-/g, ' ')));
+    variants.add(normalize(input.replace(/\s+/g, '-')));
+
+    return this.allRanges.find((range) => {
+      const d = normalize(range.domain);
+      if (variants.has(d)) return true;
+      // Be lenient: treat last hyphen as a space for cases like "AAA-BBB CCC"
+      const lastHyphenAsSpace = normalize(d.replace(/-([^\-]+)$/,' $1'));
+      return variants.has(lastHyphenAsSpace);
+    });
+  };
 
   loading: boolean = false;
   setLoading = (loading: boolean) => (this.loading = loading);

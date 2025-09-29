@@ -14,6 +14,7 @@ import { makeAutoObservable, observable, reaction } from "mobx";
 import { generate } from "random-words";
 import React, { useMemo } from "react";
 import loadCreateRangeStateFromStorage, { IInitDataToStore } from "./utils/loadCreateRangeStateFromStorage";
+import { domainToUrlSafe } from "@src/utils/rangeUrlUtils";
 
 export const feeToDeploy = new BN(0.042e8);
 export const transactionFeeToDeploy = new BN(0.001e8);
@@ -78,7 +79,8 @@ class CreateRangeVm {
         currentPrice: undefined,
         leverage: new BN(1),
         locked: false,
-        priceLoaded: false
+        priceLoaded: false,
+        inWallet: undefined, // Will be synced after initialization
       }),
       observable({
         asset: TOKENS_BY_SYMBOL.PUZZLE,
@@ -87,7 +89,8 @@ class CreateRangeVm {
         currentPrice: undefined,
         leverage: new BN(1),
         locked: false,
-        priceLoaded: false
+        priceLoaded: false,
+        inWallet: undefined, // Will be synced after initialization
       })
     ];
     this.syncCurrentPrices();
@@ -245,6 +248,7 @@ class CreateRangeVm {
             asset: asset,
             priceLoaded: true,
             leverage: new BN(leverage),
+            inWallet: undefined, // Always reset inWallet, will be synced below
           });
         });
         this.baseTokenPrice = new BN(initData.assets[0]?.initialPrice || 1);
@@ -261,6 +265,10 @@ class CreateRangeVm {
     this.domain = initData?.title ?? generate({ minLength: 2, maxLength: 6, exactly: 2, join: "-" });
     this.step = initData?.step ?? 0;
     this.maxStep = initData?.maxStep ?? 0;
+    
+    // Sync wallet balances after initialization
+    this.syncInWallet();
+    
     this.saveSettings();
   };
 
@@ -729,7 +737,7 @@ class CreateRangeVm {
                     this.setNotificationParams(null);
                     this.initialize(null);
                     localStorage.removeItem("puzzle-custom-range");
-                    window.open(`/ranges/${this.domain}/details`);
+                    window.open(`/ranges/${domainToUrlSafe(this.domain)}/details`);
                   }}
                   title={available ? "Go to Range page" : "Range is being deployed"}
                   disabled={!available}

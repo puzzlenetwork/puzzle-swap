@@ -22,6 +22,8 @@ import RangeLiquidity from "./RangeLiquidity";
 import EarnedByLP from "./EarnedByLP";
 import LowRangeLiquidityNotification from "@components/LowRangeLiquidityNotification";
 import Spinner from "@src/components/Spinner";
+import { urlSafeToOriginalDomain } from "@src/utils/rangeUrlUtils";
+import { useEffect } from "react";
 
 const Root = styled.div`
   display: flex;
@@ -62,6 +64,10 @@ const Body = styled.div`
 const RangeDetailsInterfaceImpl: React.FC = observer(() => {
   const vm = useRangeDetailsInterfaceVM();
   const { width } = useWindowSize();
+
+  useEffect(() => {
+    vm.initialize();
+  }, [vm]);
   const isMobile = !!(width && width < 880);
   const showLowRangeLiquidityNotification = useMemo(() => vm.range && (!vm.range.liquidity || vm.range.liquidity.lt(100)), [vm.range?.liquidity]);
 
@@ -137,12 +143,13 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
 
 const RangeDetailsInterface: React.FC = () => {
   const { rangeDomain } = useParams<{ rangeDomain: string }>();
+  const decodedRangeDomain = rangeDomain ? urlSafeToOriginalDomain(rangeDomain) : "";
   const { rangesStore } = useStores();
-  const range = rangesStore.getRangeByDomain(rangeDomain ?? "");
+  const range = rangesStore.getRangeByDomain(decodedRangeDomain);
   const rangeAddress = range?.address ?? "";
   
   return (
-    <RangeDetailsInterfaceVMProvider rangeDomain={rangeDomain ?? ""}>
+    <RangeDetailsInterfaceVMProvider rangeDomain={decodedRangeDomain}>
       <RangeDetailsInterfaceImpl />
     </RangeDetailsInterfaceVMProvider>
   );

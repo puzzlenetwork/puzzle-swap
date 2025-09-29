@@ -38,6 +38,10 @@ class RangeDetailsInterfaceVM {
     return this.range?.address || '';
   }
   
+  public initialize = async () => {
+    await this.loadRangeData();
+  };
+
   private loadRangeData = async () => {
     // First try to get range by domain from store
     let range = this.range;
@@ -194,13 +198,12 @@ class RangeDetailsInterfaceVM {
     this.rangeDomain = rangeDomain;
     makeAutoObservable(this);
 
-    // Load range data when domain is available
-    this.loadRangeData();
-    this.syncChartData("all");
+    // Load range data will be called from useEffect in React component
 
     when(
       () => this.range != null,
       () => {
+        this.syncChartData("all");
         this.updatelpRewardsByTime(
           "all",
           this.range!.assets.map(({ assetId, feesEarned, extraEarned }) => ({

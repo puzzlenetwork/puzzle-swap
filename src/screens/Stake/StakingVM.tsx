@@ -47,9 +47,10 @@ class StakingVM {
 
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
-    this.updateAddressStakingInfo();
     // when(() => accountStore.address !== null, this.updateAddressStakingInfo);
     reaction(() => this.rootStore.accountStore?.address, this.updateAddressStakingInfo);
+    // Delayed initialization to avoid blocking the constructor
+    setTimeout(() => this.updateAddressStakingInfo(), 0);
   }
 
   public puzzleAmountToStake: BN = BN.ZERO;
@@ -76,57 +77,68 @@ class StakingVM {
   }
 
   private updateAddressStakingInfo = async () => {
-    const { address } = this.rootStore.accountStore;
-    if (address == null) {
+    try {
+      const { address } = this.rootStore.accountStore;
+      if (address == null) {
+        this._setGlobalStaked(BN.ZERO);
+        this._setAddressStaked(BN.ZERO);
+        this._setClaimedRewardInUSDN(BN.ZERO);
+        this._setClaimedRewardInUSDN(BN.ZERO);
+        this._setAvailableToClaim(BN.ZERO);
+        this._setLastClaimDate(BN.ZERO);
+        return;
+      }
+      const usdn = TOKENS_BY_SYMBOL.XTN.assetId;
+      const puzzle = TOKENS_BY_SYMBOL.PUZZLE.assetId;
+      const keysArray = {
+        globalStaked: "global_staked",
+        addressStaked: `${address}_staked`,
+        claimedRewardInUSDN: `${address}_${usdn}_claimed`,
+        claimedRewardInPuzzle: `${address}_${puzzle}_claimed`,
+        globalLastCheckInterest: `global_lastCheck_${puzzle}_interest`,
+        addressLastCheckInterest: `${address}_lastCheck_${puzzle}_interest`,
+        lastClaimDate: `${address}_${puzzle}_lastClaim`
+      };
+      const response = await nodeService.nodeKeysRequest(CONTRACT_ADDRESSES.staking, Object.values(keysArray));
+      //todo вынести в отдельную фунцию
+      const parsedNodeResponse = [...(response ?? [])].reduce<Record<string, BN>>((acc, { key, value }) => {
+        Object.entries(keysArray).forEach(([regName, regValue]) => {
+          const regexp = new RegExp(regValue);
+          if (regexp.test(key)) {
+            acc[regName] = new BN(value);
+          }
+        });
+        return acc;
+      }, {});
+
+      const globalStaked = parsedNodeResponse["globalStaked"];
+      const addressStaked = parsedNodeResponse["addressStaked"];
+      const claimedRewardInUSDN = parsedNodeResponse["claimedRewardInUSDN"];
+      const claimedRewardInPuzzle = parsedNodeResponse["claimedRewardInPuzzle"];
+      const globalLastCheckInterest = parsedNodeResponse["globalLastCheckInterest"];
+      const addressLastCheckInterest = parsedNodeResponse["addressLastCheckInterest"];
+      const lastClaimDate = parsedNodeResponse["lastClaimDate"];
+
+      this._setGlobalStaked(globalStaked ?? BN.ZERO);
+      this._setAddressStaked(addressStaked ?? BN.ZERO);
+      this._setClaimedRewardInUSDN(claimedRewardInUSDN ?? BN.ZERO);
+      this._setClaimedRewardInPuzzle(claimedRewardInPuzzle ?? BN.ZERO);
+
+      const availableToClaim = (globalLastCheckInterest ?? BN.ZERO)
+        .minus(addressLastCheckInterest ?? BN.ZERO)
+        .times(addressStaked ?? BN.ZERO);
+      this._setAvailableToClaim(addressStaked ? availableToClaim : BN.ZERO);
+      lastClaimDate && this._setLastClaimDate(lastClaimDate);
+    } catch (error) {
+      console.error('Error updating staking info:', error);
+      // Set default values on error to prevent infinite loading
       this._setGlobalStaked(BN.ZERO);
       this._setAddressStaked(BN.ZERO);
       this._setClaimedRewardInUSDN(BN.ZERO);
-      this._setClaimedRewardInUSDN(BN.ZERO);
+      this._setClaimedRewardInPuzzle(BN.ZERO);
       this._setAvailableToClaim(BN.ZERO);
       this._setLastClaimDate(BN.ZERO);
-      return;
     }
-    const usdn = TOKENS_BY_SYMBOL.XTN.assetId;
-    const puzzle = TOKENS_BY_SYMBOL.PUZZLE.assetId;
-    const keysArray = {
-      globalStaked: "global_staked",
-      addressStaked: `${address}_staked`,
-      claimedRewardInUSDN: `${address}_${usdn}_claimed`,
-      claimedRewardInPuzzle: `${address}_${puzzle}_claimed`,
-      globalLastCheckInterest: `global_lastCheck_${puzzle}_interest`,
-      addressLastCheckInterest: `${address}_lastCheck_${puzzle}_interest`,
-      lastClaimDate: `${address}_${puzzle}_lastClaim`
-    };
-    const response = await nodeService.nodeKeysRequest(CONTRACT_ADDRESSES.staking, Object.values(keysArray));
-    //todo вынести в отдельную фунцию
-    const parsedNodeResponse = [...(response ?? [])].reduce<Record<string, BN>>((acc, { key, value }) => {
-      Object.entries(keysArray).forEach(([regName, regValue]) => {
-        const regexp = new RegExp(regValue);
-        if (regexp.test(key)) {
-          acc[regName] = new BN(value);
-        }
-      });
-      return acc;
-    }, {});
-
-    const globalStaked = parsedNodeResponse["globalStaked"];
-    const addressStaked = parsedNodeResponse["addressStaked"];
-    const claimedRewardInUSDN = parsedNodeResponse["claimedRewardInUSDN"];
-    const claimedRewardInPuzzle = parsedNodeResponse["claimedRewardInPuzzle"];
-    const globalLastCheckInterest = parsedNodeResponse["globalLastCheckInterest"];
-    const addressLastCheckInterest = parsedNodeResponse["addressLastCheckInterest"];
-    const lastClaimDate = parsedNodeResponse["lastClaimDate"];
-
-    this._setGlobalStaked(globalStaked);
-    this._setAddressStaked(addressStaked ?? BN.ZERO);
-    this._setClaimedRewardInUSDN(claimedRewardInUSDN ?? BN.ZERO);
-    this._setClaimedRewardInPuzzle(claimedRewardInPuzzle ?? BN.ZERO);
-
-    const availableToClaim = globalLastCheckInterest
-      .minus(addressLastCheckInterest ?? BN.ZERO)
-      .times(addressStaked ?? BN.ZERO);
-    this._setAvailableToClaim(addressStaked ? availableToClaim : BN.ZERO);
-    lastClaimDate && this._setLastClaimDate(lastClaimDate);
   };
 
   claimReward = async () => {

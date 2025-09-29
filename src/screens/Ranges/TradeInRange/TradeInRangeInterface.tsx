@@ -18,6 +18,7 @@ import React, { useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Details from "./Details";
 import SwapButton from "./SwapButton";
+import { urlSafeToOriginalDomain } from "@src/utils/rangeUrlUtils";
 import SwitchTokensButton from "./SwitchTokensButton";
 import TooltipFeeInfo from "./TooltipFeeInfo";
 import { TradeInRangeVMProvider, useTradeInRangeVM } from "./TradeInRangeVM";
@@ -154,8 +155,9 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
 
 const TradeInRangeInterface: React.FC = () => {
   const { rangeDomain } = useParams<{ rangeDomain: string }>();
+  const decodedRangeDomain = rangeDomain ? urlSafeToOriginalDomain(rangeDomain) : "";
   const { rangesStore } = useStores();
-  const range = rangesStore.getRangeByDomain(rangeDomain ?? "");
+  const range = rangesStore.getRangeByDomain(decodedRangeDomain);
   const rangeAddress = range?.address ?? "";
   
   return (

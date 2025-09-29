@@ -16,6 +16,7 @@ import { Link } from "react-router-dom";
 import { useStores } from "@stores";
 import Skeleton from "react-loading-skeleton";
 import BN from "@src/utils/BN";
+import { domainToUrlSafe } from "@src/utils/rangeUrlUtils";
 
 interface IProps {}
 
@@ -140,7 +141,7 @@ const MyRangeBalance: React.FC<IProps> = () => {
                 </Button>
               </Link>
               <SizedBox width={8} />
-              <Link to={vm.range ? `/ranges/${vm.range.domain}/deposit` : ""}>
+              <Link to={vm.range ? `/ranges/${domainToUrlSafe(vm.range.domain)}/deposit` : ""}>
                 <Button fixed size="medium">
                   Deposit
                 </Button>

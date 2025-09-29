@@ -29,8 +29,6 @@ export function useAnalyticTracking() {
         projectId = "stpndbvdkq";
         break;
     }
-    console.log("projectId", projectId);
-    console.log("env", env);
     Clarity.init(projectId);
 
     // Google Analytics only for development environment

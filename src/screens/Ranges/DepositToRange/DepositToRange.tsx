@@ -14,6 +14,7 @@ import { useStores } from "@stores";
 import Loading from "@components/Loading";
 import DepositSingleToken from "./DepositSingleToken";
 import DepositMultipleTokens from "./DepositMultipleTokens";
+import { domainToUrlSafe, urlSafeToOriginalDomain } from "@src/utils/rangeUrlUtils";
 
 const Root = styled.div`
   display: flex;
@@ -34,8 +35,8 @@ const Root = styled.div`
 const DepositToRangeImpl = observer(() => {
   const vm = useDepositToRangeVM();
   const range = vm.range;
-  const depositRoute = `/ranges/${range.domain}/deposit`;
-  const depositOneTokenRoute = `/ranges/${range.domain}/depositonetoken`;
+  const depositRoute = `/ranges/${domainToUrlSafe(range.domain)}/deposit`;
+  const depositOneTokenRoute = `/ranges/${domainToUrlSafe(range.domain)}/depositonetoken`;
   const navigate = useNavigate();
   const activeTab = window.location.pathname.includes(depositOneTokenRoute) ? 1 : 0;
 
@@ -50,7 +51,7 @@ const DepositToRangeImpl = observer(() => {
   return (
     <Layout>
       <Root>
-        <GoBack link={`/ranges/${range.domain}/details`} text={`Back to range ${range.domain}`} />
+        <GoBack link={`/ranges/${domainToUrlSafe(range.domain)}/details`} text={`Back to range ${range.domain}`} />
         <SizedBox height={24} />
         <Text weight={500} size="large">
           Deposit liquidity to Range {range.domain}
@@ -92,8 +93,9 @@ const DepositToRangeImpl = observer(() => {
 
 const DepositToRange: React.FC = () => {
   const { rangeDomain } = useParams<{ rangeDomain: string }>();
+  const decodedRangeDomain = rangeDomain ? urlSafeToOriginalDomain(rangeDomain) : "";
   const { rangesStore } = useStores();
-  const range = rangesStore.getRangeByDomain(rangeDomain ?? "");
+  const range = rangesStore.getRangeByDomain(decodedRangeDomain);
   const rangeAddress = range?.address ?? "";
   
   return (

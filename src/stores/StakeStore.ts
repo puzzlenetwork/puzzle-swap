@@ -4,7 +4,7 @@ import BN from "@src/utils/BN";
 import stakedPuzzleLogo from "@src/assets/tokens/staked-puzzle.svg";
 import nodeService from "@src/services/nodeService";
 import { CONTRACT_ADDRESSES, ROUTES, TOKENS_BY_SYMBOL } from "@src/constants";
-import poolService from "@src/services/poolsService";
+import poolService, { IPuzzleTokenStatsResponse } from "@src/services/poolsService";
 
 export interface IStakingStats {
   stakingApy?: BN;
@@ -24,10 +24,14 @@ export default class StakeStore {
   public stats: IStakingStats | null = null;
   private _setStats = (v: IStakingStats) => (this.stats = v);
 
+  public puzzleTokenStats: IPuzzleTokenStatsResponse | null = null;
+  private _setPuzzleTokenStats = (v: IPuzzleTokenStatsResponse) => (this.puzzleTokenStats = v);
+
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
     this.syncStats().then();
+    this.syncPuzzleTokenStats().then();
     this.updateStakedInvestments().then();
     setInterval(this.updateStakedInvestments, 30 * 1000);
     reaction(
@@ -43,6 +47,11 @@ export default class StakeStore {
       {} as IStakingStats
     );
     this._setStats(formattedData);
+  };
+
+  syncPuzzleTokenStats = async () => {
+    const data = await poolService.getPuzzleTokenStats();
+    this._setPuzzleTokenStats(data);
   };
 
   updateStakedInvestments = async (force = false) => {
