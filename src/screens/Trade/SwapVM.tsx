@@ -206,7 +206,7 @@ export class SwapVM {
 
   swap = async () => {
     const { accountStore, notificationStore } = this.rootStore;
-    const { token0, amount0, minimumToReceive, parameters } = this;
+    const { token0, token1, amount0, minimumToReceive, parameters } = this;
     if (this.synchronizing || parameters == null) return;
     if (token0 == null || amount0.eq(0)) return;
     if (minimumToReceive == null) return;
@@ -232,14 +232,49 @@ export class SwapVM {
           ]
         }
       })
-      .then((txId) => {
-        txId &&
-          notificationStore.notify("You can view the details of it in explorer", {
-            type: "success",
-            title: "Transaction is completed",
-            link: `${EXPLORER_URL}/transactions/${txId}`,
-            linkTitle: "View on Explorer"
-          });
+      .then(async (txId) => {
+        if (txId) {
+          try {
+            const txResponse = await fetch(`https://nodes.wx.network/transactions/info/${txId}`);
+            const tx = await txResponse.json();
+            
+            const paymentAssetId = tx.payment[0].assetId ?? "WAVES";
+            const decimals_in = token0.decimals;
+            const decimals_out = token1.decimals;
+
+            const out = (
+              tx.payment[0].amount -
+              (
+                tx.stateChanges.transfers.find(
+                  (t: any) => t.address === tx.sender && t.asset === paymentAssetId
+                )?.amount || 0
+              )
+            ) / (10 ** decimals_in);
+
+            const inn = (
+              tx.stateChanges.transfers.find(
+                (t: any) => t.address === tx.sender && t.asset !== paymentAssetId
+              )?.amount || 0
+            ) / (10 ** decimals_out);
+
+            notificationStore.notify(
+              `You swapped ${out.toFixed(6)} ${token0.symbol} ➔ ${inn.toFixed(6)} ${token1.symbol}`,
+              {
+                type: "success",
+                title: "Swap completed successfully!",
+                link: `${EXPLORER_URL}/transactions/${txId}`,
+                linkTitle: "View on Explorer"
+              }
+            );
+          } catch (error) {
+            notificationStore.notify("You can view the details of it in explorer", {
+              type: "success",
+              title: "Transaction is completed",
+              link: `${EXPLORER_URL}/transactions/${txId}`,
+              linkTitle: "View on Explorer"
+            });
+          }
+        }
       })
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
