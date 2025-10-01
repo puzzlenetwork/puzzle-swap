@@ -45,8 +45,6 @@ class RangeDetailsInterfaceVM {
   private loadRangeData = async () => {
     // First try to get range by domain from store
     let range = this.range;
-    console.log("loadRangeData: looking for domain", this.rangeDomain);
-    console.log("loadRangeData: range from store", range);
     if (!range) {
       // If range not in store, load all ranges
       try {
@@ -55,8 +53,6 @@ class RangeDetailsInterfaceVM {
           size: 200,
           minLiquidity: 0
         });
-        console.log("loadRangeData: loaded ranges count", response.ranges.length);
-        console.log("loadRangeData: all domains", response.ranges.map(r => r.domain));
         
         response.ranges.forEach((rangeData) => {
           const r = new Range(rangeData);
@@ -64,8 +60,6 @@ class RangeDetailsInterfaceVM {
         });
         
         range = this.range;
-        console.log("loadRangeData: range found after loading", range);
-        console.log("loadRangeData: allRanges in store", this.rootStore.rangesStore.allRanges.map(r => r.domain));
       } catch (error) {
         console.error("Error loading range by domain:", error);
       }
@@ -79,8 +73,6 @@ class RangeDetailsInterfaceVM {
         this.setHistory(rangeData.charts || []);
         this.updateBlockHeight();
       });
-    } else {
-      console.log("loadRangeData: range not found, tried domain:", this.rangeDomain);
     }
   };
 

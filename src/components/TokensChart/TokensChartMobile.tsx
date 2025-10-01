@@ -41,8 +41,12 @@ const TokensChartMobileImpl: React.FC<IProps> = observer(({ ...rest }) => {
         <TradingViewChart />
       )}
       <SizedBox height={24} />
-      <ChartAgeButtons className="age-btns" value={vm.selectedChartPeriod} onChange={vm.setSelectedChartPeriod} />
-      <SizedBox height={24} />
+      {swapVm.chartType === "standard" && (
+        <>
+          <ChartAgeButtons className="age-btns" value={vm.selectedChartPeriod} onChange={vm.setSelectedChartPeriod} />
+          <SizedBox height={24} />
+        </>
+      )}
       <LearnMoreTokenChartButtons />
       <SizedBox height={24} />
     </Dialog>

@@ -63,10 +63,13 @@ const TokensChartDesktopImpl: React.FC<IProps> = observer(({ height, ...rest }) 
                 onToggle={swapVm.setChartType} 
               />
             )}
+            <SizedBox width={16} />
           </Row>
-          <Row alignItems="center">
-            <ChartAgeButtons className="age-btns" value={vm.selectedChartPeriod} onChange={vm.setSelectedChartPeriod} />
-          </Row>
+          {swapVm.chartType === "standard" && (
+            <Row alignItems="center">
+              <ChartAgeButtons className="age-btns" value={vm.selectedChartPeriod} onChange={vm.setSelectedChartPeriod} />
+            </Row>
+          )}
         </Row>
         {swapVm.chartType === "standard" || !hasChartData ? (
           <TokensChart {...(rest as any)} />

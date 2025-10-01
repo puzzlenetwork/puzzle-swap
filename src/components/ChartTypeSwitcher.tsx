@@ -21,7 +21,8 @@ const Button = styled.div<{ active: boolean }>`
   cursor: pointer;
   background: ${({ active, theme }) => (active ? theme.colors.primary100 : "transparent")};
   transition: background 0.2s;
-  
+  width: 100%;
+  text-align: center;
   &:hover {
     background: ${({ active, theme }) => (active ? theme.colors.primary100 : theme.colors.primary50)};
   }
