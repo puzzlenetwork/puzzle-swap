@@ -45,10 +45,30 @@ class RangeDetailsInterfaceVM {
   private loadRangeData = async () => {
     // First try to get range by domain from store
     let range = this.range;
+    console.log("loadRangeData: looking for domain", this.rangeDomain);
+    console.log("loadRangeData: range from store", range);
     if (!range) {
-      // If range not in store, load all ranges first
-      await this.rootStore.rangesStore.syncRanges();
-      range = this.range;
+      // If range not in store, load all ranges
+      try {
+        const response = await rangesService.getRanges({
+          page: 1,
+          size: 200,
+          minLiquidity: 0
+        });
+        console.log("loadRangeData: loaded ranges count", response.ranges.length);
+        console.log("loadRangeData: all domains", response.ranges.map(r => r.domain));
+        
+        response.ranges.forEach((rangeData) => {
+          const r = new Range(rangeData);
+          this.rootStore.rangesStore.updateInAllRanges(r);
+        });
+        
+        range = this.range;
+        console.log("loadRangeData: range found after loading", range);
+        console.log("loadRangeData: allRanges in store", this.rootStore.rangesStore.allRanges.map(r => r.domain));
+      } catch (error) {
+        console.error("Error loading range by domain:", error);
+      }
     }
     
     if (range) {
@@ -56,10 +76,11 @@ class RangeDetailsInterfaceVM {
         if (!rangeData) return;
         const newRange = new Range(rangeData);
         this.rootStore.rangesStore.updateRange(newRange);
-        const _ = this.range; // trigger reactivity
         this.setHistory(rangeData.charts || []);
         this.updateBlockHeight();
       });
+    } else {
+      console.log("loadRangeData: range not found, tried domain:", this.rangeDomain);
     }
   };
 

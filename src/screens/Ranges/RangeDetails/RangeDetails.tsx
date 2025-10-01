@@ -64,7 +64,7 @@ const Body = styled.div`
 const RangeDetailsInterfaceImpl: React.FC = observer(() => {
   const vm = useRangeDetailsInterfaceVM();
   const { width } = useWindowSize();
-
+  console.log("vm", vm.range)
   useEffect(() => {
     vm.initialize();
   }, [vm]);
