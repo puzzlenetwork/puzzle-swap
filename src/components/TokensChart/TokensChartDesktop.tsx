@@ -8,6 +8,8 @@ import SizedBox from "@components/SizedBox";
 import ChartAgeButtons from "@components/ChartAgeButtons";
 import { IToken } from "@src/constants";
 import TokensChart from "@components/TokensChart/TokensChart";
+import TradingViewChart, { useTradingViewChartAvailability } from "@components/TokensChart/TradingViewChart";
+import ChartTypeSwitcher from "@components/ChartTypeSwitcher";
 import { TokenChartVMProvider, useTokenChartVM } from "@components/TokensChart/TokenChartVM";
 import LearnMoreTokenChartButtons from "@components/TokensChart/LearnMoreTokenChartButtons";
 import MyOrders from "@screens/Trade/Trade/LimitOrders/MyOrders";
@@ -47,17 +49,30 @@ const TokensChartDesktopImpl: React.FC<IProps> = observer(({ height, ...rest }) 
   });
   const vm = useTokenChartVM();
   const swapVm = useSwapVM();
+  const { hasChartData } = useTradingViewChartAvailability();
   return (
     <Root {...getCollapseProps()}>
       <Card style={{ height }}>
         <Row alignItems="center" justifyContent="space-between">
           <Row alignItems="center">
             <Text weight={500} fitContent>{`${rest.token1.symbol}/${rest.token0.symbol}`}</Text>
-            <SizedBox width={8} />
+            <SizedBox width={16} />
+            {hasChartData && (
+              <ChartTypeSwitcher 
+                chartType={swapVm.chartType} 
+                onToggle={swapVm.setChartType} 
+              />
+            )}
           </Row>
-          <ChartAgeButtons className="age-btns" value={vm.selectedChartPeriod} onChange={vm.setSelectedChartPeriod} />
+          <Row alignItems="center">
+            <ChartAgeButtons className="age-btns" value={vm.selectedChartPeriod} onChange={vm.setSelectedChartPeriod} />
+          </Row>
         </Row>
-        <TokensChart {...(rest as any)} />
+        {swapVm.chartType === "standard" || !hasChartData ? (
+          <TokensChart {...(rest as any)} />
+        ) : (
+          <TradingViewChart height={height - 60} />
+        )}
       </Card>
       <SizedBox height={16} />
       <LearnMoreTokenChartButtons />

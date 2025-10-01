@@ -43,6 +43,9 @@ export class SwapVM {
   openedChart = false;
   setOpenedChart = (v: boolean) => (this.openedChart = v);
 
+  chartType: "standard" | "tradingview" = "standard";
+  setChartType = (v: "standard" | "tradingview") => (this.chartType = v);
+
   openedSettings = false;
   setOpenedSettings = (v: boolean) => (this.openedSettings = v);
 
