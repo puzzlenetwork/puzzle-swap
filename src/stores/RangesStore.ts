@@ -122,7 +122,6 @@ export default class RangesStore {
     variants.add(normalize(input));
     variants.add(normalize(input.replace(/-/g, ' ')));
     variants.add(normalize(input.replace(/\s+/g, '-')));
-
     return this.allRanges.find((range) => {
       const d = normalize(range.domain);
       if (variants.has(d)) return true;

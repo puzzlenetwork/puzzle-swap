@@ -10,6 +10,7 @@ export interface IGetRanges {
   order?: "asc" | "desc";
   search?: string;
   userAddress?: string;
+  minLiquidity?: number;
 }
 
 export interface IGetGlobalRangesInfo {
