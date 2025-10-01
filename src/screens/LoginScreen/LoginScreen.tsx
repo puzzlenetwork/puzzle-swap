@@ -13,6 +13,7 @@ import seed from "@src/assets/icons/seed.svg";
 import keeper from "@src/assets/icons/keeper.svg";
 import metamask from "@src/assets/icons/metamask.svg";
 import ledger from "@src/assets/icons/ledger.svg";
+import aura from "@src/assets/icons/aura.svg";
 
 import pic from "@src/assets/loginScreenPuzzleRender.svg";
 import LoginType from "./LoginType";
@@ -75,6 +76,8 @@ const LoginScreen: React.FC<IProps> = () => {
   const handleLogin = (loginType: LOGIN_TYPE) => () =>
     accountStore.login(loginType).then(() => accountStore.setLoginModalOpened(false));
   const isMetamaskInstalled = typeof window.ethereum !== "undefined";
+  const isAuraAvailable = typeof window !== "undefined" && 
+    ((window as any).aura || (window as any).AuraWallet || (window as any).WavesAura);
   const loginTypes = [
     {
       title: "WX.Network Email",
@@ -110,6 +113,12 @@ const LoginScreen: React.FC<IProps> = () => {
       title: "Ledger",
       icon: ledger,
       type: LOGIN_TYPE.LEDGER,
+      active: true
+    },
+    {
+      title: "Aura Wallet",
+      icon: aura,
+      type: LOGIN_TYPE.AURA,
       active: true
     }
   ];
