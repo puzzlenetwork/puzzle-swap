@@ -61,7 +61,7 @@ const Layout = styled.div`
   left: 0;
   bottom: 0;
   right: 0;
-  z-index: 10000;
+  z-index: 900;
   background-color: ${({ theme }) => theme.colors.white};
   @media (min-width: 1280px) {
     justify-content: center;

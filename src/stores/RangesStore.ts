@@ -4,6 +4,18 @@ import rangesService, { IProvidedAssetResponse, IProvidedResponse } from "@src/s
 import { Range } from "@src/entities/Range";
 import BN from "@src/utils/BN";
 
+const debounce = (func: Function, wait: number) => {
+  let timeout: NodeJS.Timeout;
+  return function executedFunction(...args: any[]) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+};
+
 export class IProvidedAsset {
   assetId: string;
   name: string;
@@ -79,9 +91,7 @@ export default class RangesStore {
     // Re-sync invested amount when balances change (e.g. after deposit/withdraw)
     reaction(
       () => [this.rootStore.accountStore.address, this.rootStore.accountStore.assetBalances],
-      () => {
-        this.syncUserInvestedAmount();
-      }
+      this.debouncedSyncUserInvestedAmount
     );
   }
 
@@ -136,6 +146,13 @@ export default class RangesStore {
 
   investmentsLoading: boolean = false;
   setInvestmentsLoading = (loading: boolean) => (this.investmentsLoading = loading);
+
+  userInvestedAmountLoading: boolean = false;
+  setUserInvestedAmountLoading = (loading: boolean) => (this.userInvestedAmountLoading = loading);
+
+  debouncedSyncUserInvestedAmount = debounce(() => {
+    this.syncUserInvestedAmount();
+  }, 2000);
 
   // Pagination state
   pagination = {
@@ -246,6 +263,7 @@ export default class RangesStore {
       this.setInvestmentsData([]);
       return;
     }
+    if (this.investmentsLoading) return;
     try {
       this.setInvestmentsLoading(true);
       const data = await rangesService.getUserInvestments(address);
@@ -268,11 +286,15 @@ export default class RangesStore {
       this.userInvestedAmount = null;
       return;
     }
+    if (this.userInvestedAmountLoading) return;
     try {
+      this.setUserInvestedAmountLoading(true);
       const amount = await rangesService.getUserTotalProvided(address);
       this.setUserInvestedAmount(amount);
     } catch (error) {
       console.error("Error fetching user invested amount:", error);
+    } finally {
+      this.setUserInvestedAmountLoading(false);
     }
   };
 }

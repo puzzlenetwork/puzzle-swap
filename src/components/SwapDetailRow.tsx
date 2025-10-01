@@ -13,9 +13,13 @@ const Root = styled.div`
   margin: 8px 0;
 `;
 
+const Title = styled(Text)`
+  width: auto;
+`;
+
 const SwapDetailRow: React.FC<IProps> = ({ title, children, ...rest }) => (
   <Root {...rest}>
-    <Text type="secondary">{title}</Text>
+    <Title type="secondary">{title}</Title>
     {children}
   </Root>
 );

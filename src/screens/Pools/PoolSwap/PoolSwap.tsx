@@ -128,7 +128,13 @@ const PoolSwapImpl: React.FC = observer(() => {
           <SizedBox height={16} />
           <SwapDetailRow title="Price impact">
             <Row alignItems="center" mainAxisSize="fit-content" justifyContent="flex-end">
-              {vm.priceImpact && <Text>~{vm.priceImpact.toFormat(4)}%&nbsp;</Text>}
+              {vm.priceImpact && (
+                <Text type={vm.priceImpact.gt(5) ? "error" : "primary"}>
+                  ~{vm.priceImpact.toFormat(4)}%
+                  {vm.priceImpact.gt(5) && " (High price impact)"}
+                  &nbsp;
+                </Text>
+              )}
               {vm.token0 && !vm.amount0.isNaN() && (
                 <Tooltip content={<TooltipFeeInfo />} config={{ placement: "top", trigger: "click" }}>
                   <InfoIcon />
