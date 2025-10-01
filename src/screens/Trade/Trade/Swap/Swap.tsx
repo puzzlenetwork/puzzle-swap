@@ -11,6 +11,7 @@ import { ReactComponent as ShowMoreIcon } from "@src/assets/icons/showMore.svg";
 import Divider from "@components/Divider";
 import Tooltip from "@components/Tooltip";
 import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
+import { ReactComponent as CopyIcon } from "@src/assets/icons/copy.svg";
 import { useStores } from "@stores";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
@@ -125,7 +126,28 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
         <SizedBox height={24} />
         <SwapButton />
         <SizedBox height={16} />
-        <SwapDetailRow title="Route">
+        <SwapDetailRow
+          title={
+            <Row alignItems="center" mainAxisSize="fit-content">
+              <Text type="secondary" style={{ width: "auto" }}>Route</Text>
+              {vm.aggregatorResponse && (
+                <Tooltip content={<Text style={{ color: "#C6C9F4" }}>Copy aggregator data</Text>}>
+                  <CopyIcon
+                    style={{ width: 14, height: 14, marginLeft: 6, marginTop: 4, cursor: "pointer"}}
+                    onClick={() => {
+                      const data = {
+                        parameters: vm.aggregatorResponse.parameters,
+                        error: vm.aggregatorResponse.error
+                      };
+                      navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+                      notificationStore.notify("Aggregator data copied successfully", { type: "success" });
+                    }}
+                  />
+                </Tooltip>
+              )}
+            </Row>
+          }
+        >
           <Row
             alignItems="center"
             mainAxisSize="fit-content"

@@ -65,6 +65,9 @@ export class SwapVM {
   parameters: string | null = null;
   private _setParameters = (parameters: string | null) => (this.parameters = parameters);
 
+  aggregatorResponse: any = null;
+  private _setAggregatorResponse = (response: any) => (this.aggregatorResponse = response);
+
   synchronizing: boolean = false;
   private _setSynchronizing = (synchronizing: boolean) => (this.synchronizing = synchronizing);
 
@@ -133,6 +136,7 @@ export class SwapVM {
     });
     promise
       .then((v: any) => {
+        this._setAggregatorResponse(v);
         !invalidAmount && this._setAmount1(new BN(v.estimatedOut * 0.9971));
         this._calculatePrice(invalidAmount ? defaultAmount0 : amount0, new BN(v.estimatedOut));
         this._setSynchronizing(false);
@@ -142,7 +146,8 @@ export class SwapVM {
         this._setRoute(v.routes);
         this._setAggregatedProfit(new BN(v.aggregatedProfit));
       })
-      .catch(() => {
+      .catch((error) => {
+        this._setAggregatorResponse({ error: error.message || 'Unknown error' });
         this._setAmount1(BN.ZERO);
         this._setPriceImpact(BN.ZERO);
         this._setRoute([]);
@@ -239,7 +244,12 @@ export class SwapVM {
       .catch((e) => {
         notificationStore.notify(e.message ?? JSON.stringify(e), {
           type: "warning",
-          title: "Transaction is not completed"
+          title: "Transaction is not completed",
+          copyData: {
+            parameters: this.aggregatorResponse?.parameters,
+            error: this.aggregatorResponse?.error
+          },
+          copyText: "Copy aggregator data"
         });
       })
       .then(() => this._setLoading(false))

@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
-import React, { HTMLAttributes } from "react";
+import React, { HTMLAttributes, ReactNode } from "react";
 import Text from "@components/Text";
 
-interface IProps extends HTMLAttributes<HTMLDivElement> {
-  title: string;
+interface IProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
+  title: string | ReactNode;
 }
 
 const Root = styled.div`
@@ -19,7 +19,7 @@ const Title = styled(Text)`
 
 const SwapDetailRow: React.FC<IProps> = ({ title, children, ...rest }) => (
   <Root {...rest}>
-    <Title type="secondary">{title}</Title>
+    {typeof title === "string" ? <Title type="secondary">{title}</Title> : title}
     {children}
   </Root>
 );
