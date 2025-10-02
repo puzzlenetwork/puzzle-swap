@@ -10,6 +10,7 @@ import { WavesChartAPI } from "@src/services/WavesChartAPI";
 
 interface IProps {
   height?: number;
+  interval?: string;
 }
 
 const Root = styled.div`
@@ -34,6 +35,7 @@ const ChartContainer = styled.div<{ height: number }>`
 `;
 
 
+
 // Hook to check if chart data is available for current pair
 export const useTradingViewChartAvailability = () => {
   const vm = useTokenChartVM();
@@ -49,29 +51,23 @@ export const useTradingViewChartAvailability = () => {
     const checkDataAvailability = async () => {
       setIsChecking(true);
       
-      try {
-        const pairData = await WavesChartAPI.checkPairExists(vm.asset0.assetId);
-        if (!pairData) {
-          setHasChartData(false);
-          setIsChecking(false);
-          return;
-        }
+      const pairData = await WavesChartAPI.checkPairExists(vm.asset0.assetId, vm.asset1.assetId);
+      if (!pairData) {
+        setHasChartData(false);
+        setIsChecking(false);
+        return;
+      }
 
-        // Get candles data
-        const candles = await WavesChartAPI.getCandles(
-          pairData.amountAsset,
-          pairData.priceAsset,
-          '1h'
-        );
+      const candles = await WavesChartAPI.getCandles(
+        pairData.amountAsset,
+        pairData.priceAsset,
+        '1h'
+      );
 
-        if (candles.length > 0) {
-          const formattedData = WavesChartAPI.convertToCandlestickData(candles);
-          setHasChartData(formattedData.length > 0);
-        } else {
-          setHasChartData(false);
-        }
-      } catch (error) {
-        console.error("Error checking chart availability:", error);
+      if (candles.length > 0) {
+        const formattedData = WavesChartAPI.convertToCandlestickData(candles);
+        setHasChartData(formattedData.length > 0);
+      } else {
         setHasChartData(false);
       }
       
@@ -84,7 +80,7 @@ export const useTradingViewChartAvailability = () => {
   return { hasChartData, isChecking };
 };
 
-const TradingViewChart: React.FC<IProps> = observer(({ height = 350 }) => {
+const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = '1h' }) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<any>(null);
   const seriesRef = useRef<any>(null);
@@ -97,6 +93,82 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350 }) => {
   const currentPairDataRef = useRef<any>(null);
   const hasReachedEndOfDataRef = useRef(false);
 
+  const loadMoreHistoricalData = async (requestedTime: number) => {
+    if (isLoadingMoreRef.current || !currentPairDataRef.current || hasReachedEndOfDataRef.current) {
+      return;
+    }
+
+    isLoadingMoreRef.current = true;
+    
+    try {
+      const earliestDataTime = candlestickDataRef.current.length > 0 ? 
+        new Date((candlestickDataRef.current[0].time as number) * 1000) : 
+        new Date(requestedTime * 1000);
+      
+      const timeEnd = earliestDataTime;
+      const timeStart = new Date(timeEnd.getTime() - 90 * 24 * 60 * 60 * 1000);
+      
+      const allCandles: any[] = [];
+      const chunkSize = 30 * 24 * 60 * 60 * 1000;
+      let currentEnd = timeEnd;
+      
+      while (currentEnd > timeStart) {
+        const currentStart = new Date(Math.max(currentEnd.getTime() - chunkSize, timeStart.getTime()));
+        
+        const candles = await WavesChartAPI.getCandlesWithTimeRange(
+          currentPairDataRef.current.amountAsset,
+          currentPairDataRef.current.priceAsset,
+          interval,
+          currentStart,
+          currentEnd
+        );
+        
+        allCandles.unshift(...candles);
+        currentEnd = currentStart;
+        
+        if (currentStart.getTime() <= timeStart.getTime()) {
+          break;
+        }
+      }
+      
+      if (allCandles.length > 0) {
+        const formattedHistoricalData = WavesChartAPI.convertToCandlestickData(allCandles);
+        
+        if (formattedHistoricalData.length > 0) {
+          const existingTimes = new Set(candlestickDataRef.current.map(item => item.time));
+          const newData = formattedHistoricalData.filter(item => !existingTimes.has(item.time));
+          
+          if (newData.length > 0) {
+            const combinedData = [...newData, ...candlestickDataRef.current]
+              .sort((a, b) => (a.time as number) - (b.time as number));
+
+            candlestickDataRef.current = combinedData;
+            
+            if (seriesRef.current && chartRef.current) {
+              const timeScale = chartRef.current.timeScale();
+              const scrollPosition = timeScale.scrollPosition();
+              
+              seriesRef.current.setData(combinedData);
+              
+              setTimeout(() => {
+                if (chartRef.current) {
+                  chartRef.current.timeScale().scrollToPosition(scrollPosition, false);
+                }
+              }, 0);
+            }
+          } else {
+            hasReachedEndOfDataRef.current = true;
+          }
+        }
+      } else {
+        hasReachedEndOfDataRef.current = true;
+      }
+    } catch (error: any) {
+    }
+    
+    isLoadingMoreRef.current = false;
+  };
+
   // Load candlestick data from API
   useEffect(() => {
     if (!vm.asset0?.assetId || !vm.asset1?.assetId) return;
@@ -105,7 +177,7 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350 }) => {
       setLoading(true);
       hasReachedEndOfDataRef.current = false;
 
-      const pairData = await WavesChartAPI.checkPairExists(vm.asset0.assetId);
+      const pairData = await WavesChartAPI.checkPairExists(vm.asset0.assetId, vm.asset1.assetId);
       if (!pairData) {
         setHasChartData(false);
         setLoading(false);
@@ -117,7 +189,7 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350 }) => {
       const candles = await WavesChartAPI.getCandles(
         pairData.amountAsset,
         pairData.priceAsset,
-        '1h'
+        interval
       );
 
       if (candles.length > 0) {
@@ -138,60 +210,8 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350 }) => {
     };
 
     loadData();
-  }, [vm.asset0?.assetId, vm.asset1?.assetId]);
+  }, [vm.asset0?.assetId, vm.asset1?.assetId, interval]);
 
-  const loadMoreHistoricalData = async (requestedTime: number) => {
-    if (isLoadingMoreRef.current || !currentPairDataRef.current || hasReachedEndOfDataRef.current) {
-      return;
-    }
-
-    isLoadingMoreRef.current = true;
-    
-    try {
-      const earliestDataTime = candlestickDataRef.current.length > 0 ? 
-        new Date((candlestickDataRef.current[0].time as number) * 1000) : 
-        new Date(requestedTime * 1000);
-      
-      const timeEnd = earliestDataTime;
-      const timeStart = new Date(timeEnd.getTime() - 30 * 24 * 60 * 60 * 1000);
-      
-      const historicalCandles = await WavesChartAPI.getCandlesWithTimeRange(
-        currentPairDataRef.current.amountAsset,
-        currentPairDataRef.current.priceAsset,
-        '1h',
-        timeStart,
-        timeEnd
-      );
-      
-      if (historicalCandles.length > 0) {
-        const formattedHistoricalData = WavesChartAPI.convertToCandlestickData(historicalCandles);
-        
-        if (formattedHistoricalData.length > 0) {
-          const existingTimes = new Set(candlestickDataRef.current.map(item => item.time));
-          const newData = formattedHistoricalData.filter(item => !existingTimes.has(item.time));
-          
-          if (newData.length > 0) {
-            const combinedData = [...newData, ...candlestickDataRef.current]
-              .sort((a, b) => (a.time as number) - (b.time as number));
-
-            setCandlestickData(combinedData);
-            candlestickDataRef.current = combinedData;
-            
-            if (seriesRef.current) {
-              seriesRef.current.setData(combinedData);
-            }
-          } else {
-            hasReachedEndOfDataRef.current = true;
-          }
-        }
-      } else {
-        hasReachedEndOfDataRef.current = true;
-      }
-    } catch (error: any) {
-    }
-    
-    isLoadingMoreRef.current = false;
-  };
 
   useEffect(() => {
     if (!chartContainerRef.current) {
@@ -260,9 +280,10 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350 }) => {
           if (timeRange && candlestickDataRef.current.length > 0) {
             const firstDataTime = candlestickDataRef.current[0].time;
             const rangeStart = timeRange.from;
+            const buffer = 10;
             
-            if (rangeStart < firstDataTime) {
-              loadMoreHistoricalData(rangeStart as number);
+            if (rangeStart <= (firstDataTime as number) + buffer) {
+              void loadMoreHistoricalData(rangeStart as number);
             }
           }
         });

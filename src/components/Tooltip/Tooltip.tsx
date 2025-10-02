@@ -17,7 +17,7 @@ const Root = styled.div<{ fixed?: boolean }>`
   background: ${({ theme }) => `${theme.colors.white}`};
   max-width: 320px;
   min-width: 160px;
-  z-index: 2;
+  z-index: 1000;
   width: max-content;
   box-sizing: border-box;
   padding: 8px 16px 12px;

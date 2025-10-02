@@ -5,6 +5,7 @@ import ChartAgeButtons from "@components/ChartAgeButtons";
 import { IToken } from "@src/constants";
 import TokensChart from "@components/TokensChart/TokensChart";
 import TradingViewChart from "@components/TokensChart/TradingViewChart";
+import ChartIntervalButtons from "@components/ChartIntervalButtons";
 import ChartTypeSwitcher from "@components/ChartTypeSwitcher";
 import Dialog from "@components/Dialog";
 import { TokenChartVMProvider, useTokenChartVM } from "@components/TokensChart/TokenChartVM";
@@ -18,9 +19,11 @@ interface IProps {
   onClose: () => void;
 }
 
+
 const TokensChartMobileImpl: React.FC<IProps> = observer(({ ...rest }) => {
   const vm = useTokenChartVM();
   const swapVm = useSwapVM();
+  const [selectedInterval, setSelectedInterval] = React.useState('1w');
   return (
     <Dialog
       onClose={rest.onClose}
@@ -35,10 +38,21 @@ const TokensChartMobileImpl: React.FC<IProps> = observer(({ ...rest }) => {
         onToggle={swapVm.setChartType} 
       />
       <SizedBox height={16} />
+      {swapVm.chartType === "tradingview" && (
+        <>
+          <ChartIntervalButtons
+            value={selectedInterval}
+            onChange={setSelectedInterval}
+          />
+          <SizedBox height={16} />
+        </>
+      )}
       {swapVm.chartType === "standard" ? (
         <TokensChart {...(rest as any)} />
       ) : (
-        <TradingViewChart />
+        <TradingViewChart 
+          interval={selectedInterval}
+        />
       )}
       <SizedBox height={24} />
       {swapVm.chartType === "standard" && (

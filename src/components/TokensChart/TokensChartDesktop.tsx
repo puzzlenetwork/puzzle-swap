@@ -9,6 +9,7 @@ import ChartAgeButtons from "@components/ChartAgeButtons";
 import { IToken } from "@src/constants";
 import TokensChart from "@components/TokensChart/TokensChart";
 import TradingViewChart, { useTradingViewChartAvailability } from "@components/TokensChart/TradingViewChart";
+import ChartIntervalButtons from "@components/ChartIntervalButtons";
 import ChartTypeSwitcher from "@components/ChartTypeSwitcher";
 import { TokenChartVMProvider, useTokenChartVM } from "@components/TokensChart/TokenChartVM";
 import LearnMoreTokenChartButtons from "@components/TokensChart/LearnMoreTokenChartButtons";
@@ -41,6 +42,10 @@ const Root = styled.div`
   }
 `;
 
+const IntervalButtonsWrapper = styled.div`
+  max-width: 296px;
+`;
+
 const TokensChartDesktopImpl: React.FC<IProps> = observer(({ height, ...rest }) => {
   const { getCollapseProps } = useCollapse({
     isExpanded: rest.visible,
@@ -50,12 +55,13 @@ const TokensChartDesktopImpl: React.FC<IProps> = observer(({ height, ...rest }) 
   const vm = useTokenChartVM();
   const swapVm = useSwapVM();
   const { hasChartData } = useTradingViewChartAvailability();
+  const [selectedInterval, setSelectedInterval] = React.useState('1w');
   return (
     <Root {...getCollapseProps()}>
       <Card style={{ height }}>
         <Row alignItems="center" justifyContent="space-between">
           <Row alignItems="center">
-            <Text weight={500} fitContent>{`${rest.token1.symbol}/${rest.token0.symbol}`}</Text>
+            <Text weight={500} fitContent>{`${rest.token0.symbol}/${rest.token1.symbol}`}</Text>
             <SizedBox width={16} />
             {hasChartData && (
               <ChartTypeSwitcher 
@@ -65,16 +71,28 @@ const TokensChartDesktopImpl: React.FC<IProps> = observer(({ height, ...rest }) 
             )}
             <SizedBox width={16} />
           </Row>
-          {swapVm.chartType === "standard" && (
+          {swapVm.chartType === "standard" ? (
             <Row alignItems="center">
               <ChartAgeButtons className="age-btns" value={vm.selectedChartPeriod} onChange={vm.setSelectedChartPeriod} />
             </Row>
-          )}
+          ) : hasChartData ? (
+            <Row alignItems="center">
+              <IntervalButtonsWrapper>
+                <ChartIntervalButtons
+                  value={selectedInterval}
+                  onChange={setSelectedInterval}
+                />
+              </IntervalButtonsWrapper>
+            </Row>
+          ) : null}
         </Row>
         {swapVm.chartType === "standard" || !hasChartData ? (
           <TokensChart {...(rest as any)} />
         ) : (
-          <TradingViewChart height={height - 60} />
+          <TradingViewChart 
+            height={height - 60} 
+            interval={selectedInterval}
+          />
         )}
       </Card>
       <SizedBox height={16} />

@@ -49,22 +49,35 @@ export interface CandlesResponse {
 }
 
 export class WavesChartAPI {
-  static async checkPairExists(asset0: string): Promise<PairData | null> {
-    try {
-      const response = await axios.get<PairsResponse>(`${WAVES_API_BASE}/pairs`, {
-        params: {
-          search_by_asset: asset0,
-        },
-      });
+  static async checkPairExists(asset0: string, asset1?: string, retries: number = 3): Promise<PairData | null> {
+    for (let i = 0; i < retries; i++) {
+      try {
+        const response = await axios.get<PairsResponse>(`${WAVES_API_BASE}/pairs`, {
+          params: {
+            search_by_asset: asset0,
+          },
+        });
 
-      if (response.data.data && response.data.data.length > 0) {
-        return response.data.data[0];
+        if (response.data.data && response.data.data.length > 0) {
+          if (asset1) {
+            const pair = response.data.data.find(
+              p => (p.amountAsset === asset0 && p.priceAsset === asset1) || 
+                   (p.amountAsset === asset1 && p.priceAsset === asset0)
+            );
+            return pair || null;
+          }
+          return response.data.data[0];
+        }
+
+        return null;
+      } catch (error) {
+        if (i === retries - 1) {
+          return null;
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
       }
-
-      return null;
-    } catch (error) {
-      return null;
     }
+    return null;
   }
 
   static async getCandles(
@@ -73,11 +86,33 @@ export class WavesChartAPI {
     interval: string = '1h'
   ): Promise<CandleData[]> {
     try {
-      // Get data for last 30 days to find actual trades
       const timeEnd = new Date();
-      const timeStart = new Date(timeEnd.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
+      const timeStart = new Date(timeEnd.getTime() - 90 * 24 * 60 * 60 * 1000);
       
-      return this.getCandlesWithTimeRange(amountAsset, priceAsset, interval, timeStart, timeEnd);
+      const allCandles: CandleData[] = [];
+      const chunkSize = 30 * 24 * 60 * 60 * 1000;
+      let currentEnd = timeEnd;
+      
+      while (currentEnd > timeStart) {
+        const currentStart = new Date(Math.max(currentEnd.getTime() - chunkSize, timeStart.getTime()));
+        
+        const candles = await this.getCandlesWithTimeRange(
+          amountAsset, 
+          priceAsset, 
+          interval, 
+          currentStart, 
+          currentEnd
+        );
+        
+        allCandles.unshift(...candles);
+        currentEnd = currentStart;
+        
+        if (currentStart.getTime() <= timeStart.getTime()) {
+          break;
+        }
+      }
+      
+      return allCandles;
     } catch (error) {
       return [];
     }
@@ -88,24 +123,31 @@ export class WavesChartAPI {
     priceAsset: string, 
     interval: string,
     timeStart: Date,
-    timeEnd: Date
+    timeEnd: Date,
+    retries: number = 3
   ): Promise<CandleData[]> {
-    try {
-      const params = {
-        interval,
-        timeStart: timeStart.toISOString(),
-        timeEnd: timeEnd.toISOString(),
-        limit: 100,
-      };
-      
-      const url = `${WAVES_API_BASE}/candles/${amountAsset}/${priceAsset}`;
-      const response = await axios.get<CandlesResponse>(url, { params });
-      const candlesData = response.data.data || [];
-      
-      return candlesData;
-    } catch (error: any) {
-      return [];
+    for (let i = 0; i < retries; i++) {
+      try {
+        const params = {
+          interval,
+          timeStart: timeStart.toISOString(),
+          timeEnd: timeEnd.toISOString(),
+          limit: 100,
+        };
+        
+        const url = `${WAVES_API_BASE}/candles/${amountAsset}/${priceAsset}`;
+        const response = await axios.get<CandlesResponse>(url, { params });
+        const candlesData = response.data.data || [];
+        
+        return candlesData;
+      } catch (error: any) {
+        if (i === retries - 1) {
+          return [];
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+      }
     }
+    return [];
   }
 
   static convertToCandlestickData(candles: CandleData[]) {
