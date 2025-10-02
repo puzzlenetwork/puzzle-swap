@@ -47,7 +47,7 @@ body {
 }
 
 .rc-dialog-body {
-    padding: 16px 24px 0 24px;
+    padding: 16px 12px 0 12px;
 }
 
 .rc-dialog-title {

@@ -50,23 +50,57 @@ export interface CandlesResponse {
 
 export class WavesChartAPI {
   static async checkPairExists(asset0: string, asset1?: string, retries: number = 3): Promise<PairData | null> {
+    if (!asset1) {
+      for (let i = 0; i < retries; i++) {
+        try {
+          const response = await axios.get<PairsResponse>(`${WAVES_API_BASE}/pairs`, {
+            params: {
+              search_by_asset: asset0,
+            },
+          });
+
+          if (response.data.data && response.data.data.length > 0) {
+            return response.data.data[0];
+          }
+          return null;
+        } catch (error) {
+          if (i === retries - 1) {
+            return null;
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+        }
+      }
+      return null;
+    }
+
     for (let i = 0; i < retries; i++) {
       try {
-        const response = await axios.get<PairsResponse>(`${WAVES_API_BASE}/pairs`, {
+        const response0 = await axios.get<PairsResponse>(`${WAVES_API_BASE}/pairs`, {
           params: {
             search_by_asset: asset0,
           },
         });
 
-        if (response.data.data && response.data.data.length > 0) {
-          if (asset1) {
-            const pair = response.data.data.find(
-              p => (p.amountAsset === asset0 && p.priceAsset === asset1) || 
-                   (p.amountAsset === asset1 && p.priceAsset === asset0)
-            );
-            return pair || null;
-          }
-          return response.data.data[0];
+        if (response0.data.data && response0.data.data.length > 0) {
+          const pair = response0.data.data.find(
+            p => (p.amountAsset === asset0 && p.priceAsset === asset1) || 
+                 (p.amountAsset === asset1 && p.priceAsset === asset0)
+          );
+          if (pair) return pair;
+        }
+
+        const response1 = await axios.get<PairsResponse>(`${WAVES_API_BASE}/pairs`, {
+          params: {
+            search_by_asset: asset1,
+          },
+        });
+
+        if (response1.data.data && response1.data.data.length > 0) {
+          const pair = response1.data.data.find(
+            p => (p.amountAsset === asset0 && p.priceAsset === asset1) || 
+                 (p.amountAsset === asset1 && p.priceAsset === asset0)
+          );
+          if (pair) return pair;
         }
 
         return null;
@@ -150,7 +184,7 @@ export class WavesChartAPI {
     return [];
   }
 
-  static convertToCandlestickData(candles: CandleData[]) {
+  static convertToCandlestickData(candles: CandleData[], isInverted: boolean = false) {
     const result = candles
       .map(candle => {
         try {
@@ -165,6 +199,21 @@ export class WavesChartAPI {
           
           if (isNaN(date.getTime())) {
             return null;
+          }
+          
+          if (isInverted) {
+            const open = 1 / candle.data.open;
+            const close = 1 / candle.data.close;
+            const high = 1 / candle.data.low;
+            const low = 1 / candle.data.high;
+            
+            return {
+              time: Math.floor(date.getTime() / 1000) as any,
+              open,
+              high,
+              low,
+              close,
+            };
           }
           
           return {

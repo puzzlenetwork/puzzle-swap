@@ -34,9 +34,6 @@ const ChartContainer = styled.div<{ height: number }>`
   box-sizing: border-box;
 `;
 
-
-
-// Hook to check if chart data is available for current pair
 export const useTradingViewChartAvailability = () => {
   const vm = useTokenChartVM();
   const [hasChartData, setHasChartData] = useState(false);
@@ -65,7 +62,8 @@ export const useTradingViewChartAvailability = () => {
       );
 
       if (candles.length > 0) {
-        const formattedData = WavesChartAPI.convertToCandlestickData(candles);
+        const isInverted = pairData.amountAsset === vm.asset1?.assetId && pairData.priceAsset === vm.asset0?.assetId;
+        const formattedData = WavesChartAPI.convertToCandlestickData(candles, isInverted);
         setHasChartData(formattedData.length > 0);
       } else {
         setHasChartData(false);
@@ -92,6 +90,7 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
   const isLoadingMoreRef = useRef(false);
   const currentPairDataRef = useRef<any>(null);
   const hasReachedEndOfDataRef = useRef(false);
+  const isInvertedRef = useRef(false);
 
   const loadMoreHistoricalData = async (requestedTime: number) => {
     if (isLoadingMoreRef.current || !currentPairDataRef.current || hasReachedEndOfDataRef.current) {
@@ -132,7 +131,7 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
       }
       
       if (allCandles.length > 0) {
-        const formattedHistoricalData = WavesChartAPI.convertToCandlestickData(allCandles);
+        const formattedHistoricalData = WavesChartAPI.convertToCandlestickData(allCandles, isInvertedRef.current);
         
         if (formattedHistoricalData.length > 0) {
           const existingTimes = new Set(candlestickDataRef.current.map(item => item.time));
@@ -169,7 +168,6 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
     isLoadingMoreRef.current = false;
   };
 
-  // Load candlestick data from API
   useEffect(() => {
     if (!vm.asset0?.assetId || !vm.asset1?.assetId) return;
 
@@ -186,6 +184,8 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
 
       currentPairDataRef.current = pairData;
 
+      isInvertedRef.current = pairData.amountAsset === vm.asset1.assetId && pairData.priceAsset === vm.asset0.assetId;
+
       const candles = await WavesChartAPI.getCandles(
         pairData.amountAsset,
         pairData.priceAsset,
@@ -193,7 +193,7 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
       );
 
       if (candles.length > 0) {
-        const formattedData = WavesChartAPI.convertToCandlestickData(candles);
+        const formattedData = WavesChartAPI.convertToCandlestickData(candles, isInvertedRef.current);
         
         if (formattedData.length > 0) {
           setCandlestickData(formattedData);
@@ -294,7 +294,6 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
         }
         
       } catch (error) {
-        console.error("Error creating TradingView chart:", error);
       }
     };
 
