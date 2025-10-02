@@ -328,7 +328,7 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
   if (loading) {
     return (
       <Root>
-        <Row alignItems="center" justifyContent="center" style={{ height: height }}>
+        <Row alignItems="center" justifyContent="center" style={{ height: height, width: '100%' }}>
           <Spinner />
           <Text style={{ marginLeft: 8 }}>Loading chart data...</Text>
         </Row>
