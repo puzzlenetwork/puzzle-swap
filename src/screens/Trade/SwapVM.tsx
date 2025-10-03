@@ -68,6 +68,9 @@ export class SwapVM {
   aggregatorResponse: any = null;
   private _setAggregatorResponse = (response: any) => (this.aggregatorResponse = response);
 
+  lastErrorAggregatorResponse: any = null;
+  private _setLastErrorAggregatorResponse = (response: any) => (this.lastErrorAggregatorResponse = response);
+
   synchronizing: boolean = false;
   private _setSynchronizing = (synchronizing: boolean) => (this.synchronizing = synchronizing);
 
@@ -212,6 +215,7 @@ export class SwapVM {
     if (minimumToReceive == null) return;
     await this._syncAmount1();
     this._setLoading(true);
+    const currentAggregatorResponse = this.aggregatorResponse;
     await accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.aggregator,
@@ -277,12 +281,13 @@ export class SwapVM {
         }
       })
       .catch((e) => {
+        this._setLastErrorAggregatorResponse(currentAggregatorResponse);
         notificationStore.notify(e.message ?? JSON.stringify(e), {
           type: "warning",
           title: "Transaction is not completed",
           copyData: {
-            parameters: this.aggregatorResponse?.parameters,
-            error: this.aggregatorResponse?.error
+            parameters: currentAggregatorResponse?.parameters,
+            error: currentAggregatorResponse?.error
           },
           copyText: "Copy aggregator data"
         });
