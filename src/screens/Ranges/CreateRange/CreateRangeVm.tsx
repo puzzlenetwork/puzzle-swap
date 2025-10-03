@@ -737,7 +737,7 @@ class CreateRangeVm {
                     this.setNotificationParams(null);
                     this.initialize(null);
                     localStorage.removeItem("puzzle-custom-range");
-                    window.open(`/ranges/${domainToUrlSafe(this.domain)}/details`);
+                    window.open(`/ranges/${address}/details`);
                   }}
                   title={available ? "Go to Range page" : "Range is being deployed"}
                   disabled={!available}

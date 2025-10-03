@@ -130,7 +130,7 @@ class WalletVM {
           relativeReversedLeverage: asset.reversedLeverage.div(maxLeverage).times(100).plus(10).toNumber()
         }));
         return {
-          onClickPath: `/ranges/${lpTokenDomain}/details`,
+          onClickPath: `/ranges/${poolAddress}/details`,
           logo: (
             <Card style={{
               width: 40,

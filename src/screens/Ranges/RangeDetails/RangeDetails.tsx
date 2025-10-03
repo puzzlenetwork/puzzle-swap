@@ -141,14 +141,10 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
 });
 
 const RangeDetailsInterface: React.FC = () => {
-  const { rangeDomain } = useParams<{ rangeDomain: string }>();
-  const decodedRangeDomain = rangeDomain ? urlSafeToOriginalDomain(rangeDomain) : "";
-  const { rangesStore } = useStores();
-  const range = rangesStore.getRangeByDomain(decodedRangeDomain);
-  const rangeAddress = range?.address ?? "";
+  const { rangeAddress } = useParams<{ rangeAddress: string }>();
   
   return (
-    <RangeDetailsInterfaceVMProvider rangeDomain={decodedRangeDomain}>
+    <RangeDetailsInterfaceVMProvider rangeDomain={rangeAddress || ""}>
       <RangeDetailsInterfaceImpl />
     </RangeDetailsInterfaceVMProvider>
   );

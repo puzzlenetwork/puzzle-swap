@@ -31,7 +31,9 @@ class RangeDetailsInterfaceVM {
 
   private rangeDomain: string;
   public get range() {
-    return this.rootStore.rangesStore.getRangeByDomain(this.rangeDomain);
+    const byDomain = this.rootStore.rangesStore.getRangeByDomain(this.rangeDomain);
+    if (byDomain) return byDomain;
+    return this.rootStore.rangesStore.getRangeByAddress(this.rangeDomain);
   }
   
   public get rangeAddress(): string {
@@ -43,10 +45,21 @@ class RangeDetailsInterfaceVM {
   };
 
   private loadRangeData = async () => {
-    // First try to get range by domain from store
     let range = this.range;
     if (!range) {
-      // If range not in store, load all ranges
+      try {
+        const rangeData = await rangesService.getRangeByAddress(this.rangeDomain, { charts: true });
+        if (rangeData) {
+          const newRange = new Range(rangeData);
+          this.rootStore.rangesStore.updateRange(newRange);
+          this.setHistory(rangeData.charts || []);
+          this.updateBlockHeight();
+          return;
+        }
+      } catch (error) {
+        console.error("Error loading range by address:", error);
+      }
+
       try {
         const response = await rangesService.getRanges({
           page: 1,
