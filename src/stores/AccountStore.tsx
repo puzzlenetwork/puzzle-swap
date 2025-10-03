@@ -449,15 +449,20 @@ class AccountStore {
 
   get balances() {
     const { accountStore } = this.rootStore;
-    return TOKENS_LIST.map((t) => {
+    const allBalances = TOKENS_LIST.map((t, index) => {
       const balance = accountStore.findBalanceByAssetId(t.assetId);
-      return balance ?? new Balance(t);
-    }).sort((a, b) => {
-      if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
-      if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
-      if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
-      return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
+      return { balance: balance ?? new Balance(t), originalIndex: index };
     });
+
+    const withBalance = allBalances
+      .filter(({ balance }) => balance.usdnEquivalent != null && balance.usdnEquivalent.gt(0))
+      .sort((a, b) => a.balance.usdnEquivalent!.lt(b.balance.usdnEquivalent!) ? 1 : -1);
+
+    const withoutBalance = allBalances
+      .filter(({ balance }) => balance.usdnEquivalent == null || balance.usdnEquivalent.eq(0))
+      .sort((a, b) => a.originalIndex - b.originalIndex);
+
+    return [...withBalance, ...withoutBalance].map(({ balance }) => balance);
   }
 
   get addressToDisplay(): string {
