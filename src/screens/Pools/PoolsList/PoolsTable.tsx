@@ -104,7 +104,17 @@ const PoolsTable: React.FC = () => {
       .filter((pool) => {
         if (!poolsStore.showEmptyBalances) {
           const data = poolsStore.investedInPools?.find((v) => pool.domain === v.pool.domain);
-          return data?.liquidityInUsdt != null && data.liquidityInUsdt.gt(0);
+          if (!data || !data.addressStaked || data.addressStaked.eq(0)) return false;
+          
+          const totalValue = pool.tokens.reduce((acc, token) => {
+            const top = pool.liquidity?.[token.assetId]?.times(data.addressStaked!) ?? new BN(0);
+            const tokenAmount = top.div(pool.globalPoolTokenAmount ?? new BN(1));
+            const rate = poolsStore.usdtRate(token.assetId, 1) ?? new BN(0);
+            const usdValue = new BN(tokenAmount).times(rate).div(new BN(10).pow(token.decimals));
+            return acc.plus(usdValue);
+          }, new BN(0));
+          
+          return totalValue.gt(0);
         }
         return true;
       })
@@ -214,9 +224,20 @@ const PoolsTable: React.FC = () => {
         ),
         accountBalance: (() => {
           const data = poolsStore.investedInPools?.find((v) => pool.domain === v.pool.domain);
-          return data?.liquidityInUsdt != null && data.liquidityInUsdt.gt(0)
-            ? `$${data.liquidityInUsdt.toFormat(2)}`
-            : "";
+          if (!data || !data.addressStaked || data.addressStaked.eq(0)) return "";
+          
+          const totalValue = pool.tokens.reduce((acc, token) => {
+            const top = pool.liquidity?.[token.assetId]?.times(data.addressStaked!) ?? new BN(0);
+            const tokenAmount = top.div(pool.globalPoolTokenAmount ?? new BN(1));
+            const rate = poolsStore.usdtRate(token.assetId, 1) ?? new BN(0);
+            const usdValue = new BN(tokenAmount).times(rate).div(new BN(10).pow(token.decimals));
+            return acc.plus(usdValue);
+          }, new BN(0));
+          
+          if (totalValue.eq(0)) return "";
+          return totalValue.gte(0.01) 
+            ? `$${totalValue.toFormat(2)}` 
+            : `$${totalValue.toFormat(6)}`;
         })(),
         liquidity: "$" + new BN(pool.statistics?.liquidity ?? 0).toBigFormat(0),
         volume: (() => {

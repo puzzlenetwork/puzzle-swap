@@ -280,13 +280,16 @@ class PoolInvestVM {
 
   get totalProvidedLiquidityByAddress() {
     if (this.rootStore.accountStore.address == null || this.userIndexStaked == null) return BN.ZERO;
-    const liquidityInUsdt = this.pool.globalLiquidity.times(this.userIndexStaked).div(this.pool.globalPoolTokenAmount);
-    return liquidityInUsdt.isNaN() ? BN.ZERO : liquidityInUsdt;
+    const balances = this.poolBalancesTable;
+    if (!balances) return BN.ZERO;
+    const total = balances.reduce((acc, token) => acc.plus(token.usdnEquivalent || BN.ZERO), BN.ZERO);
+    return total.isNaN() ? BN.ZERO : total;
   }
 
   get shareOfPool() {
-    if (this.rootStore.accountStore.address == null) return BN.ZERO;
-    return this.totalProvidedLiquidityByAddress.times(new BN(100)).div(this.pool.globalLiquidity);
+    if (this.rootStore.accountStore.address == null || this.userIndexStaked == null) return BN.ZERO;
+    if (this.pool.globalPoolTokenAmount == null || this.pool.globalPoolTokenAmount.eq(0)) return BN.ZERO;
+    return this.userIndexStaked.times(new BN(100)).div(this.pool.globalPoolTokenAmount);
   }
 
   get poolBalancesTable() {

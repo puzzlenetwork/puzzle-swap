@@ -3,6 +3,43 @@ import { IHistory } from "@src/utils/types";
 import { getBackendApiUrl } from "@src/constants/api";
 import axios from "axios";
 
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+  ttl: number;
+}
+
+class SimpleCache {
+  private cache = new Map<string, CacheEntry<any>>();
+
+  get<T>(key: string): T | null {
+    const entry = this.cache.get(key);
+    if (!entry) return null;
+    
+    const now = Date.now();
+    if (now - entry.timestamp > entry.ttl) {
+      this.cache.delete(key);
+      return null;
+    }
+    
+    return entry.data;
+  }
+
+  set<T>(key: string, data: T, ttl: number = 10000): void {
+    this.cache.set(key, {
+      data,
+      timestamp: Date.now(),
+      ttl
+    });
+  }
+
+  clear(): void {
+    this.cache.clear();
+  }
+}
+
+const cache = new SimpleCache();
+
 export interface IGetRanges {
   page: number;
   size: number;
@@ -155,6 +192,10 @@ const rangesService = {
     return data.charts;
   },
   getUserTotalProvided: async (userAddress: string): Promise<number> => {
+    const cacheKey = `getUserTotalProvided_${userAddress}`;
+    const cached = cache.get<number>(cacheKey);
+    if (cached !== null) return cached;
+    
     const baseUrl = `${getBackendApiUrl()}/stats/v1/statistics/pools/provided_data`;
     const paramsString = new URLSearchParams({
       userAddress: userAddress,
@@ -164,9 +205,15 @@ const rangesService = {
     });
     const url = `${baseUrl}?${paramsString.toString()}`;
     const { data } = await axios.get(url);
+    
+    cache.set(cacheKey, data.total_provided_usd, 5000);
     return data.total_provided_usd;
   },
   getUserInvestments: async (userAddress: string): Promise<IProvidedResponse[]> => {
+    const cacheKey = `getUserInvestments_${userAddress}`;
+    const cached = cache.get<IProvidedResponse[]>(cacheKey);
+    if (cached !== null) return cached;
+    
     const baseUrl = `${getBackendApiUrl()}/stats/v1/statistics/pools/provided_data`;
     const paramsString = new URLSearchParams({
       userAddress: userAddress,
@@ -176,6 +223,8 @@ const rangesService = {
     });
     const url = `${baseUrl}?${paramsString.toString()}`;
     const { data } = await axios.get(url);
+    
+    cache.set(cacheKey, data.data, 5000);
     return data.data;
   },
   getStakingStatistics: async (group?: "common" | "index"): Promise<IStakingStatistics[]> => {

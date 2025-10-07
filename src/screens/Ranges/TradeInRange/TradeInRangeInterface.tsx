@@ -131,7 +131,13 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
           <SizedBox height={16} />
           <SwapDetailRow title="Price impact">
             <Row alignItems="center" mainAxisSize="fit-content" justifyContent="flex-end">
-              {vm.priceImpact && <Text>~{vm.priceImpact.toFormat(4)}%&nbsp;</Text>}
+              {vm.priceImpact && (
+                <Text type={vm.priceImpact.gt(5) ? "error" : "primary"}>
+                  ~{vm.priceImpact.toFormat(4)}%
+                  {vm.priceImpact.gt(5) && " (High price impact)"}
+                  &nbsp;
+                </Text>
+              )}
               {vm.token0 && !vm.amount0.isNaN() && (
                 <Tooltip content={<TooltipFeeInfo />} config={{ placement: "top" }}>
                   <InfoIcon />
@@ -154,14 +160,10 @@ const TradeInRangeInterfaceImpl: React.FC = observer(() => {
 });
 
 const TradeInRangeInterface: React.FC = () => {
-  const { rangeDomain } = useParams<{ rangeDomain: string }>();
-  const decodedRangeDomain = rangeDomain ? urlSafeToOriginalDomain(rangeDomain) : "";
-  const { rangesStore } = useStores();
-  const range = rangesStore.getRangeByDomain(decodedRangeDomain);
-  const rangeAddress = range?.address ?? "";
+  const { rangeAddress } = useParams<{ rangeAddress: string }>();
   
   return (
-    <TradeInRangeVMProvider rangeAddress={rangeAddress}>
+    <TradeInRangeVMProvider rangeAddress={rangeAddress || ""}>
       <TradeInRangeInterfaceImpl />
     </TradeInRangeVMProvider>
   );

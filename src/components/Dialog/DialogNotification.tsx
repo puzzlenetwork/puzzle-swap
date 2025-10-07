@@ -200,7 +200,7 @@ export const buildSuccessDepositToRangeDialogParams = ({
 }: TBuildSuccessDepositToRangeDialogParamsProps): IDialogNotificationProps => {
   const txLink = `${EXPLORER_URL}/transactions/${txId}`;
   const range = accountStore.rootStore.rangesStore.getRangeByAddress(rangeAddress);
-  const rangeLink = `/ranges/${range?.domain ? domainToUrlSafe(range.domain) : rangeAddress}/details`;
+  const rangeLink = `/ranges/${rangeAddress}/details`;
   return {
     title: "Successfully deposited",
     description: `Liquidity successfully provided to the range ${range?.domain}. You can track your reward on the range page.`,

@@ -22,6 +22,8 @@ export type TNotifyOptions = Partial<{
   title: string;
   onClick?: () => void;
   onClickText?: string;
+  copyData?: any;
+  copyText?: string;
   style: { [key: string]: string | number };
 }>;
 
@@ -54,6 +56,23 @@ class NotificationStore {
             {opts.linkTitle}
           </Text>
         </Link>
+      </Column>
+    ) : opts.copyData ? (
+      <Column>
+        <Text size="small" type="secondary">
+          {content}
+        </Text>
+        <SizedBox height={12} />
+        <Text
+          size="small"
+          style={{ color: theme.colors.primary500, fontWeight: 500, cursor: 'pointer' }}
+          onClick={() => {
+            navigator.clipboard.writeText(JSON.stringify(opts.copyData, null, 2));
+            this.notify("Aggregator data copied successfully", { type: "success" });
+          }}
+        >
+          {opts.copyText || "Copy data"}
+        </Text>
       </Column>
     ) : (
       <Column>

@@ -16,6 +16,7 @@ import { THEME_TYPE } from "@src/themes/ThemeProvider";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import { wavesAddress2eth } from "@waves/node-api-js";
 import { ProviderKeeperMobile } from "@keeper-wallet/provider-keeper-mobile";
+import { ProviderAura } from "waves-provider-aura";
 import { IDialogNotificationProps } from "@components/Dialog/DialogNotification";
 
 export enum LOGIN_TYPE {
@@ -24,7 +25,8 @@ export enum LOGIN_TYPE {
   KEEPER = "KEEPER",
   KEEPER_MOBILE = "KEEPER_MOBILE",
   LEDGER = "LEDGER",
-  METAMASK = "METAMASK"
+  METAMASK = "METAMASK",
+  AURA = "AURA"
 }
 
 export interface IInvokeTxParams {
@@ -189,6 +191,7 @@ class AccountStore {
 
   login = async (loginType: LOGIN_TYPE) => {
     this.setLoginType(loginType);
+    console.log("LOGIN_TYPE.AURA", LOGIN_TYPE.AURA, loginType)
     switch (loginType) {
       case LOGIN_TYPE.KEEPER_MOBILE:
         this.setSigner(new Signer());
@@ -216,6 +219,10 @@ class AccountStore {
         this.setSigner(new Signer({ NODE_URL: NODE_URL }));
         const provider = new ProviderWeb("https://waves.exchange/signer/");
         await this.signer?.setProvider(provider);
+        break;
+      case LOGIN_TYPE.AURA:
+        this.setSigner(new Signer());
+        await this.signer?.setProvider(new ProviderAura());
         break;
       default:
         return;
@@ -307,6 +314,8 @@ class AccountStore {
         return this.transferWithSigner(txParams, LOGIN_TYPE.KEEPER_MOBILE);
       case LOGIN_TYPE.METAMASK:
         return this.transferWithSigner(txParams, LOGIN_TYPE.METAMASK);
+      case LOGIN_TYPE.AURA:
+        return this.transferWithSigner(txParams, LOGIN_TYPE.AURA);
     }
     return null;
   };
@@ -382,6 +391,8 @@ class AccountStore {
         return this.invokeWithSigner(txParams, LOGIN_TYPE.METAMASK);
       case LOGIN_TYPE.KEEPER_MOBILE:
         return this.invokeWithSigner(txParams, LOGIN_TYPE.KEEPER_MOBILE);
+      case LOGIN_TYPE.AURA:
+        return this.invokeWithSigner(txParams, LOGIN_TYPE.AURA);
     }
     return null;
   };
@@ -438,15 +449,20 @@ class AccountStore {
 
   get balances() {
     const { accountStore } = this.rootStore;
-    return TOKENS_LIST.map((t) => {
+    const allBalances = TOKENS_LIST.map((t, index) => {
       const balance = accountStore.findBalanceByAssetId(t.assetId);
-      return balance ?? new Balance(t);
-    }).sort((a, b) => {
-      if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
-      if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
-      if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
-      return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
+      return { balance: balance ?? new Balance(t), originalIndex: index };
     });
+
+    const withBalance = allBalances
+      .filter(({ balance }) => balance.usdnEquivalent != null && balance.usdnEquivalent.gt(0))
+      .sort((a, b) => a.balance.usdnEquivalent!.lt(b.balance.usdnEquivalent!) ? 1 : -1);
+
+    const withoutBalance = allBalances
+      .filter(({ balance }) => balance.usdnEquivalent == null || balance.usdnEquivalent.eq(0))
+      .sort((a, b) => a.originalIndex - b.originalIndex);
+
+    return [...withBalance, ...withoutBalance].map(({ balance }) => balance);
   }
 
   get addressToDisplay(): string {
@@ -463,6 +479,8 @@ class AccountStore {
         return "Keeper";
       case LOGIN_TYPE.METAMASK:
         return "Metamask";
+      case LOGIN_TYPE.AURA:
+        return "Aura Wallet";
     }
     return "login";
   }

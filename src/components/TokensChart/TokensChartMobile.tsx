@@ -4,9 +4,13 @@ import SizedBox from "@components/SizedBox";
 import ChartAgeButtons from "@components/ChartAgeButtons";
 import { IToken } from "@src/constants";
 import TokensChart from "@components/TokensChart/TokensChart";
+import TradingViewChart, { useTradingViewChartAvailability } from "@components/TokensChart/TradingViewChart";
+import ChartIntervalButtons from "@components/ChartIntervalButtons";
+import ChartTypeSwitcher from "@components/ChartTypeSwitcher";
 import Dialog from "@components/Dialog";
 import { TokenChartVMProvider, useTokenChartVM } from "@components/TokensChart/TokenChartVM";
 import LearnMoreTokenChartButtons from "@components/TokensChart/LearnMoreTokenChartButtons";
+import { useSwapVM } from "@screens/Trade/SwapVM";
 
 interface IProps {
   token0: IToken;
@@ -15,8 +19,12 @@ interface IProps {
   onClose: () => void;
 }
 
+
 const TokensChartMobileImpl: React.FC<IProps> = observer(({ ...rest }) => {
   const vm = useTokenChartVM();
+  const swapVm = useSwapVM();
+  const { hasChartData } = useTradingViewChartAvailability();
+  const [selectedInterval, setSelectedInterval] = React.useState('1w');
   return (
     <Dialog
       onClose={rest.onClose}
@@ -26,10 +34,38 @@ const TokensChartMobileImpl: React.FC<IProps> = observer(({ ...rest }) => {
       visible={rest.visible}
       title={`${rest.token0.symbol}/${rest.token1.symbol}`}
     >
-      <TokensChart {...(rest as any)} />
+      {hasChartData && (
+        <>
+          <ChartTypeSwitcher 
+            chartType={swapVm.chartType} 
+            onToggle={swapVm.setChartType} 
+          />
+          <SizedBox height={16} />
+        </>
+      )}
+      {swapVm.chartType === "tradingview" && hasChartData && (
+        <>
+          <ChartIntervalButtons
+            value={selectedInterval}
+            onChange={setSelectedInterval}
+          />
+          <SizedBox height={16} />
+        </>
+      )}
+      {swapVm.chartType === "standard" || !hasChartData ? (
+        <TokensChart {...(rest as any)} />
+      ) : (
+        <TradingViewChart 
+          interval={selectedInterval}
+        />
+      )}
       <SizedBox height={24} />
-      <ChartAgeButtons className="age-btns" value={vm.selectedChartPeriod} onChange={vm.setSelectedChartPeriod} />
-      <SizedBox height={24} />
+      {swapVm.chartType === "standard" && (
+        <>
+          <ChartAgeButtons className="age-btns" value={vm.selectedChartPeriod} onChange={vm.setSelectedChartPeriod} />
+          <SizedBox height={24} />
+        </>
+      )}
       <LearnMoreTokenChartButtons />
       <SizedBox height={24} />
     </Dialog>

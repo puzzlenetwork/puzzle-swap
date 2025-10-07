@@ -377,7 +377,7 @@ export default class PoolsStore {
     });
 
   private syncTokensFromPy = async () => {
-    const res = await fetch(`${getBackendApiUrl()}/stats/v1/statistics/tokens?allowed=true`);
+    const res = await fetch(`${getBackendApiUrl()}/stats/v1/statistics/tokens`);
     if (!res.ok) {
       throw new Error("Failed to fetch data");
     }

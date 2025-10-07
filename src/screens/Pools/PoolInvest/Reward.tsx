@@ -79,12 +79,15 @@ const Reward: React.FC<IProps> = () => {
               <Text weight={500}>
                 {vm.totalClaimedReward != null ? (
                   vm.claimedRewardList?.length > 0 ? (
-                    vm.claimedRewardList?.map((item: any) => (
-                      <Text textAlign="left" type="secondary" size="small">
-                        {new BN(item["amount"] / 10 ** TOKENS_BY_ASSET_ID[item["assetId"]].decimals).toFormat(2)}{" "}
-                        {TOKENS_BY_ASSET_ID[item["assetId"]].symbol}
-                      </Text>
-                    ))
+                    vm.claimedRewardList?.map((item: any) => {
+                      const token = TOKENS_BY_ASSET_ID[item["assetId"]];
+                      const amount = new BN(item["amount"] / 10 ** token.decimals);
+                      return (
+                        <Text key={item["assetId"]} textAlign="left" type="secondary" size="small">
+                          {amount.toFormat(token.decimals)} {token.symbol}
+                        </Text>
+                      );
+                    })
                   ) : (
                     <div>$0.00</div>
                   )

@@ -43,6 +43,9 @@ export class SwapVM {
   openedChart = false;
   setOpenedChart = (v: boolean) => (this.openedChart = v);
 
+  chartType: "standard" | "tradingview" = "standard";
+  setChartType = (v: "standard" | "tradingview") => (this.chartType = v);
+
   openedSettings = false;
   setOpenedSettings = (v: boolean) => (this.openedSettings = v);
 
@@ -61,6 +64,12 @@ export class SwapVM {
 
   parameters: string | null = null;
   private _setParameters = (parameters: string | null) => (this.parameters = parameters);
+
+  aggregatorResponse: any = null;
+  private _setAggregatorResponse = (response: any) => (this.aggregatorResponse = response);
+
+  lastErrorAggregatorResponse: any = null;
+  private _setLastErrorAggregatorResponse = (response: any) => (this.lastErrorAggregatorResponse = response);
 
   synchronizing: boolean = false;
   private _setSynchronizing = (synchronizing: boolean) => (this.synchronizing = synchronizing);
@@ -130,6 +139,7 @@ export class SwapVM {
     });
     promise
       .then((v: any) => {
+        this._setAggregatorResponse(v);
         !invalidAmount && this._setAmount1(new BN(v.estimatedOut * 0.9971));
         this._calculatePrice(invalidAmount ? defaultAmount0 : amount0, new BN(v.estimatedOut));
         this._setSynchronizing(false);
@@ -139,7 +149,8 @@ export class SwapVM {
         this._setRoute(v.routes);
         this._setAggregatedProfit(new BN(v.aggregatedProfit));
       })
-      .catch(() => {
+      .catch((error) => {
+        this._setAggregatorResponse({ error: error.message || 'Unknown error' });
         this._setAmount1(BN.ZERO);
         this._setPriceImpact(BN.ZERO);
         this._setRoute([]);
@@ -198,12 +209,13 @@ export class SwapVM {
 
   swap = async () => {
     const { accountStore, notificationStore } = this.rootStore;
-    const { token0, amount0, minimumToReceive, parameters } = this;
+    const { token0, token1, amount0, minimumToReceive, parameters } = this;
     if (this.synchronizing || parameters == null) return;
     if (token0 == null || amount0.eq(0)) return;
     if (minimumToReceive == null) return;
     await this._syncAmount1();
     this._setLoading(true);
+    const currentAggregatorResponse = this.aggregatorResponse;
     await accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.aggregator,
@@ -224,19 +236,60 @@ export class SwapVM {
           ]
         }
       })
-      .then((txId) => {
-        txId &&
-          notificationStore.notify("You can view the details of it in explorer", {
-            type: "success",
-            title: "Transaction is completed",
-            link: `${EXPLORER_URL}/transactions/${txId}`,
-            linkTitle: "View on Explorer"
-          });
+      .then(async (txId) => {
+        if (txId) {
+          try {
+            const txResponse = await fetch(`https://nodes.wx.network/transactions/info/${txId}`);
+            const tx = await txResponse.json();
+            
+            const paymentAssetId = tx.payment[0].assetId ?? "WAVES";
+            const decimals_in = token0.decimals;
+            const decimals_out = token1.decimals;
+
+            const out = (
+              tx.payment[0].amount -
+              (
+                tx.stateChanges.transfers.find(
+                  (t: any) => t.address === tx.sender && t.asset === paymentAssetId
+                )?.amount || 0
+              )
+            ) / (10 ** decimals_in);
+
+            const inn = (
+              tx.stateChanges.transfers.find(
+                (t: any) => t.address === tx.sender && t.asset !== paymentAssetId
+              )?.amount || 0
+            ) / (10 ** decimals_out);
+
+            notificationStore.notify(
+              `You swapped ${out.toFixed(6)} ${token0.symbol} ➔ ${inn.toFixed(6)} ${token1.symbol}`,
+              {
+                type: "success",
+                title: "Swap completed successfully!",
+                link: `${EXPLORER_URL}/transactions/${txId}`,
+                linkTitle: "View on Explorer"
+              }
+            );
+          } catch (error) {
+            notificationStore.notify("You can view the details of it in explorer", {
+              type: "success",
+              title: "Transaction is completed",
+              link: `${EXPLORER_URL}/transactions/${txId}`,
+              linkTitle: "View on Explorer"
+            });
+          }
+        }
       })
       .catch((e) => {
+        this._setLastErrorAggregatorResponse(currentAggregatorResponse);
         notificationStore.notify(e.message ?? JSON.stringify(e), {
           type: "warning",
-          title: "Transaction is not completed"
+          title: "Transaction is not completed",
+          copyData: {
+            parameters: currentAggregatorResponse?.parameters,
+            error: currentAggregatorResponse?.error
+          },
+          copyText: "Copy aggregator data"
         });
       })
       .then(() => this._setLoading(false))

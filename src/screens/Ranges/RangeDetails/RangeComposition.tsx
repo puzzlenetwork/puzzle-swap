@@ -47,8 +47,10 @@ const RangeComposition: React.FC<IProps> = (props) => {
   const [filteredTokens, setFilteredTokens] = useState<any[]>([]);
   const [balanceSort, setValueSort] = useState(true);
   const [showSellOff, setShowSellOff] = useState(props.isMobile ?? false);
-  const [relativeTokenAssetId, setRelativeTokenAssetId] = useState<string>(vm.range?.baseTokenId ?? "");
+  const [relativeTokenAssetId, setRelativeTokenAssetId] = useState<string>("");
   const [rateToRelativeToken, setRateToRelativeToken] = useState(new BN(1));
+
+  console.log('[RangeComposition] Render:', { relativeTokenAssetId, baseTokenId: vm.range?.baseTokenId });
 
   const hideShowSellOff = vm.range?.assets.every((a) => !a.maxSellAllowed || a.maxSellAllowed.isNaN());
 
@@ -61,6 +63,18 @@ const RangeComposition: React.FC<IProps> = (props) => {
         : vm.range?.assets.find((a) => a.assetId === relativeAssetId)?.currentPrice;
     if (!!baseTokenPrice && !!relativePrice) setRateToRelativeToken(baseTokenPrice.div(relativePrice));
   };
+
+  React.useEffect(() => {
+    console.log('[RangeComposition] useEffect:', {
+      baseTokenId: vm.range?.baseTokenId,
+      relativeTokenAssetId,
+      shouldSet: vm.range?.baseTokenId && !relativeTokenAssetId
+    });
+    if (vm.range?.baseTokenId && !relativeTokenAssetId) {
+      console.log('[RangeComposition] Setting base token:', vm.range.baseTokenId);
+      handleChangeRelativeToken(vm.range.baseTokenId);
+    }
+  }, [vm.range?.baseTokenId]);
 
   const columns = React.useMemo(
     () => [
