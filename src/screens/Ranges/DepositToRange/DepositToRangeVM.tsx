@@ -61,11 +61,7 @@ class DepositToRangeVM {
     this.rangeAddress = rangeAddress;
     makeAutoObservable(this);
 
-    rangesService.getRangeByAddress(rangeAddress, { charts: true }).then((rangeData) => {
-      const range = new Range(rangeData);
-      this.rootStore.rangesStore.updateRange(range);
-      const _ = this.range; // trigger reactivity
-    });
+    this.loadRange(rangeAddress);
 
     when(
       () => this.range != null,
@@ -75,6 +71,49 @@ class DepositToRangeVM {
       }
     );
   }
+
+  private loadRange = async (rangeAddressOrDomain: string) => {
+    const existingRange = this.rootStore.rangesStore.getRangeByAddress(rangeAddressOrDomain) || 
+                         this.rootStore.rangesStore.getRangeByDomain(rangeAddressOrDomain);
+    
+    if (existingRange) {
+      this.rangeAddress = existingRange.address;
+      return;
+    }
+
+    try {
+      const rangeData = await rangesService.getRangeByAddress(rangeAddressOrDomain, { charts: true });
+      const range = new Range(rangeData);
+      this.rootStore.rangesStore.updateRange(range);
+      this.rangeAddress = range.address;
+      const _ = this.range;
+    } catch (error) {
+      console.error('Failed to load range by address, trying to load all ranges:', error);
+      
+      try {
+        const response = await rangesService.getRanges({
+          page: 1,
+          size: 200,
+          minLiquidity: 0
+        });
+        
+        response.ranges.forEach((rangeData) => {
+          const r = new Range(rangeData);
+          this.rootStore.rangesStore.updateInAllRanges(r);
+        });
+        
+        const foundRange = this.rootStore.rangesStore.getRangeByDomain(rangeAddressOrDomain);
+        if (foundRange) {
+          this.rangeAddress = foundRange.address;
+          const rangeData = await rangesService.getRangeByAddress(foundRange.address, { charts: true });
+          const range = new Range(rangeData);
+          this.rootStore.rangesStore.updateRange(range);
+        }
+      } catch (error) {
+        console.error('Failed to load ranges:', error);
+      }
+    }
+  };
 
   public get balances(): Balance[] {
     const { accountStore } = this.rootStore;
