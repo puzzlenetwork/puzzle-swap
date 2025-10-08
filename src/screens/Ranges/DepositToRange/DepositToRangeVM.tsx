@@ -92,7 +92,6 @@ class DepositToRangeVM {
       this.setRangeAddress(range.address);
       const _ = this.range;
     } catch (error) {
-      console.error('Failed to load range by address, trying to load all ranges:', error);
       
       try {
         const response = await rangesService.getRanges({
@@ -114,7 +113,6 @@ class DepositToRangeVM {
           this.rootStore.rangesStore.updateRange(range);
         }
       } catch (error) {
-        console.error('Failed to load ranges:', error);
       }
     }
   };
@@ -335,7 +333,6 @@ class DepositToRangeVM {
           );
       })
       .catch((e) => {
-        console.error(e);
         this.setNotificationParams(
           buildErrorDialogParams({
             title: "Transaction is not completed",
