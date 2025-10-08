@@ -61,11 +61,7 @@ class DepositToRangeVM {
     this.rangeAddress = rangeAddress;
     makeAutoObservable(this);
 
-    rangesService.getRangeByAddress(rangeAddress, { charts: true }).then((rangeData) => {
-      const range = new Range(rangeData);
-      this.rootStore.rangesStore.updateRange(range);
-      const _ = this.range; // trigger reactivity
-    });
+    this.loadRange(rangeAddress);
 
     when(
       () => this.range != null,
@@ -75,6 +71,51 @@ class DepositToRangeVM {
       }
     );
   }
+
+  private setRangeAddress = (address: string) => {
+    this.rangeAddress = address;
+  };
+
+  private loadRange = async (rangeAddressOrDomain: string) => {
+    const existingRange = this.rootStore.rangesStore.getRangeByAddress(rangeAddressOrDomain) || 
+                         this.rootStore.rangesStore.getRangeByDomain(rangeAddressOrDomain);
+    
+    if (existingRange) {
+      this.setRangeAddress(existingRange.address);
+      return;
+    }
+
+    try {
+      const rangeData = await rangesService.getRangeByAddress(rangeAddressOrDomain, { charts: true });
+      const range = new Range(rangeData);
+      this.rootStore.rangesStore.updateRange(range);
+      this.setRangeAddress(range.address);
+      const _ = this.range;
+    } catch (error) {
+      
+      try {
+        const response = await rangesService.getRanges({
+          page: 1,
+          size: 200,
+          minLiquidity: 0
+        });
+        
+        response.ranges.forEach((rangeData) => {
+          const r = new Range(rangeData);
+          this.rootStore.rangesStore.updateInAllRanges(r);
+        });
+        
+        const foundRange = this.rootStore.rangesStore.getRangeByDomain(rangeAddressOrDomain);
+        if (foundRange) {
+          this.setRangeAddress(foundRange.address);
+          const rangeData = await rangesService.getRangeByAddress(foundRange.address, { charts: true });
+          const range = new Range(rangeData);
+          this.rootStore.rangesStore.updateRange(range);
+        }
+      } catch (error) {
+      }
+    }
+  };
 
   public get balances(): Balance[] {
     const { accountStore } = this.rootStore;
@@ -133,7 +174,7 @@ class DepositToRangeVM {
         payment: [
           {
             assetId: this.selectedTokenToDeposit!.assetId,
-            amount: this.singleTokenAmount.toString()
+            amount: this.singleTokenAmount.toFixed(0)
           }
         ],
         call: {
@@ -265,16 +306,12 @@ class DepositToRangeVM {
     if (this.tokensToDepositAmounts == null || !this.canDepositMultipleTokens) return;
     this._setLoading(true);
     this.setNotificationParams(null);
-    const payment = Object.entries(this.tokensToDepositAmounts).reduce(
-      (acc, [assetId, value]) => [
-        ...acc,
-        {
-          assetId: assetId === "WAVES" ? null : assetId,
-          amount: BN.parseUnits(value, TOKENS_BY_ASSET_ID[assetId].decimals).toSignificant(0).toString()
-        }
-      ],
-      [] as Array<{ assetId: string | null; amount: string }>
-    );
+    const payment = Object.entries(this.tokensToDepositAmounts)
+      .map(([assetId, value]) => ({
+        assetId: assetId === "WAVES" ? null : assetId,
+        amount: BN.parseUnits(value, TOKENS_BY_ASSET_ID[assetId].decimals).toFixed(0)
+      }))
+      .filter(p => p.amount !== "0");
 
     accountStore
       .invoke({
@@ -296,7 +333,6 @@ class DepositToRangeVM {
           );
       })
       .catch((e) => {
-        console.error(e);
         this.setNotificationParams(
           buildErrorDialogParams({
             title: "Transaction is not completed",

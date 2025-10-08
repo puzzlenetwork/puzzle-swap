@@ -6,6 +6,7 @@ import BN from "@src/utils/BN";
 import { EXPLORER_URL, IToken, TOKENS_BY_ASSET_ID } from "@src/constants";
 import { LPData, RangeAsset } from "@src/entities/Range";
 import rangesService from "@src/services/rangesService";
+import { Range } from "@src/entities/Range";
 
 interface IProps {
   children: React.ReactNode;
@@ -55,6 +56,8 @@ class WithdrawFromRangeVM {
     this.rootStore = rootStore;
     makeAutoObservable(this);
 
+    this.loadRange(rangeAddress);
+
     when(
       () => this.rootStore.accountStore.address != null && this.range != null,
       () => {
@@ -64,6 +67,51 @@ class WithdrawFromRangeVM {
       }
     );
   }
+
+  private setRangeAddress = (address: string) => {
+    this.rangeAddress = address;
+  };
+
+  private loadRange = async (rangeAddressOrDomain: string) => {
+    const existingRange = this.rootStore.rangesStore.getRangeByAddress(rangeAddressOrDomain) || 
+                         this.rootStore.rangesStore.getRangeByDomain(rangeAddressOrDomain);
+    
+    if (existingRange) {
+      this.setRangeAddress(existingRange.address);
+      return;
+    }
+
+    try {
+      const rangeData = await rangesService.getRangeByAddress(rangeAddressOrDomain, { charts: true });
+      const range = new Range(rangeData);
+      this.rootStore.rangesStore.updateRange(range);
+      this.setRangeAddress(range.address);
+      const _ = this.range;
+    } catch (error) {
+      
+      try {
+        const response = await rangesService.getRanges({
+          page: 1,
+          size: 200,
+          minLiquidity: 0
+        });
+        
+        response.ranges.forEach((rangeData) => {
+          const r = new Range(rangeData);
+          this.rootStore.rangesStore.updateInAllRanges(r);
+        });
+        
+        const foundRange = this.rootStore.rangesStore.getRangeByDomain(rangeAddressOrDomain);
+        if (foundRange) {
+          this.setRangeAddress(foundRange.address);
+          const rangeData = await rangesService.getRangeByAddress(foundRange.address, { charts: true });
+          const range = new Range(rangeData);
+          this.rootStore.rangesStore.updateRange(range);
+        }
+      } catch (error) {
+      }
+    }
+  };
 
   updateUserIndexStaked = async () => {
     if (this.rootStore.accountStore.address == null) return;
