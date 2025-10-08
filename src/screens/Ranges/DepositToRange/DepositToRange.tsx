@@ -34,7 +34,6 @@ const Root = styled.div`
 
 const DepositToRangeImpl = observer(() => {
   const vm = useDepositToRangeVM();
-  const navigate = useNavigate();
   const range = vm.range;
 
   if (range == null) {
@@ -43,8 +42,6 @@ const DepositToRangeImpl = observer(() => {
 
   const depositRoute = `/ranges/${range.address}/deposit`;
   const depositOneTokenRoute = `/ranges/${range.address}/depositonetoken`;
-  const activeTab = window.location.pathname.includes(depositOneTokenRoute) ? 1 : 0;
-
   const pathname = window.location.pathname;
   const isDepositSingle = pathname.includes(depositOneTokenRoute);
   const isDepositMultiple = pathname.includes(depositRoute) && !isDepositSingle;

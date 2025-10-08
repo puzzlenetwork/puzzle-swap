@@ -52,6 +52,9 @@ export class SwapVM {
     localStorage.setItem("swap-chart-type", v);
   };
 
+  chartType: "standard" | "tradingview" = "standard";
+  setChartType = (v: "standard" | "tradingview") => (this.chartType = v);
+
   openedSettings = false;
   setOpenedSettings = (v: boolean) => (this.openedSettings = v);
 
