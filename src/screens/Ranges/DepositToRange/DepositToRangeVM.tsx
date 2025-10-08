@@ -72,12 +72,16 @@ class DepositToRangeVM {
     );
   }
 
+  private setRangeAddress = (address: string) => {
+    this.rangeAddress = address;
+  };
+
   private loadRange = async (rangeAddressOrDomain: string) => {
     const existingRange = this.rootStore.rangesStore.getRangeByAddress(rangeAddressOrDomain) || 
                          this.rootStore.rangesStore.getRangeByDomain(rangeAddressOrDomain);
     
     if (existingRange) {
-      this.rangeAddress = existingRange.address;
+      this.setRangeAddress(existingRange.address);
       return;
     }
 
@@ -85,7 +89,7 @@ class DepositToRangeVM {
       const rangeData = await rangesService.getRangeByAddress(rangeAddressOrDomain, { charts: true });
       const range = new Range(rangeData);
       this.rootStore.rangesStore.updateRange(range);
-      this.rangeAddress = range.address;
+      this.setRangeAddress(range.address);
       const _ = this.range;
     } catch (error) {
       console.error('Failed to load range by address, trying to load all ranges:', error);
@@ -104,7 +108,7 @@ class DepositToRangeVM {
         
         const foundRange = this.rootStore.rangesStore.getRangeByDomain(rangeAddressOrDomain);
         if (foundRange) {
-          this.rangeAddress = foundRange.address;
+          this.setRangeAddress(foundRange.address);
           const rangeData = await rangesService.getRangeByAddress(foundRange.address, { charts: true });
           const range = new Range(rangeData);
           this.rootStore.rangesStore.updateRange(range);
@@ -172,7 +176,7 @@ class DepositToRangeVM {
         payment: [
           {
             assetId: this.selectedTokenToDeposit!.assetId,
-            amount: this.singleTokenAmount.toString()
+            amount: this.singleTokenAmount.toFixed(0)
           }
         ],
         call: {
@@ -304,16 +308,12 @@ class DepositToRangeVM {
     if (this.tokensToDepositAmounts == null || !this.canDepositMultipleTokens) return;
     this._setLoading(true);
     this.setNotificationParams(null);
-    const payment = Object.entries(this.tokensToDepositAmounts).reduce(
-      (acc, [assetId, value]) => [
-        ...acc,
-        {
-          assetId: assetId === "WAVES" ? null : assetId,
-          amount: BN.parseUnits(value, TOKENS_BY_ASSET_ID[assetId].decimals).toSignificant(0).toString()
-        }
-      ],
-      [] as Array<{ assetId: string | null; amount: string }>
-    );
+    const payment = Object.entries(this.tokensToDepositAmounts)
+      .map(([assetId, value]) => ({
+        assetId: assetId === "WAVES" ? null : assetId,
+        amount: BN.parseUnits(value, TOKENS_BY_ASSET_ID[assetId].decimals).toFixed(0)
+      }))
+      .filter(p => p.amount !== "0");
 
     accountStore
       .invoke({

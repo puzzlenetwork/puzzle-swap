@@ -40,11 +40,17 @@ export class SwapVM {
   public activeAction: number = 0;
   setActiveAction = (v: number) => (this.activeAction = v);
 
-  openedChart = false;
-  setOpenedChart = (v: boolean) => (this.openedChart = v);
+  openedChart = localStorage.getItem("swap-chart-opened") === "true";
+  setOpenedChart = (v: boolean) => {
+    this.openedChart = v;
+    localStorage.setItem("swap-chart-opened", String(v));
+  };
 
-  chartType: "standard" | "tradingview" = "standard";
-  setChartType = (v: "standard" | "tradingview") => (this.chartType = v);
+  chartType: "standard" | "tradingview" = (localStorage.getItem("swap-chart-type") as "standard" | "tradingview") || "standard";
+  setChartType = (v: "standard" | "tradingview") => {
+    this.chartType = v;
+    localStorage.setItem("swap-chart-type", v);
+  };
 
   openedSettings = false;
   setOpenedSettings = (v: boolean) => (this.openedSettings = v);
