@@ -307,11 +307,14 @@ class DepositToRangeVM {
     this._setLoading(true);
     this.setNotificationParams(null);
     const payment = Object.entries(this.tokensToDepositAmounts)
-      .map(([assetId, value]) => ({
-        assetId: assetId === "WAVES" ? null : assetId,
-        amount: BN.parseUnits(value, TOKENS_BY_ASSET_ID[assetId].decimals).toFixed(0)
-      }))
-      .filter(p => p.amount !== "0");
+      .map(([assetId, value]) => {
+        const amount = BN.parseUnits(value, TOKENS_BY_ASSET_ID[assetId].decimals).toFixed(0);
+        const amountBN = new BN(amount);
+        return {
+          assetId: assetId === "WAVES" ? null : assetId,
+          amount: amountBN.isZero() ? "1" : amount
+        };
+      })
 
     accountStore
       .invoke({
@@ -333,6 +336,7 @@ class DepositToRangeVM {
           );
       })
       .catch((e) => {
+        console.log("e", e)
         this.setNotificationParams(
           buildErrorDialogParams({
             title: "Transaction is not completed",
