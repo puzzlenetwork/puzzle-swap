@@ -8,6 +8,7 @@ export const ROUTES = {
   ROOT: "/",
   NOT_FOUND: "/404",
   STAKE: "/stake",
+  STAKING_NEW: "/staking_new",
   TRADE: "/trade",
   LIMIT_ORDER: "/limitOrder",
   OLD_EXPLORE: "/classic-explore",

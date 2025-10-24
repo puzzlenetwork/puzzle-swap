@@ -20,12 +20,36 @@ export interface IStakingStatsResponse {
 
 export interface IPuzzleTokenStatsResponse {
   general_info: {
+    name: string;
+    symbol: string;
+    decimals: number;
+    circulation: number;
+    price: number;
     apr_7d: number;
     apr_30d: number;
     apr_365d: number;
     apr_average: number;
+    puzzle_aprs: {
+      apr_all: number;
+      apr_1y: number;
+      apr_90d: number;
+      apr_30d: number;
+      apr_7d: number;
+      apr_1d: number;
+    };
+    asset_id: string;
+    website: string;
+    whitepaper: string;
+    twitter: string;
+    telegram: string;
+    medium: string;
+    github: string;
   };
   charts: any;
+}
+
+export interface IPuzzleTokenChartsResponse {
+  avg_fees_apr: number;
 }
 
 interface ICreatePoolData {
@@ -136,6 +160,10 @@ const poolService = {
   },
   getPuzzleTokenStats: async (): Promise<IPuzzleTokenStatsResponse> => {
     const { data } = await axios.get(`${getBackendApiUrl()}/stats/v1/statistics/puzzletoken`);
+    return data;
+  },
+  getPuzzleTokenCharts: async (timeRange: string): Promise<IPuzzleTokenChartsResponse> => {
+    const { data } = await axios.get(`${getBackendApiUrl()}/stats/v1/statistics/puzzletoken/charts?timeRange=${timeRange}`);
     return data;
   },
   getPoolsStateByUserAddress: async (address?: string | null): Promise<TPoolState[]> => {
