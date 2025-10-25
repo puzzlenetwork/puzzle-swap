@@ -53,7 +53,7 @@ const RightColumn = styled(Column)`
 
 const DesktopBanner = styled.div`
   display: none;
-  
+  width: 100%;
   @media (min-width: 880px) {
     display: block;
   }

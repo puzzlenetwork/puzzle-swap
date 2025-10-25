@@ -63,13 +63,23 @@ const AmbassadorSelector = styled.div`
   gap: 12px;
 `;
 
-const AmbassadorLabel = styled(Text)`
+const AmbassadorSelectorLabel = styled(Text)`
   margin-bottom: 4px;
 `;
 
 const AmbassadorCircles = styled(Row)`
-  gap: 8px;
+  gap: 16px;
+  align-items: flex-start;
+`;
+
+const AmbassadorWrapper = styled(Column)`
   align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  
+  &:hover > div {
+    opacity: 0.8;
+  }
 `;
 
 const AmbassadorCircle = styled.div<{ selected?: boolean; imageUrl?: string }>`
@@ -82,13 +92,14 @@ const AmbassadorCircle = styled.div<{ selected?: boolean; imageUrl?: string }>`
       : selected ? theme.colors.blue500 : theme.colors.primary300
   };
   border: ${({ selected, theme }) => (selected ? `2px solid ${theme.colors.blue500}` : '2px solid transparent')};
-  cursor: pointer;
   transition: 0.3s;
-  position: relative;
-  
-  :hover {
-    opacity: 0.8;
-  }
+`;
+
+const AmbassadorLabel = styled(Text)`
+  font-size: 10px;
+  max-width: 50px;
+  text-align: center;
+  word-break: break-word;
 `;
 
 const NoneOption = styled.div<{ selected?: boolean }>`
@@ -244,7 +255,7 @@ const MintRedeem: React.FC = observer(() => {
       }
       try {
         const balances = await nodeService.getAddressBalances(accountStore.address);
-        
+
         const stPuzzleAsset = balances.find(b => b.assetId === STPUZZLE_ASSET_ID);
         if (stPuzzleAsset) {
           const balance = new BN(stPuzzleAsset.balance).div(1e8);
@@ -252,7 +263,7 @@ const MintRedeem: React.FC = observer(() => {
         } else {
           setStPuzzleBalance(BN.ZERO);
         }
-        
+
         const puzzleAsset = balances.find(b => b.assetId === "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS");
         if (puzzleAsset) {
           const balance = new BN(puzzleAsset.balance).div(1e8);
@@ -345,19 +356,19 @@ const MintRedeem: React.FC = observer(() => {
           type: "success"
         });
         setInputAmount("");
-        
+
         setTimeout(async () => {
           if (!accountStore.address) return;
           try {
             const balances = await nodeService.getAddressBalances(accountStore.address);
-            
+
             const stPuzzleAsset = balances.find(b => b.assetId === STPUZZLE_ASSET_ID);
             if (stPuzzleAsset) {
               setStPuzzleBalance(new BN(stPuzzleAsset.balance).div(1e8));
             } else {
               setStPuzzleBalance(BN.ZERO);
             }
-            
+
             const puzzleAsset = balances.find(b => b.assetId === "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS");
             if (puzzleAsset) {
               setPuzzleBalance(new BN(puzzleAsset.balance).div(1e8));
@@ -435,27 +446,31 @@ const MintRedeem: React.FC = observer(() => {
 
           {activeTab === 0 && (
             <AmbassadorSelector>
-              <AmbassadorLabel type="secondary" size="small">
+              <AmbassadorSelectorLabel type="secondary" size="small">
                 Choose your ambassador
-              </AmbassadorLabel>
+              </AmbassadorSelectorLabel>
               <AmbassadorCircles>
-                <NoneOption
-                  selected={selectedAmbassador === ""}
-                  onClick={() => setSelectedAmbassador("")}
-                  title="None"
-                >
-                  <Text size="small" textAlign="center" type={selectedAmbassador === "" ? "light" : "secondary"}>
-                    None
-                  </Text>
-                </NoneOption>
+                <AmbassadorWrapper onClick={() => setSelectedAmbassador("")}>
+                  <NoneOption
+                    selected={selectedAmbassador === ""}
+                    title="None"
+                  >
+                    <Text size="small" textAlign="center" type={selectedAmbassador === "" ? "light" : "secondary"}>
+                      None
+                    </Text>
+                  </NoneOption>
+                </AmbassadorWrapper>
                 {ambassadors.map((ambassador) => (
-                  <AmbassadorCircle
+                  <AmbassadorWrapper
                     key={ambassador.domain}
-                    selected={selectedAmbassador === ambassador.domain}
-                    imageUrl={ambassador.imageUrl}
                     onClick={() => setSelectedAmbassador(ambassador.domain)}
-                    title={ambassador.name}
-                  />
+                  >
+                    <AmbassadorCircle
+                      selected={selectedAmbassador === ambassador.domain}
+                      imageUrl={ambassador.imageUrl}
+                    />
+                    <AmbassadorLabel type="secondary">{ambassador.domain}</AmbassadorLabel>
+                  </AmbassadorWrapper>
                 ))}
               </AmbassadorCircles>
             </AmbassadorSelector>
