@@ -205,6 +205,15 @@ class CreateRangeVm {
     )
 
     reaction(
+      () => this.rootStore.tokenStore.initializedFromBackend,
+      (initialized) => {
+        if (initialized && this.baseTokenPrice?.eq(1)) {
+          this.syncCurrentPrices();
+        }
+      }
+    )
+
+    reaction(
       () => ({
         assets: this.rangeAssets.map((t) => ({
           assetId: t.asset?.assetId,
@@ -265,10 +274,10 @@ class CreateRangeVm {
     this.domain = initData?.title ?? generate({ minLength: 2, maxLength: 6, exactly: 2, join: "-" });
     this.step = initData?.step ?? 0;
     this.maxStep = initData?.maxStep ?? 0;
-    
+
     // Sync wallet balances after initialization
     this.syncInWallet();
-    
+
     this.saveSettings();
   };
 
@@ -293,7 +302,7 @@ class CreateRangeVm {
   }
 
   get titleCorrect() {
-  return this.hasTitle && this.domain.length < 14 && !/[^A-Za-z0-9_-\s\/]/.test(this.domain);
+    return this.hasTitle && this.domain.length < 14 && !/[^A-Za-z0-9_-\s\/]/.test(this.domain);
   }
 
   get correct0() {
@@ -976,7 +985,7 @@ class CreateRangeVm {
   private async waitForTxThrottled(txId: string, options: any, intervalMs = 10000): Promise<any> {
     let attempts = 0;
     const maxAttempts = 60;
-    
+
     while (attempts < maxAttempts) {
       try {
         const result = await waitForTx(txId, { ...options, timeout: 5000 });
@@ -994,7 +1003,7 @@ class CreateRangeVm {
   async getTokenPrice(assetId: string, tries = 0): Promise<BN | undefined> {
     const now = Date.now();
     const cached = this.priceCache.get(assetId);
-    
+
     if (cached && (now - cached.timestamp) < this.CACHE_DURATION) {
       return cached.price;
     }
