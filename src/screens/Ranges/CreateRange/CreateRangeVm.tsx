@@ -65,6 +65,7 @@ class CreateRangeVm {
   private priceCache = new Map<string, { price: BN; timestamp: number }>();
   private readonly CACHE_DURATION = 30000;
   private _setLoading = (l: boolean) => (this.loading = l);
+  private hasInitialPriceSync = false;
 
   public notificationParams: IDialogNotificationProps | null = null;
   public setNotificationParams = (params: IDialogNotificationProps | null) => (this.notificationParams = params);
@@ -207,8 +208,12 @@ class CreateRangeVm {
     reaction(
       () => this.rootStore.tokenStore.initializedFromBackend,
       (initialized) => {
-        if (initialized && this.baseTokenPrice?.eq(1)) {
-          this.syncCurrentPrices();
+        if (initialized && !this.hasInitialPriceSync && this.baseTokenPrice?.eq(1) && this.rangeAssets.length > 0) {
+          const hasRealPrice = this.rootStore.tokenStore.statisticsFromBackendByAssetId[this.rangeAssets[0].asset.assetId]?.price;
+          if (hasRealPrice && !hasRealPrice.eq(1)) {
+            this.hasInitialPriceSync = true;
+            this.syncCurrentPrices();
+          }
         }
       }
     )
