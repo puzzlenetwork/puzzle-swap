@@ -208,11 +208,14 @@ class CreateRangeVm {
     reaction(
       () => this.rootStore.tokenStore.initializedFromBackend,
       (initialized) => {
-        if (initialized && !this.hasInitialPriceSync && this.baseTokenPrice?.eq(1) && this.rangeAssets.length > 0) {
-          const hasRealPrice = this.rootStore.tokenStore.statisticsFromBackendByAssetId[this.rangeAssets[0].asset.assetId]?.price;
-          if (hasRealPrice && !hasRealPrice.eq(1)) {
-            this.hasInitialPriceSync = true;
-            this.syncCurrentPrices();
+        if (initialized && !this.hasInitialPriceSync && this.rangeAssets.length > 0) {
+          const needsSync = this.baseTokenPrice === null || this.baseTokenPrice?.eq(1);
+          if (needsSync) {
+            const hasRealPrice = this.rootStore.tokenStore.statisticsFromBackendByAssetId[this.rangeAssets[0].asset.assetId]?.price;
+            if (hasRealPrice && !hasRealPrice.eq(1)) {
+              this.hasInitialPriceSync = true;
+              this.syncCurrentPrices();
+            }
           }
         }
       }
@@ -265,7 +268,8 @@ class CreateRangeVm {
             inWallet: undefined, // Always reset inWallet, will be synced below
           });
         });
-        this.baseTokenPrice = new BN(initData.assets[0]?.initialPrice || 1);
+        this.baseTokenPrice = null;
+        this.hasInitialPriceSync = false;
       }
     } else {
       this.setDefaultRangeAssets();
