@@ -66,6 +66,7 @@ const App: React.FC = () => {
         <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
         {/* Stake */}
         <Route path={ROUTES.STAKE} element={<Stake />} />
+        <Route path={ROUTES.PZL} element={<StakingNew />} />
         <Route path={ROUTES.STAKING_NEW} element={<StakingNew />} />
         {/* Paper */}
         <Route path="/paper" element={<Paper />} />

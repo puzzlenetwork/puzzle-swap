@@ -5,12 +5,13 @@ import Layout from "@components/Layout";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { Column } from "@components/Flex";
-import { StakingVMProvider } from "@screens/Stake/StakingVM";
 import MyBalances from "./MyBalances";
 import StakingStats from "./StakingStats";
 import MintRedeem from "./MintRedeem";
 import StPuzzleStats from "./StPuzzleStats";
 import ReadyBanner from "./ReadyBanner";
+import { useLocation } from "react-router-dom";
+import { ROUTES } from "@src/constants";
 
 const Root = styled.div`
   display: flex;
@@ -72,21 +73,35 @@ const AdaptiveText = styled(Text)`
   @media (min-width: 880px) {
     max-width: 800px;
   }
+
+  a {
+    color: ${({ theme }) => theme.colors.blue500};
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 `;
 
 const StakingNewImpl: React.FC = () => {
+  const location = useLocation();
+  const isPzlRoute = location.pathname === ROUTES.PZL;
+  
   return (
     <Layout>
       <Observer>
         {() => (
           <Root>
             <Text weight={500} size="large">
-              stPUZZLE
+              {isPzlRoute ? "PZL" : "stPUZZLE"}
             </Text>
             <SizedBox height={8} />
             <AdaptiveText fitContent textAlign="left" type="secondary">
-              Liquid staked PUZZLE. Earns same APY as a usual PUZZLE, but is presented as a token, which can be sent,
-              used in liquidity pools and event bridged to other chains.
+              {isPzlRoute 
+                ? <>PZL is a token with autocompounded yield – a wrapper of staked PUZZLE. Earns the same APY as usual PUZZLE. PZL can be sent, used in liquidity pools and even bridged to other chains via our partner <a href="https://wavesbridge.io" target="_blank" rel="noopener noreferrer">WavesBridge.io</a>.</>
+                : "Liquid staked PUZZLE. Earns same APY as a usual PUZZLE, but is presented as a token, which can be sent, used in liquidity pools and event bridged to other chains."
+              }
             </AdaptiveText>
             <SizedBox height={24} />
             <Body>
@@ -112,10 +127,4 @@ const StakingNewImpl: React.FC = () => {
   );
 };
 
-const StakingNew: React.FC = () => (
-  <StakingVMProvider>
-    <StakingNewImpl />
-  </StakingVMProvider>
-);
-
-export default StakingNew;
+export default StakingNewImpl;

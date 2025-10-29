@@ -17,10 +17,10 @@ const ReadyBanner: React.FC = () => {
         <BannerTitle type="light">Ready to go beyond?</BannerTitle>
         <SizedBox height={16} />
         <Row style={{ gap: "8px", flexWrap: "wrap" }}>
-          <Button kind="secondary" size="medium" onClick={() => window.open("https://wavesbridge.io/bridge?from=WAVE&to=UNIT&asset=UNIT0", "_blank")}>
+          <Button kind="secondary" size="medium" onClick={() => window.open("https://wavesbridge.io", "_blank")}>
             BRIDGE
           </Button>
-          <Button kind="secondary" size="medium" onClick={() => navigate(ROUTES.TRADE)}>
+          <Button kind="secondary" size="medium" onClick={() => navigate("/trade?asset1=3jXnyztUEVPLyAhwcYdAuoLtbZi55QqbHvYzWekfkGNo")}>
             SWAP
           </Button>
           <Button kind="secondary" size="medium" onClick={() => navigate(ROUTES.RANGES)}>

@@ -7,13 +7,14 @@ import { Column, Row } from "@components/Flex";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import stakedPuzzle from "@src/assets/tokens/staked-puzzle.svg";
 import puzzleLogo from "@src/assets/tokens/PUZZLE.svg";
-import { useStakingVM } from "@screens/Stake/StakingVM";
 import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
 import Skeleton from "react-loading-skeleton";
 import { useStores } from "@stores";
 import { useState, useEffect } from "react";
 import nodeService from "@src/services/nodeService";
+import { useLocation } from "react-router-dom";
+import { ROUTES } from "@src/constants";
 
 const Root = styled.div`
   display: flex;
@@ -32,34 +33,47 @@ const Container = styled(Card)`
 
 const STPUZZLE_ASSET_ID = "3jXnyztUEVPLyAhwcYdAuoLtbZi55QqbHvYzWekfkGNo";
 
+const PUZZLE_ASSET_ID = "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS";
+
 const MyBalances: React.FC = () => {
+  const location = useLocation();
+  const isPzlRoute = location.pathname === ROUTES.PZL;
   const { accountStore } = useStores();
-  const vm = useStakingVM();
   const [stPuzzleBalance, setStPuzzleBalance] = useState<BN | null>(null);
-  const available = BN.formatUnits(vm.puzzleBalance.balance ?? BN.ZERO, vm.puzzleToken.decimals);
+  const [puzzleBalance, setPuzzleBalance] = useState<BN | null>(null);
 
   useEffect(() => {
-    const fetchStPuzzleBalance = async () => {
+    const fetchBalances = async () => {
       if (!accountStore.address) {
         setStPuzzleBalance(BN.ZERO);
+        setPuzzleBalance(BN.ZERO);
         return;
       }
       try {
         const balances = await nodeService.getAddressBalances(accountStore.address);
+        
         const stPuzzleAsset = balances.find(b => b.assetId === STPUZZLE_ASSET_ID);
         if (stPuzzleAsset) {
           setStPuzzleBalance(new BN(stPuzzleAsset.balance).div(1e8));
         } else {
           setStPuzzleBalance(BN.ZERO);
         }
+
+        const puzzleAsset = balances.find(b => b.assetId === PUZZLE_ASSET_ID);
+        if (puzzleAsset) {
+          setPuzzleBalance(new BN(puzzleAsset.balance).div(1e8));
+        } else {
+          setPuzzleBalance(BN.ZERO);
+        }
       } catch (error) {
-        console.error("Failed to fetch stPUZZLE balance:", error);
+        console.error("Failed to fetch balances:", error);
         setStPuzzleBalance(BN.ZERO);
+        setPuzzleBalance(BN.ZERO);
       }
     };
-    fetchStPuzzleBalance();
+    fetchBalances();
     
-    const interval = setInterval(fetchStPuzzleBalance, 5000);
+    const interval = setInterval(fetchBalances, 5000);
     return () => clearInterval(interval);
   }, [accountStore.address]);
   return (
@@ -77,10 +91,10 @@ const MyBalances: React.FC = () => {
               PUZZLE
             </Text>
             <Text weight={500}>
-              {vm.puzzleBalance.balance == null && accountStore.address != null ? (
+              {puzzleBalance == null && accountStore.address != null ? (
                 <Skeleton height={16} width={110} />
               ) : (
-                `${available.toFormat(2)}`
+                `${(puzzleBalance ?? BN.ZERO).toFormat(2)}`
               )}
             </Text>
           </Column>
@@ -90,7 +104,7 @@ const MyBalances: React.FC = () => {
           <SizedBox width={8} />
           <Column justifyContent="space-between">
             <Text type="secondary" size="small" style={{ marginBottom: 2 }}>
-              stPUZZLE
+              {isPzlRoute ? "Staked PUZZLE (PZL)" : "stPUZZLE"}
             </Text>
             <Text weight={500}>{stPuzzleBalance != null ? stPuzzleBalance.toFormat(2, BN.ROUND_DOWN) : <Skeleton height={16} width={110} />}</Text>
           </Column>

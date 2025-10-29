@@ -4,6 +4,8 @@ import Text from "@components/Text";
 import Card from "@components/Card";
 import SizedBox from "@components/SizedBox";
 import { Column } from "@components/Flex";
+import { useLocation } from "react-router-dom";
+import { ROUTES } from "@src/constants";
 
 const Root = styled.div`
   display: flex;
@@ -41,6 +43,8 @@ const BRIDGE_ADDRESS = "3P6Rk2XBo6MJm9seLfxvJ1VSGz54yWiYb9U";
 const NODE_URL = "https://nodes.wavesnodes.com";
 
 const StPuzzleStats: React.FC = () => {
+  const location = useLocation();
+  const isPzlRoute = location.pathname === ROUTES.PZL;
   const [circulating, setCirculating] = useState<number | null>(null);
   const [bridged, setBridged] = useState<number | null>(null);
 
@@ -78,7 +82,7 @@ const StPuzzleStats: React.FC = () => {
   return (
     <Root>
       <Text weight={500} type="secondary">
-        stPUZZLE stats
+        {isPzlRoute ? "PZL" : "stPUZZLE"} stats
       </Text>
       <SizedBox height={8} />
       <Container>

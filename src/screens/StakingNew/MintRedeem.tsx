@@ -11,6 +11,8 @@ import nodeService from "@src/services/nodeService";
 import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";
+import { useLocation } from "react-router-dom";
+import { ROUTES } from "@src/constants";
 
 const Root = styled.div`
   display: flex;
@@ -175,6 +177,8 @@ interface AmbassadorData {
 }
 
 const MintRedeem: React.FC = observer(() => {
+  const location = useLocation();
+  const isPzlRoute = location.pathname === ROUTES.PZL;
   const { accountStore, notificationStore } = useStores();
   const [activeTab, setActiveTab] = useState(0);
   const [selectedAmbassador, setSelectedAmbassador] = useState("");
@@ -184,6 +188,38 @@ const MintRedeem: React.FC = observer(() => {
   const [loading, setLoading] = useState(false);
   const [puzzleBalance, setPuzzleBalance] = useState<BN>(BN.ZERO);
   const [stPuzzleBalance, setStPuzzleBalance] = useState<BN>(BN.ZERO);
+
+  useEffect(() => {
+    if (ambassadors.length === 0) return;
+
+    const params = new URLSearchParams(location.search);
+    const ambassadorParam = params.get("a");
+    
+    if (ambassadorParam) {
+      const ambassadorExists = ambassadors.some(a => a.domain === ambassadorParam);
+      if (ambassadorExists) {
+        setSelectedAmbassador(ambassadorParam);
+        localStorage.setItem("selectedAmbassador", ambassadorParam);
+      } else {
+        setSelectedAmbassador("");
+        localStorage.setItem("selectedAmbassador", "");
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.delete("a");
+        window.history.replaceState({}, "", newUrl.toString());
+      }
+    } else {
+      const savedAmbassador = localStorage.getItem("selectedAmbassador");
+      if (savedAmbassador) {
+        const ambassadorExists = ambassadors.some(a => a.domain === savedAmbassador);
+        if (ambassadorExists) {
+          setSelectedAmbassador(savedAmbassador);
+        } else {
+          setSelectedAmbassador("");
+          localStorage.setItem("selectedAmbassador", "");
+        }
+      }
+    }
+  }, [location.search, ambassadors]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -292,7 +328,8 @@ const MintRedeem: React.FC = observer(() => {
     if (input.isNaN() || input.lte(0)) return "";
 
     if (activeTab === 0) {
-      return input.div(lpPrice).toFixed(8);
+      const afterFee = input.times(0.999);
+      return afterFee.div(lpPrice).toFixed(8);
     } else {
       return input.times(lpPrice).toFixed(8);
     }
@@ -416,7 +453,7 @@ const MintRedeem: React.FC = observer(() => {
               />
               <SizedBox height={4} />
               <Text size="small" type="secondary">
-                {activeTab === 0 ? "PUZZLE" : "stPUZZLE"}
+                {activeTab === 0 ? "PUZZLE" : (isPzlRoute ? "Staked PUZZLE (PZL)" : "stPUZZLE")}
               </Text>
             </Column>
             <Column style={{ alignItems: "center" }}>
@@ -439,7 +476,7 @@ const MintRedeem: React.FC = observer(() => {
               />
               <SizedBox height={4} />
               <Text size="small" type="secondary">
-                {activeTab === 0 ? "stPUZZLE" : "PUZZLE"}
+                {activeTab === 0 ? (isPzlRoute ? "Staked PUZZLE (PZL)" : "stPUZZLE") : "PUZZLE"}
               </Text>
             </Column>
           </ConversionRow>
@@ -447,10 +484,19 @@ const MintRedeem: React.FC = observer(() => {
           {activeTab === 0 && (
             <AmbassadorSelector>
               <AmbassadorSelectorLabel type="secondary" size="small">
-                Choose your ambassador
+                {selectedAmbassador 
+                  ? `You've chosen ${ambassadors.find(a => a.domain === selectedAmbassador)?.name || selectedAmbassador} as ambassador`
+                  : "Choose your ambassador"
+                }
               </AmbassadorSelectorLabel>
               <AmbassadorCircles>
-                <AmbassadorWrapper onClick={() => setSelectedAmbassador("")}>
+                <AmbassadorWrapper onClick={() => {
+                  setSelectedAmbassador("");
+                  localStorage.setItem("selectedAmbassador", "");
+                  const newUrl = new URL(window.location.href);
+                  newUrl.searchParams.delete("a");
+                  window.history.replaceState({}, "", newUrl.toString());
+                }}>
                   <NoneOption
                     selected={selectedAmbassador === ""}
                     title="None"
@@ -463,7 +509,13 @@ const MintRedeem: React.FC = observer(() => {
                 {ambassadors.map((ambassador) => (
                   <AmbassadorWrapper
                     key={ambassador.domain}
-                    onClick={() => setSelectedAmbassador(ambassador.domain)}
+                    onClick={() => {
+                      setSelectedAmbassador(ambassador.domain);
+                      localStorage.setItem("selectedAmbassador", ambassador.domain);
+                      const newUrl = new URL(window.location.href);
+                      newUrl.searchParams.set("a", ambassador.domain);
+                      window.history.replaceState({}, "", newUrl.toString());
+                    }}
                   >
                     <AmbassadorCircle
                       selected={selectedAmbassador === ambassador.domain}
@@ -474,6 +526,12 @@ const MintRedeem: React.FC = observer(() => {
                 ))}
               </AmbassadorCircles>
             </AmbassadorSelector>
+          )}
+
+          {activeTab === 0 && (
+            <Text size="small" type="secondary" style={{ lineHeight: "20px" }}>
+              Mint transactions are subject to 0.1% fee. Half of the fee will be directed to your chosen ambassador, the other half will be burned to boost PUZZLE deflation.
+            </Text>
           )}
 
           <Button fixed onClick={handleMintRedeem} disabled={loading}>

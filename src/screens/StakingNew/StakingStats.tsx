@@ -95,7 +95,7 @@ const StakingStats: React.FC = () => {
             <Text type="secondary" size="small">
               Avg Staked
             </Text>
-            <Text weight={500}>{avgStaked !== null ? `${avgStaked.toFixed(2)} PZL` : "-"}</Text>
+            <Text weight={500}>{avgStaked !== null ? `${avgStaked.toFixed(2)} PUZZLE` : "-"}</Text>
           </StatItem>
         </StatsGrid>
       </Container>
