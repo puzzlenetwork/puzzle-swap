@@ -47,14 +47,14 @@ class WalletVM {
     }
   };
 
-  handleLogOut = async () =>
-    Promise.all([
+  handleLogOut = async () => {
+    await this.rootStore.accountStore.logout();
+    return Promise.all([
       this.rootStore.accountStore.setWalletModalOpened(false),
       this.rootStore.accountStore.setAssetBalances(null),
-      this.rootStore.accountStore.setAddress(null),
-      this.rootStore.accountStore.setLoginType(null),
       this.rootStore.stakeStore.setStakedAccountPuzzle(null)
     ]);
+  };
 
   get signInInfo() {
     const { signInMethod, addressToDisplay } = this.rootStore.accountStore;

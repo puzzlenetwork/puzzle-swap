@@ -15,6 +15,7 @@ interface IProps {
   token: IToken;
   fav: boolean;
   change?: BN;
+  vol24?: BN;
   rate?: BN;
   handleWatchListChange: (assetId: string) => void;
 }
@@ -30,7 +31,7 @@ const Fav = styled.img`
   height: 24px;
   cursor: pointer;
 `;
-const MobileTokenTableRow: React.FC<IProps> = ({ token, fav, handleWatchListChange, rate, change }) => {
+const MobileTokenTableRow: React.FC<IProps> = ({ token, fav, handleWatchListChange, rate, change, vol24 }) => {
   const navigate = useNavigate();
   return (
     <Root className="gridRow">
@@ -50,9 +51,13 @@ const MobileTokenTableRow: React.FC<IProps> = ({ token, fav, handleWatchListChan
       </Row>
       <Column justifyContent="flex-end" crossAxisSize="max">
         <Text textAlign="end">$ {rate?.gte(0.0001) ? rate?.toFormat(4) : rate?.toFormat(8)}</Text>
-        <Text textAlign="end" nowrap type={change?.gt(0) ? "success" : "error"} size="small">
-          {change?.toFormat(2)}%
-        </Text>
+        {change != null && vol24 != null && !vol24.eq(0) ? (
+          <Text textAlign="end" nowrap type={change?.gt(0) ? "success" : "error"} size="small">
+            {change?.toFormat(2)}%
+          </Text>
+        ) : (
+          <Text textAlign="end" nowrap size="small">-</Text>
+        )}
       </Column>
     </Root>
   );
