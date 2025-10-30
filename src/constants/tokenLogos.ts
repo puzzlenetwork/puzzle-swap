@@ -303,7 +303,8 @@ const tokenLogos: Record<string, string> = {
   DAI_WXG: "https://r.wavesexplorer.com/assets/site/img/assets_logo/8zUYbdB8Q6mDhpcXYv52ji8ycfj4SDX4gJXS7YY3dA4R.svg",
   AURA: "https://wx.network/static/icons/assets/8BrtpekrprCfkqTyZ8vLGoKnvLtUscApws8U9Qusv56M.svg",
 
-  USDC_ERC: usdcLogo
+  USDC_ERC: usdcLogo,
+  PZ_BARSIK: "https://wx.network/static/icons/assets/GWMgup79SpFF3DTTbEZrVpAEYx1tLAH97pLpJiwFApDX.svg"
 };
 
 export default tokenLogos;
