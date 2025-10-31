@@ -13,6 +13,7 @@ import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";
 import { useLocation } from "react-router-dom";
 import { ROUTES } from "@src/constants";
+import makeNodeRequest from "@src/utils/makeNodeRequest";
 
 const Root = styled.div`
   display: flex;
@@ -167,7 +168,6 @@ export const EagleImg = styled.img`
 
 const STPUZZLE_CONTRACT = "3PQ5u6ipEAxgvKP5a9Qq8srsKLJP92fRkjJ";
 const STPUZZLE_ASSET_ID = "3jXnyztUEVPLyAhwcYdAuoLtbZi55QqbHvYzWekfkGNo";
-const NODE_URL = "https://nodes.wavesnodes.com";
 
 interface AmbassadorData {
   domain: string;
@@ -243,10 +243,10 @@ const MintRedeem: React.FC = observer(() => {
   useEffect(() => {
     const fetchAmbassadors = async () => {
       try {
-        const response = await fetch(
-          `${NODE_URL}/addresses/data/${STPUZZLE_CONTRACT}`
+        const response = await makeNodeRequest(
+          `/addresses/data/${STPUZZLE_CONTRACT}`
         );
-        const data = await response.json();
+        const data = response.data;
 
         const refDomainsEntry = data.find((entry: any) => entry.key === "ref_domains");
         if (!refDomainsEntry) return;
