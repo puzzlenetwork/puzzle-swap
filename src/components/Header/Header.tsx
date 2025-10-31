@@ -170,7 +170,7 @@ const Header: React.FC<IProps> = () => {
     { name: "Pools", link: ROUTES.POOLS },
     { name: "Ranges", link: ROUTES.RANGES },
     { name: "Stake", link: ROUTES.STAKE },
-    { name: "PZL", link: ROUTES.PZL }
+    // { name: "PZL", link: ROUTES.PZL }
   ];
 
   const products = [
