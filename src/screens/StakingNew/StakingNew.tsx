@@ -87,18 +87,18 @@ const AdaptiveText = styled(Text)`
 const StakingNewImpl: React.FC = () => {
   const location = useLocation();
   const isPzlRoute = location.pathname === ROUTES.PZL;
-  
+
   return (
     <Layout>
       <Observer>
         {() => (
           <Root>
             <Text weight={500} size="large">
-              {isPzlRoute ? "PZL" : "stPUZZLE"}
+              {isPzlRoute ? "Staked PUZZLE (PZL)" : "stPUZZLE"}
             </Text>
             <SizedBox height={8} />
             <AdaptiveText fitContent textAlign="left" type="secondary">
-              {isPzlRoute 
+              {isPzlRoute
                 ? <>PZL is a token with autocompounded yield – a wrapper of staked PUZZLE. Earns the same APY as usual PUZZLE. PZL can be sent, used in liquidity pools and even bridged to other chains via our partner <a href="https://wavesbridge.io" target="_blank" rel="noopener noreferrer">WavesBridge.io</a>.</>
                 : "Liquid staked PUZZLE. Earns same APY as a usual PUZZLE, but is presented as a token, which can be sent, used in liquidity pools and event bridged to other chains."
               }
