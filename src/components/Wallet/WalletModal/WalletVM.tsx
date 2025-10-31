@@ -47,14 +47,14 @@ class WalletVM {
     }
   };
 
-  handleLogOut = async () =>
-    Promise.all([
+  handleLogOut = async () => {
+    await this.rootStore.accountStore.logout();
+    return Promise.all([
       this.rootStore.accountStore.setWalletModalOpened(false),
       this.rootStore.accountStore.setAssetBalances(null),
-      this.rootStore.accountStore.setAddress(null),
-      this.rootStore.accountStore.setLoginType(null),
       this.rootStore.stakeStore.setStakedAccountPuzzle(null)
     ]);
+  };
 
   get signInInfo() {
     const { signInMethod, addressToDisplay } = this.rootStore.accountStore;
@@ -86,18 +86,33 @@ class WalletVM {
     const { poolsStore, stakeStore } = this.rootStore;
     const poolsData =
       poolsStore.investedInPools
-        ?.filter(({ liquidityInUsdt }) => !liquidityInUsdt.eq(0))
-        .map(({ pool, addressStaked, indexTokenRate, liquidityInUsdt, indexTokenName }) => {
+        ?.map(({ pool: poolConfig, addressStaked, indexTokenRate, indexTokenName }) => {
+          if (!addressStaked || addressStaked.eq(0)) return null;
+          
+          const pool = poolsStore.pools.find((p) => p.domain === poolConfig.domain);
+          if (!pool) return null;
+          
+          const totalValue = pool.tokens.reduce((acc, token) => {
+            const top = pool.liquidity?.[token.assetId]?.times(addressStaked) ?? BN.ZERO;
+            const tokenAmount = top.div(pool.globalPoolTokenAmount ?? new BN(1));
+            const rate = poolsStore.usdtRate(token.assetId, 1) ?? BN.ZERO;
+            const usdValue = tokenAmount.times(rate).div(new BN(10).pow(token.decimals));
+            return acc.plus(usdValue);
+          }, BN.ZERO);
+          
+          if (totalValue.eq(0)) return null;
+          
           const amount = BN.formatUnits(addressStaked, 8);
           return {
-            onClickPath: `/pools/${pool.domain}/invest`,
-            logo: pool?.logo,
-            name: pool?.title,
+            onClickPath: `/pools/${poolConfig.domain}/invest`,
+            logo: poolConfig?.logo,
+            name: poolConfig?.title,
             amount: (amount.gte(0.0001) ? amount.toFormat(4) : amount.toFormat(8)) + indexTokenName,
             nuclearValue: indexTokenRate,
-            usdnEquivalent: liquidityInUsdt
+            usdnEquivalent: totalValue
           };
-        }) ?? [];
+        })
+        .filter((item): item is NonNullable<typeof item> => item !== null) ?? [];
     const stakedNftData = this.stakedNfts.map(({ imageLink, marketPrice, name }) => {
       return {
         onClickPath: ROUTES.ULTRASTAKE,

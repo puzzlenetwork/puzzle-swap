@@ -56,9 +56,26 @@ class InvestVM {
   }
 
   get totalInvestmentBalance(): string | null {
-    const { investedInPools } = this.rootStore.poolsStore;
+    const { investedInPools, usdtRate } = this.rootStore.poolsStore;
     if (investedInPools == null) return null;
-    const value = investedInPools?.reduce((acc, v) => acc.plus(v.liquidityInUsdt), BN.ZERO);
-    return "$" + value?.toFormat(2);
+    
+    const value = investedInPools.reduce((acc, invested) => {
+      if (!invested.addressStaked || invested.addressStaked.eq(0)) return acc;
+      
+      const pool = this.pools.find((p) => p.domain === invested.pool.domain);
+      if (!pool) return acc;
+      
+      const totalValue = pool.tokens.reduce((tokenAcc, token) => {
+        const top = pool.liquidity?.[token.assetId]?.times(invested.addressStaked!) ?? BN.ZERO;
+        const tokenAmount = top.div(pool.globalPoolTokenAmount ?? new BN(1));
+        const rate = usdtRate(token.assetId, 1) ?? BN.ZERO;
+        const usdValue = tokenAmount.times(rate).div(new BN(10).pow(token.decimals));
+        return tokenAcc.plus(usdValue);
+      }, BN.ZERO);
+      
+      return acc.plus(totalValue);
+    }, BN.ZERO);
+    
+    return "$" + value.toFormat(2);
   }
 }

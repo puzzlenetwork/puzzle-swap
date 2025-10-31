@@ -10,6 +10,7 @@ interface ILinkGroupItem {
   link: string;
   isExternalLink?: boolean;
   isActive?: boolean;
+  innerLinks?: { name: string; link: string }[];
 }
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
@@ -46,17 +47,33 @@ const RowLinks = styled(Row)`
   padding: 8px 0px;
   justify-content: space-between;
 `;
+
+const InnerLink = styled(Anchor)`
+  font-size: 14px;
+  line-height: 20px;
+  color: ${({ theme }) => theme.colors.primary650};
+  padding: 4px 0px 4px 34px;
+  display: block;
+`;
+
 const ProductList: React.FC<IProps> = ({ title, links, ...rest }) => {
   return (
     <Root {...rest}>
-      {links.map(({ icon, name, link, isExternalLink, isActive }, key) => (
-        <RowLinks key={key}>
-          <img alt={name} src={icon} width={24} height={24} style={{ opacity: isActive ? 0.4 : 1 }} />
-          <StyledAnchor href={link} style={{ opacity: isActive ? 0.4 : 1 }}>
-            {name}
-          </StyledAnchor>
-          {isActive ? <img alt={name} src={CheckIcon} /> : <div></div>}
-        </RowLinks>
+      {links.map(({ icon, name, link, isExternalLink, isActive, innerLinks }, key) => (
+        <React.Fragment key={key}>
+          <RowLinks>
+            <img alt={name} src={icon} width={24} height={24} style={{ opacity: isActive ? 0.4 : 1 }} />
+            <StyledAnchor href={link} style={{ opacity: isActive ? 0.4 : 1 }}>
+              {name}
+            </StyledAnchor>
+            {isActive ? <img alt={name} src={CheckIcon} /> : <div></div>}
+          </RowLinks>
+          {innerLinks?.map((innerLink, innerKey) => (
+            <InnerLink key={innerKey} href={innerLink.link}>
+              {innerLink.name}
+            </InnerLink>
+          ))}
+        </React.Fragment>
       ))}
     </Root>
   );

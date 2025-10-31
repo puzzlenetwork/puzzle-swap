@@ -236,7 +236,9 @@ class AccountStore {
     await this.updateAccountAssets();
   };
 
-  logout() {
+  async logout() {
+    await this.signer?.logout();
+    this.setSigner(null);
     this.setAddress(null);
     this.setEthAddress(null);
     this.setLoginType(null);

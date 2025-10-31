@@ -169,7 +169,8 @@ const Header: React.FC<IProps> = () => {
     { name: "Trade", link: ROUTES.TRADE },
     { name: "Pools", link: ROUTES.POOLS },
     { name: "Ranges", link: ROUTES.RANGES },
-    { name: "Stake", link: ROUTES.STAKE }
+    { name: "Stake", link: ROUTES.STAKE },
+    // { name: "PZL", link: ROUTES.PZL }
   ];
 
   const products = [
@@ -179,7 +180,7 @@ const Header: React.FC<IProps> = () => {
       icon: SwapIcon,
       isActive: true
     },
-    { name: "Puzzle Lend", link: PRODUCTS.LEND, icon: LendIcon },
+    { name: "Puzzle Lend", link: PRODUCTS.LEND, icon: LendIcon, innerLinks: [{ name: "PZL", link: ROUTES.PZL }] },
     { name: "Puzzle Market", link: PRODUCTS.MARKET, icon: MarketIcon },
     { name: "Puzzle Node", link: PRODUCTS.NODE, icon: NodeIcon }
   ];

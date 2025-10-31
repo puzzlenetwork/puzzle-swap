@@ -211,6 +211,7 @@ const TokensTable: React.FC<IProps> = () => {
               <MobileTokenTableRow
                 token={t}
                 change={stats?.change24H}
+                vol24={stats?.volume24}
                 fav={tokenStore.watchList.includes(t.assetId)}
                 key={t.assetId}
                 rate={stats.currentPrice}

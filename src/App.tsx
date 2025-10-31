@@ -12,6 +12,7 @@ import PoolsList from "@screens/Pools/PoolsList";
 import WithdrawLiquidity from "@screens/Pools/WithdrawLiquidity";
 import Trade from "@screens/Trade";
 import Stake from "@screens/Stake";
+import StakingNew from "@screens/StakingNew";
 import Ultrastake from "@screens/Ultrastake";
 import PoolSwap from "@screens/Pools/PoolSwap";
 import WalletModal from "@components/Wallet/WalletModal";
@@ -65,6 +66,8 @@ const App: React.FC = () => {
         <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
         {/* Stake */}
         <Route path={ROUTES.STAKE} element={<Stake />} />
+        {/* <Route path={ROUTES.PZL} element={<StakingNew />} /> */}
+        <Route path={ROUTES.STAKING_NEW} element={<StakingNew />} />
         {/* Paper */}
         <Route path="/paper" element={<Paper />} />
 
