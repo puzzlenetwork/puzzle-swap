@@ -1,5 +1,5 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 import AddLiquidity from "@screens/Pools/AddLiquidity";
@@ -37,6 +37,8 @@ import TradeInRange from "@screens/Ranges/TradeInRange";
 import { useAnalyticTracking } from "./hooks/useAnalyticTracking";
 import { ReactNotifications } from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
+import TermsOfService from "@screens/TermsOfService";
+import TermsAcceptanceModal from "@components/TermsAcceptanceModal";
 
 const Root = styled(Column)`
   width: 100%;
@@ -52,8 +54,22 @@ const MobileSpace = styled.div`
 `;
 const App: React.FC = () => {
   const { accountStore } = useStores();
+  const location = useLocation();
   usePageTitle();
   useAnalyticTracking();
+
+  // Check terms acceptance on app load for already logged in users
+  useEffect(() => {
+    // Don't show modal if user is on the terms page
+    if (location.pathname === ROUTES.TERMS_OF_SERVICE) {
+      return;
+    }
+
+    if (accountStore.address && !accountStore.checkTermsAcceptance()) {
+      accountStore.setTermsAcceptanceModalOpened(true);
+    }
+  }, [accountStore, accountStore.address, location.pathname]);
+
   return (
     <Root>
       <ReactNotifications />
@@ -113,11 +129,18 @@ const App: React.FC = () => {
         <Route path={ROUTES.RANGES_WITHDRAW} element={<WithdrawFromRange />} />
         <Route path={ROUTES.RANGES_CREATE} element={<CreateRange />} />
         <Route path={ROUTES.RANGES_TRADE} element={<TradeInRange />} />
+
+        {/* Terms of Service */}
+        <Route path={ROUTES.TERMS_OF_SERVICE} element={<TermsOfService />} />
       </Routes>
       <WalletModal onClose={() => accountStore.setWalletModalOpened(false)} visible={accountStore.walletModalOpened} />
       <SendAssetModal
         onClose={() => accountStore.setSendAssetModalOpened(false)}
         visible={accountStore.sendAssetModalOpened}
+      />
+      <TermsAcceptanceModal
+        onAccept={() => accountStore.acceptTerms()}
+        visible={accountStore.termsAcceptanceModalOpened}
       />
       <MobileSpace />
       <MobileNavBar />
