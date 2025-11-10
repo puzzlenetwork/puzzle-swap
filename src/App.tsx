@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import React from "react";
+import { Route, Routes } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 import AddLiquidity from "@screens/Pools/AddLiquidity";
@@ -38,7 +38,6 @@ import { useAnalyticTracking } from "./hooks/useAnalyticTracking";
 import { ReactNotifications } from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
 import TermsOfService from "@screens/TermsOfService";
-import TermsAcceptanceModal from "@components/TermsAcceptanceModal";
 
 const Root = styled(Column)`
   width: 100%;
@@ -54,21 +53,8 @@ const MobileSpace = styled.div`
 `;
 const App: React.FC = () => {
   const { accountStore } = useStores();
-  const location = useLocation();
   usePageTitle();
   useAnalyticTracking();
-
-  // Check terms acceptance on app load for already logged in users
-  useEffect(() => {
-    // Don't show modal if user is on the terms page
-    if (location.pathname === ROUTES.TERMS_OF_SERVICE) {
-      return;
-    }
-
-    if (accountStore.address && !accountStore.checkTermsAcceptance()) {
-      accountStore.setTermsAcceptanceModalOpened(true);
-    }
-  }, [accountStore, accountStore.address, location.pathname]);
 
   return (
     <Root>
@@ -137,10 +123,6 @@ const App: React.FC = () => {
       <SendAssetModal
         onClose={() => accountStore.setSendAssetModalOpened(false)}
         visible={accountStore.sendAssetModalOpened}
-      />
-      <TermsAcceptanceModal
-        onAccept={() => accountStore.acceptTerms()}
-        visible={accountStore.termsAcceptanceModalOpened}
       />
       <MobileSpace />
       <MobileNavBar />

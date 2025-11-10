@@ -112,9 +112,6 @@ class AccountStore {
   assetToSend: Balance | null = null;
   setAssetToSend = (state: Balance | null) => (this.assetToSend = state);
 
-  termsAcceptanceModalOpened: boolean = false;
-  setTermsAcceptanceModalOpened = (state: boolean) => (this.termsAcceptanceModalOpened = state);
-
   changePoolModalOpened: boolean = false;
   setChangePoolModalOpened = (state: boolean) => (this.changePoolModalOpened = state);
 
@@ -192,24 +189,6 @@ class AccountStore {
     this.setIsAccScripted(res.extraFee > 0);
   };
 
-  checkTermsAcceptance = (): boolean => {
-    try {
-      const accepted = localStorage.getItem("termsAccepted");
-      return accepted === "true";
-    } catch (e) {
-      return false;
-    }
-  };
-
-  acceptTerms = () => {
-    try {
-      localStorage.setItem("termsAccepted", "true");
-      this.setTermsAcceptanceModalOpened(false);
-    } catch (e) {
-      console.error("Failed to save terms acceptance:", e);
-    }
-  };
-
   login = async (loginType: LOGIN_TYPE) => {
     this.setLoginType(loginType);
     console.log("LOGIN_TYPE.AURA", LOGIN_TYPE.AURA, loginType)
@@ -255,11 +234,6 @@ class AccountStore {
     }
     this.setAddress(loginData?.address ?? null);
     await this.updateAccountAssets();
-
-    // Check if user has accepted terms, show modal if not
-    if (loginData?.address && !this.checkTermsAcceptance()) {
-      this.setTermsAcceptanceModalOpened(true);
-    }
   };
 
   async logout() {
