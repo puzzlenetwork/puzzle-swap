@@ -180,7 +180,7 @@ const Header: React.FC<IProps> = () => {
       icon: SwapIcon,
       isActive: true
     },
-    { name: "Puzzle Lend", link: PRODUCTS.LEND, icon: LendIcon, innerLinks: [{ name: "PZL", link: ROUTES.PZL }] },
+    { name: "Puzzle Lend", link: PRODUCTS.LEND, icon: LendIcon },
     { name: "Puzzle Market", link: PRODUCTS.MARKET, icon: MarketIcon },
     { name: "Puzzle Node", link: PRODUCTS.NODE, icon: NodeIcon }
   ];
@@ -265,7 +265,7 @@ const Header: React.FC<IProps> = () => {
           <Desktop>
             <SizedBox width={2} />
             {menuItems.map(({ name, link }) => {
-              const isSelected = name === "Trade" 
+              const isSelected = name === "Trade"
                 ? (isRoutesEquals(link, location.pathname) || isRoutesEquals(ROUTES.LIMIT_ORDER, location.pathname))
                 : isRoutesEquals(link, location.pathname);
               return (
