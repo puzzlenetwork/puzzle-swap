@@ -273,6 +273,36 @@ const TermsOfService: React.FC = () => {
           The Software platform does not guarantee the stability, liquidity, or redemption value of the Rome Stablecoin and shall not be held liable for any losses arising from price fluctuations, smart contract errors, or broader market conditions. Users are solely responsible for assessing the risks associated with using algorithmic and collateralized stable assets.
         </p>
 
+        <h3>Token Disclaimer</h3>
+
+        <p>
+          The PUZZLE Token and any other tokens associated with the Puzzle Network ecosystem are decentralized digital assets created and managed by smart contracts deployed on the blockchain. These tokens serve as functional and governance instruments within the ecosystem and do not represent shares, securities, ownership interests, or rights to dividends, profits, or other forms of financial returns from the Software platform or any affiliated entity.
+        </p>
+
+        <p>
+          The Software platform does not guarantee the market value, price stability, liquidity, or future performance of any token within the Puzzle Network ecosystem. Token prices are determined exclusively by supply and demand in open markets and may fluctuate significantly due to factors beyond the control of the Software platform, including market conditions, regulatory developments, or third-party actions.
+        </p>
+
+        <p>
+          Users acknowledge and agree that the acquisition, holding, trading, or use of any token is performed at their own risk. The Software platform does not provide any form of insurance, compensation, or restitution in the event of a loss of value, price depreciation, market volatility, smart contract failure, or security breach.
+        </p>
+
+        <p>
+          The Software platform is not responsible for any losses, damages, or claims resulting from:
+        </p>
+
+        <ul>
+          <li>fluctuations in the value of tokens;</li>
+          <li>trading decisions made by Users;</li>
+          <li>errors, bugs, or exploits in smart contracts;</li>
+          <li>failures of third-party platforms or exchanges;</li>
+          <li>or regulatory restrictions affecting token use or transfer.</li>
+        </ul>
+
+        <p>
+          Users are solely responsible for evaluating and managing all risks associated with tokens, including the decision to buy, sell, stake, or hold them. Participation in the Puzzle Network ecosystem implies full acceptance of such risks and the absence of any guarantees of profit or stability.
+        </p>
+
         <h3>Puzzle DAO</h3>
 
         <p>
@@ -453,41 +483,7 @@ const TermsOfService: React.FC = () => {
           For more information about leasing, please visit: <a href="https://lease.puzzleswap.org/" target="_blank" rel="noreferrer">https://lease.puzzleswap.org/</a>
         </p>
 
-        <h2>8. WX NETWORK WALLET</h2>
-
-        <p>
-          WX Network Wallet is a software interface allowing you to manage Waves blockchain compatible tokens that you hold on to your User address, send and receive such tokens to and from your User address.
-        </p>
-
-        <p>WX Network Wallet functionality enables you to make the following transactions at the Waves blockchain with the help of our interface:</p>
-        <ul>
-          <li>transfer</li>
-          <li>mass transfer</li>
-          <li>sponsorship</li>
-          <li>set asset script</li>
-        </ul>
-
-        <p>
-          The WX Network Wallet exclusively supports Waves blockchain compatible tokens. It's important to note that some crypto tokens may not be supported by the WX Network Wallet. In such cases, the Software platform bears no responsibility or liability for any attempt to use the WX Network Wallet with crypto tokens that are not supported or compatible with the Waves blockchain.
-        </p>
-
-        <p>
-          All Waves blockchain tokens are stored and all transfer transactions involving such tokens are directly recorded on the decentralized Waves blockchain. Therefore, Users acknowledge and agree that we do not store, control, or manage their Waves blockchain compatible tokens. We are not accountable for any actions taken with these tokens by Users or any other person who gains access to the User's address through the WX Network Wallet. Additionally, the Software platform does not store Users' Seed phrase and password and does not have access to the cryptocurrencies and other crypto assets managed through the WX Network Wallet Services. Furthermore, we do not provide financial or investment services or advice to Users.
-        </p>
-
-        <p>
-          The mining fee for the miners of the Waves blockchain, required for recording (mining) transfers and other Waves blockchain transactions made through the WX Network Wallet, is collected automatically upon transaction completion. This fee is determined, raised, and may be changed by the miners of the Waves blockchain, not by the Software platform.
-        </p>
-
-        <p>
-          Users acknowledge that transactions with cryptocurrencies and other crypto assets recorded on the blockchain are irreversible. The Software platform cannot be held liable under any circumstances for transfers and transactions made by Users using the WX Network Wallet. We have no control over, or liability for, the delivery, quality, safety, legality, or any other aspect of any crypto assets that Users may purchase or sell to or from a third party, including other Users of the Software.
-        </p>
-
-        <p>
-          Any disputes concerning transactions with cryptocurrencies should be resolved directly with the relevant third party. However, if Users believe that a third party has engaged in fraudulent, misleading, or inappropriate behavior, or if they are unable to adequately resolve a dispute, they may notify our support team via email at <a href="mailto:support@wx.network">support@wx.network</a> for assistance, and we will consider what action to take, if any.
-        </p>
-
-        <h2>9. COMMUNICATIONS AND WRITTEN NOTICES</h2>
+        <h2>8. COMMUNICATIONS AND WRITTEN NOTICES</h2>
 
         <p>
           Unless specifically provided otherwise in these Terms, any notice, instruction, request, or other communication to be given to us by the User under these Terms shall be in writing and sent to the email address provided below (or to any other address which we may specify to the User for this purpose from time to time). Such communication shall be deemed delivered only upon actual receipt by us at the following email address:
@@ -506,7 +502,7 @@ const TermsOfService: React.FC = () => {
           <li>If sent via courier service, at the date of signing of the document on receipt of such notice.</li>
         </ul>
 
-        <h2>10. INTELLECTUAL PROPERTY</h2>
+        <h2>9. INTELLECTUAL PROPERTY</h2>
 
         <p>
           We grant you limited, non-exclusive, non-transferable, revocable permission to make use of the Software and the Services. This access shall remain in effect until and unless terminated by you or by us.
@@ -532,7 +528,7 @@ const TermsOfService: React.FC = () => {
           Third-party software (for example, open-source software) included in the Software and the Services is made available to you under the relevant third-party software's license terms.
         </p>
 
-        <h2>11. PROHIBITED ACTIVITIES</h2>
+        <h2>10. PROHIBITED ACTIVITIES</h2>
 
         <p>
           You agree that you will not use the Software and the Services to perform any type or sort of illegal activity or to take any action that negatively affects the performance of the Service. You may not engage in the following activities via the Services, nor assist a third party in any such activity:
@@ -550,7 +546,7 @@ const TermsOfService: React.FC = () => {
           If you are blocked from accessing the Software and Services, you agree not to implement any measures to circumvent such blocking. The use of our Software and Services in connection with any transaction involving illegal services, purposes, or tokens is prohibited.
         </p>
 
-        <h2>12. LIMITATION ON LIABILITY</h2>
+        <h2>11. LIMITATION ON LIABILITY</h2>
 
         <p>
           <strong>YOU ACKNOWLEDGE AND AGREE THAT YOU ASSUME FULL RESPONSIBILITY FOR YOUR USE OF THE SOFTWARE AND SERVICES. YOU ACKNOWLEDGE AND AGREE THAT ANY INFORMATION YOU SEND OR RECEIVE DURING YOUR USE OF THE SOFTWARE AND SERVICES MAY NOT BE SECURE AND MAY BE INTERCEPTED OR LATER ACQUIRED BY UNAUTHORIZED PARTIES. YOU ACKNOWLEDGE AND AGREE THAT YOUR USE OF THE SOFTWARE AND SERVICES IS AT YOUR OWN RISK. RECOGNIZING SUCH, YOU UNDERSTAND AND AGREE THAT, TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, NEITHER SOFTWARE PLATFORM NOR ITS AFFILIATED PERSONS OR REPRESENTATIVES WILL BE LIABLE TO YOU FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, PUNITIVE, EXEMPLARY, OR OTHER DAMAGES OF ANY KIND, INCLUDING WITHOUT LIMITATION DAMAGES FOR LOSS OF PROFITS, GOODWILL, USE, DATA, OR OTHER TANGIBLE OR INTANGIBLE LOSSES OR ANY OTHER DAMAGES BASED ON CONTRACT, TORT, STRICT LIABILITY, OR ANY OTHER GROUND (EVEN IF SOFTWARE PLATFORM HAD BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES), RESULTING FROM THE SERVICE; THE USE OR THE INABILITY TO USE SOFTWARE AND SERVICES; UNAUTHORIZED ACCESS TO OR ALTERATION OF YOUR TRANSMISSIONS OR DATA; STATEMENTS OR CONDUCT OF ANY THIRD PARTY ON THE SOFTWARE AND SERVICES; ANY ACTIONS WE TAKE OR FAIL TO TAKE AS A RESULT OF COMMUNICATIONS YOU SEND TO US; HUMAN ERRORS; TECHNICAL MALFUNCTIONS; FAILURES, INCLUDING PUBLIC UTILITY OR INTERNET OUTAGES; OMISSIONS, INTERRUPTIONS, LATENCY, DELETIONS, OR DEFECTS OF ANY DEVICE OR NETWORK, PROVIDERS, OR SOFTWARE; ANY INJURY OR DAMAGE TO COMPUTER EQUIPMENT; INABILITY TO FULLY ACCESS THE SOFTWARE AND SERVICES OR USE THE SOFTWARE AND SERVICES; THEFT, TAMPERING, DESTRUCTION, OR UNAUTHORIZED ACCESS TO IMAGES OR OTHER CONTENT OF ANY KIND; DATA THAT IS PROCESSED LATE OR INCORRECTLY OR IS INCOMPLETE OR LOST; TYPING, PRINTING, OR OTHER ERRORS, OR ANY COMBINATION THEREOF; OR ANY OTHER MATTER RELATING TO THE SOFTWARE AND SERVICES.</strong>
@@ -568,19 +564,19 @@ const TermsOfService: React.FC = () => {
           You acknowledge that the Software platform is not responsible for transferring, safeguarding, or maintaining your private keys, passwords, or any crypto-assets accessible therewith. If you lose, mishandle, or have stolen password or private keys, you acknowledge that you may not be able to recover your crypto-assets accessible via such private keys and passwords and that the Software platform is not responsible for such loss. You acknowledge that the Software platform is not responsible for any loss, damage, or liability arising from your failure to comply with the Terms hereunder.
         </p>
 
-        <h2>13. THIRD-PARTY WEBSITES AND CONTENT</h2>
+        <h2>12. THIRD-PARTY WEBSITES AND CONTENT</h2>
 
         <p>
           The Software and the Services may contain links to websites or services owned or operated by parties other than the Software platform (including, but not limited to, third-party crypto gateway services). Such links are provided for your reference only. The Software platform does not monitor or control resources outside the Software and the Services and is not responsible for their content. The inclusion of links to third-party resources does not imply any endorsement of the material in the Software and the Services or, unless expressly disclosed otherwise, any sponsorship, affiliation, or association with its owner, operator, or sponsor, nor does such inclusion of links imply that the Software platform is authorized to use any trade name, trademark, logo, legal or official seal, or copyrighted symbol that may be reflected on the linked website. The Software platform does not control the third-party content or monitor it for compliance with any requirement (e.g., truthfulness, integrity, legality). Accordingly, the Software platform does not bear any liability arising in connection with your access or use of the third-party content.
         </p>
 
-        <h2>14. INDEMNITY</h2>
+        <h2>13. INDEMNITY</h2>
 
         <p>
           You agree to release and indemnify, defend, and hold harmless the Software platform and its parents, subsidiaries, affiliates, and agencies, as well as the officers, directors, employees, shareholders, and representatives of any of the foregoing entities, from and against any and all losses, liabilities, expenses, damages, costs (including attorneys' fees and court costs), claims, or actions of any kind whatsoever arising or resulting from your use of the Software and Services, your violation of these Terms of Use, and any of your acts or omissions that implicate publicity rights, defamation, or invasion of privacy. The Software platform reserves the right, at its own expense, to assume exclusive defense and control of any matter otherwise subject to indemnification by you, and in such case, you agree to cooperate with the Software platform in the defense of such matter.
         </p>
 
-        <h2>15. FORCE MAJEURE</h2>
+        <h2>14. FORCE MAJEURE</h2>
 
         <p>A Force Majeure Event includes without limitation each of the following:</p>
         <ul>
@@ -591,7 +587,7 @@ const TermsOfService: React.FC = () => {
           <li>Any event, act, or circumstances not reasonably within our control and the effect of that event(s) is such that WX Network support is not in a position to take any reasonable action to cure the default.</li>
         </ul>
 
-        <h2>16. COMPLAINTS</h2>
+        <h2>15. COMPLAINTS</h2>
 
         <p>
           In the event that an alleged breach, controversy, claim, dispute, or difference (a Dispute) arises between you and us out of or in connection with your use of the Service and/or these Terms (including but not limited to the validity, performance, breach, or termination thereof), the parties shall seek to resolve the matter by negotiation by referring the matter first to:
@@ -618,7 +614,7 @@ const TermsOfService: React.FC = () => {
           Additionally, you must inform us about any error in the Software and Services within 24 hours from the time the error occurs. Failure to report errors within this timeframe may result in Puzzle Network support being unable to investigate the error.
         </p>
 
-        <h2>17. DISPUTE RESOLUTION, PLACE OF JURISDICTION AND GOVERNING LAW</h2>
+        <h2>16. DISPUTE RESOLUTION, PLACE OF JURISDICTION AND GOVERNING LAW</h2>
 
         <p>
           These terms shall exclusively be governed by and construed in accordance with the substantive laws of the Republic of Seychelles. If parties cannot reach a resolution through negotiation, any dispute, controversy, or claim arising from or related to these terms, including validity, breach, or termination, shall be settled by arbitration in accordance with the Federation Rules of International Arbitration of the Federation Chambers of Commerce. The arbitration panel shall consist of one arbitrator, and the seat of arbitration shall be Victoria, the Republic of Seychelles. Arbitral proceedings shall be conducted in English.
@@ -636,7 +632,7 @@ const TermsOfService: React.FC = () => {
           You represent and warrant that you are not a citizen or resident of the United States of America, and that you are not otherwise considered a "U.S. Person" under Regulation S of the U.S. Securities Act of 1933. The Puzzle Network does not make the Software and Services available to any U.S. Person. You agree not to use VPNs or other technological methods to circumvent this restriction. Any access or use of the Software and Services by U.S. Persons is unauthorized and constitutes a violation of these Terms of Use.
         </p>
 
-        <h2>18. RISKS</h2>
+        <h2>17. RISKS</h2>
 
         <p>
           <strong>Third-Party Services and Websites.</strong> You acknowledge and agree that the Software platform is not responsible for the third-party services and websites you use and interact with the help of WX Network Software and Services, and that you shall access the trustworthiness of any third-party websites, products, smart-contracts, or content you access or use through the WX Network Software and Services independently. You further expressly acknowledge that third-party websites and services can be maliciously or negligently harmful, causing mistakes and/or failures of WX Network operation and that the Software platform can not be held liable for your interaction with such third-party websites and services and related loss of property or even identity.
@@ -682,7 +678,7 @@ const TermsOfService: React.FC = () => {
           These warnings and others later provided by the Software platform in no way evidence or represent an on-going duty to alert you of all of the potential risks of utilizing the Software and Services.
         </p>
 
-        <h2>19. OTHER INFORMATION</h2>
+        <h2>18. OTHER INFORMATION</h2>
 
         <h3>Entire Agreement/assignment</h3>
 

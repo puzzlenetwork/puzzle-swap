@@ -19,7 +19,7 @@ import { ReactComponent as XIcon } from "@src/assets/links/x.svg";
 import { ReactComponent as TelegramIcon } from "@src/assets/links/telegram.svg";
 import { ReactComponent as RobotIcon } from "@src/assets/links/robot.svg";
 import { ReactComponent as GithubIcon } from "@src/assets/links/github.svg";
-import { ReactComponent as ShowMoreIcon } from "@src/assets/icons/showMore.svg";
+import { ReactComponent as BookIcon } from "@src/assets/icons/book.svg";
 import ProductList from "../ProductList";
 import SwapIcon from "@src/assets/links/swap.svg";
 import NodeIcon from "@src/assets/links/node.svg";
@@ -223,7 +223,7 @@ const Header: React.FC<IProps> = () => {
       isExternalLink: true
     },
     {
-      icon: <ShowMoreIcon className={isDarkTheme ? "theme_icon" : ""} />,
+      icon: <BookIcon height={20} width={20} className={isDarkTheme ? "theme_icon" : ""} />,
       name: "Terms of Use",
       link: ROUTES.TERMS_OF_SERVICE,
       isExternalLink: false
