@@ -128,7 +128,7 @@ export const Banner = styled(Card)`
   justify-content: space-between;
   align-items: center;
   margin-top: 24px;
-  background: ${({ theme }) => theme.colors.primary800};
+  background: #363870;
   
   @media (min-width: 880px) {
     flex-direction: row;
