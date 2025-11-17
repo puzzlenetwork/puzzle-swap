@@ -302,6 +302,7 @@ const tokenLogos: Record<string, string> = {
   SHIB_WXG: "https://r.wavesexplorer.com/assets/site/img/assets_logo/GVxGPBtgVWMW1wHiFnfaCakbJ6sKgZgowJgW5Dqrd7JH.svg",
   DAI_WXG: "https://r.wavesexplorer.com/assets/site/img/assets_logo/8zUYbdB8Q6mDhpcXYv52ji8ycfj4SDX4gJXS7YY3dA4R.svg",
   AURA: "https://wx.network/static/icons/assets/8BrtpekrprCfkqTyZ8vLGoKnvLtUscApws8U9Qusv56M.svg",
+  PZL: "https://raw.githubusercontent.com/puzzlenetwork/static/e9d3e0ab82c47fce0696b1afa528d7b7f5d52316/PZL.svg",
 
   USDC_ERC: usdcLogo
 };
