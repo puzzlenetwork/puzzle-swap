@@ -5,7 +5,7 @@ import Card from "@components/Card";
 import SizedBox from "@components/SizedBox";
 import { Column } from "@components/Flex";
 import { useLocation } from "react-router-dom";
-import { ROUTES } from "@src/constants";
+import { ROUTES, ASSET_IDS } from "@src/constants";
 import makeNodeRequest from "@src/utils/makeNodeRequest";
 
 const Root = styled.div`
@@ -39,7 +39,6 @@ const StatValue = styled(Text)`
   font-size: 20px;
 `;
 
-const STPUZZLE_ASSET_ID = "3jXnyztUEVPLyAhwcYdAuoLtbZi55QqbHvYzWekfkGNo";
 const BRIDGE_ADDRESS = "3P6Rk2XBo6MJm9seLfxvJ1VSGz54yWiYb9U";
 
 const StPuzzleStats: React.FC = () => {
@@ -51,12 +50,12 @@ const StPuzzleStats: React.FC = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const detailsResponse = await makeNodeRequest(`/assets/details/${STPUZZLE_ASSET_ID}`);
+        const detailsResponse = await makeNodeRequest(`/assets/details/${ASSET_IDS.stPuzzle}`);
         const detailsData = detailsResponse.data;
         console.log("stPUZZLE details:", detailsData);
         setCirculating(detailsData.quantity / 1e8);
 
-        const balanceResponse = await makeNodeRequest(`/assets/balance/${BRIDGE_ADDRESS}/${STPUZZLE_ASSET_ID}`);
+        const balanceResponse = await makeNodeRequest(`/assets/balance/${BRIDGE_ADDRESS}/${ASSET_IDS.stPuzzle}`);
         const balanceData = balanceResponse.data;
         console.log("stPUZZLE bridge balance:", balanceData);
         setBridged(balanceData.balance / 1e8);

@@ -6,7 +6,7 @@ import SizedBox from "@components/SizedBox";
 import { Banner, BannerContent, BannerTitle, EagleImg } from "./MintRedeem";
 import eagle from "@src/assets/eagle.png";
 import { useNavigate } from "react-router-dom";
-import { ROUTES } from "@src/constants";
+import { ROUTES, ASSET_IDS } from "@src/constants";
 
 const ReadyBanner: React.FC = () => {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const ReadyBanner: React.FC = () => {
           <Button kind="secondary" size="medium" onClick={() => window.open("https://wavesbridge.io", "_blank")}>
             BRIDGE
           </Button>
-          <Button kind="secondary" size="medium" onClick={() => navigate("/trade?asset1=3jXnyztUEVPLyAhwcYdAuoLtbZi55QqbHvYzWekfkGNo")}>
+          <Button kind="secondary" size="medium" onClick={() => navigate(`/trade?asset1=${ASSET_IDS.stPuzzle}`)}>
             SWAP
           </Button>
           <Button kind="secondary" size="medium" onClick={() => navigate(ROUTES.RANGES)}>

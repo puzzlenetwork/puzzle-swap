@@ -12,7 +12,7 @@ import BN from "@src/utils/BN";
 import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";
 import { useLocation } from "react-router-dom";
-import { ROUTES } from "@src/constants";
+import { ROUTES, CONTRACT_ADDRESSES, ASSET_IDS } from "@src/constants";
 import makeNodeRequest from "@src/utils/makeNodeRequest";
 
 const Root = styled.div`
@@ -100,7 +100,7 @@ const AmbassadorCircle = styled.div<{ selected?: boolean; imageUrl?: string }>`
 
 const AmbassadorLabel = styled(Text)`
   font-size: 10px;
-  max-width: 50px;
+  max-width: 100px;
   text-align: center;
   word-break: break-word;
 `;
@@ -166,9 +166,6 @@ export const EagleImg = styled.img`
   }
 `;
 
-const STPUZZLE_CONTRACT = "3PQ5u6ipEAxgvKP5a9Qq8srsKLJP92fRkjJ";
-const STPUZZLE_ASSET_ID = "3jXnyztUEVPLyAhwcYdAuoLtbZi55QqbHvYzWekfkGNo";
-
 interface AmbassadorData {
   domain: string;
   address: string;
@@ -194,7 +191,7 @@ const MintRedeem: React.FC = observer(() => {
 
     const params = new URLSearchParams(location.search);
     const ambassadorParam = params.get("a");
-    
+
     if (ambassadorParam) {
       const ambassadorExists = ambassadors.some(a => a.domain === ambassadorParam);
       if (ambassadorExists) {
@@ -224,7 +221,7 @@ const MintRedeem: React.FC = observer(() => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await nodeService.evaluate(STPUZZLE_CONTRACT, "getLPPrice(false)");
+        const result = await nodeService.evaluate(CONTRACT_ADDRESSES.stPuzzle, "getLPPrice(false)");
         console.log("getLPPrice result:", result);
         if (result?.result?.type === "Tuple") {
           const tupleValue = result.result.value as { _2: { type: string; value: number } };
@@ -244,7 +241,7 @@ const MintRedeem: React.FC = observer(() => {
     const fetchAmbassadors = async () => {
       try {
         const response = await makeNodeRequest(
-          `/addresses/data/${STPUZZLE_CONTRACT}`
+          `/addresses/data/${CONTRACT_ADDRESSES.stPuzzle}`
         );
         const data = response.data;
 
@@ -292,7 +289,7 @@ const MintRedeem: React.FC = observer(() => {
       try {
         const balances = await nodeService.getAddressBalances(accountStore.address);
 
-        const stPuzzleAsset = balances.find(b => b.assetId === STPUZZLE_ASSET_ID);
+        const stPuzzleAsset = balances.find(b => b.assetId === ASSET_IDS.stPuzzle);
         if (stPuzzleAsset) {
           const balance = new BN(stPuzzleAsset.balance).div(1e8);
           setStPuzzleBalance(balance);
@@ -358,7 +355,7 @@ const MintRedeem: React.FC = observer(() => {
       const amount = input.times(1e8).toFixed(0);
       const txParams = activeTab === 0
         ? {
-            dApp: STPUZZLE_CONTRACT,
+            dApp: CONTRACT_ADDRESSES.stPuzzle,
             payment: [
               {
                 assetId: "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS",
@@ -373,10 +370,10 @@ const MintRedeem: React.FC = observer(() => {
             }
           }
         : {
-            dApp: STPUZZLE_CONTRACT,
+            dApp: CONTRACT_ADDRESSES.stPuzzle,
             payment: [
               {
-                assetId: STPUZZLE_ASSET_ID,
+                assetId: ASSET_IDS.stPuzzle,
                 amount
               }
             ],
@@ -399,7 +396,7 @@ const MintRedeem: React.FC = observer(() => {
           try {
             const balances = await nodeService.getAddressBalances(accountStore.address);
 
-            const stPuzzleAsset = balances.find(b => b.assetId === STPUZZLE_ASSET_ID);
+            const stPuzzleAsset = balances.find(b => b.assetId === ASSET_IDS.stPuzzle);
             if (stPuzzleAsset) {
               setStPuzzleBalance(new BN(stPuzzleAsset.balance).div(1e8));
             } else {
@@ -484,7 +481,7 @@ const MintRedeem: React.FC = observer(() => {
           {activeTab === 0 && (
             <AmbassadorSelector>
               <AmbassadorSelectorLabel type="secondary" size="small">
-                {selectedAmbassador 
+                {selectedAmbassador
                   ? `You've chosen ${ambassadors.find(a => a.domain === selectedAmbassador)?.name || selectedAmbassador} as ambassador`
                   : "Choose your ambassador"
                 }

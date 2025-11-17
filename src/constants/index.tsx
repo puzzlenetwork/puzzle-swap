@@ -564,6 +564,11 @@ export const CONTRACT_ADDRESSES = {
   proxyLimitOrders: "3PM4Mn2iwQnUkeMxTJJAuriiVEGAcQwDU5H",
   priceOracle: "3P8d1E1BLKoD52y3bQJ1bDTd2TD1gpaLn9t",
   layer2: "3PQoBfUKHkJAeGWhooLP7WS8ovb54av9Jp2",
+  stPuzzle: "3PJUHFBuuztWicMTxBQh8LqJtQW6mxbJcwJ",
+};
+
+export const ASSET_IDS = {
+  stPuzzle: "DgER5m4fWpSFXhXDBxBye1B4HHCwdRttsbU5LBz6XEYs",
 };
 export const PUZZLE_NFTS = [
   {

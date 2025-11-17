@@ -14,7 +14,7 @@ import { useStores } from "@stores";
 import { useState, useEffect } from "react";
 import nodeService from "@src/services/nodeService";
 import { useLocation } from "react-router-dom";
-import { ROUTES } from "@src/constants";
+import { ROUTES, ASSET_IDS } from "@src/constants";
 
 const Root = styled.div`
   display: flex;
@@ -30,8 +30,6 @@ const Container = styled(Card)`
     padding: 24px;
   }
 `;
-
-const STPUZZLE_ASSET_ID = "3jXnyztUEVPLyAhwcYdAuoLtbZi55QqbHvYzWekfkGNo";
 
 const PUZZLE_ASSET_ID = "HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS";
 
@@ -51,8 +49,8 @@ const MyBalances: React.FC = () => {
       }
       try {
         const balances = await nodeService.getAddressBalances(accountStore.address);
-        
-        const stPuzzleAsset = balances.find(b => b.assetId === STPUZZLE_ASSET_ID);
+
+        const stPuzzleAsset = balances.find(b => b.assetId === ASSET_IDS.stPuzzle);
         if (stPuzzleAsset) {
           setStPuzzleBalance(new BN(stPuzzleAsset.balance).div(1e8));
         } else {
