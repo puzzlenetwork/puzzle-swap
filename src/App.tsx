@@ -37,6 +37,7 @@ import TradeInRange from "@screens/Ranges/TradeInRange";
 import { useAnalyticTracking } from "./hooks/useAnalyticTracking";
 import { ReactNotifications } from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
+import TermsOfService from "@screens/TermsOfService";
 
 const Root = styled(Column)`
   width: 100%;
@@ -54,6 +55,7 @@ const App: React.FC = () => {
   const { accountStore } = useStores();
   usePageTitle();
   useAnalyticTracking();
+
   return (
     <Root>
       <ReactNotifications />
@@ -66,8 +68,7 @@ const App: React.FC = () => {
         <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
         {/* Stake */}
         <Route path={ROUTES.STAKE} element={<Stake />} />
-        {/* <Route path={ROUTES.PZL} element={<StakingNew />} /> */}
-        <Route path={ROUTES.STAKING_NEW} element={<StakingNew />} />
+         <Route path={ROUTES.PZL} element={<StakingNew />} />
         {/* Paper */}
         <Route path="/paper" element={<Paper />} />
 
@@ -113,6 +114,9 @@ const App: React.FC = () => {
         <Route path={ROUTES.RANGES_WITHDRAW} element={<WithdrawFromRange />} />
         <Route path={ROUTES.RANGES_CREATE} element={<CreateRange />} />
         <Route path={ROUTES.RANGES_TRADE} element={<TradeInRange />} />
+
+        {/* Terms of Service */}
+        <Route path={ROUTES.TERMS_OF_SERVICE} element={<TermsOfService />} />
       </Routes>
       <WalletModal onClose={() => accountStore.setWalletModalOpened(false)} visible={accountStore.walletModalOpened} />
       <SendAssetModal

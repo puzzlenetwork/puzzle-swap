@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { LOGIN_TYPE } from "@stores/AccountStore";
 import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
@@ -71,10 +71,38 @@ const Layout = styled.div`
 const Container = styled(Column)`
   width: 100%;
 `;
+
+const CheckboxContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  max-width: 360px;
+`;
+
+const StyledCheckbox = styled.input`
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #7075E9;
+  flex-shrink: 0;
+  margin-top: 2px;
+`;
+
 const LoginScreen: React.FC<IProps> = () => {
   const { accountStore } = useStores();
-  const handleLogin = (loginType: LOGIN_TYPE) => () =>
+  const [termsAccepted, setTermsAccepted] = useState(true);
+
+  const handleLogin = (loginType: LOGIN_TYPE) => () => {
+    if (!termsAccepted) {
+      accountStore.rootStore.notificationStore.notify("Please accept Terms of Use to continue", {
+        title: "Terms Required",
+        type: "warning"
+      });
+      return;
+    }
     accountStore.login(loginType).then(() => accountStore.setLoginModalOpened(false));
+  };
   const isMetamaskInstalled = typeof window.ethereum !== "undefined";
   const isAuraAvailable = typeof window !== "undefined" && 
     ((window as any).aura || (window as any).AuraWallet || (window as any).WavesAura);
@@ -150,6 +178,17 @@ const LoginScreen: React.FC<IProps> = () => {
               Learn more about wallets
             </Anchor>
           </Text>
+          <SizedBox height={16} />
+          <CheckboxContainer>
+            <StyledCheckbox
+              type="checkbox"
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+            />
+            <Text weight={400} size="small" style={{ color: "#8082C5" }}>
+              By authorizing my wallet I agree with <Anchor href="/terms-of-service" style={{ color: "#7075E9", textDecoration: "none" }}>Terms of Use</Anchor>
+            </Text>
+          </CheckboxContainer>
           <SizedBox height={116} />
         </Root>
       </Row>

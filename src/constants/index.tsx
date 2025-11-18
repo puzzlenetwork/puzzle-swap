@@ -9,7 +9,6 @@ export const ROUTES = {
   NOT_FOUND: "/404",
   STAKE: "/stake",
   PZL: "/pzl",
-  STAKING_NEW: "/staking_new",
   TRADE: "/trade",
   LIMIT_ORDER: "/limitOrder",
   OLD_EXPLORE: "/classic-explore",
@@ -35,6 +34,7 @@ export const ROUTES = {
   RANGES_DEPOSIT: "/ranges/:rangeAddress/deposit",
   RANGES_DEPOSIT_ONE_TOKEN: "/ranges/:rangeAddress/depositOneToken",
   RANGES_WITHDRAW: "/ranges/:rangeAddress/withdraw",
+  TERMS_OF_SERVICE: "/terms-of-service",
 };
 
 export const PRODUCTS = {
@@ -564,6 +564,11 @@ export const CONTRACT_ADDRESSES = {
   proxyLimitOrders: "3PM4Mn2iwQnUkeMxTJJAuriiVEGAcQwDU5H",
   priceOracle: "3P8d1E1BLKoD52y3bQJ1bDTd2TD1gpaLn9t",
   layer2: "3PQoBfUKHkJAeGWhooLP7WS8ovb54av9Jp2",
+  stPuzzle: "3PJUHFBuuztWicMTxBQh8LqJtQW6mxbJcwJ",
+};
+
+export const ASSET_IDS = {
+  stPuzzle: "DgER5m4fWpSFXhXDBxBye1B4HHCwdRttsbU5LBz6XEYs",
 };
 export const PUZZLE_NFTS = [
   {
