@@ -107,6 +107,9 @@ class RangeDetailsInterfaceVM {
   public rewardsDisplayMode: "all" | "fees" | "extra" = "all";
   public setRewardsDisplayMode = (value: "all" | "fees" | "extra") => (this.rewardsDisplayMode = value);
 
+  public showUsdPrice: boolean = false;
+  public setShowUsdPrice = (value: boolean) => (this.showUsdPrice = value);
+
   public timeRangeToDisplayRewards: "1d" | "7d" | "1m" | "3m" | "1y" | "all" = "all";
   private _setTimeRangeToDisplayRewards = (value: "1d" | "7d" | "1m" | "3m" | "1y" | "all") =>
     (this.timeRangeToDisplayRewards = value);
@@ -117,42 +120,49 @@ class RangeDetailsInterfaceVM {
 
   public lpRewardsByTime: Record<
     "1d" | "7d" | "1m" | "3m" | "1y" | "all",
-    { assetId: string; feesEarned: BN; extraEarned: BN }[]
-  > = {} as Record<"1d" | "7d" | "1m" | "3m" | "1y" | "all", { assetId: string; feesEarned: BN; extraEarned: BN }[]>;
+    { assetId: string; feesEarned: BN; extraEarned: BN; totalEarnedUsd: BN }[]
+  > = {} as Record<"1d" | "7d" | "1m" | "3m" | "1y" | "all", { assetId: string; feesEarned: BN; extraEarned: BN; totalEarnedUsd: BN }[]>;
   public updatelpRewardsByTime = (
     key: "1d" | "7d" | "1m" | "3m" | "1y" | "all",
-    value: { assetId: string; feesEarned: BN; extraEarned: BN }[]
+    value: { assetId: string; feesEarned: BN; extraEarned: BN; totalEarnedUsd: BN }[]
   ) => (this.lpRewardsByTime[key] = value);
 
-  public get LPRewardsToDisplay(): { assetId: string; amount: BN }[] {
+  public get LPRewardsToDisplay(): { assetId: string; amount: BN; usdValue?: BN }[] {
+    const data = this.lpRewardsByTime[this.timeRangeToDisplayRewards] ?? [];
+
     switch (this.rewardsDisplayMode) {
       case "all":
-        return (
-          this.lpRewardsByTime[this.timeRangeToDisplayRewards]
-            ?.map(({ assetId, feesEarned, extraEarned }) => ({
-              assetId,
-              amount: feesEarned.plus(extraEarned)
-            }))
-            .filter(({ amount }) => amount.gt(0)) ?? []
-        );
+        return data
+          .map(({ assetId, feesEarned, extraEarned, totalEarnedUsd }) => ({
+            assetId,
+            amount: feesEarned.plus(extraEarned),
+            usdValue: totalEarnedUsd
+          }))
+          .filter(({ amount }) => amount.gt(0));
       case "fees":
-        return (
-          this.lpRewardsByTime[this.timeRangeToDisplayRewards]
-            ?.map(({ assetId, feesEarned }) => ({
+        return data
+          .map(({ assetId, feesEarned, totalEarnedUsd }) => {
+            const total = feesEarned.plus(this.lpRewardsByTime[this.timeRangeToDisplayRewards]?.find(r => r.assetId === assetId)?.extraEarned || BN.ZERO);
+            const feeRatio = total.gt(0) ? feesEarned.div(total) : BN.ZERO;
+            return {
               assetId,
-              amount: feesEarned
-            }))
-            .filter(({ amount }) => amount.gt(0)) ?? []
-        );
+              amount: feesEarned,
+              usdValue: totalEarnedUsd.times(feeRatio)
+            };
+          })
+          .filter(({ amount }) => amount.gt(0));
       case "extra":
-        return (
-          this.lpRewardsByTime[this.timeRangeToDisplayRewards]
-            ?.map(({ assetId, extraEarned }) => ({
+        return data
+          .map(({ assetId, extraEarned, totalEarnedUsd, feesEarned }) => {
+            const total = feesEarned.plus(extraEarned);
+            const extraRatio = total.gt(0) ? extraEarned.div(total) : BN.ZERO;
+            return {
               assetId,
-              amount: extraEarned
-            }))
-            .filter(({ amount }) => amount.gt(0)) ?? []
-        );
+              amount: extraEarned,
+              usdValue: totalEarnedUsd.times(extraRatio)
+            };
+          })
+          .filter(({ amount }) => amount.gt(0));
       default:
         return [];
     }
@@ -230,14 +240,7 @@ class RangeDetailsInterfaceVM {
       () => this.range != null,
       () => {
         this.syncChartData("all");
-        this.updatelpRewardsByTime(
-          "all",
-          this.range!.assets.map(({ assetId, feesEarned, extraEarned }) => ({
-            assetId,
-            feesEarned: feesEarned,
-            extraEarned: extraEarned
-          }))
-        );
+        this.syncLPRewards("all");
         this.syncIndexTokenInfo();
       }
     );
@@ -308,7 +311,8 @@ class RangeDetailsInterfaceVM {
           Object.entries(rangeData.period_stats.fees).map(([assetId, fees]) => ({
             assetId,
             extraEarned: new BN(fees.extra_earned),
-            feesEarned: new BN(fees.fees_earned)
+            feesEarned: new BN(fees.fees_earned),
+            totalEarnedUsd: new BN(fees.total_earned_usd)
           }))
         );
       });
@@ -324,7 +328,8 @@ class RangeDetailsInterfaceVM {
           Object.entries(rangeData.period_stats.fees).map(([assetId, fees]) => ({
             assetId,
             extraEarned: new BN(fees.extra_earned),
-            feesEarned: new BN(fees.fees_earned)
+            feesEarned: new BN(fees.fees_earned),
+            totalEarnedUsd: new BN(fees.total_earned_usd)
           }))
         );
       });

@@ -93,7 +93,7 @@ class RangesListVm {
     { title: "Stats Last 3 Months", key: "90d" },
     { title: "Stats Last Year", key: "1y" }
   ];
-  selectedStatsRange: number = 0;
+  selectedStatsRange: number = 3;
   setSelectedStatsRange = (v: number) => {
     this.selectedStatsRange = v;
     this.rootStore.rangesStore.setTimeRange(this.statsRanges[v].key as "all" | "1d" | "7d" | "30d" | "90d" | "1y");

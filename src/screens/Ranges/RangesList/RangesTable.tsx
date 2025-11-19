@@ -62,6 +62,14 @@ const RangesTable: React.FC = () => {
       },
       {
         Header: (
+          <Text size="medium" type="secondary" textAlign="center">
+            APY
+          </Text>
+        ),
+        accessor: "apy"
+      },
+      {
+        Header: (
           <Text size="medium" type="secondary" textAlign="end">
             Earned by LP
           </Text>
@@ -234,6 +242,11 @@ const RangesTable: React.FC = () => {
               )}
             </Row>
           ),
+          apy: (
+            <Text textAlign="end" nowrap fitContent>
+              {range.periodStats.apr.toFormat(2)}%
+            </Text>
+          ),
           periodFees: (
             <Column alignItems="flex-end" crossAxisSize="max">
               <Row style={{ gap: 4, flexWrap: "wrap", justifyContent: "flex-end" }}>
@@ -287,6 +300,9 @@ const RangesTable: React.FC = () => {
     ),
     liquidity: (
       <Skeleton width={160} height={24} />
+    ),
+    apy: (
+      <Skeleton width={80} height={24} />
     ),
     periodFees: (
       <Column alignItems="flex-end" crossAxisSize="max">
