@@ -6,6 +6,7 @@ import BN from "@src/utils/BN";
 import nodeService from "@src/services/nodeService";
 import { CONTRACT_ADDRESSES, EXPLORER_URL, TOKENS_BY_SYMBOL } from "@src/constants";
 import poolsService from "@src/services/poolsService";
+import { getBackendApiUrl } from "@src/constants/api";
 
 interface IProps {
   children: React.ReactNode;
@@ -37,7 +38,7 @@ class UltrastakeVM {
 
   private loadUltrastakeStats = async () => {
     try {
-      const response = await fetch("https://swapapi.puzzleswap.org/stats/v1/statistics/aggregator/ultrastake");
+      const response = await fetch(`${getBackendApiUrl()}/stats/v1/statistics/aggregator/ultrastake`);
       const data = await response.json();
       this._setUltrastakeStats(data);
     } catch (error) {

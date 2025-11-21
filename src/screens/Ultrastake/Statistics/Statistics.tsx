@@ -49,12 +49,15 @@ const Tab = styled.button<{ active: boolean }>`
 
 const Statistics: React.FC = () => {
   const vm = useUltrastakeVM();
-  const [period, setPeriod] = useState<"_1d" | "_7d" | "_30d">("_1d");
+  const [period, setPeriod] = useState<"_1d" | "_7d" | "_30d" | "_90d" | "_1y" | "_all">("_1d");
 
   const periodLabels = {
     _1d: "24 hours",
     _7d: "7 days",
-    _30d: "30 days"
+    _30d: "30 days",
+    _90d: "90 days",
+    _1y: "1 year",
+    _all: "All time"
   };
 
   const stats = vm.ultrastakeStats;
@@ -73,13 +76,22 @@ const Statistics: React.FC = () => {
       <SizedBox height={8} />
       <TabsContainer>
         <Tab active={period === "_1d"} onClick={() => setPeriod("_1d")}>
-          24h
+          1d
         </Tab>
         <Tab active={period === "_7d"} onClick={() => setPeriod("_7d")}>
           7d
         </Tab>
         <Tab active={period === "_30d"} onClick={() => setPeriod("_30d")}>
           30d
+        </Tab>
+        <Tab active={period === "_90d"} onClick={() => setPeriod("_90d")}>
+          90d
+        </Tab>
+        <Tab active={period === "_1y"} onClick={() => setPeriod("_1y")}>
+          1y
+        </Tab>
+        <Tab active={period === "_all"} onClick={() => setPeriod("_all")}>
+          all
         </Tab>
       </TabsContainer>
       <Container>

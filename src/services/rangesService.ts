@@ -48,6 +48,7 @@ export interface IGetRanges {
   search?: string;
   userAddress?: string;
   minLiquidity?: number;
+  timeRange?: "all" | "1d" | "7d" | "30d" | "90d" | "1y";
 }
 
 export interface IGetGlobalRangesInfo {
@@ -62,6 +63,7 @@ export interface IGetRange {
   nominatePriceIn?: string;
   user?: string;
   charts?: boolean;
+  timeRange?: "all" | "1d" | "7d" | "30d" | "90d" | "1y";
 }
 
 export interface IGetRangesResponse {

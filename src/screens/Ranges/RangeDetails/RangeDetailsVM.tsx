@@ -48,12 +48,13 @@ class RangeDetailsInterfaceVM {
     let range = this.range;
     if (!range) {
       try {
-        const rangeData = await rangesService.getRangeByAddress(this.rangeDomain, { charts: true });
+        const rangeData = await rangesService.getRangeByAddress(this.rangeDomain, { charts: true, timeRange: "30d" });
         if (rangeData) {
           const newRange = new Range(rangeData);
           this.rootStore.rangesStore.updateRange(newRange);
           this.setHistory(rangeData.charts || []);
           this.updateBlockHeight();
+          this.setCurrentPeriodApr(new BN(rangeData.period_stats.apr));
           return;
         }
       } catch (error) {
@@ -64,25 +65,48 @@ class RangeDetailsInterfaceVM {
         const response = await rangesService.getRanges({
           page: 1,
           size: 200,
-          minLiquidity: 0
+          minLiquidity: 0,
+          timeRange: "30d"
         });
-        
+
         response.ranges.forEach((rangeData) => {
           const r = new Range(rangeData);
           this.rootStore.rangesStore.updateInAllRanges(r);
         });
-        
+
         range = this.range;
+        const initialRange = response.ranges.find(r => r.address === this.rangeDomain);
+        if (initialRange) {
+          this.setCurrentPeriodApr(new BN(initialRange.period_stats.apr));
+        }
       } catch (error) {
         console.error("Error loading range by domain:", error);
       }
     }
-    
+
     if (range) {
-      rangesService.getRangeByAddress(range.address, { charts: true }).then((rangeData) => {
+      Promise.all([
+        rangesService.getRanges({
+          page: 1,
+          size: 200,
+          minLiquidity: 0,
+          timeRange: "30d"
+        }),
+        rangesService.getRangeByAddress(range.address, { charts: true, timeRange: "30d" })
+      ]).then(([rangesResponse, rangeData]) => {
         if (!rangeData) return;
-        const newRange = new Range(rangeData);
-        this.rootStore.rangesStore.updateRange(newRange);
+
+        const rangeFromList = rangesResponse.ranges.find(r => r.address === range!.address);
+        if (rangeFromList) {
+          this.setCurrentPeriodApr(new BN(rangeFromList.period_stats.apr));
+          const newRange = new Range(rangeFromList);
+          this.rootStore.rangesStore.updateRange(newRange);
+        } else {
+          this.setCurrentPeriodApr(new BN(rangeData.period_stats.apr));
+          const newRange = new Range(rangeData);
+          this.rootStore.rangesStore.updateRange(newRange);
+        }
+
         this.setHistory(rangeData.charts || []);
         this.updateBlockHeight();
       });
@@ -110,12 +134,61 @@ class RangeDetailsInterfaceVM {
   public showUsdPrice: boolean = false;
   public setShowUsdPrice = (value: boolean) => (this.showUsdPrice = value);
 
-  public timeRangeToDisplayRewards: "1d" | "7d" | "1m" | "3m" | "1y" | "all" = "all";
+  public timeRangeToDisplayRewards: "1d" | "7d" | "1m" | "3m" | "1y" | "all" = "1m";
   private _setTimeRangeToDisplayRewards = (value: "1d" | "7d" | "1m" | "3m" | "1y" | "all") =>
     (this.timeRangeToDisplayRewards = value);
   public setTimeRangeToDisplayRewards = (value: "1d" | "7d" | "1m" | "3m" | "1y" | "all") => {
     this._setTimeRangeToDisplayRewards(value);
-    this.syncLPRewards(value);
+    this.reloadRangeWithTimeRange(value);
+  };
+
+  public currentPeriodApr: BN = BN.ZERO;
+  private setCurrentPeriodApr = (value: BN) => (this.currentPeriodApr = value);
+
+  private reloadRangeWithTimeRange = async (period: "1d" | "7d" | "1m" | "3m" | "1y" | "all") => {
+    const timeRangeMap: Record<"1d" | "7d" | "1m" | "3m" | "1y" | "all", "1d" | "7d" | "30d" | "90d" | "1y" | "all"> = {
+      "1d": "1d",
+      "7d": "7d",
+      "1m": "30d",
+      "3m": "90d",
+      "1y": "1y",
+      "all": "all"
+    };
+    const timeRange = timeRangeMap[period];
+
+    Promise.all([
+      rangesService.getRanges({
+        page: 1,
+        size: 200,
+        minLiquidity: 0,
+        timeRange: timeRange
+      }),
+      rangesService.getRangeByAddress(this.rangeAddress, { timeRange })
+    ]).then(([rangesResponse, rangeData]) => {
+      const rangeFromList = rangesResponse.ranges.find(r => r.address === this.rangeAddress);
+
+      if (rangeFromList) {
+        this.setCurrentPeriodApr(new BN(rangeFromList.period_stats.apr));
+        const newRange = new Range(rangeFromList);
+        this.rootStore.rangesStore.updateRange(newRange);
+      } else if (rangeData) {
+        this.setCurrentPeriodApr(new BN(rangeData.period_stats.apr));
+        const newRange = new Range(rangeData);
+        this.rootStore.rangesStore.updateRange(newRange);
+      }
+
+      if (rangeData) {
+        this.updatelpRewardsByTime(
+          period,
+          Object.entries(rangeData.period_stats.fees).map(([assetId, fees]) => ({
+            assetId,
+            extraEarned: new BN(fees.extra_earned),
+            feesEarned: new BN(fees.fees_earned),
+            totalEarnedUsd: new BN(fees.total_earned_usd)
+          }))
+        );
+      }
+    });
   };
 
   public lpRewardsByTime: Record<
@@ -126,6 +199,13 @@ class RangeDetailsInterfaceVM {
     key: "1d" | "7d" | "1m" | "3m" | "1y" | "all",
     value: { assetId: string; feesEarned: BN; extraEarned: BN; totalEarnedUsd: BN }[]
   ) => (this.lpRewardsByTime[key] = value);
+
+  public get currentApr(): BN {
+    if (this.currentPeriodApr && !this.currentPeriodApr.eq(0)) {
+      return this.currentPeriodApr;
+    }
+    return this.range?.periodStats?.apr ?? BN.ZERO;
+  }
 
   public get LPRewardsToDisplay(): { assetId: string; amount: BN; usdValue?: BN }[] {
     const data = this.lpRewardsByTime[this.timeRangeToDisplayRewards] ?? [];
@@ -234,13 +314,11 @@ class RangeDetailsInterfaceVM {
     this.rangeDomain = rangeDomain;
     makeAutoObservable(this);
 
-    // Load range data will be called from useEffect in React component
-
     when(
       () => this.range != null,
       () => {
         this.syncChartData("all");
-        this.syncLPRewards("all");
+        this.reloadRangeWithTimeRange("1m");
         this.syncIndexTokenInfo();
       }
     );
@@ -302,38 +380,6 @@ class RangeDetailsInterfaceVM {
       });
   };
 
-  public syncLPRewards = async (period: "1d" | "7d" | "1m" | "3m" | "1y" | "all") => {
-    if (period === "all") {
-      rangesService.getRangeByAddress(this.rangeAddress).then((rangeData: IRangeParamsResponse) => {
-        if (!rangeData) return;
-        this.updatelpRewardsByTime(
-          period,
-          Object.entries(rangeData.period_stats.fees).map(([assetId, fees]) => ({
-            assetId,
-            extraEarned: new BN(fees.extra_earned),
-            feesEarned: new BN(fees.fees_earned),
-            totalEarnedUsd: new BN(fees.total_earned_usd)
-          }))
-        );
-      });
-      return;
-    }
-    const [startTime, endTime] = this.convertTimeRange(period);
-    rangesService
-      .getRangeByAddress(this.rangeAddress, { startTime, endTime })
-      .then((rangeData: IRangeParamsResponse) => {
-        if (!rangeData) return;
-        this.updatelpRewardsByTime(
-          period,
-          Object.entries(rangeData.period_stats.fees).map(([assetId, fees]) => ({
-            assetId,
-            extraEarned: new BN(fees.extra_earned),
-            feesEarned: new BN(fees.fees_earned),
-            totalEarnedUsd: new BN(fees.total_earned_usd)
-          }))
-        );
-      });
-  };
 
   public syncChartData = async (period: "1d" | "7d" | "1m" | "3m" | "1y" | "all") => {
     const [startTime, endTime] = this.convertTimeRange(period);

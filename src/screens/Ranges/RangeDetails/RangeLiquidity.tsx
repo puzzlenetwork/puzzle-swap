@@ -51,7 +51,7 @@ const RangeLiquidity: React.FC<HTMLAttributes<HTMLElement>> = (props) => {
         <SizedBox width={20} />
         <Column alignItems="flex-end" justifyContent="flex-end">
           <Text fitContent style={{ fontSize: "20px", lineHeight: "24px" }}>
-            {vm.range ? `${vm.range.periodStats.apr.toFormat(2)}%` : <Skeleton width={80} height={24} />}
+            {vm.range ? `${vm.currentApr.toFormat(2)}%` : <Skeleton width={80} height={24} />}
           </Text>
         </Column>
       </AdaptiveFlex>
