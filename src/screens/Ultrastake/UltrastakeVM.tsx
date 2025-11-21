@@ -30,9 +30,20 @@ class UltrastakeVM {
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
     poolsService.getStats().then((d) => this._setStats(d));
+    this.loadUltrastakeStats();
     when(() => rootStore.accountStore.address != null, this.updateAddressStakingInfo);
     reaction(() => this.rootStore.accountStore?.address, this.updateAddressStakingInfo);
   }
+
+  private loadUltrastakeStats = async () => {
+    try {
+      const response = await fetch("https://swapapi.puzzleswap.org/stats/v1/statistics/aggregator/ultrastake");
+      const data = await response.json();
+      this._setUltrastakeStats(data);
+    } catch (error) {
+      console.error("Failed to load ultrastake stats:", error);
+    }
+  };
 
   public nftDisplayState: number = 0;
   setNftDisplayState = (v: number) => (this.nftDisplayState = v);
@@ -45,6 +56,9 @@ class UltrastakeVM {
 
   public stats: any = null;
   private _setStats = (v: any) => (this.stats = v);
+
+  public ultrastakeStats: any = null;
+  private _setUltrastakeStats = (v: any) => (this.ultrastakeStats = v);
 
   private _setClaimedRewardInUSDN = (v: BN) => (this.claimedRewardInUSDN = v);
   private _setClaimedRewardInPuzzle = (v: BN) => (this.claimedRewardInPuzzle = v);

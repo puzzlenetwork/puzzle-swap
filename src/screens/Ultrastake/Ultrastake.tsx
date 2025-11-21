@@ -7,6 +7,7 @@ import { UltrastakeVMProvider, useUltrastakeVM } from "./UltrastakeVM";
 import GoBack from "@components/GoBack";
 import SizedBox from "@components/SizedBox";
 import Reward from "./Reward";
+import Statistics from "./Statistics";
 import Tabs from "@components/Tabs";
 import MarketNfts from "@screens/Ultrastake/MarketNfts";
 import AccountNfts from "@screens/Ultrastake/AccountNfts";
@@ -53,10 +54,9 @@ const UltrastakeImpl: React.FC = () => {
               </Text>
               <SizedBox height={8} />
               <Text type="secondary" className="title">
-                Stake Puzzle NFT to share the rewards pool from Puzzle aggregator fees and boost your staking rewards up
-                to
-                <b style={{ color: "#35A15A" }}> {apy}</b>. You can stake one of each type of NFTs.
+                Stake Puzzle NFT to share the rewards pool from Puzzle aggregator fees and boost your staking reward.
               </Text>
+              <Statistics />
               <Reward />
               <SizedBox height={40} />
               <Tabs
