@@ -206,7 +206,7 @@ export default class PoolsStore {
     this.totalItems = items;
   };
 
-  volumeByTimeFilter: number = 0;
+  volumeByTimeFilter: number = 2;
   setVolumeByTimeFilter = (v: number) => {
     this.volumeByTimeFilter = v;
   };

@@ -39,14 +39,8 @@ const UltrastakeBanner: React.FC = () => {
       <Card type="dark" flexDirection="row" justifyContent="space-between" alignItems="center">
         <Column mainAxisSize="stretch">
           <Title type="light">NFT Staking</Title>
-          <Text type="light" style={{ maxWidth: 195 }}>
-            Buy and stake NFTs to get APY boost up to{" "}
-            {stakeStore.stats != null
-              ? stakeStore.stats.stakingApy
-                  ?.plus(stakeStore.stats.eagleApy ?? 0)
-                  .toString()
-                  .concat(" %")
-              : "—"}
+          <Text type="light">
+            Stake NFTs to earn commissions from aggregator swaps
           </Text>
           <SizedBox height={16} />
           <Link to={ROUTES.ULTRASTAKE}>

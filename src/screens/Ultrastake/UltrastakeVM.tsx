@@ -6,6 +6,7 @@ import BN from "@src/utils/BN";
 import nodeService from "@src/services/nodeService";
 import { CONTRACT_ADDRESSES, EXPLORER_URL, TOKENS_BY_SYMBOL } from "@src/constants";
 import poolsService from "@src/services/poolsService";
+import { getBackendApiUrl } from "@src/constants/api";
 
 interface IProps {
   children: React.ReactNode;
@@ -30,9 +31,20 @@ class UltrastakeVM {
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
     poolsService.getStats().then((d) => this._setStats(d));
+    this.loadUltrastakeStats();
     when(() => rootStore.accountStore.address != null, this.updateAddressStakingInfo);
     reaction(() => this.rootStore.accountStore?.address, this.updateAddressStakingInfo);
   }
+
+  private loadUltrastakeStats = async () => {
+    try {
+      const response = await fetch(`${getBackendApiUrl()}/stats/v1/statistics/aggregator/ultrastake`);
+      const data = await response.json();
+      this._setUltrastakeStats(data);
+    } catch (error) {
+      console.error("Failed to load ultrastake stats:", error);
+    }
+  };
 
   public nftDisplayState: number = 0;
   setNftDisplayState = (v: number) => (this.nftDisplayState = v);
@@ -45,6 +57,9 @@ class UltrastakeVM {
 
   public stats: any = null;
   private _setStats = (v: any) => (this.stats = v);
+
+  public ultrastakeStats: any = null;
+  private _setUltrastakeStats = (v: any) => (this.ultrastakeStats = v);
 
   private _setClaimedRewardInUSDN = (v: BN) => (this.claimedRewardInUSDN = v);
   private _setClaimedRewardInPuzzle = (v: BN) => (this.claimedRewardInPuzzle = v);

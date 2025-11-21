@@ -170,7 +170,7 @@ export default class RangesStore {
   };
 
   // Time range to show statistics
-  timeRange = "all" as "all" | "1d" | "7d" | "30d" | "90d" | "1y";
+  timeRange = "30d" as "all" | "1d" | "7d" | "30d" | "90d" | "1y";
 
   minLiquidity = 1;
 
