@@ -17,6 +17,9 @@ const Root = styled(Column)`
   .menu-item {
     padding: 10px 0;
     cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
 
     :first-of-type {
       padding-top: 0;

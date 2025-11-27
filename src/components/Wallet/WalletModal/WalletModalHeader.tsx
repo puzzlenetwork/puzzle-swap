@@ -43,6 +43,9 @@ const Action = styled.div`
   cursor: pointer;
   height: 60px;
   box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 
   .img {
     height: 24px;
