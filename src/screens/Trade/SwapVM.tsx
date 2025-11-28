@@ -30,11 +30,34 @@ export class SwapVM {
     this.assetId0 = asset0 ?? TOKENS_BY_SYMBOL.WAVES.assetId;
     this.assetId1 = asset1 ?? TOKENS_BY_SYMBOL.PUZZLE.assetId;
     this._syncAmount1();
+
     reaction(
-      () => [this.assetId0, this.assetId1, this.amount0],
-      () => this._syncAmount1()
+      () => [this.assetId0, this.assetId1],
+      () => {
+        if (this.inputMode === "send") {
+          this._syncAmount1();
+        } else {
+          this._syncAmount0();
+        }
+      }
     );
-    setInterval(() => this._syncAmount1(true), 15 * 1000);
+
+    reaction(
+      () => this.amount0,
+      () => {
+        if (this.inputMode === "send") {
+          this._syncAmount1();
+        }
+      }
+    );
+
+    setInterval(() => {
+      if (this.inputMode === "send") {
+        this._syncAmount1(true);
+      } else {
+        this._syncAmount0(true);
+      }
+    }, 15 * 1000);
   }
 
   public activeAction: number = 0;
@@ -53,6 +76,9 @@ export class SwapVM {
   };
   openedSettings = false;
   setOpenedSettings = (v: boolean) => (this.openedSettings = v);
+
+  inputMode: "send" | "receive" = "send";
+  setInputMode = (mode: "send" | "receive") => (this.inputMode = mode);
 
   slippage = new BN(50);
   setSlippage = (v: BN) => (this.slippage = v);
@@ -122,6 +148,13 @@ export class SwapVM {
   amount1: BN = BN.ZERO;
   private _setAmount1 = (amount: BN) => (this.amount1 = amount);
 
+  setAmount1 = (amount: BN) => {
+    this.amount1 = amount;
+    if (this.inputMode === "receive") {
+      this._syncAmount0();
+    }
+  };
+
   routingModalOpened: boolean = false;
   setRoutingModalState = (state: boolean) => (this.routingModalOpened = state);
 
@@ -157,6 +190,69 @@ export class SwapVM {
       .catch((error) => {
         this._setAggregatorResponse({ error: error.message || 'Unknown error' });
         this._setAmount1(BN.ZERO);
+        this._setPriceImpact(BN.ZERO);
+        this._setRoute([]);
+        this._setPrice(BN.ZERO);
+        this._setParameters(null);
+      })
+      .finally(() => {
+        this.setRejectAggregatorPromise(undefined);
+        this._setSynchronizing(false);
+      });
+  };
+
+  private _syncAmount0 = (quiet = false) => {
+    const { amount1, assetId0, assetId1 } = this;
+    const invalidAmount = amount1 == null || amount1.isNaN() || amount1.lte(0);
+
+    if (amount1 != null && amount1.eq(0)) {
+      this.setAmount0(BN.ZERO);
+      return;
+    }
+
+    const rate0 = this.rootStore.poolsStore.usdtRate(assetId0);
+    const rate1 = this.rootStore.poolsStore.usdtRate(assetId1);
+
+    if (!rate0 || !rate1 || rate0.eq(0) || rate1.eq(0)) {
+      return;
+    }
+
+    const amount1Formatted = BN.formatUnits(amount1, this.token1.decimals);
+    const usdValue = amount1Formatted.times(rate1);
+    const estimatedAmount0Formatted = usdValue.div(rate0);
+    const estimatedAmount0 = new BN(BN.parseUnits(estimatedAmount0Formatted, this.token0.decimals).toFixed(0));
+
+    !quiet && this._setSynchronizing(true);
+    const defaultAmount0 = BN.parseUnits(1, this.token0.decimals);
+
+    if (this.rejectAggregatorPromise != null) this.rejectAggregatorPromise();
+
+    const promise = new Promise((resolve, reject) => {
+      this.rejectAggregatorPromise = reject;
+      resolve(aggregatorService.calc(assetId0, assetId1, invalidAmount ? defaultAmount0 : estimatedAmount0));
+    });
+
+    promise
+      .then((v: any) => {
+        this._setAggregatorResponse(v);
+
+        if (!invalidAmount) {
+          this.amount0 = estimatedAmount0;
+          // Пересчитываем точное значение получения
+          this._setAmount1(new BN(v.estimatedOut * 0.9971));
+        }
+
+        this._calculatePrice(estimatedAmount0, new BN(v.estimatedOut));
+        this._setSynchronizing(false);
+        !invalidAmount &&
+          this._setPriceImpact((new BN(v.priceImpact).gt(0) ? new BN(v.priceImpact) : BN.ZERO).times(100));
+        this._setParameters(!invalidAmount ? v.parameters : null);
+        this._setRoute(v.routes);
+        this._setAggregatedProfit(new BN(v.aggregatedProfit));
+      })
+      .catch((error) => {
+        this._setAggregatorResponse({ error: error.message || 'Unknown error' });
+        this.amount0 = BN.ZERO;
         this._setPriceImpact(BN.ZERO);
         this._setRoute([]);
         this._setPrice(BN.ZERO);
@@ -210,6 +306,9 @@ export class SwapVM {
     const assetId0 = this.assetId0;
     this.setAssetId0(this.assetId1);
     this.setAssetId1(assetId0);
+    this.amount0 = BN.ZERO;
+    this.amount1 = BN.ZERO;
+    this.inputMode = "send";
   };
 
   swap = async () => {
@@ -246,7 +345,7 @@ export class SwapVM {
           try {
             const txResponse = await fetch(`https://nodes.wx.network/transactions/info/${txId}`);
             const tx = await txResponse.json();
-            
+
             const paymentAssetId = tx.payment[0].assetId ?? "WAVES";
             const decimals_in = token0.decimals;
             const decimals_out = token1.decimals;

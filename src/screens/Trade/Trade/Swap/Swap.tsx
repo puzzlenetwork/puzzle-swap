@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback } from "react";
 import Card from "@components/Card";
 import TokenInput from "@components/TokenInput";
 import SizedBox from "@components/SizedBox";
@@ -24,7 +24,6 @@ import { useSwapVM } from "@screens/Trade/SwapVM";
 import SwitchTokensButton from "./SwitchTokensButton";
 import Details from "./Details";
 import BN from "@src/utils/BN";
-import _ from "lodash";
 
 interface IProps {}
 
@@ -42,7 +41,6 @@ const Root = styled.div`
 const Swap: React.FC<IProps> = ({ ...rest }) => {
   const { notificationStore, accountStore } = useStores();
   const vm = useSwapVM();
-  const [amount0, setAmount0] = useState<BN>(vm.amount0);
   const navigate = useNavigate();
 
   const handleSetAssetId0 = (assetId: string) => {
@@ -79,22 +77,25 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
     vm.setAssetId1(assetId);
   };
 
-  const debounce = useMemo(() => _.debounce((val: BN) => setAmount0(val), 1000), []);
-  const handleDebounce = useCallback(
-    (val: BN) => {
-      setAmount0(val);
-      debounce(val);
+  const handleChangeAmount0 = useCallback(
+    (v: BN) => {
+      vm.setInputMode("send");
+      vm.setAmount0(v);
     },
-    [debounce]
+    [vm]
   );
 
-  const handleChangeAmount0 = (v: BN) => {
-    handleDebounce(v);
-    vm.setAmount0(v);
-  };
+  const handleChangeAmount1 = useCallback(
+    (v: BN) => {
+      vm.setInputMode("receive");
+      vm.setAmount1(v);
+    },
+    [vm]
+  );
+
   const handleMaxClick = () => {
+    vm.setInputMode("send");
     vm.amount0MaxClickFunc && vm.amount0MaxClickFunc();
-    vm.balance0 && setAmount0(vm.balance0);
   };
 
   return (
@@ -104,7 +105,7 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
         <Settings />
         <TokenInput
           decimals={vm.token0.decimals}
-          amount={amount0}
+          amount={vm.amount0}
           setAmount={handleChangeAmount0}
           assetId={vm.assetId0}
           setAssetId={handleSetAssetId0}
@@ -117,6 +118,7 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
         <TokenInput
           decimals={vm.token1.decimals}
           amount={vm.amount1}
+          setAmount={handleChangeAmount1}
           assetId={vm.assetId1}
           setAssetId={handleSetAssetId1}
           balances={accountStore.balances}
