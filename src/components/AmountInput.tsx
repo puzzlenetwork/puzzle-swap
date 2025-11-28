@@ -32,7 +32,8 @@ const AmountInput = React.forwardRef<HTMLInputElement, TProps>(({ onWheel, ...pr
     {...props}
     ref={ref}
     small={props.small}
-    type="number"
+    type="text"
+    inputMode="decimal"
     onWheel={(e) => {
       e.target && (e.target as any).blur();
       onWheel && onWheel(e);
