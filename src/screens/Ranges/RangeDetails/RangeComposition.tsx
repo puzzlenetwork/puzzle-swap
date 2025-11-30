@@ -108,7 +108,7 @@ const RangeComposition: React.FC<IProps> = (props) => {
         accessor: "share",
         Header: () => (
           <Row alignItems="center" justifyContent="flex-end">
-            Fact / Target Share
+            Fact / Virt / Setup Share
           </Row>
         )
       },
@@ -159,8 +159,10 @@ const RangeComposition: React.FC<IProps> = (props) => {
       }));
 
     let totalValue = BN.ZERO;
+    let totalFactValue = BN.ZERO;
     tokens.forEach((a) => {
       totalValue = totalValue.plus(a.balanceUsd);
+      totalFactValue = totalFactValue.plus(a.factBalanceUsd);
     });
 
     const data = tokens.map((a) => ({
@@ -270,7 +272,15 @@ const RangeComposition: React.FC<IProps> = (props) => {
       ),
       share: (
         <Row alignItems="center" justifyContent="flex-end">
-          <Text fitContent>{a.balanceUsd.div(totalValue).times(100).toFormat(2)}% /</Text>
+          <Text fitContent type={a.isActive ? "primary" : "error"}>
+            {a.factBalanceUsd.div(totalFactValue).times(100).toFormat(2)}%
+          </Text>
+          <SizedBox width={4} />
+          <Text fitContent>/</Text>
+          <SizedBox width={4} />
+          <Text fitContent>{a.balanceUsd.div(totalValue).times(100).toFormat(2)}%</Text>
+          <SizedBox width={4} />
+          <Text fitContent>/</Text>
           <SizedBox width={4} />
           <Text fitContent type="secondary">
             {a.share.toFormat(2)}%
