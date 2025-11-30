@@ -16,17 +16,12 @@ import { normalizeUrl } from "@src/constants/api";
 import { Column, Row } from "@src/components/Flex";
 import Tooltip from "@src/components/Tooltip";
 import BN from "@src/utils/BN";
+import { getUserSettings, saveUserSettings, isValidPublicKey, IUserSettings } from "@src/utils/userSettings";
 import axios from "axios";
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 
 interface IProps {}
-
-interface ISettingsStorageData {
-  slippage: number;
-  customNode?: string;
-  backendUrl?: string;
-}
 
 const Root = styled(Card)<{ expanded: boolean }>`
   ${({ expanded }) => (!expanded ? "display:none;" : "")}
@@ -37,6 +32,7 @@ const Root = styled(Card)<{ expanded: boolean }>`
   right: 0;
   left: 0;
   inset: 0;
+  overflow-y: auto;
 `;
 
 const Tag = styled.div<{ active?: boolean }>`
@@ -184,37 +180,48 @@ const LoadingDots = styled.div`
 const Settings: React.FC<IProps> = () => {
   const vm = useSwapVM();
   const theme = useTheme();
-  const storageData = localStorage.getItem("puzzle-user-settings");
-  const initData: ISettingsStorageData | null = storageData ? JSON.parse(storageData) : null;
-  const initialSlippage = new BN(initData ? initData.slippage : 1).times(10);
+  const initData = getUserSettings();
+  const initialSlippage = new BN(initData?.slippage ?? 1).times(10);
+
   const [slippage, setSlippage] = useState(initialSlippage);
-  const [customNode, setCustomNode] = useState(initData?.customNode || "");
-  const [backendUrl, setBackendUrl] = useState(initData?.backendUrl || "");
+  const [customNode, setCustomNode] = useState(initData?.customNode ?? "");
+  const [backendUrl, setBackendUrl] = useState(initData?.backendUrl ?? "");
+  const [customPublicKey, setCustomPublicKey] = useState(initData?.customPublicKey ?? "");
   const [testStatus, setTestStatus] = useState<"idle" | "testing" | "success" | "error">("idle");
   const [testMessage, setTestMessage] = useState("");
   const [backendTestStatus, setBackendTestStatus] = useState<"idle" | "testing" | "success" | "error">("idle");
   const [backendTestMessage, setBackendTestMessage] = useState("");
-  const isSomethingChanged = slippage.eq(initialSlippage) && customNode === (initData?.customNode || "") && backendUrl === (initData?.backendUrl || "");
+
+  const trimmedPublicKey = customPublicKey.trim();
+  const isPublicKeyValid = isValidPublicKey(trimmedPublicKey);
+  const hasChanges = !slippage.eq(initialSlippage)
+    || customNode !== (initData?.customNode ?? "")
+    || backendUrl !== (initData?.backendUrl ?? "")
+    || customPublicKey !== (initData?.customPublicKey ?? "");
+  const canSave = hasChanges && !slippage.gt(1000) && isPublicKeyValid;
+
   const handleClose = () => vm.setOpenedSettings(false);
+
   const validateSlippage = (v: number) =>
-    // assuming that slippage is a number in [0,100] as required for percentage
     !isNaN(v) && v > 0 ? Math.min(v, 100) : 1;
+
   const handleSave = () => {
-    localStorage.setItem(
-      "puzzle-user-settings",
-      JSON.stringify({
-        ...initData,
-        slippage: validateSlippage(slippage.div(10).toNumber()),
-        customNode: customNode.trim(),
-        backendUrl: backendUrl.trim()
-      })
-    );
+    const settings: IUserSettings = {
+      ...initData,
+      slippage: validateSlippage(slippage.div(10).toNumber()),
+      customNode: customNode.trim(),
+      backendUrl: backendUrl.trim(),
+      customPublicKey: trimmedPublicKey
+    };
+    saveUserSettings(settings);
     handleClose();
   };
+
   const handleReset = () => {
     setSlippage(initialSlippage);
-    setCustomNode(initData?.customNode || "");
-    setBackendUrl(initData?.backendUrl || "");
+    setCustomNode(initData?.customNode ?? "");
+    setBackendUrl(initData?.backendUrl ?? "");
+    setCustomPublicKey(initData?.customPublicKey ?? "");
     setTestStatus("idle");
     setTestMessage("");
     setBackendTestStatus("idle");
@@ -408,7 +415,7 @@ const Settings: React.FC<IProps> = () => {
                 )}
               </TestButton>
             </NodeInputRow>
-            
+
             {testMessage && (
               <StatusMessage type={testStatus === "success" ? "success" : "error"}>
                 {testStatus === "success" ? (
@@ -419,7 +426,7 @@ const Settings: React.FC<IProps> = () => {
                 <span>{testMessage}</span>
               </StatusMessage>
             )}
-            
+
             {!customNode.trim() && (
               <Text size="small" type="secondary" style={{ opacity: 0.7 }}>
                 Leave empty to use default nodes
@@ -480,7 +487,7 @@ const Settings: React.FC<IProps> = () => {
                 )}
               </TestButton>
             </NodeInputRow>
-            
+
             {backendTestMessage && (
               <StatusMessage type={backendTestStatus === "success" ? "success" : "error"}>
                 {backendTestStatus === "success" ? (
@@ -491,13 +498,49 @@ const Settings: React.FC<IProps> = () => {
                 <span>{backendTestMessage}</span>
               </StatusMessage>
             )}
-            
+
             {!backendUrl.trim() && (
               <Text size="small" type="secondary" style={{ opacity: 0.7 }}>
                 Leave empty to use default backend from environment
               </Text>
             )}
           </NodeTestContainer>
+        </Column>
+        <SizedBox height={24} />
+        <Column crossAxisSize="max">
+          <Tooltip
+            config={{ placement: "bottom-end", trigger: "click" }}
+            content={
+              <Text>
+                For smart accounts: enter the public key of the account you want to sign transactions for.
+                Your connected wallet will act as the signer/manager.
+              </Text>
+            }
+          >
+            <Row alignItems="center">
+              <Text fitContent weight={500}>
+                Smart Account Key
+              </Text>
+              <InfoIcon style={{ marginLeft: 8 }} />
+            </Row>
+          </Tooltip>
+          <SizedBox height={8} />
+          <Input
+            value={customPublicKey}
+            onChange={(e) => setCustomPublicKey(e.target.value)}
+            placeholder="Base58 public key (44 chars)"
+            description=""
+            error={!!trimmedPublicKey && !isPublicKeyValid}
+          />
+          {!trimmedPublicKey ? (
+            <Text size="small" type="secondary" style={{ opacity: 0.7, marginTop: 8 }}>
+              Leave empty for normal wallet signing
+            </Text>
+          ) : !isPublicKeyValid ? (
+            <Text size="small" type="error" style={{ marginTop: 8 }}>
+              Invalid public key (must be 44 Base58 characters)
+            </Text>
+          ) : null}
         </Column>
         <SizedBox height={12} />
       </Column>
@@ -513,7 +556,7 @@ const Settings: React.FC<IProps> = () => {
         <TextButton kind="secondary" weight={500} onClick={handleReset}>
           Reset
         </TextButton>
-        <Button size="medium" onClick={handleSave} disabled={isSomethingChanged || slippage.gt(1000)}>
+        <Button size="medium" onClick={handleSave} disabled={!canSave}>
           Save
         </Button>
       </Row>

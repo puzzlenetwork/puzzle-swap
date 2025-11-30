@@ -10,7 +10,7 @@ import { autorun, makeAutoObservable, reaction } from "mobx";
 import Balance from "@src/entities/Balance";
 import { getCurrentBrowser } from "@src/utils/getCurrentBrowser";
 import BN from "@src/utils/BN";
-import { nodeInteraction, waitForTx } from "@waves/waves-transactions";
+import { nodeInteraction, waitForTx, broadcast } from "@waves/waves-transactions";
 import nodeService from "@src/services/nodeService";
 import { THEME_TYPE } from "@src/themes/ThemeProvider";
 import centerEllipsis from "@src/utils/centerEllipsis";
@@ -18,6 +18,7 @@ import { wavesAddress2eth } from "@waves/node-api-js";
 import { ProviderKeeperMobile } from "@keeper-wallet/provider-keeper-mobile";
 import { ProviderAura } from "waves-provider-aura";
 import { IDialogNotificationProps } from "@components/Dialog/DialogNotification";
+import { getCustomPublicKey } from "@src/utils/userSettings";
 
 export enum LOGIN_TYPE {
   SIGNER_SEED = "SIGNER_SEED",
@@ -356,25 +357,32 @@ class AccountStore {
     }
   };
 
+  private executeKeeperTransaction = async (type: number, data: any): Promise<string> => {
+    const customPublicKey = getCustomPublicKey();
+
+    if (customPublicKey) {
+      data.senderPublicKey = customPublicKey;
+      const signedTx = await (window as any).WavesKeeper.signTransaction({ type, data });
+      const parsedTx = JSON.parse(signedTx);
+      const result = await broadcast(parsedTx, NODE_URL);
+      await waitForTx(result.id, { apiBase: NODE_URL });
+      return result.id;
+    }
+
+    const tx = await (window as any).WavesKeeper.signAndPublishTransaction({ type, data });
+    const txId = JSON.parse(tx).id;
+    await waitForTx(txId, { apiBase: NODE_URL });
+    return txId;
+  };
+
   private transferWithKeeper = async (data: ITransferParams): Promise<string | null> => {
     const tokenAmount = BN.formatUnits(data.amount, this.assetToSend?.decimals).toString();
-    const tx = await (window as any).WavesKeeper.signAndPublishTransaction({
-      type: 4,
-      data: {
-        amount: { tokens: tokenAmount, assetId: data.assetId },
-        fee: {
-          tokens: this.isAccScripted ? "0.005" : "0.001",
-          assetId: "WAVES"
-        },
-        recipient: data.recipient
-      }
-    } as any);
-
-    const txId = JSON.parse(tx).id;
-    await waitForTx(txId, {
-      apiBase: NODE_URL
-    });
-    return txId;
+    const txData = {
+      amount: { tokens: tokenAmount, assetId: data.assetId },
+      fee: { tokens: this.isAccScripted ? "0.005" : "0.001", assetId: "WAVES" },
+      recipient: data.recipient
+    };
+    return this.executeKeeperTransaction(4, txData);
   };
 
   ///////////------------invoke
@@ -415,38 +423,24 @@ class AccountStore {
     }
     const ttx = this.signer.invoke({
       dApp: txParams.dApp,
-      fee: txParams.fee != null ? txParams.fee : this.isAccScripted ? 900000 : 500000,
+      fee: txParams.fee ?? (this.isAccScripted ? 900000 : 500000),
       payment: txParams.payment,
       call: txParams.call
     });
 
     const txId = await ttx.broadcast().then((tx: any) => tx.id);
-    await waitForTx(txId, {
-      apiBase: NODE_URL
-    });
+    await waitForTx(txId, { apiBase: NODE_URL });
     return txId;
   };
 
   private invokeWithKeeper = async (txParams: IInvokeTxParams): Promise<string | null> => {
     const data = {
-      fee: {
-        assetId: "WAVES",
-        amount: txParams.fee != null ? txParams.fee : this.isAccScripted ? 900000 : 500000
-      },
+      fee: { assetId: "WAVES", amount: txParams.fee ?? (this.isAccScripted ? 900000 : 500000) },
       dApp: txParams.dApp,
       call: txParams.call,
       payment: txParams.payment
     };
-    const tx = await (window as any).WavesKeeper.signAndPublishTransaction({
-      type: 16,
-      data
-    } as any);
-
-    const txId = JSON.parse(tx).id;
-    await waitForTx(txId, {
-      apiBase: NODE_URL
-    });
-    return txId;
+    return this.executeKeeperTransaction(16, data);
   };
 
   get balances() {
