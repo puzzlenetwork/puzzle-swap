@@ -201,7 +201,7 @@ class CreateRangeVm {
     )
 
     reaction(
-      () => this.rootStore.accountStore.address,
+      () => [this.rootStore.accountStore.address, this.rootStore.accountStore.smartAccountAddress],
       () => this.syncInWallet()
     )
 

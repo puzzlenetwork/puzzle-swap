@@ -37,7 +37,7 @@ class RangesListVm {
     this.syncFiltersWithRangesStore();
 
     reaction(
-      () => this.rootStore.accountStore.address,
+      () => [this.rootStore.accountStore.address, this.rootStore.accountStore.smartAccountAddress],
       () => this.rootStore.rangesStore.syncUserInvestedAmount(),
     )
 
@@ -131,14 +131,14 @@ class RangesListVm {
       (async () => {
         console.log("In async function for handleShowOnlyUserRangesChange, v =", v);
         if (v) {
-          const { address } = this.rootStore.accountStore;
-          await this.rootStore.rangesStore.setUserAddress(address ?? undefined);
-          await this.rootStore.rangesStore.setMinLiquidity(address ? 0 : 1);
+          const { effectiveAddress } = this.rootStore.accountStore;
+          await this.rootStore.rangesStore.setUserAddress(effectiveAddress ?? undefined);
+          await this.rootStore.rangesStore.setMinLiquidity(effectiveAddress ? 0 : 1);
         } else {
           await this.rootStore.rangesStore.setUserAddress(undefined);
         }
       })(),
-      this.syncRanges({ userAddress: v ? (this.rootStore.accountStore.address ?? undefined) : undefined }),
+      this.syncRanges({ userAddress: v ? (this.rootStore.accountStore.effectiveAddress ?? undefined) : undefined }),
     ]);
   }
 

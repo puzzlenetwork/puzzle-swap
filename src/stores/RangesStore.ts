@@ -80,7 +80,7 @@ export default class RangesStore {
     this.syncUserInvestedAmount();
 
     reaction(
-      () => this.rootStore.accountStore.address,
+      () => [this.rootStore.accountStore.address, this.rootStore.accountStore.smartAccountAddress],
       () => {
         this.userAddress = undefined;
         this.syncRanges();
@@ -90,7 +90,7 @@ export default class RangesStore {
     )
     // Re-sync invested amount when balances change (e.g. after deposit/withdraw)
     reaction(
-      () => [this.rootStore.accountStore.address, this.rootStore.accountStore.assetBalances],
+      () => [this.rootStore.accountStore.effectiveAddress, this.rootStore.accountStore.assetBalances],
       this.debouncedSyncUserInvestedAmount
     );
   }
@@ -258,15 +258,16 @@ export default class RangesStore {
   investmentsData: ProvidedData[] = [];
   setInvestmentsData = (data: ProvidedData[]) => (this.investmentsData = data);
   syncInvestments = async () => {
-    const { address } = this.rootStore.accountStore;
+    const { address, effectiveAddress } = this.rootStore.accountStore;
     if (!address) {
       this.setInvestmentsData([]);
       return;
     }
+    const targetAddress = effectiveAddress ?? address;
     if (this.investmentsLoading) return;
     try {
       this.setInvestmentsLoading(true);
-      const data = await rangesService.getUserInvestments(address);
+      const data = await rangesService.getUserInvestments(targetAddress);
       this.setInvestmentsData(data.map((item) => new ProvidedData(item)));
     } catch (error) {
       console.error("Error fetching investments:", error);
@@ -281,15 +282,16 @@ export default class RangesStore {
     this.userInvestedAmount = new BN(v);
   };
   syncUserInvestedAmount = async () => {
-    const { address } = this.rootStore.accountStore;
+    const { address, effectiveAddress } = this.rootStore.accountStore;
     if (!address) {
       this.userInvestedAmount = null;
       return;
     }
+    const targetAddress = effectiveAddress ?? address;
     if (this.userInvestedAmountLoading) return;
     try {
       this.setUserInvestedAmountLoading(true);
-      const amount = await rangesService.getUserTotalProvided(address);
+      const amount = await rangesService.getUserTotalProvided(targetAddress);
       this.setUserInvestedAmount(amount);
     } catch (error) {
       console.error("Error fetching user invested amount:", error);

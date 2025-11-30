@@ -114,8 +114,9 @@ class WithdrawFromRangeVM {
   };
 
   updateUserIndexStaked = async () => {
-    if (this.rootStore.accountStore.address == null) return;
-    const response = await this.range.contractKeysRequest(`${this.rootStore.accountStore.address}_indexStaked`);
+    const effectiveAddress = this.rootStore.accountStore.effectiveAddress;
+    if (effectiveAddress == null) return;
+    const response = await this.range.contractKeysRequest(`${effectiveAddress}_indexStaked`);
     if (response != null && response.length > 0) {
       this.setUserIndexStaked(new BN(response[0].value));
       this.syncTokensToWithdrawAmounts();
@@ -123,8 +124,9 @@ class WithdrawFromRangeVM {
   };
 
   public syncLPData = async () => {
-    if (!this.rootStore.accountStore.address) return;
-    rangesService.getLPData(this.rangeAddress, this.rootStore.accountStore.address).then((data) => {
+    const effectiveAddress = this.rootStore.accountStore.effectiveAddress;
+    if (!effectiveAddress) return;
+    rangesService.getLPData(this.rangeAddress, effectiveAddress).then((data) => {
       if (!data) return;
       const newLPData = new LPData(data);
       this.setLPData(newLPData);

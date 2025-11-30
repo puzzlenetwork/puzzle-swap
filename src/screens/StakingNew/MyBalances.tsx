@@ -48,7 +48,8 @@ const MyBalances: React.FC = () => {
         return;
       }
       try {
-        const balances = await nodeService.getAddressBalances(accountStore.address);
+        const targetAddress = accountStore.effectiveAddress ?? accountStore.address;
+        const balances = await nodeService.getAddressBalances(targetAddress);
 
         const stPuzzleAsset = balances.find(b => b.assetId === ASSET_IDS.stPuzzle);
         if (stPuzzleAsset) {

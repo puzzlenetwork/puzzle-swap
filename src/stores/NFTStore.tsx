@@ -87,7 +87,7 @@ export default class NftStore {
     Promise.all([this.syncAccountNFTs(), this.syncAccountNFTsOnStaking(), this.getTotalPuzzlesNftsAmount()]);
 
     reaction(
-      () => this.rootStore.accountStore.address,
+      () => [this.rootStore.accountStore.address, this.rootStore.accountStore.smartAccountAddress],
       () => Promise.all([this.syncAccountNFTs(), this.syncAccountNFTsOnStaking(), this.getTotalPuzzlesNftsAmount()])
     );
     setInterval(
@@ -102,10 +102,11 @@ export default class NftStore {
   };
 
   syncAccountNFTs = async () => {
-    const { address } = this.rootStore.accountStore;
+    const { address, effectiveAddress } = this.rootStore.accountStore;
     const { artworks } = this;
     if (address == null || artworks == null) return;
-    const nfts = await nodeService.getAddressNfts(address);
+    const targetAddress = effectiveAddress ?? address;
+    const nfts = await nodeService.getAddressNfts(targetAddress);
     const supportedPuzzleNft = nfts
       .map((nft) => ({
         ...nft,
@@ -142,12 +143,13 @@ export default class NftStore {
 
   syncAccountNFTsOnStaking = async () => {
     const { artworks } = this;
-    const { address } = this.rootStore.accountStore;
+    const { address, effectiveAddress } = this.rootStore.accountStore;
     if (address == null || artworks == null) return;
+    const targetAddress = effectiveAddress ?? address;
     const ultra = CONTRACT_ADDRESSES.ultraStaking;
 
     const allNftOnStaking = await nodeService.getAddressNfts(ultra);
-    const addressStakingNft = await nodeService.nodeMatchRequest(ultra, `address_${address}_nft_(.*)`);
+    const addressStakingNft = await nodeService.nodeMatchRequest(ultra, `address_${targetAddress}_nft_(.*)`);
 
     if (addressStakingNft == null) return;
     const stakedNftIds = addressStakingNft?.reduce<string[]>((acc, { key }) => [...acc, key.split("_")[3]], []);

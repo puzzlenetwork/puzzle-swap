@@ -104,7 +104,7 @@ class PoolInvestVM {
     makeAutoObservable(this);
 
 
-    when(() => this.pool.isCustom === true, this.loadNFTPaymentInfo);
+    when(() => this.pool?.isCustom === true, this.loadNFTPaymentInfo);
     when(
       () => this.pool != null,
       async () => {
@@ -131,7 +131,7 @@ class PoolInvestVM {
   }
 
   syncIndexTokenInfo = async () => {
-    const { address } = this.rootStore.accountStore;
+    const { effectiveAddress: address } = this.rootStore.accountStore;
     const indexTokenIdResponse = await this.pool.contractKeysRequest("static_poolToken_idStr");
     if (address == null) return;
     if (indexTokenIdResponse != null && indexTokenIdResponse.length === 1) {
@@ -142,7 +142,7 @@ class PoolInvestVM {
     }
   };
   getAddressActivityInfo = async () => {
-    const { address } = this.rootStore.accountStore;
+    const { effectiveAddress: address } = this.rootStore.accountStore;
     if (address == null) return;
     const keysArray = {
       globalIndexStaked: "global_indexStaked",
@@ -184,7 +184,7 @@ class PoolInvestVM {
   };
 
   calcRewards = async () => {
-    const { address } = this.rootStore.accountStore;
+    const { effectiveAddress: address } = this.rootStore.accountStore;
     if (address == null || this.pool?.address == null) return;
     const data = await nodeService.evaluate(
       CONTRACT_ADDRESSES.calcReward,

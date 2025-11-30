@@ -176,9 +176,11 @@ class LimitOrdersVM {
 
   sync = async () => {
     if (this.rootStore.accountStore == null) return;
+    const effectiveAddress = this.rootStore.accountStore.effectiveAddress;
+    if (effectiveAddress == null) return;
     const data = await nodeService.nodeKeysRequest(
       CONTRACT_ADDRESSES.limitOrders,
-      `user_${this.rootStore.accountStore.address}_orders`
+      `user_${effectiveAddress}_orders`
     );
     if (data.length === 0) return;
     const orderIdList: string[] = data[0].value.toString().split(",");

@@ -348,7 +348,7 @@ class RangeDetailsInterfaceVM {
   };
 
   syncIndexTokenInfo = async () => {
-    const { address } = this.rootStore.accountStore;
+    const address = this.rootStore.accountStore.effectiveAddress;
     if (address == null) return;
     const balance = await assetBalance(this.range!.lpTokenId, address, NODE_URL);
     this.setIndexBalance(new BN(balance ?? 0));
@@ -366,10 +366,11 @@ class RangeDetailsInterfaceVM {
   public setIsLPDataLoading = (value: boolean) => (this.isLPDataLoading = value);
 
   public syncLPData = async () => {
-    if (!this.rootStore.accountStore.address) return;
+    const effectiveAddress = this.rootStore.accountStore.effectiveAddress;
+    if (!effectiveAddress) return;
     this.setIsLPDataLoading(true);
     rangesService
-      .getLPData(this.rangeAddress, this.rootStore.accountStore.address, true)
+      .getLPData(this.rangeAddress, effectiveAddress, true)
       .then((data) => {
         if (!data) return;
         const newLPData = new LPData(data);
