@@ -88,7 +88,7 @@ const MultipleTokensAddLiquidity: React.FC<IProps> = () => {
             return (
               <DepositCompositionRow
                 key={i}
-                name={token.name}
+                name={TOKENS_BY_ASSET_ID[token.assetId].symbol}
                 availableAmount={available}
                 depositAmount={depositAmount}
                 share={token.share}
