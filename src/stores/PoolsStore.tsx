@@ -97,7 +97,7 @@ export default class PoolsStore {
       }
     );
     reaction(
-      () => this.rootStore.accountStore.address,
+      () => [this.rootStore.accountStore.address, this.rootStore.accountStore.smartAccountAddress],
       () => Promise.all([this.updateInvestedInPoolsInfo(true), this.updatePoolsState()])
     );
   }
@@ -333,15 +333,16 @@ export default class PoolsStore {
   };
 
   updateInvestedInPoolsInfo = async (force = false) => {
-    const { address } = this.rootStore.accountStore;
+    const { address, effectiveAddress } = this.rootStore.accountStore;
     if (address == null) {
       this.setInvestedInPools(null);
       return;
     }
+    const targetAddress = effectiveAddress ?? address;
     if (!force && this.investedInPoolsLoading) return;
     this.setInvestedInPoolsLoading(true);
-    await this.updateAccountCustomPoolsLiquidityInfo(address);
-    await this.updateAccountMainPoolsLiquidityInfo(address);
+    await this.updateAccountCustomPoolsLiquidityInfo(targetAddress);
+    await this.updateAccountMainPoolsLiquidityInfo(targetAddress);
     this.setInvestedInPoolsLoading(false);
   };
 
@@ -355,7 +356,7 @@ export default class PoolsStore {
 
   private updateAccountMainPoolsLiquidityInfo = async (address: string) => {
     const mainPoolsAccountLiquidity = await Promise.all(this.mainPools.map((p) => p.getAccountLiquidityInfo(address)));
-    const newAddress = this.rootStore.accountStore.address;
+    const newAddress = this.rootStore.accountStore.effectiveAddress ?? this.rootStore.accountStore.address;
     if (address !== newAddress) return;
     this.setInvestedInPools(mainPoolsAccountLiquidity, {
       onlyMain: true
@@ -363,11 +364,12 @@ export default class PoolsStore {
   };
 
   updatePoolsState = async () => {
-    const address = this.rootStore.accountStore.address;
-    const state = await poolService.getPoolsStateByUserAddress(address);
+    const { address, effectiveAddress } = this.rootStore.accountStore;
+    const targetAddress = effectiveAddress ?? address;
+    const state = await poolService.getPoolsStateByUserAddress(targetAddress);
     this.setPoolState(state);
     this.syncPoolsLiquidity();
-    address && this.updateAccountCustomPoolsLiquidityInfo(address);
+    targetAddress && this.updateAccountCustomPoolsLiquidityInfo(targetAddress);
   };
 
   syncPoolsLiquidity = () =>

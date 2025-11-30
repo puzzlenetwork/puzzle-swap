@@ -35,7 +35,7 @@ export default class StakeStore {
     this.updateStakedInvestments().then();
     setInterval(this.updateStakedInvestments, 30 * 1000);
     reaction(
-      () => this.rootStore.accountStore.address,
+      () => [this.rootStore.accountStore.address, this.rootStore.accountStore.smartAccountAddress],
       () => this.updateStakedInvestments(true)
     );
   }
@@ -55,17 +55,18 @@ export default class StakeStore {
   };
 
   updateStakedInvestments = async (force = false) => {
-    const { address } = this.rootStore.accountStore;
+    const { address, effectiveAddress } = this.rootStore.accountStore;
     if (address === null) {
       this.setStakedAccountPuzzle(BN.ZERO);
       return;
     }
+    const targetAddress = effectiveAddress ?? address;
     if (!force && this.loading) return;
     this.setLoading(true);
     if (this.stakedAccountPuzzle != null) {
       this.setLoading(true);
     }
-    const addressStakedValue = await nodeService.nodeKeysRequest(CONTRACT_ADDRESSES.staking, `${address}_staked`);
+    const addressStakedValue = await nodeService.nodeKeysRequest(CONTRACT_ADDRESSES.staking, `${targetAddress}_staked`);
     const addressStaked =
       addressStakedValue && addressStakedValue?.length > 0 ? new BN(addressStakedValue[0].value) : BN.ZERO;
     this.setStakedAccountPuzzle(addressStaked);

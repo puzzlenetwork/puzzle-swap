@@ -287,7 +287,8 @@ const MintRedeem: React.FC = observer(() => {
         return;
       }
       try {
-        const balances = await nodeService.getAddressBalances(accountStore.address);
+        const targetAddress = accountStore.effectiveAddress ?? accountStore.address;
+        const balances = await nodeService.getAddressBalances(targetAddress);
 
         const stPuzzleAsset = balances.find(b => b.assetId === ASSET_IDS.stPuzzle);
         if (stPuzzleAsset) {
@@ -394,7 +395,8 @@ const MintRedeem: React.FC = observer(() => {
         setTimeout(async () => {
           if (!accountStore.address) return;
           try {
-            const balances = await nodeService.getAddressBalances(accountStore.address);
+            const targetAddress = accountStore.effectiveAddress ?? accountStore.address;
+            const balances = await nodeService.getAddressBalances(targetAddress);
 
             const stPuzzleAsset = balances.find(b => b.assetId === ASSET_IDS.stPuzzle);
             if (stPuzzleAsset) {

@@ -57,8 +57,9 @@ class WithdrawLiquidityVM {
   }
 
   updateUserIndexStaked = async () => {
-    if (this.rootStore.accountStore.address == null) return;
-    const response = await this.pool.contractKeysRequest(`${this.rootStore.accountStore.address}_indexStaked`);
+    const { effectiveAddress } = this.rootStore.accountStore;
+    if (effectiveAddress == null) return;
+    const response = await this.pool.contractKeysRequest(`${effectiveAddress}_indexStaked`);
     if (response != null && response.length > 0) {
       this.setUserIndexStaked(new BN(response[0].value));
     }
@@ -85,9 +86,11 @@ class WithdrawLiquidityVM {
   }
 
   get tokensToWithdrawAmounts(): Record<string, WithdrawToken> | null {
-    if (this.pool == null || this.userIndexStaked == null) return null;
+    if (this.pool == null || this.userIndexStaked == null || this.pool.liquidity == null) return null;
     return this.pool.tokens.reduce<Record<string, WithdrawToken>>((acc, { assetId, decimals }) => {
-      const top = this.pool.liquidity[assetId]
+      const liquidity = this.pool.liquidity[assetId];
+      if (liquidity == null) return acc;
+      const top = liquidity
         .times(this.percentToWithdraw)
         .times(0.01)
         .times(this.userIndexStaked ?? BN.ZERO);
@@ -121,8 +124,12 @@ class WithdrawLiquidityVM {
 
   withdraw = () => {
     const { notificationStore } = this.rootStore;
-    if (this.percentToWithdraw.eq(0) || this.pool.layer2Address == null) return;
-    if (this.userIndexStaked == null) return;
+    if (this.percentToWithdraw.eq(0) || this.pool.layer2Address == null) {
+      return;
+    }
+    if (this.userIndexStaked == null) {
+      return;
+    }
 
     this._setLoading(true);
     const value = this.userIndexStaked.times(0.01).times(this.percentToWithdraw).toSignificant(0).toString();

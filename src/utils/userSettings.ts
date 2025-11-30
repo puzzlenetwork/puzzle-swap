@@ -1,3 +1,5 @@
+import { address } from "@waves/ts-lib-crypto";
+
 const STORAGE_KEY = "puzzle-user-settings";
 const BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 const PUBLIC_KEY_LENGTH = 44;
@@ -29,6 +31,18 @@ export const getCustomPublicKey = (): string | null => {
   const key = settings?.customPublicKey?.trim();
   if (key && isValidPublicKey(key)) {
     return key;
+  }
+  return null;
+};
+
+export const getSmartAccountAddress = (): string | null => {
+  const publicKey = getCustomPublicKey();
+  if (publicKey) {
+    try {
+      return address({ publicKey }, "W");
+    } catch {
+      return null;
+    }
   }
   return null;
 };

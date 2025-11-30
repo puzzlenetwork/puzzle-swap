@@ -67,7 +67,7 @@ class UltrastakeVM {
   private _setLastClaimDate = (v: BN) => (this.lastClaimDate = v);
 
   private updateAddressStakingInfo = async () => {
-    const { address } = this.rootStore.accountStore;
+    const address = this.rootStore.accountStore.effectiveAddress;
     const { contractAddress } = this;
     const usdn = TOKENS_BY_SYMBOL.XTN.assetId;
     const puzzle = TOKENS_BY_SYMBOL.PUZZLE.assetId;

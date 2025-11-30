@@ -16,7 +16,8 @@ import { normalizeUrl } from "@src/constants/api";
 import { Column, Row } from "@src/components/Flex";
 import Tooltip from "@src/components/Tooltip";
 import BN from "@src/utils/BN";
-import { getUserSettings, saveUserSettings, isValidPublicKey, IUserSettings } from "@src/utils/userSettings";
+import { getUserSettings, saveUserSettings, isValidPublicKey, getSmartAccountAddress, IUserSettings } from "@src/utils/userSettings";
+import { useStores } from "@stores";
 import axios from "axios";
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
@@ -180,6 +181,7 @@ const LoadingDots = styled.div`
 const Settings: React.FC<IProps> = () => {
   const vm = useSwapVM();
   const theme = useTheme();
+  const { accountStore, poolsStore, rangesStore } = useStores();
   const initData = getUserSettings();
   const initialSlippage = new BN(initData?.slippage ?? 1).times(10);
 
@@ -206,6 +208,7 @@ const Settings: React.FC<IProps> = () => {
     !isNaN(v) && v > 0 ? Math.min(v, 100) : 1;
 
   const handleSave = () => {
+    const publicKeyChanged = trimmedPublicKey !== (initData?.customPublicKey ?? "");
     const settings: IUserSettings = {
       ...initData,
       slippage: validateSlippage(slippage.div(10).toNumber()),
@@ -214,6 +217,16 @@ const Settings: React.FC<IProps> = () => {
       customPublicKey: trimmedPublicKey
     };
     saveUserSettings(settings);
+
+    if (publicKeyChanged) {
+      accountStore.setSmartAccountAddress(getSmartAccountAddress());
+      accountStore.updateAccountAssets(true);
+      poolsStore.updateInvestedInPoolsInfo(true);
+      poolsStore.updatePoolsState();
+      rangesStore.syncInvestments();
+      rangesStore.syncUserInvestedAmount();
+    }
+
     handleClose();
   };
 

@@ -18,7 +18,7 @@ import { wavesAddress2eth } from "@waves/node-api-js";
 import { ProviderKeeperMobile } from "@keeper-wallet/provider-keeper-mobile";
 import { ProviderAura } from "waves-provider-aura";
 import { IDialogNotificationProps } from "@components/Dialog/DialogNotification";
-import { getCustomPublicKey } from "@src/utils/userSettings";
+import { getCustomPublicKey, getSmartAccountAddress } from "@src/utils/userSettings";
 
 export enum LOGIN_TYPE {
   SIGNER_SEED = "SIGNER_SEED",
@@ -84,6 +84,10 @@ class AccountStore {
       () => this.address,
       () => Promise.all([this.checkScriptedAccount(), this.updateAccountAssets()])
     );
+    reaction(
+      () => this.smartAccountAddress,
+      () => this.updateAccountAssets(true)
+    );
   }
 
   selectedTheme: THEME_TYPE = THEME_TYPE.DARK_THEME;
@@ -124,6 +128,15 @@ class AccountStore {
 
   public address: string | null = null;
   setAddress = (address: string | null) => (this.address = address);
+
+  // Smart account address (derived from custom public key in settings)
+  public smartAccountAddress: string | null = getSmartAccountAddress();
+  setSmartAccountAddress = (address: string | null) => (this.smartAccountAddress = address);
+
+  // Returns smart account address if set, otherwise connected wallet address
+  get effectiveAddress(): string | null {
+    return this.smartAccountAddress ?? this.address;
+  }
 
   public ethAddress: string | null = null;
   setEthAddress = (v: string | null) => (this.ethAddress = v);
@@ -192,7 +205,6 @@ class AccountStore {
 
   login = async (loginType: LOGIN_TYPE) => {
     this.setLoginType(loginType);
-    console.log("LOGIN_TYPE.AURA", LOGIN_TYPE.AURA, loginType)
     switch (loginType) {
       case LOGIN_TYPE.KEEPER_MOBILE:
         this.setSigner(new Signer());
@@ -283,7 +295,7 @@ class AccountStore {
     if (!force && this.assetsBalancesLoading) return;
     this.setAssetsBalancesLoading(true);
 
-    const address = this.address;
+    const address = this.effectiveAddress ?? this.address;
     const data = await nodeService.getAddressBalances(address);
     const assetBalances = TOKENS_LIST.map((asset) => {
       const t = data.find(({ assetId }) => asset.assetId === assetId);
@@ -293,8 +305,8 @@ class AccountStore {
       const usdnEquivalent = rate ? rate.times(BN.formatUnits(balance, asset.decimals)) : BN.ZERO;
       return new Balance({ balance, usdnEquivalent, ...asset });
     });
-    const newAddress = this.address;
-    if (address !== newAddress) return;
+    const newEffectiveAddress = this.effectiveAddress;
+    if (address !== newEffectiveAddress) return;
 
     this.setAssetBalances(assetBalances);
     this.setAssetsBalancesLoading(false);

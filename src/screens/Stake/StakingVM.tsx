@@ -78,7 +78,7 @@ class StakingVM {
 
   private updateAddressStakingInfo = async () => {
     try {
-      const { address } = this.rootStore.accountStore;
+      const address = this.rootStore.accountStore.effectiveAddress;
       if (address == null) {
         this._setGlobalStaked(BN.ZERO);
         this._setAddressStaked(BN.ZERO);
