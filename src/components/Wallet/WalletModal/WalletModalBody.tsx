@@ -9,6 +9,7 @@ import Tabs from "@components/Tabs";
 import AssetsBalances from "@components/Wallet/WalletModal/AssetsBalances";
 import NFTs from "@components/Wallet/WalletModal/NFTs";
 import Investments from "./Investments";
+import SignTransaction from "./SignTransaction";
 
 interface IProps {}
 
@@ -51,7 +52,7 @@ const WalletModalBody: React.FC<IProps> = () => {
     <Root>
       <TabsWrapper>
         <Tabs
-          tabs={[{ name: "Assets" }, { name: "Investments" }, { name: "NFTs" }]}
+          tabs={[{ name: "Assets" }, { name: "Investments" }, { name: "NFTs" }, { name: "Sign TX" }]}
           activeTab={activeTab}
           setActive={(v) => setActiveTab(v)}
           style={{ justifyContent: "space-evenly", paddingTop: 16 }}
@@ -64,6 +65,7 @@ const WalletModalBody: React.FC<IProps> = () => {
           {activeTab === 0 && <AssetsBalances />}
           {activeTab === 1 && <Investments />}
           {activeTab === 2 && <NFTs />}
+          {activeTab === 3 && <SignTransaction />}
           <SizedBox height={64} width={1} />
         </ListWrapper>
       </Scrollbar>
