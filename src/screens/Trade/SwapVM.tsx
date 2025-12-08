@@ -44,8 +44,9 @@ export class SwapVM {
 
     reaction(
       () => this.amount0,
-      () => {
-        if (this.inputMode === "send") {
+      (_, prev) => {
+        // Only sync if inputMode is "send" AND this is a user-initiated change (not from _syncAmount0)
+        if (this.inputMode === "send" && !this.synchronizing) {
           this._syncAmount1();
         }
       }
@@ -76,6 +77,9 @@ export class SwapVM {
   };
   openedSettings = false;
   setOpenedSettings = (v: boolean) => (this.openedSettings = v);
+
+  // Track last request to prevent duplicates
+  private lastRequestKey: string | null = null;
 
   inputMode: "send" | "receive" = "send";
   setInputMode = (mode: "send" | "receive") => (this.inputMode = mode);
@@ -168,18 +172,27 @@ export class SwapVM {
     if (amount0 != null && amount0.eq(0)) {
       this._setAmount1(BN.ZERO);
     }
-    !quiet && this._setSynchronizing(true);
     const defaultAmount0 = BN.parseUnits(1, this.token0.decimals);
+    const amountToUse = invalidAmount ? defaultAmount0 : amount0;
+
+    // Prevent duplicate requests with same parameters
+    const requestKey = `${assetId0}-${assetId1}-${amountToUse.toString()}`;
+    if (this.synchronizing && this.lastRequestKey === requestKey) {
+      return;
+    }
+    this.lastRequestKey = requestKey;
+
+    !quiet && this._setSynchronizing(true);
     if (this.rejectAggregatorPromise != null) this.rejectAggregatorPromise();
     const promise = new Promise((resolve, reject) => {
       this.rejectAggregatorPromise = reject;
-      resolve(aggregatorService.calc(assetId0, assetId1, invalidAmount ? defaultAmount0 : amount0));
+      resolve(aggregatorService.calc(assetId0, assetId1, amountToUse));
     });
     promise
       .then((v: any) => {
         this._setAggregatorResponse(v);
         !invalidAmount && this._setAmount1(new BN(v.estimatedOut * 0.9971));
-        this._calculatePrice(invalidAmount ? defaultAmount0 : amount0, new BN(v.estimatedOut));
+        this._calculatePrice(amountToUse, new BN(v.estimatedOut));
         this._setSynchronizing(false);
         !invalidAmount &&
           this._setPriceImpact((new BN(v.priceImpact).gt(0) ? new BN(v.priceImpact) : BN.ZERO).times(100));
@@ -222,14 +235,22 @@ export class SwapVM {
     const estimatedAmount0Formatted = usdValue.div(rate0);
     const estimatedAmount0 = new BN(BN.parseUnits(estimatedAmount0Formatted, this.token0.decimals).toFixed(0));
 
-    !quiet && this._setSynchronizing(true);
     const defaultAmount0 = BN.parseUnits(1, this.token0.decimals);
+    const amountToUse = invalidAmount ? defaultAmount0 : estimatedAmount0;
 
+    // Prevent duplicate requests with same parameters
+    const requestKey = `${assetId0}-${assetId1}-${amountToUse.toString()}`;
+    if (this.synchronizing && this.lastRequestKey === requestKey) {
+      return;
+    }
+    this.lastRequestKey = requestKey;
+
+    !quiet && this._setSynchronizing(true);
     if (this.rejectAggregatorPromise != null) this.rejectAggregatorPromise();
 
     const promise = new Promise((resolve, reject) => {
       this.rejectAggregatorPromise = reject;
-      resolve(aggregatorService.calc(assetId0, assetId1, invalidAmount ? defaultAmount0 : estimatedAmount0));
+      resolve(aggregatorService.calc(assetId0, assetId1, amountToUse));
     });
 
     promise
