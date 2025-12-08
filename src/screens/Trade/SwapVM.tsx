@@ -232,7 +232,7 @@ export class SwapVM {
 
     const amount1Formatted = BN.formatUnits(amount1, this.token1.decimals);
     const usdValue = amount1Formatted.times(rate1);
-    const estimatedAmount0Formatted = usdValue.div(rate0);
+    const estimatedAmount0Formatted = usdValue.div(rate0).times(1.01);
     const estimatedAmount0 = new BN(BN.parseUnits(estimatedAmount0Formatted, this.token0.decimals).toFixed(0));
 
     const defaultAmount0 = BN.parseUnits(1, this.token0.decimals);

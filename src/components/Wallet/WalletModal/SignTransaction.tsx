@@ -128,6 +128,26 @@ const SignTransaction: React.FC = () => {
   const customPublicKey = getCustomPublicKey();
   const hasCustomKey = !!customPublicKey;
 
+  const prepareTransactionData = (tx: Record<string, unknown>): Record<string, unknown> => {
+    const {
+      id, proofs, height, stateChanges, applicationStatus, spentComplexity,
+      timestamp, version, chainId, sender, senderPublicKey: _spk,
+      ...cleanData
+    } = tx;
+
+    if (typeof cleanData.fee === "number") {
+      if (cleanData.type === 4) {
+        const feeInWaves = cleanData.fee / 100000000;
+        cleanData.fee = { tokens: feeInWaves.toString(), assetId: cleanData.feeAssetId || "WAVES" };
+      } else {
+        cleanData.fee = { assetId: cleanData.feeAssetId || "WAVES", amount: cleanData.fee };
+      }
+      delete cleanData.feeAssetId;
+    }
+
+    return cleanData;
+  };
+
   const handleSign = async () => {
     if (!jsonInput.trim()) {
       setStatus({ type: "error", message: "Please enter a transaction JSON" });
@@ -147,6 +167,8 @@ const SignTransaction: React.FC = () => {
       return;
     }
 
+    const cleanTxData = prepareTransactionData(txData);
+
     setIsLoading(true);
     setStatus({ type: "info", message: "Please confirm the transaction in your wallet..." });
 
@@ -154,14 +176,14 @@ const SignTransaction: React.FC = () => {
       const useCustomKey = publicKeySource === "settings" && hasCustomKey;
 
       if (useCustomKey) {
-        txData.senderPublicKey = customPublicKey;
+        cleanTxData.senderPublicKey = customPublicKey;
       }
 
       if (accountStore.loginType === LOGIN_TYPE.KEEPER) {
         // Sign with Keeper
         const signedTx = await (window as any).WavesKeeper.signTransaction({
-          type: txData.type,
-          data: txData
+          type: cleanTxData.type,
+          data: cleanTxData
         });
         const parsedTx = JSON.parse(signedTx);
         const result = await broadcast(parsedTx, NODE_URL);
@@ -174,7 +196,8 @@ const SignTransaction: React.FC = () => {
         setJsonInput("");
       } else if (accountStore.signer) {
         // For other signers, broadcast directly
-        const result = await broadcast(txData, NODE_URL);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result = await broadcast(cleanTxData as any, NODE_URL);
         await waitForTx(result.id, { apiBase: NODE_URL });
 
         setStatus({
