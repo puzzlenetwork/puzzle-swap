@@ -195,9 +195,7 @@ const SignTransaction: React.FC = () => {
         });
         setJsonInput("");
       } else if (accountStore.signer) {
-        // For other signers, broadcast directly
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const result = await broadcast(cleanTxData as any, NODE_URL);
+        const result = await broadcast(cleanTxData as Parameters<typeof broadcast>[0], NODE_URL);
         await waitForTx(result.id, { apiBase: NODE_URL });
 
         setStatus({
