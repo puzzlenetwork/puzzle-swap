@@ -6,8 +6,8 @@ import Text from "@src/components/Text";
 import SizedBox from "@components/SizedBox";
 import Card from "@components/Card";
 import GridTable from "@components/GridTable";
-import { ParsedTransaction, TransactionType } from "@src/services/transactionHistoryService";
-import { EXPLORER_URL } from "@src/constants";
+import { ParsedTransaction } from "@src/services/transactionHistoryService";
+import { EXPLORER_URL, TOKENS_BY_ASSET_ID } from "@src/constants";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Skeleton from "react-loading-skeleton";
@@ -30,19 +30,27 @@ const Root = styled.div`
   width: 100%;
 `;
 
+const StyledCard = styled(Card)`
+  padding: 10px !important;
+  overflow: auto;
+  max-width: calc(100vw - 32px);
+`;
+
+const StyledGridTable = styled(GridTable)`
+  min-width: 100%;
+  .gridTitle {
+    padding: 10px !important;
+  }
+`;
+
 const TransactionRow = styled(Row)`
   box-sizing: border-box;
-  padding: 16px !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
   cursor: pointer;
 
   &:hover {
     background: ${({ theme }) => theme.colors.primary50};
-  }
-
-  @media (min-width: 880px) {
-    padding: 16px 24px !important;
   }
 `;
 
@@ -52,7 +60,7 @@ const TypeBadge = styled.span<{ txType: string }>`
   text-align: center;
   padding: 2px 8px;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   text-transform: capitalize;
   background: ${({ txType }) => {
@@ -89,17 +97,94 @@ const TypeBadge = styled.span<{ txType: string }>`
   }};
 `;
 
-const formatTransactionDetails = (tx: ParsedTransaction): string => {
+const DetailsRow = styled(Row)`
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+`;
+
+const TokenPairIcons = styled.div`
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+`;
+
+const TokenIcon = styled.img<{ overlap?: boolean }>`
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid ${({ theme }) => theme.colors.white};
+  margin-left: ${({ overlap }) => (overlap ? "-8px" : "0")};
+`;
+
+const SmallText = styled(Text)`
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const TimeText = styled(Text)`
+  text-align: right;
+  font-size: 12px;
+`;
+
+const EmptyText = styled(Text)`
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 16px 0;
+`;
+
+const LoadMoreText = styled(Text)`
+  cursor: pointer;
+  padding: 8px 0;
+`;
+
+const SkeletonWrapper = styled.div`
+  margin: 16px 24px;
+  width: calc(100% - 48px);
+`;
+
+const getTokenLogo = (assetId?: string): string | undefined => {
+  if (!assetId || assetId === "WAVES") {
+    return TOKENS_BY_ASSET_ID["WAVES"]?.logo;
+  }
+  return TOKENS_BY_ASSET_ID[assetId]?.logo;
+};
+
+const TransactionDetails: React.FC<{ tx: ParsedTransaction }> = ({ tx }) => {
   if (tx.type === "swap" && tx.fromSymbol && tx.toSymbol) {
-    return `${tx.fromAmount?.toFormat(4)} ${tx.fromSymbol} → ${tx.toAmount?.toFormat(4)} ${tx.toSymbol}`;
+    const fromLogo = getTokenLogo(tx.fromAssetId);
+    const toLogo = getTokenLogo(tx.toAssetId);
+    return (
+      <DetailsRow>
+        <TokenPairIcons>
+          {fromLogo && <TokenIcon src={fromLogo} alt={tx.fromSymbol} />}
+          {toLogo && <TokenIcon src={toLogo} alt={tx.toSymbol} overlap />}
+        </TokenPairIcons>
+        <SmallText fitContent>
+          {tx.fromAmount?.toFormat(2)} {tx.fromSymbol} → {tx.toAmount?.toFormat(2)} {tx.toSymbol}
+        </SmallText>
+      </DetailsRow>
+    );
   }
   if (["deposit", "withdraw", "claim"].includes(tx.type) && tx.symbol) {
-    return `${tx.amount?.toFormat(4)} ${tx.symbol}`;
+    const logo = getTokenLogo(tx.assetId);
+    return (
+      <DetailsRow>
+        {logo && <TokenIcon src={logo} alt={tx.symbol} />}
+        <SmallText fitContent>{tx.amount?.toFormat(4)} {tx.symbol}</SmallText>
+      </DetailsRow>
+    );
   }
   if (tx.type === "stake" || tx.type === "unstake") {
-    return tx.type === "stake" ? "Staked LP tokens" : "Unstaked LP tokens";
+    return (
+      <SmallText fitContent>
+        {tx.type === "stake" ? "Staked LP" : "Unstaked LP"}
+      </SmallText>
+    );
   }
-  return "—";
+  return <SmallText fitContent>—</SmallText>;
 };
 
 const TransactionHistory: React.FC<IProps> = ({
@@ -117,9 +202,11 @@ const TransactionHistory: React.FC<IProps> = ({
           {title}
         </Text>
         <SizedBox height={8} />
-        <Card style={{ padding: 0 }}>
-          <Skeleton height={45} count={3} style={{ margin: "16px 24px", width: "calc(100% - 48px)" }} />
-        </Card>
+        <StyledCard>
+          <SkeletonWrapper>
+            <Skeleton height={40} count={3} />
+          </SkeletonWrapper>
+        </StyledCard>
       </Root>
     );
   }
@@ -130,17 +217,13 @@ const TransactionHistory: React.FC<IProps> = ({
         <Text weight={500} type="secondary">
           {title}
         </Text>
-        <Text size="small" type="secondary">
+        <Text textAlign="right" size="small" type="secondary">
           Last 30 transactions
         </Text>
       </Row>
       <SizedBox height={8} />
-      <Card style={{ padding: 0, overflow: "auto", maxWidth: "calc(100vw - 32px)" }}>
-        <GridTable
-          style={{ width: "fit-content", minWidth: "100%" }}
-          desktopTemplate={"2fr 1fr 1fr"}
-          mobileTemplate={"2fr 1fr 1fr"}
-        >
+      <StyledCard>
+        <StyledGridTable desktopTemplate="1fr 70px 90px" mobileTemplate="1fr 60px 70px">
           <div className="gridTitle">
             <div>Details</div>
             <div>Type</div>
@@ -148,9 +231,7 @@ const TransactionHistory: React.FC<IProps> = ({
           </div>
           {transactions.length === 0 ? (
             <TransactionRow className="gridRow" alignItems="center">
-              <Text type="secondary" style={{ gridColumn: "1 / -1", textAlign: "center", padding: "16px 0" }}>
-                {emptyText}
-              </Text>
+              <EmptyText type="secondary">{emptyText}</EmptyText>
             </TransactionRow>
           ) : (
             <>
@@ -161,34 +242,25 @@ const TransactionHistory: React.FC<IProps> = ({
                   alignItems="center"
                   onClick={() => window.open(`${EXPLORER_URL}/transactions/${tx.id}`)}
                 >
-                  <Text fitContent nowrap style={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {formatTransactionDetails(tx)}
-                  </Text>
+                  <TransactionDetails tx={tx} />
                   <TypeBadge txType={tx.type}>{tx.type}</TypeBadge>
-                  <Text fitContent nowrap type="secondary">
+                  <TimeText fitContent nowrap type="secondary">
                     {(dayjs(tx.timestamp) as any).fromNow()}
-                  </Text>
+                  </TimeText>
                 </TransactionRow>
               ))}
               {onLoadMore && (
                 <>
                   <SizedBox height={8} />
-                  <Text
-                    type="secondary"
-                    weight={500}
-                    textAlign="center"
-                    style={{ cursor: "pointer", padding: "8px 0" }}
-                    onClick={onLoadMore}
-                  >
+                  <LoadMoreText type="secondary" size="small" textAlign="center" onClick={onLoadMore}>
                     {loadingMore ? <Loading big /> : "Load more"}
-                  </Text>
-                  <SizedBox height={8} />
+                  </LoadMoreText>
                 </>
               )}
             </>
           )}
-        </GridTable>
-      </Card>
+        </StyledGridTable>
+      </StyledCard>
     </Root>
   );
 };

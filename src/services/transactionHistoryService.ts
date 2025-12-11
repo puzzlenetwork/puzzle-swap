@@ -195,6 +195,7 @@ const transactionHistoryService = {
     if (!transactions) return [];
 
     return transactions
+      .filter((tx) => tx.sender === address)
       .map(parseTransaction)
       .filter((tx): tx is ParsedTransaction => tx !== null && tx.type === "swap");
   },
@@ -204,6 +205,7 @@ const transactionHistoryService = {
     if (!transactions) return [];
 
     return transactions
+      .filter((tx) => tx.sender === address)
       .map(parseTransaction)
       .filter(
         (tx): tx is ParsedTransaction =>
@@ -215,7 +217,10 @@ const transactionHistoryService = {
     const transactions = await nodeService.transactions(address, limit);
     if (!transactions) return [];
 
-    return transactions.map(parseTransaction).filter((tx): tx is ParsedTransaction => tx !== null);
+    return transactions
+      .filter((tx) => tx.sender === address)
+      .map(parseTransaction)
+      .filter((tx): tx is ParsedTransaction => tx !== null);
   }
 };
 

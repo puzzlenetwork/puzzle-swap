@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
+import { useSwapVM } from "@screens/Trade/SwapVM";
 import TransactionHistory from "@components/TransactionHistory";
 import transactionHistoryService, { ParsedTransaction } from "@src/services/transactionHistoryService";
 import SizedBox from "@components/SizedBox";
@@ -16,6 +17,7 @@ const Root = styled.div`
 
 const SwapHistory: React.FC = () => {
   const { accountStore } = useStores();
+  const vm = useSwapVM();
   const [transactions, setTransactions] = useState<ParsedTransaction[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -42,6 +44,12 @@ const SwapHistory: React.FC = () => {
   useEffect(() => {
     loadHistory();
   }, [accountStore.effectiveAddress]);
+
+  useEffect(() => {
+    if (vm.swapCounter > 0) {
+      setTimeout(() => loadHistory(), 3000);
+    }
+  }, [vm.swapCounter]);
 
   if (!accountStore.address) {
     return null;

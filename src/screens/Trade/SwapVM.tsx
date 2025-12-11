@@ -162,6 +162,9 @@ export class SwapVM {
   routingModalOpened: boolean = false;
   setRoutingModalState = (state: boolean) => (this.routingModalOpened = state);
 
+  swapCounter: number = 0;
+  private incrementSwapCounter = () => this.swapCounter++;
+
   rejectAggregatorPromise?: () => void;
   setRejectAggregatorPromise = (v: any) => (this.rejectAggregatorPromise = v);
 
@@ -418,6 +421,7 @@ export class SwapVM {
         });
       })
       .then(() => this._setLoading(false))
+      .then(() => this.incrementSwapCounter())
       .then(() => accountStore.updateAccountAssets(true));
   };
 
