@@ -15,6 +15,7 @@ import RangeComposition from "./RangeComposition";
 import Reward from "./Reward";
 import MyRangeBalance from "./MyRangeBalance";
 import LPStaking from "./LPStaking";
+import RangeHistory from "./RangeHistory";
 import Card from "@src/components/Card";
 import RangeChart from "@src/components/RangeChart";
 import useWindowSize from "@src/hooks/useWindowSize";
@@ -127,6 +128,7 @@ const RangeDetailsInterfaceImpl: React.FC = observer(() => {
             )}
             <RangeCharts />
             <RangeComposition isMobile={isMobile} />
+            <RangeHistory />
           </MainBlock>
           <RightBlock>
             {showLowRangeLiquidityNotification && <LowRangeLiquidityNotification />}
