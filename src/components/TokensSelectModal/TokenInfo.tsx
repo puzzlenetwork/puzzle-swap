@@ -1,15 +1,22 @@
 import styled from "@emotion/styled";
-import React, { HTMLAttributes } from "react";
+import React, { HTMLAttributes, useRef } from "react";
 import { Column, Row } from "@src/components/Flex";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import Balance from "@src/entities/Balance";
 import SquareTokenIcon from "@components/SquareTokenIcon";
+import star from "@src/assets/icons/star.svg";
+import starHover from "@src/assets/icons/star-hover.svg";
+import starred from "@src/assets/icons/filled-star.svg";
+import starredHover from "@src/assets/icons/filled-star-hover.svg";
+import useHover from "@src/hooks/useHover";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   token: Balance;
   withClickLogic?: boolean;
   hidden?: boolean;
+  isFavorite?: boolean;
+  onFavoriteToggle?: (assetId: string) => void;
 }
 
 const Root = styled.div<{ withClickLogic?: boolean }>`
@@ -60,11 +67,34 @@ const Gradient = styled.div`
   z-index: 10;
   cursor: not-allowed;
 `;
-const TokenInfo: React.FC<IProps> = ({ token, hidden, ...rest }) => {
+const FavIcon = styled.img`
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+`;
+const TokenInfo: React.FC<IProps> = ({ token, hidden, isFavorite, onFavoriteToggle, ...rest }) => {
+  const favRef = useRef(null!);
+  const isHover = useHover(favRef);
+
+  const handleFavClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onFavoriteToggle?.(token.assetId);
+  };
   return (
     <Root {...rest}>
       {hidden && <Gradient />}
-      <Row>
+      <Row alignItems="center">
+        {onFavoriteToggle && (
+          <>
+            <FavIcon
+              ref={favRef}
+              src={isFavorite ? (isHover ? starredHover : starred) : isHover ? starHover : star}
+              onClick={handleFavClick}
+            />
+            <SizedBox width={8} />
+          </>
+        )}
         {token.logo ? <SquareTokenIcon size="small" src={token.logo} /> : <DefaultIcon />}
         <SizedBox width={8} />
         <Column>

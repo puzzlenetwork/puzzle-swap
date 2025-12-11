@@ -8,6 +8,7 @@ import { Column } from "@src/components/Flex";
 import Scrollbar from "@src/components/Scrollbar";
 import Balance from "@src/entities/Balance";
 import useOnClickOutside from "@src/hooks/useOnClickOutside";
+import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";
 import React, { useRef, useState } from "react";
 import TokenInfo from "./TokenInfo";
@@ -22,6 +23,7 @@ interface IProps {
 
 const tokenCategories = [
   "All",
+  "Favorites",
   // "Global",
   "Stables",
   "Common",
@@ -33,14 +35,15 @@ const tokenCategories = [
 
 export enum tokenCategoriesEnum {
   all = 0,
-  // global = 1,
-  // stable = 2,
+  favorites = 1,
+  // global = 2,
+  // stable = 3,
   // ducks = 4,
-  stable = 1,
-  common = 2,
-  pz = 3,
-  // defi = 4,
-  meme = 4
+  stable = 2,
+  common = 3,
+  pz = 4,
+  // defi = 5,
+  meme = 5
 }
 
 const Scroll = styled.div`
@@ -58,6 +61,7 @@ const Scroll = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.colors.primary100};
 `;
 const TokenSelectModal: React.FC<IProps> = ({ onClose, balances, onSelect, visible, selectedTokenId }) => {
+  const { tokenStore } = useStores();
   const [searchValue, setSearchValue] = useState<string>("");
   const [activeFilter, setActiveFilter] = useState<number>(0);
   const handleSearch = (event: any) => {
@@ -71,6 +75,15 @@ const TokenSelectModal: React.FC<IProps> = ({ onClose, balances, onSelect, visib
     setActiveFilter(0);
     onClose();
   };
+
+  const handleFavoriteToggle = (assetId: string) => {
+    if (tokenStore.watchList.includes(assetId)) {
+      tokenStore.removeFromWatchList(assetId);
+    } else {
+      tokenStore.addToWatchList(assetId);
+    }
+  };
+
   const filteredTokens = balances
     .filter((v) => {
       if (!v || !v.symbol || !v.name) {
@@ -83,8 +96,20 @@ const TokenSelectModal: React.FC<IProps> = ({ onClose, balances, onSelect, visib
     })
     .filter((balance) => {
       if (activeFilter === 0) return true;
+      if (activeFilter === tokenCategoriesEnum.favorites) {
+        return tokenStore.watchList.includes(balance.assetId);
+      }
       return balance.category?.includes(tokenCategoriesEnum[activeFilter]);
     });
+
+  // Sort: favorites first, then by balance
+  const sortedTokens = [...filteredTokens].sort((a, b) => {
+    const aIsFav = tokenStore.watchList.includes(a.assetId);
+    const bIsFav = tokenStore.watchList.includes(b.assetId);
+    if (aIsFav && !bIsFav) return -1;
+    if (!aIsFav && bIsFav) return 1;
+    return 0;
+  });
 
   return (
     <Dialog
@@ -108,8 +133,8 @@ const TokenSelectModal: React.FC<IProps> = ({ onClose, balances, onSelect, visib
       <SizedBox height={32} />
       <Scrollbar style={{ margin: -24 }}>
         <Column crossAxisSize="max" style={{ maxHeight: 352 }}>
-          {filteredTokens && filteredTokens.length > 0 ? (
-            filteredTokens.map((t) => {
+          {sortedTokens && sortedTokens.length > 0 ? (
+            sortedTokens.map((t) => {
               const disabled = selectedTokenId === t.assetId;
               return (
                 <TokenInfo
@@ -119,6 +144,8 @@ const TokenSelectModal: React.FC<IProps> = ({ onClose, balances, onSelect, visib
                   onClick={!disabled ? () => handleTokenSelect(t.assetId) : () => null}
                   key={t.assetId}
                   token={t}
+                  isFavorite={tokenStore.watchList.includes(t.assetId)}
+                  onFavoriteToggle={handleFavoriteToggle}
                 />
               );
             })

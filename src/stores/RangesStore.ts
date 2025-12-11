@@ -165,7 +165,7 @@ export default class RangesStore {
 
   // Filter state
   filter = {
-    sortBy: "fact_liquidity" as "fact_liquidity" | "earned" | "virtual_liquidity",
+    sortBy: "apr" as "fact_liquidity" | "earned" | "virtual_liquidity" | "apr",
     order: "desc" as "asc" | "desc"
   };
 
@@ -196,7 +196,7 @@ export default class RangesStore {
   };
 
   // Methods for filtering
-  setFilter = async (filter: { sortBy: "fact_liquidity" | "earned" | "virtual_liquidity"; order: "asc" | "desc" }) => {
+  setFilter = async (filter: { sortBy: "fact_liquidity" | "earned" | "virtual_liquidity" | "apr"; order: "asc" | "desc" }) => {
     this.filter = filter;
     await this.syncRanges();
   };

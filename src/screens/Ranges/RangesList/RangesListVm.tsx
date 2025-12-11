@@ -64,6 +64,8 @@ class RangesListVm {
   };
 
   rangesSortings = [
+    { title: "APY ↓", key: "aprD" },
+    { title: "APY ↑", key: "aprA" },
     { title: "Fact Liquidity ↓", key: "fact_liquidityD" },
     { title: "Fact Liquidity ↑", key: "fact_liquidityA" },
     { title: "Virtual Liquidity ↓", key: "virtual_liquidityD" },
@@ -76,7 +78,7 @@ class RangesListVm {
     this._setLoading(true);
     this.rangesSorting = v;
     this.rootStore.rangesStore.setFilter({
-      sortBy: this.rangesSortings[v].key.slice(0, -1) as "fact_liquidity" | "earned" | "virtual_liquidity",
+      sortBy: this.rangesSortings[v].key.slice(0, -1) as "fact_liquidity" | "earned" | "virtual_liquidity" | "apr",
       order: (this.rangesSortings[v].key.slice(-1) === "A" ? "asc" : "desc") as "asc" | "desc"
     }).then(() => {
       this.rootStore.rangesStore.setPagination({ page: 1, size: this.rootStore.rangesStore.pagination.size }).then(() => {
