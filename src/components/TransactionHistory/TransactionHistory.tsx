@@ -20,8 +20,10 @@ interface IProps {
   loading?: boolean;
   loadingMore?: boolean;
   emptyText?: string;
-  onLoadMore?: () => void;
   title?: string;
+  onLoadMore?: () => void;
+  hasMore?: boolean;
+  subtitle?: string;
 }
 
 const Root = styled.div`
@@ -135,14 +137,14 @@ const EmptyText = styled(Text)`
   padding: 16px 0;
 `;
 
-const LoadMoreText = styled(Text)`
-  cursor: pointer;
-  padding: 8px 0;
-`;
-
 const SkeletonWrapper = styled.div`
   margin: 16px 24px;
   width: calc(100% - 48px);
+`;
+
+const LoadMoreText = styled(Text)`
+  cursor: pointer;
+  padding: 8px 0;
 `;
 
 const getTokenLogo = (assetId?: string): string | undefined => {
@@ -192,15 +194,24 @@ const TransactionHistory: React.FC<IProps> = ({
   loading,
   loadingMore,
   emptyText = "Your transactions will show up here",
+  title = "Transaction History",
   onLoadMore,
-  title = "Transaction History"
+  hasMore = true,
+  subtitle
 }) => {
   if (loading) {
     return (
       <Root>
-        <Text weight={500} type="secondary">
-          {title}
-        </Text>
+        <Row justifyContent="space-between" alignItems="center">
+          <Text weight={500} type="secondary">
+            {title}
+          </Text>
+          {subtitle && (
+            <Text textAlign="right" size="small" type="secondary">
+              {subtitle}
+            </Text>
+          )}
+        </Row>
         <SizedBox height={8} />
         <StyledCard>
           <SkeletonWrapper>
@@ -217,9 +228,11 @@ const TransactionHistory: React.FC<IProps> = ({
         <Text weight={500} type="secondary">
           {title}
         </Text>
-        <Text textAlign="right" size="small" type="secondary">
-          Last 30 transactions
-        </Text>
+        {subtitle && (
+          <Text textAlign="right" size="small" type="secondary">
+            {subtitle}
+          </Text>
+        )}
       </Row>
       <SizedBox height={8} />
       <StyledCard>
@@ -249,7 +262,7 @@ const TransactionHistory: React.FC<IProps> = ({
                   </TimeText>
                 </TransactionRow>
               ))}
-              {onLoadMore && (
+              {onLoadMore && hasMore && (
                 <>
                   <SizedBox height={8} />
                   <LoadMoreText type="secondary" size="small" textAlign="center" onClick={onLoadMore}>

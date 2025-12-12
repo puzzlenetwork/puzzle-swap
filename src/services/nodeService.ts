@@ -136,17 +136,9 @@ const nodeService = {
     }
   },
   transactions: async (address: string, limit = 10, after?: string): Promise<ITransaction[] | null> => {
-    const urlSearchParams = new URLSearchParams();
-    if (after != null) {
-      urlSearchParams.set("after", after);
-    }
-    const url = `/transactions/address/${address}/limit/${limit}?${after != null ? urlSearchParams.toString() : ""}`;
+    const url = `/transactions/address/${address}/limit/${limit}${after ? `?after=${after}` : ""}`;
     const response: { data: [ITransaction[]] } = await makeNodeRequest(url);
-    if (response.data[0]) {
-      return response.data[0];
-    } else {
-      return null;
-    }
+    return response.data[0] ?? null;
   },
   assetDetails: async (assetId: string): Promise<IAssetDetails | null> => {
     const url = `/assets/details/${assetId}`;

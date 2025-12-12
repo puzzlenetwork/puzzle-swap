@@ -7,6 +7,9 @@ import TransactionHistory from "@components/TransactionHistory";
 import transactionHistoryService, { ParsedTransaction } from "@src/services/transactionHistoryService";
 import SizedBox from "@components/SizedBox";
 
+const PAGE_SIZE = 10;
+const MAX_TRANSACTIONS = 30;
+
 const Root = styled.div`
   display: flex;
   flex-direction: column;
@@ -18,26 +21,25 @@ const Root = styled.div`
 const SwapHistory: React.FC = () => {
   const { accountStore } = useStores();
   const vm = useSwapVM();
-  const [transactions, setTransactions] = useState<ParsedTransaction[]>([]);
+  const [allTransactions, setAllTransactions] = useState<ParsedTransaction[]>([]);
+  const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
   const [loading, setLoading] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
 
-  const loadHistory = async (append = false) => {
+  const loadHistory = async () => {
     const address = accountStore.effectiveAddress;
     if (!address) {
-      setTransactions([]);
+      setAllTransactions([]);
       return;
     }
 
-    append ? setLoadingMore(true) : setLoading(true);
+    setLoading(true);
     try {
-      const limit = append ? transactions.length + 30 : 30;
-      const history = await transactionHistoryService.getSwapHistory(address, limit);
-      setTransactions(history);
+      const history = await transactionHistoryService.getSwapHistory(address, MAX_TRANSACTIONS);
+      setAllTransactions(history);
+      setDisplayCount(PAGE_SIZE);
     } catch {
     } finally {
       setLoading(false);
-      setLoadingMore(false);
     }
   };
 
@@ -55,16 +57,20 @@ const SwapHistory: React.FC = () => {
     return null;
   }
 
+  const visibleTransactions = allTransactions.slice(0, displayCount);
+  const hasMore = displayCount < allTransactions.length && displayCount < MAX_TRANSACTIONS;
+
   return (
     <Root>
       <SizedBox height={24} />
       <TransactionHistory
-        transactions={transactions}
+        transactions={visibleTransactions}
         loading={loading}
-        loadingMore={loadingMore}
         emptyText="Your swap transactions will show up here"
         title="Swap History"
-        onLoadMore={() => loadHistory(true)}
+        subtitle="Last 30 transactions"
+        onLoadMore={() => setDisplayCount((prev) => prev + PAGE_SIZE)}
+        hasMore={hasMore}
       />
     </Root>
   );

@@ -1,4 +1,4 @@
-import { CONTRACT_ADDRESSES, TOKENS_BY_ASSET_ID } from "@src/constants";
+import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import nodeService from "./nodeService";
 import { ITransaction } from "@src/utils/types";
 import BN from "@src/utils/BN";
@@ -189,20 +189,40 @@ const parseTransaction = (tx: ITransaction): ParsedTransaction | null => {
   return null;
 };
 
+const fetchTransactionsWithDetails = async (address: string, limit: number): Promise<ITransaction[]> => {
+  const transactions = await nodeService.transactions(address, limit);
+  if (!transactions) return [];
+
+  const invokeTransactions = transactions.filter((tx) => tx.type === 16);
+  if (invokeTransactions.length === 0) return transactions;
+
+  const detailedTransactions = await Promise.all(
+    invokeTransactions.map((tx) => nodeService.transactionInfo(tx.id))
+  );
+
+  const detailedMap = new Map<string, ITransaction>();
+  detailedTransactions.forEach((tx) => {
+    if (tx) detailedMap.set(tx.id, tx);
+  });
+
+  return transactions.map((tx) => detailedMap.get(tx.id) ?? tx);
+};
+
 const transactionHistoryService = {
-  getSwapHistory: async (address: string, limit = 50): Promise<ParsedTransaction[]> => {
-    const transactions = await nodeService.transactions(address, limit);
-    if (!transactions) return [];
+  getSwapHistory: async (address: string, targetCount = 30): Promise<ParsedTransaction[]> => {
+    const limit = Math.min(targetCount * 10, 300);
+    const transactions = await fetchTransactionsWithDetails(address, limit);
 
     return transactions
       .filter((tx) => tx.sender === address)
       .map(parseTransaction)
-      .filter((tx): tx is ParsedTransaction => tx !== null && tx.type === "swap");
+      .filter((tx): tx is ParsedTransaction => tx !== null && tx.type === "swap")
+      .slice(0, targetCount);
   },
 
-  getPoolHistory: async (address: string, limit = 50): Promise<ParsedTransaction[]> => {
-    const transactions = await nodeService.transactions(address, limit);
-    if (!transactions) return [];
+  getPoolHistory: async (address: string, targetCount = 30): Promise<ParsedTransaction[]> => {
+    const limit = Math.min(targetCount * 5, 200);
+    const transactions = await fetchTransactionsWithDetails(address, limit);
 
     return transactions
       .filter((tx) => tx.sender === address)
@@ -210,17 +230,19 @@ const transactionHistoryService = {
       .filter(
         (tx): tx is ParsedTransaction =>
           tx !== null && ["deposit", "withdraw", "claim", "stake", "unstake"].includes(tx.type)
-      );
+      )
+      .slice(0, targetCount);
   },
 
-  getAllHistory: async (address: string, limit = 100): Promise<ParsedTransaction[]> => {
-    const transactions = await nodeService.transactions(address, limit);
-    if (!transactions) return [];
+  getAllHistory: async (address: string, targetCount = 50): Promise<ParsedTransaction[]> => {
+    const limit = Math.min(targetCount * 3, 200);
+    const transactions = await fetchTransactionsWithDetails(address, limit);
 
     return transactions
       .filter((tx) => tx.sender === address)
       .map(parseTransaction)
-      .filter((tx): tx is ParsedTransaction => tx !== null);
+      .filter((tx): tx is ParsedTransaction => tx !== null)
+      .slice(0, targetCount);
   }
 };
 

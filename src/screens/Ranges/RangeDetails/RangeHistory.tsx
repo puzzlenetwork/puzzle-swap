@@ -7,6 +7,9 @@ import transactionHistoryService, { ParsedTransaction } from "@src/services/tran
 import SizedBox from "@components/SizedBox";
 import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
 
+const PAGE_SIZE = 10;
+const MAX_TRANSACTIONS = 30;
+
 const Root = styled.div`
   display: flex;
   flex-direction: column;
@@ -17,28 +20,27 @@ const Root = styled.div`
 const RangeHistory: React.FC = () => {
   const { accountStore } = useStores();
   const vm = useRangeDetailsInterfaceVM();
-  const [transactions, setTransactions] = useState<ParsedTransaction[]>([]);
+  const [allTransactions, setAllTransactions] = useState<ParsedTransaction[]>([]);
+  const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
   const [loading, setLoading] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
 
-  const loadHistory = async (append = false) => {
+  const loadHistory = async () => {
     const address = accountStore.effectiveAddress;
     if (!address) {
-      setTransactions([]);
+      setAllTransactions([]);
       return;
     }
 
-    append ? setLoadingMore(true) : setLoading(true);
+    setLoading(true);
     try {
-      const limit = append ? transactions.length + 30 : 30;
-      const history = await transactionHistoryService.getPoolHistory(address, limit);
+      const history = await transactionHistoryService.getPoolHistory(address, MAX_TRANSACTIONS);
       const rangeAddress = vm.range?.address;
       const filtered = rangeAddress ? history.filter((tx) => tx.poolAddress === rangeAddress) : history;
-      setTransactions(filtered);
+      setAllTransactions(filtered);
+      setDisplayCount(PAGE_SIZE);
     } catch {
     } finally {
       setLoading(false);
-      setLoadingMore(false);
     }
   };
 
@@ -50,15 +52,18 @@ const RangeHistory: React.FC = () => {
     return null;
   }
 
+  const visibleTransactions = allTransactions.slice(0, displayCount);
+  const hasMore = displayCount < allTransactions.length && displayCount < MAX_TRANSACTIONS;
+
   return (
     <Root>
       <TransactionHistory
-        transactions={transactions}
+        transactions={visibleTransactions}
         loading={loading}
-        loadingMore={loadingMore}
         emptyText="Your range transactions will show up here"
         title="Your Transaction History"
-        onLoadMore={() => loadHistory(true)}
+        onLoadMore={() => setDisplayCount((prev) => prev + PAGE_SIZE)}
+        hasMore={hasMore}
       />
       <SizedBox height={24} />
     </Root>
