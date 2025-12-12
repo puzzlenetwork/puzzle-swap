@@ -189,12 +189,38 @@ const parseTransaction = (tx: ITransaction): ParsedTransaction | null => {
   return null;
 };
 
-const fetchTransactionsWithDetails = async (address: string, limit: number): Promise<ITransaction[]> => {
-  const transactions = await nodeService.transactions(address, limit);
-  if (!transactions) return [];
+interface FetchOptions {
+  maxTransactions?: number;
+  targetCount?: number;
+  filterFn?: (tx: ITransaction) => boolean;
+}
 
-  const invokeTransactions = transactions.filter((tx) => tx.type === 16);
-  if (invokeTransactions.length === 0) return transactions;
+const fetchTransactionsWithDetails = async (
+  address: string,
+  options: FetchOptions = {}
+): Promise<ITransaction[]> => {
+  const { maxTransactions = 300, targetCount, filterFn } = options;
+  const batchSize = 100;
+
+  let allTransactions: ITransaction[] = [];
+  let after: string | undefined;
+
+  while (allTransactions.length < maxTransactions) {
+    const remaining = maxTransactions - allTransactions.length;
+    const batch = await nodeService.transactions(address, Math.min(batchSize, remaining), after);
+    if (!batch || batch.length === 0) break;
+
+    allTransactions = [...allTransactions, ...batch];
+    after = batch[batch.length - 1].id;
+
+    if (targetCount && filterFn) {
+      const matchCount = allTransactions.filter(filterFn).length;
+      if (matchCount >= targetCount) break;
+    }
+  }
+
+  const invokeTransactions = allTransactions.filter((tx) => tx.type === 16);
+  if (invokeTransactions.length === 0) return allTransactions;
 
   const detailedTransactions = await Promise.all(
     invokeTransactions.map((tx) => nodeService.transactionInfo(tx.id))
@@ -205,13 +231,25 @@ const fetchTransactionsWithDetails = async (address: string, limit: number): Pro
     if (tx) detailedMap.set(tx.id, tx);
   });
 
-  return transactions.map((tx) => detailedMap.get(tx.id) ?? tx);
+  return allTransactions.map((tx) => detailedMap.get(tx.id) ?? tx);
 };
+
+const isSwapTransaction = (tx: ITransaction): boolean =>
+  tx.type === 16 && SWAP_FUNCTIONS.includes(tx.call?.function ?? "");
+
+const isPoolTransaction = (tx: ITransaction): boolean =>
+  tx.type === 16 &&
+  [...POOL_DEPOSIT_FUNCTIONS, ...POOL_WITHDRAW_FUNCTIONS, ...CLAIM_FUNCTIONS, ...STAKE_FUNCTIONS, ...UNSTAKE_FUNCTIONS].includes(
+    tx.call?.function ?? ""
+  );
 
 const transactionHistoryService = {
   getSwapHistory: async (address: string, targetCount = 30): Promise<ParsedTransaction[]> => {
-    const limit = Math.min(targetCount * 10, 300);
-    const transactions = await fetchTransactionsWithDetails(address, limit);
+    const transactions = await fetchTransactionsWithDetails(address, {
+      maxTransactions: 500,
+      targetCount,
+      filterFn: (tx) => tx.sender === address && isSwapTransaction(tx)
+    });
 
     return transactions
       .filter((tx) => tx.sender === address)
@@ -221,8 +259,11 @@ const transactionHistoryService = {
   },
 
   getPoolHistory: async (address: string, targetCount = 30): Promise<ParsedTransaction[]> => {
-    const limit = Math.min(targetCount * 5, 200);
-    const transactions = await fetchTransactionsWithDetails(address, limit);
+    const transactions = await fetchTransactionsWithDetails(address, {
+      maxTransactions: 300,
+      targetCount,
+      filterFn: (tx) => tx.sender === address && isPoolTransaction(tx)
+    });
 
     return transactions
       .filter((tx) => tx.sender === address)
@@ -235,8 +276,10 @@ const transactionHistoryService = {
   },
 
   getAllHistory: async (address: string, targetCount = 50): Promise<ParsedTransaction[]> => {
-    const limit = Math.min(targetCount * 3, 200);
-    const transactions = await fetchTransactionsWithDetails(address, limit);
+    const transactions = await fetchTransactionsWithDetails(address, {
+      maxTransactions: 200,
+      targetCount
+    });
 
     return transactions
       .filter((tx) => tx.sender === address)
