@@ -68,7 +68,7 @@ const SwapHistory: React.FC = () => {
         loading={loading}
         emptyText="Your swap transactions will show up here"
         title="Swap History"
-        subtitle="Last 30 transactions"
+        subtitle="Last 30 days"
         onLoadMore={() => setDisplayCount((prev) => prev + PAGE_SIZE)}
         hasMore={hasMore}
       />
