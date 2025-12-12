@@ -3,6 +3,40 @@ import nodeService from "./nodeService";
 import { ITransaction } from "@src/utils/types";
 import BN from "@src/utils/BN";
 
+interface SwapCache {
+  address: string;
+  lastTxId: string | null;
+  lastTimestamp: number;
+  transactions: ParsedTransaction[];
+}
+
+const CACHE_KEY = "puzzle_swap_history_cache";
+
+const loadCache = (): SwapCache | null => {
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (!cached) return null;
+    const parsed = JSON.parse(cached);
+    parsed.transactions = parsed.transactions.map((tx: any) => ({
+      ...tx,
+      fromAmount: tx.fromAmount ? new BN(tx.fromAmount) : undefined,
+      toAmount: tx.toAmount ? new BN(tx.toAmount) : undefined,
+      amount: tx.amount ? new BN(tx.amount) : undefined
+    }));
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+const saveCache = (cache: SwapCache) => {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+  } catch {}
+};
+
+let swapCache: SwapCache | null = loadCache();
+
 export type TransactionType = "swap" | "deposit" | "withdraw" | "claim" | "stake" | "unstake" | "unknown";
 
 export interface ParsedTransaction {
@@ -252,17 +286,73 @@ const isWithinLast30Days = (timestamp: number): boolean => {
 
 const transactionHistoryService = {
   getSwapHistory: async (address: string, targetCount = 30): Promise<ParsedTransaction[]> => {
-    const transactions = await fetchTransactionsWithDetails(address, {
-      maxTransactions: 500,
-      targetCount,
-      filterFn: (tx) => tx.sender === address && isSwapTransaction(tx)
-    });
+    const batchSize = 1000;
+    const thirtyDaysAgo = Date.now() - THIRTY_DAYS_MS;
+    const hasValidCache = swapCache && swapCache.address === address && swapCache.lastTxId;
 
-    return transactions
-      .filter((tx) => tx.sender === address && isWithinLast30Days(tx.timestamp))
+    let newSwapTransactions: ITransaction[] = [];
+    let after: string | undefined;
+    let reachedCachedTx = false;
+
+    while (true) {
+      const batch = await nodeService.transactions(address, batchSize, after);
+      if (!batch || batch.length === 0) break;
+
+      for (const tx of batch) {
+        if (hasValidCache && tx.id === swapCache!.lastTxId) {
+          reachedCachedTx = true;
+          break;
+        }
+
+        if (tx.sender === address && isSwapTransaction(tx)) {
+          newSwapTransactions.push(tx);
+        }
+      }
+
+      if (reachedCachedTx) break;
+
+      const oldestTx = batch[batch.length - 1];
+      if (oldestTx.timestamp < thirtyDaysAgo) break;
+
+      after = oldestTx.id;
+    }
+
+    const detailedNew = await Promise.all(
+      newSwapTransactions.map((tx) => nodeService.transactionInfo(tx.id))
+    );
+
+    const parsedNew = detailedNew
+      .filter((tx): tx is ITransaction => tx !== null)
       .map(parseTransaction)
-      .filter((tx): tx is ParsedTransaction => tx !== null && tx.type === "swap")
-      .slice(0, targetCount);
+      .filter((tx): tx is ParsedTransaction => tx !== null && tx.type === "swap");
+
+    let allTransactions: ParsedTransaction[];
+    if (hasValidCache && reachedCachedTx) {
+      const cachedFiltered = swapCache!.transactions.filter((tx) => isWithinLast30Days(tx.timestamp));
+      allTransactions = [...parsedNew, ...cachedFiltered];
+    } else {
+      allTransactions = parsedNew;
+    }
+
+    allTransactions = allTransactions
+      .filter((tx) => isWithinLast30Days(tx.timestamp))
+      .sort((a, b) => b.timestamp - a.timestamp);
+
+    const firstTx = await nodeService.transactions(address, 1);
+    swapCache = {
+      address,
+      lastTxId: firstTx?.[0]?.id ?? null,
+      lastTimestamp: Date.now(),
+      transactions: allTransactions
+    };
+    saveCache(swapCache);
+
+    return allTransactions.slice(0, targetCount);
+  },
+
+  clearSwapCache: () => {
+    swapCache = null;
+    localStorage.removeItem(CACHE_KEY);
   },
 
   getPoolHistory: async (address: string, targetCount = 30): Promise<ParsedTransaction[]> => {
