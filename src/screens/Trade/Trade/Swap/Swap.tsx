@@ -23,6 +23,7 @@ import SettingsHeader from "../SettingsHeader";
 import { useSwapVM } from "@screens/Trade/SwapVM";
 import SwitchTokensButton from "./SwitchTokensButton";
 import Details from "./Details";
+import SwapHistory from "./SwapHistory";
 import BN from "@src/utils/BN";
 
 interface IProps {}
@@ -195,6 +196,7 @@ const Swap: React.FC<IProps> = ({ ...rest }) => {
       </Card>
       <SizedBox height={16} />
       <Details />
+      <SwapHistory />
       <RoutingModal visible={vm.routingModalOpened} onClose={() => vm.setRoutingModalState(false)} />
     </Root>
   );

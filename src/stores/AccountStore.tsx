@@ -360,7 +360,6 @@ class AccountStore {
       });
       return txId;
     } catch (e: any) {
-      console.warn(e);
       this.rootStore.notificationStore.notify(e.toString(), {
         type: "warning",
         title: "Transaction is not completed"

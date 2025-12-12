@@ -122,7 +122,6 @@ class ExploreTokenVM {
       ["after", this.operationsSkip]
     ] as Array<[string, string | number | boolean]>;
     const txs = await transactionsService.getTransactions(params);
-    // console.log(txs);
     this.setOperationsSkip(this.operationsSkip + 5);
     this.setOperations([...this.operations, ...txs] as any[]);
     this.setLoading(false);

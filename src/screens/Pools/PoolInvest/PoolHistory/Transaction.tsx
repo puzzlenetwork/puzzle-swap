@@ -48,7 +48,6 @@ const Transaction: React.FC<IProps> = ({
   }
 
   if (payment == null || typeof payment === "undefined" || payment.length === 0) {
-    console.log("no payment for transaction", id);
     return null;
   }
 

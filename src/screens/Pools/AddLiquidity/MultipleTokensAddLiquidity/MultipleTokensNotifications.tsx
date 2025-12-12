@@ -24,7 +24,7 @@ const MultipleTokensNotifications: React.FC<IProps> = () => {
             text={
               <Text size="medium">
                 You must have all assets to bring liquidity to the pool. Top up empty balances or&nbsp;
-                <Link to={addOneTokenRoute}>provide liquidity with an {vm.baseToken.symbol} token.</Link>
+                <Link to={addOneTokenRoute}>provide liquidity with a single token.</Link>
               </Text>
             }
             style={{ margin: 24 }}

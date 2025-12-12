@@ -18,7 +18,6 @@ const GridTable = styled.div<{
     margin-bottom: 8px;
     @media (min-width: 880px) {
       grid-template-columns: ${({ desktopTemplate }) => desktopTemplate ?? "6fr 2fr 1fr"};
-      padding: 14px 24px;
     }
   }
 
@@ -34,7 +33,7 @@ const GridTable = styled.div<{
     color: ${({ theme }) => theme.colors.primary650};
     box-sizing: border-box;
     margin: 0 16px;
-    padding: 16px 0;
+    padding: 16px 10px;
     border-bottom: 1px solid ${({ theme }) => theme.colors.primary100};
     @media (min-width: 880px) {
       grid-template-columns: ${({ desktopTemplate }) => desktopTemplate ?? "6fr 2fr 1fr"};

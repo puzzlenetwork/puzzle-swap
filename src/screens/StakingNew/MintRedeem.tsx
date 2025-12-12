@@ -222,7 +222,6 @@ const MintRedeem: React.FC = observer(() => {
     const fetchData = async () => {
       try {
         const result = await nodeService.evaluate(CONTRACT_ADDRESSES.stPuzzle, "getLPPrice(false)");
-        console.log("getLPPrice result:", result);
         if (result?.result?.type === "Tuple") {
           const tupleValue = result.result.value as { _2: { type: string; value: number } };
           const value = tupleValue._2?.value;
@@ -316,7 +315,6 @@ const MintRedeem: React.FC = observer(() => {
 
   const handleMaxClick = () => {
     const maxBalance = activeTab === 0 ? puzzleBalance : stPuzzleBalance;
-    console.log("Max clicked, tab:", activeTab, "puzzle balance:", puzzleBalance.toString(), "stPuzzle balance:", stPuzzleBalance.toString(), "maxBalance:", maxBalance.toString());
     setInputAmount(maxBalance.toString());
   };
 

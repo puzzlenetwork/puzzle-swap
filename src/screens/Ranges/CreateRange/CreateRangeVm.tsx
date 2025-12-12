@@ -706,8 +706,6 @@ class CreateRangeVm {
 
       this.rootStore.accountStore.updateAccountAssets(true);
 
-      console.log("Range initialized successfully! Transaction ID:", txId);
-
       // Show success notification
       this.setNotificationParams({
         type: "success",
@@ -1033,7 +1031,6 @@ class CreateRangeVm {
   }
 
   async syncCurrentPrices() {
-    console.log("Sync current prices")
     // priceLoaded: mark all as loading before syncing from tokenStore
     this.rangeAssets.forEach((a) => (a.priceLoaded = false));
     const basePrice = await this.getTokenPrice(this.rangeAssets[0].asset.assetId);

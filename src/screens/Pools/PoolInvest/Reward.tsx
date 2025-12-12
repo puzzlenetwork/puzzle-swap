@@ -115,7 +115,7 @@ const Reward: React.FC<IProps> = () => {
           ) : (
             <Column crossAxisSize="max">
               {!vm.loading ? (
-                <Button fixed size="medium" onClick={vm.claimRewards} disabled={!vm.canClaimRewards}>
+                <Button fixed size="medium" onClick={vm.claimRewards} disabled={!vm.canClaimRewards || vm.pool?.isRebalancing}>
                   Claim reward
                 </Button>
               ) : (

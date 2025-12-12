@@ -64,6 +64,8 @@ class RangesListVm {
   };
 
   rangesSortings = [
+    { title: "APY ↓", key: "aprD" },
+    { title: "APY ↑", key: "aprA" },
     { title: "Fact Liquidity ↓", key: "fact_liquidityD" },
     { title: "Fact Liquidity ↑", key: "fact_liquidityA" },
     { title: "Virtual Liquidity ↓", key: "virtual_liquidityD" },
@@ -76,7 +78,7 @@ class RangesListVm {
     this._setLoading(true);
     this.rangesSorting = v;
     this.rootStore.rangesStore.setFilter({
-      sortBy: this.rangesSortings[v].key.slice(0, -1) as "fact_liquidity" | "earned" | "virtual_liquidity",
+      sortBy: this.rangesSortings[v].key.slice(0, -1) as "fact_liquidity" | "earned" | "virtual_liquidity" | "apr",
       order: (this.rangesSortings[v].key.slice(-1) === "A" ? "asc" : "desc") as "asc" | "desc"
     }).then(() => {
       this.rootStore.rangesStore.setPagination({ page: 1, size: this.rootStore.rangesStore.pagination.size }).then(() => {
@@ -119,17 +121,14 @@ class RangesListVm {
   showOnlyUserRanges: boolean = false;
   setShowOnlyUserRanges = (v: boolean) => {
     this.showOnlyUserRanges = v;
-    console.log("Setting showOnlyUserRanges to:", v);
     this._setLoading(true);
     this.handleShowOnlyUserRangesChange(v).then(() => {
       this._setLoading(false);
     });
   };
   handleShowOnlyUserRangesChange = async (v: boolean) => {
-    console.log("Handling showOnlyUserRangesChange:", v);
     return Promise.all([
       (async () => {
-        console.log("In async function for handleShowOnlyUserRangesChange, v =", v);
         if (v) {
           const { effectiveAddress } = this.rootStore.accountStore;
           await this.rootStore.rangesStore.setUserAddress(effectiveAddress ?? undefined);

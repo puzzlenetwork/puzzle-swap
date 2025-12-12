@@ -43,7 +43,7 @@ const cache = new SimpleCache();
 export interface IGetRanges {
   page: number;
   size: number;
-  sortBy?: "fact_liquidity" | "earned" | "virtual_liquidity";
+  sortBy?: "fact_liquidity" | "earned" | "virtual_liquidity" | "apr";
   order?: "asc" | "desc";
   search?: string;
   userAddress?: string;

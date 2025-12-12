@@ -41,11 +41,11 @@ const Overview: React.FC = () => {
       <Container>
         <Column justifyContent="space-between">
           <Text type="secondary" size="small">
-            Staking APY (weekly / monthly / yearly)
+            Staking APR (weekly / monthly / yearly)
           </Text>
           <Text style={{ fontSize: 20 }}>
-            {stakeStore.puzzleTokenStats?.general_info != null ? (
-              `${stakeStore.puzzleTokenStats.general_info.apr_7d.toFixed(2)}% / ${stakeStore.puzzleTokenStats.general_info.apr_30d.toFixed(2)}% / ${stakeStore.puzzleTokenStats.general_info.apr_365d.toFixed(2)}%`
+            {stakeStore.puzzleTokenStats?.general_info?.puzzle_aprs != null ? (
+              `${stakeStore.puzzleTokenStats.general_info.puzzle_aprs.apr_7d.toFixed(2)}% / ${stakeStore.puzzleTokenStats.general_info.puzzle_aprs.apr_30d.toFixed(2)}% / ${stakeStore.puzzleTokenStats.general_info.puzzle_aprs.apr_1y.toFixed(2)}%`
             ) : (
               <Skeleton height={20} width={250} />
             )}

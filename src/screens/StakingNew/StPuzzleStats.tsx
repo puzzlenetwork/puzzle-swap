@@ -52,12 +52,10 @@ const StPuzzleStats: React.FC = () => {
       try {
         const detailsResponse = await makeNodeRequest(`/assets/details/${ASSET_IDS.stPuzzle}`);
         const detailsData = detailsResponse.data;
-        console.log("stPUZZLE details:", detailsData);
         setCirculating(detailsData.quantity / 1e8);
 
         const balanceResponse = await makeNodeRequest(`/assets/balance/${BRIDGE_ADDRESS}/${ASSET_IDS.stPuzzle}`);
         const balanceData = balanceResponse.data;
-        console.log("stPUZZLE bridge balance:", balanceData);
         setBridged(balanceData.balance / 1e8);
       } catch (error) {
         console.error("Failed to fetch stPUZZLE stats:", error);
