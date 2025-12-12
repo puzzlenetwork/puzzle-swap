@@ -243,6 +243,13 @@ const isPoolTransaction = (tx: ITransaction): boolean =>
     tx.call?.function ?? ""
   );
 
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+const isWithinLast30Days = (timestamp: number): boolean => {
+  const now = Date.now();
+  return now - timestamp <= THIRTY_DAYS_MS;
+};
+
 const transactionHistoryService = {
   getSwapHistory: async (address: string, targetCount = 30): Promise<ParsedTransaction[]> => {
     const transactions = await fetchTransactionsWithDetails(address, {
@@ -252,7 +259,7 @@ const transactionHistoryService = {
     });
 
     return transactions
-      .filter((tx) => tx.sender === address)
+      .filter((tx) => tx.sender === address && isWithinLast30Days(tx.timestamp))
       .map(parseTransaction)
       .filter((tx): tx is ParsedTransaction => tx !== null && tx.type === "swap")
       .slice(0, targetCount);
@@ -266,7 +273,7 @@ const transactionHistoryService = {
     });
 
     return transactions
-      .filter((tx) => tx.sender === address)
+      .filter((tx) => tx.sender === address && isWithinLast30Days(tx.timestamp))
       .map(parseTransaction)
       .filter(
         (tx): tx is ParsedTransaction =>
@@ -282,7 +289,7 @@ const transactionHistoryService = {
     });
 
     return transactions
-      .filter((tx) => tx.sender === address)
+      .filter((tx) => tx.sender === address && isWithinLast30Days(tx.timestamp))
       .map(parseTransaction)
       .filter((tx): tx is ParsedTransaction => tx !== null)
       .slice(0, targetCount);
