@@ -336,7 +336,6 @@ class DepositToRangeVM {
           );
       })
       .catch((e) => {
-        console.log("e", e)
         this.setNotificationParams(
           buildErrorDialogParams({
             title: "Transaction is not completed",

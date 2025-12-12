@@ -412,7 +412,6 @@ class PoolInvestVM {
         const localTx = tx.stateChanges.invokes.find(
           (x) => x.dApp === this.pool.address || x.dApp === this.pool.layer2Address
         );
-        console.log(localTx);
         if (!localTx) {
           return tx;
         } else {

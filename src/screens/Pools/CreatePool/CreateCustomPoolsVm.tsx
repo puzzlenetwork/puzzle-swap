@@ -425,7 +425,6 @@ class CreateCustomPoolsVm {
         fee: 100500000,
         call: { function: "init", args: [] }
       })
-      .then((txId) => console.log(txId))
       .then(() =>
         this.setNotificationParams(
           buildDialogParams({

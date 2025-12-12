@@ -134,17 +134,31 @@ const MyPoolBalance: React.FC<IProps> = () => {
         <Buttons>
           {address != null ? (
             <>
-              <Link to={`/pools/${vm.pool.domain}/withdraw`}>
-                <Button fixed size="medium" kind="secondary">
-                  Withdraw
-                </Button>
-              </Link>
-              <SizedBox width={8} />
-              <Link to={`/pools/${vm.pool.domain}/addLiquidity`}>
-                <Button fixed size="medium">
-                  Deposit
-                </Button>
-              </Link>
+              {vm.pool?.isRebalancing ? (
+                <>
+                  <Button fixed size="medium" kind="secondary" disabled>
+                    Withdraw
+                  </Button>
+                  <SizedBox width={8} />
+                  <Button fixed size="medium" disabled>
+                    Deposit
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to={`/pools/${vm.pool.domain}/withdraw`}>
+                    <Button fixed size="medium" kind="secondary">
+                      Withdraw
+                    </Button>
+                  </Link>
+                  <SizedBox width={8} />
+                  <Link to={`/pools/${vm.pool.domain}/addLiquidity`}>
+                    <Button fixed size="medium">
+                      Deposit
+                    </Button>
+                  </Link>
+                </>
+              )}
             </>
           ) : (
             <Column crossAxisSize="max">

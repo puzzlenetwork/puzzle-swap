@@ -22,6 +22,7 @@ import Loading from "@components/Loading";
 import { ROUTES } from "@src/constants";
 import { useStores } from "@stores";
 import Boosting from "./Boosting";
+import RebalancingNotification from "@components/RebalancingNotification";
 
 const Root = styled.div`
   display: flex;
@@ -84,6 +85,12 @@ const PoolInvestImpl: React.FC = observer(() => {
         <Body>
           <MainBlock>
             <RightBlockMobile>
+              {vm.pool?.isRebalancing && (
+                <RebalancingNotification
+                  timeRemaining={vm.pool?.rebalanceTimeRemaining}
+                  progress={vm.pool?.rebalanceProgress}
+                />
+              )}
               <Reward />
               <MyPoolBalance />
               <LPStaking />
@@ -93,6 +100,12 @@ const PoolInvestImpl: React.FC = observer(() => {
             <PoolHistory />
           </MainBlock>
           <RightBlock>
+            {vm.pool?.isRebalancing && (
+              <RebalancingNotification
+                timeRemaining={vm.pool?.rebalanceTimeRemaining}
+                progress={vm.pool?.rebalanceProgress}
+              />
+            )}
             <Reward />
             <MyPoolBalance />
             <LPStaking />

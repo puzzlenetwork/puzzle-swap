@@ -121,17 +121,14 @@ class RangesListVm {
   showOnlyUserRanges: boolean = false;
   setShowOnlyUserRanges = (v: boolean) => {
     this.showOnlyUserRanges = v;
-    console.log("Setting showOnlyUserRanges to:", v);
     this._setLoading(true);
     this.handleShowOnlyUserRangesChange(v).then(() => {
       this._setLoading(false);
     });
   };
   handleShowOnlyUserRangesChange = async (v: boolean) => {
-    console.log("Handling showOnlyUserRangesChange:", v);
     return Promise.all([
       (async () => {
-        console.log("In async function for handleShowOnlyUserRangesChange, v =", v);
         if (v) {
           const { effectiveAddress } = this.rootStore.accountStore;
           await this.rootStore.rangesStore.setUserAddress(effectiveAddress ?? undefined);

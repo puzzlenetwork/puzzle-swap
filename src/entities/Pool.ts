@@ -1,10 +1,56 @@
-import { IPoolConfig, IPoolConfigStatistics, IPoolStats, IToken } from "@src/constants";
+import { IPoolConfig, IPoolConfigStatistics, IPoolRebalanceConfig, IPoolStats, IToken } from "@src/constants";
 import { makeAutoObservable } from "mobx";
 import BN from "@src/utils/BN";
 import tokenLogos from "@src/constants/tokenLogos";
 import nodeService from "@src/services/nodeService";
 import { getStateByKey } from "@src/utils/getStateByKey";
 import { IAssetConfig } from "@src/services/poolsService";
+
+export class Rebalance {
+  inProgress: boolean;
+  steps: number;
+  currentStep: number;
+  interval: number;
+  startHeight?: number;
+  targetShares?: Record<string, number>;
+
+  constructor(params: IPoolRebalanceConfig) {
+    this.inProgress = params.in_progress;
+    this.steps = params.steps;
+    this.currentStep = params.current_step;
+    this.interval = params.interval;
+    this.startHeight = params.start_height;
+    this.targetShares = params.target_shares;
+  }
+
+  get remainingBlocks(): number {
+    return (this.steps - this.currentStep) * this.interval;
+  }
+
+  get remainingMinutes(): number {
+    return this.remainingBlocks;
+  }
+
+  get estimatedTimeRemaining(): string {
+    const minutes = this.remainingMinutes;
+    if (minutes < 60) {
+      return `~${minutes} min`;
+    }
+    const hours = Math.floor(minutes / 60);
+    const remainingMins = minutes % 60;
+    if (hours < 24) {
+      return remainingMins > 0 ? `~${hours}h ${remainingMins}m` : `~${hours}h`;
+    }
+    const days = Math.floor(hours / 24);
+    const remainingHours = hours % 24;
+    return remainingHours > 0 ? `~${days}d ${remainingHours}h` : `~${days}d`;
+  }
+
+  get progress(): number {
+    if (this.steps === 0) return 100;
+    return Math.round((this.currentStep / this.steps) * 100);
+  }
+}
 
 export interface IData {
   key: string;
@@ -85,6 +131,26 @@ class Pool implements IPoolConfig {
   public _usdtRate: BN = BN.ZERO;
   public setUsdtRate = (value: BN) => (this._usdtRate = value);
 
+  private _rebalanceInstances: Rebalance[] = [];
+
+  get isRebalancing(): boolean {
+    return this._rebalanceInstances.some((r) => r.inProgress);
+  }
+
+  get activeRebalance(): Rebalance | undefined {
+    return this._rebalanceInstances.find((r) => r.inProgress);
+  }
+
+  get rebalanceTimeRemaining(): string | null {
+    const active = this.activeRebalance;
+    return active ? active.estimatedTimeRemaining : null;
+  }
+
+  get rebalanceProgress(): number | null {
+    const active = this.activeRebalance;
+    return active ? active.progress : null;
+  }
+
   constructor(params: IPoolConfig) {
     this.address = params.address;
     this.layer2Address = params.layer_2_address;
@@ -103,6 +169,7 @@ class Pool implements IPoolConfig {
     this.createdAt = params.created_at?.toString() ?? "";
     this.stats = params.stats;
     this.assets = params.assets;
+    this._rebalanceInstances = params.rebalances?.map((r) => new Rebalance(r)) ?? [];
     makeAutoObservable(this);
   }
 

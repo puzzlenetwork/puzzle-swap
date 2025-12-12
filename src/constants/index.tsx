@@ -677,6 +677,15 @@ export interface ITotals {
   owner_fees_1d: number;
   protocol_fees_1d: number;
 }
+export interface IPoolRebalanceConfig {
+  in_progress: boolean;
+  steps: number;
+  current_step: number;
+  interval: number;
+  start_height?: number;
+  target_shares?: Record<string, number>;
+}
+
 export interface IPoolConfig {
   address: string;
   layer_2_address?: string;
@@ -691,7 +700,7 @@ export interface IPoolConfig {
   lp_token_amount?: number;
   lp_token_id?: string;
   owner?: string;
-  rebalances?: [];
+  rebalances?: IPoolRebalanceConfig[];
   swap_fee?: number;
   title: string;
   version?: string;

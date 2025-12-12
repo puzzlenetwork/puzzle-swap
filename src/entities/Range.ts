@@ -79,6 +79,15 @@ export interface IPeriodStatsResponse {
   fees: Record<string, IAssetFeesResponse>;
 }
 
+export interface IRebalanceResponse {
+  in_progress: boolean;
+  steps: number;
+  current_step: number;
+  interval: number;
+  start_height?: number;
+  target_shares?: Record<string, number>;
+}
+
 export interface IRangeParamsResponse {
   address: string;
   artefact_origin_transaction_id: string;
@@ -98,7 +107,7 @@ export interface IRangeParamsResponse {
   lp_token_id: string;
   mode: string;
   owner: string;
-  rebalances: any[];
+  rebalances: IRebalanceResponse[];
   swap_fee: number;
   title: string;
   version: string;
@@ -266,6 +275,52 @@ export class PeriodStats {
   }
 }
 
+export class Rebalance {
+  inProgress: boolean;
+  steps: number;
+  currentStep: number;
+  interval: number;
+  startHeight?: number;
+  targetShares?: Record<string, number>;
+
+  constructor(params: IRebalanceResponse) {
+    this.inProgress = params.in_progress;
+    this.steps = params.steps;
+    this.currentStep = params.current_step;
+    this.interval = params.interval;
+    this.startHeight = params.start_height;
+    this.targetShares = params.target_shares;
+  }
+
+  get remainingBlocks(): number {
+    return (this.steps - this.currentStep) * this.interval;
+  }
+
+  get remainingMinutes(): number {
+    return this.remainingBlocks;
+  }
+
+  get estimatedTimeRemaining(): string {
+    const minutes = this.remainingMinutes;
+    if (minutes < 60) {
+      return `~${minutes} min`;
+    }
+    const hours = Math.floor(minutes / 60);
+    const remainingMins = minutes % 60;
+    if (hours < 24) {
+      return remainingMins > 0 ? `~${hours}h ${remainingMins}m` : `~${hours}h`;
+    }
+    const days = Math.floor(hours / 24);
+    const remainingHours = hours % 24;
+    return remainingHours > 0 ? `~${days}d ${remainingHours}h` : `~${days}d`;
+  }
+
+  get progress(): number {
+    if (this.steps === 0) return 100;
+    return Math.round((this.currentStep / this.steps) * 100);
+  }
+}
+
 export class Range {
   address: string;
   artefactOriginTransactionId: string;
@@ -285,7 +340,7 @@ export class Range {
   lpTokenId: string;
   mode: string;
   owner: string;
-  rebalances: any[];
+  rebalances: Rebalance[];
   swapFee: BN;
   title: string;
   version: string;
@@ -321,7 +376,7 @@ export class Range {
     this.lpTokenId = params.lp_token_id;
     this.mode = params.mode;
     this.owner = params.owner;
-    this.rebalances = params.rebalances;
+    this.rebalances = params.rebalances?.map((r) => new Rebalance(r)) ?? [];
     this.swapFee = new BN(params.swap_fee);
     this.title = params.title;
     this.version = params.version;
@@ -337,6 +392,24 @@ export class Range {
     this.periodStats = new PeriodStats(params.period_stats);
     this.baseToken = this.assets.find((asset) => asset.assetId === this.baseTokenId);
     makeAutoObservable(this);
+  }
+
+  get isRebalancing(): boolean {
+    return this.rebalances.some((r) => r.inProgress);
+  }
+
+  get activeRebalance(): Rebalance | undefined {
+    return this.rebalances.find((r) => r.inProgress);
+  }
+
+  get rebalanceTimeRemaining(): string | null {
+    const active = this.activeRebalance;
+    return active ? active.estimatedTimeRemaining : null;
+  }
+
+  get rebalanceProgress(): number | null {
+    const active = this.activeRebalance;
+    return active ? active.progress : null;
   }
 
   // Пример геттеров/методов
