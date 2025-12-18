@@ -27,7 +27,7 @@ interface IProps {
 }
 
 const Root = styled.div<{ loading?: boolean }>`
-  background: #ffffff;
+  background: ${({ theme }) => theme.colors.white};
   border-radius: 16px;
   padding: 16px;
   display: flex;
@@ -36,7 +36,7 @@ const Root = styled.div<{ loading?: boolean }>`
   position: relative;
   transition: opacity 0.2s;
 
-  ${({ loading }) => loading && `
+  ${({ loading, theme }) => loading && `
     &::after {
       content: "";
       position: absolute;
@@ -44,7 +44,7 @@ const Root = styled.div<{ loading?: boolean }>`
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(255, 255, 255, 0.7);
+      background: ${theme.colors.white}B3;
       border-radius: 16px;
       animation: ${pulse} 1.5s ease-in-out infinite;
     }
@@ -64,7 +64,7 @@ const TokenInfo = styled(Row)`
 const IconContainer = styled.div`
   width: 40px;
   height: 40px;
-  border: 1px solid #F1F2FE;
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -82,22 +82,22 @@ const TokenName = styled.span`
   font-family: Roboto, sans-serif;
   font-weight: 400;
   font-size: 14px;
-  color: #363870;
+  color: ${({ theme }) => theme.colors.primary800};
 `;
 
 const ShareText = styled.span`
   font-family: Roboto, sans-serif;
   font-weight: 400;
   font-size: 12px;
-  color: #7F81C4;
+  color: ${({ theme }) => theme.colors.primary650};
 `;
 
 const Checkbox = styled.div<{ checked: boolean }>`
   width: 20px;
   height: 20px;
   border-radius: 4px;
-  background: ${({ checked }) => (checked ? "#7075E8" : "#F1F2FE")};
-  border: 1px solid ${({ checked }) => (checked ? "#6462DD" : "#F1F2FE")};
+  background: ${({ checked, theme }) => (checked ? theme.colors.blue500 : theme.colors.primary100)};
+  border: 1px solid ${({ checked, theme }) => (checked ? theme.colors.button : theme.colors.primary100)};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -115,7 +115,7 @@ const SectionLabel = styled.span`
   font-family: Roboto, sans-serif;
   font-weight: 400;
   font-size: 12px;
-  color: #7F81C4;
+  color: ${({ theme }) => theme.colors.primary650};
 `;
 
 const InputRow = styled(Row)`
@@ -125,8 +125,8 @@ const InputRow = styled(Row)`
 
 const AmountField = styled.div<{ error?: boolean }>`
   flex: 1;
-  background: ${({ error }) => (error ? "#FFF0F0" : "#F1F2FE")};
-  border: 1px solid ${({ error }) => (error ? "#FF6B6B" : "transparent")};
+  background: ${({ error, theme }) => (error ? theme.colors.error100 : theme.colors.primary100)};
+  border: 1px solid ${({ error, theme }) => (error ? theme.colors.error500 : "transparent")};
   border-radius: 12px;
   padding: 12px;
   display: flex;
@@ -138,21 +138,21 @@ const AmountValue = styled.span`
   font-family: Roboto, sans-serif;
   font-weight: 400;
   font-size: 16px;
-  color: #7F81C4;
+  color: ${({ theme }) => theme.colors.primary650};
 `;
 
 const AmountInput = styled.input`
   font-family: Roboto, sans-serif;
   font-weight: 400;
   font-size: 16px;
-  color: #363870;
+  color: ${({ theme }) => theme.colors.primary800};
   background: transparent;
   border: none;
   outline: none;
   width: 100%;
 
   &::placeholder {
-    color: #7F81C4;
+    color: ${({ theme }) => theme.colors.primary650};
   }
 `;
 
@@ -160,7 +160,7 @@ const MaxButton = styled.button`
   font-family: Roboto, sans-serif;
   font-weight: 500;
   font-size: 12px;
-  color: #7075E8;
+  color: ${({ theme }) => theme.colors.blue500};
   background: transparent;
   border: none;
   cursor: pointer;
@@ -169,7 +169,7 @@ const MaxButton = styled.button`
   transition: all 0.2s;
 
   &:hover {
-    background: rgba(112, 117, 232, 0.1);
+    background: ${({ theme }) => theme.colors.blue500}1A;
   }
 `;
 
@@ -182,18 +182,18 @@ const BalanceText = styled.span`
   font-family: Roboto, sans-serif;
   font-weight: 400;
   font-size: 12px;
-  color: #7F81C4;
+  color: ${({ theme }) => theme.colors.primary650};
 `;
 
 const ErrorText = styled.span`
   font-family: Roboto, sans-serif;
   font-weight: 400;
   font-size: 12px;
-  color: #FF6B6B;
+  color: ${({ theme }) => theme.colors.error500};
 `;
 
 const TokenSelector = styled.div<{ clickable?: boolean }>`
-  border: 1px solid #F1F2FE;
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
   border-radius: 10px;
   padding: 8px;
   display: flex;
@@ -203,9 +203,9 @@ const TokenSelector = styled.div<{ clickable?: boolean }>`
   transition: all 0.2s;
 
   &:hover {
-    ${({ clickable }) => clickable && `
-      background: #F8F9FF;
-      border-color: #E0E1F5;
+    ${({ clickable, theme }) => clickable && `
+      background: ${theme.colors.primary50};
+      border-color: ${theme.colors.primary300};
     `}
   }
 `;
@@ -213,7 +213,7 @@ const TokenSelector = styled.div<{ clickable?: boolean }>`
 const TokenSelectorIcon = styled.div`
   width: 24px;
   height: 24px;
-  border: 1px solid #F1F2FE;
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
   border-radius: 12px;
   overflow: hidden;
 
@@ -228,7 +228,7 @@ const TokenSelectorLabel = styled.span`
   font-family: Roboto, sans-serif;
   font-weight: 400;
   font-size: 14px;
-  color: #363870;
+  color: ${({ theme }) => theme.colors.primary800};
 `;
 
 const RecommendedSwapCard: React.FC<IProps> = ({ swap, selected = true, onToggle, onSourceTokenClick, onAmountChange, sourceTokenLogo, sourceTokenBalance, loading }) => {
@@ -236,12 +236,10 @@ const RecommendedSwapCard: React.FC<IProps> = ({ swap, selected = true, onToggle
   const currentSourceLogo = sourceTokenLogo || defaultLogo;
   const [localAmount, setLocalAmount] = React.useState(swap.amountToSendFormatted);
 
-  // Update local amount when swap changes externally
   React.useEffect(() => {
     setLocalAmount(swap.amountToSendFormatted);
   }, [swap.amountToSendFormatted]);
 
-  // Check if amount exceeds balance
   const isExceedingBalance = React.useMemo(() => {
     if (!sourceTokenBalance || !localAmount) return false;
     const amount = parseFloat(localAmount.replace(/,/g, ""));
@@ -317,7 +315,7 @@ const RecommendedSwapCard: React.FC<IProps> = ({ swap, selected = true, onToggle
             <TokenSelectorLabel>{swap.sourceToken.symbol}</TokenSelectorLabel>
             {onSourceTokenClick && (
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                <path d="M3 4.5L6 7.5L9 4.5" stroke="#7F81C4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             )}
           </TokenSelector>
