@@ -11,7 +11,26 @@ import {
   IDialogNotificationProps
 } from "@components/Dialog/DialogNotification";
 import Pool from "@src/entities/Pool";
-import { CONTRACT_ADDRESSES } from "@src/constants";
+import { CONTRACT_ADDRESSES, TOKENS_BY_SYMBOL } from "@src/constants";
+import aggregatorService, { ICalcResponse } from "@src/services/aggregatorService";
+
+export interface IRecommendedSwap {
+  tokenSymbol: string;
+  tokenAssetId: string;
+  tokenLogo: string;
+  tokenShare: number;
+  amountToSend: BN;
+  amountToSendFormatted: string;
+  amountToReceive: BN;
+  amountToReceiveFormatted: string;
+  sourceToken: {
+    symbol: string;
+    assetId: string;
+    decimals: number;
+  };
+  aggregatorResponse: ICalcResponse | null;
+  loading: boolean;
+}
 
 const ctx = React.createContext<AddLiquidityInterfaceVM | null>(null);
 
@@ -180,7 +199,50 @@ class AddLiquidityInterfaceVM {
       const usdnEquivalent = BN.formatUnits(balance.times(rate), token.decimals);
       return acc.plus(usdnEquivalent);
     }, BN.ZERO);
+
+    if (total.eq(0) && this.recommendedSwaps.length > 0) {
+      return this.potentialAmountToDeposit;
+    }
+
     return !total.isNaN() ? "$ " + total.toFormat(total?.toNumber() > 0.001 ? 2 : 4) : null;
+  }
+
+  get potentialAmountToDeposit(): string | null {
+    if (this.pool == null || this.recommendedSwaps.length === 0) return null;
+
+    const projectedBalances: Record<string, BN> = {};
+
+    for (const token of this.pool.tokens) {
+      const currentBalance = this.rootStore.accountStore.findBalanceByAssetId(token.assetId)?.balance ?? BN.ZERO;
+      const swap = this.recommendedSwaps.find(s => s.tokenAssetId === token.assetId);
+      const additionalAmount = swap?.amountToReceive ?? BN.ZERO;
+      projectedBalances[token.assetId] = currentBalance.plus(additionalAmount);
+    }
+
+    const projectedMinPIssued = BN.min(
+      ...this.pool.tokens.map(({ assetId }) => {
+        const balance = projectedBalances[assetId] ?? BN.ZERO;
+        return this.pool!.globalPoolTokenAmount.times(balance).div(this.pool!.liquidity[assetId]);
+      })
+    );
+
+    const projectedTotal = this.pool.tokens.reduce<BN>((acc, token) => {
+      const tokenBalance = this.pool!.liquidity[token.assetId] ?? BN.ZERO;
+      const dk = this.pool!.globalPoolTokenAmount.plus(projectedMinPIssued)
+        .div(this.pool!.globalPoolTokenAmount)
+        .minus(new BN(1))
+        .times(tokenBalance)
+        .times(this.providedPercentOfPool)
+        .times(0.01);
+
+      const rate = this.rootStore.poolsStore.usdtRate(token.assetId, 1) ?? BN.ZERO;
+      const usdnEquivalent = BN.formatUnits(dk.times(rate), token.decimals);
+      return acc.plus(usdnEquivalent);
+    }, BN.ZERO);
+
+    return !projectedTotal.isNaN() && projectedTotal.gt(0)
+      ? "~$ " + projectedTotal.toFormat(projectedTotal.toNumber() > 0.001 ? 2 : 4)
+      : null;
   }
 
   get baseTokenBalance() {
@@ -231,7 +293,6 @@ class AddLiquidityInterfaceVM {
           );
       })
       .catch((e) => {
-        console.error(e);
         this.setNotificationParams(
           buildErrorDialogParams({
             title: "Transaction is not completed",
@@ -319,9 +380,572 @@ class AddLiquidityInterfaceVM {
     );
   }
 
-
   private handleDepositFinally = () => {
     this.rootStore.accountStore.updateAccountAssets(true);
     this._setLoading(false);
+  };
+
+  recommendedSwaps: IRecommendedSwap[] = [];
+  private _setRecommendedSwaps = (swaps: IRecommendedSwap[]) => (this.recommendedSwaps = swaps);
+
+  swapsLoading: boolean = false;
+  private _setSwapsLoading = (v: boolean) => (this.swapsLoading = v);
+
+  swapAllLoading: boolean = false;
+  private _setSwapAllLoading = (v: boolean) => (this.swapAllLoading = v);
+
+  swapProgress: { current: number; total: number; currentToken: { symbol: string; logo: string } | null } = {
+    current: 0,
+    total: 0,
+    currentToken: null
+  };
+  private _setSwapProgress = (progress: typeof this.swapProgress) => (this.swapProgress = progress);
+
+  swapResults: Record<string, 'success' | 'failed'> = {};
+  private _setSwapResult = (tokenAssetId: string, result: 'success' | 'failed') => {
+    this.swapResults = { ...this.swapResults, [tokenAssetId]: result };
+  };
+  private _clearSwapResults = () => {
+    this.swapResults = {};
+  };
+
+  customSourceTokens: Record<string, { assetId: string; symbol: string; decimals: number; logo: string }> = {};
+
+  updateSwapSourceToken = async (targetTokenAssetId: string, newSourceAssetId: string) => {
+    const { accountStore } = this.rootStore;
+    const sourceBalance = accountStore.findBalanceByAssetId(newSourceAssetId);
+
+    if (!sourceBalance) return;
+
+    this.customSourceTokens[targetTokenAssetId] = {
+      assetId: sourceBalance.assetId,
+      symbol: sourceBalance.symbol ?? "Unknown",
+      decimals: sourceBalance.decimals ?? 8,
+      logo: sourceBalance.logo ?? ""
+    };
+
+    const swapIndex = this.recommendedSwaps.findIndex(s => s.tokenAssetId === targetTokenAssetId);
+    if (swapIndex === -1) return;
+
+    const swap = this.recommendedSwaps[swapIndex];
+    const targetToken = this.pool?.tokens.find(t => t.assetId === targetTokenAssetId);
+    if (!targetToken) return;
+
+    const requiredAmounts = this.requiredTokenAmounts;
+    if (!requiredAmounts) return;
+
+    const requiredAmount = requiredAmounts[targetTokenAssetId] || BN.ZERO;
+    const userBalance = accountStore.findBalanceByAssetId(targetTokenAssetId)?.balance ?? BN.ZERO;
+    const deficit = requiredAmount.minus(userBalance);
+
+    if (deficit.lte(0)) return;
+
+    const deficitFormatted = BN.formatUnits(deficit, targetToken.decimals);
+    const targetRate = this.rootStore.poolsStore.usdtRate(targetTokenAssetId) ?? BN.ZERO;
+    const deficitUsd = deficitFormatted.times(targetRate);
+
+    const sourceRate = this.rootStore.poolsStore.usdtRate(newSourceAssetId) ?? BN.ZERO;
+    if (sourceRate.eq(0)) return;
+
+    const estimatedSourceAmount = deficitUsd.div(sourceRate);
+    const sourceToken = this.customSourceTokens[targetTokenAssetId];
+
+    const sourceAmountRaw = estimatedSourceAmount.times(1.02).times(new BN(10).pow(sourceToken.decimals));
+    const sourceAmountWithBuffer = new BN(sourceAmountRaw.toFixed(0));
+
+    if (sourceAmountWithBuffer.lt(1000)) return;
+
+    try {
+      const calcResponse = await aggregatorService.calc(
+        sourceToken.assetId,
+        targetTokenAssetId,
+        sourceAmountWithBuffer
+      );
+
+      const amountToReceive = new BN(calcResponse.estimatedOut || 0);
+
+      const updatedSwaps = [...this.recommendedSwaps];
+      updatedSwaps[swapIndex] = {
+        ...swap,
+        sourceToken: {
+          symbol: sourceToken.symbol,
+          assetId: sourceToken.assetId,
+          decimals: sourceToken.decimals
+        },
+        amountToSend: sourceAmountWithBuffer,
+        amountToSendFormatted: BN.formatUnits(sourceAmountWithBuffer, sourceToken.decimals).toFormat(4),
+        amountToReceive,
+        amountToReceiveFormatted: BN.formatUnits(amountToReceive, targetToken.decimals).toFormat(4),
+        aggregatorResponse: calcResponse
+      };
+      this._setRecommendedSwaps(updatedSwaps);
+    } catch (e) {}
+  };
+
+  getSourceTokenLogo = (targetTokenAssetId: string): string | undefined => {
+    const customLogo = this.customSourceTokens[targetTokenAssetId]?.logo;
+    if (customLogo) return customLogo;
+
+    const defaultSource = this.sourceTokenForSwaps;
+    const balance = this.rootStore.accountStore.findBalanceByAssetId(defaultSource.assetId);
+    return balance?.logo;
+  };
+
+  updateSwapAmount = async (targetTokenAssetId: string, amountStr: string) => {
+    const swapIndex = this.recommendedSwaps.findIndex(s => s.tokenAssetId === targetTokenAssetId);
+    if (swapIndex === -1) return;
+
+    const swap = this.recommendedSwaps[swapIndex];
+    const targetToken = this.pool?.tokens.find(t => t.assetId === targetTokenAssetId);
+    if (!targetToken) return;
+
+    const amount = parseFloat(amountStr);
+    if (isNaN(amount) || amount <= 0) return;
+
+    const sourceAmountRaw = new BN(amount).times(new BN(10).pow(swap.sourceToken.decimals));
+    const sourceAmount = new BN(sourceAmountRaw.toFixed(0));
+
+    if (sourceAmount.lte(0)) return;
+
+    try {
+      const calcResponse = await aggregatorService.calc(
+        swap.sourceToken.assetId,
+        targetTokenAssetId,
+        sourceAmount
+      );
+
+      const amountToReceive = new BN(calcResponse.estimatedOut || 0);
+
+      const updatedSwaps = [...this.recommendedSwaps];
+      updatedSwaps[swapIndex] = {
+        ...swap,
+        amountToSend: sourceAmount,
+        amountToSendFormatted: BN.formatUnits(sourceAmount, swap.sourceToken.decimals).toFormat(4),
+        amountToReceive,
+        amountToReceiveFormatted: BN.formatUnits(amountToReceive, targetToken.decimals).toFormat(4),
+        aggregatorResponse: calcResponse
+      };
+      this._setRecommendedSwaps(updatedSwaps);
+    } catch (e) {}
+  };
+
+  get sourceTokenForSwaps() {
+    const { accountStore } = this.rootStore;
+    const stableTokens = [
+      TOKENS_BY_SYMBOL.USDT_WXG,
+      TOKENS_BY_SYMBOL.USDC_WXG,
+      TOKENS_BY_SYMBOL.USDT,
+      TOKENS_BY_SYMBOL.USDC,
+      TOKENS_BY_SYMBOL.XTN
+    ].filter(Boolean);
+
+    for (const token of stableTokens) {
+      const balance = accountStore.findBalanceByAssetId(token.assetId);
+      if (balance?.balance?.gt(0)) {
+        return {
+          symbol: token.symbol,
+          assetId: token.assetId,
+          decimals: token.decimals
+        };
+      }
+    }
+
+    return {
+      symbol: "USDT",
+      assetId: TOKENS_BY_SYMBOL.USDT_WXG.assetId,
+      decimals: TOKENS_BY_SYMBOL.USDT_WXG.decimals
+    };
+  }
+
+  get userTotalPoolAssetsUsd(): BN {
+    const { accountStore } = this.rootStore;
+    if (this.pool == null) return BN.ZERO;
+
+    return this.pool.tokens.reduce((acc, token) => {
+      const balance = accountStore.findBalanceByAssetId(token.assetId);
+      const balanceFormatted = balance?.balance ? BN.formatUnits(balance.balance, token.decimals) : BN.ZERO;
+      const rate = this.rootStore.poolsStore.usdtRate(token.assetId) ?? BN.ZERO;
+      return acc.plus(balanceFormatted.times(rate));
+    }, BN.ZERO);
+  }
+
+  get targetDepositUsd(): BN {
+    return this.userTotalPoolAssetsUsd.times(this.providedPercentOfPool).div(100);
+  }
+
+  get requiredTokenAmounts(): Record<string, BN> | null {
+    if (this.pool == null) return null;
+    const { poolsStore } = this.rootStore;
+
+    const targetUsd = this.targetDepositUsd;
+    if (targetUsd.lte(0)) return null;
+
+    return this.pool.tokens.reduce<Record<string, BN>>((acc, token) => {
+      const tokenTargetUsd = targetUsd.times(token.share).div(100);
+
+      const rate = poolsStore.usdtRate(token.assetId) ?? BN.ZERO;
+      if (rate.lte(0)) return { ...acc, [token.assetId]: BN.ZERO };
+
+      const requiredFormatted = tokenTargetUsd.div(rate);
+      const requiredRaw = requiredFormatted.times(new BN(10).pow(token.decimals));
+
+      return { ...acc, [token.assetId]: requiredRaw };
+    }, {});
+  }
+
+  get tokensWithInsufficientBalance(): Array<{
+    token: Balance;
+    requiredAmount: BN;
+    currentBalance: BN;
+    deficit: BN;
+    poolToken: { symbol: string; logo: string; share: number; decimals: number; assetId: string };
+  }> {
+    const { accountStore } = this.rootStore;
+    if (this.pool == null || this.requiredTokenAmounts == null) return [];
+
+    return this.pool.tokens
+      .map((poolToken) => {
+        const balance = accountStore.findBalanceByAssetId(poolToken.assetId);
+        const currentBalance = balance?.balance ?? BN.ZERO;
+        const requiredAmount = this.requiredTokenAmounts![poolToken.assetId] ?? BN.ZERO;
+        const deficit = requiredAmount.minus(currentBalance);
+
+        return {
+          token: balance ?? new Balance(poolToken),
+          requiredAmount,
+          currentBalance,
+          deficit,
+          poolToken
+        };
+      })
+      .filter(({ deficit }) => deficit.gt(0));
+  }
+
+  get hasInsufficientTokens(): boolean {
+    if (this.pool == null) return false;
+    if (this.providedPercentOfPool.lte(0)) return false;
+
+    const { accountStore } = this.rootStore;
+
+    for (const token of this.pool.tokens) {
+      const userBalance = accountStore.findBalanceByAssetId(token.assetId)?.balance ?? BN.ZERO;
+
+      if (userBalance.eq(0)) {
+        return true;
+      }
+
+      const requiredForDeposit = this.tokensToDepositAmounts?.[token.assetId] ?? BN.ZERO;
+      if (requiredForDeposit.gt(userBalance)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  get targetDepositUsdFormatted(): string {
+    const value = this.targetDepositUsd;
+    return !value.isNaN() ? "$ " + value.toFormat(value.gt(0.01) ? 2 : 4) : "$ 0";
+  }
+
+  get recommendedSwapsTotalUsd(): BN {
+    if (this.recommendedSwaps.length === 0) return BN.ZERO;
+
+    return this.recommendedSwaps.reduce((total, swap) => {
+      const rate = this.rootStore.poolsStore.usdtRate(swap.tokenAssetId) ?? BN.ZERO;
+      const poolToken = this.pool?.tokens.find(t => t.assetId === swap.tokenAssetId);
+      if (!poolToken || rate.eq(0)) return total;
+
+      const amountFormatted = BN.formatUnits(swap.amountToReceive, poolToken.decimals);
+      return total.plus(amountFormatted.times(rate));
+    }, BN.ZERO);
+  }
+
+  get recommendedSwapsTotalUsdFormatted(): string {
+    const value = this.recommendedSwapsTotalUsd;
+    return !value.isNaN() && value.gt(0) ? "$ " + value.toFormat(value.gt(0.01) ? 2 : 4) : "$ 0";
+  }
+
+  getSwapUsdValue(swap: IRecommendedSwap): string {
+    const rate = this.rootStore.poolsStore.usdtRate(swap.tokenAssetId) ?? BN.ZERO;
+    const poolToken = this.pool?.tokens.find(t => t.assetId === swap.tokenAssetId);
+    if (!poolToken || rate.eq(0)) return "$ 0";
+
+    const amountFormatted = BN.formatUnits(swap.amountToReceive, poolToken.decimals);
+    const value = amountFormatted.times(rate);
+    return !value.isNaN() && value.gt(0) ? "$ " + value.toFormat(value.gt(0.01) ? 2 : 4) : "$ 0";
+  }
+
+  calculateRecommendedSwaps = async () => {
+    const insufficientTokens = this.tokensWithInsufficientBalance;
+    if (insufficientTokens.length === 0) {
+      this._setRecommendedSwaps([]);
+      return;
+    }
+
+    this._setSwapsLoading(true);
+    const defaultSourceToken = this.sourceTokenForSwaps;
+
+    const swapPromises = insufficientTokens.map(async ({ token, deficit, poolToken }) => {
+      try {
+        const customSource = this.customSourceTokens[poolToken.assetId];
+        const sourceToken = customSource
+          ? { symbol: customSource.symbol, assetId: customSource.assetId, decimals: customSource.decimals }
+          : defaultSourceToken;
+
+        const targetRate = this.rootStore.poolsStore.usdtRate(token.assetId);
+        if (!targetRate || targetRate.eq(0)) return null;
+
+        const deficitFormatted = BN.formatUnits(deficit, poolToken.decimals);
+        const deficitUsd = deficitFormatted.times(targetRate);
+
+        const sourceRate = this.rootStore.poolsStore.usdtRate(sourceToken.assetId) ?? BN.ZERO;
+        if (sourceRate.eq(0)) return null;
+
+        const estimatedSourceAmount = deficitUsd.div(sourceRate);
+
+        if (deficitUsd.lt(0.01)) return null;
+
+        const sourceAmountRaw = estimatedSourceAmount.times(1.02).times(new BN(10).pow(sourceToken.decimals));
+        const sourceAmountWithBuffer = new BN(sourceAmountRaw.toFixed(0));
+
+        if (sourceAmountWithBuffer.lte(0)) return null;
+
+        const aggregatorResponse = await aggregatorService.calc(
+          sourceToken.assetId,
+          poolToken.assetId,
+          sourceAmountWithBuffer
+        );
+
+        if (!aggregatorResponse || !aggregatorResponse.estimatedOut || aggregatorResponse.estimatedOut <= 0) {
+          return null;
+        }
+
+        return {
+          tokenSymbol: poolToken.symbol,
+          tokenAssetId: poolToken.assetId,
+          tokenLogo: poolToken.logo,
+          tokenShare: poolToken.share,
+          amountToSend: sourceAmountWithBuffer,
+          amountToSendFormatted: BN.formatUnits(sourceAmountWithBuffer, sourceToken.decimals).toFormat(2),
+          amountToReceive: new BN(aggregatorResponse.estimatedOut),
+          amountToReceiveFormatted: BN.formatUnits(new BN(aggregatorResponse.estimatedOut), poolToken.decimals).toFormat(4),
+          sourceToken,
+          aggregatorResponse,
+          loading: false
+        } as IRecommendedSwap;
+      } catch (e: any) {
+        return null;
+      }
+    });
+
+    const results = await Promise.all(swapPromises);
+    this._setRecommendedSwaps(results.filter((r): r is IRecommendedSwap => r !== null));
+    this._setSwapsLoading(false);
+  };
+
+  executeSingleSwap = async (swap: IRecommendedSwap) => {
+    const { accountStore, notificationStore } = this.rootStore;
+    if (!swap.aggregatorResponse?.parameters) return;
+
+    const swapIndex = this.recommendedSwaps.findIndex((s) => s.tokenAssetId === swap.tokenAssetId);
+    if (swapIndex >= 0) {
+      const updatedSwaps = [...this.recommendedSwaps];
+      updatedSwaps[swapIndex] = { ...updatedSwaps[swapIndex], loading: true };
+      this._setRecommendedSwaps(updatedSwaps);
+    }
+
+    try {
+      const slippage = JSON.parse(localStorage.getItem("puzzle-user-settings") || '{"slippage": 1}')?.slippage || 1;
+      const minimumToReceive = swap.amountToReceive.times(new BN(100 - slippage).div(100));
+
+      const txId = await accountStore.invoke({
+        dApp: CONTRACT_ADDRESSES.aggregator,
+        payment: [
+          {
+            assetId: swap.sourceToken.assetId,
+            amount: swap.amountToSend.toString()
+          }
+        ],
+        call: {
+          function: "swap",
+          args: [
+            { type: "string", value: swap.aggregatorResponse.parameters },
+            { type: "integer", value: minimumToReceive.toFixed(0).toString() }
+          ]
+        }
+      });
+
+      if (txId) {
+        notificationStore.notify(`Swapped ${swap.amountToSendFormatted} ${swap.sourceToken.symbol} to ${swap.tokenSymbol}`, {
+          type: "success",
+          title: "Swap completed!"
+        });
+
+        this._setRecommendedSwaps(this.recommendedSwaps.filter((s) => s.tokenAssetId !== swap.tokenAssetId));
+        await accountStore.updateAccountAssets(true);
+        await this.calculateRecommendedSwaps();
+      }
+    } catch (e: any) {
+      notificationStore.notify(e.message ?? JSON.stringify(e), {
+        type: "warning",
+        title: "Swap failed"
+      });
+    } finally {
+      const swapIndex = this.recommendedSwaps.findIndex((s) => s.tokenAssetId === swap.tokenAssetId);
+      if (swapIndex >= 0) {
+        const updatedSwaps = [...this.recommendedSwaps];
+        updatedSwaps[swapIndex] = { ...updatedSwaps[swapIndex], loading: false };
+        this._setRecommendedSwaps(updatedSwaps);
+      }
+    }
+  };
+
+  executeAllSwaps = async () => {
+    if (this.recommendedSwaps.length === 0) return;
+
+    this._setSwapAllLoading(true);
+    const { accountStore, notificationStore } = this.rootStore;
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const swap of this.recommendedSwaps) {
+      if (!swap.aggregatorResponse?.parameters) {
+        failCount++;
+        continue;
+      }
+
+      try {
+        const slippage = JSON.parse(localStorage.getItem("puzzle-user-settings") || '{"slippage": 1}')?.slippage || 1;
+        const minimumToReceive = swap.amountToReceive.times(new BN(100 - slippage).div(100));
+
+        const txId = await accountStore.invoke({
+          dApp: CONTRACT_ADDRESSES.aggregator,
+          payment: [
+            {
+              assetId: swap.sourceToken.assetId,
+              amount: swap.amountToSend.toString()
+            }
+          ],
+          call: {
+            function: "swap",
+            args: [
+              { type: "string", value: swap.aggregatorResponse.parameters },
+              { type: "integer", value: minimumToReceive.toFixed(0).toString() }
+            ]
+          }
+        });
+
+        if (txId) {
+          successCount++;
+        } else {
+          failCount++;
+        }
+      } catch (e) {
+        failCount++;
+      }
+    }
+
+    await accountStore.updateAccountAssets(true);
+    await this.calculateRecommendedSwaps();
+
+    if (successCount > 0) {
+      notificationStore.notify(`Successfully completed ${successCount} swap${successCount > 1 ? "s" : ""}`, {
+        type: "success",
+        title: "Swaps completed!"
+      });
+    }
+
+    if (failCount > 0) {
+      notificationStore.notify(`${failCount} swap${failCount > 1 ? "s" : ""} failed`, {
+        type: "warning",
+        title: "Some swaps failed"
+      });
+    }
+
+    this._setSwapAllLoading(false);
+  };
+
+  executeSelectedSwaps = async (swaps: IRecommendedSwap[]) => {
+    if (swaps.length === 0) return;
+
+    this._setSwapAllLoading(true);
+    this._clearSwapResults();
+    this._setSwapProgress({ current: 0, total: swaps.length, currentToken: null });
+
+    const { accountStore, notificationStore } = this.rootStore;
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (let i = 0; i < swaps.length; i++) {
+      const swap = swaps[i];
+
+      this._setSwapProgress({
+        current: i + 1,
+        total: swaps.length,
+        currentToken: { symbol: swap.tokenSymbol, logo: swap.tokenLogo }
+      });
+
+      if (!swap.aggregatorResponse?.parameters) {
+        failCount++;
+        this._setSwapResult(swap.tokenAssetId, 'failed');
+        continue;
+      }
+
+      try {
+        const slippage = JSON.parse(localStorage.getItem("puzzle-user-settings") || '{"slippage": 1}')?.slippage || 1;
+        const minimumToReceive = swap.amountToReceive.times(new BN(100 - slippage).div(100));
+
+        const txId = await accountStore.invoke({
+          dApp: CONTRACT_ADDRESSES.aggregator,
+          payment: [
+            {
+              assetId: swap.sourceToken.assetId,
+              amount: swap.amountToSend.toString()
+            }
+          ],
+          call: {
+            function: "swap",
+            args: [
+              { type: "string", value: swap.aggregatorResponse.parameters },
+              { type: "integer", value: minimumToReceive.toFixed(0).toString() }
+            ]
+          }
+        });
+
+        if (txId) {
+          successCount++;
+          this._setSwapResult(swap.tokenAssetId, 'success');
+        } else {
+          failCount++;
+          this._setSwapResult(swap.tokenAssetId, 'failed');
+        }
+      } catch (e) {
+        failCount++;
+        this._setSwapResult(swap.tokenAssetId, 'failed');
+      }
+    }
+
+    await accountStore.updateAccountAssets(true);
+    await this.calculateRecommendedSwaps();
+
+    if (successCount > 0) {
+      notificationStore.notify(`Successfully completed ${successCount} swap${successCount > 1 ? "s" : ""}`, {
+        type: "success",
+        title: "Swaps completed!"
+      });
+    }
+
+    if (failCount > 0) {
+      notificationStore.notify(`${failCount} swap${failCount > 1 ? "s" : ""} failed`, {
+        type: "warning",
+        title: "Some swaps failed"
+      });
+    }
+
+    this._setSwapAllLoading(false);
+    this._setSwapProgress({ current: 0, total: 0, currentToken: null });
   };
 }
