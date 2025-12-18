@@ -22,7 +22,7 @@ const Root = styled.div`
 `;
 
 const RecommendedSwapsContainer = styled.div`
-  background: #F1F2FE;
+  background: ${({ theme }) => theme.colors.primary100};
   border-radius: 16px;
   padding: 16px;
   display: flex;
@@ -34,7 +34,7 @@ const HeaderText = styled.span`
   font-family: Roboto, sans-serif;
   font-weight: 500;
   font-size: 16px;
-  color: #7F81C4;
+  color: ${({ theme }) => theme.colors.primary650};
 `;
 
 const SwapsList = styled.div`
@@ -53,14 +53,14 @@ const ProgressText = styled.span`
   font-family: Roboto, sans-serif;
   font-weight: 400;
   font-size: 14px;
-  color: #7F81C4;
+  color: ${({ theme }) => theme.colors.primary650};
 `;
 
 const ModalTokenName = styled.span`
   font-family: Roboto, sans-serif;
   font-weight: 500;
   font-size: 16px;
-  color: #363870;
+  color: ${({ theme }) => theme.colors.primary800};
 `;
 
 const SwapProgressList = styled.div`
@@ -74,9 +74,16 @@ const SwapProgressItem = styled(Row)<{ active?: boolean; done?: boolean; failed?
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: ${({ active, done, failed }) => (failed ? "#FFF0F0" : active ? "#F1F2FE" : done ? "#F0FFF4" : "#FAFAFA")};
+  background: ${({ active, done, failed, theme }) =>
+    failed ? theme.colors.error100 :
+    active ? theme.colors.primary100 :
+    done ? theme.colors.success100 :
+    theme.colors.primary50};
   border-radius: 10px;
-  border: 1px solid ${({ active, failed }) => (failed ? "#FF6B6B" : active ? "#7075E8" : "transparent")};
+  border: 1px solid ${({ active, failed, theme }) =>
+    failed ? theme.colors.error500 :
+    active ? theme.colors.blue500 :
+    "transparent"};
   opacity: ${({ done, failed }) => (done || failed ? 0.7 : 1)};
   min-height: 56px;
   width: auto;
@@ -99,7 +106,10 @@ const SwapProgressStatus = styled.span<{ done?: boolean; failed?: boolean }>`
   font-family: Roboto, sans-serif;
   font-weight: 400;
   font-size: 12px;
-  color: ${({ done, failed }) => (failed ? "#FF6B6B" : done ? "#22C55E" : "#7F81C4")};
+  color: ${({ done, failed, theme }) =>
+    failed ? theme.colors.error500 :
+    done ? theme.colors.success500 :
+    theme.colors.primary650};
   margin-left: auto;
   min-width: 50px;
   text-align: right;
@@ -108,7 +118,7 @@ const SwapProgressStatus = styled.span<{ done?: boolean; failed?: boolean }>`
 const ProgressBar = styled.div`
   width: 100%;
   height: 4px;
-  background: #F1F2FE;
+  background: ${({ theme }) => theme.colors.primary100};
   border-radius: 2px;
   overflow: hidden;
 `;
@@ -116,7 +126,7 @@ const ProgressBar = styled.div`
 const ProgressBarFill = styled.div<{ percent: number }>`
   height: 100%;
   width: ${({ percent }) => percent}%;
-  background: #7075E8;
+  background: ${({ theme }) => theme.colors.blue500};
   border-radius: 2px;
 `;
 
@@ -135,19 +145,19 @@ const TotalValueTokenName = styled.span`
   font-family: Roboto, sans-serif;
   font-weight: 400;
   font-size: 16px;
-  color: #7F81C4;
+  color: ${({ theme }) => theme.colors.primary650};
 `;
 
 const TotalValueTokenAmount = styled.span`
   font-family: Roboto, sans-serif;
   font-weight: 400;
   font-size: 16px;
-  color: #7F81C4;
+  color: ${({ theme }) => theme.colors.primary650};
 `;
 
 const TotalValueDivider = styled.div`
   height: 1px;
-  background: #F1F2FE;
+  background: ${({ theme }) => theme.colors.primary300};
   margin: 8px 0;
 `;
 
@@ -155,7 +165,7 @@ const TotalValueLabel = styled.span`
   font-family: Roboto, sans-serif;
   font-weight: 400;
   font-size: 16px;
-  color: #7F81C4;
+  color: ${({ theme }) => theme.colors.primary650};
 `;
 
 const RecommendedSwaps: React.FC = () => {
@@ -167,12 +177,10 @@ const RecommendedSwaps: React.FC = () => {
   const [swapsInProgress, setSwapsInProgress] = React.useState<IRecommendedSwap[]>([]);
 
   useEffect(() => {
-    // Debounce the calculation to avoid too many API calls while sliding
     const timeoutId = setTimeout(() => {
       if (vm.hasInsufficientTokens) {
         vm.calculateRecommendedSwaps();
       } else {
-        // Clear swaps if no longer insufficient
         if (vm.recommendedSwaps.length > 0) {
           vm.calculateRecommendedSwaps();
         }
@@ -182,7 +190,6 @@ const RecommendedSwaps: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [providedPercent, vm.hasInsufficientTokens]);
 
-  // Initialize all swaps as selected when they load
   useEffect(() => {
     if (vm.recommendedSwaps.length > 0) {
       setSelectedSwaps(new Set(vm.recommendedSwaps.map(s => s.tokenAssetId)));
@@ -222,7 +229,6 @@ const RecommendedSwaps: React.FC = () => {
     vm.updateSwapAmount(swap.tokenAssetId, amount);
   };
 
-  // Get balances for token selection (exclude the target token of current swap)
   const getBalancesForModal = () => {
     if (!tokenModalSwap) return [];
     return accountStore.balances.filter(b =>
@@ -230,7 +236,6 @@ const RecommendedSwaps: React.FC = () => {
     );
   };
 
-  // Get formatted balance for source token
   const getSourceTokenBalance = (swap: IRecommendedSwap): string | undefined => {
     const balanceEntity = accountStore.findBalanceByAssetId(swap.sourceToken.assetId);
     if (!balanceEntity || balanceEntity.balance == null) return undefined;
