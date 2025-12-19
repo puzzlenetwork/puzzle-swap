@@ -18,29 +18,29 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   margin: 24px;
-  gap: 16px;
+  gap: 12px;
 `;
 
 const RecommendedSwapsContainer = styled.div`
   background: ${({ theme }) => theme.colors.primary100};
   border-radius: 16px;
-  padding: 16px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 `;
 
 const HeaderText = styled.span`
   font-family: Roboto, sans-serif;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 14px;
   color: ${({ theme }) => theme.colors.primary650};
 `;
 
 const SwapsList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 `;
 
 const ModalContent = styled(Column)`
@@ -130,47 +130,9 @@ const ProgressBarFill = styled.div<{ percent: number }>`
   border-radius: 2px;
 `;
 
-const TotalValueSection = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const TotalValueRow = styled(Row)`
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-`;
-
-const TotalValueTokenName = styled.span`
-  font-family: Roboto, sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  color: ${({ theme }) => theme.colors.primary650};
-`;
-
-const TotalValueTokenAmount = styled.span`
-  font-family: Roboto, sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  color: ${({ theme }) => theme.colors.primary650};
-`;
-
-const TotalValueDivider = styled.div`
-  height: 1px;
-  background: ${({ theme }) => theme.colors.primary300};
-  margin: 8px 0;
-`;
-
-const TotalValueLabel = styled.span`
-  font-family: Roboto, sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  color: ${({ theme }) => theme.colors.primary650};
-`;
-
 const RecommendedSwaps: React.FC = () => {
   const vm = useAddLiquidityInterfaceVM();
-  const { accountStore } = useStores();
+  const { accountStore, poolsStore } = useStores();
   const providedPercent = vm.providedPercentOfPool.toNumber();
   const [selectedSwaps, setSelectedSwaps] = React.useState<Set<string>>(new Set());
   const [tokenModalSwap, setTokenModalSwap] = React.useState<IRecommendedSwap | null>(null);
@@ -244,7 +206,59 @@ const RecommendedSwaps: React.FC = () => {
     return formatted.gt(0.01) ? formatted.toFormat(2) : formatted.toFormat(6);
   };
 
+  const getSendUsdValue = (swap: IRecommendedSwap): string => {
+    const rate = poolsStore.usdtRate(swap.sourceToken.assetId, 1) ?? BN.ZERO;
+    const amount = BN.formatUnits(swap.amountToSend, swap.sourceToken.decimals);
+    const usd = amount.times(rate);
+    return usd.gt(0) ? `~$${usd.toFormat(2)}` : "";
+  };
+
+  const getReceiveUsdValue = (swap: IRecommendedSwap): string => {
+    const poolToken = vm.pool?.tokens.find(t => t.assetId === swap.tokenAssetId);
+    if (!poolToken) return "";
+    const rate = poolsStore.usdtRate(swap.tokenAssetId, 1) ?? BN.ZERO;
+    const amount = BN.formatUnits(swap.amountToReceive, poolToken.decimals);
+    const usd = amount.times(rate);
+    return usd.gt(0) ? `~$${usd.toFormat(2)}` : "";
+  };
+
+  const getPriceImpact = (swap: IRecommendedSwap): BN | undefined => {
+    if (!swap.aggregatorResponse) return undefined;
+
+    // Calculate price impact: (expected - actual) / expected * 100
+    const poolToken = vm.pool?.tokens.find(t => t.assetId === swap.tokenAssetId);
+    if (!poolToken) return undefined;
+
+    const sendRate = poolsStore.usdtRate(swap.sourceToken.assetId, 1) ?? BN.ZERO;
+    const receiveRate = poolsStore.usdtRate(swap.tokenAssetId, 1) ?? BN.ZERO;
+
+    if (sendRate.eq(0) || receiveRate.eq(0)) return undefined;
+
+    const sendUsd = BN.formatUnits(swap.amountToSend, swap.sourceToken.decimals).times(sendRate);
+    const receiveUsd = BN.formatUnits(swap.amountToReceive, poolToken.decimals).times(receiveRate);
+
+    if (sendUsd.eq(0)) return undefined;
+
+    const impact = sendUsd.minus(receiveUsd).div(sendUsd).times(100);
+    return impact.gt(0) ? impact : BN.ZERO;
+  };
+
+  // Calculate total USD for selected swaps
+  const getSelectedSwapsTotalUsd = (): string => {
+    const selectedSwapsList = vm.recommendedSwaps.filter(s => selectedSwaps.has(s.tokenAssetId));
+    const total = selectedSwapsList.reduce((acc, swap) => {
+      const poolToken = vm.pool?.tokens.find(t => t.assetId === swap.tokenAssetId);
+      if (!poolToken) return acc;
+      const rate = poolsStore.usdtRate(swap.tokenAssetId, 1) ?? BN.ZERO;
+      const amount = BN.formatUnits(swap.amountToReceive, poolToken.decimals);
+      return acc.plus(amount.times(rate));
+    }, BN.ZERO);
+
+    return total.gt(0) ? `$${total.toFormat(2)}` : "";
+  };
+
   const selectedCount = vm.recommendedSwaps.filter(s => selectedSwaps.has(s.tokenAssetId)).length;
+  const totalUsd = getSelectedSwapsTotalUsd();
 
   if (!vm.hasInsufficientTokens) {
     return null;
@@ -267,17 +281,17 @@ const RecommendedSwaps: React.FC = () => {
       {hasRecommendedSwaps && (
         <RecommendedSwapsContainer>
           <HeaderText>
-            Recommended Swaps that may be useful for you
+            Recommended Swaps
             {vm.swapsLoading && vm.recommendedSwaps.length > 0 && (
               <span style={{ marginLeft: 8 }}><Loading /></span>
             )}
           </HeaderText>
 
           {vm.swapsLoading && vm.recommendedSwaps.length === 0 ? (
-            <Row justifyContent="center" alignItems="center" style={{ padding: "24px" }}>
+            <Row justifyContent="center" alignItems="center" style={{ padding: "16px" }}>
               <Loading />
               <SizedBox width={8} />
-              <Text type="secondary">Calculating recommended swaps...</Text>
+              <Text type="secondary">Calculating swaps...</Text>
             </Row>
           ) : (
             <>
@@ -292,26 +306,13 @@ const RecommendedSwaps: React.FC = () => {
                     onAmountChange={handleAmountChange}
                     sourceTokenLogo={vm.getSourceTokenLogo(swap.tokenAssetId)}
                     sourceTokenBalance={getSourceTokenBalance(swap)}
+                    sendUsdValue={getSendUsdValue(swap)}
+                    receiveUsdValue={getReceiveUsdValue(swap)}
+                    priceImpact={getPriceImpact(swap)}
                     loading={vm.swapsLoading}
                   />
                 ))}
               </SwapsList>
-
-              {vm.recommendedSwaps.length > 0 && (
-                <TotalValueSection>
-                  {vm.recommendedSwaps.map((swap) => (
-                    <TotalValueRow key={swap.tokenAssetId}>
-                      <TotalValueTokenName>{swap.tokenSymbol}</TotalValueTokenName>
-                      <TotalValueTokenAmount>~{vm.getSwapUsdValue(swap).replace('$ ', '')} USDT</TotalValueTokenAmount>
-                    </TotalValueRow>
-                  ))}
-                  <TotalValueDivider />
-                  <TotalValueRow>
-                    <TotalValueLabel>Total Value</TotalValueLabel>
-                    <TotalValueTokenAmount>~{vm.recommendedSwapsTotalUsdFormatted.replace('$ ', '')} USDT</TotalValueTokenAmount>
-                  </TotalValueRow>
-                </TotalValueSection>
-              )}
 
               <Button
                 kind="primary"
@@ -324,7 +325,7 @@ const RecommendedSwaps: React.FC = () => {
                     Swapping Tokens <Loading />
                   </>
                 ) : (
-                  `Swap ${selectedCount} Token${selectedCount !== 1 ? "s" : ""}`
+                  `Swap ${selectedCount} Token${selectedCount !== 1 ? "s" : ""}${totalUsd ? ` for ${totalUsd}` : ""}`
                 )}
               </Button>
             </>

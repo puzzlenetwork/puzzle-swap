@@ -11,7 +11,7 @@ import {
   IDialogNotificationProps
 } from "@components/Dialog/DialogNotification";
 import Pool from "@src/entities/Pool";
-import { CONTRACT_ADDRESSES, TOKENS_BY_SYMBOL } from "@src/constants";
+import { CONTRACT_ADDRESSES } from "@src/constants";
 import aggregatorService, { ICalcResponse } from "@src/services/aggregatorService";
 
 export interface IRecommendedSwap {
@@ -499,7 +499,9 @@ class AddLiquidityInterfaceVM {
     const targetToken = this.pool?.tokens.find(t => t.assetId === targetTokenAssetId);
     if (!targetToken) return;
 
-    const amount = parseFloat(amountStr);
+    // Remove thousand separators (commas) before parsing
+    const cleanAmountStr = amountStr.replace(/,/g, "");
+    const amount = parseFloat(cleanAmountStr);
     if (isNaN(amount) || amount <= 0) return;
 
     const sourceAmountRaw = new BN(amount).times(new BN(10).pow(swap.sourceToken.decimals));
@@ -529,31 +531,165 @@ class AddLiquidityInterfaceVM {
     } catch (e) {}
   };
 
-  get sourceTokenForSwaps() {
-    const { accountStore } = this.rootStore;
-    const stableTokens = [
-      TOKENS_BY_SYMBOL.USDT_WXG,
-      TOKENS_BY_SYMBOL.USDC_WXG,
-      TOKENS_BY_SYMBOL.USDT,
-      TOKENS_BY_SYMBOL.USDC,
-      TOKENS_BY_SYMBOL.XTN
-    ].filter(Boolean);
+  get tokensWithSurplus(): Array<{
+    token: { symbol: string; assetId: string; decimals: number; logo?: string };
+    surplus: BN;
+    surplusUsd: BN;
+  }> {
+    const { accountStore, poolsStore } = this.rootStore;
+    if (this.pool == null || this.requiredTokenAmounts == null) return [];
 
-    for (const token of stableTokens) {
-      const balance = accountStore.findBalanceByAssetId(token.assetId);
-      if (balance?.balance?.gt(0)) {
-        return {
-          symbol: token.symbol,
-          assetId: token.assetId,
-          decimals: token.decimals
-        };
+    const result: Array<{
+      token: { symbol: string; assetId: string; decimals: number; logo?: string };
+      surplus: BN;
+      surplusUsd: BN;
+    }> = [];
+
+    for (const poolToken of this.pool.tokens) {
+      const balance = accountStore.findBalanceByAssetId(poolToken.assetId);
+      const currentBalance = balance?.balance ?? BN.ZERO;
+      const requiredAmount = this.requiredTokenAmounts![poolToken.assetId] ?? BN.ZERO;
+
+      const surplus = currentBalance.minus(requiredAmount);
+      if (surplus.gt(0)) {
+        const rate = poolsStore.usdtRate(poolToken.assetId, 1) ?? BN.ZERO;
+        const surplusUsd = BN.formatUnits(surplus, poolToken.decimals).times(rate);
+
+        if (surplusUsd.gt(1)) {
+          result.push({
+            token: {
+              symbol: poolToken.symbol,
+              assetId: poolToken.assetId,
+              decimals: poolToken.decimals,
+              logo: poolToken.logo
+            },
+            surplus,
+            surplusUsd
+          });
+        }
       }
+    }
+
+    return result.sort((a, b) => b.surplusUsd.minus(a.surplusUsd).toNumber());
+  }
+
+  get nonPoolSourceTokens(): Array<{
+    token: { symbol: string; assetId: string; decimals: number };
+    balanceUsd: BN;
+  }> {
+    const { accountStore, poolsStore } = this.rootStore;
+    if (this.pool == null) return [];
+
+    const poolAssetIds = new Set(this.pool.tokens.map(t => t.assetId));
+
+    const priorityTokens = [
+      { assetId: "B45iYkZVC9cudR2yxrsJnrM75StiTrwphbfQ7xkyisip", symbol: "USDT", decimals: 6 },
+      { assetId: "WAVES", symbol: "WAVES", decimals: 8 },
+      { assetId: "DG2xFkPdDwKUoBkzGAhQtLpSGzfXLiCYPEzeKH2Ad24p", symbol: "XTN", decimals: 6 },
+      { assetId: "AP4Cb5xLYGH6ZigHreCZHoXpQTWDkPsG2BHqfDUx6taJ", symbol: "ROME", decimals: 8 },
+    ];
+
+    const result: Array<{
+      token: { symbol: string; assetId: string; decimals: number };
+      balanceUsd: BN;
+      priority: number;
+    }> = [];
+
+    for (let i = 0; i < priorityTokens.length; i++) {
+      const token = priorityTokens[i];
+      if (poolAssetIds.has(token.assetId)) continue;
+
+      const balance = accountStore.findBalanceByAssetId(token.assetId);
+      if (balance?.balance && balance.balance.gt(0)) {
+        const rate = poolsStore.usdtRate(token.assetId, 1) ?? BN.ZERO;
+        const balanceUsd = BN.formatUnits(balance.balance, token.decimals).times(rate);
+
+        if (balanceUsd.gt(1)) {
+          result.push({
+            token: { symbol: token.symbol, assetId: token.assetId, decimals: token.decimals },
+            balanceUsd,
+            priority: i
+          });
+        }
+      }
+    }
+
+    const priorityAssetIds = new Set(priorityTokens.map(t => t.assetId));
+    const otherBalances = accountStore.assetBalances
+      ?.filter((b) => {
+        if (poolAssetIds.has(b.assetId)) return false;
+        if (priorityAssetIds.has(b.assetId)) return false;
+        return b.balance && b.balance.gt(0) && b.usdnEquivalent && b.usdnEquivalent.gt(1);
+      })
+      .sort((a, b) => (b.usdnEquivalent?.minus(a.usdnEquivalent ?? BN.ZERO).toNumber() ?? 0));
+
+    if (otherBalances) {
+      for (const b of otherBalances) {
+        result.push({
+          token: { symbol: b.symbol ?? "Unknown", assetId: b.assetId, decimals: b.decimals ?? 8 },
+          balanceUsd: b.usdnEquivalent ?? BN.ZERO,
+          priority: 100
+        });
+      }
+    }
+
+    return result
+      .sort((a, b) => a.priority - b.priority || b.balanceUsd.minus(a.balanceUsd).toNumber())
+      .map(({ token, balanceUsd }) => ({ token, balanceUsd }));
+  }
+
+  get allAvailableSourceTokens(): Array<{
+    token: { symbol: string; assetId: string; decimals: number };
+    balanceUsd: BN;
+    balanceRaw: BN;
+  }> {
+    const { accountStore } = this.rootStore;
+    const result: Array<{
+      token: { symbol: string; assetId: string; decimals: number };
+      balanceUsd: BN;
+      balanceRaw: BN;
+    }> = [];
+
+    for (const { token, surplusUsd, surplus } of this.tokensWithSurplus) {
+      result.push({
+        token: { symbol: token.symbol, assetId: token.assetId, decimals: token.decimals },
+        balanceUsd: surplusUsd,
+        balanceRaw: surplus
+      });
+    }
+
+    for (const { token, balanceUsd } of this.nonPoolSourceTokens) {
+      const balance = accountStore.findBalanceByAssetId(token.assetId);
+      result.push({
+        token,
+        balanceUsd,
+        balanceRaw: balance?.balance ?? BN.ZERO
+      });
+    }
+
+    return result;
+  }
+
+  get sourceTokenForSwaps() {
+    const surplusTokens = this.tokensWithSurplus;
+    if (surplusTokens.length > 0) {
+      const best = surplusTokens[0];
+      return {
+        symbol: best.token.symbol,
+        assetId: best.token.assetId,
+        decimals: best.token.decimals
+      };
+    }
+
+    const nonPoolTokens = this.nonPoolSourceTokens;
+    if (nonPoolTokens.length > 0) {
+      return nonPoolTokens[0].token;
     }
 
     return {
       symbol: "USDT",
-      assetId: TOKENS_BY_SYMBOL.USDT_WXG.assetId,
-      decimals: TOKENS_BY_SYMBOL.USDT_WXG.decimals
+      assetId: "B45iYkZVC9cudR2yxrsJnrM75StiTrwphbfQ7xkyisip",
+      decimals: 6
     };
   }
 
@@ -600,7 +736,7 @@ class AddLiquidityInterfaceVM {
     deficit: BN;
     poolToken: { symbol: string; logo: string; share: number; decimals: number; assetId: string };
   }> {
-    const { accountStore } = this.rootStore;
+    const { accountStore, poolsStore } = this.rootStore;
     if (this.pool == null || this.requiredTokenAmounts == null) return [];
 
     return this.pool.tokens
@@ -608,12 +744,16 @@ class AddLiquidityInterfaceVM {
         const balance = accountStore.findBalanceByAssetId(poolToken.assetId);
         const currentBalance = balance?.balance ?? BN.ZERO;
         const requiredAmount = this.requiredTokenAmounts![poolToken.assetId] ?? BN.ZERO;
-        const deficit = requiredAmount.minus(currentBalance);
+
+        const rate = poolsStore.usdtRate(poolToken.assetId, 1) ?? BN.ZERO;
+        const balanceUsd = BN.formatUnits(currentBalance, poolToken.decimals).times(rate);
+        const effectiveBalance = balanceUsd.lt(1) ? BN.ZERO : currentBalance;
+        const deficit = requiredAmount.minus(effectiveBalance);
 
         return {
           token: balance ?? new Balance(poolToken),
           requiredAmount,
-          currentBalance,
+          currentBalance: effectiveBalance,
           deficit,
           poolToken
         };
@@ -621,26 +761,43 @@ class AddLiquidityInterfaceVM {
       .filter(({ deficit }) => deficit.gt(0));
   }
 
+  get hasSwapSourceTokens(): boolean {
+    return this.tokensWithSurplus.length > 0 || this.nonPoolSourceTokens.length > 0;
+  }
+
   get hasInsufficientTokens(): boolean {
     if (this.pool == null) return false;
     if (this.providedPercentOfPool.lte(0)) return false;
 
-    const { accountStore } = this.rootStore;
+    const { accountStore, poolsStore } = this.rootStore;
+
+    let hasDeficit = false;
 
     for (const token of this.pool.tokens) {
-      const userBalance = accountStore.findBalanceByAssetId(token.assetId)?.balance ?? BN.ZERO;
+      const balance = accountStore.findBalanceByAssetId(token.assetId);
+      const userBalance = balance?.balance ?? BN.ZERO;
 
       if (userBalance.eq(0)) {
-        return true;
+        hasDeficit = true;
+        break;
+      }
+
+      const rate = poolsStore.usdtRate(token.assetId, 1) ?? BN.ZERO;
+      const balanceUsd = BN.formatUnits(userBalance, token.decimals).times(rate);
+      if (balanceUsd.lt(1)) {
+        hasDeficit = true;
+        break;
       }
 
       const requiredForDeposit = this.tokensToDepositAmounts?.[token.assetId] ?? BN.ZERO;
       if (requiredForDeposit.gt(userBalance)) {
-        return true;
+        hasDeficit = true;
+        break;
       }
     }
 
-    return false;
+    // Only show as "insufficient" if there's a deficit AND we have source tokens to swap from
+    return hasDeficit && this.hasSwapSourceTokens;
   }
 
   get targetDepositUsdFormatted(): string {
@@ -684,27 +841,104 @@ class AddLiquidityInterfaceVM {
     }
 
     this._setSwapsLoading(true);
-    const defaultSourceToken = this.sourceTokenForSwaps;
+    const { poolsStore } = this.rootStore;
 
-    const swapPromises = insufficientTokens.map(async ({ token, deficit, poolToken }) => {
+    const deficits: Array<{
+      poolToken: { symbol: string; logo: string; share: number; decimals: number; assetId: string };
+      deficitRaw: BN;
+      deficitUsd: BN;
+      customSourceAssetId?: string;
+    }> = [];
+
+    for (const { deficit, poolToken } of insufficientTokens) {
+      const targetRate = poolsStore.usdtRate(poolToken.assetId) ?? BN.ZERO;
+      if (targetRate.eq(0)) continue;
+
+      const deficitFormatted = BN.formatUnits(deficit, poolToken.decimals);
+      const deficitUsd = deficitFormatted.times(targetRate);
+
+      if (deficitUsd.lt(0.01)) continue;
+
+      const customSource = this.customSourceTokens[poolToken.assetId];
+
+      deficits.push({
+        poolToken,
+        deficitRaw: deficit,
+        deficitUsd,
+        customSourceAssetId: customSource?.assetId
+      });
+    }
+
+    if (deficits.length === 0) {
+      this._setRecommendedSwaps([]);
+      this._setSwapsLoading(false);
+      return;
+    }
+
+    deficits.sort((a, b) => b.poolToken.share - a.poolToken.share);
+
+    const availableSources = this.allAvailableSourceTokens.map(s => ({
+      token: s.token,
+      balanceUsd: s.balanceUsd,
+      balanceRaw: s.balanceRaw,
+      remainingUsd: s.balanceUsd.times(0.98)
+    }));
+
+    if (availableSources.length === 0) {
+      this._setRecommendedSwaps([]);
+      this._setSwapsLoading(false);
+      return;
+    }
+
+    const allocations: Array<{
+      poolToken: typeof deficits[0]['poolToken'];
+      sourceToken: { symbol: string; assetId: string; decimals: number };
+      allocatedUsd: BN;
+    }> = [];
+
+    for (const { poolToken, deficitUsd, customSourceAssetId } of deficits) {
+      let sourceToUse: typeof availableSources[0] | null = null;
+
+      if (customSourceAssetId) {
+        const customSource = availableSources.find(s => s.token.assetId === customSourceAssetId);
+        if (customSource && customSource.remainingUsd.gt(0.01) && customSource.token.assetId !== poolToken.assetId) {
+          sourceToUse = customSource;
+        }
+      }
+
+      if (!sourceToUse) {
+        for (const source of availableSources) {
+          if (source.token.assetId === poolToken.assetId) continue;
+          if (source.remainingUsd.lte(0.01)) continue;
+          sourceToUse = source;
+          break;
+        }
+      }
+
+      if (!sourceToUse) continue;
+
+      const allocatedUsd = BN.min(deficitUsd, sourceToUse.remainingUsd);
+      sourceToUse.remainingUsd = sourceToUse.remainingUsd.minus(allocatedUsd);
+
+      allocations.push({
+        poolToken,
+        sourceToken: sourceToUse.token,
+        allocatedUsd
+      });
+    }
+
+    if (allocations.length === 0) {
+      this._setRecommendedSwaps([]);
+      this._setSwapsLoading(false);
+      return;
+    }
+
+    const swapPromises = allocations.map(async ({ poolToken, sourceToken, allocatedUsd }) => {
       try {
-        const customSource = this.customSourceTokens[poolToken.assetId];
-        const sourceToken = customSource
-          ? { symbol: customSource.symbol, assetId: customSource.assetId, decimals: customSource.decimals }
-          : defaultSourceToken;
-
-        const targetRate = this.rootStore.poolsStore.usdtRate(token.assetId);
-        if (!targetRate || targetRate.eq(0)) return null;
-
-        const deficitFormatted = BN.formatUnits(deficit, poolToken.decimals);
-        const deficitUsd = deficitFormatted.times(targetRate);
-
-        const sourceRate = this.rootStore.poolsStore.usdtRate(sourceToken.assetId) ?? BN.ZERO;
+        const sourceRate = poolsStore.usdtRate(sourceToken.assetId) ?? BN.ZERO;
         if (sourceRate.eq(0)) return null;
 
-        const estimatedSourceAmount = deficitUsd.div(sourceRate);
-
-        if (deficitUsd.lt(0.01)) return null;
+        const estimatedSourceAmount = allocatedUsd.div(sourceRate);
 
         const sourceAmountRaw = estimatedSourceAmount.times(1.02).times(new BN(10).pow(sourceToken.decimals));
         const sourceAmountWithBuffer = new BN(sourceAmountRaw.toFixed(0));

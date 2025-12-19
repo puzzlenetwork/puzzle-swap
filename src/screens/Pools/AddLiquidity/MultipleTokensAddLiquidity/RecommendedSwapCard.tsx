@@ -5,6 +5,7 @@ import { Column, Row } from "@components/Flex";
 import { observer } from "mobx-react-lite";
 import { IRecommendedSwap } from "../AddLiquidityInterfaceVM";
 import tokenLogos from "@src/constants/tokenLogos";
+import BN from "@src/utils/BN";
 
 const pulse = keyframes`
   0%, 100% {
@@ -23,18 +24,22 @@ interface IProps {
   onAmountChange?: (swap: IRecommendedSwap, amount: string) => void;
   sourceTokenLogo?: string;
   sourceTokenBalance?: string;
+  sendUsdValue?: string;
+  receiveUsdValue?: string;
+  priceImpact?: BN;
   loading?: boolean;
 }
 
 const Root = styled.div<{ loading?: boolean }>`
   background: ${({ theme }) => theme.colors.white};
   border-radius: 16px;
-  padding: 16px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   position: relative;
   transition: opacity 0.2s;
+  min-width: 0;
 
   ${({ loading, theme }) => loading && `
     &::after {
@@ -62,25 +67,26 @@ const TokenInfo = styled(Row)`
 `;
 
 const IconContainer = styled.div`
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border: 1px solid ${({ theme }) => theme.colors.primary100};
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  flex-shrink: 0;
 
   img {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     object-fit: cover;
   }
 `;
 
 const TokenName = styled.span`
   font-family: Roboto, sans-serif;
-  font-weight: 400;
+  font-weight: 500;
   font-size: 14px;
   color: ${({ theme }) => theme.colors.primary800};
 `;
@@ -88,7 +94,7 @@ const TokenName = styled.span`
 const ShareText = styled.span`
   font-family: Roboto, sans-serif;
   font-weight: 400;
-  font-size: 12px;
+  font-size: 11px;
   color: ${({ theme }) => theme.colors.primary650};
 `;
 
@@ -103,42 +109,29 @@ const Checkbox = styled.div<{ checked: boolean }>`
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
+  flex-shrink: 0;
 `;
 
-const SwapSection = styled.div`
-  display: flex;
-  flex-direction: column;
+const SwapRow = styled(Row)`
   gap: 8px;
-`;
-
-const SectionLabel = styled.span`
-  font-family: Roboto, sans-serif;
-  font-weight: 400;
-  font-size: 12px;
-  color: ${({ theme }) => theme.colors.primary650};
-`;
-
-const InputRow = styled(Row)`
-  gap: 8px;
-  align-items: center;
+  align-items: stretch;
 `;
 
 const AmountField = styled.div<{ error?: boolean }>`
   flex: 1;
+  min-width: 0;
   background: ${({ error, theme }) => (error ? theme.colors.error100 : theme.colors.primary100)};
   border: 1px solid ${({ error, theme }) => (error ? theme.colors.error500 : "transparent")};
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: 10px;
+  padding: 8px 12px;
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: 2px;
 `;
 
-const AmountValue = styled.span`
-  font-family: Roboto, sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  color: ${({ theme }) => theme.colors.primary650};
+const AmountRow = styled(Row)`
+  align-items: center;
+  gap: 4px;
 `;
 
 const AmountInput = styled.input`
@@ -149,47 +142,48 @@ const AmountInput = styled.input`
   background: transparent;
   border: none;
   outline: none;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.primary650};
   }
 `;
 
+const AmountValue = styled.span`
+  font-family: Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: ${({ theme }) => theme.colors.primary800};
+  flex: 1;
+  min-width: 0;
+`;
+
+const UsdText = styled.span`
+  font-family: Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  color: ${({ theme }) => theme.colors.primary650};
+  white-space: nowrap;
+`;
+
 const MaxButton = styled.button`
   font-family: Roboto, sans-serif;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 11px;
   color: ${({ theme }) => theme.colors.blue500};
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 2px 4px;
   border-radius: 4px;
   transition: all 0.2s;
+  flex-shrink: 0;
 
   &:hover {
     background: ${({ theme }) => theme.colors.blue500}1A;
   }
-`;
-
-const BalanceRow = styled(Row)`
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const BalanceText = styled.span`
-  font-family: Roboto, sans-serif;
-  font-weight: 400;
-  font-size: 12px;
-  color: ${({ theme }) => theme.colors.primary650};
-`;
-
-const ErrorText = styled.span`
-  font-family: Roboto, sans-serif;
-  font-weight: 400;
-  font-size: 12px;
-  color: ${({ theme }) => theme.colors.error500};
 `;
 
 const TokenSelector = styled.div<{ clickable?: boolean }>`
@@ -201,6 +195,8 @@ const TokenSelector = styled.div<{ clickable?: boolean }>`
   gap: 8px;
   cursor: ${({ clickable }) => (clickable ? "pointer" : "default")};
   transition: all 0.2s;
+  width: 160px;
+  flex-shrink: 0;
 
   &:hover {
     ${({ clickable, theme }) => clickable && `
@@ -216,6 +212,7 @@ const TokenSelectorIcon = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.primary100};
   border-radius: 12px;
   overflow: hidden;
+  flex-shrink: 0;
 
   img {
     width: 24px;
@@ -229,15 +226,82 @@ const TokenSelectorLabel = styled.span`
   font-weight: 400;
   font-size: 14px;
   color: ${({ theme }) => theme.colors.primary800};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
 `;
 
-const RecommendedSwapCard: React.FC<IProps> = ({ swap, selected = true, onToggle, onSourceTokenClick, onAmountChange, sourceTokenLogo, sourceTokenBalance, loading }) => {
+const SectionLabel = styled.span`
+  font-family: Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  color: ${({ theme }) => theme.colors.primary650};
+`;
+
+const BalanceText = styled.span`
+  font-family: Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.primary650};
+`;
+
+const ErrorText = styled.span`
+  font-family: Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  color: ${({ theme }) => theme.colors.error500};
+`;
+
+const PriceImpactBadge = styled.span<{ level?: "normal" | "warning" | "danger" }>`
+  font-family: Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: ${({ level, theme }) =>
+    level === "danger" ? theme.colors.error100 :
+    level === "warning" ? "#FFF3CD" :
+    theme.colors.primary100};
+  color: ${({ level, theme }) =>
+    level === "danger" ? theme.colors.error500 :
+    level === "warning" ? "#856404" :
+    theme.colors.primary650};
+`;
+
+const ArrowContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  flex-shrink: 0;
+  color: ${({ theme }) => theme.colors.primary650};
+`;
+
+const RecommendedSwapCard: React.FC<IProps> = ({
+  swap,
+  selected = true,
+  onToggle,
+  onSourceTokenClick,
+  onAmountChange,
+  sourceTokenLogo,
+  sourceTokenBalance,
+  sendUsdValue,
+  receiveUsdValue,
+  priceImpact,
+  loading
+}) => {
   const defaultLogo = tokenLogos.USDT_WXG || tokenLogos.USDT;
   const currentSourceLogo = sourceTokenLogo || defaultLogo;
-  const [localAmount, setLocalAmount] = React.useState(swap.amountToSendFormatted);
+
+  // Store amount without thousand separators to avoid parsing issues
+  const cleanFormattedAmount = swap.amountToSendFormatted.replace(/,/g, "");
+  const [localAmount, setLocalAmount] = React.useState(cleanFormattedAmount);
 
   React.useEffect(() => {
-    setLocalAmount(swap.amountToSendFormatted);
+    // Remove commas when syncing from prop
+    setLocalAmount(swap.amountToSendFormatted.replace(/,/g, ""));
   }, [swap.amountToSendFormatted]);
 
   const isExceedingBalance = React.useMemo(() => {
@@ -260,12 +324,23 @@ const RecommendedSwapCard: React.FC<IProps> = ({ swap, selected = true, onToggle
 
   const handleMaxClick = () => {
     if (sourceTokenBalance) {
-      setLocalAmount(sourceTokenBalance);
+      const cleanBalance = sourceTokenBalance.replace(/,/g, "");
+      setLocalAmount(cleanBalance);
       if (onAmountChange) {
-        onAmountChange(swap, sourceTokenBalance);
+        onAmountChange(swap, cleanBalance);
       }
     }
   };
+
+  // Price impact levels: < 3% normal, 3-5% warning, > 5% danger
+  const getPriceImpactLevel = (): "normal" | "warning" | "danger" | undefined => {
+    if (!priceImpact) return undefined;
+    if (priceImpact.gt(5)) return "danger";
+    if (priceImpact.gt(3)) return "warning";
+    return "normal";
+  };
+
+  const priceImpactLevel = getPriceImpactLevel();
 
   return (
     <Root loading={loading}>
@@ -276,7 +351,15 @@ const RecommendedSwapCard: React.FC<IProps> = ({ swap, selected = true, onToggle
           </IconContainer>
           <Column>
             <TokenName>{swap.tokenSymbol}</TokenName>
-            <ShareText>Share: {swap.tokenShare} %</ShareText>
+            <Row alignItems="center" style={{ gap: 4 }}>
+              <ShareText>Share: {swap.tokenShare}%</ShareText>
+              {priceImpact && priceImpactLevel && (
+                <PriceImpactBadge level={priceImpactLevel}>
+                  {priceImpactLevel === "danger" ? "⚠️ " : ""}
+                  {priceImpact.toFormat(2)}%
+                </PriceImpactBadge>
+              )}
+            </Row>
           </Column>
         </TokenInfo>
         <Checkbox checked={selected} onClick={() => onToggle?.(swap)}>
@@ -288,18 +371,19 @@ const RecommendedSwapCard: React.FC<IProps> = ({ swap, selected = true, onToggle
         </Checkbox>
       </TokenHeader>
 
-      <SwapSection>
-        <BalanceRow>
+      {sourceTokenBalance && (
+        <Row justifyContent="flex-end" alignItems="center">
+          <BalanceText>
+            Balance: {sourceTokenBalance} {swap.sourceToken.symbol}
+            <MaxButton onClick={handleMaxClick}>MAX</MaxButton>
+          </BalanceText>
+        </Row>
+      )}
+
+      <SwapRow>
+        <AmountField error={isExceedingBalance}>
           <SectionLabel>You send</SectionLabel>
-          {sourceTokenBalance && (
-            <BalanceText>
-              Balance: {sourceTokenBalance} {swap.sourceToken.symbol}
-              <MaxButton onClick={handleMaxClick}>MAX</MaxButton>
-            </BalanceText>
-          )}
-        </BalanceRow>
-        <InputRow>
-          <AmountField error={isExceedingBalance}>
+          <AmountRow>
             <AmountInput
               type="text"
               value={localAmount}
@@ -307,38 +391,46 @@ const RecommendedSwapCard: React.FC<IProps> = ({ swap, selected = true, onToggle
               onBlur={handleAmountBlur}
               placeholder="0.0"
             />
-          </AmountField>
-          <TokenSelector clickable={!!onSourceTokenClick} onClick={() => onSourceTokenClick?.(swap)}>
-            <TokenSelectorIcon>
-              <img src={currentSourceLogo} alt={swap.sourceToken.symbol} />
-            </TokenSelectorIcon>
-            <TokenSelectorLabel>{swap.sourceToken.symbol}</TokenSelectorLabel>
-            {onSourceTokenClick && (
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            )}
-          </TokenSelector>
-        </InputRow>
-        {isExceedingBalance && (
-          <ErrorText>Insufficient balance</ErrorText>
-        )}
-      </SwapSection>
+            {sendUsdValue && <UsdText>{sendUsdValue}</UsdText>}
+          </AmountRow>
+          {isExceedingBalance && <ErrorText>Insufficient balance</ErrorText>}
+        </AmountField>
 
-      <SwapSection>
-        <SectionLabel>You receive</SectionLabel>
-        <InputRow>
-          <AmountField>
+        <TokenSelector clickable={!!onSourceTokenClick} onClick={() => onSourceTokenClick?.(swap)}>
+          <TokenSelectorIcon>
+            <img src={currentSourceLogo} alt={swap.sourceToken.symbol} />
+          </TokenSelectorIcon>
+          <TokenSelectorLabel>{swap.sourceToken.symbol}</TokenSelectorLabel>
+          {onSourceTokenClick && (
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )}
+        </TokenSelector>
+      </SwapRow>
+
+      <ArrowContainer>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M8 3V13M8 13L4 9M8 13L12 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </ArrowContainer>
+
+      <SwapRow>
+        <AmountField>
+          <SectionLabel>You receive</SectionLabel>
+          <AmountRow>
             <AmountValue>{swap.amountToReceiveFormatted}</AmountValue>
-          </AmountField>
-          <TokenSelector>
-            <TokenSelectorIcon>
-              <img src={swap.tokenLogo} alt={swap.tokenSymbol} />
-            </TokenSelectorIcon>
-            <TokenSelectorLabel>{swap.tokenSymbol}</TokenSelectorLabel>
-          </TokenSelector>
-        </InputRow>
-      </SwapSection>
+            {receiveUsdValue && <UsdText>{receiveUsdValue}</UsdText>}
+          </AmountRow>
+        </AmountField>
+
+        <TokenSelector>
+          <TokenSelectorIcon>
+            <img src={swap.tokenLogo} alt={swap.tokenSymbol} />
+          </TokenSelectorIcon>
+          <TokenSelectorLabel>{swap.tokenSymbol}</TokenSelectorLabel>
+        </TokenSelector>
+      </SwapRow>
     </Root>
   );
 };
