@@ -6,6 +6,7 @@ import { observer } from "mobx-react-lite";
 import { useAddLiquidityInterfaceVM } from "../AddLiquidityInterfaceVM";
 import BN from "@src/utils/BN";
 import Text from "@components/Text";
+import RecommendedSwaps from "./RecommendedSwaps";
 
 interface IProps {}
 
@@ -14,6 +15,12 @@ const MultipleTokensNotifications: React.FC<IProps> = () => {
   const minBalanceAsset = vm.minBalanceAsset;
   const minBalance = minBalanceAsset?.balance ?? new BN(1);
   const addOneTokenRoute = `/pools/${vm.poolDomain}/addOneToken`;
+
+  // Show RecommendedSwaps when user has insufficient tokens
+  if (vm.hasInsufficientTokens && vm.providedPercentOfPool.gt(0)) {
+    return <RecommendedSwaps />;
+  }
+
   return (
     <>
       {vm.minBalanceAsset &&

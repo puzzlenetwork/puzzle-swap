@@ -152,6 +152,51 @@ export const buildErrorDialogParams = ({
     ]
   };
 };
+
+type TBuildSwapErrorDialogParamsProps = {
+  transactionError?: string;
+  aggregatorError?: string;
+  route?: string;
+  onTryAgain?: () => void;
+};
+
+export const buildSwapErrorDialogParams = ({
+  transactionError,
+  aggregatorError,
+  route,
+  onTryAgain
+}: TBuildSwapErrorDialogParamsProps): IDialogNotificationProps => {
+  const debugInfo = JSON.stringify({
+    route: route || null,
+    aggregatorError: aggregatorError || null,
+    transactionError: transactionError || null
+  }, null, 2);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(debugInfo);
+  };
+
+  const displayError = transactionError || aggregatorError || "Unknown error";
+
+  return {
+    title: "Transaction is not completed",
+    description: displayError,
+    type: "warning",
+    buttonsDirection: "row",
+    buttons: [
+      () => (
+        <Button size="medium" kind="secondary" fixed onClick={handleCopy}>
+          Copy error
+        </Button>
+      ),
+      ...(onTryAgain ? [() => (
+        <Button size="medium" fixed onClick={onTryAgain}>
+          Try again
+        </Button>
+      )] : [])
+    ]
+  };
+};
 type TBuildWarningLiquidityDialogParamsProps = {
   title: string;
   description: string;
