@@ -414,10 +414,11 @@ export class SwapVM {
           type: "warning",
           title: "Transaction is not completed",
           copyData: {
-            parameters: currentAggregatorResponse?.parameters,
-            error: currentAggregatorResponse?.error
+            route: currentAggregatorResponse?.parameters || null,
+            aggregatorError: currentAggregatorResponse?.error || null,
+            transactionError: e.message ?? JSON.stringify(e)
           },
-          copyText: "Copy aggregator data"
+          copyText: "Copy error"
         });
       })
       .then(() => this._setLoading(false))

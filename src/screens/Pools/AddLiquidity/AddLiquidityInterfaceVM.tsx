@@ -8,6 +8,7 @@ import {
   buildErrorDialogParams,
   buildSuccessLiquidityDialogParams,
   buildWarningLiquidityDialogParams,
+  buildSwapErrorDialogParams,
   IDialogNotificationProps
 } from "@components/Dialog/DialogNotification";
 import Pool from "@src/entities/Pool";
@@ -1108,10 +1109,11 @@ class AddLiquidityInterfaceVM {
     this._clearSwapResults();
     this._setSwapProgress({ current: 0, total: swaps.length, currentToken: null });
 
-    const { accountStore, notificationStore } = this.rootStore;
+    const { accountStore } = this.rootStore;
 
     let successCount = 0;
     let failCount = 0;
+    let lastError: { message: string; swap: IRecommendedSwap } | null = null;
 
     for (let i = 0; i < swaps.length; i++) {
       const swap = swaps[i];
@@ -1125,6 +1127,7 @@ class AddLiquidityInterfaceVM {
       if (!swap.aggregatorResponse?.parameters) {
         failCount++;
         this._setSwapResult(swap.tokenAssetId, 'failed');
+        lastError = { message: "No aggregator parameters", swap };
         continue;
       }
 
@@ -1155,15 +1158,19 @@ class AddLiquidityInterfaceVM {
         } else {
           failCount++;
           this._setSwapResult(swap.tokenAssetId, 'failed');
+          lastError = { message: "Transaction rejected", swap };
         }
-      } catch (e) {
+      } catch (e: any) {
         failCount++;
         this._setSwapResult(swap.tokenAssetId, 'failed');
+        lastError = { message: e.message ?? JSON.stringify(e), swap };
       }
     }
 
     await accountStore.updateAccountAssets(true);
     await this.calculateRecommendedSwaps();
+
+    const { notificationStore } = this.rootStore;
 
     if (successCount > 0) {
       notificationStore.notify(`Successfully completed ${successCount} swap${successCount > 1 ? "s" : ""}`, {
@@ -1172,11 +1179,17 @@ class AddLiquidityInterfaceVM {
       });
     }
 
-    if (failCount > 0) {
-      notificationStore.notify(`${failCount} swap${failCount > 1 ? "s" : ""} failed`, {
-        type: "warning",
-        title: "Some swaps failed"
-      });
+    if (failCount > 0 && lastError) {
+      this.setNotificationParams(
+        buildSwapErrorDialogParams({
+          transactionError: lastError.message,
+          route: lastError.swap.aggregatorResponse?.parameters,
+          onTryAgain: () => {
+            this.setNotificationParams(null);
+            this.executeSelectedSwaps(swaps);
+          }
+        })
+      );
     }
 
     this._setSwapAllLoading(false);
