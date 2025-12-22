@@ -356,7 +356,7 @@ const RecommendedSwapCard: React.FC<IProps> = ({
               {priceImpact && priceImpactLevel && (
                 <PriceImpactBadge level={priceImpactLevel}>
                   {priceImpactLevel === "danger" ? "⚠️ " : ""}
-                  {priceImpact.toFormat(2)}%
+                  Price Impact: {priceImpact.toFormat(2)}%
                 </PriceImpactBadge>
               )}
             </Row>
