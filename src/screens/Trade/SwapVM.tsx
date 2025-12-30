@@ -5,6 +5,8 @@ import { RootStore, useStores } from "@stores";
 import BN from "@src/utils/BN";
 import aggregatorService, { TCalcRoute } from "@src/services/aggregatorService";
 import { CONTRACT_ADDRESSES, EXPLORER_URL, IToken, ROUTES, TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL } from "@src/constants";
+import nodeService from "@src/services/nodeService";
+import { isDryRunEnabled, getCustomPublicKey } from "@src/utils/userSettings";
 
 interface IProps {
   children: React.ReactNode;
@@ -328,11 +330,13 @@ export class SwapVM {
 
   switchTokens = () => {
     const assetId0 = this.assetId0;
+    const prevAmount1 = new BN(this.amount1.toFixed(0));
     this.setAssetId0(this.assetId1);
     this.setAssetId1(assetId0);
-    this.amount0 = BN.ZERO;
+    this.amount0 = prevAmount1;
     this.amount1 = BN.ZERO;
     this.inputMode = "send";
+    this._syncAmount1();
   };
 
   swap = async () => {
@@ -344,6 +348,52 @@ export class SwapVM {
     await this._syncAmount1();
     this._setLoading(true);
     const currentAggregatorResponse = this.aggregatorResponse;
+
+    // Dry-run check if enabled
+    if (isDryRunEnabled()) {
+      const publicKey = await accountStore.getPublicKey();
+      if (publicKey) {
+        try {
+          const dryRunResult = await nodeService.dryRunSwap(
+            publicKey,
+            parameters,
+            minimumToReceive.toFixed(0),
+            token1.assetId === "WAVES" ? "WAVES" : token1.assetId,
+            {
+              assetId: token0.assetId === "WAVES" ? null : token0.assetId,
+              amount: amount0.toString()
+            }
+          );
+
+          if (!dryRunResult.success) {
+            this._setLoading(false);
+            notificationStore.notify(dryRunResult.error || "Dry run failed", {
+              type: "warning",
+              title: "Swap simulation failed"
+            });
+            return;
+          }
+
+          // Show estimated result from dry-run
+          const estimatedOut = dryRunResult.estimatedOut;
+          if (estimatedOut) {
+            const formattedOut = BN.formatUnits(new BN(estimatedOut), token1.decimals);
+            notificationStore.notify(
+              `Simulation OK: ~${formattedOut.toFormat(6)} ${token1.symbol}`,
+              { type: "info", title: "Dry run passed", duration: 3 }
+            );
+          }
+        } catch (e: any) {
+          this._setLoading(false);
+          notificationStore.notify(e.message || "Dry run failed", {
+            type: "warning",
+            title: "Swap simulation failed"
+          });
+          return;
+        }
+      }
+    }
+
     await accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.aggregator,

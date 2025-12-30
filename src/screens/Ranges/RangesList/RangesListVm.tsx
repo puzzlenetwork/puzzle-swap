@@ -127,6 +127,7 @@ class RangesListVm {
     });
   };
   handleShowOnlyUserRangesChange = async (v: boolean) => {
+    await this.rootStore.rangesStore.setPagination({ page: 1, size: this.rootStore.rangesStore.pagination.size });
     return Promise.all([
       (async () => {
         if (v) {

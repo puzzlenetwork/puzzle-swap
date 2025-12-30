@@ -2,6 +2,8 @@ import { IEvaluateScript, ITransaction } from "@src/utils/types";
 import makeNodeRequest from "@src/utils/makeNodeRequest";
 import { CONTRACT_ADDRESSES } from "@src/constants";
 
+const DRY_RUN_CONTRACT = CONTRACT_ADDRESSES.dryRun;
+
 export interface INodeData {
   key: string;
   type: "integer" | "string";
@@ -60,6 +62,13 @@ interface IAssetDetails {
   scripted: boolean;
   minSponsoredAssetFee: null | any;
   originTransactionId: string;
+}
+
+export interface IDryRunResult {
+  success: boolean;
+  estimatedOut?: string;
+  height?: string;
+  error?: string;
 }
 
 const nodeService = {
@@ -147,6 +156,84 @@ const nodeService = {
       return response.data;
     } else {
       return null;
+    }
+  },
+
+  dryRunSwap: async (
+    senderPublicKey: string,
+    route: string,
+    minToReceive: string,
+    tokenOut: string,
+    payment: { assetId: string | null; amount: string }
+  ): Promise<IDryRunResult> => {
+    const url = `/utils/script/evaluate/${DRY_RUN_CONTRACT}`;
+    const tx = {
+      type: 16,
+      version: 2,
+      senderPublicKey,
+      dApp: DRY_RUN_CONTRACT,
+      call: {
+        function: "call",
+        args: [
+          { type: "string", value: route },
+          { type: "integer", value: parseInt(minToReceive) },
+          { type: "string", value: tokenOut }
+        ]
+      },
+      payment: [payment],
+      fee: 500000,
+      feeAssetId: null,
+      proofs: []
+    };
+
+    try {
+      const { data } = await makeNodeRequest(url, { postData: tx });
+
+      // Parse successful response: "OK: 1364934OK: 5006602"
+      if (data?.message) {
+        const okMatch = data.message.match(/OK:\s*(\d+)OK:\s*(\d+)/);
+        if (okMatch) {
+          return {
+            success: true,
+            estimatedOut: okMatch[1],
+            height: okMatch[2]
+          };
+        }
+
+        // Check for slippage error
+        if (data.message.includes("amount to receive is too low")) {
+          const expectedMatch = data.message.match(/expected:\s*(\d+),\s*real\s*(\d+)/);
+          return {
+            success: false,
+            error: expectedMatch
+              ? `Slippage error: expected ${expectedMatch[1]}, real ${expectedMatch[2]}`
+              : "Slippage error: amount to receive is too low"
+          };
+        }
+
+        // Other errors
+        const errorMatch = data.message.match(/error\s*=\s*([^,\)]+)/);
+        return {
+          success: false,
+          error: errorMatch ? errorMatch[1] : data.message
+        };
+      }
+
+      return { success: false, error: "Unknown response" };
+    } catch (e: any) {
+      const message = e?.response?.data?.message || e?.message || "Dry run failed";
+
+      // Try to parse error from response
+      const okMatch = message.match(/OK:\s*(\d+)OK:\s*(\d+)/);
+      if (okMatch) {
+        return {
+          success: true,
+          estimatedOut: okMatch[1],
+          height: okMatch[2]
+        };
+      }
+
+      return { success: false, error: message };
     }
   }
 };

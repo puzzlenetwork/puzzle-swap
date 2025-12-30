@@ -67,7 +67,7 @@ const BaseTokenAddLiquidityAmount: React.FC<IProps> = () => {
         ) : (
           <Notification
             type="info"
-            text={`Your ${vm.baseToken.symbol} will be automatically converted to other pool
+            text={`Your ${vm.pool?.tokens.map(t => t.symbol).join(", ")} will be automatically converted to other pool
         tokens and provided as liquidity. Please pay attention that value of
         your deposit can be different from value of tokens provided because of
         slippage. We do not recommend to use this method for bigger amounts.`}

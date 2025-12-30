@@ -38,6 +38,7 @@ import { useAnalyticTracking } from "./hooks/useAnalyticTracking";
 import { ReactNotifications } from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
 import TermsOfService from "@screens/TermsOfService";
+import SettingsSidebar from "@components/SettingsSidebar";
 
 const Root = styled(Column)`
   width: 100%;
@@ -122,6 +123,10 @@ const App: React.FC = () => {
       <SendAssetModal
         onClose={() => accountStore.setSendAssetModalOpened(false)}
         visible={accountStore.sendAssetModalOpened}
+      />
+      <SettingsSidebar
+        visible={accountStore.settingsSidebarOpened}
+        onClose={() => accountStore.setSettingsSidebarOpened(false)}
       />
       <MobileSpace />
       <MobileNavBar />

@@ -7,6 +7,7 @@ import tokensService, { TokenStatisticsFromBackend } from "@src/services/tokensS
 
 export interface ISerializedTokenStore {
   watchList: string[];
+  hiddenTokens: string[];
 }
 
 export type TTokenStatistics = {
@@ -48,6 +49,18 @@ export default class TokenStore {
     const index = this.watchList.indexOf(assetId);
     index !== -1 && this.watchList.splice(index, 1);
   };
+
+  public hiddenTokens: string[];
+  public hideToken = (assetId: string) => {
+    if (!this.hiddenTokens.includes(assetId)) {
+      this.hiddenTokens.push(assetId);
+    }
+  };
+  public unhideToken = (assetId: string) => {
+    const index = this.hiddenTokens.indexOf(assetId);
+    index !== -1 && this.hiddenTokens.splice(index, 1);
+  };
+  public isTokenHidden = (assetId: string) => this.hiddenTokens.includes(assetId);
 
   private syncTokenStatistics = async () => {
     const { notificationStore } = this.rootStore;
@@ -118,6 +131,7 @@ export default class TokenStore {
     this.rootStore = rootStore;
     makeAutoObservable(this);
     this.watchList = initState?.watchList ?? [];
+    this.hiddenTokens = initState?.hiddenTokens ?? [];
     Promise.all([
       this.syncTokenStatistics().then(() => this.setInitialized(true)),
       this.syncTokenStatisticsFromBackend().then(() => this.setInitializedFromBackend(true)),
@@ -127,6 +141,7 @@ export default class TokenStore {
   }
 
   serialize = (): ISerializedTokenStore => ({
-    watchList: this.watchList
+    watchList: this.watchList,
+    hiddenTokens: this.hiddenTokens
   });
 }

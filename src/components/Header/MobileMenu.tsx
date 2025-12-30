@@ -75,7 +75,10 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
     { name: "Explore", link: ROUTES.EXPLORE, outer: false },
     { name: "Trade", link: ROUTES.TRADE, outer: false },
     { name: "Pools", link: ROUTES.POOLS, outer: false },
-    { name: "Ranges", link: ROUTES.RANGES, outer: false },
+    { name: "Ranges", link: ROUTES.RANGES, outer: false }
+  ];
+
+  const stakeMenu = [
     { name: "Stake", link: ROUTES.STAKE, outer: false },
     { name: "PZL", link: ROUTES.PZL, outer: false }
   ];
@@ -124,6 +127,22 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
         <MenuContainer>
           <Column crossAxisSize="max">
             {mainFunctional.map(({ name, link }) => (
+              <MenuItem
+                key={name}
+                selected={isRoutesEquals(link, location.pathname)}
+                href={link}
+                target={link[0] === "/" ? "_self" : ""}
+              >
+                {name}
+              </MenuItem>
+            ))}
+
+            <SizedBox height={24} />
+
+            <Text type="secondary" style={{ marginBottom: 10 }}>
+              Stake
+            </Text>
+            {stakeMenu.map(({ name, link }) => (
               <MenuItem
                 key={name}
                 selected={isRoutesEquals(link, location.pathname)}

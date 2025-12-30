@@ -111,6 +111,9 @@ class AccountStore {
   walletModalOpened: boolean = false;
   setWalletModalOpened = (state: boolean) => (this.walletModalOpened = state);
 
+  settingsSidebarOpened: boolean = false;
+  setSettingsSidebarOpened = (state: boolean) => (this.settingsSidebarOpened = state);
+
   sendAssetModalOpened: boolean = false;
   setSendAssetModalOpened = (state: boolean) => (this.sendAssetModalOpened = state);
 
@@ -502,6 +505,26 @@ class AccountStore {
       type: "info",
       duration: 20
     });
+  };
+
+  getPublicKey = async (): Promise<string | null> => {
+    // First check for custom public key in settings
+    const customPublicKey = getCustomPublicKey();
+    if (customPublicKey) {
+      return customPublicKey;
+    }
+
+    // Try to get from WavesKeeper
+    if (this.loginType === LOGIN_TYPE.KEEPER && (window as any).WavesKeeper) {
+      try {
+        const state = await (window as any).WavesKeeper.publicState();
+        return state?.account?.publicKey ?? null;
+      } catch {
+        return null;
+      }
+    }
+
+    return null;
   };
 }
 

@@ -2,10 +2,8 @@ import styled from "@emotion/styled";
 import React, { HTMLAttributes, useState } from "react";
 import newswap from "@src/assets/icons/new-trade-swap.svg";
 import SizedBox from "@components/SizedBox";
-import Text from "@components/Text";
 import { useNavigate } from "react-router-dom";
 import Loading from "@components/Loading";
-import { TOKENS_BY_SYMBOL } from "@src/constants";
 import { useTheme } from "@emotion/react";
 import { useSwapVM } from "@screens/Trade/SwapVM";
 import BN from "@src/utils/BN";
@@ -25,6 +23,14 @@ const Root = styled.div`
   }
 `;
 
+const RatesContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  line-height: 1.4;
+  opacity: 0.8;
+`;
+
 const buildRateStr = (symbol0: string | undefined, symbol1: string | undefined, price1?: undefined | BN) => {
   let priceDisplay = price1?.toFormat(4);
   if (priceDisplay === "0.0000") {
@@ -40,6 +46,7 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
   const { token0, token1, price } = vm;
   const navigate = useNavigate();
   const [switched, setSwitched] = useState(false);
+
   const handleSwitch = () => {
     vm.switchTokens();
     const urlSearchParams = new URLSearchParams(window.location.search);
@@ -51,17 +58,10 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
     });
     setSwitched((v) => !v);
   };
-  const stablesIds = [
-    TOKENS_BY_SYMBOL.XTN.assetId,
-    TOKENS_BY_SYMBOL.USDT.assetId,
-    TOKENS_BY_SYMBOL.USDTu.assetId,
-    TOKENS_BY_SYMBOL.USDCu.assetId,
-    TOKENS_BY_SYMBOL.ROME.assetId
-  ];
 
-  const rate = stablesIds.some((assetId) => assetId === token0?.assetId)
-    ? buildRateStr(token1?.symbol, token0?.symbol, price != null && price.gt(0) ? price.pow(-1) : undefined)
-    : buildRateStr(token0?.symbol, token1?.symbol, price != null && price.gt(0) ? price : undefined);
+  const rate1 = buildRateStr(token0?.symbol, token1?.symbol, price != null && price.gt(0) ? price : undefined);
+  const rate2 = buildRateStr(token1?.symbol, token0?.symbol, price != null && price.gt(0) ? price.pow(-1) : undefined);
+
   return (
     <Root {...rest} onClick={handleSwitch}>
       <img
@@ -76,7 +76,14 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
       {!rest.new && (
         <>
           <SizedBox width={8} />
-          <Text>{!vm.synchronizing ? rate : <Loading />}</Text>
+          {!vm.synchronizing ? (
+            <RatesContainer>
+              <span>{rate1}</span>
+              <span>{rate2}</span>
+            </RatesContainer>
+          ) : (
+            <Loading />
+          )}
           <SizedBox width={16} />
         </>
       )}
