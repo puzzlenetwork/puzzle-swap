@@ -24,10 +24,10 @@ const Root = styled.div`
   }
 `;
 
-const RatesContainer = styled.div`
+const RatesContainer = styled.div<{ small?: boolean }>`
   display: flex;
   flex-direction: column;
-  font-size: 12px;
+  font-size: ${({ small }) => (small ? "12px" : "16px")};
   line-height: 1.4;
   opacity: 0.8;
   color: ${({ theme }) => theme.colors.primary800};
@@ -79,7 +79,7 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
         <>
           <SizedBox width={8} />
           {!vm.synchronizing ? (
-            <RatesContainer>
+            <RatesContainer small={isShowRatesEnabled()}>
               <span>{rate1}</span>
               {isShowRatesEnabled() && <span>{rate2}</span>}
             </RatesContainer>
