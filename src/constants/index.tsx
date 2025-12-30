@@ -565,6 +565,7 @@ export const CONTRACT_ADDRESSES = {
   priceOracle: "3P8d1E1BLKoD52y3bQJ1bDTd2TD1gpaLn9t",
   layer2: "3PQoBfUKHkJAeGWhooLP7WS8ovb54av9Jp2",
   stPuzzle: "3PJUHFBuuztWicMTxBQh8LqJtQW6mxbJcwJ",
+  dryRun: "3PLtvRD5p5EDfrzNv1uwWu4qzF5cC4chDEt",
 };
 
 export const ASSET_IDS = {

@@ -9,6 +9,7 @@ export interface IUserSettings {
   customNode?: string;
   backendUrl?: string;
   customPublicKey?: string;
+  dryRunEnabled?: boolean;
 }
 
 export const isValidPublicKey = (key: string): boolean => {
@@ -50,6 +51,11 @@ export const getSmartAccountAddress = (): string | null => {
 export const getSlippage = (): number => {
   const settings = getUserSettings();
   return settings?.slippage ?? 1;
+};
+
+export const isDryRunEnabled = (): boolean => {
+  const settings = getUserSettings();
+  return settings?.dryRunEnabled ?? false;
 };
 
 export const saveUserSettings = (settings: IUserSettings): void => {

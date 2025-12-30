@@ -3,6 +3,7 @@ import Card from "@components/Card";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import TextButton from "@components/TextButton";
+import Switch from "@components/Switch";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import ShareTokenInput from "@screens/Pools/CreatePool/PoolSettingsCard/SelectAssets/ShareTokenInput";
@@ -54,10 +55,12 @@ const Settings: React.FC<IProps> = () => {
   const theme = useTheme();
   const initData = getUserSettings();
   const initialSlippage = new BN(initData?.slippage ?? 1).times(10);
+  const initialDryRun = initData?.dryRunEnabled ?? false;
 
   const [slippage, setSlippage] = useState(initialSlippage);
+  const [dryRunEnabled, setDryRunEnabled] = useState(initialDryRun);
 
-  const hasChanges = !slippage.eq(initialSlippage);
+  const hasChanges = !slippage.eq(initialSlippage) || dryRunEnabled !== initialDryRun;
   const canSave = hasChanges && !slippage.gt(1000);
 
   const handleClose = () => vm.setOpenedSettings(false);
@@ -68,7 +71,8 @@ const Settings: React.FC<IProps> = () => {
   const handleSave = () => {
     const settings: IUserSettings = {
       ...initData,
-      slippage: validateSlippage(slippage.div(10).toNumber())
+      slippage: validateSlippage(slippage.div(10).toNumber()),
+      dryRunEnabled
     };
     saveUserSettings(settings);
     handleClose();
@@ -76,6 +80,7 @@ const Settings: React.FC<IProps> = () => {
 
   const handleReset = () => {
     setSlippage(initialSlippage);
+    setDryRunEnabled(initialDryRun);
     handleClose();
   };
 
@@ -132,6 +137,28 @@ const Settings: React.FC<IProps> = () => {
               error={slippage.gt(1000)}
             />
           </Row>
+        </Column>
+        <SizedBox height={16} />
+        <Column crossAxisSize="max">
+          <Tooltip
+            config={{ placement: "bottom-end", trigger: "click" }}
+            content={
+              <Text>
+                Simulate swap before execution to check if it will succeed.
+                Helps prevent failed transactions.
+              </Text>
+            }
+          >
+            <Row alignItems="center" justifyContent="space-between">
+              <Row alignItems="center">
+                <Text fitContent weight={500}>
+                  Dry run (simulation)
+                </Text>
+                <InfoIcon style={{ marginLeft: 8 }} />
+              </Row>
+              <Switch value={dryRunEnabled} onChange={() => setDryRunEnabled(!dryRunEnabled)} />
+            </Row>
+          </Tooltip>
         </Column>
       </Column>
       <SizedBox height={24} />
