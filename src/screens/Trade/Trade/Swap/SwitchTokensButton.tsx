@@ -7,6 +7,7 @@ import Loading from "@components/Loading";
 import { useTheme } from "@emotion/react";
 import { useSwapVM } from "@screens/Trade/SwapVM";
 import BN from "@src/utils/BN";
+import { isShowRatesEnabled } from "@src/utils/userSettings";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   new?: boolean;
@@ -29,6 +30,7 @@ const RatesContainer = styled.div`
   font-size: 12px;
   line-height: 1.4;
   opacity: 0.8;
+  color: ${({ theme }) => theme.colors.primary800};
 `;
 
 const buildRateStr = (symbol0: string | undefined, symbol1: string | undefined, price1?: undefined | BN) => {
@@ -79,7 +81,7 @@ const SwitchTokensButton: React.FC<IProps> = ({ ...rest }) => {
           {!vm.synchronizing ? (
             <RatesContainer>
               <span>{rate1}</span>
-              <span>{rate2}</span>
+              {isShowRatesEnabled() && <span>{rate2}</span>}
             </RatesContainer>
           ) : (
             <Loading />

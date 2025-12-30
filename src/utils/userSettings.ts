@@ -10,6 +10,7 @@ export interface IUserSettings {
   backendUrl?: string;
   customPublicKey?: string;
   dryRunEnabled?: boolean;
+  showRatesEnabled?: boolean;
 }
 
 export const isValidPublicKey = (key: string): boolean => {
@@ -56,6 +57,11 @@ export const getSlippage = (): number => {
 export const isDryRunEnabled = (): boolean => {
   const settings = getUserSettings();
   return settings?.dryRunEnabled ?? false;
+};
+
+export const isShowRatesEnabled = (): boolean => {
+  const settings = getUserSettings();
+  return settings?.showRatesEnabled ?? false;
 };
 
 export const saveUserSettings = (settings: IUserSettings): void => {

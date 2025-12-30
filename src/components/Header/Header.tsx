@@ -391,7 +391,7 @@ const Header: React.FC<IProps> = () => {
         </Row>
         <Mobile>
           {poolsStore.puzzleRate.gt(0) && (
-            <PuzzlePrice href="https://puzzlestage.herokuapp.com/explore/token/HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS" target="_blank" rel="noreferrer" style={{ padding: "4px 8px", fontSize: 12 }}>
+            <PuzzlePrice href="https://puzzleswap.org/explore/token/HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS" target="_blank" rel="noreferrer" style={{ padding: "4px 8px", fontSize: 12 }}>
               <img src={TOKENS_BY_SYMBOL.PUZZLE.logo} alt="PUZZLE" style={{ width: 16, height: 16 }} />
               ${poolsStore.puzzleRate.toFormat(4)}
             </PuzzlePrice>
@@ -419,7 +419,7 @@ const Header: React.FC<IProps> = () => {
         </Mobile>
         <Desktop>
           {poolsStore.puzzleRate.gt(0) && (
-            <PuzzlePrice href="https://puzzlestage.herokuapp.com/explore/token/HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS" target="_blank" rel="noreferrer">
+            <PuzzlePrice href="https://puzzleswap.org/explore/token/HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS" target="_blank" rel="noreferrer">
               <img src={TOKENS_BY_SYMBOL.PUZZLE.logo} alt="PUZZLE" />
               ${poolsStore.puzzleRate.toFormat(4)}
             </PuzzlePrice>
