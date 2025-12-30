@@ -56,11 +56,13 @@ const Settings: React.FC<IProps> = () => {
   const initData = getUserSettings();
   const initialSlippage = new BN(initData?.slippage ?? 1).times(10);
   const initialDryRun = initData?.dryRunEnabled ?? false;
+  const initialShowRates = initData?.showRatesEnabled ?? false;
 
   const [slippage, setSlippage] = useState(initialSlippage);
   const [dryRunEnabled, setDryRunEnabled] = useState(initialDryRun);
+  const [showRatesEnabled, setShowRatesEnabled] = useState(initialShowRates);
 
-  const hasChanges = !slippage.eq(initialSlippage) || dryRunEnabled !== initialDryRun;
+  const hasChanges = !slippage.eq(initialSlippage) || dryRunEnabled !== initialDryRun || showRatesEnabled !== initialShowRates;
   const canSave = hasChanges && !slippage.gt(1000);
 
   const handleClose = () => vm.setOpenedSettings(false);
@@ -72,7 +74,8 @@ const Settings: React.FC<IProps> = () => {
     const settings: IUserSettings = {
       ...initData,
       slippage: validateSlippage(slippage.div(10).toNumber()),
-      dryRunEnabled
+      dryRunEnabled,
+      showRatesEnabled
     };
     saveUserSettings(settings);
     handleClose();
@@ -81,6 +84,7 @@ const Settings: React.FC<IProps> = () => {
   const handleReset = () => {
     setSlippage(initialSlippage);
     setDryRunEnabled(initialDryRun);
+    setShowRatesEnabled(initialShowRates);
     handleClose();
   };
 
@@ -149,14 +153,35 @@ const Settings: React.FC<IProps> = () => {
               </Text>
             }
           >
-            <Row alignItems="center" justifyContent="space-between">
-              <Row alignItems="center">
+            <Row alignItems="center" justifyContent="space-between" style={{ gap: 8}}>
+              <Row alignItems="center" style={{ gap: 8}}>
                 <Text fitContent weight={500}>
                   Dry run (simulation)
                 </Text>
-                <InfoIcon style={{ marginLeft: 8 }} />
+                <InfoIcon />
               </Row>
               <Switch value={dryRunEnabled} onChange={() => setDryRunEnabled(!dryRunEnabled)} />
+            </Row>
+          </Tooltip>
+        </Column>
+        <SizedBox height={16} />
+        <Column crossAxisSize="max">
+          <Tooltip
+            config={{ placement: "bottom-end", trigger: "click" }}
+            content={
+              <Text>
+                Show exchange rates (e.g. 1 WAVES = 21.75 PUZZLE) next to the swap button.
+              </Text>
+            }
+          >
+            <Row alignItems="center" justifyContent="space-between" style={{ gap: 8}}>
+              <Row alignItems="center" style={{ gap: 8}}>
+                <Text fitContent weight={500}>
+                  Show rates
+                </Text>
+                <InfoIcon />
+              </Row>
+              <Switch value={showRatesEnabled} onChange={() => setShowRatesEnabled(!showRatesEnabled)} />
             </Row>
           </Tooltip>
         </Column>
