@@ -100,9 +100,11 @@ const NodeInputRow = styled.div`
   display: flex;
   align-items: flex-start;
   gap: 8px;
+  width: 100%;
 
   .input-container {
     flex: 1;
+    min-width: 0;
   }
 
   @media (max-width: 480px) {
