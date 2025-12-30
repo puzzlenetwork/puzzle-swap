@@ -28,9 +28,10 @@ const tokenCategories = [
   "Stables",
   "Common",
   "PZ LP",
-  "Memes"
+  "Memes",
   // "Waves DeFi",
   // "Waves Ducks",
+  "Hidden"
 ];
 
 export enum tokenCategoriesEnum {
@@ -43,7 +44,8 @@ export enum tokenCategoriesEnum {
   common = 3,
   pz = 4,
   // defi = 5,
-  meme = 5
+  meme = 5,
+  hidden = 6
 }
 
 const Scroll = styled.div`
@@ -84,6 +86,14 @@ const TokenSelectModal: React.FC<IProps> = ({ onClose, balances, onSelect, visib
     }
   };
 
+  const handleHideToggle = (assetId: string) => {
+    if (tokenStore.isTokenHidden(assetId)) {
+      tokenStore.unhideToken(assetId);
+    } else {
+      tokenStore.hideToken(assetId);
+    }
+  };
+
   const filteredTokens = balances
     .filter((v) => {
       if (!v || !v.symbol || !v.name) {
@@ -95,6 +105,14 @@ const TokenSelectModal: React.FC<IProps> = ({ onClose, balances, onSelect, visib
       );
     })
     .filter((balance) => {
+      // If viewing hidden category, show only hidden tokens
+      if (activeFilter === tokenCategoriesEnum.hidden) {
+        return tokenStore.isTokenHidden(balance.assetId);
+      }
+      // Otherwise, hide hidden tokens from all other categories
+      if (tokenStore.isTokenHidden(balance.assetId)) {
+        return false;
+      }
       if (activeFilter === 0) return true;
       if (activeFilter === tokenCategoriesEnum.favorites) {
         return tokenStore.watchList.includes(balance.assetId);
@@ -146,6 +164,8 @@ const TokenSelectModal: React.FC<IProps> = ({ onClose, balances, onSelect, visib
                   token={t}
                   isFavorite={tokenStore.watchList.includes(t.assetId)}
                   onFavoriteToggle={handleFavoriteToggle}
+                  isHidden={tokenStore.isTokenHidden(t.assetId)}
+                  onHideToggle={handleHideToggle}
                 />
               );
             })

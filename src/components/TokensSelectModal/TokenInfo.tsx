@@ -9,6 +9,10 @@ import star from "@src/assets/icons/star.svg";
 import starHover from "@src/assets/icons/star-hover.svg";
 import starred from "@src/assets/icons/filled-star.svg";
 import starredHover from "@src/assets/icons/filled-star-hover.svg";
+import eyeIcon from "@src/assets/icons/eye.svg";
+import eyeHoverIcon from "@src/assets/icons/eye-hover.svg";
+import eyeOffIcon from "@src/assets/icons/eye-off.svg";
+import eyeOffHoverIcon from "@src/assets/icons/eye-off-hover.svg";
 import useHover from "@src/hooks/useHover";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
@@ -17,6 +21,8 @@ interface IProps extends HTMLAttributes<HTMLDivElement> {
   hidden?: boolean;
   isFavorite?: boolean;
   onFavoriteToggle?: (assetId: string) => void;
+  isHidden?: boolean;
+  onHideToggle?: (assetId: string) => void;
 }
 
 const Root = styled.div<{ withClickLogic?: boolean }>`
@@ -73,14 +79,29 @@ const FavIcon = styled.img`
   cursor: pointer;
   flex-shrink: 0;
 `;
-const TokenInfo: React.FC<IProps> = ({ token, hidden, isFavorite, onFavoriteToggle, ...rest }) => {
+const HideIcon = styled.img`
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  flex-shrink: 0;
+`;
+
+const TokenInfo: React.FC<IProps> = ({ token, hidden, isFavorite, onFavoriteToggle, isHidden, onHideToggle, ...rest }) => {
   const favRef = useRef(null!);
-  const isHover = useHover(favRef);
+  const hideRef = useRef(null!);
+  const isFavHover = useHover(favRef);
+  const isHideHover = useHover(hideRef);
 
   const handleFavClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onFavoriteToggle?.(token.assetId);
   };
+
+  const handleHideClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onHideToggle?.(token.assetId);
+  };
+
   return (
     <Root {...rest}>
       {hidden && <Gradient />}
@@ -89,8 +110,19 @@ const TokenInfo: React.FC<IProps> = ({ token, hidden, isFavorite, onFavoriteTogg
           <>
             <FavIcon
               ref={favRef}
-              src={isFavorite ? (isHover ? starredHover : starred) : isHover ? starHover : star}
+              src={isFavorite ? (isFavHover ? starredHover : starred) : isFavHover ? starHover : star}
               onClick={handleFavClick}
+            />
+            <SizedBox width={8} />
+          </>
+        )}
+        {onHideToggle && (
+          <>
+            <HideIcon
+              ref={hideRef}
+              src={isHidden ? (isHideHover ? eyeOffHoverIcon : eyeOffIcon) : isHideHover ? eyeHoverIcon : eyeIcon}
+              onClick={handleHideClick}
+              title={isHidden ? "Show token" : "Hide token"}
             />
             <SizedBox width={8} />
           </>
