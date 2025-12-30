@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import React, { useEffect, useState } from "react";
 import MenuIcon from "@src/assets/icons/menu.svg";
+import SettingsMenuIcon from "@src/assets/icons/settings.svg";
 import closeIcon from "@src/assets/icons/close.svg";
 import { Column, Row } from "@components/Flex";
 import MobileMenu from "@components/Header/MobileMenu";
@@ -8,7 +9,7 @@ import mobileMenuIcon from "@src/assets/icons/mobileMenu.svg";
 import SizedBox from "@components/SizedBox";
 import Wallet from "@components/Wallet/Wallet";
 import { observer } from "mobx-react-lite";
-import { PRODUCTS, ROUTES } from "@src/constants";
+import { PRODUCTS, ROUTES, TOKENS_BY_SYMBOL } from "@src/constants";
 import { Link, useLocation } from "react-router-dom";
 import { useTheme } from "@emotion/react";
 import Tooltip from "@components/Tooltip";
@@ -145,11 +146,98 @@ const RowLinks = styled(Row)`
   }
 `;
 
+const PuzzlePrice = styled(Link)`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: ${({ theme }) => theme.colors.primary100};
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.primary800};
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primary200};
+  }
+
+  img {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+  }
+`;
+
+const SubMenuContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+
+  &:hover .submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+`;
+
+const SubMenuTrigger = styled.div<{ selected?: boolean }>`
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  box-sizing: border-box;
+  border-bottom: 4px solid ${({ selected, theme }) => (selected ? theme.colors.blue500 : "transparent")};
+  height: 100%;
+  margin: 0 9px;
+  cursor: pointer;
+  color: ${({ selected, theme }) => (selected ? theme.colors.primary800 : theme.colors.primary650)};
+  gap: 4px;
+
+  &:hover {
+    border-bottom: 4px solid ${({ theme }) => theme.colors.primary300};
+    color: ${({ theme }) => theme.colors.blue500};
+  }
+`;
+
+const SubMenu = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: ${({ theme }) => theme.colors.white};
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(54, 56, 112, 0.16);
+  padding: 8px 0;
+  min-width: 120px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: all 0.2s ease;
+  z-index: 103;
+`;
+
+const SubMenuItem = styled(Link)`
+  display: block;
+  padding: 8px 16px;
+  font-weight: 500;
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.primary650};
+  text-decoration: none;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primary100};
+    color: ${({ theme }) => theme.colors.blue500};
+  }
+`;
+
 const Header: React.FC<IProps> = () => {
   const [mobileMenuOpened, setMobileMenuOpened] = useState(false);
   const [bannerClosed /*, setBannerClosed*/] = useState(false);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-  const { accountStore } = useStores();
+  const { accountStore, poolsStore } = useStores();
   const location = useLocation();
   const theme = useTheme();
   const toggleMenu = (state: boolean) => {
@@ -169,7 +257,10 @@ const Header: React.FC<IProps> = () => {
     { name: "Explore", link: ROUTES.EXPLORE },
     { name: "Trade", link: ROUTES.TRADE },
     { name: "Pools", link: ROUTES.POOLS },
-    { name: "Ranges", link: ROUTES.RANGES },
+    { name: "Ranges", link: ROUTES.RANGES }
+  ];
+
+  const stakeSubMenu = [
     { name: "Stake", link: ROUTES.STAKE },
     { name: "PZL", link: ROUTES.PZL }
   ];
@@ -283,13 +374,42 @@ const Header: React.FC<IProps> = () => {
                 </MenuItem>
               );
             })}
+            <SubMenuContainer>
+              <SubMenuTrigger selected={stakeSubMenu.some(({ link }) => isRoutesEquals(link, location.pathname))}>
+                Stake
+                <Arrow style={{ width: 12, height: 12 }} />
+              </SubMenuTrigger>
+              <SubMenu className="submenu">
+                {stakeSubMenu.map(({ name, link }) => (
+                  <SubMenuItem key={name} to={link}>
+                    {name}
+                  </SubMenuItem>
+                ))}
+              </SubMenu>
+            </SubMenuContainer>
           </Desktop>
         </Row>
         <Mobile>
+          {poolsStore.puzzleRate.gt(0) && (
+            <PuzzlePrice to={ROUTES.PZL} style={{ padding: "4px 8px", fontSize: 12 }}>
+              <img src={TOKENS_BY_SYMBOL.PUZZLE.logo} alt="PUZZLE" style={{ width: 16, height: 16 }} />
+              ${poolsStore.puzzleRate.toFormat(4)}
+            </PuzzlePrice>
+          )}
+          <SizedBox width={8} />
+          {!mobileMenuOpened && (
+            <img
+              onClick={() => accountStore.setSettingsSidebarOpened(true)}
+              className="icon"
+              src={SettingsMenuIcon}
+              alt="settings"
+            />
+          )}
+          <SizedBox width={8} />
           {accountStore.address != null && !mobileMenuOpened && (
             <WalletIcon onClick={() => accountStore.setWalletModalOpened(true)} style={{ cursor: "pointer" }} />
           )}
-          <SizedBox width={16} />
+          <SizedBox width={12} />
           <img
             onClick={() => toggleMenu(!mobileMenuOpened)}
             className="icon"
@@ -298,7 +418,16 @@ const Header: React.FC<IProps> = () => {
           />
         </Mobile>
         <Desktop>
+          {poolsStore.puzzleRate.gt(0) && (
+            <PuzzlePrice to={ROUTES.PZL}>
+              <img src={TOKENS_BY_SYMBOL.PUZZLE.logo} alt="PUZZLE" />
+              ${poolsStore.puzzleRate.toFormat(4)}
+            </PuzzlePrice>
+          )}
           <Wallet />
+          <BurgerMenu expanded={false} onClick={() => accountStore.setSettingsSidebarOpened(true)}>
+            <img className="icon" src={SettingsMenuIcon} alt="settings" />
+          </BurgerMenu>
           <Tooltip
             config={{
               placement: "bottom-start",

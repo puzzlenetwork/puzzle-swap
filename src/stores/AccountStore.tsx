@@ -111,6 +111,9 @@ class AccountStore {
   walletModalOpened: boolean = false;
   setWalletModalOpened = (state: boolean) => (this.walletModalOpened = state);
 
+  settingsSidebarOpened: boolean = false;
+  setSettingsSidebarOpened = (state: boolean) => (this.settingsSidebarOpened = state);
+
   sendAssetModalOpened: boolean = false;
   setSendAssetModalOpened = (state: boolean) => (this.sendAssetModalOpened = state);
 

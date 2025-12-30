@@ -39,6 +39,12 @@ let swapCache: SwapCache | null = loadCache();
 
 export type TransactionType = "swap" | "deposit" | "withdraw" | "claim" | "stake" | "unstake" | "unknown";
 
+export interface TokenAmount {
+  assetId: string;
+  amount: BN;
+  symbol: string;
+}
+
 export interface ParsedTransaction {
   id: string;
   type: TransactionType;
@@ -55,6 +61,7 @@ export interface ParsedTransaction {
   amount?: BN;
   assetId?: string;
   symbol?: string;
+  tokens?: TokenAmount[];
 }
 
 const SWAP_FUNCTIONS = ["swap", "puzzleSwap", "swapWithReferral", "routeSwap"];
@@ -109,11 +116,20 @@ const parseSwapTransaction = (tx: ITransaction): ParsedTransaction | null => {
 
 const parsePoolDepositTransaction = (tx: ITransaction): ParsedTransaction | null => {
   try {
-    const payment = tx.payment?.[0];
-    if (!payment) return null;
+    const payments = tx.payment ?? [];
+    if (payments.length === 0) return null;
 
-    const assetId = payment.assetId ?? "WAVES";
-    const amount = new BN(payment.amount);
+    const tokens: TokenAmount[] = payments.map((payment) => {
+      const assetId = payment.assetId ?? "WAVES";
+      const amount = new BN(payment.amount);
+      return {
+        assetId,
+        amount: BN.formatUnits(amount, getAssetDecimals(assetId)),
+        symbol: getAssetSymbol(assetId)
+      };
+    });
+
+    const firstToken = tokens[0];
 
     return {
       id: tx.id,
@@ -121,9 +137,10 @@ const parsePoolDepositTransaction = (tx: ITransaction): ParsedTransaction | null
       timestamp: tx.timestamp,
       status: tx.applicationStatus === "succeeded" ? "success" : "failed",
       poolAddress: tx.dApp,
-      amount: BN.formatUnits(amount, getAssetDecimals(assetId)),
-      assetId,
-      symbol: getAssetSymbol(assetId)
+      amount: firstToken.amount,
+      assetId: firstToken.assetId,
+      symbol: firstToken.symbol,
+      tokens
     };
   } catch {
     return null;
@@ -133,12 +150,21 @@ const parsePoolDepositTransaction = (tx: ITransaction): ParsedTransaction | null
 const parsePoolWithdrawTransaction = (tx: ITransaction): ParsedTransaction | null => {
   try {
     const transfers = tx.stateChanges?.transfers ?? [];
-    const receivedTransfer = transfers.find((t) => t.address === tx.sender);
+    const receivedTransfers = transfers.filter((t) => t.address === tx.sender);
 
-    if (!receivedTransfer) return null;
+    if (receivedTransfers.length === 0) return null;
 
-    const assetId = receivedTransfer.asset ?? "WAVES";
-    const amount = new BN(receivedTransfer.amount);
+    const tokens: TokenAmount[] = receivedTransfers.map((transfer) => {
+      const assetId = transfer.asset ?? "WAVES";
+      const amount = new BN(transfer.amount);
+      return {
+        assetId,
+        amount: BN.formatUnits(amount, getAssetDecimals(assetId)),
+        symbol: getAssetSymbol(assetId)
+      };
+    });
+
+    const firstToken = tokens[0];
 
     return {
       id: tx.id,
@@ -146,9 +172,10 @@ const parsePoolWithdrawTransaction = (tx: ITransaction): ParsedTransaction | nul
       timestamp: tx.timestamp,
       status: tx.applicationStatus === "succeeded" ? "success" : "failed",
       poolAddress: tx.dApp,
-      amount: BN.formatUnits(amount, getAssetDecimals(assetId)),
-      assetId,
-      symbol: getAssetSymbol(assetId)
+      amount: firstToken.amount,
+      assetId: firstToken.assetId,
+      symbol: firstToken.symbol,
+      tokens
     };
   } catch {
     return null;

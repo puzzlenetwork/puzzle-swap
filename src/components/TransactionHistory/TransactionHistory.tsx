@@ -6,7 +6,7 @@ import Text from "@src/components/Text";
 import SizedBox from "@components/SizedBox";
 import Card from "@components/Card";
 import GridTable from "@components/GridTable";
-import { ParsedTransaction } from "@src/services/transactionHistoryService";
+import { ParsedTransaction, TokenAmount } from "@src/services/transactionHistoryService";
 import { EXPLORER_URL, TOKENS_BY_ASSET_ID } from "@src/constants";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -170,12 +170,21 @@ const TransactionDetails: React.FC<{ tx: ParsedTransaction }> = ({ tx }) => {
       </DetailsRow>
     );
   }
-  if (["deposit", "withdraw", "claim"].includes(tx.type) && tx.symbol) {
-    const logo = getTokenLogo(tx.assetId);
+  if (["deposit", "withdraw", "claim"].includes(tx.type)) {
+    const tokens = tx.tokens ?? (tx.symbol ? [{ assetId: tx.assetId!, amount: tx.amount!, symbol: tx.symbol }] : []);
+    if (tokens.length === 0) return <SmallText fitContent>—</SmallText>;
+
     return (
       <DetailsRow>
-        {logo && <TokenIcon src={logo} alt={tx.symbol} />}
-        <SmallText fitContent>{tx.amount?.toFormat(4)} {tx.symbol}</SmallText>
+        <TokenPairIcons>
+          {tokens.map((token, index) => {
+            const logo = getTokenLogo(token.assetId);
+            return logo ? <TokenIcon key={token.assetId} src={logo} alt={token.symbol} overlap={index > 0} /> : null;
+          })}
+        </TokenPairIcons>
+        <SmallText fitContent>
+          {tokens.map((token) => `${token.amount?.toFormat(4)} ${token.symbol}`).join(", ")}
+        </SmallText>
       </DetailsRow>
     );
   }
