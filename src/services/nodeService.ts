@@ -180,7 +180,7 @@ const nodeService = {
           { type: "string", value: tokenOut }
         ]
       },
-      payment: [payment],
+      payment: [{ assetId: payment.assetId, amount: parseInt(payment.amount) }],
       fee: 500000,
       feeAssetId: null,
       proofs: []
@@ -188,8 +188,6 @@ const nodeService = {
 
     try {
       const { data } = await makeNodeRequest(url, { postData: tx });
-
-      // Parse successful response: "OK: 1364934OK: 5006602"
       if (data?.message) {
         const okMatch = data.message.match(/OK:\s*(\d+)OK:\s*(\d+)/);
         if (okMatch) {

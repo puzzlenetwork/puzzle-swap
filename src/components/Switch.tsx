@@ -7,6 +7,7 @@ interface IProps {
   value: boolean;
   onChange: () => void;
   size?: TSwitchSize;
+  disabled?: boolean;
 }
 
 const Root = styled.div<{ size?: TSwitchSize }>`
@@ -143,11 +144,11 @@ const Root = styled.div<{ size?: TSwitchSize }>`
   }
 `;
 
-const Switch: React.FC<IProps> = ({ value, onChange, size }) => {
+const Switch: React.FC<IProps> = ({ value, onChange, size, disabled }) => {
   return (
-    <Root size={size}>
+    <Root size={size} style={{ opacity: disabled ? 0.5 : 1 }}>
       <label className="switch">
-        <input type="checkbox" checked={value} onChange={onChange} />
+        <input type="checkbox" checked={value} onChange={onChange} disabled={disabled} />
         <span className="slider round" />
       </label>
     </Root>

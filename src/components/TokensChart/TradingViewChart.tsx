@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { createChart, CandlestickData, CandlestickSeries, UTCTimestamp } from "lightweight-charts";
+import { createChart, CandlestickData, CandlestickSeries, UTCTimestamp, createSeriesMarkers, SeriesMarker } from "lightweight-charts";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 import { useTokenChartVM } from "./TokenChartVM";
@@ -7,6 +7,8 @@ import { Row } from "@components/Flex";
 import Text from "@components/Text";
 import Spinner from "@components/Spinner";
 import { WavesChartAPI } from "@src/services/WavesChartAPI";
+import { useStores } from "@stores";
+import transactionHistoryService, { TradeMarker } from "@src/services/transactionHistoryService";
 
 interface IProps {
   height?: number;
@@ -47,7 +49,7 @@ export const useTradingViewChartAvailability = () => {
 
     const checkDataAvailability = async () => {
       setIsChecking(true);
-      
+
       const pairData = await WavesChartAPI.checkPairExists(vm.asset0.assetId, vm.asset1.assetId);
       if (!pairData) {
         setHasChartData(false);
@@ -68,7 +70,7 @@ export const useTradingViewChartAvailability = () => {
       } else {
         setHasChartData(false);
       }
-      
+
       setIsChecking(false);
     };
 
@@ -83,6 +85,7 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
   const chartRef = useRef<any>(null);
   const seriesRef = useRef<any>(null);
   const vm = useTokenChartVM();
+  const { accountStore } = useStores();
   const [loading, setLoading] = useState(false);
   const [candlestickData, setCandlestickData] = useState<CandlestickData<UTCTimestamp>[]>([]);
   const candlestickDataRef = useRef<CandlestickData<UTCTimestamp>[]>([]);
@@ -91,6 +94,8 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
   const currentPairDataRef = useRef<any>(null);
   const hasReachedEndOfDataRef = useRef(false);
   const isInvertedRef = useRef(false);
+  const [tradeMarkers, setTradeMarkers] = useState<TradeMarker[]>([]);
+  const markersRef = useRef<any>(null);
 
   const loadMoreHistoricalData = async (requestedTime: number) => {
     if (isLoadingMoreRef.current || !currentPairDataRef.current || hasReachedEndOfDataRef.current) {
@@ -98,22 +103,22 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
     }
 
     isLoadingMoreRef.current = true;
-    
+
     try {
-      const earliestDataTime = candlestickDataRef.current.length > 0 ? 
-        new Date((candlestickDataRef.current[0].time as number) * 1000) : 
+      const earliestDataTime = candlestickDataRef.current.length > 0 ?
+        new Date((candlestickDataRef.current[0].time as number) * 1000) :
         new Date(requestedTime * 1000);
-      
+
       const timeEnd = earliestDataTime;
       const timeStart = new Date(timeEnd.getTime() - 90 * 24 * 60 * 60 * 1000);
-      
+
       const allCandles: any[] = [];
       const chunkSize = 30 * 24 * 60 * 60 * 1000;
       let currentEnd = timeEnd;
-      
+
       while (currentEnd > timeStart) {
         const currentStart = new Date(Math.max(currentEnd.getTime() - chunkSize, timeStart.getTime()));
-        
+
         const candles = await WavesChartAPI.getCandlesWithTimeRange(
           currentPairDataRef.current.amountAsset,
           currentPairDataRef.current.priceAsset,
@@ -121,34 +126,34 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
           currentStart,
           currentEnd
         );
-        
+
         allCandles.unshift(...candles);
         currentEnd = currentStart;
-        
+
         if (currentStart.getTime() <= timeStart.getTime()) {
           break;
         }
       }
-      
+
       if (allCandles.length > 0) {
         const formattedHistoricalData = WavesChartAPI.convertToCandlestickData(allCandles, isInvertedRef.current);
-        
+
         if (formattedHistoricalData.length > 0) {
           const existingTimes = new Set(candlestickDataRef.current.map(item => item.time));
           const newData = formattedHistoricalData.filter(item => !existingTimes.has(item.time));
-          
+
           if (newData.length > 0) {
             const combinedData = [...newData, ...candlestickDataRef.current]
               .sort((a, b) => (a.time as number) - (b.time as number));
 
             candlestickDataRef.current = combinedData;
-            
+
             if (seriesRef.current && chartRef.current) {
               const timeScale = chartRef.current.timeScale();
               const scrollPosition = timeScale.scrollPosition();
-              
+
               seriesRef.current.setData(combinedData);
-              
+
               setTimeout(() => {
                 if (chartRef.current) {
                   chartRef.current.timeScale().scrollToPosition(scrollPosition, false);
@@ -164,7 +169,7 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
       }
     } catch (error: any) {
     }
-    
+
     isLoadingMoreRef.current = false;
   };
 
@@ -194,7 +199,7 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
 
       if (candles.length > 0) {
         const formattedData = WavesChartAPI.convertToCandlestickData(candles, isInvertedRef.current);
-        
+
         if (formattedData.length > 0) {
           setCandlestickData(formattedData);
           candlestickDataRef.current = formattedData;
@@ -222,19 +227,19 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
       if (!chartContainerRef.current) {
         return;
       }
-      
+
       try {
         if (chartContainerRef.current.clientWidth === 0) {
           setTimeout(createChartInstance, 100);
           return;
         }
-        
+
         if (chartRef.current) {
           chartRef.current.remove();
           chartRef.current = null;
           seriesRef.current = null;
         }
-        
+
         const chart = createChart(chartContainerRef.current, {
           width: chartContainerRef.current.clientWidth,
           height: chartContainerRef.current.clientHeight,
@@ -272,7 +277,7 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
           wickUpColor: '#26a69a',
           wickDownColor: '#ef5350',
         });
-        
+
         chartRef.current = chart;
         seriesRef.current = candlestickSeries;
 
@@ -281,7 +286,7 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
             const firstDataTime = candlestickDataRef.current[0].time;
             const rangeStart = timeRange.from;
             const buffer = 10;
-            
+
             if (rangeStart <= (firstDataTime as number) + buffer) {
               void loadMoreHistoricalData(rangeStart as number);
             }
@@ -292,7 +297,7 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
           candlestickSeries.setData(candlestickData);
           chart.timeScale().fitContent();
         }
-        
+
       } catch (error) {
       }
     };
@@ -302,6 +307,7 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
 
     return () => {
       clearTimeout(timer);
+      markersRef.current = null;
       if (chartRef.current) {
         chartRef.current.remove();
         chartRef.current = null;
@@ -324,6 +330,69 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
     }
   }, [candlestickData]);
 
+  useEffect(() => {
+    if (!accountStore.address || !vm.asset0?.assetId || !vm.asset1?.assetId) {
+      setTradeMarkers([]);
+      return;
+    }
+
+    const loadTradeMarkers = async () => {
+      try {
+        const markers = await transactionHistoryService.getSwapsByPair(
+          accountStore.address!,
+          vm.asset0.assetId,
+          vm.asset1.assetId
+        );
+        setTradeMarkers(markers);
+      } catch (e) {
+        setTradeMarkers([]);
+      }
+    };
+
+    loadTradeMarkers();
+  }, [accountStore.address, vm.asset0?.assetId, vm.asset1?.assetId]);
+
+  useEffect(() => {
+    if (tradeMarkers.length === 0) {
+      if (markersRef.current) {
+        try {
+          markersRef.current.detach();
+        } catch (e) {}
+        markersRef.current = null;
+      }
+      return;
+    }
+
+    const applyMarkers = () => {
+      if (!seriesRef.current || !chartRef.current) {
+        return;
+      }
+
+      try {
+        if (markersRef.current) {
+          try {
+            markersRef.current.detach();
+          } catch (e) {}
+          markersRef.current = null;
+        }
+
+        const markers: SeriesMarker<UTCTimestamp>[] = tradeMarkers.map((marker) => ({
+          time: marker.time as UTCTimestamp,
+          position: marker.type === "buy" ? "belowBar" as const : "aboveBar" as const,
+          color: marker.type === "buy" ? "#26a69a" : "#ef5350",
+          shape: marker.type === "buy" ? "arrowUp" as const : "arrowDown" as const,
+          text: marker.type === "buy" ? "B" : "S",
+          size: 1
+        }));
+
+        markersRef.current = createSeriesMarkers(seriesRef.current, markers);
+      } catch (e) {
+      }
+    };
+
+    const timer = setTimeout(applyMarkers, 150);
+    return () => clearTimeout(timer);
+  }, [tradeMarkers, candlestickData]);
 
   if (loading) {
     return (

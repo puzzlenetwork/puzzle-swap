@@ -171,7 +171,8 @@ export class SwapVM {
   setRejectAggregatorPromise = (v: any) => (this.rejectAggregatorPromise = v);
 
   //todo cun out kludge with invalidAmount
-  private _syncAmount1 = (quiet = false) => {
+  private _syncAmount1 = async (quiet = false) => {
+    const { accountStore } = this.rootStore;
     const { amount0, assetId0, assetId1 } = this;
     const invalidAmount = amount0 == null || amount0.isNaN() || amount0.lte(0);
     if (amount0 != null && amount0.eq(0)) {
@@ -194,16 +195,44 @@ export class SwapVM {
       resolve(aggregatorService.calc(assetId0, assetId1, amountToUse));
     });
     promise
-      .then((v: any) => {
+      .then(async (v: any) => {
         this._setAggregatorResponse(v);
-        !invalidAmount && this._setAmount1(new BN(v.estimatedOut * 0.9971));
         this._calculatePrice(amountToUse, new BN(v.estimatedOut));
-        this._setSynchronizing(false);
         !invalidAmount &&
           this._setPriceImpact((new BN(v.priceImpact).gt(0) ? new BN(v.priceImpact) : BN.ZERO).times(100));
         this._setParameters(!invalidAmount ? v.parameters : null);
         this._setRoute(v.routes);
         this._setAggregatedProfit(new BN(v.aggregatedProfit));
+
+        // If dry run enabled and user connected, get exact amount from contract
+        if (!invalidAmount && isDryRunEnabled() && v.parameters) {
+          const publicKey = await accountStore.getPublicKey();
+          if (publicKey) {
+            try {
+              const minToReceive = new BN(v.estimatedOut * 0.9971).times(new BN(100 - 1).div(100));
+              const dryRunResult = await nodeService.dryRunSwap(
+                publicKey,
+                v.parameters,
+                minToReceive.toFixed(0),
+                this.token1.assetId === "WAVES" ? "WAVES" : this.token1.assetId,
+                {
+                  assetId: this.token0.assetId === "WAVES" ? null : this.token0.assetId,
+                  amount: amountToUse.toString()
+                }
+              );
+              if (dryRunResult.success && dryRunResult.estimatedOut) {
+                this._setAmount1(new BN(dryRunResult.estimatedOut));
+                this._setSynchronizing(false);
+                return;
+              }
+            } catch (e) {
+              // Fall back to aggregator estimate
+            }
+          }
+        }
+
+        !invalidAmount && this._setAmount1(new BN(v.estimatedOut * 0.9971));
+        this._setSynchronizing(false);
       })
       .catch((error) => {
         this._setAggregatorResponse({ error: error.message || 'Unknown error' });

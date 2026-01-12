@@ -146,7 +146,7 @@ const RowLinks = styled(Row)`
   }
 `;
 
-const PuzzlePrice = styled.a`
+const PuzzlePrice = styled(Link)`
   display: flex;
   align-items: center;
   gap: 6px;
@@ -237,7 +237,7 @@ const Header: React.FC<IProps> = () => {
   const [mobileMenuOpened, setMobileMenuOpened] = useState(false);
   const [bannerClosed /*, setBannerClosed*/] = useState(false);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-  const { accountStore, poolsStore } = useStores();
+  const { accountStore, poolsStore, tokenStore } = useStores();
   const location = useLocation();
   const theme = useTheme();
   const toggleMenu = (state: boolean) => {
@@ -390,10 +390,10 @@ const Header: React.FC<IProps> = () => {
           </Desktop>
         </Row>
         <Mobile>
-          {poolsStore.puzzleRate.gt(0) && (
-            <PuzzlePrice href="https://puzzleswap.org/explore/token/HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS" target="_blank" rel="noreferrer" style={{ padding: "4px 8px", fontSize: 12 }}>
+          {tokenStore.statisticsByAssetId[TOKENS_BY_SYMBOL.PUZZLE.assetId]?.currentPrice?.gt(0) && (
+            <PuzzlePrice to={ROUTES.STAKE} style={{ padding: "4px 8px", fontSize: 12 }}>
               <img src={TOKENS_BY_SYMBOL.PUZZLE.logo} alt="PUZZLE" style={{ width: 16, height: 16 }} />
-              ${poolsStore.puzzleRate.toFormat(4)}
+              ${tokenStore.statisticsByAssetId[TOKENS_BY_SYMBOL.PUZZLE.assetId]?.currentPrice?.toFormat(4)}
             </PuzzlePrice>
           )}
           <SizedBox width={8} />
@@ -418,10 +418,10 @@ const Header: React.FC<IProps> = () => {
           />
         </Mobile>
         <Desktop>
-          {poolsStore.puzzleRate.gt(0) && (
-            <PuzzlePrice href="https://puzzleswap.org/explore/token/HEB8Qaw9xrWpWs8tHsiATYGBWDBtP2S7kcPALrMu43AS" target="_blank" rel="noreferrer">
+          {tokenStore.statisticsByAssetId[TOKENS_BY_SYMBOL.PUZZLE.assetId]?.currentPrice?.gt(0) && (
+            <PuzzlePrice to={ROUTES.STAKE}>
               <img src={TOKENS_BY_SYMBOL.PUZZLE.logo} alt="PUZZLE" />
-              ${poolsStore.puzzleRate.toFormat(4)}
+              ${tokenStore.statisticsByAssetId[TOKENS_BY_SYMBOL.PUZZLE.assetId]?.currentPrice?.toFormat(4)}
             </PuzzlePrice>
           )}
           <Wallet />

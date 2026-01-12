@@ -305,14 +305,24 @@ const isPoolTransaction = (tx: ITransaction): boolean =>
   );
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+const CACHE_TTL_MS = 30 * 1000;
 
 const isWithinLast30Days = (timestamp: number): boolean => {
   const now = Date.now();
   return now - timestamp <= THIRTY_DAYS_MS;
 };
 
+const isCacheFresh = (cache: SwapCache | null, address: string): boolean => {
+  if (!cache || cache.address !== address) return false;
+  return Date.now() - cache.lastTimestamp < CACHE_TTL_MS;
+};
+
 const transactionHistoryService = {
   getSwapHistory: async (address: string, targetCount = 30): Promise<ParsedTransaction[]> => {
+    if (isCacheFresh(swapCache, address)) {
+      return swapCache!.transactions.slice(0, targetCount);
+    }
+
     const batchSize = 1000;
     const thirtyDaysAgo = Date.now() - THIRTY_DAYS_MS;
     const hasValidCache = swapCache && swapCache.address === address && swapCache.lastTxId;
@@ -413,4 +423,55 @@ const transactionHistoryService = {
   }
 };
 
-export default transactionHistoryService;
+export interface TradeMarker {
+  time: number;
+  type: "buy" | "sell";
+  price: number;
+  amount: BN;
+  symbol: string;
+  txId: string;
+}
+
+const transactionHistoryServiceExtended = {
+  ...transactionHistoryService,
+
+  getSwapsByPair: async (
+    address: string,
+    asset0Id: string,
+    asset1Id: string
+  ): Promise<TradeMarker[]> => {
+    const history = await transactionHistoryService.getSwapHistory(address, 100);
+
+    const markers: TradeMarker[] = [];
+
+    for (const tx of history) {
+      if (tx.type !== "swap" || tx.status !== "success") continue;
+      if (!tx.fromAssetId || !tx.toAssetId || !tx.fromAmount || !tx.toAmount) continue;
+
+      const fromId = tx.fromAssetId === "WAVES" ? "WAVES" : tx.fromAssetId;
+      const toId = tx.toAssetId === "WAVES" ? "WAVES" : tx.toAssetId;
+
+      const isBuy = fromId === asset0Id && toId === asset1Id;
+      const isSell = fromId === asset1Id && toId === asset0Id;
+
+      if (!isBuy && !isSell) continue;
+
+      const price = isBuy
+        ? tx.toAmount.div(tx.fromAmount).toNumber()
+        : tx.fromAmount.div(tx.toAmount).toNumber();
+
+      markers.push({
+        time: Math.floor(tx.timestamp / 1000),
+        type: isBuy ? "buy" : "sell",
+        price,
+        amount: isBuy ? tx.toAmount : tx.fromAmount,
+        symbol: isBuy ? tx.toSymbol! : tx.fromSymbol!,
+        txId: tx.id
+      });
+    }
+
+    return markers.sort((a, b) => a.time - b.time);
+  }
+};
+
+export default transactionHistoryServiceExtended;
