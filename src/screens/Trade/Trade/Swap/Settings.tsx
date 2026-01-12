@@ -181,7 +181,7 @@ const Settings: React.FC<IProps> = () => {
             <Row alignItems="center" justifyContent="space-between" style={{ gap: 8}}>
               <Row alignItems="center" style={{ gap: 8}}>
                 <Text fitContent weight={500}>
-                  Show rates
+                  Show price ratio
                 </Text>
                 <InfoIcon />
               </Row>
