@@ -271,11 +271,11 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
         });
 
         const candlestickSeries = chart.addSeries(CandlestickSeries, {
-          upColor: '#26a69a',
-          downColor: '#ef5350',
+          upColor: accountStore.priceColors.up,
+          downColor: accountStore.priceColors.down,
           borderVisible: false,
-          wickUpColor: '#26a69a',
-          wickDownColor: '#ef5350',
+          wickUpColor: accountStore.priceColors.up,
+          wickDownColor: accountStore.priceColors.down,
         });
 
         chartRef.current = chart;
@@ -314,7 +314,7 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
         seriesRef.current = null;
       }
     };
-  }, [height, candlestickData]);
+  }, [height, candlestickData, accountStore.bearMarketEnabled]);
 
   useEffect(() => {
     if (chartRef.current && seriesRef.current && candlestickData.length > 0) {
@@ -379,7 +379,7 @@ const TradingViewChart: React.FC<IProps> = observer(({ height = 350, interval = 
         const markers: SeriesMarker<UTCTimestamp>[] = tradeMarkers.map((marker) => ({
           time: marker.time as UTCTimestamp,
           position: marker.type === "buy" ? "belowBar" as const : "aboveBar" as const,
-          color: marker.type === "buy" ? "#26a69a" : "#ef5350",
+          color: marker.type === "buy" ? accountStore.priceColors.up : accountStore.priceColors.down,
           shape: marker.type === "buy" ? "arrowUp" as const : "arrowDown" as const,
           text: marker.type === "buy" ? "B" : "S",
           size: 1

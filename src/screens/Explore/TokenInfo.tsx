@@ -6,6 +6,8 @@ import RoundTokenIcon from "@components/RoundTokenIcon";
 import { ROUTES } from "@src/constants";
 import BN from "@src/utils/BN";
 import { Link } from "react-router-dom";
+import { useStores } from "@stores";
+import { observer } from "mobx-react-lite";
 
 interface IProps {
   num: number;
@@ -16,7 +18,9 @@ interface IProps {
   change: BN;
 }
 
-const TokenInfo: React.FC<IProps> = ({ num, assetId, name, change, logo, symbol }) => {
+const TokenInfo: React.FC<IProps> = observer(({ num, assetId, name, change, logo, symbol }) => {
+  const { accountStore } = useStores();
+  const changeColor = change.gt(0) ? accountStore.priceColors.upAlt : accountStore.priceColors.downAlt;
   return (
     <Row justifyContent="space-between">
       <Link to={ROUTES.EXPLORE_TOKEN.replace(":assetId", assetId)}>
@@ -38,10 +42,10 @@ const TokenInfo: React.FC<IProps> = ({ num, assetId, name, change, logo, symbol 
           </Row>
         </Row>
       </Link>
-      <Text type={change.gt(0) ? "success" : "error"} weight={500} fitContent style={{ flexWrap: "wrap" }}>
+      <Text weight={500} fitContent style={{ flexWrap: "wrap", color: changeColor }}>
         {change.toFormat(2)}%
       </Text>
     </Row>
   );
-};
+});
 export default TokenInfo;

@@ -7,14 +7,16 @@ import StatisticsGroup from "@components/StatisticsGroup";
 import SizedBox from "@components/SizedBox";
 import BN from "@src/utils/BN";
 import { TOKENS_BY_SYMBOL } from "@src/constants";
+import { useStores } from "@stores";
 
 const ExploreTokenPriceStatistics = () => {
   const vm = useExploreTokenVM();
+  const { accountStore } = useStores();
   const chart24h = vm.getChartByPeriod("1d");
   const low = new BN(Math.min(...chart24h.map(({ volume }) => volume)) ?? 0);
   const high = new BN(Math.max(...chart24h.map(({ volume }) => volume)) ?? 0);
 
-  const changeColor = vm.statistics?.change24H?.gte(0) ? "#35A15A" : "#ED827E";
+  const changeColor = vm.statistics?.change24H?.gte(0) ? accountStore.priceColors.upAlt : accountStore.priceColors.downAlt;
 
   return (
     <Card style={{ flex: 1 }}>

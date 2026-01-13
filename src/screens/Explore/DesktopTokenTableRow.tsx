@@ -14,6 +14,8 @@ import Button from "@components/Button";
 import { useNavigate } from "react-router-dom";
 import useHover from "@src/hooks/useHover";
 import BN from "@src/utils/BN";
+import { useStores } from "@stores";
+import { observer } from "mobx-react-lite";
 
 interface IProps {
   token: IToken;
@@ -34,10 +36,12 @@ const Fav = styled.img`
   height: 24px;
   cursor: pointer;
 `;
-const DesktopTokenTableRow: React.FC<IProps> = ({ token, fav, change, handleWatchListChange, rate, vol24 }) => {
+const DesktopTokenTableRow: React.FC<IProps> = observer(({ token, fav, change, handleWatchListChange, rate, vol24 }) => {
   const navigate = useNavigate();
   const hoverRef = useRef(null!);
   const isHover = useHover(hoverRef);
+  const { accountStore } = useStores();
+  const changeColor = change?.gt(0) ? accountStore.priceColors.upAlt : accountStore.priceColors.downAlt;
   return (
     <Root className="gridRow">
       <Row>
@@ -60,12 +64,12 @@ const DesktopTokenTableRow: React.FC<IProps> = ({ token, fav, change, handleWatc
         </Row>
       </Row>
       <Text>${rate?.gte(0.0001) ? rate?.toFormat(4) : rate?.toFormat(8)}</Text>
-      {change != null && vol24 != null && !vol24.eq(0) ? <Text type={change?.gt(0) ? "success" : "error"}>{change.toFormat(2)} %</Text> : <Text>-</Text>}
+      {change != null && vol24 != null && !vol24.eq(0) ? <Text style={{ color: changeColor }}>{change.toFormat(2)} %</Text> : <Text>-</Text>}
       {vol24 != null ? <Text>${vol24.toFormat(2)}</Text> : <Text>-</Text>}
       <Button onClick={() => navigate(`/trade?asset1=${token.assetId}`)} size="medium" kind="secondary">
         Trade
       </Button>
     </Root>
   );
-};
+});
 export default DesktopTokenTableRow;

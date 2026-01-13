@@ -14,6 +14,7 @@ import RoundTokenIcon from "@components/RoundTokenIcon";
 import { observer } from "mobx-react-lite";
 import SocialMediaAndFav from "@screens/ExploreToken/SocialMediaAndFav";
 import { useTheme } from "@emotion/react";
+import { useStores } from "@stores";
 
 interface IProps {}
 
@@ -38,6 +39,8 @@ const PriceTitle = styled(Text)`
 const ExploreTokenImpl: React.FC<IProps> = observer(() => {
   const vm = useExploreTokenVM();
   const theme = useTheme();
+  const { accountStore } = useStores();
+  const changeColor = vm.statistics?.change24H.gte(0) ? accountStore.priceColors.upAlt : accountStore.priceColors.downAlt;
   return (
     <Layout>
       <ExploreLayout>
@@ -64,10 +67,7 @@ const ExploreTokenImpl: React.FC<IProps> = observer(() => {
         <SizedBox height={8} />
         <Row alignItems="end" mainAxisSize="fit-content">
           <PriceTitle size="large">$ {vm.statistics?.currentPrice.toFormat(4) ?? ""}&nbsp;</PriceTitle>
-          <Text
-            style={{ lineHeight: "16px", whiteSpace: "nowrap" }}
-            type={vm.statistics?.change24H.gte(0) ? "success" : "error"}
-          >
+          <Text style={{ lineHeight: "16px", whiteSpace: "nowrap", color: changeColor }}>
             {vm.statistics?.changeStr ?? ""}
           </Text>
         </Row>

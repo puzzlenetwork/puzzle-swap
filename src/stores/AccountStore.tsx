@@ -18,7 +18,7 @@ import { wavesAddress2eth } from "@waves/node-api-js";
 import { ProviderKeeperMobile } from "@keeper-wallet/provider-keeper-mobile";
 import { ProviderAura } from "waves-provider-aura";
 import { IDialogNotificationProps } from "@components/Dialog/DialogNotification";
-import { getCustomPublicKey, getSmartAccountAddress } from "@src/utils/userSettings";
+import { getCustomPublicKey, getSmartAccountAddress, isBearMarketEnabled } from "@src/utils/userSettings";
 
 export enum LOGIN_TYPE {
   SIGNER_SEED = "SIGNER_SEED",
@@ -95,6 +95,22 @@ class AccountStore {
   toggleTheme = (): void => {
     this.selectedTheme = this.selectedTheme === THEME_TYPE.LIGHT_THEME ? THEME_TYPE.DARK_THEME : THEME_TYPE.LIGHT_THEME;
   };
+
+  bearMarketEnabled: boolean = isBearMarketEnabled();
+
+  setBearMarketEnabled = (v: boolean) => {
+    this.bearMarketEnabled = v;
+  };
+
+  // Colors for up/down price movements (inverted in bear market mode)
+  get priceColors() {
+    return {
+      up: this.bearMarketEnabled ? "#ef5350" : "#26a69a",
+      down: this.bearMarketEnabled ? "#26a69a" : "#ef5350",
+      upAlt: this.bearMarketEnabled ? "#ED827E" : "#35A15A",
+      downAlt: this.bearMarketEnabled ? "#35A15A" : "#ED827E"
+    };
+  }
 
   isAccScripted = false;
   setIsAccScripted = (v: boolean) => (this.isAccScripted = v);

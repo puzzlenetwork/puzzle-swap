@@ -152,7 +152,7 @@ const Settings: React.FC<IProps> = () => {
             content={
               <Text>
                 {isConnected
-                  ? "Simulate swap before execution to get the exact output amount."
+                  ? "Uses on-chain request to calculate an exact value to receive. Will take longer to load rates, however they will become more accurate."
                   : "Connect wallet to use this feature."}
               </Text>
             }
@@ -160,7 +160,7 @@ const Settings: React.FC<IProps> = () => {
             <Row alignItems="center" justifyContent="space-between" style={{ gap: 8}}>
               <Row alignItems="center" style={{ gap: 8}}>
                 <Text fitContent weight={500}>
-                  Exact number to receive
+                  Exact Mode
                 </Text>
                 <InfoIcon />
               </Row>
@@ -174,14 +174,14 @@ const Settings: React.FC<IProps> = () => {
             config={{ placement: "bottom-end", trigger: "click" }}
             content={
               <Text>
-                Show exchange rates (e.g. 1 WAVES = 21.75 PUZZLE) next to the swap button.
+                Display swap price nominated in both assets, e.g. 1 PUZZLE = 20 WAVES and 1 WAVES = 0.05 PUZZLE.
               </Text>
             }
           >
             <Row alignItems="center" justifyContent="space-between" style={{ gap: 8}}>
               <Row alignItems="center" style={{ gap: 8}}>
                 <Text fitContent weight={500}>
-                  Show price ratio
+                  Reverse Price
                 </Text>
                 <InfoIcon />
               </Row>

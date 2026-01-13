@@ -5,6 +5,7 @@ import Text from "@components/Text";
 import { observer } from "mobx-react-lite";
 import { useOldExploreVM } from "@screens/OldExplorer/OldExploreVm";
 import StatisticsGroup from "@components/StatisticsGroup";
+import { useStores } from "@stores";
 interface IProps {}
 
 const Root = styled.div`
@@ -33,6 +34,7 @@ const StyledCard = styled(Card)``;
 
 const TokenStatistics: React.FC<IProps> = () => {
   const vm = useOldExploreVM();
+  const { accountStore } = useStores();
   return (
     <Root>
       <StyledCard style={{ flex: 1 }}>
@@ -45,7 +47,7 @@ const TokenStatistics: React.FC<IProps> = () => {
             },
             {
               title: "24h change",
-              valueColor: vm.tokenDetails.change24H?.gte(0) ? "#35A15A" : "#ED827E",
+              valueColor: vm.tokenDetails.change24H?.gte(0) ? accountStore.priceColors.upAlt : accountStore.priceColors.downAlt,
               value: `${vm.tokenDetails.change24H?.gte(0) ? "+" : "-"} ${vm.tokenDetails.change24H?.toFormat(2)} %`
             },
             {

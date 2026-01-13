@@ -11,6 +11,7 @@ export interface IUserSettings {
   customPublicKey?: string;
   dryRunEnabled?: boolean;
   showRatesEnabled?: boolean;
+  bearMarketEnabled?: boolean;
 }
 
 export const isValidPublicKey = (key: string): boolean => {
@@ -62,6 +63,11 @@ export const isDryRunEnabled = (): boolean => {
 export const isShowRatesEnabled = (): boolean => {
   const settings = getUserSettings();
   return settings?.showRatesEnabled ?? false;
+};
+
+export const isBearMarketEnabled = (): boolean => {
+  const settings = getUserSettings();
+  return settings?.bearMarketEnabled ?? false;
 };
 
 export const saveUserSettings = (settings: IUserSettings): void => {

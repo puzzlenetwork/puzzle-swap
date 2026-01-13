@@ -10,6 +10,8 @@ import { Column, Row } from "@src/components/Flex";
 import Text from "@components/Text";
 import BN from "@src/utils/BN";
 import { useNavigate } from "react-router-dom";
+import { useStores } from "@stores";
+import { observer } from "mobx-react-lite";
 
 interface IProps {
   token: IToken;
@@ -31,8 +33,10 @@ const Fav = styled.img`
   height: 24px;
   cursor: pointer;
 `;
-const MobileTokenTableRow: React.FC<IProps> = ({ token, fav, handleWatchListChange, rate, change, vol24 }) => {
+const MobileTokenTableRow: React.FC<IProps> = observer(({ token, fav, handleWatchListChange, rate, change, vol24 }) => {
   const navigate = useNavigate();
+  const { accountStore } = useStores();
+  const changeColor = change?.gt(0) ? accountStore.priceColors.upAlt : accountStore.priceColors.downAlt;
   return (
     <Root className="gridRow">
       <Row alignItems="center">
@@ -52,7 +56,7 @@ const MobileTokenTableRow: React.FC<IProps> = ({ token, fav, handleWatchListChan
       <Column justifyContent="flex-end" crossAxisSize="max">
         <Text textAlign="end">$ {rate?.gte(0.0001) ? rate?.toFormat(4) : rate?.toFormat(8)}</Text>
         {change != null && vol24 != null && !vol24.eq(0) ? (
-          <Text textAlign="end" nowrap type={change?.gt(0) ? "success" : "error"} size="small">
+          <Text textAlign="end" nowrap size="small" style={{ color: changeColor }}>
             {change?.toFormat(2)}%
           </Text>
         ) : (
@@ -61,5 +65,5 @@ const MobileTokenTableRow: React.FC<IProps> = ({ token, fav, handleWatchListChan
       </Column>
     </Root>
   );
-};
+});
 export default MobileTokenTableRow;
