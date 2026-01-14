@@ -8,13 +8,14 @@ import Input from "@components/Input";
 import Button from "@components/Button";
 import TextButton from "@components/TextButton";
 import Tooltip from "@components/Tooltip";
+import Switch from "@components/Switch";
 import { ReactComponent as Close } from "@src/assets/icons/darkClose.svg";
 import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
 import { ReactComponent as SuccessIcon } from "@src/assets/icons/success.svg";
 import { ReactComponent as ErrorIcon } from "@src/assets/icons/error.svg";
 import { ReactComponent as SettingsIcon } from "@src/assets/icons/settings.svg";
 import { normalizeUrl } from "@src/constants/api";
-import { getUserSettings, saveUserSettings, isValidPublicKey, getSmartAccountAddress, IUserSettings } from "@src/utils/userSettings";
+import { getUserSettings, saveUserSettings, isValidPublicKey, getSmartAccountAddress, IUserSettings, isBearMarketEnabled } from "@src/utils/userSettings";
 import axios from "axios";
 import { THEME_TYPE } from "@src/themes/ThemeProvider";
 import { ReactComponent as SunIcon } from "@src/assets/icons/sun.svg";
@@ -240,6 +241,7 @@ const SettingsSidebar: React.FC<IProps> = ({ visible, onClose }) => {
   const [customNode, setCustomNode] = useState(initData?.customNode ?? "");
   const [backendUrl, setBackendUrl] = useState(initData?.backendUrl ?? "");
   const [customPublicKey, setCustomPublicKey] = useState(initData?.customPublicKey ?? "");
+  const [bearMarketEnabled, setBearMarketEnabled] = useState(initData?.bearMarketEnabled ?? false);
   const [testStatus, setTestStatus] = useState<"idle" | "testing" | "success" | "error">("idle");
   const [testMessage, setTestMessage] = useState("");
   const [backendTestStatus, setBackendTestStatus] = useState<"idle" | "testing" | "success" | "error">("idle");
@@ -251,6 +253,7 @@ const SettingsSidebar: React.FC<IProps> = ({ visible, onClose }) => {
       setCustomNode(data?.customNode ?? "");
       setBackendUrl(data?.backendUrl ?? "");
       setCustomPublicKey(data?.customPublicKey ?? "");
+      setBearMarketEnabled(data?.bearMarketEnabled ?? false);
       setTestStatus("idle");
       setTestMessage("");
       setBackendTestStatus("idle");
@@ -263,7 +266,8 @@ const SettingsSidebar: React.FC<IProps> = ({ visible, onClose }) => {
   const hasChanges =
     customNode !== (initData?.customNode ?? "") ||
     backendUrl !== (initData?.backendUrl ?? "") ||
-    customPublicKey !== (initData?.customPublicKey ?? "");
+    customPublicKey !== (initData?.customPublicKey ?? "") ||
+    bearMarketEnabled !== (initData?.bearMarketEnabled ?? false);
   const canSave = hasChanges && isPublicKeyValid;
 
   const handleSave = () => {
@@ -272,9 +276,13 @@ const SettingsSidebar: React.FC<IProps> = ({ visible, onClose }) => {
       slippage: initData?.slippage ?? 1,
       customNode: customNode.trim(),
       backendUrl: backendUrl.trim(),
-      customPublicKey: trimmedPublicKey
+      customPublicKey: trimmedPublicKey,
+      bearMarketEnabled
     };
     saveUserSettings(settings);
+
+    // Update bear market mode in store for reactive updates
+    accountStore.setBearMarketEnabled(bearMarketEnabled);
 
     if (publicKeyChanged) {
       accountStore.setSmartAccountAddress(getSmartAccountAddress());
@@ -292,6 +300,7 @@ const SettingsSidebar: React.FC<IProps> = ({ visible, onClose }) => {
     setCustomNode(initData?.customNode ?? "");
     setBackendUrl(initData?.backendUrl ?? "");
     setCustomPublicKey(initData?.customPublicKey ?? "");
+    setBearMarketEnabled(initData?.bearMarketEnabled ?? false);
     setTestStatus("idle");
     setTestMessage("");
     setBackendTestStatus("idle");
@@ -386,6 +395,20 @@ const SettingsSidebar: React.FC<IProps> = ({ visible, onClose }) => {
               {accountStore.selectedTheme === THEME_TYPE.DARK_THEME ? <MoonIcon /> : <SunIcon />}
               <span>{accountStore.selectedTheme === THEME_TYPE.DARK_THEME ? "Dark Theme" : "Light Theme"}</span>
             </ThemeToggle>
+            <Column crossAxisSize="max" style={{ marginTop: 16 }}>
+              <Tooltip
+                config={{ placement: "bottom-start", trigger: "click" }}
+                content={<Text>Inverse color scheme to red up/green down for bear market preferences.</Text>}
+              >
+                <Row alignItems="center" justifyContent="space-between" style={{ gap: 8 }}>
+                  <Row alignItems="center" style={{ gap: 8 }}>
+                    <Text fitContent weight={500}>Bear Market</Text>
+                    <InfoIcon style={{ width: 16, height: 16 }} />
+                  </Row>
+                  <Switch value={bearMarketEnabled} onChange={() => setBearMarketEnabled(!bearMarketEnabled)} />
+                </Row>
+              </Tooltip>
+            </Column>
           </Section>
 
           <Section>

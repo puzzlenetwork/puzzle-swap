@@ -12,6 +12,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Skeleton from "react-loading-skeleton";
 import Loading from "@components/Loading";
+import { useStores } from "@stores";
 
 dayjs.extend(relativeTime);
 
@@ -56,7 +57,7 @@ const TransactionRow = styled(Row)`
   }
 `;
 
-const TypeBadge = styled.span<{ txType: string }>`
+const TypeBadge = styled.span<{ txType: string; upColor: string; downColor: string }>`
   display: inline-block;
   width: 50px;
   text-align: center;
@@ -65,34 +66,34 @@ const TypeBadge = styled.span<{ txType: string }>`
   font-size: 11px;
   font-weight: 500;
   text-transform: capitalize;
-  background: ${({ txType }) => {
+  background: ${({ txType, upColor, downColor }) => {
     switch (txType) {
       case "swap":
         return "rgba(112, 117, 233, 0.15)";
       case "deposit":
       case "stake":
-        return "rgba(53, 161, 90, 0.15)";
+        return `${upColor}26`;
       case "withdraw":
       case "unstake":
-        return "rgba(237, 130, 126, 0.15)";
+        return `${downColor}26`;
       case "claim":
-        return "rgba(31, 137, 67, 0.15)";
+        return `${upColor}26`;
       default:
         return "rgba(128, 130, 197, 0.15)";
     }
   }};
-  color: ${({ txType }) => {
+  color: ${({ txType, upColor, downColor }) => {
     switch (txType) {
       case "swap":
         return "#7075E9";
       case "deposit":
       case "stake":
-        return "#35A15A";
+        return upColor;
       case "withdraw":
       case "unstake":
-        return "#ED827E";
+        return downColor;
       case "claim":
-        return "#1F8943";
+        return upColor;
       default:
         return "#8082C5";
     }
@@ -208,6 +209,7 @@ const TransactionHistory: React.FC<IProps> = ({
   hasMore = true,
   subtitle
 }) => {
+  const { accountStore } = useStores();
   if (loading) {
     return (
       <Root>
@@ -265,7 +267,7 @@ const TransactionHistory: React.FC<IProps> = ({
                   onClick={() => window.open(`${EXPLORER_URL}/transactions/${tx.id}`)}
                 >
                   <TransactionDetails tx={tx} />
-                  <TypeBadge txType={tx.type}>{tx.type}</TypeBadge>
+                  <TypeBadge txType={tx.type} upColor={accountStore.priceColors.upAlt} downColor={accountStore.priceColors.downAlt}>{tx.type}</TypeBadge>
                   <TimeText fitContent nowrap type="secondary">
                     {(dayjs(tx.timestamp) as any).fromNow()}
                   </TimeText>

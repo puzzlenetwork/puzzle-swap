@@ -16,6 +16,7 @@ import BN from "@src/utils/BN";
 import { getUserSettings, saveUserSettings, IUserSettings } from "@src/utils/userSettings";
 import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
+import { useStores } from "@stores";
 
 interface IProps {}
 
@@ -53,6 +54,8 @@ const Tag = styled.div<{ active?: boolean }>`
 const Settings: React.FC<IProps> = () => {
   const vm = useSwapVM();
   const theme = useTheme();
+  const { accountStore, notificationStore } = useStores();
+  const isConnected = !!accountStore.address;
   const initData = getUserSettings();
   const initialSlippage = new BN(initData?.slippage ?? 1).times(10);
   const initialDryRun = initData?.dryRunEnabled ?? false;
@@ -148,19 +151,41 @@ const Settings: React.FC<IProps> = () => {
             config={{ placement: "bottom-end", trigger: "click" }}
             content={
               <Text>
-                Simulate swap before execution to check if it will succeed.
-                Helps prevent failed transactions.
+                {isConnected
+                  ? "Uses on-chain request to calculate an exact value to receive. Will take longer to load rates, however they will become more accurate."
+                  : "Connect wallet to use this feature."}
               </Text>
             }
           >
             <Row alignItems="center" justifyContent="space-between" style={{ gap: 8}}>
               <Row alignItems="center" style={{ gap: 8}}>
                 <Text fitContent weight={500}>
-                  Dry run (simulation)
+                  Exact Mode
                 </Text>
                 <InfoIcon />
               </Row>
-              <Switch value={dryRunEnabled} onChange={() => setDryRunEnabled(!dryRunEnabled)} />
+              <Switch value={dryRunEnabled} disabled={!isConnected} onChange={() => setDryRunEnabled(!dryRunEnabled)} />
+            </Row>
+          </Tooltip>
+        </Column>
+        <SizedBox height={16} />
+        <Column crossAxisSize="max">
+          <Tooltip
+            config={{ placement: "bottom-end", trigger: "click" }}
+            content={
+              <Text>
+                Display swap price nominated in both assets, e.g. 1 PUZZLE = 20 WAVES and 1 WAVES = 0.05 PUZZLE.
+              </Text>
+            }
+          >
+            <Row alignItems="center" justifyContent="space-between" style={{ gap: 8}}>
+              <Row alignItems="center" style={{ gap: 8}}>
+                <Text fitContent weight={500}>
+                  Reverse Price
+                </Text>
+                <InfoIcon />
+              </Row>
+              <Switch value={showRatesEnabled} onChange={() => setShowRatesEnabled(!showRatesEnabled)} />
             </Row>
           </Tooltip>
         </Column>

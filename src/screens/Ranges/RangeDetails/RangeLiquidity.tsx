@@ -16,6 +16,10 @@ const AdaptiveFlex = styled(Column)`
   }
 `;
 
+const LiquidityValues = styled(Row)`
+  flex-wrap: wrap;
+`;
+
 const HeaderRow = styled(Row)`
   justify-content: space-between;
   align-items: center;
@@ -38,15 +42,15 @@ const RangeLiquidity: React.FC<HTMLAttributes<HTMLElement>> = (props) => {
       <SizedBox height={12} />
       <AdaptiveFlex>
         <Column>
-          <AdaptiveFlex>
-            <Text fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px" }}>
+          <LiquidityValues>
+            <Text fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px", whiteSpace: "nowrap" }}>
               {vm.range ? `$${vm.range.liquidity.toFormat(2)} /` : <Skeleton width={120} height={24} />}
             </Text>
             <SizedBox width={4} />
-            <Text type="secondary" fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px" }}>
+            <Text type="secondary" fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px", whiteSpace: "nowrap" }}>
               {vm.range ? `$${vm.range.virtualLiquidity.toFormat(2)}` : <Skeleton width={120} height={24} />}
             </Text>
-          </AdaptiveFlex>
+          </LiquidityValues>
         </Column>
         <SizedBox width={20} />
         <Column alignItems="flex-end" justifyContent="flex-end">
