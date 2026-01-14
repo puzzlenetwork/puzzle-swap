@@ -189,6 +189,27 @@ const Settings: React.FC<IProps> = () => {
             </Row>
           </Tooltip>
         </Column>
+        <SizedBox height={16} />
+        <Column crossAxisSize="max">
+          <Tooltip
+            config={{ placement: "bottom-end", trigger: "click" }}
+            content={
+              <Text>
+                Show exchange rates (e.g. 1 WAVES = 21.75 PUZZLE) next to the swap button.
+              </Text>
+            }
+          >
+            <Row alignItems="center" justifyContent="space-between" style={{ gap: 8}}>
+              <Row alignItems="center" style={{ gap: 8}}>
+                <Text fitContent weight={500}>
+                  Show rates
+                </Text>
+                <InfoIcon />
+              </Row>
+              <Switch value={showRatesEnabled} onChange={() => setShowRatesEnabled(!showRatesEnabled)} />
+            </Row>
+          </Tooltip>
+        </Column>
       </Column>
       <SizedBox height={24} />
       {/*footer*/}
