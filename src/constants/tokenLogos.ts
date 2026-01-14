@@ -291,7 +291,7 @@ const tokenLogos: Record<string, string> = {
   WBTCu:
     "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599/logo.png",
   ETHu: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png",
-  WSOL: "https://waves-bridge-assets.web.app/logo/SOL/So11111111111111111111111111111111111111112.png",
+  SOL: "https://waves-bridge-assets.web.app/logo/SOL/So11111111111111111111111111111111111111112.png",
 
   TRUMP: "https://s2.coinmarketcap.com/static/img/coins/64x64/35336.png",
   MELANIA: "https://s2.coinmarketcap.com/static/img/coins/64x64/35347.png",
