@@ -3,6 +3,16 @@ import BN from "@src/utils/BN";
 import { IHistory } from "@src/utils/types";
 import { makeAutoObservable } from "mobx";
 
+// Mapping for normalizing token names from backend
+const TOKEN_NAME_MAP: Record<string, string> = {
+  wsol: "SOL",
+  WSOL: "SOL",
+};
+
+const normalizeTokenName = (name: string): string => {
+  return TOKEN_NAME_MAP[name] ?? name;
+};
+
 export interface IRangeAssetResponse {
   asset_id: string;
   balance: number;
@@ -175,7 +185,7 @@ export class RangeAsset {
     this.selloffStartHeight = new BN(params.selloff_start_height);
     this.shutdownBuy = params.shutdown_buy;
     this.shutdownSell = params.shutdown_sell;
-    this.name = params.name;
+    this.name = normalizeTokenName(params.name);
     this.realBalance = new BN(params.real_balance);
     this.share = new BN(params.share);
   }
@@ -189,7 +199,7 @@ export class Reward {
 
   constructor(params: IRewardResponse) {
     this.assetId = params.asset_id;
-    this.name = params.name;
+    this.name = normalizeTokenName(params.name);
     this.amount = new BN(params.amount);
     this.amountUsd = new BN(params.amount_usd);
   }
@@ -487,7 +497,7 @@ export class LPDataAsset {
   providedAmountUsd: BN;
   constructor(params: ILPDataAssetResponse) {
     this.assetId = params.asset_id;
-    this.name = params.name;
+    this.name = normalizeTokenName(params.name);
     this.earnedAmount = new BN(params.earned_amount);
     this.earnedAmountUsd = new BN(params.earned_amount_usd);
     this.providedAmount = new BN(params.provided_amount);
