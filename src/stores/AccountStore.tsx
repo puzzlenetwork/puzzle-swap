@@ -296,7 +296,8 @@ class AccountStore {
 
   subscribeToKeeperUpdate = () =>
     (window as any).WavesKeeper.on("update", (publicState: any) => {
-      this.setAddress(publicState.account?.address ?? null);
+      const newAddress = publicState.account?.address ?? null;
+      this.setAddress(newAddress);
     });
 
   serialize = (): ISerializedAccountStore => ({

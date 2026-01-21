@@ -35,7 +35,43 @@ export const ROUTES = {
   RANGES_DEPOSIT_ONE_TOKEN: "/ranges/:rangeAddress/depositOneToken",
   RANGES_WITHDRAW: "/ranges/:rangeAddress/withdraw",
   TERMS_OF_SERVICE: "/terms-of-service",
+  IDEAS: "/ideas",
 };
+
+export enum IDEA_STATUS {
+  PENDING = "pending",
+  IN_PROGRESS = "in_progress",
+  NEEDS_INFO = "needs_info",
+  TESTING = "testing",
+  DONE = "done",
+  REJECTED = "rejected"
+}
+
+export interface IIdea {
+  id: string;
+  address: string;
+  telegram: string;
+  description: string;
+  screenshots?: string[];
+  attachments?: string[];
+  status: IDEA_STATUS;
+  signature: string;
+  createdAt: string;
+  updatedAt: string;
+  likes?: string[];
+  dislikes?: string[];
+  bonusPoints?: number;
+  paidAmount?: number;
+  assignedTo?: string;
+}
+
+export interface IDeveloper {
+  address: string;
+  nickname?: string;
+  role: string;
+}
+
+export const IDEAS_API_URL = process.env.REACT_APP_IDEAS_API_URL || "http://localhost:3001/ideas-api";
 
 export const PRODUCTS = {
   SWAP: "https://swap.puzzle.network/",
