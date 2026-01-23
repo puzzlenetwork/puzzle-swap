@@ -71,7 +71,7 @@ export interface IDeveloper {
   role: string;
 }
 
-export const IDEAS_API_URL = process.env.REACT_APP_IDEAS_API_URL || "http://localhost:3001/ideas-api";
+export const IDEAS_API_URL = process.env.REACT_APP_IDEAS_API_URL || "https://stage2.puzzle.name/ideas-api";
 
 export const PRODUCTS = {
   SWAP: "https://swap.puzzle.network/",
