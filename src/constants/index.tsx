@@ -36,6 +36,7 @@ export const ROUTES = {
   RANGES_WITHDRAW: "/ranges/:rangeAddress/withdraw",
   TERMS_OF_SERVICE: "/terms-of-service",
   IDEAS: "/ideas",
+  LEADERBOARD: "/ideas/leaderboard",
 };
 
 export enum IDEA_STATUS {
@@ -49,6 +50,7 @@ export enum IDEA_STATUS {
 
 export interface IIdea {
   id: string;
+  number?: number;
   address: string;
   telegram: string;
   description: string;

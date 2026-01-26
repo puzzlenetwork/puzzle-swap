@@ -231,6 +231,15 @@ const HintText = styled(Text)`
   color: ${({ theme }) => theme.colors.primary650};
 `;
 
+const HintLink = styled.a`
+  color: #9275CC;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 const AttachmentsSection = styled(Column)`
   gap: 8px;
   width: 100%;
@@ -546,7 +555,9 @@ const SubmitIdeaModal: React.FC<Props> = ({ visible, onClose }) => {
               </AddMoreButton>
             ) : null}
           </AttachmentsSection>
-          <HintText>Google Drive or Imgur ({attachments.length}/{MAX_ATTACHMENTS})</HintText>
+          <HintText>
+            Upload images to <HintLink href="https://imgur.com/upload" target="_blank" rel="noopener noreferrer">Imgur</HintLink> or <HintLink href="https://drive.google.com" target="_blank" rel="noopener noreferrer">Google Drive</HintLink> and paste link ({attachments.length}/{MAX_ATTACHMENTS})
+          </HintText>
         </FormGroup>
 
         {error && <ErrorText>{error}</ErrorText>}

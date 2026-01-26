@@ -40,6 +40,7 @@ import 'react-notifications-component/dist/theme.css';
 import TermsOfService from "@screens/TermsOfService";
 import SettingsSidebar from "@components/SettingsSidebar";
 import Ideas from "@screens/Ideas/Ideas";
+import Leaderboard from "@screens/Leaderboard/Leaderboard";
 
 const Root = styled(Column)`
   width: 100%;
@@ -122,6 +123,9 @@ const App: React.FC = () => {
 
         {/* Ideas */}
         <Route path={ROUTES.IDEAS} element={<Ideas />} />
+
+        {/* Leaderboard */}
+        <Route path={ROUTES.LEADERBOARD} element={<Leaderboard />} />
       </Routes>
       <WalletModal onClose={() => accountStore.setWalletModalOpened(false)} visible={accountStore.walletModalOpened} />
       <SendAssetModal

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
+import { useNavigate } from "react-router-dom";
 import { Column, Row } from "@components/Flex";
 import { useStores } from "@stores";
 import Text from "@components/Text";
@@ -9,7 +10,8 @@ import IdeaCard from "./IdeaCard";
 import SubmitIdeaModal from "./SubmitIdeaModal";
 import StatsCard from "./StatsCard";
 import AdminPanel from "./AdminPanel";
-import { IDEA_STATUS } from "@src/constants";
+import LeaderboardTable from "@screens/Leaderboard/LeaderboardTable";
+import { IDEA_STATUS, ROUTES } from "@src/constants";
 
 const Root = styled(Column)`
   width: 100%;
@@ -113,6 +115,57 @@ const StatsRow = styled.div`
   @media (max-width: 500px) {
     grid-template-columns: 1fr;
     gap: 12px;
+  }
+`;
+
+const LeaderboardSection = styled(Column)`
+  width: 100%;
+  background: ${({ theme }) => theme.colors.white};
+  border-radius: 16px;
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
+  overflow: hidden;
+`;
+
+const LeaderboardHeader = styled.div`
+  padding: 16px 20px;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.primary100};
+
+  @media (max-width: 500px) {
+    padding: 12px 16px;
+  }
+`;
+
+const LeaderboardTitle = styled(Text)`
+  font-size: 16px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.primary800};
+`;
+
+const ViewAllWrapper = styled.div`
+  padding: 16px 20px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+
+  @media (max-width: 500px) {
+    padding: 12px 16px;
+  }
+`;
+
+const ViewAllButton = styled.button`
+  padding: 10px 24px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #9275CC 0%, #7075E9 100%);
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
   }
 `;
 
@@ -403,6 +456,7 @@ const LightbulbIcon = () => (
 
 const Ideas: React.FC = () => {
   const { ideasStore, accountStore } = useStores();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = React.useState<TabType>("all");
   const [statusFilter, setStatusFilter] = React.useState<StatusFilter>("open");
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -411,6 +465,7 @@ const Ideas: React.FC = () => {
     document.title = "Puzzle Swap | Ideas";
     ideasStore.fetchIdeas();
     ideasStore.fetchGlobalStats();
+    ideasStore.fetchLeaderboard();
   }, [ideasStore]);
 
   useEffect(() => {
@@ -489,14 +544,21 @@ const Ideas: React.FC = () => {
         <SubmitButton onClick={handleSubmitClick}>Submit Idea</SubmitButton>
       </HeaderSection>
 
+      {ideasStore.leaderboard.length > 0 && (
+        <LeaderboardSection>
+          <LeaderboardHeader>
+            <LeaderboardTitle>Top Contributors</LeaderboardTitle>
+          </LeaderboardHeader>
+          <LeaderboardTable data={ideasStore.leaderboard} limit={3} />
+          <ViewAllWrapper>
+            <ViewAllButton onClick={() => navigate(ROUTES.LEADERBOARD)}>
+              View All
+            </ViewAllButton>
+          </ViewAllWrapper>
+        </LeaderboardSection>
+      )}
+
       <StatsRow>
-        {accountStore.address && (
-          <StatsCard
-            title="My Ranking"
-            value={myRank ? `#${myRank}` : "—"}
-            subtitle="in leaderboard"
-          />
-        )}
         <StatsCard
           title="Completed Ideas"
           value={(globalStats?.completedIdeas || 0).toString()}

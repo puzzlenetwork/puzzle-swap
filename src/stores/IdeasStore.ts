@@ -27,6 +27,12 @@ class IdeasStore {
   myRank: number = 0;
   setMyRank = (rank: number) => (this.myRank = rank);
 
+  // Full leaderboard data
+  leaderboard: Array<{ address: string; totalPoints: number; completedIdeas: number; totalPaid: number }> = [];
+  setLeaderboard = (data: typeof this.leaderboard) => (this.leaderboard = data);
+  leaderboardLoading = false;
+  setLeaderboardLoading = (v: boolean) => (this.leaderboardLoading = v);
+
   // Global platform stats
   globalStats: { totalIdeas: number; completedIdeas: number; totalPaid: number } | null = null;
   setGlobalStats = (stats: typeof this.globalStats) => (this.globalStats = stats);
@@ -130,6 +136,22 @@ class IdeasStore {
       });
     } catch (error) {
       console.error("Error fetching leaderboard:", error);
+    }
+  };
+
+  fetchLeaderboard = async () => {
+    this.setLeaderboardLoading(true);
+    try {
+      const response = await fetch(`${IDEAS_API_URL}/ideas/leaderboard`);
+      if (!response.ok) throw new Error("Failed to fetch leaderboard");
+      const data = await response.json();
+      runInAction(() => {
+        this.setLeaderboard(data.leaderboard || []);
+      });
+    } catch (error) {
+      console.error("Error fetching leaderboard:", error);
+    } finally {
+      this.setLeaderboardLoading(false);
     }
   };
 

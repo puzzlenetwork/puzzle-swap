@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
+import copy from "copy-to-clipboard";
 import { IIdea, IDEA_STATUS } from "@src/constants";
 import { useStores } from "@stores";
 import centerEllipsis from "@src/utils/centerEllipsis";
@@ -30,6 +31,18 @@ const CompactCard = styled.div`
   @media (max-width: 768px) {
     padding: 10px 12px;
     gap: 10px;
+  }
+`;
+
+const IdeaNumber = styled.span`
+  font-size: 13px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.primary300};
+  min-width: 28px;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+    min-width: 24px;
   }
 `;
 
@@ -239,6 +252,28 @@ const ModalAddress = styled.span`
   font-size: 15px;
   font-weight: 600;
   color: ${({ theme }) => theme.colors.primary800};
+`;
+
+const AddressRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const CopyButton = styled.button<{ copied?: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border: none;
+  background: transparent;
+  color: ${({ copied, theme }) => copied ? "#35A15A" : theme.colors.primary300};
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    color: ${({ copied }) => copied ? "#35A15A" : "#9275CC"};
+  }
 `;
 
 const TelegramHandle = styled.a`
@@ -738,6 +773,19 @@ const TelegramIcon = () => (
   </svg>
 );
 
+const CopyIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+    <path d="M11.0833 5.25H6.41667C5.77233 5.25 5.25 5.77233 5.25 6.41667V11.0833C5.25 11.7277 5.77233 12.25 6.41667 12.25H11.0833C11.7277 12.25 12.25 11.7277 12.25 11.0833V6.41667C12.25 5.77233 11.7277 5.25 11.0833 5.25Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M2.91667 8.75H2.33333C2.02391 8.75 1.72717 8.62708 1.50838 8.40829C1.28958 8.1895 1.16667 7.89275 1.16667 7.58333V2.91667C1.16667 2.60725 1.28958 2.3105 1.50838 2.09171C1.72717 1.87292 2.02391 1.75 2.33333 1.75H7C7.30942 1.75 7.60617 1.87292 7.82496 2.09171C8.04375 2.3105 8.16667 2.60725 8.16667 2.91667V3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+    <path d="M11.6667 3.5L5.25 9.91667L2.33333 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 const DriveIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
     <path d="M8.01 19.03L3.01 10.98L7.99 3H16.01L21 10.98L16.02 19.03H8.01Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
@@ -787,7 +835,7 @@ const RewardValue = styled.span`
 `;
 
 const IdeaCard: React.FC<Props> = ({ idea }) => {
-  const { ideasStore, accountStore } = useStores();
+  const { ideasStore, accountStore, notificationStore } = useStores();
   const isMyIdea = accountStore.address?.toLowerCase() === idea.address.toLowerCase();
   const isDeveloper = accountStore.address && (ideasStore.allDevelopers || []).some(
     d => d.address.toLowerCase() === accountStore.address!.toLowerCase()
@@ -799,6 +847,8 @@ const IdeaCard: React.FC<Props> = ({ idea }) => {
   const [showBonusInput, setShowBonusInput] = useState(false);
   const [bonusPoints, setBonusPoints] = useState<number | "">("");
   const [paidAmount, setPaidAmount] = useState<string>("");
+  const [copiedAddress, setCopiedAddress] = useState(false);
+  const [copiedTelegram, setCopiedTelegram] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -832,6 +882,21 @@ const IdeaCard: React.FC<Props> = ({ idea }) => {
   };
 
   const getInitials = (address: string) => address.slice(0, 2).toUpperCase();
+
+  const handleCopyAddress = () => {
+    copy(idea.address);
+    setCopiedAddress(true);
+    notificationStore.notify("Address copied", { type: "success", title: "Copied!" });
+    setTimeout(() => setCopiedAddress(false), 2000);
+  };
+
+  const handleCopyTelegram = () => {
+    if (!idea.telegram) return;
+    copy(`@${idea.telegram}`);
+    setCopiedTelegram(true);
+    notificationStore.notify("Telegram copied", { type: "success", title: "Copied!" });
+    setTimeout(() => setCopiedTelegram(false), 2000);
+  };
 
   const handleStatusChange = async (newStatus: IDEA_STATUS) => {
     if (updating || newStatus === idea.status) {
@@ -889,6 +954,7 @@ const IdeaCard: React.FC<Props> = ({ idea }) => {
   return (
     <>
       <CompactCard onClick={() => setIsOpen(true)}>
+        {idea.number !== undefined && <IdeaNumber>#{idea.number}</IdeaNumber>}
         <Avatar>{getInitials(idea.address)}</Avatar>
         <ContentWrapper>
           <TopRow>
@@ -936,16 +1002,26 @@ const IdeaCard: React.FC<Props> = ({ idea }) => {
             <ModalUserInfo>
               <ModalAvatar>{getInitials(idea.address)}</ModalAvatar>
               <ModalUserDetails>
-                <ModalAddress>{centerEllipsis(idea.address, 6)}</ModalAddress>
+                <AddressRow>
+                  <ModalAddress>{centerEllipsis(idea.address, 6)}</ModalAddress>
+                  <CopyButton copied={copiedAddress} onClick={handleCopyAddress} title="Copy address">
+                    {copiedAddress ? <CheckIcon /> : <CopyIcon />}
+                  </CopyButton>
+                </AddressRow>
                 {idea.telegram && (
-                  <TelegramHandle
-                    href={`https://t.me/${idea.telegram}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <TelegramIcon />
-                    @{idea.telegram}
-                  </TelegramHandle>
+                  <AddressRow>
+                    <TelegramHandle
+                      href={`https://t.me/${idea.telegram}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <TelegramIcon />
+                      @{idea.telegram}
+                    </TelegramHandle>
+                    <CopyButton copied={copiedTelegram} onClick={handleCopyTelegram} title="Copy telegram">
+                      {copiedTelegram ? <CheckIcon /> : <CopyIcon />}
+                    </CopyButton>
+                  </AddressRow>
                 )}
               </ModalUserDetails>
             </ModalUserInfo>
