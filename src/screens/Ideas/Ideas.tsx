@@ -232,6 +232,7 @@ const TabsRow = styled.div`
   border-radius: 12px;
   flex-shrink: 0;
   width: fit-content;
+  box-sizing: border-box;
 
   @media (max-width: 500px) {
     width: 100%;
@@ -259,6 +260,7 @@ const Tab = styled.button<{ active?: boolean }>`
   box-shadow: ${({ active }) =>
     active ? "0 2px 8px rgba(0, 0, 0, 0.08)" : "none"};
   white-space: nowrap;
+  box-sizing: border-box;
 
   &:hover {
     color: ${({ active }) => (active ? "#9275CC" : "#8265BC")};
@@ -537,7 +539,7 @@ const Ideas: React.FC = () => {
         <TitleBlock>
           <Title>Community Driven Development</Title>
           <Subtitle>
-            We actively develop community connections. Browse, propose, evaluate
+            We actively develop community suggestions. Browse, propose, evaluate
             ideas and help us become better. Share your vision and earn rewards!
           </Subtitle>
         </TitleBlock>

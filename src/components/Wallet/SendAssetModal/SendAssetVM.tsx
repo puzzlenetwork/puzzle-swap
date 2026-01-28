@@ -103,8 +103,7 @@ class SendAssetVM {
         txId &&
           notificationStore.notify(
             `${amount} ${assetToSend.symbol} were successfully sent to ${centerEllipsis(
-              this.recipientAddress ?? "",
-              6
+              this.recipientAddress ?? ""
             )}. You can track the transaction in explorer.`,
             {
               type: "success",

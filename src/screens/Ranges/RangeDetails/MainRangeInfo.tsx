@@ -91,7 +91,7 @@ const MainRangeInfo: React.FC<IProps> = ({ isMobile }) => {
               Smart Contract
             </Text>
             <TextButton prefix={link} onClick={handleSmartContractClick}>
-              {vm.range ? centerEllipsis(vm.range.address ?? "", 8) : <Skeleton width={84} height={16} />}
+              {vm.range ? centerEllipsis(vm.range.address ?? "") : <Skeleton width={84} height={16} />}
             </TextButton>
           </Column>
           <SizedBox width={24} height={16} />
@@ -100,7 +100,7 @@ const MainRangeInfo: React.FC<IProps> = ({ isMobile }) => {
               Range Creator
             </Text>
             <TextButton prefix={link} onClick={() => vm.range && window.open(`${WSCAN_EXPLORER_URL}${vm.range.owner}`)}>
-              {vm.range ? centerEllipsis(vm.range.owner ?? "", 8) : <Skeleton width={84} height={16} />}
+              {vm.range ? centerEllipsis(vm.range.owner ?? "") : <Skeleton width={84} height={16} />}
             </TextButton>
           </Column>
           <SizedBox height={20} />

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 import copy from "copy-to-clipboard";
+import * as identityImg from "identity-img";
 import { IIdea, IDEA_STATUS } from "@src/constants";
 import { useStores } from "@stores";
 import centerEllipsis from "@src/utils/centerEllipsis";
@@ -46,24 +47,16 @@ const IdeaNumber = styled.span`
   }
 `;
 
-const Avatar = styled.div`
+const Avatar = styled.img`
   width: 32px;
   height: 32px;
   min-width: 32px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #9275CC 0%, #7075E9 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 11px;
-  font-weight: 600;
+  border-radius: 50%;
 
   @media (max-width: 768px) {
     width: 28px;
     height: 28px;
     min-width: 28px;
-    font-size: 10px;
   }
 `;
 
@@ -229,17 +222,10 @@ const ModalUserInfo = styled.div`
   gap: 12px;
 `;
 
-const ModalAvatar = styled.div`
+const ModalAvatar = styled.img`
   width: 44px;
   height: 44px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #9275CC 0%, #7075E9 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 14px;
-  font-weight: 600;
+  border-radius: 50%;
 `;
 
 const ModalUserDetails = styled.div`
@@ -881,7 +867,8 @@ const IdeaCard: React.FC<Props> = ({ idea }) => {
     });
   };
 
-  const getInitials = (address: string) => address.slice(0, 2).toUpperCase();
+  const avatar = identityImg.create(idea.address, { size: 32 * 3 });
+  const modalAvatar = identityImg.create(idea.address, { size: 44 * 3 });
 
   const handleCopyAddress = () => {
     copy(idea.address);
@@ -955,10 +942,10 @@ const IdeaCard: React.FC<Props> = ({ idea }) => {
     <>
       <CompactCard onClick={() => setIsOpen(true)}>
         {idea.number !== undefined && <IdeaNumber>#{idea.number}</IdeaNumber>}
-        <Avatar>{getInitials(idea.address)}</Avatar>
+        <Avatar src={avatar} alt="avatar" />
         <ContentWrapper>
           <TopRow>
-            <Address>{centerEllipsis(idea.address, 4)}</Address>
+            <Address>{centerEllipsis(idea.address)}</Address>
             <Separator>·</Separator>
             <Description>{idea.description}</Description>
           </TopRow>
@@ -1000,10 +987,10 @@ const IdeaCard: React.FC<Props> = ({ idea }) => {
         <Modal isOpen={isOpen} onClick={(e) => e.stopPropagation()}>
           <ModalHeader>
             <ModalUserInfo>
-              <ModalAvatar>{getInitials(idea.address)}</ModalAvatar>
+              <ModalAvatar src={modalAvatar} alt="avatar" />
               <ModalUserDetails>
                 <AddressRow>
-                  <ModalAddress>{centerEllipsis(idea.address, 6)}</ModalAddress>
+                  <ModalAddress>{centerEllipsis(idea.address)}</ModalAddress>
                   <CopyButton copied={copiedAddress} onClick={handleCopyAddress} title="Copy address">
                     {copiedAddress ? <CheckIcon /> : <CopyIcon />}
                   </CopyButton>
@@ -1100,7 +1087,7 @@ const IdeaCard: React.FC<Props> = ({ idea }) => {
               {idea.paidAmount ? (
                 <RewardItem>
                   <RewardLabel>Reward</RewardLabel>
-                  <RewardValue>{idea.paidAmount.toLocaleString()} PUZZLE</RewardValue>
+                  <RewardValue>{idea.paidAmount.toLocaleString("en-US")} PUZZLE</RewardValue>
                 </RewardItem>
               ) : null}
               {idea.bonusPoints ? (

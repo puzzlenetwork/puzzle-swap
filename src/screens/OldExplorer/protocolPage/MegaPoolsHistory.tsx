@@ -127,7 +127,7 @@ const MegaPoolsHistory: React.FC<IProps> = () => {
             return "default";
         }
       })(),
-      account: centerEllipsis(v.sender, 6),
+      account: centerEllipsis(v.sender),
       time: (dayjs(v.timestamp) as any).fromNow()
     }));
     setTr(data);

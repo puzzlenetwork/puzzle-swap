@@ -493,7 +493,7 @@ class AccountStore {
   }
 
   get addressToDisplay(): string {
-    return this.ethAddress == null ? centerEllipsis(this.address ?? "", 6) : centerEllipsis(this.ethAddress ?? "", 10);
+    return this.ethAddress == null ? centerEllipsis(this.address ?? "") : centerEllipsis(this.ethAddress ?? "");
   }
 
   get signInMethod(): string {

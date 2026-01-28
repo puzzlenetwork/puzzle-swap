@@ -233,10 +233,11 @@ const HintText = styled(Text)`
 
 const HintLink = styled.a`
   color: #9275CC;
-  text-decoration: none;
+  text-decoration: underline;
+  font-weight: 500;
 
   &:hover {
-    text-decoration: underline;
+    color: #7055AA;
   }
 `;
 
@@ -467,7 +468,7 @@ const SubmitIdeaModal: React.FC<Props> = ({ visible, onClose }) => {
           </WalletIcon>
           <Column style={{ gap: 2 }}>
             <WalletLabel>Connected Wallet</WalletLabel>
-            <WalletAddress>{centerEllipsis(accountStore.address || "", 12)}</WalletAddress>
+            <WalletAddress>{centerEllipsis(accountStore.address || "")}</WalletAddress>
           </Column>
         </WalletInfo>
 

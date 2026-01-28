@@ -896,7 +896,7 @@ const AdminPanel: React.FC = () => {
   };
 
   const handleRemoveUser = async (address: string) => {
-    if (!window.confirm(`Remove user ${centerEllipsis(address, 6)}?`)) return;
+    if (!window.confirm(`Remove user ${centerEllipsis(address)}?`)) return;
 
     try {
       const timestamp = Date.now();
@@ -1103,11 +1103,11 @@ const AdminPanel: React.FC = () => {
                   <UserDetails>
                     <AddressRow>
                       {user.nickname && <Address style={{ fontFamily: 'inherit' }}>{user.nickname}</Address>}
-                      <Address>{centerEllipsis(user.address, 6)}</Address>
+                      <Address>{centerEllipsis(user.address)}</Address>
                       <Badge role={user.role}>{user.role}</Badge>
                     </AddressRow>
                     <AddedInfo>
-                      Added by {centerEllipsis(user.addedBy, 4)} • {formatDate(user.addedAt)}
+                      Added by {centerEllipsis(user.addedBy)} • {formatDate(user.addedAt)}
                     </AddedInfo>
                   </UserDetails>
                 </UserInfo>
@@ -1177,10 +1177,10 @@ const AdminPanel: React.FC = () => {
                     <RankBadge rank={rank}>{rank}</RankBadge>
                     <LeaderboardAddress>
                       <AddressMain>
-                        {nickname || centerEllipsis(entry.address, 6)}
+                        {nickname || centerEllipsis(entry.address)}
                       </AddressMain>
                       {nickname && (
-                        <AddressSub>{centerEllipsis(entry.address, 6)}</AddressSub>
+                        <AddressSub>{centerEllipsis(entry.address)}</AddressSub>
                       )}
                     </LeaderboardAddress>
                     <StatCell>
@@ -1239,7 +1239,7 @@ const AdminPanel: React.FC = () => {
           <ModalContent onClick={(e) => e.stopPropagation()}>
             <ModalHeader>
               <ModalTitle>
-                Completed Ideas by {getDeveloperNickname(selectedUserAddress) || centerEllipsis(selectedUserAddress, 6)}
+                Completed Ideas by {getDeveloperNickname(selectedUserAddress) || centerEllipsis(selectedUserAddress)}
               </ModalTitle>
               <CloseButton onClick={() => setSelectedUserAddress(null)}>×</CloseButton>
             </ModalHeader>

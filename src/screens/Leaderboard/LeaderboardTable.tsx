@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
+import * as identityImg from "identity-img";
 import { Column } from "@components/Flex";
 import Text from "@components/Text";
 import centerEllipsis from "@src/utils/centerEllipsis";
@@ -100,7 +101,18 @@ const RankCell = styled.div<{ rank: number }>`
 const AddressCell = styled.div`
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 8px;
+`;
+
+const Avatar = styled.img`
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+
+  @media (max-width: 500px) {
+    width: 20px;
+    height: 20px;
+  }
 `;
 
 const AddressText = styled(Text)`
@@ -229,7 +241,8 @@ const LeaderboardTable: React.FC<Props> = ({ data, limit, showCurrentUser = true
           <TableRow key={entry.address} isCurrentUser={isCurrentUser} rank={rank}>
             <RankCell rank={rank}>{getMedal(rank)}</RankCell>
             <AddressCell>
-              <AddressText>{centerEllipsis(entry.address, 6)}</AddressText>
+              <Avatar src={identityImg.create(entry.address, { size: 24 * 3 })} alt="avatar" />
+              <AddressText>{centerEllipsis(entry.address)}</AddressText>
               <CopyButton onClick={() => handleCopyAddress(entry.address)} title="Copy address">
                 <CopyIcon />
               </CopyButton>
@@ -237,7 +250,7 @@ const LeaderboardTable: React.FC<Props> = ({ data, limit, showCurrentUser = true
             </AddressCell>
             <HideOnSmall><ValueCell center>{entry.completedIdeas || 0}</ValueCell></HideOnSmall>
             <ValueCell style={{paddingLeft: 15}} highlight>{entry.totalPoints || 0}</ValueCell>
-            <HideOnMobile><ValueCell>{entry.totalPaid?.toLocaleString() || 0} PUZZLE</ValueCell></HideOnMobile>
+            <HideOnMobile><ValueCell>{entry.totalPaid?.toLocaleString("en-US") || 0} PUZZLE</ValueCell></HideOnMobile>
           </TableRow>
         );
       })}
