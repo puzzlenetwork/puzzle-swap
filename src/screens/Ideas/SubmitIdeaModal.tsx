@@ -412,11 +412,6 @@ const SubmitIdeaModal: React.FC<Props> = ({ visible, onClose }) => {
   const handleSubmit = async () => {
     setError("");
 
-    if (!telegram.trim()) {
-      setError("Please enter your Telegram username");
-      return;
-    }
-
     if (!description.trim()) {
       setError("Please describe your idea");
       return;
@@ -473,7 +468,7 @@ const SubmitIdeaModal: React.FC<Props> = ({ visible, onClose }) => {
         </WalletInfo>
 
         <FormGroup>
-          <Label>Telegram Username *</Label>
+          <Label>Telegram Username</Label>
           <Input
             type="text"
             placeholder="@username"
@@ -571,7 +566,7 @@ const SubmitIdeaModal: React.FC<Props> = ({ visible, onClose }) => {
           <CancelButton onClick={handleClose}>Cancel</CancelButton>
           <SubmitButton
             onClick={handleSubmit}
-            disabled={ideasStore.submitting || !telegram || !description}
+            disabled={ideasStore.submitting || !description}
           >
             {ideasStore.submitting ? "Signing..." : "Sign & Submit"}
           </SubmitButton>
