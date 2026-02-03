@@ -134,7 +134,7 @@ const SignTransaction: React.FC = () => {
 
     const {
       id, proofs, height, stateChanges, applicationStatus, spentComplexity,
-      timestamp, version, chainId, sender, senderPublicKey: _spk,
+      timestamp, version, chainId, sender,
       type: _type, feeAssetId: _feeAssetId, feeAsset: _feeAsset,
       ...cleanData
     } = tx;
@@ -185,7 +185,7 @@ const SignTransaction: React.FC = () => {
     try {
       const useCustomKey = publicKeySource === "settings" && hasCustomKey;
 
-      if (useCustomKey) {
+      if (!cleanTxData.senderPublicKey && useCustomKey) {
         cleanTxData.senderPublicKey = customPublicKey;
       }
 
