@@ -129,20 +129,29 @@ const SignTransaction: React.FC = () => {
   const hasCustomKey = !!customPublicKey;
 
   const prepareTransactionData = (tx: Record<string, unknown>): Record<string, unknown> => {
+    const txType = tx.type;
+    const txFeeAssetId = tx.feeAssetId;
+
     const {
       id, proofs, height, stateChanges, applicationStatus, spentComplexity,
       timestamp, version, chainId, sender, senderPublicKey: _spk,
+      type: _type, feeAssetId: _feeAssetId, feeAsset: _feeAsset,
       ...cleanData
     } = tx;
 
     if (typeof cleanData.fee === "number") {
-      if (cleanData.type === 4) {
+      if (txType === 4) {
         const feeInWaves = cleanData.fee / 100000000;
-        cleanData.fee = { tokens: feeInWaves.toString(), assetId: cleanData.feeAssetId || "WAVES" };
+        cleanData.fee = { tokens: feeInWaves.toString(), assetId: txFeeAssetId || "WAVES" };
       } else {
-        cleanData.fee = { assetId: cleanData.feeAssetId || "WAVES", amount: cleanData.fee };
+        cleanData.fee = { assetId: txFeeAssetId || "WAVES", amount: cleanData.fee };
       }
-      delete cleanData.feeAssetId;
+    }
+
+    if (txType === 4 && typeof cleanData.amount === "number") {
+      const amountInTokens = cleanData.amount / Math.pow(10, 8);
+      cleanData.amount = { tokens: amountInTokens.toString(), assetId: cleanData.assetId || "WAVES" };
+      delete cleanData.assetId;
     }
 
     return cleanData;
@@ -167,6 +176,7 @@ const SignTransaction: React.FC = () => {
       return;
     }
 
+    const txType = txData.type;
     const cleanTxData = prepareTransactionData(txData);
 
     setIsLoading(true);
@@ -182,7 +192,7 @@ const SignTransaction: React.FC = () => {
       if (accountStore.loginType === LOGIN_TYPE.KEEPER) {
         // Sign with Keeper
         const signedTx = await (window as any).WavesKeeper.signTransaction({
-          type: cleanTxData.type,
+          type: txType,
           data: cleanTxData
         });
         const parsedTx = JSON.parse(signedTx);
