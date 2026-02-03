@@ -78,7 +78,7 @@ const MainRangeInfo: React.FC<IProps> = ({ isMobile }) => {
         <Hat>
           <Column>
             <Row alignItems="center">
-              <Title size="large" weight={500} style={whiteText}>
+              <Title size="large" weight={500} style={{ ...whiteText, width: "fit-content", whiteSpace: "nowrap" }}>
                 Range {vm.range?.domain}
               </Title>
               {vm.range?.swapFee.gte(100) && (
