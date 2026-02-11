@@ -41,12 +41,16 @@ export default class StakeStore {
   }
 
   syncStats = async () => {
-    const data = await poolService.getStats();
-    const formattedData = Object.entries(data).reduce(
-      (acc, [name, v]) => ({ ...acc, [name]: new BN(v) }),
-      {} as IStakingStats
-    );
-    this._setStats(formattedData);
+    try {
+      const data = await poolService.getStats();
+      const formattedData = Object.entries(data).reduce(
+        (acc, [name, v]) => ({ ...acc, [name]: new BN(v) }),
+        {} as IStakingStats
+      );
+      this._setStats(formattedData);
+    } catch (e) {
+      // stats endpoint may be unavailable
+    }
   };
 
   syncPuzzleTokenStats = async () => {
