@@ -57,7 +57,7 @@ const AggregatorHistory: React.FC<IProps> = () => {
             const amount = BN.formatUnits(new BN(v.call.args[1].value).div(v.payment[0].amount), sIn?.decimals);
             return `1 ${sIn?.symbol} = ${amount.toString()} ${sOut?.symbol}`;
           })(),
-          account: <Text type="blue500">{centerEllipsis(v.sender, 6)}</Text>,
+          account: <Text type="blue500">{centerEllipsis(v.sender)}</Text>,
           poolName: poolsStore.pools.find(({ domain }) => v.domain === domain)?.title,
           time: (dayjs(v.timestamp) as any).fromNow()
         };

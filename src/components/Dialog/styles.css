@@ -11,6 +11,27 @@
 
 .rc-dialog {
   width: calc(100% - 32px);
+  max-width: 100%;
+}
+
+@media (max-width: 500px) {
+  .rc-dialog {
+    width: calc(100% - 24px) !important;
+    margin: 12px;
+  }
+
+  .rc-dialog-content {
+    border-radius: 12px;
+    min-height: auto;
+  }
+
+  .rc-dialog-body {
+    padding: 12px 8px 0 8px;
+  }
+
+  .rc-dialog-header {
+    padding: 12px 16px;
+  }
 }
 
 .rc-dialog-content {

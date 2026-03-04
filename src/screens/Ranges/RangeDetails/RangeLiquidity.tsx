@@ -20,6 +20,10 @@ const LiquidityText = styled(Text)`
   }
 `;
 
+const LiquidityValues = styled(Row)`
+  flex-wrap: wrap;
+`;
+
 const HeaderRow = styled(Row)`
   justify-content: space-between;
   align-items: center;
@@ -67,32 +71,26 @@ const RangeLiquidity: React.FC<HTMLAttributes<HTMLElement>> = (props) => {
           APY
         </Text>
       </HeaderRow>
-      <DesktopValuesRow style={{ marginTop: 12 }}>
-        <Row style={{ gap: 4 }}>
-          <LiquidityText fitContent>
-            {vm.range ? `$${vm.range.liquidity.toFormat(2)} /` : <Skeleton width={120} height={24} />}
-          </LiquidityText>
-          <LiquidityText type="secondary" fitContent>
-            {vm.range ? `$${vm.range.virtualLiquidity.toFormat(2)}` : <Skeleton width={120} height={24} />}
-          </LiquidityText>
-        </Row>
-        <LiquidityText fitContent>
-          {vm.range ? `${vm.currentApr.toFormat(2)}%` : <Skeleton width={80} height={24} />}
-        </LiquidityText>
-      </DesktopValuesRow>
-
-      {/* Mobile */}
-      <MobileContent>
-        <Text type="secondary" size="medium">
-          Fact / Virtual / APY
-        </Text>
-        <SizedBox height={12} />
-        <MobileValuesRow>
-          <LiquidityText fitContent>
-            {vm.range ? `$${vm.range.liquidity.toFormat(2)} / $${vm.range.virtualLiquidity.toFormat(2)} / ${vm.currentApr.toFormat(2)}%` : <Skeleton width={200} height={18} />}
-          </LiquidityText>
-        </MobileValuesRow>
-      </MobileContent>
+      <SizedBox height={12} />
+      <AdaptiveFlex>
+        <Column>
+          <LiquidityValues>
+            <Text fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px", whiteSpace: "nowrap" }}>
+              {vm.range ? `$${vm.range.liquidity.toFormat(2)} /` : <Skeleton width={120} height={24} />}
+            </Text>
+            <SizedBox width={4} />
+            <Text type="secondary" fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px", whiteSpace: "nowrap" }}>
+              {vm.range ? `$${vm.range.virtualLiquidity.toFormat(2)}` : <Skeleton width={120} height={24} />}
+            </Text>
+          </LiquidityValues>
+        </Column>
+        <SizedBox width={20} />
+        <Column alignItems="flex-end" justifyContent="flex-end">
+          <Text fitContent style={{ fontSize: "20px", lineHeight: "24px" }}>
+            {vm.range ? `${vm.currentApr.toFormat(2)}%` : <Skeleton width={80} height={24} />}
+          </Text>
+        </Column>
+      </AdaptiveFlex>
     </Card>
   );
 };

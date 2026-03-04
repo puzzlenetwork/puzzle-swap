@@ -130,7 +130,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
                 Smart Contract
               </Text>
               <TextButton prefix={link} onClick={handleSmartContractClick}>
-                {centerEllipsis(vm.pool?.address ?? "", 8)}
+                {centerEllipsis(vm.pool?.address ?? "")}
               </TextButton>
             </Column>
             <Column>
@@ -140,7 +140,7 @@ const MainPoolInfo: React.FC<IProps> = () => {
               <Text type="light" size="medium">
                 {vm.pool.isCustom ? (
                   <TextButton prefix={link} onClick={() => window.open(`${EXPLORER_URL}/${vm.pool?.owner}`)}>
-                    {centerEllipsis(vm.pool?.owner ?? "", 8)}
+                    {centerEllipsis(vm.pool?.owner ?? "")}
                   </TextButton>
                 ) : (
                   <TextButton prefix={puzzleIcon}>Puzzle Swap</TextButton>
