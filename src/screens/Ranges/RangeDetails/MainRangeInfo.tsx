@@ -14,6 +14,7 @@ import centerEllipsis from "@src/utils/centerEllipsis";
 import TextButton from "@components/TextButton";
 import { themes } from "@src/themes/ThemeProvider";
 import Skeleton from "react-loading-skeleton";
+import Tag from "@src/components/Tag";
 
 interface IProps {
   isMobile?: boolean;
@@ -76,9 +77,16 @@ const MainRangeInfo: React.FC<IProps> = ({ isMobile }) => {
       <Column crossAxisSize="max">
         <Hat>
           <Column>
-            <Title size="large" weight={500} style={whiteText}>
-              Range {vm.range?.domain}
-            </Title>
+            <Row alignItems="center">
+              <Title size="large" weight={500} style={{ ...whiteText, width: "fit-content", whiteSpace: "nowrap" }}>
+                Range {vm.range?.domain}
+              </Title>
+              {vm.range?.swapFee.gte(100) && (
+                <Tag type="error" style={{ marginLeft: 8 }}>
+                  Paused
+                </Tag>
+              )}
+            </Row>
             <SizedBox height={4} />
             <Text type="purple300" size="medium">
               Trade fees: {vm.range ? `${vm.range.swapFee.toFormat(2)}%` : <Skeleton width={36} height={16} />}

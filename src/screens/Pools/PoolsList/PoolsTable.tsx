@@ -217,6 +217,11 @@ const PoolsTable: React.FC = () => {
                     Boosted APY 🚀
                   </Tag>
                 )}
+                {pool.swapFee >= 100 && (
+                  <Tag type="error">
+                    Paused
+                  </Tag>
+                )}
               </Row>
               <TokenTags tokens={pool.assets ?? []} />
             </Column>

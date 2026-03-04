@@ -91,7 +91,8 @@ class AddLiquidityInterfaceVM {
         const pool = this.rootStore.poolsStore.customPools.find(({ domain }) => domain === this.poolDomain);
         if (pool) {
           this._setPool(pool);
-          this.selectedTokenId = pool.base_token_id;
+          const hasBaseToken = pool.tokens.some(t => t.assetId === pool.base_token_id);
+          this.selectedTokenId = hasBaseToken ? pool.base_token_id : pool.tokens[0]?.assetId ?? null;
         }
         this.setInitialized(true);
       }
@@ -123,10 +124,14 @@ class AddLiquidityInterfaceVM {
   }
 
   public get baseToken() {
+    if (!this.pool) return undefined as any;
     if (this.selectedTokenId) {
-      return this.pool!.getAssetById(this.selectedTokenId)!;
+      const token = this.pool.getAssetById(this.selectedTokenId);
+      if (token) return token;
     }
-    return this.pool!.getAssetById(this.pool!.base_token_id)!;
+    const baseToken = this.pool.getAssetById(this.pool.base_token_id);
+    if (baseToken) return baseToken;
+    return this.pool.tokens[0];
   }
 
   get minPIssued() {

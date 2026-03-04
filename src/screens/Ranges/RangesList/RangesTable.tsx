@@ -18,6 +18,7 @@ import { useRangesListVm } from "./RangesListVm";
 import RangeNotFound from "./RangeNotFound";
 import useWindowSize from "@src/hooks/useWindowSize";
 import { ReactComponent as WarningIcon } from "@src/assets/icons/warning.svg";
+import Tag from "@src/components/Tag";
 import { THEME_TYPE, themes } from "@src/themes/ThemeProvider";
 import Tooltip from "@src/components/Tooltip";
 import Img from "@src/components/Img";
@@ -108,7 +109,14 @@ const RangesTable: React.FC = () => {
               <SizedBox width={16} />
               <Column crossAxisSize="max" justifyContent="space-between">
                 <SizedBox height={10} />
-                <Text weight={500}>Range {range.domain}</Text>
+                <Row alignItems="center">
+                  <Text fitContent weight={500} style={{ whiteSpace: "nowrap" }}>Range {range.domain}</Text>
+                  {range.swapFee.gte(100) && (
+                    <Tag type="error" style={{ marginLeft: 4 }}>
+                      Paused
+                    </Tag>
+                  )}
+                </Row>
                 <SizedBox height={8} />
                 <Row style={{ flexWrap: "wrap", gap: 4 }}>
                   {range.assets
