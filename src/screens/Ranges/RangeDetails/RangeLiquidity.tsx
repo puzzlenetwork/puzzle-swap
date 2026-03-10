@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import Text from "@src/components/Text";
 import { useRangeDetailsInterfaceVM } from "./RangeDetailsVM";
 import { HTMLAttributes } from "react";
-import { Row } from "@src/components/Flex";
+import { Row, Column, AdaptiveRow } from "@src/components/Flex";
 import styled from "@emotion/styled";
 import Skeleton from "react-loading-skeleton";
 
@@ -72,7 +72,7 @@ const RangeLiquidity: React.FC<HTMLAttributes<HTMLElement>> = (props) => {
         </Text>
       </HeaderRow>
       <SizedBox height={12} />
-      <AdaptiveFlex>
+      <AdaptiveRow>
         <Column>
           <LiquidityValues>
             <Text fitContent style={{ display: "inline", fontSize: "20px", lineHeight: "24px", whiteSpace: "nowrap" }}>
@@ -90,7 +90,7 @@ const RangeLiquidity: React.FC<HTMLAttributes<HTMLElement>> = (props) => {
             {vm.range ? `${vm.currentApr.toFormat(2)}%` : <Skeleton width={80} height={24} />}
           </Text>
         </Column>
-      </AdaptiveFlex>
+      </AdaptiveRow>
     </Card>
   );
 };
