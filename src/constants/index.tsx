@@ -9,6 +9,7 @@ export const ROUTES = {
   NOT_FOUND: "/404",
   STAKE: "/stake",
   PZL: "/pzl",
+  PWAVES: "/pwaves",
   TRADE: "/trade",
   LIMIT_ORDER: "/limitOrder",
   OLD_EXPLORE: "/classic-explore",
@@ -603,11 +604,13 @@ export const CONTRACT_ADDRESSES = {
   priceOracle: "3P8d1E1BLKoD52y3bQJ1bDTd2TD1gpaLn9t",
   layer2: "3PQoBfUKHkJAeGWhooLP7WS8ovb54av9Jp2",
   stPuzzle: "3PJUHFBuuztWicMTxBQh8LqJtQW6mxbJcwJ",
+  pWaves: "3PNfWAt2wdUxjJJKi7gXZTt7CgeP3QWjxAe",
   dryRun: "3PLtvRD5p5EDfrzNv1uwWu4qzF5cC4chDEt",
 };
 
 export const ASSET_IDS = {
   stPuzzle: "DgER5m4fWpSFXhXDBxBye1B4HHCwdRttsbU5LBz6XEYs",
+  pWaves: "Ftv7u2ybczYc46pPp7ixcQYYxqupAPscySaMC2DjPfrR",
 };
 export const PUZZLE_NFTS = [
   {

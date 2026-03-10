@@ -263,7 +263,8 @@ const Header: React.FC<IProps> = () => {
 
   const stakeSubMenu = [
     { name: "Stake", link: ROUTES.STAKE },
-    { name: "PZL", link: ROUTES.PZL }
+    { name: "PZL", link: ROUTES.PZL },
+    { name: "pWAVES", link: ROUTES.PWAVES }
   ];
 
   const products = [

@@ -13,6 +13,7 @@ import WithdrawLiquidity from "@screens/Pools/WithdrawLiquidity";
 import Trade from "@screens/Trade";
 import Stake from "@screens/Stake";
 import StakingNew from "@screens/StakingNew";
+import PWaves from "@screens/PWaves";
 import Ultrastake from "@screens/Ultrastake";
 import PoolSwap from "@screens/Pools/PoolSwap";
 import WalletModal from "@components/Wallet/WalletModal";
@@ -72,6 +73,7 @@ const App: React.FC = () => {
         {/* Stake */}
         <Route path={ROUTES.STAKE} element={<Stake />} />
          <Route path={ROUTES.PZL} element={<StakingNew />} />
+        <Route path={ROUTES.PWAVES} element={<PWaves />} />
         {/* Paper */}
         <Route path="/paper" element={<Paper />} />
 

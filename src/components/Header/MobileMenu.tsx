@@ -81,7 +81,8 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
 
   const stakeMenu = [
     { name: "Stake", link: ROUTES.STAKE, outer: false },
-    { name: "PZL", link: ROUTES.PZL, outer: false }
+    { name: "PZL", link: ROUTES.PZL, outer: false },
+    { name: "pWAVES", link: ROUTES.PWAVES, outer: false }
   ];
 
   const toolsMenu = [
