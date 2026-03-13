@@ -7,6 +7,7 @@ import tokenLogos from "@src/constants/tokenLogos";
 
 const HeroBanner = styled.div`
   width: 100%;
+  box-sizing: border-box;
   border-radius: 16px;
   padding: 24px;
   background: ${({ theme }) => theme.colors.card.background};
@@ -39,13 +40,7 @@ const HeroBanner = styled.div`
 const HeroContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
-
-  @media (min-width: 880px) {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
+  gap: 16px;
 `;
 
 const HeroLeft = styled(Column)`
@@ -55,18 +50,13 @@ const HeroLeft = styled(Column)`
 
 const HeroRight = styled(Row)`
   gap: 12px;
-  flex-wrap: wrap;
-
-  @media (min-width: 880px) {
-    flex-wrap: nowrap;
-  }
 `;
 
 const StatCard = styled.div`
   background: ${({ theme }) => theme.colors.primary100};
   border-radius: 12px;
-  padding: 14px 20px;
-  min-width: 120px;
+  padding: 10px 16px;
+  min-width: 100px;
   flex: 1;
   transition: background 0.2s ease-out;
 
@@ -88,7 +78,7 @@ const Title = styled.div`
 `;
 
 const StatValue = styled(Text)`
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1.2;
 `;
 
@@ -103,7 +93,7 @@ const PWavesHero: React.FC<Props> = ({ price, totalLocked }) => {
       <HeroContent>
         <HeroLeft>
           <Title>
-            <TokenIcon src={tokenLogos.WAVES} alt="pWAVES" />
+            <TokenIcon src={tokenLogos.pWAVES} alt="pWAVES" />
             <Text weight={500} size="large">
               pWAVES
             </Text>

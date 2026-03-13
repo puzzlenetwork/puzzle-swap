@@ -93,7 +93,7 @@ const PWavesMyBalances: React.FC = () => {
           </Column>
         </BalanceRow>
         <BalanceRow>
-          <SquareTokenIcon src={tokenLogos.WAVES} size="small" />
+          <SquareTokenIcon src={tokenLogos.pWAVES} size="small" />
           <SizedBox width={8} />
           <Column justifyContent="space-between">
             <Text type="secondary" size="small" style={{ marginBottom: 2 }}>pWAVES</Text>

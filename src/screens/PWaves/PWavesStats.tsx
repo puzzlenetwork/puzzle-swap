@@ -1,10 +1,10 @@
 import styled from "@emotion/styled";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import Text from "@components/Text";
 import Card from "@components/Card";
 import SizedBox from "@components/SizedBox";
-import { Column } from "@components/Flex";
 import Tabs from "@components/Tabs";
+import { createChart, AreaSeries, UTCTimestamp } from "lightweight-charts";
 
 const Root = styled.div`
   display: flex;
@@ -50,6 +50,11 @@ const PriceChange = styled.span<{ positive: boolean }>`
   margin-left: 4px;
 `;
 
+const ChartContainer = styled.div`
+  width: 100%;
+  height: 200px;
+`;
+
 interface StatsEntry {
   block: number;
   pWavesAmount: number;
@@ -74,6 +79,7 @@ interface Props {
 
 const PWavesStats: React.FC<Props> = ({ allStats, currentHeight }) => {
   const [activeTab, setActiveTab] = useState(0);
+  const chartContainerRef = useRef<HTMLDivElement>(null);
 
   const filteredStats = useMemo(() => {
     if (allStats.length === 0) return [];
@@ -82,6 +88,65 @@ const PWavesStats: React.FC<Props> = ({ allStats, currentHeight }) => {
     const minBlock = currentHeight - blocksBack;
     return allStats.filter(s => s.block >= minBlock);
   }, [allStats, currentHeight, activeTab]);
+
+  const chartData = useMemo(() => {
+    if (allStats.length === 0 || currentHeight === 0) return [];
+    const now = Date.now() / 1000;
+    return allStats.map(s => ({
+      time: Math.floor(now - (currentHeight - s.block) * 60) as UTCTimestamp,
+      value: s.price,
+    }));
+  }, [allStats, currentHeight]);
+
+  useEffect(() => {
+    if (!chartContainerRef.current || chartData.length === 0) return;
+
+    const chart = createChart(chartContainerRef.current, {
+      width: chartContainerRef.current.clientWidth,
+      height: 200,
+      layout: {
+        background: { color: "transparent" },
+        textColor: "#8082c5",
+      },
+      grid: {
+        vertLines: { color: "rgba(197, 203, 206, 0.1)" },
+        horzLines: { color: "rgba(197, 203, 206, 0.1)" },
+      },
+      rightPriceScale: {
+        borderColor: "rgba(197, 203, 206, 0.2)",
+      },
+      timeScale: {
+        borderColor: "rgba(197, 203, 206, 0.2)",
+        timeVisible: true,
+        secondsVisible: false,
+      },
+      crosshair: {
+        mode: 1,
+      },
+    });
+
+    const series = chart.addSeries(AreaSeries, {
+      lineColor: "#7075E9",
+      topColor: "rgba(112, 117, 233, 0.4)",
+      bottomColor: "rgba(112, 117, 233, 0.0)",
+      lineWidth: 2,
+    });
+
+    series.setData(chartData);
+    chart.timeScale().fitContent();
+
+    const handleResize = () => {
+      if (chartContainerRef.current) {
+        chart.applyOptions({ width: chartContainerRef.current.clientWidth });
+      }
+    };
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      chart.remove();
+    };
+  }, [chartData]);
 
   const apr = useMemo(() => {
     if (filteredStats.length < 2) return null;
@@ -110,6 +175,7 @@ const PWavesStats: React.FC<Props> = ({ allStats, currentHeight }) => {
       </Text>
       <SizedBox height={8} />
       <Container>
+        <ChartContainer ref={chartContainerRef} />
         <Tabs tabs={tabs} activeTab={activeTab} setActive={setActiveTab} />
         <StatsGrid>
           <StatItem>

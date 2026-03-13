@@ -98,6 +98,7 @@ import plethLogo from "@src/assets/tokens/PL-ETH.svg";
 import plusdtLogo from "@src/assets/tokens/PL-USDT.svg";
 import plpuzzleLogo from "@src/assets/tokens/PL-PUZZLE.svg";
 import romeLogo from "@src/assets/tokens/ROME.svg";
+import pWavesLogo from "@src/assets/tokens/pWaves.png";
 import pool5Logo from "@src/assets/tokens/5POOL.jpeg";
 import pzWebLogo from "@src/assets/tokens/WEBPOOL.svg";
 import pzUnitsLogo from "@src/assets/tokens/UNITS.jpeg";
@@ -305,7 +306,8 @@ const tokenLogos: Record<string, string> = {
   PZL: "https://raw.githubusercontent.com/puzzlenetwork/static/e9d3e0ab82c47fce0696b1afa528d7b7f5d52316/PZL.svg",
 
   USDC_ERC: usdcLogo,
-  PZ_BARSIK: "https://wx.network/static/icons/assets/GWMgup79SpFF3DTTbEZrVpAEYx1tLAH97pLpJiwFApDX.svg"
+  PZ_BARSIK: "https://wx.network/static/icons/assets/GWMgup79SpFF3DTTbEZrVpAEYx1tLAH97pLpJiwFApDX.svg",
+  pWAVES: pWavesLogo,
 };
 
 export default tokenLogos;
