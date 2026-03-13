@@ -53,6 +53,33 @@ const LinkText = styled.a`
   }
 `;
 
+const NodeIcon = styled.img`
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  flex-shrink: 0;
+`;
+
+const FallbackIcon = styled.div`
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: ${({ theme }) => theme.colors.primary300};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.primary800};
+`;
+
+const NodeInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
 const WeightBadge = styled.span`
   background: ${({ theme }) => theme.colors.primary100};
   border-radius: 6px;
@@ -68,8 +95,23 @@ interface NodeEntry {
   name: string | null;
 }
 
+const NODE_ICON_NAMES: Record<string, string> = {
+  "3P98uUFYSP3jRr76kUAeW96Vb2m4LZhrAAf": "WavesFunnyNode",
+  "3PLp1QsFxukK5nnTBYHAqjz9duWMriDkHeT": "dodllnode",
+  "3PCrRrwHEjGXFjYtXDsNv78f3Ch3CH3p6V1": "puzzleNode",
+  "3PFcMotvQA8vxzA9NFKFBz6AY7GXD1AgXKP": "subw@r",
+};
+
+const getNodeIconUrl = (address: string) => {
+  const iconName = NODE_ICON_NAMES[address];
+  return iconName
+    ? `https://configs.waves.exchange/leasing/icons/${iconName}_32.png`
+    : null;
+};
+
 const PWavesNodes: React.FC = () => {
   const [nodes, setNodes] = useState<NodeEntry[]>([]);
+  const [brokenIcons, setBrokenIcons] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const fetchNodes = async () => {
@@ -120,13 +162,26 @@ const PWavesNodes: React.FC = () => {
       <Container>
         {nodes.map((node) => (
           <NodeRow key={node.address}>
-            <LinkText
-              href={`${EXPLORER_URL}/address/${node.address}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {node.name || `${node.address.slice(0, 8)}...${node.address.slice(-6)}`}
-            </LinkText>
+            <NodeInfo>
+              {getNodeIconUrl(node.address) && !brokenIcons.has(node.address) ? (
+                <NodeIcon
+                  src={getNodeIconUrl(node.address)!}
+                  alt={node.name || node.address}
+                  onError={() => setBrokenIcons(prev => new Set(prev).add(node.address))}
+                />
+              ) : (
+                <FallbackIcon>
+                  {(node.name || node.address)[0].toUpperCase()}
+                </FallbackIcon>
+              )}
+              <LinkText
+                href={`${EXPLORER_URL}/address/${node.address}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {node.name || `${node.address.slice(0, 8)}...${node.address.slice(-6)}`}
+              </LinkText>
+            </NodeInfo>
             <WeightBadge>
               {((node.weight / totalWeight) * 100).toFixed(0)}%
             </WeightBadge>
