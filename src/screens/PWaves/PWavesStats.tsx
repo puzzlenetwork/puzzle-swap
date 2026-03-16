@@ -99,6 +99,11 @@ const PWavesStats: React.FC<Props> = ({ allStats, currentHeight }) => {
       topColor: "rgba(112, 117, 233, 0.4)",
       bottomColor: "rgba(112, 117, 233, 0.0)",
       lineWidth: 2,
+      priceFormat: {
+        type: "price",
+        precision: 6,
+        minMove: 0.000001,
+      },
     });
 
     series.setData(chartData);
