@@ -8,6 +8,14 @@ import makeNodeRequest from "@src/utils/makeNodeRequest";
 import { CONTRACT_ADDRESSES, EXPLORER_URL } from "@src/constants";
 import axios from "axios";
 
+import wavesCommanderIcon from "@src/assets/nodes/WavesCommander.png";
+import cryptinIcon from "@src/assets/nodes/cryptin.png";
+import auraIcon from "@src/assets/nodes/aura.png";
+import wavesFunnyNodeIcon from "@src/assets/nodes/WavesFunnyNode.png";
+import dodllnodeIcon from "@src/assets/nodes/dodllnode.png";
+import puzzleNodeIcon from "@src/assets/nodes/puzzleNode.png";
+import subwarIcon from "@src/assets/nodes/subw@r.png";
+
 const Root = styled.div`
   display: flex;
   flex-direction: column;
@@ -95,23 +103,31 @@ interface NodeEntry {
   name: string | null;
 }
 
-const NODE_ICON_NAMES: Record<string, string> = {
-  "3P98uUFYSP3jRr76kUAeW96Vb2m4LZhrAAf": "WavesFunnyNode",
-  "3PLp1QsFxukK5nnTBYHAqjz9duWMriDkHeT": "dodllnode",
-  "3PCrRrwHEjGXFjYtXDsNv78f3Ch3CH3p6V1": "puzzleNode",
-  "3PFcMotvQA8vxzA9NFKFBz6AY7GXD1AgXKP": "subw@r",
+const NODE_ICONS: Record<string, string> = {
+  "3P98uUFYSP3jRr76kUAeW96Vb2m4LZhrAAf": wavesFunnyNodeIcon,
+  "3PLp1QsFxukK5nnTBYHAqjz9duWMriDkHeT": dodllnodeIcon,
+  "3PCrRrwHEjGXFjYtXDsNv78f3Ch3CH3p6V1": puzzleNodeIcon,
+  "3PFcMotvQA8vxzA9NFKFBz6AY7GXD1AgXKP": subwarIcon,
+  "3PGiSJd2BjDyzR5Z28cgtGB584GjbhUTsdk": wavesCommanderIcon,
+  "3PPPTqGUYHJUYqKkRCV3kAS44guun9iN7J8": cryptinIcon,
+  "3PP4nrxNnL3xRkMAaUWXnerryUDVEttAurA": auraIcon,
 };
 
-const getNodeIconUrl = (address: string) => {
-  const iconName = NODE_ICON_NAMES[address];
-  return iconName
-    ? `https://configs.waves.exchange/leasing/icons/${iconName}_32.png`
-    : null;
+const NODE_NAMES: Record<string, string> = {
+  "3PGfXB5bEz7EkbtGMNUYop5aior5X6bUbvL": "WavesLease",
+  "3PGiSJd2BjDyzR5Z28cgtGB584GjbhUTsdk": "WavesCommander",
+  "3PA1KvFfq9VuJjg45p2ytGgaNjrgnLSgf4r": "Black Turtle Node",
+  "3P98uUFYSP3jRr76kUAeW96Vb2m4LZhrAAf": "WavesFunnyNode",
+  "3PBM36FThQAReDT3268sz5KCZ6t9BQ83qRg": "Elysium",
+  "3P8kbUdrXnsrGVnoEhj3qvZwCzv5snQ4zes": "LATAM Node",
+  "3PPPTqGUYHJUYqKkRCV3kAS44guun9iN7J8": "Cryptin",
+  "3PP4nrxNnL3xRkMAaUWXnerryUDVEttAurA": "Aura",
+  "3PLp1QsFxukK5nnTBYHAqjz9duWMriDkHeT": "dodllnode",
+  "3PCrRrwHEjGXFjYtXDsNv78f3Ch3CH3p6V1": "Puzzle Node",
 };
 
 const PWavesNodes: React.FC = () => {
   const [nodes, setNodes] = useState<NodeEntry[]>([]);
-  const [brokenIcons, setBrokenIcons] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const fetchNodes = async () => {
@@ -160,18 +176,19 @@ const PWavesNodes: React.FC = () => {
       </Text>
       <SizedBox height={8} />
       <Container>
-        {nodes.map((node) => (
+        {nodes.map((node) => {
+          const displayName = node.name || NODE_NAMES[node.address] || `${node.address.slice(0, 8)}...${node.address.slice(-6)}`;
+          return (
           <NodeRow key={node.address}>
             <NodeInfo>
-              {getNodeIconUrl(node.address) && !brokenIcons.has(node.address) ? (
+              {NODE_ICONS[node.address] ? (
                 <NodeIcon
-                  src={getNodeIconUrl(node.address)!}
-                  alt={node.name || node.address}
-                  onError={() => setBrokenIcons(prev => new Set(prev).add(node.address))}
+                  src={NODE_ICONS[node.address]}
+                  alt={displayName}
                 />
               ) : (
                 <FallbackIcon>
-                  {(node.name || node.address)[0].toUpperCase()}
+                  {displayName[0].toUpperCase()}
                 </FallbackIcon>
               )}
               <LinkText
@@ -179,14 +196,15 @@ const PWavesNodes: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {node.name || `${node.address.slice(0, 8)}...${node.address.slice(-6)}`}
+                {displayName}
               </LinkText>
             </NodeInfo>
             <WeightBadge>
               {((node.weight / totalWeight) * 100).toFixed(0)}%
             </WeightBadge>
           </NodeRow>
-        ))}
+          );
+        })}
       </Container>
     </Root>
   );
