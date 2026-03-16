@@ -70,9 +70,6 @@ const RateInfo = styled.div`
   background: ${({ theme }) => theme.colors.primary100};
   border-radius: 10px;
   padding: 10px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   border: 1px solid transparent;
   transition: border-color 0.2s ease-out;
 
@@ -226,8 +223,7 @@ const PWavesMintRedeem: React.FC<Props> = observer(({ currentPrice }) => {
         <Column style={{ gap: "16px", width: "100%" }}>
           {currentPrice && (
             <RateInfo>
-              <Text size="small" type="secondary">Exchange rate</Text>
-              <Text size="small" weight={500}>1 pWAVES = {currentPrice.toFixed(6)} WAVES</Text>
+              <Text size="small" type="secondary">Exchange rate: 1 pWAVES = {currentPrice.toFixed(6)} WAVES</Text>
             </RateInfo>
           )}
 

@@ -106,13 +106,13 @@ const PWaves: React.FC = () => {
             <Body>
               <LeftColumn>
                 <PWavesHero price={currentPrice} totalLocked={totalLocked} />
-                <PWavesMyBalances />
-                <PWavesMintRedeem currentPrice={currentPrice} />
+                <PWavesStats allStats={allStats} currentHeight={currentHeight} />
+                <PWavesNodes />
               </LeftColumn>
               <RightColumn>
-                <PWavesStats allStats={allStats} currentHeight={currentHeight} />
+                <PWavesMyBalances />
+                <PWavesMintRedeem currentPrice={currentPrice} />
                 <PWavesCalculator allStats={allStats} currentHeight={currentHeight} />
-                <PWavesNodes />
               </RightColumn>
             </Body>
           </Root>

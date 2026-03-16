@@ -18,37 +18,6 @@ const Container = styled(Card)`
   gap: 24px;
 `;
 
-const StatsGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-  width: 100%;
-
-  @media (min-width: 560px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-`;
-
-const StatItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 12px;
-  border-radius: 10px;
-  background: ${({ theme }) => theme.colors.primary100};
-  transition: background 0.2s ease-out;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.primary300};
-  }
-`;
-
-const PriceChange = styled.span<{ positive: boolean }>`
-  color: ${({ positive, theme }) => positive ? theme.colors.success500 : theme.colors.error500};
-  font-size: 12px;
-  font-weight: 500;
-  margin-left: 4px;
-`;
 
 const ChartContainer = styled.div`
   width: 100%;
@@ -90,13 +59,13 @@ const PWavesStats: React.FC<Props> = ({ allStats, currentHeight }) => {
   }, [allStats, currentHeight, activeTab]);
 
   const chartData = useMemo(() => {
-    if (allStats.length === 0 || currentHeight === 0) return [];
+    if (filteredStats.length === 0 || currentHeight === 0) return [];
     const now = Date.now() / 1000;
-    return allStats.map(s => ({
+    return filteredStats.map(s => ({
       time: Math.floor(now - (currentHeight - s.block) * 60) as UTCTimestamp,
       value: s.price,
     }));
-  }, [allStats, currentHeight]);
+  }, [filteredStats, currentHeight]);
 
   useEffect(() => {
     if (!chartContainerRef.current || chartData.length === 0) return;
@@ -148,26 +117,6 @@ const PWavesStats: React.FC<Props> = ({ allStats, currentHeight }) => {
     };
   }, [chartData]);
 
-  const apr = useMemo(() => {
-    if (filteredStats.length < 2) return null;
-    const first = filteredStats[0];
-    const last = filteredStats[filteredStats.length - 1];
-    const priceChange = (last.price - first.price) / first.price;
-    const blocksDiff = last.block - first.block;
-    if (blocksDiff === 0) return null;
-    return (priceChange / blocksDiff) * BLOCKS_PER_DAY * 365 * 100;
-  }, [filteredStats]);
-
-  const priceChangePercent = useMemo(() => {
-    if (filteredStats.length < 2) return null;
-    const first = filteredStats[0];
-    const last = filteredStats[filteredStats.length - 1];
-    return ((last.price - first.price) / first.price) * 100;
-  }, [filteredStats]);
-
-  const currentPrice = allStats.length > 0 ? allStats[allStats.length - 1].price : null;
-  const totalLocked = allStats.length > 0 ? allStats[allStats.length - 1].wavesAmount / 1e8 : null;
-
   return (
     <Root>
       <Text weight={500} type="secondary">
@@ -177,32 +126,6 @@ const PWavesStats: React.FC<Props> = ({ allStats, currentHeight }) => {
       <Container>
         <ChartContainer ref={chartContainerRef} />
         <Tabs tabs={tabs} activeTab={activeTab} setActive={setActiveTab} />
-        <StatsGrid>
-          <StatItem>
-            <Text type="secondary" size="small">APR</Text>
-            <Text weight={500}>{apr !== null ? `${apr.toFixed(2)}%` : "-"}</Text>
-          </StatItem>
-          <StatItem>
-            <Text type="secondary" size="small">pWAVES price</Text>
-            <Text weight={500}>
-              {currentPrice !== null ? `${currentPrice.toFixed(4)}` : "-"}
-              {priceChangePercent !== null && (
-                <PriceChange positive={priceChangePercent >= 0}>
-                  {priceChangePercent >= 0 ? "+" : ""}{priceChangePercent.toFixed(3)}%
-                </PriceChange>
-              )}
-            </Text>
-          </StatItem>
-          <StatItem>
-            <Text type="secondary" size="small">Total locked</Text>
-            <Text weight={500}>
-              {totalLocked !== null
-                ? `${totalLocked.toLocaleString(undefined, { maximumFractionDigits: 0 })} WAVES`
-                : "-"
-              }
-            </Text>
-          </StatItem>
-        </StatsGrid>
       </Container>
     </Root>
   );
