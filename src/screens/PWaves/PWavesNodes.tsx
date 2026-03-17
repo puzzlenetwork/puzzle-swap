@@ -16,9 +16,9 @@ import dodllnodeIcon from "@src/assets/nodes/dodllnode.png";
 import puzzleNodeIcon from "@src/assets/nodes/puzzleNode.png";
 import subwarIcon from "@src/assets/nodes/subw@r.png";
 import elysiumIcon from "@src/assets/nodes/elysium.svg";
-import latamNodeIcon from "@src/assets/nodes/latamNode.svg";
-import blackTurtleNodeIcon from "@src/assets/nodes/blackTurtleNode.svg";
-import wavesLeaseIcon from "@src/assets/nodes/wavesLease.svg";
+import latamNodeIcon from "@src/assets/nodes/latamNode.webp";
+import blackTurtleNodeIcon from "@src/assets/nodes/blackTurtleNode.webp";
+import wavesLeaseIcon from "@src/assets/nodes/wavesLease.webp";
 
 const Root = styled.div`
   display: flex;
