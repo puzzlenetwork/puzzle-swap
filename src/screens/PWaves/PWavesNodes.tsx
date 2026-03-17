@@ -15,6 +15,10 @@ import wavesFunnyNodeIcon from "@src/assets/nodes/WavesFunnyNode.png";
 import dodllnodeIcon from "@src/assets/nodes/dodllnode.png";
 import puzzleNodeIcon from "@src/assets/nodes/puzzleNode.png";
 import subwarIcon from "@src/assets/nodes/subw@r.png";
+import elysiumIcon from "@src/assets/nodes/elysium.svg";
+import latamNodeIcon from "@src/assets/nodes/latamNode.svg";
+import blackTurtleNodeIcon from "@src/assets/nodes/blackTurtleNode.svg";
+import wavesLeaseIcon from "@src/assets/nodes/wavesLease.svg";
 
 const Root = styled.div`
   display: flex;
@@ -111,6 +115,10 @@ const NODE_ICONS: Record<string, string> = {
   "3PGiSJd2BjDyzR5Z28cgtGB584GjbhUTsdk": wavesCommanderIcon,
   "3PPPTqGUYHJUYqKkRCV3kAS44guun9iN7J8": cryptinIcon,
   "3PP4nrxNnL3xRkMAaUWXnerryUDVEttAurA": auraIcon,
+  "3PBM36FThQAReDT3268sz5KCZ6t9BQ83qRg": elysiumIcon,
+  "3P8kbUdrXnsrGVnoEhj3qvZwCzv5snQ4zes": latamNodeIcon,
+  "3PA1KvFfq9VuJjg45p2ytGgaNjrgnLSgf4r": blackTurtleNodeIcon,
+  "3PGfXB5bEz7EkbtGMNUYop5aior5X6bUbvL": wavesLeaseIcon,
 };
 
 const NODE_NAMES: Record<string, string> = {

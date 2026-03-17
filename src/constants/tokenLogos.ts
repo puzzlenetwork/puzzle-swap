@@ -112,6 +112,8 @@ import wbriacashLogo from "@src/assets/tokens/WBriacash.svg";
 import wbriacash2Logo from "@src/assets/tokens/WBRIACASH2.svg";
 import sashaxLogo from "@src/assets/tokens/Sasha-X.svg";
 import gxwxLogo from "@src/assets/tokens/gxWX.svg";
+import wocLogo from "@src/assets/tokens/WOC.svg";
+import pzBarsikLogo from "@src/assets/tokens/PZ_BARSIK.svg";
 import baiLogo from "@src/assets/tokens/BAI.svg";
 import unit0Logo from "@src/assets/tokens/UNIT0.jpg";
 import romekeeperLogo from "@src/assets/tokens/ROMEKEEPER.svg";
@@ -306,8 +308,9 @@ const tokenLogos: Record<string, string> = {
   PZL: "https://raw.githubusercontent.com/puzzlenetwork/static/e9d3e0ab82c47fce0696b1afa528d7b7f5d52316/PZL.svg",
 
   USDC_ERC: usdcLogo,
-  PZ_BARSIK: "https://wx.network/static/icons/assets/GWMgup79SpFF3DTTbEZrVpAEYx1tLAH97pLpJiwFApDX.svg",
+  PZ_BARSIK: pzBarsikLogo,
   pWAVES: pWavesLogo,
+  WOC: wocLogo,
 };
 
 export default tokenLogos;
