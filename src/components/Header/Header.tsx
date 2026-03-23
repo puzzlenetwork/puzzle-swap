@@ -256,9 +256,12 @@ const Header: React.FC<IProps> = () => {
   const menuItems = [
     { name: "Explore", link: ROUTES.EXPLORE },
     { name: "Trade", link: ROUTES.TRADE },
-    { name: "Pools", link: ROUTES.POOLS },
-    { name: "Ranges", link: ROUTES.RANGES },
     { name: "Ideas", link: ROUTES.IDEAS }
+  ];
+
+  const lpsSubMenu = [
+    { name: "Pools", link: ROUTES.POOLS },
+    { name: "Ranges", link: ROUTES.RANGES }
   ];
 
   const stakeSubMenu = [
@@ -376,6 +379,19 @@ const Header: React.FC<IProps> = () => {
                 </MenuItem>
               );
             })}
+            <SubMenuContainer>
+              <SubMenuTrigger selected={lpsSubMenu.some(({ link }) => isRoutesEquals(link, location.pathname))}>
+                LPs
+                <Arrow style={{ width: 12, height: 12 }} />
+              </SubMenuTrigger>
+              <SubMenu className="submenu">
+                {lpsSubMenu.map(({ name, link }) => (
+                  <SubMenuItem key={name} to={link}>
+                    {name}
+                  </SubMenuItem>
+                ))}
+              </SubMenu>
+            </SubMenuContainer>
             <SubMenuContainer>
               <SubMenuTrigger selected={stakeSubMenu.some(({ link }) => isRoutesEquals(link, location.pathname))}>
                 Stake

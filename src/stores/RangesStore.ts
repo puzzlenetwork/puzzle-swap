@@ -164,10 +164,7 @@ export default class RangesStore {
   totalItems = 0;
 
   // Filter state
-  filter = {
-    sortBy: "apr" as "fact_liquidity" | "earned" | "virtual_liquidity" | "apr",
-    order: "desc" as "asc" | "desc"
-  };
+  filter = RangesStore.loadSorting();
 
   // Time range to show statistics
   timeRange = "30d" as "all" | "1d" | "7d" | "30d" | "90d" | "1y";
@@ -198,8 +195,26 @@ export default class RangesStore {
   // Methods for filtering
   setFilter = async (filter: { sortBy: "fact_liquidity" | "earned" | "virtual_liquidity" | "apr"; order: "asc" | "desc" }) => {
     this.filter = filter;
+    RangesStore.saveSorting(filter);
     await this.syncRanges();
   };
+
+  private static readonly SORTING_KEY = "puzzle-ranges-sorting";
+
+  private static loadSorting(): { sortBy: "fact_liquidity" | "earned" | "virtual_liquidity" | "apr"; order: "asc" | "desc" } {
+    try {
+      const raw = localStorage.getItem(RangesStore.SORTING_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed.sortBy && parsed.order) return parsed;
+      }
+    } catch {}
+    return { sortBy: "apr", order: "desc" };
+  }
+
+  private static saveSorting(filter: { sortBy: string; order: string }) {
+    localStorage.setItem(RangesStore.SORTING_KEY, JSON.stringify(filter));
+  }
 
   setTimeRange = async (timeRange: "all" | "1d" | "7d" | "30d" | "90d" | "1y") => {
     this.timeRange = timeRange;
