@@ -21,7 +21,7 @@ const Icon = styled.img`
   height: 24px;
 `;
 const MoreRangeInformation: React.FC<IProps> = ({ setOpenedShare }) => {
-  const linkToRange = "https://stage2.puzzle.name/ranged/";
+  const linkToRange = `${window.location.origin}/ranged/`;
   return (
     <Root>
       <Row
