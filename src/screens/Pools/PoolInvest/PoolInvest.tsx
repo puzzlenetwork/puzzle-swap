@@ -10,6 +10,7 @@ import SizedBox from "@components/SizedBox";
 import PoolInformation from "./PoolInformation";
 import { Column } from "@src/components/Flex";
 import TradesVolume from "./TradesVolume";
+import LiquidityFlow from "./LiquidityFlow";
 import PoolComposition from "./PoolComposition";
 import GoBack from "@components/GoBack";
 import MainPoolInfo from "./MainPoolInfo";
@@ -95,6 +96,7 @@ const PoolInvestImpl: React.FC = observer(() => {
               <MyPoolBalance />
               <LPStaking />
             </RightBlockMobile>
+            <LiquidityFlow />
             <TradesVolume />
             <PoolComposition />
             <PoolHistory />

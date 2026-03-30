@@ -78,6 +78,45 @@ class PoolInvestVM {
   history: IHistory[] = [];
   setHistory = (v: IHistory[]) => (this.history = v);
 
+  public liquidityFlowPeriod: "1d" | "7d" | "30d" | "90d" | "1y" = "7d";
+  public setLiquidityFlowPeriod = (v: "1d" | "7d" | "30d" | "90d" | "1y") => (this.liquidityFlowPeriod = v);
+
+  private get periodDays(): number {
+    const map: Record<string, number> = { "1d": 1, "7d": 7, "30d": 30, "90d": 90, "1y": 365 };
+    return map[this.liquidityFlowPeriod] ?? 7;
+  }
+
+  get liquidityFlowData(): { history: { time: number; liquidity: number }[]; change: BN; changePercent: BN; current: BN; previous: BN } {
+    const sorted = [...this.history]
+      .filter((h) => h.liquidity != null && h.liquidity > 0)
+      .sort((a, b) => a.time - b.time);
+
+    if (sorted.length < 2) {
+      return { history: [], change: BN.ZERO, changePercent: BN.ZERO, current: BN.ZERO, previous: BN.ZERO };
+    }
+
+    const now = sorted[sorted.length - 1].time;
+    const cutoff = now - this.periodDays * 86400;
+    const filtered = sorted.filter((h) => h.time >= cutoff);
+
+    if (filtered.length < 2) {
+      return { history: [], change: BN.ZERO, changePercent: BN.ZERO, current: BN.ZERO, previous: BN.ZERO };
+    }
+
+    const current = new BN(filtered[filtered.length - 1].liquidity);
+    const previous = new BN(filtered[0].liquidity);
+    const change = current.minus(previous);
+    const changePercent = previous.gt(0) ? change.times(100).div(previous) : BN.ZERO;
+
+    return {
+      history: filtered.map((h) => ({ time: h.time, liquidity: h.liquidity })),
+      change,
+      changePercent,
+      current,
+      previous
+    };
+  }
+
   public useMaxStakeUnstakeAmount: boolean = true;
   public setUseMaxStakeUnstakeAmount = (value: boolean) => (this.useMaxStakeUnstakeAmount = value);
 
