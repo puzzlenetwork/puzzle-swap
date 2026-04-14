@@ -13,6 +13,31 @@ import { Row } from "@src/components/Flex";
 import Tabs from "@src/components/Tabs";
 import Select from "@src/components/Select";
 
+const PERIOD_LABELS: Record<"1d" | "7d" | "30d" | "90d" | "1y", string> = {
+  "1d": "24h",
+  "7d": "7D",
+  "30d": "30D",
+  "90d": "90D",
+  "1y": "1Y"
+};
+
+const ChangePercentBadge = styled.span<{ positive: boolean }>`
+  color: ${({ positive, theme }) => (positive ? theme.colors.success : theme.colors.error500)};
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: ${({ positive, theme }) =>
+    positive ? (theme.colors.success ?? "#22c55e") + "18" : (theme.colors.error500 ?? "#ef4444") + "18"};
+  white-space: nowrap;
+`;
+
+const PeriodsRow = styled(Row)`
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+`;
+
 interface IProps {}
 
 const Root = styled.div<{ disabled?: boolean }>`
@@ -105,6 +130,9 @@ const RangeCharts: React.FC<IProps> = () => {
     return vm.chartData && vm.chartData.length <= (24 * 8);
   }, [vm.chartData]);
 
+  const periodsChange = vm.periodsChange;
+  const hasAnyPeriodData = periodsChange.some(({ changePercent }) => !changePercent.eq(0));
+
   return (
     <Root disabled={vm.chartData == null || vm.chartData.length < 2}>
       <Row style={isMobile ? { flexDirection: "column", gap: 12 } : {}}>
@@ -146,6 +174,20 @@ const RangeCharts: React.FC<IProps> = () => {
           />
         )}
       </Row>
+      {hasAnyPeriodData && (
+        <PeriodsRow>
+          {periodsChange.map(({ period, changePercent }) => {
+            const positive = changePercent.gte(0);
+            const isZero = changePercent.eq(0);
+            return (
+              <ChangePercentBadge key={period} positive={positive}>
+                {PERIOD_LABELS[period]}: {isZero ? "" : positive ? "+" : ""}
+                {changePercent.toFormat(2)}%
+              </ChangePercentBadge>
+            );
+          })}
+        </PeriodsRow>
+      )}
       <SizedBox height={8} />
       <Card>
         {activeTab !== 2 && (

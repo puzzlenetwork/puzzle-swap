@@ -603,6 +603,7 @@ export const CONTRACT_ADDRESSES = {
   proxyLimitOrders: "3PM4Mn2iwQnUkeMxTJJAuriiVEGAcQwDU5H",
   priceOracle: "3P8d1E1BLKoD52y3bQJ1bDTd2TD1gpaLn9t",
   layer2: "3PQoBfUKHkJAeGWhooLP7WS8ovb54av9Jp2",
+  rangesRouter: "3PJ269ccXMYkKo7mbJFPAhf9PaJvjNapViT",
   stPuzzle: "3PJUHFBuuztWicMTxBQh8LqJtQW6mxbJcwJ",
   pWaves: "3PNfWAt2wdUxjJJKi7gXZTt7CgeP3QWjxAe",
   dryRun: "3PLtvRD5p5EDfrzNv1uwWu4qzF5cC4chDEt",

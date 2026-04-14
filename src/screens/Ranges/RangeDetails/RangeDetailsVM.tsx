@@ -119,6 +119,9 @@ class RangeDetailsInterfaceVM {
   history: IHistory[] = [];
   setHistory = (v: IHistory[]) => (this.history = v);
 
+  public allPeriodsHistory: IHistory[] = [];
+  public setAllPeriodsHistory = (v: IHistory[]) => (this.allPeriodsHistory = v);
+
   public indexTokenBalance: BN = BN.ZERO;
   private setIndexBalance = (value: BN) => (this.indexTokenBalance = value);
 
@@ -318,6 +321,7 @@ class RangeDetailsInterfaceVM {
       () => this.range != null,
       () => {
         this.syncChartData("all");
+        this.syncAllPeriodsHistory();
         this.reloadRangeWithTimeRange("1m");
         this.syncIndexTokenInfo();
       }
@@ -389,6 +393,52 @@ class RangeDetailsInterfaceVM {
       this.setChartDataLoaded(data);
     });
   };
+
+  public syncAllPeriodsHistory = async () => {
+    const [startTime, endTime] = this.convertTimeRange("all");
+    rangesService.getChartData(this.rangeAddress, { startTime, endTime }).then((data) => {
+      if (!data) return;
+      this.setAllPeriodsHistory(data);
+    });
+  };
+
+  public get periodsChange(): { period: "1d" | "7d" | "30d" | "90d" | "1y"; changePercent: BN }[] {
+    const periods: { period: "1d" | "7d" | "30d" | "90d" | "1y"; days: number }[] = [
+      { period: "1d", days: 1 },
+      { period: "7d", days: 7 },
+      { period: "30d", days: 30 },
+      { period: "90d", days: 90 },
+      { period: "1y", days: 365 }
+    ];
+
+    const source =
+      this.allPeriodsHistory.length >= 2
+        ? this.allPeriodsHistory
+        : this.history.length >= 2
+          ? this.history
+          : [];
+
+    const sorted = [...source]
+      .filter((h) => h.liquidity != null && h.liquidity > 0)
+      .sort((a, b) => a.time - b.time);
+
+    if (sorted.length < 2) {
+      return periods.map(({ period }) => ({ period, changePercent: BN.ZERO }));
+    }
+
+    const now = sorted[sorted.length - 1].time;
+
+    return periods.map(({ period, days }) => {
+      const cutoff = now - days * 86400;
+      const filtered = sorted.filter((h) => h.time >= cutoff);
+      if (filtered.length < 2) return { period, changePercent: BN.ZERO };
+
+      const cur = new BN(filtered[filtered.length - 1].liquidity);
+      const prev = new BN(filtered[0].liquidity);
+      const pct = prev.gt(0) ? cur.minus(prev).times(100).div(prev) : BN.ZERO;
+      return { period, changePercent: pct };
+    });
+  }
 
   get rangeBalancesTable() {
     if (this.range?.assets == null) return null;

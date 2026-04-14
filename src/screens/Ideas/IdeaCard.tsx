@@ -373,6 +373,40 @@ const AttachmentLink = styled.a`
   }
 `;
 
+const ImgurPreview = styled.img`
+  width: 100px;
+  height: 75px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid ${({ theme }) => theme.colors.primary100};
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #9275CC;
+  }
+`;
+
+const getImgurDirectUrl = (url: string): string | null => {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.replace(/^www\./, "");
+    if (host !== "imgur.com" && host !== "i.imgur.com") return null;
+
+    if (host === "i.imgur.com") return url;
+
+    const path = parsed.pathname.replace(/^\/+/, "");
+    if (!path || path.startsWith("a/") || path.startsWith("gallery/") || path.startsWith("t/")) return null;
+
+    const id = path.split("/")[0].replace(/\.[a-zA-Z0-9]+$/, "");
+    if (!/^[a-zA-Z0-9]+$/.test(id)) return null;
+
+    return `https://i.imgur.com/${id}.jpg`;
+  } catch {
+    return null;
+  }
+};
+
 const ModalFooter = styled.div`
   display: flex;
   justify-content: space-between;
@@ -1038,6 +1072,17 @@ const IdeaCard: React.FC<Props> = ({ idea }) => {
                   Attachments
                 </AttachmentsLabel>
                 {idea.attachments.map((url, index) => {
+                  const imgurSrc = getImgurDirectUrl(url);
+                  if (imgurSrc) {
+                    return (
+                      <ImgurPreview
+                        key={index}
+                        src={imgurSrc}
+                        alt={`Attachment ${index + 1}`}
+                        onClick={() => window.open(url, "_blank")}
+                      />
+                    );
+                  }
                   const getShortName = (link: string) => {
                     try {
                       const match = link.match(/\/d\/([a-zA-Z0-9_-]+)/);

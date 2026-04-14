@@ -83,7 +83,8 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
   ];
 
   const stakeMenu = [
-    { name: "Stake", link: ROUTES.STAKE, outer: false },
+    { name: "Puzzle", link: ROUTES.STAKE, outer: false },
+    { name: "NFT", link: ROUTES.ULTRASTAKE, outer: false },
     { name: "PZL", link: ROUTES.PZL, outer: false },
     { name: "pWAVES", link: ROUTES.PWAVES, outer: false }
   ];

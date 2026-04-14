@@ -7,7 +7,7 @@ import {
   buildSuccessDepositToRangeDialogParams,
   IDialogNotificationProps
 } from "@src/components/Dialog/DialogNotification";
-import { IToken, TOKENS_BY_ASSET_ID } from "@src/constants";
+import { CONTRACT_ADDRESSES, IToken, TOKENS_BY_ASSET_ID } from "@src/constants";
 import { Range } from "@src/entities/Range";
 import BN from "@src/utils/BN";
 import Balance from "@src/entities/Balance";
@@ -48,6 +48,7 @@ class DepositToRangeVM {
   public setSelectedTokenToDepositId = (assetId: string | null) => {
     const token = TOKENS_BY_ASSET_ID[assetId ?? "WAVES"];
     this.setSelectedTokenToDeposit(token);
+    this.setSingleTokenAmount(BN.ZERO);
   };
 
   public singleTokenAmount: BN = BN.ZERO;
@@ -170,7 +171,7 @@ class DepositToRangeVM {
     this.setNotificationParams(null);
     return accountStore
       .invoke({
-        dApp: this.range.address,
+        dApp: CONTRACT_ADDRESSES.rangesRouter,
         payment: [
           {
             assetId: this.selectedTokenToDeposit!.assetId,
@@ -178,8 +179,11 @@ class DepositToRangeVM {
           }
         ],
         call: {
-          function: "generateIndexWithOneToken",
-          args: [{ type: "boolean", value: false }]
+          function: "generateWithOneToken",
+          args: [
+            { type: "string", value: this.range.address },
+            { type: "boolean", value: false }
+          ]
         }
       })
       .then((txId) => {

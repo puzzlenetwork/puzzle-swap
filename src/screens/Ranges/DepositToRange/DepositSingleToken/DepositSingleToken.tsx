@@ -35,12 +35,12 @@ const DepositSingleToken: React.FC<IProps> = () => {
       <SizedBox height={8} />
       <Card>
         <TokenInput
-          selectable={false}
+          selectable
           decimals={selectedToken.decimals}
           amount={vm.singleTokenAmount}
           setAmount={vm.setSingleTokenAmount}
           assetId={selectedToken.assetId}
-          // setAssetId={vm.setSelectedTokenToDepositId}
+          setAssetId={vm.setSelectedTokenToDepositId}
           balances={vm.balances ?? []}
           onMaxClick={vm.onMaxSingleTokenClick}
           usdnEquivalent={vm.selectedTokenAmountUsdnEquivalent}

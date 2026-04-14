@@ -208,7 +208,7 @@ const PWavesNodes: React.FC = () => {
               </LinkText>
             </NodeInfo>
             <WeightBadge>
-              {((node.weight / totalWeight) * 100).toFixed(0)}%
+              {((node.weight / totalWeight) * 100).toFixed(2)}%
             </WeightBadge>
           </NodeRow>
           );
