@@ -387,6 +387,15 @@ const ImgurPreview = styled.img`
   }
 `;
 
+const isImgurUrl = (url: string): boolean => {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, "");
+    return host === "imgur.com" || host === "i.imgur.com";
+  } catch {
+    return false;
+  }
+};
+
 const getImgurDirectUrl = (url: string): string | null => {
   try {
     const parsed = new URL(url);
@@ -396,15 +405,47 @@ const getImgurDirectUrl = (url: string): string | null => {
     if (host === "i.imgur.com") return url;
 
     const path = parsed.pathname.replace(/^\/+/, "");
-    if (!path || path.startsWith("a/") || path.startsWith("gallery/") || path.startsWith("t/")) return null;
+    if (!path || path.startsWith("t/")) return null;
 
-    const id = path.split("/")[0].replace(/\.[a-zA-Z0-9]+$/, "");
+    const segments = path.split("/");
+    const rawId = segments[segments.length - 1] || segments[0];
+    const id = rawId.replace(/\.[a-zA-Z0-9]+$/, "");
     if (!/^[a-zA-Z0-9]+$/.test(id)) return null;
 
     return `https://i.imgur.com/${id}.jpg`;
   } catch {
     return null;
   }
+};
+
+interface ImgurAttachmentProps {
+  url: string;
+  index: number;
+}
+
+const ImgurAttachment: React.FC<ImgurAttachmentProps> = ({ url, index }) => {
+  const directUrl = getImgurDirectUrl(url);
+  const [failed, setFailed] = useState(false);
+
+  if (directUrl && !failed) {
+    return (
+      <ImgurPreview
+        src={directUrl}
+        alt={`Attachment ${index + 1}`}
+        onClick={() => window.open(url, "_blank")}
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+
+  const shortName = url.length > 50 ? url.slice(0, 47) + "..." : url;
+  return (
+    <AttachmentLink href={url} target="_blank" rel="noopener noreferrer">
+      <DriveIcon />
+      <span>{shortName}</span>
+      <LinkIcon />
+    </AttachmentLink>
+  );
 };
 
 const ModalFooter = styled.div`
@@ -1072,16 +1113,8 @@ const IdeaCard: React.FC<Props> = ({ idea }) => {
                   Attachments
                 </AttachmentsLabel>
                 {idea.attachments.map((url, index) => {
-                  const imgurSrc = getImgurDirectUrl(url);
-                  if (imgurSrc) {
-                    return (
-                      <ImgurPreview
-                        key={index}
-                        src={imgurSrc}
-                        alt={`Attachment ${index + 1}`}
-                        onClick={() => window.open(url, "_blank")}
-                      />
-                    );
+                  if (isImgurUrl(url)) {
+                    return <ImgurAttachment key={index} url={url} index={index} />;
                   }
                   const getShortName = (link: string) => {
                     try {

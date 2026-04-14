@@ -118,6 +118,8 @@ class AccountStore {
   isWavesKeeperInstalled = false;
   setWavesKeeperInstalled = (state: boolean) => (this.isWavesKeeperInstalled = state);
 
+  private keeperUpdateSubscribed = false;
+
   assetsBalancesLoading = false;
   setAssetsBalancesLoading = (state: boolean) => (this.assetsBalancesLoading = state);
 
@@ -294,11 +296,47 @@ class AccountStore {
     );
   };
 
-  subscribeToKeeperUpdate = () =>
-    (window as any).WavesKeeper.on("update", (publicState: any) => {
-      const newAddress = publicState.account?.address ?? null;
+  subscribeToKeeperUpdate = () => {
+    if (this.keeperUpdateSubscribed) return;
+    const keeper = (window as any).WavesKeeper;
+    if (keeper?.on == null) return;
+    this.keeperUpdateSubscribed = true;
+
+    keeper.on("update", async (publicState: any) => {
+      if (this.loginType !== LOGIN_TYPE.KEEPER) return;
+
+      const isLocked = publicState?.locked === true;
+      const newAddress: string | null = publicState?.account?.address ?? null;
+      const networkCode: string | undefined = publicState?.network?.code;
+
+      // Keeper was locked or the user disconnected the account from this site
+      if (isLocked || newAddress == null) {
+        await this.logout();
+        return;
+      }
+
+      // User switched to a non-mainnet network in Keeper — Puzzle is mainnet only
+      if (networkCode != null && networkCode !== "W") {
+        this.rootStore.notificationStore.notify("Please switch Keeper to Mainnet", {
+          title: "Unsupported network",
+          type: "warning"
+        });
+        await this.logout();
+        return;
+      }
+
+      if (newAddress === this.address) return;
+
       this.setAddress(newAddress);
+      // Re-login the signer so the provider picks up the new Keeper account
+      try {
+        await this.signer?.login();
+      } catch {
+        // Signer may not be initialized yet — the reaction on `address` still
+        // refreshes balances, and the next transaction will trigger a login.
+      }
     });
+  };
 
   serialize = (): ISerializedAccountStore => ({
     selectedTheme: this.selectedTheme,
