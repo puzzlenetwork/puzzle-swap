@@ -420,6 +420,27 @@ const transactionHistoryService = {
       .map(parseTransaction)
       .filter((tx): tx is ParsedTransaction => tx !== null)
       .slice(0, targetCount);
+  },
+
+  getRangeAllHistory: async (rangeAddress: string, targetCount = 30): Promise<ParsedTransaction[]> => {
+    const transactions = await fetchTransactionsWithDetails(rangeAddress, {
+      maxTransactions: 300,
+      targetCount,
+      filterFn: (tx) => tx.type === 16 && tx.dApp === rangeAddress && isPoolTransaction(tx)
+    });
+
+    return transactions
+      .filter((tx) => tx.type === 16 && tx.dApp === rangeAddress && isWithinLast30Days(tx.timestamp))
+      .map((tx) => {
+        const parsed = parseTransaction(tx);
+        if (parsed) parsed.poolAddress = rangeAddress;
+        return parsed;
+      })
+      .filter(
+        (tx): tx is ParsedTransaction =>
+          tx !== null && ["deposit", "withdraw", "claim", "stake", "unstake"].includes(tx.type)
+      )
+      .slice(0, targetCount);
   }
 };
 

@@ -186,7 +186,7 @@ const tokenLogos: Record<string, string> = {
   TSN: tsnLogo,
   BUSD: busdLogo,
   WART: wartLogo,
-  POWER: powerLogo,
+  PWR: powerLogo,
   NGNT: ngntLogo,
   WXB: wxbLogo,
   PLUTO: plutoLogo,

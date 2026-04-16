@@ -38,7 +38,11 @@ export const ROUTES = {
   TERMS_OF_SERVICE: "/terms-of-service",
   IDEAS: "/ideas",
   LEADERBOARD: "/ideas/leaderboard",
+  NEWS: "/news",
+  NEWS_DETAIL: "/news/:slug",
 };
+
+export const NEWS_API_URL = process.env.REACT_APP_NEWS_API_URL || "http://localhost:3002";
 
 export enum IDEA_STATUS {
   PENDING = "pending",

@@ -42,6 +42,8 @@ import TermsOfService from "@screens/TermsOfService";
 import SettingsSidebar from "@components/SettingsSidebar";
 import Ideas from "@screens/Ideas/Ideas";
 import Leaderboard from "@screens/Leaderboard/Leaderboard";
+import News from "@screens/News/News";
+import NewsDetail from "@screens/News/NewsDetail";
 
 const Root = styled(Column)`
   width: 100%;
@@ -128,6 +130,10 @@ const App: React.FC = () => {
 
         {/* Leaderboard */}
         <Route path={ROUTES.LEADERBOARD} element={<Leaderboard />} />
+
+        {/* News */}
+        <Route path={ROUTES.NEWS} element={<News />} />
+        <Route path={ROUTES.NEWS_DETAIL} element={<NewsDetail />} />
       </Routes>
       <WalletModal onClose={() => accountStore.setWalletModalOpened(false)} visible={accountStore.walletModalOpened} />
       <SendAssetModal

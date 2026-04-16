@@ -256,7 +256,8 @@ const Header: React.FC<IProps> = () => {
   const menuItems = [
     { name: "Explore", link: ROUTES.EXPLORE },
     { name: "Trade", link: ROUTES.TRADE },
-    { name: "Ideas", link: ROUTES.IDEAS }
+    { name: "Ideas", link: ROUTES.IDEAS },
+    { name: "News", link: ROUTES.NEWS }
   ];
 
   const lpsSubMenu = [
