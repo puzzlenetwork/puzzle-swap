@@ -28,7 +28,7 @@
     "@waves/signer": "^1.1.0",
     "@waves/ts-lib-crypto": "1.4.4-beta.1",
     "@waves/waves-transactions": "^4.3.11",
-    "axios": "^1.8.4",
+    "axios": "^1.15.0",
     "babel-jest": "^27.5.1",
     "babel-loader": "^8.4.1",
     "babel-plugin-named-asset-import": "^0.3.8",
