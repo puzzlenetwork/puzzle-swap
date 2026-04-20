@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import Layout from "@components/Layout";
 import {
@@ -8,7 +8,7 @@ import {
 } from "./PoolInvestVM";
 import SizedBox from "@components/SizedBox";
 import PoolInformation from "./PoolInformation";
-import { Column } from "@src/components/Flex";
+import { Column, Row } from "@src/components/Flex";
 import TradesVolume from "./TradesVolume";
 import LiquidityFlow from "./LiquidityFlow";
 import PoolComposition from "./PoolComposition";
@@ -66,9 +66,30 @@ const Body = styled.div`
     column-gap: 40px;
   }
 `;
+const SwapOrderButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 24px;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
+  border-radius: 8px;
+  color: ${({ theme }) => theme.colors.primary800};
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.primary300};
+    color: ${({ theme }) => theme.colors.primary300};
+  }
+`;
 const PoolInvestImpl: React.FC = observer(() => {
   const vm = usePoolInvestVM();
   const { poolsStore } = useStores();
+  const [tradesOnTop, setTradesOnTop] = useState(true);
   if (poolsStore.customPools.length === 0 && vm.pool == null) {
     return <Loading />;
   }
@@ -96,8 +117,26 @@ const PoolInvestImpl: React.FC = observer(() => {
               <MyPoolBalance />
               <LPStaking />
             </RightBlockMobile>
-            <LiquidityFlow />
-            <TradesVolume />
+            <Row justifyContent="flex-end">
+              <SwapOrderButton
+                type="button"
+                onClick={() => setTradesOnTop((v) => !v)}
+                title="Swap charts order"
+              >
+                ⇅ Swap charts
+              </SwapOrderButton>
+            </Row>
+            {tradesOnTop ? (
+              <>
+                <TradesVolume />
+                <LiquidityFlow />
+              </>
+            ) : (
+              <>
+                <LiquidityFlow />
+                <TradesVolume />
+              </>
+            )}
             <PoolComposition />
             <PoolHistory />
           </MainBlock>

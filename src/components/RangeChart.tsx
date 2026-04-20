@@ -71,20 +71,24 @@ const RangeChart: React.FC<IParams> = ({ assetsWithLeverage, size, uniqueId, cha
               <RadarWithImage
                 imageElement={
                   <g filter={`url(#blur${uniqueId})`}>
-                    {props.points.map((point: any, i: any) => (
-                      <image
-                        href={TOKENS_BY_ASSET_ID[point.name].logo}
-                        width={backgroundIconSize}
-                        height={backgroundIconSize}
-                        x={point.x - halfBackgroundIcon}
-                        y={point.y - halfBackgroundIcon}
-                        key={i}
-                        style={{
-                          opacity: 0.9,
-                          borderRadius: halfBackgroundIcon // Note: SVG image does not support borderRadius directly
-                        }}
-                      />
-                    ))}
+                    {props.points.map((point: any, i: any) => {
+                      const logo = TOKENS_BY_ASSET_ID[point.name]?.logo;
+                      if (!logo) return null;
+                      return (
+                        <image
+                          href={logo}
+                          width={backgroundIconSize}
+                          height={backgroundIconSize}
+                          x={point.x - halfBackgroundIcon}
+                          y={point.y - halfBackgroundIcon}
+                          key={i}
+                          style={{
+                            opacity: 0.9,
+                            borderRadius: halfBackgroundIcon // Note: SVG image does not support borderRadius directly
+                          }}
+                        />
+                      );
+                    })}
                   </g>
                 }
                 uniqueId={uniqueId}
@@ -98,19 +102,23 @@ const RangeChart: React.FC<IParams> = ({ assetsWithLeverage, size, uniqueId, cha
       />
       <PolarAngleAxis
         dataKey="assetId"
-        tick={(props) => (
-          <foreignObject width={iconSize} height={iconSize} x={props.x - halfIcon} y={props.y - halfIcon}>
-            <Img
-              src={TOKENS_BY_ASSET_ID[props.payload.value].logo}
-              style={{
-                width: iconSize,
-                height: iconSize,
-                borderRadius: halfIcon,
-                transform: assetsWithLeverage.length < 3 ? "rotate(90deg)" : ""
-              }}
-            />
-          </foreignObject>
-        )}
+        tick={(props) => {
+          const logo = TOKENS_BY_ASSET_ID[props.payload.value]?.logo;
+          if (!logo) return <g />;
+          return (
+            <foreignObject width={iconSize} height={iconSize} x={props.x - halfIcon} y={props.y - halfIcon}>
+              <Img
+                src={logo}
+                style={{
+                  width: iconSize,
+                  height: iconSize,
+                  borderRadius: halfIcon,
+                  transform: assetsWithLeverage.length < 3 ? "rotate(90deg)" : ""
+                }}
+              />
+            </foreignObject>
+          );
+        }}
       />
     </RadarChart>
   );
@@ -130,15 +138,15 @@ const RangeChartWrapper: React.FC<IParams> = ({ assetsWithLeverage, showTooltip 
           <AssetsList>
             {assetsWithLeverage
               .map((asset) => ({
-                ...TOKENS_BY_ASSET_ID[asset.assetId],
+                ...(TOKENS_BY_ASSET_ID[asset.assetId] ?? {}),
                 ...asset
               }))
-              .map(({ logo, symbol, reversedLeverage }, index) => (
+              .map(({ logo, symbol, reversedLeverage, assetId }, index) => (
                 <Row crossAxisSize="max" key={index}>
                   <TokenIcon src={logo} />
                   <SizedBox width={6} />
                   <Text size="medium">
-                    {symbol} - {reversedLeverage.toFixed(2)}%
+                    {symbol ?? assetId} - {reversedLeverage.toFixed(2)}%
                   </Text>
                 </Row>
               ))}

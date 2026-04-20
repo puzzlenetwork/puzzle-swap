@@ -29,9 +29,23 @@ const Root = styled.div`
   padding-top: 24px;
 `;
 
+const HeaderRow = styled(Row)`
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin-bottom: 12px;
+`;
+
+const TitleText = styled(Text)`
+  white-space: nowrap;
+  flex-shrink: 0;
+`;
+
 const TabsRow = styled(Row)`
   gap: 4px;
-  margin-bottom: 12px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
 `;
 
 const Tab = styled.button<{ active?: boolean }>`
@@ -39,11 +53,13 @@ const Tab = styled.button<{ active?: boolean }>`
   background: ${({ theme, active }) => (active ? theme.colors.primary300 : "transparent")};
   color: ${({ theme, active }) => (active ? "#fff" : theme.colors.primary800)};
   border-radius: 8px;
-  padding: 4px 12px;
-  font-size: 13px;
+  padding: 3px 8px;
+  font-size: 12px;
+  line-height: 16px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.primary300};
@@ -160,10 +176,10 @@ const LiquidityFlow: React.FC = () => {
 
   return (
     <Root>
-      <Row alignItems="center" style={{ justifyContent: "space-between", marginBottom: 12 }}>
-        <Text weight={500} type="secondary" fitContent>
+      <HeaderRow>
+        <TitleText weight={500} type="secondary" fitContent>
           Liquidity Flow
-        </Text>
+        </TitleText>
         <TabsRow>
           {PERIODS.map((p) => (
             <Tab key={p} active={vm.liquidityFlowPeriod === p} onClick={() => vm.setLiquidityFlowPeriod(p)}>
@@ -171,7 +187,7 @@ const LiquidityFlow: React.FC = () => {
             </Tab>
           ))}
         </TabsRow>
-      </Row>
+      </HeaderRow>
 
       <StatsGrid>
         <StatCard>
