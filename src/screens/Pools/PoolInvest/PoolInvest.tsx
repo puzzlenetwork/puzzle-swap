@@ -8,7 +8,7 @@ import {
 } from "./PoolInvestVM";
 import SizedBox from "@components/SizedBox";
 import PoolInformation from "./PoolInformation";
-import { Column, Row } from "@src/components/Flex";
+import { Column } from "@src/components/Flex";
 import TradesVolume from "./TradesVolume";
 import LiquidityFlow from "./LiquidityFlow";
 import PoolComposition from "./PoolComposition";
@@ -66,30 +66,83 @@ const Body = styled.div`
     column-gap: 40px;
   }
 `;
-const SwapOrderButton = styled.button`
-  display: inline-flex;
+const CarouselRoot = styled.div`
+  position: relative;
+  width: 100%;
+`;
+const CarouselSlide = styled.div<{ visible: boolean }>`
+  display: ${({ visible }) => (visible ? "block" : "none")};
+  animation: ${({ visible }) => (visible ? "carouselFadeIn 0.25s ease-out" : "none")};
+
+  @keyframes carouselFadeIn {
+    from {
+      opacity: 0;
+      transform: translateX(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+`;
+const CarouselDots = styled.div`
+  display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 24px;
-  padding: 6px 12px;
-  background: transparent;
-  border: 1px solid ${({ theme }) => theme.colors.primary100};
-  border-radius: 8px;
-  color: ${({ theme }) => theme.colors.primary800};
-  font-size: 13px;
-  font-weight: 500;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+`;
+const Dot = styled.button<{ active?: boolean }>`
+  width: ${({ active }) => (active ? 20 : 8)}px;
+  height: 8px;
+  border-radius: 4px;
+  border: none;
+  background: ${({ theme, active }) => (active ? theme.colors.primary300 : theme.colors.primary100)};
   cursor: pointer;
+  padding: 0;
   transition: all 0.2s;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primary300};
+  }
+`;
+const CarouselArrow = styled.button<{ side: "left" | "right" }>`
+  position: absolute;
+  top: 50%;
+  ${({ side }) => (side === "left" ? "left: -4px;" : "right: -4px;")}
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid ${({ theme }) => theme.colors.primary100};
+  background: ${({ theme }) => theme.colors.white};
+  color: ${({ theme }) => theme.colors.primary800};
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  z-index: 2;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.primary300};
     color: ${({ theme }) => theme.colors.primary300};
   }
 `;
+const CHART_SLIDES = ["trades", "liquidity"] as const;
+type ChartSlide = (typeof CHART_SLIDES)[number];
 const PoolInvestImpl: React.FC = observer(() => {
   const vm = usePoolInvestVM();
   const { poolsStore } = useStores();
-  const [tradesOnTop, setTradesOnTop] = useState(true);
+  const [activeSlide, setActiveSlide] = useState<ChartSlide>("trades");
+  const activeIndex = CHART_SLIDES.indexOf(activeSlide);
+  const goTo = (index: number) => {
+    const normalized = (index + CHART_SLIDES.length) % CHART_SLIDES.length;
+    setActiveSlide(CHART_SLIDES[normalized]);
+  };
   if (poolsStore.customPools.length === 0 && vm.pool == null) {
     return <Loading />;
   }
@@ -117,26 +170,41 @@ const PoolInvestImpl: React.FC = observer(() => {
               <MyPoolBalance />
               <LPStaking />
             </RightBlockMobile>
-            <Row justifyContent="flex-end">
-              <SwapOrderButton
+            <CarouselRoot>
+              <CarouselArrow
+                side="left"
                 type="button"
-                onClick={() => setTradesOnTop((v) => !v)}
-                title="Swap charts order"
+                onClick={() => goTo(activeIndex - 1)}
+                title="Previous chart"
               >
-                ⇅ Swap charts
-              </SwapOrderButton>
-            </Row>
-            {tradesOnTop ? (
-              <>
+                ‹
+              </CarouselArrow>
+              <CarouselArrow
+                side="right"
+                type="button"
+                onClick={() => goTo(activeIndex + 1)}
+                title="Next chart"
+              >
+                ›
+              </CarouselArrow>
+              <CarouselSlide visible={activeSlide === "trades"} key={`slide-trades-${activeIndex}`}>
                 <TradesVolume />
+              </CarouselSlide>
+              <CarouselSlide visible={activeSlide === "liquidity"} key={`slide-liquidity-${activeIndex}`}>
                 <LiquidityFlow />
-              </>
-            ) : (
-              <>
-                <LiquidityFlow />
-                <TradesVolume />
-              </>
-            )}
+              </CarouselSlide>
+              <CarouselDots>
+                {CHART_SLIDES.map((slide, i) => (
+                  <Dot
+                    key={slide}
+                    active={slide === activeSlide}
+                    onClick={() => goTo(i)}
+                    type="button"
+                    title={slide === "trades" ? "Trades volume" : "Liquidity flow"}
+                  />
+                ))}
+              </CarouselDots>
+            </CarouselRoot>
             <PoolComposition />
             <PoolHistory />
           </MainBlock>
