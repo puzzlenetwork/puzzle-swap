@@ -72,28 +72,31 @@ const CarouselRoot = styled.div`
 `;
 const CarouselSlide = styled.div<{ visible: boolean }>`
   display: ${({ visible }) => (visible ? "block" : "none")};
-  animation: ${({ visible }) => (visible ? "carouselFadeIn 0.25s ease-out" : "none")};
+  animation: ${({ visible }) => (visible ? "carouselFadeIn 0.15s ease-out" : "none")};
 
   @keyframes carouselFadeIn {
     from {
       opacity: 0;
-      transform: translateX(8px);
     }
     to {
       opacity: 1;
-      transform: translateX(0);
     }
   }
 `;
-const CarouselDots = styled.div`
+const CarouselControls = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 12px;
   margin-top: 12px;
 `;
+const Dots = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
 const Dot = styled.button<{ active?: boolean }>`
-  width: ${({ active }) => (active ? 20 : 8)}px;
+  width: ${({ active }) => (active ? 18 : 8)}px;
   height: 8px;
   border-radius: 4px;
   border: none;
@@ -106,26 +109,21 @@ const Dot = styled.button<{ active?: boolean }>`
     background: ${({ theme }) => theme.colors.primary300};
   }
 `;
-const CarouselArrow = styled.button<{ side: "left" | "right" }>`
-  position: absolute;
-  top: 50%;
-  ${({ side }) => (side === "left" ? "left: -4px;" : "right: -4px;")}
-  transform: translateY(-50%);
-  width: 32px;
-  height: 32px;
+const CarouselArrow = styled.button`
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   border: 1px solid ${({ theme }) => theme.colors.primary100};
-  background: ${({ theme }) => theme.colors.white};
+  background: transparent;
   color: ${({ theme }) => theme.colors.primary800};
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 14px;
   line-height: 1;
-  z-index: 2;
+  padding: 0;
   transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.primary300};
@@ -171,39 +169,39 @@ const PoolInvestImpl: React.FC = observer(() => {
               <LPStaking />
             </RightBlockMobile>
             <CarouselRoot>
-              <CarouselArrow
-                side="left"
-                type="button"
-                onClick={() => goTo(activeIndex - 1)}
-                title="Previous chart"
-              >
-                ‹
-              </CarouselArrow>
-              <CarouselArrow
-                side="right"
-                type="button"
-                onClick={() => goTo(activeIndex + 1)}
-                title="Next chart"
-              >
-                ›
-              </CarouselArrow>
               <CarouselSlide visible={activeSlide === "trades"} key={`slide-trades-${activeIndex}`}>
                 <TradesVolume />
               </CarouselSlide>
               <CarouselSlide visible={activeSlide === "liquidity"} key={`slide-liquidity-${activeIndex}`}>
                 <LiquidityFlow />
               </CarouselSlide>
-              <CarouselDots>
-                {CHART_SLIDES.map((slide, i) => (
-                  <Dot
-                    key={slide}
-                    active={slide === activeSlide}
-                    onClick={() => goTo(i)}
-                    type="button"
-                    title={slide === "trades" ? "Trades volume" : "Liquidity flow"}
-                  />
-                ))}
-              </CarouselDots>
+              <CarouselControls>
+                <CarouselArrow
+                  type="button"
+                  onClick={() => goTo(activeIndex - 1)}
+                  title="Previous chart"
+                >
+                  ‹
+                </CarouselArrow>
+                <Dots>
+                  {CHART_SLIDES.map((slide, i) => (
+                    <Dot
+                      key={slide}
+                      active={slide === activeSlide}
+                      onClick={() => goTo(i)}
+                      type="button"
+                      title={slide === "trades" ? "Trades volume" : "Liquidity flow"}
+                    />
+                  ))}
+                </Dots>
+                <CarouselArrow
+                  type="button"
+                  onClick={() => goTo(activeIndex + 1)}
+                  title="Next chart"
+                >
+                  ›
+                </CarouselArrow>
+              </CarouselControls>
             </CarouselRoot>
             <PoolComposition />
             <PoolHistory />
