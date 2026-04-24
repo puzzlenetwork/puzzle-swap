@@ -6,8 +6,6 @@ Puzzle Ranges supports different liquidity placement models. Below are three exa
 
 <figure><img src="/docs/assets/for-creators/IMG_3892.gif" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="/docs/assets/for-creators/IMG_3890.gif" alt=""><figcaption></figcaption></figure>
-
 #### **Tokens:**
 
 WAVES/USDTu: 0.5 – 5\
@@ -43,7 +41,7 @@ Ideal for users seeking conservative strategies.
 
 ## Use Case #3 — Mega Range
 
-<figure><img src="/docs/assets/for-creators/IMG_4390.gif" alt=""><figcaption></figcaption></figure>
+<figure><img src="/docs/assets/for-creators/IMG_3890.gif" alt=""><figcaption></figcaption></figure>
 
 **Tokens:** WAVES, BTC, ETH, USDTu
 
