@@ -44,6 +44,7 @@ import Ideas from "@screens/Ideas/Ideas";
 import Leaderboard from "@screens/Leaderboard/Leaderboard";
 import News from "@screens/News/News";
 import NewsDetail from "@screens/News/NewsDetail";
+import Docs from "@screens/Docs/Docs";
 
 const Root = styled(Column)`
   width: 100%;
@@ -134,6 +135,10 @@ const App: React.FC = () => {
         {/* News */}
         <Route path={ROUTES.NEWS} element={<News />} />
         <Route path={ROUTES.NEWS_DETAIL} element={<NewsDetail />} />
+
+        {/* Docs */}
+        <Route path={ROUTES.DOCS} element={<Docs />} />
+        <Route path={ROUTES.DOCS_PAGE} element={<Docs />} />
       </Routes>
       <WalletModal onClose={() => accountStore.setWalletModalOpened(false)} visible={accountStore.walletModalOpened} />
       <SendAssetModal

@@ -40,6 +40,8 @@ export const ROUTES = {
   LEADERBOARD: "/ideas/leaderboard",
   NEWS: "/news",
   NEWS_DETAIL: "/news/:slug",
+  DOCS: "/docs",
+  DOCS_PAGE: "/docs/*",
 };
 
 export const NEWS_API_URL = process.env.REACT_APP_NEWS_API_URL || "http://localhost:3002";
