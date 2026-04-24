@@ -4,9 +4,9 @@ Puzzle Ranges supports different liquidity placement models. Below are three exa
 
 ## Use case #1 — Single range
 
-<figure><img src="https://1061290567-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FCuzV77ftSwjxobxizYi0%2Fuploads%2FQOhS7Ww0HMr7jvyQ4WRD%2F1.gif?alt=media&#x26;token=22f2ebe8-c561-4eee-b30c-f602ec5e89f5" alt=""><figcaption></figcaption></figure>
+<figure><img src="/docs/assets/for-creators/IMG_3892.gif" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="https://github.com/user-attachments/assets/c1bde694-691e-4166-9323-23f6f8cf5f26" alt=""><figcaption></figcaption></figure>
+<figure><img src="/docs/assets/for-creators/IMG_3890.gif" alt=""><figcaption></figcaption></figure>
 
 #### **Tokens:**
 
@@ -23,7 +23,7 @@ Capital allocation is highly concentrated.
 
 ## Use case #2 — Multiple ranges
 
-<figure><img src="https://github.com/user-attachments/assets/3baf6894-01f7-487d-94c3-6bd9246d78ff" alt=""><figcaption></figcaption></figure>
+<figure><img src="/docs/assets/for-creators/IMG_3891.gif" alt=""><figcaption></figcaption></figure>
 
 Multiple range liquidity placement allows for more flexible management by distributing liquidity across several price ranges. This approach is beneficial in scenarios where market conditions fluctuate within a broader spectrum.
 
@@ -43,7 +43,7 @@ Ideal for users seeking conservative strategies.
 
 ## Use Case #3 — Mega Range
 
-<figure><img src="https://github.com/user-attachments/assets/270b9b8e-11a7-4627-b539-eb1924d376f3" alt=""><figcaption></figcaption></figure>
+<figure><img src="/docs/assets/for-creators/IMG_4390.gif" alt=""><figcaption></figcaption></figure>
 
 **Tokens:** WAVES, BTC, ETH, USDTu
 

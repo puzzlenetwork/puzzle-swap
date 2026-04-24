@@ -2,7 +2,7 @@
 
 Puzzle Ranges provides a clear interface for monitoring pool status, evaluating structure and efficiency, and checking the status of each token within its range. Here’s how it works.
 
-<figure><img src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfz_GHXB7TibCmDmBpFoK09GWoXkPNPRfZ4DyUkFaPtqv9fY071bCNd2mpmTw9C_DXJnhZvLO5ZUuK9NfrUJl7jnuUCTUFBRNqIbs5JBK_pNk3SqJ8qEqNXiFbwlffab-I29jMTJw?key=LaH6UZVdigLuamwiKAjK3Q" alt=""><figcaption></figcaption></figure>
+<figure><img src="/docs/assets/common/track-ranges-1.png" alt=""><figcaption></figcaption></figure>
 
 ## Range composition
 

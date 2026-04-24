@@ -18,7 +18,7 @@ Allows you to provide liquidity using **just one** of the tokens in the range. T
 * Choose the asset and amount
 * The system splits the deposit: one part stays as is, the other is swapped into the missing tokens based on pool weights and current prices
 
-<figure><img src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXeFwbk3eG3x5W2s_WGwm3d4Q2lcLlCwIKUcxvNAJs4E4jvicV6HPsZyywEgAgG6GT_sJ7VDi2PBHitN2Qe9-eobSoUTrRiueKFxQxZbqKe7oTLnnQPM4xrFsq8uLOvAMV9CiRykNQ?key=LaH6UZVdigLuamwiKAjK3Q" alt=""><figcaption></figcaption></figure>
+<figure><img src="/docs/assets/common/liquidity-1.png" alt=""><figcaption></figcaption></figure>
 
 {% hint style="info" %}
 💡 If the actual balance of a token is depleted, it cannot be withdrawn.
@@ -35,7 +35,7 @@ This is the most efficient method since no internal swaps are needed.
 * Choose the percentage of your portfolio to deposit
 * All assets are deposited directly — no swaps occur inside the pool
 
-<figure><img src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXcV7piunQ1OkrLywHVgL0A_t9hSvMhnm94IkJ8W7ah9pLvZY94DiurGZRGVBbm8RVEi3si1-v8knk65o493EuF3Jd1PQxaxWN06MI4L9-oLjPRe91BzASNa0cbGweXjndBC4oQD?key=LaH6UZVdigLuamwiKAjK3Q" alt=""><figcaption></figcaption></figure>
+<figure><img src="/docs/assets/common/liquidity-2.png" alt=""><figcaption></figcaption></figure>
 
 **Withdrawals work the same way:** the user receives all tokens back, in the current pool proportions.
 
