@@ -61,7 +61,7 @@ If you need additional information that is not directly available in this page, 
 Perform an HTTP GET request on the current page URL with the `ask` query parameter:
 
 ```
-GET https://puzzle-ranges.gitbook.io/puzzle-ranges-docs/liquidity-deposit-and-withdrawal.md?ask=<question>
+GET https://app.puzzleswap.org/docs/liquidity-deposit-and-withdrawal.md?ask=<question>
 ```
 
 The question should be specific, self-contained, and written in natural language.

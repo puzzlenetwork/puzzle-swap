@@ -3,7 +3,21 @@ import { Link, useLocation } from "react-router-dom";
 import styled from "@emotion/styled";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import { Column, Row } from "@components/Flex";
+
+function preprocessGitbookMarkdown(input: string): string {
+  let out = input.replace(
+    /\{%\s*hint\s+style="(\w+)"\s*%\}([\s\S]*?)\{%\s*endhint\s*%\}/g,
+    (_m, style: string, body: string) => {
+      const safeStyle = ["info", "success", "warning", "danger"].includes(style) ? style : "info";
+      const inner = body.trim().replace(/\n/g, "<br/>");
+      return `<div class="gb-hint gb-hint--${safeStyle}">${inner}</div>`;
+    }
+  );
+  out = out.replace(/\{%[^%]*%\}/g, "");
+  return out;
+}
 
 type DocItem = { label: string; slug: string };
 type DocSection = { title: string; items: DocItem[] };
@@ -164,6 +178,26 @@ const Content = styled.article`
     padding: 8px 12px;
     text-align: left;
   }
+  .gb-hint {
+    margin: 0 0 1em;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border-left: 4px solid transparent;
+    color: ${({ theme }) => theme.colors.primary800};
+    background: ${({ theme }) => theme.colors.primary50};
+  }
+  .gb-hint--success {
+    border-left-color: ${({ theme }) => theme.colors.success500 ?? "#35A15A"};
+  }
+  .gb-hint--info {
+    border-left-color: ${({ theme }) => theme.colors.blue500};
+  }
+  .gb-hint--warning {
+    border-left-color: ${({ theme }) => theme.colors.attention500 ?? "#F2994A"};
+  }
+  .gb-hint--danger {
+    border-left-color: ${({ theme }) => theme.colors.error500 ?? "#ED3D51"};
+  }
 `;
 
 const State = styled.div`
@@ -189,7 +223,7 @@ const Docs: React.FC = () => {
         return res.text();
       })
       .then((txt) => {
-        if (!cancelled) setMarkdown(txt);
+        if (!cancelled) setMarkdown(preprocessGitbookMarkdown(txt));
       })
       .catch((e: Error) => {
         if (!cancelled) setError(e.message);
@@ -228,7 +262,7 @@ const Docs: React.FC = () => {
         {loading && <State>Loading…</State>}
         {error && <State>Error: {error}</State>}
         {!loading && !error && (
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{markdown}</ReactMarkdown>
         )}
       </Content>
     </Root>
