@@ -6,6 +6,30 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import { Column, Row } from "@components/Flex";
 
+function extractYoutubeId(url: string): string | null {
+  const cleaned = url.replace(/^<|>$/g, "").trim();
+  const patterns = [
+    /(?:youtu\.be\/)([A-Za-z0-9_-]{6,})/,
+    /(?:youtube\.com\/watch\?[^"]*?v=)([A-Za-z0-9_-]{6,})/,
+    /(?:youtube\.com\/embed\/)([A-Za-z0-9_-]{6,})/,
+    /(?:youtube\.com\/shorts\/)([A-Za-z0-9_-]{6,})/
+  ];
+  for (const re of patterns) {
+    const m = cleaned.match(re);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+function renderEmbed(rawUrl: string): string {
+  const url = rawUrl.replace(/^<|>$/g, "").trim();
+  const ytId = extractYoutubeId(url);
+  if (ytId) {
+    return `<div class="gb-embed gb-embed--video"><iframe src="https://www.youtube.com/embed/${ytId}" title="YouTube video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+  }
+  return `<p><a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a></p>`;
+}
+
 function preprocessGitbookMarkdown(input: string): string {
   let out = input.replace(
     /\{%\s*hint\s+style="(\w+)"\s*%\}([\s\S]*?)\{%\s*endhint\s*%\}/g,
@@ -15,6 +39,7 @@ function preprocessGitbookMarkdown(input: string): string {
       return `<div class="gb-hint gb-hint--${safeStyle}">${inner}</div>`;
     }
   );
+  out = out.replace(/\{%\s*embed\s+url="([^"]+)"\s*%\}/g, (_m, url: string) => renderEmbed(url));
   out = out.replace(/\{%[^%]*%\}/g, "");
   return out;
 }
@@ -177,6 +202,22 @@ const Content = styled.article`
     border: 1px solid ${({ theme }) => theme.colors.primary200};
     padding: 8px 12px;
     text-align: left;
+  }
+  .gb-embed--video {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    margin: 0 0 1em;
+    border-radius: 8px;
+    overflow: hidden;
+    background: ${({ theme }) => theme.colors.primary50};
+  }
+  .gb-embed--video iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
   }
   .gb-hint {
     margin: 0 0 1em;
