@@ -18,6 +18,7 @@ import RangesTable from "./RangesTable";
 import { themes } from "@src/themes/ThemeProvider";
 import Skeleton from "react-loading-skeleton";
 import useWindowSize from "@src/hooks/useWindowSize";
+import { ReactComponent as BookIcon } from "@src/assets/icons/book.svg";
 
 interface IProps {}
 
@@ -74,6 +75,38 @@ const Subtitle = styled(Text)`
     max-width: 560px;
   }
 `;
+const Actions = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+
+  @media (min-width: 880px) {
+    flex-direction: row;
+    width: auto;
+    align-items: center;
+    gap: 12px;
+  }
+`;
+
+const DocsButton = styled(Button)`
+  gap: 8px;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  svg path {
+    fill: ${({ theme }) => theme.colors.blue500};
+    transition: fill 0.4s;
+  }
+
+  &:hover svg path {
+    fill: ${({ theme }) => theme.colors.button};
+  }
+`;
+
 const Stats = styled.div<{ loggedIn?: boolean }>`
   display: grid;
   grid-template-columns: 1fr;
@@ -120,11 +153,17 @@ const RangesListImpl: React.FC<IProps> = () => {
                 </Subtitle>
               </Column>
               <SizedBox height={24} />
-              <Button fixed={isMobile} onClick={() => navigate(`${ROUTES.RANGES_CREATE}`)}>
-                <Img src={theme.images.icons.add} alt="add" />
-                <SizedBox width={12} />
-                Create a range
-              </Button>
+              <Actions>
+                <DocsButton kind="secondary" fixed={isMobile} onClick={() => navigate(ROUTES.DOCS)}>
+                  <BookIcon />
+                  Docs
+                </DocsButton>
+                <Button fixed={isMobile} onClick={() => navigate(`${ROUTES.RANGES_CREATE}`)}>
+                  <Img src={theme.images.icons.add} alt="add" />
+                  <SizedBox width={12} />
+                  Create a range
+                </Button>
+              </Actions>
             </AboutRanges>
             <SizedBox height={32} />
             <Stats loggedIn={accountStore.address != null}>
