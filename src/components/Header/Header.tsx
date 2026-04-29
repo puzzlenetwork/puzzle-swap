@@ -257,7 +257,6 @@ const Header: React.FC<IProps> = () => {
     { name: "Explore", link: ROUTES.EXPLORE },
     { name: "Trade", link: ROUTES.TRADE },
     { name: "Ideas", link: ROUTES.IDEAS },
-    { name: "News", link: ROUTES.NEWS },
     { name: "Docs", link: ROUTES.DOCS }
   ];
 
