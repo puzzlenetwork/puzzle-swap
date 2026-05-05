@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 import Dialog from "@components/Dialog";
@@ -7,6 +7,7 @@ import Text from "@components/Text";
 import Button from "@components/Button";
 import { useStores } from "@stores";
 import centerEllipsis from "@src/utils/centerEllipsis";
+import { IDEAS_API_URL } from "@src/constants";
 
 interface Props {
   visible: boolean;
@@ -246,32 +247,6 @@ const AttachmentsSection = styled(Column)`
   width: 100%;
 `;
 
-const AddMoreButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 10px;
-  border: 1px dashed ${({ theme }) => theme.colors.primary300};
-  border-radius: 10px;
-  background: transparent;
-  color: ${({ theme }) => theme.colors.primary650};
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 100%;
-
-  &:hover:not(:disabled) {
-    border-color: #9275CC;
-    color: #9275CC;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`;
-
 const AttachmentItem = styled(Row)`
   width: 100%;
   padding: 10px 12px;
@@ -281,6 +256,68 @@ const AttachmentItem = styled(Row)`
   gap: 10px;
   align-items: center;
   box-sizing: border-box;
+`;
+
+const AttachmentThumb = styled.img`
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+`;
+
+const DropZone = styled.div<{ isDragging: boolean; disabled: boolean }>`
+  width: 100%;
+  padding: 18px 14px;
+  border: 1.5px dashed
+    ${({ isDragging, theme }) => (isDragging ? "#9275CC" : theme.colors.primary300)};
+  background: ${({ isDragging }) => (isDragging ? "rgba(146, 117, 204, 0.08)" : "transparent")};
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  opacity: ${({ disabled }) => (disabled ? 0.55 : 1)};
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+
+  &:hover {
+    border-color: ${({ disabled }) => (disabled ? undefined : "#9275CC")};
+    color: ${({ disabled }) => (disabled ? undefined : "#9275CC")};
+  }
+`;
+
+const DropZoneTitle = styled(Text)`
+  font-size: 13px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.primary800};
+`;
+
+const DropZoneHint = styled(Text)`
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.primary650};
+`;
+
+const HiddenFileInput = styled.input`
+  display: none;
+`;
+
+const PasteLinkButton = styled.button`
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 4px 0;
+  font-size: 12px;
+  color: #9275CC;
+  cursor: pointer;
+  text-decoration: underline;
+
+  &:hover {
+    color: #7055AA;
+  }
 `;
 
 const AttachmentLink = styled.a`
@@ -319,8 +356,20 @@ const RemoveAttachmentButton = styled.button`
 
 const MAX_DESCRIPTION_LENGTH = 1000;
 const MAX_ATTACHMENTS = 5;
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
+const isOwnUploadUrl = (url: string): boolean => {
+  try {
+    const parsed = new URL(url);
+    return parsed.pathname.includes("/ideas-api/uploads/");
+  } catch {
+    return false;
+  }
+};
 
 const isValidAttachmentUrl = (url: string): boolean => {
+  if (isOwnUploadUrl(url)) return true;
   try {
     const parsed = new URL(url);
     const validHosts = ['drive.google.com', 'docs.google.com', 'imgur.com', 'i.imgur.com'];
@@ -374,7 +423,76 @@ const SubmitIdeaModal: React.FC<Props> = ({ visible, onClose }) => {
   const [attachments, setAttachments] = useState<string[]>([]);
   const [attachmentInput, setAttachmentInput] = useState("");
   const [showAttachmentInput, setShowAttachmentInput] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const remainingSlots = MAX_ATTACHMENTS - attachments.length;
+  const dropZoneDisabled = remainingSlots <= 0 || ideasStore.uploadingAttachment;
+
+  const handleFiles = async (fileList: FileList | File[]) => {
+    setError("");
+    const files = Array.from(fileList);
+    if (files.length === 0) return;
+
+    if (attachments.length >= MAX_ATTACHMENTS) {
+      setError(`Maximum ${MAX_ATTACHMENTS} attachments allowed`);
+      return;
+    }
+
+    const slotsLeft = MAX_ATTACHMENTS - attachments.length;
+    const toUpload = files.slice(0, slotsLeft);
+
+    for (const file of toUpload) {
+      if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+        setError("Only JPG, PNG, WEBP and GIF images are supported");
+        continue;
+      }
+      if (file.size > MAX_IMAGE_BYTES) {
+        setError(`"${file.name}" exceeds the 5 MB limit`);
+        continue;
+      }
+      const url = await ideasStore.uploadAttachmentImage(file);
+      if (url) {
+        setAttachments((prev) => (prev.includes(url) || prev.length >= MAX_ATTACHMENTS ? prev : [...prev, url]));
+      }
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    if (dropZoneDisabled) return;
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleFiles(e.dataTransfer.files);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!dropZoneDisabled) setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleFilePicked = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      handleFiles(e.target.files);
+      // Reset so picking the same file twice still triggers onChange.
+      e.target.value = "";
+    }
+  };
+
+  const openFilePicker = () => {
+    if (dropZoneDisabled) return;
+    fileInputRef.current?.click();
+  };
 
   const handleAddAttachment = () => {
     const url = attachmentInput.trim();
@@ -495,16 +613,28 @@ const SubmitIdeaModal: React.FC<Props> = ({ visible, onClose }) => {
           <Label>Attachments (optional)</Label>
           <AttachmentsSection>
             {attachments.map((url, index) => {
-              // Extract filename or short ID from URL
+              const ownUpload = isOwnUploadUrl(url);
+              // Resolve own-upload URLs against the API host so the thumbnail loads
+              // regardless of whether the stored URL is absolute or relative.
+              const thumbSrc = (() => {
+                if (!ownUpload) return null;
+                try {
+                  return new URL(url, IDEAS_API_URL).toString();
+                } catch {
+                  return url;
+                }
+              })();
               const getShortName = (link: string) => {
                 try {
                   const parsed = new URL(link);
-                  // Imgur
+                  if (ownUpload) {
+                    const filename = parsed.pathname.split("/").pop() || "image";
+                    return `Image: ${filename.slice(0, 8)}…`;
+                  }
                   if (parsed.hostname.includes('imgur.com')) {
                     const imgurMatch = link.match(/imgur\.com\/([a-zA-Z0-9]+)/);
                     if (imgurMatch) return `Imgur: ${imgurMatch[1]}`;
                   }
-                  // Google Drive
                   const match = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
                   if (match) return `Drive: ...${match[1].slice(-8)}`;
                   const docMatch = link.match(/\/document\/d\/([a-zA-Z0-9_-]+)/);
@@ -516,8 +646,8 @@ const SubmitIdeaModal: React.FC<Props> = ({ visible, onClose }) => {
               };
               return (
                 <AttachmentItem key={index}>
-                  <DriveIcon />
-                  <AttachmentLink href={url} target="_blank" rel="noopener noreferrer">
+                  {ownUpload && thumbSrc ? <AttachmentThumb src={thumbSrc} alt="" /> : <DriveIcon />}
+                  <AttachmentLink href={thumbSrc ?? url} target="_blank" rel="noopener noreferrer">
                     {getShortName(url)}
                   </AttachmentLink>
                   <RemoveAttachmentButton onClick={() => handleRemoveAttachment(index)} type="button">
@@ -526,7 +656,46 @@ const SubmitIdeaModal: React.FC<Props> = ({ visible, onClose }) => {
                 </AttachmentItem>
               );
             })}
-            {showAttachmentInput ? (
+
+            {remainingSlots > 0 && (
+              <DropZone
+                isDragging={isDragging}
+                disabled={dropZoneDisabled}
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragEnter={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onClick={openFilePicker}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    openFilePicker();
+                  }
+                }}
+              >
+                <DropZoneTitle>
+                  {ideasStore.uploadingAttachment
+                    ? "Uploading…"
+                    : isDragging
+                    ? "Drop images to upload"
+                    : "Drag & drop images, or click to browse"}
+                </DropZoneTitle>
+                <DropZoneHint>
+                  PNG, JPG, WEBP, GIF · up to 5 MB · {attachments.length}/{MAX_ATTACHMENTS}
+                </DropZoneHint>
+                <HiddenFileInput
+                  ref={fileInputRef}
+                  type="file"
+                  accept={ACCEPTED_IMAGE_TYPES.join(",")}
+                  multiple
+                  onChange={handleFilePicked}
+                />
+              </DropZone>
+            )}
+
+            {showAttachmentInput && remainingSlots > 0 && (
               <Input
                 type="text"
                 placeholder="Paste Google Drive or Imgur link"
@@ -545,14 +714,18 @@ const SubmitIdeaModal: React.FC<Props> = ({ visible, onClose }) => {
                 onBlur={handleAddAttachment}
                 autoFocus
               />
-            ) : attachments.length < MAX_ATTACHMENTS ? (
-              <AddMoreButton type="button" onClick={() => setShowAttachmentInput(true)}>
-                + Add link
-              </AddMoreButton>
-            ) : null}
+            )}
+
+            {!showAttachmentInput && remainingSlots > 0 && (
+              <PasteLinkButton type="button" onClick={() => setShowAttachmentInput(true)}>
+                Or paste an external link (Drive / Imgur)
+              </PasteLinkButton>
+            )}
           </AttachmentsSection>
           <HintText>
-            Upload images to <HintLink href="https://imgur.com/upload" target="_blank" rel="noopener noreferrer">Imgur</HintLink> or <HintLink href="https://drive.google.com" target="_blank" rel="noopener noreferrer">Google Drive</HintLink> and paste link ({attachments.length}/{MAX_ATTACHMENTS})
+            Native uploads are stored privately. External links from{" "}
+            <HintLink href="https://imgur.com/upload" target="_blank" rel="noopener noreferrer">Imgur</HintLink> or{" "}
+            <HintLink href="https://drive.google.com" target="_blank" rel="noopener noreferrer">Google Drive</HintLink> are also accepted.
           </HintText>
         </FormGroup>
 
