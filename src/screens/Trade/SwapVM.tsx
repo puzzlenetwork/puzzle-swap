@@ -72,6 +72,12 @@ export class SwapVM {
     localStorage.setItem("swap-chart-opened", String(v));
   };
 
+  openedHistory = localStorage.getItem("swap-history-opened") === "true";
+  setOpenedHistory = (v: boolean) => {
+    this.openedHistory = v;
+    localStorage.setItem("swap-history-opened", String(v));
+  };
+
   chartType: "standard" | "tradingview" = (localStorage.getItem("swap-chart-type") as "standard" | "tradingview") || "standard";
   setChartType = (v: "standard" | "tradingview") => {
     this.chartType = v;

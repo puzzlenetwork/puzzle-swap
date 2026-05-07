@@ -132,6 +132,7 @@ const RangeCharts: React.FC<IProps> = () => {
 
   const periodsChange = vm.periodsChange;
   const hasAnyPeriodData = periodsChange.some(({ changePercent }) => !changePercent.eq(0));
+  const showPeriodsChange = activeTab === 2 && hasAnyPeriodData;
 
   return (
     <Root disabled={vm.chartData == null || vm.chartData.length < 2}>
@@ -174,7 +175,7 @@ const RangeCharts: React.FC<IProps> = () => {
           />
         )}
       </Row>
-      {hasAnyPeriodData && (
+      {showPeriodsChange && (
         <PeriodsRow>
           {periodsChange.map(({ period, changePercent }) => {
             const positive = changePercent.gte(0);

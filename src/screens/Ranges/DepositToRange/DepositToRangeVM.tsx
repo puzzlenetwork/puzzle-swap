@@ -169,9 +169,13 @@ class DepositToRangeVM {
     const { accountStore } = this.rootStore;
     this._setLoading(true);
     this.setNotificationParams(null);
+    const baseInvokeFee = accountStore.isAccScripted ? 900000 : 500000;
     return accountStore
       .invoke({
         dApp: CONTRACT_ADDRESSES.rangesRouter,
+        // +1 WAVES to cover the LP-token Issue action on the first-ever single-token
+        // liquidity provision into this range. Overpay is benign on subsequent calls.
+        fee: baseInvokeFee + 100_000_000,
         payment: [
           {
             assetId: this.selectedTokenToDeposit!.assetId,

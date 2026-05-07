@@ -3,6 +3,8 @@ import React from "react";
 import { Row } from "@src/components/Flex";
 import chart from "@src/assets/icons/chart.svg";
 import nochart from "@src/assets/icons/no-chart.svg";
+import history from "@src/assets/icons/history.svg";
+import nohistory from "@src/assets/icons/no-history.svg";
 import settings from "@src/assets/icons/settings.svg";
 import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
@@ -58,6 +60,13 @@ const SettingsHeader: React.FC<IProps> = ({ withSetting }) => {
         {withSetting != null && (
           <Icon src={settings} alt="pic" onClick={() => vm.setOpenedSettings(!vm.openedSettings)} />
         )}
+        <SizedBox width={8} />
+        <Icon
+          src={!vm.openedHistory ? history : nohistory}
+          alt="Swap history"
+          title="Swap history"
+          onClick={() => vm.setOpenedHistory(!vm.openedHistory)}
+        />
         <SizedBox width={8} />
         <Icon src={!vm.openedChart ? chart : nochart} alt="pic" onClick={() => vm.setOpenedChart(!vm.openedChart)} />
       </IconsBlock>

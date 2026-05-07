@@ -51,8 +51,106 @@ class IdeasStore {
   submitting = false;
   setSubmitting = (v: boolean) => (this.submitting = v);
 
+  uploadingAttachment = false;
+  setUploadingAttachment = (v: boolean) => (this.uploadingAttachment = v);
+
   submitModalOpen = false;
   setSubmitModalOpen = (v: boolean) => (this.submitModalOpen = v);
+
+  // Sign an arbitrary action message and return signature + publicKey.
+  // Used by both submitIdea and uploadAttachmentImage so the auth flow stays consistent.
+  private signActionMessage = async (message: string): Promise<{ signature: string; publicKey: string }> => {
+    const { accountStore } = this.rootStore;
+    const keeper = (window as any).KeeperWallet || (window as any).WavesKeeper;
+    if (keeper) {
+      const encoder = new TextEncoder();
+      const messageBytes = encoder.encode(message);
+      const base64Message = btoa(String.fromCharCode.apply(null, Array.from(messageBytes)));
+      const signResult = await keeper.signCustomData({
+        version: 1,
+        binary: "base64:" + base64Message
+      });
+      return { signature: signResult.signature, publicKey: signResult.publicKey };
+    }
+    if (accountStore.signer) {
+      const signResult = await accountStore.signer.signMessage(message);
+      const signature = (signResult as any)[0]?.signature || (signResult as any).signature || String(signResult);
+      const publicKey = (signResult as any)[0]?.publicKey || (signResult as any).publicKey || "";
+      return { signature, publicKey };
+    }
+    accountStore.setWalletModalOpened(true);
+    throw new Error("Please connect your wallet first");
+  };
+
+  uploadAttachmentImage = async (file: File): Promise<string | null> => {
+    const { accountStore, notificationStore } = this.rootStore;
+    const { address } = accountStore;
+    if (!address) {
+      notificationStore.notify("Please connect your wallet first", {
+        type: "warning",
+        title: "Wallet Required"
+      });
+      return null;
+    }
+
+    const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    if (!allowed.includes(file.type)) {
+      notificationStore.notify("Only JPG, PNG, WEBP and GIF images are supported", {
+        type: "danger",
+        title: "Unsupported file type"
+      });
+      return null;
+    }
+    const maxBytes = 5 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      notificationStore.notify("Image must be 5 MB or smaller", {
+        type: "danger",
+        title: "File too large"
+      });
+      return null;
+    }
+
+    this.setUploadingAttachment(true);
+    try {
+      const timestamp = Date.now();
+      const message = JSON.stringify({ action: "upload_image", address, timestamp });
+      const { signature, publicKey } = await this.signActionMessage(message);
+
+      const formData = new FormData();
+      formData.append("file", file, file.name);
+      formData.append("address", address);
+      formData.append("publicKey", publicKey);
+      formData.append("signature", signature);
+      formData.append("message", message);
+
+      const response = await fetch(`${IDEAS_API_URL}/uploads/image`, {
+        method: "POST",
+        body: formData
+      });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to upload image");
+      }
+      const data = await response.json();
+      // Backend returns a path relative to the API host; resolve against IDEAS_API_URL
+      // so the resulting URL is renderable from any frontend origin.
+      try {
+        const apiBase = new URL(IDEAS_API_URL);
+        const absolute = new URL(data.url, apiBase).toString();
+        return absolute;
+      } catch {
+        return data.url;
+      }
+    } catch (error: any) {
+      notificationStore.notify(error?.message || "Failed to upload image", {
+        type: "danger",
+        title: "Upload failed"
+      });
+      return null;
+    } finally {
+      this.setUploadingAttachment(false);
+    }
+  };
 
   fetchIdeas = async () => {
     this.setLoading(true);
