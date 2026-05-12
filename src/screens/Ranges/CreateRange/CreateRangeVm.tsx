@@ -16,7 +16,7 @@ import React, { useMemo } from "react";
 import loadCreateRangeStateFromStorage, { IInitDataToStore } from "./utils/loadCreateRangeStateFromStorage";
 import { domainToUrlSafe } from "@src/utils/rangeUrlUtils";
 
-export const feeToDeploy = new BN(0.042e8);
+export const feeToDeploy = new BN(0.08e8);
 export const transactionFeeToDeploy = new BN(0.001e8);
 export const feeToProvideLiquidity = new BN(0.005e8);
 
@@ -846,7 +846,7 @@ class CreateRangeVm {
       }
 
       // Deploy the range smart contract
-      const deployScriptTx = await setScript({ script: RANGE_CONTRACT_B64, chainId: "W", fee: "4200000" }, seed);
+то      const deployScriptTx = await setScript({ script: RANGE_CONTRACT_B64, chainId: "W", fee: "7700000" }, seed);
       await broadcast(deployScriptTx, NODE_URL);
       try {
         await this.waitForTxThrottled(deployScriptTx.id, { apiBase: NODE_URL });
