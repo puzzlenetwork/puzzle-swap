@@ -846,7 +846,7 @@ class CreateRangeVm {
       }
 
       // Deploy the range smart contract
-то      const deployScriptTx = await setScript({ script: RANGE_CONTRACT_B64, chainId: "W", fee: "7700000" }, seed);
+      const deployScriptTx = await setScript({ script: RANGE_CONTRACT_B64, chainId: "W", fee: "7700000" }, seed);
       await broadcast(deployScriptTx, NODE_URL);
       try {
         await this.waitForTxThrottled(deployScriptTx.id, { apiBase: NODE_URL });
