@@ -35,25 +35,24 @@ const PoolInformation: React.FC<IProps> = () => {
   const valuesArray = [
     {
       title: "Liquidity",
-      value: data?.liquidity ? "$" + new BN(data.liquidity).toFormat(2) : null
+      value: data?.liquidity != null ? "$" + new BN(data.liquidity).toFormat(2) : null
     },
     {
-      title: "Monthly Volume", // TODO должно быть monthlyVolume
-      value: data?.totals?.volume_30d ? "$" + new BN(data.totals.volume_30d).toFormat(2) : null
+      title: "Monthly Volume",
+      value: data?.totals?.volume_30d != null ? "$" + new BN(data.totals.volume_30d).toFormat(2) : null
     },
     {
       title: "Monthly Fees (LP + Owner)",
-      value: data?.totals?.pool_fees_30d
+      value: data?.totals?.pool_fees_30d != null
         ? "$" +
           new BN(data?.totals?.pool_fees_30d).toFormat(2) +
           " + $" +
-          new BN(data?.totals?.owner_fees_30d).toFormat(2)
+          new BN(data?.totals?.owner_fees_30d ?? 0).toFormat(2)
         : null
-      // value: new BN(data?.pool_fees ?? 0).plus(data?.owner_fees ?? 0).toFormat(2)
     },
     {
       title: "LP APY",
-      value: data?.apr ? new BN(data.apr).toFormat(2) + " %" : null,
+      value: data?.apr != null ? new BN(data.apr).toFormat(2) + " %" : null,
       newValue: data?.boostedApy ? new BN(data.boostedApy).plus(data.apr).toBigFormat(2) + " %" : null
     }
   ];

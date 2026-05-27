@@ -326,7 +326,16 @@ export default class PoolsStore {
           ...TOKENS_BY_ASSET_ID[asset_id],
           share
         }));
-        newPools.push(new Pool({ ...config, tokens }));
+        const newPool = new Pool({ ...config, tokens });
+        if (config.stats != null) {
+          newPool.setStatistics({
+            ...config.stats,
+            totals: config?.totals,
+            liquidity: config.liquidity,
+            boostedApy: config.boosted_apr ?? null
+          });
+        }
+        newPools.push(newPool);
       }
     });
     this.setPools([...this.pools, ...newPools]);
