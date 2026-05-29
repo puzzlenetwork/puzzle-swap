@@ -72,16 +72,6 @@ const Meta = styled.div`
   color: ${({ theme }) => theme.colors.primary500};
 `;
 
-const SourceBadge = styled.span`
-  padding: 3px 8px;
-  background: ${({ theme }) => theme.colors.primary50};
-  color: ${({ theme }) => theme.colors.primary650};
-  border-radius: 6px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-`;
-
 const Title = styled.h3`
   font-size: 18px;
   font-weight: 700;
@@ -142,11 +132,10 @@ export default function NewsCard({ post }: Props) {
   return (
     <Card onClick={() => navigate(`/news/${post.slug}`)}>
       <ImageWrap hasImage={Boolean(img)}>
-        {img ? <Image src={img} alt={post.title} loading="lazy" /> : <Placeholder>{post.sourceType}</Placeholder>}
+        {img ? <Image src={img} alt={post.title} loading="lazy" /> : <Placeholder>News</Placeholder>}
       </ImageWrap>
       <Body>
         <Meta>
-          <SourceBadge>{post.sourceType}</SourceBadge>
           <span>{formatDate(post.publishedAt)}</span>
         </Meta>
         <Title>{post.title}</Title>

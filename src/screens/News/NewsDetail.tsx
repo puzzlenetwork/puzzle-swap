@@ -39,17 +39,6 @@ const Meta = styled.div`
   color: ${({ theme }) => theme.colors.primary500};
 `;
 
-const SourceBadge = styled.span`
-  padding: 3px 10px;
-  background: ${({ theme }) => theme.colors.primary50};
-  color: ${({ theme }) => theme.colors.primary650};
-  border-radius: 6px;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 11px;
-  letter-spacing: 0.3px;
-`;
-
 const Title = styled.h1`
   font-size: 36px;
   font-weight: 700;
@@ -194,7 +183,6 @@ export default function NewsDetail() {
       <BackLink to={ROUTES.NEWS}>← Back to news</BackLink>
 
       <Meta>
-        <SourceBadge>{post.sourceType}</SourceBadge>
         <span>{formatDate(post.publishedAt)}</span>
         {post.sourceAuthor && <span>• {post.sourceAuthor}</span>}
       </Meta>
