@@ -2,6 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import { NewsListItem, resolveImageUrl } from "@src/services/newsApi";
+import { ReactComponent as PuzzleLogo } from "@src/assets/logo.svg";
 
 interface Props {
   post: NewsListItem;
@@ -44,11 +45,16 @@ const Image = styled.img`
 `;
 
 const Placeholder = styled.div`
-  font-size: 14px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.primary300};
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  width: 48%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.45;
+
+  svg {
+    width: 100%;
+    height: auto;
+  }
 `;
 
 const Body = styled.div`
@@ -132,7 +138,13 @@ export default function NewsCard({ post }: Props) {
   return (
     <Card onClick={() => navigate(`/news/${post.slug}`)}>
       <ImageWrap hasImage={Boolean(img)}>
-        {img ? <Image src={img} alt={post.title} loading="lazy" /> : <Placeholder>News</Placeholder>}
+        {img ? (
+          <Image src={img} alt={post.title} loading="lazy" />
+        ) : (
+          <Placeholder>
+            <PuzzleLogo />
+          </Placeholder>
+        )}
       </ImageWrap>
       <Body>
         <Meta>
