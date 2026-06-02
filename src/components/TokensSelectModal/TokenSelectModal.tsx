@@ -52,9 +52,18 @@ const Scroll = styled.div`
   display: flex;
   margin: 0 -24px;
   padding: 0 40px 16px 24px;
-  overflow-y: scroll;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  cursor: grab;
+  user-select: none;
   -ms-overflow-style: none;
   scrollbar-width: none;
+
+  &:active {
+    cursor: grabbing;
+  }
 
   ::-webkit-scrollbar {
     display: none;
@@ -71,6 +80,50 @@ const TokenSelectModal: React.FC<IProps> = ({ onClose, balances, onSelect, visib
   };
   const ref = useRef(null!);
   useOnClickOutside(ref, onClose);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const dragState = useRef({ down: false, moved: false, startX: 0, startScroll: 0 });
+
+  const handleScrollPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    dragState.current = { down: true, moved: false, startX: e.clientX, startScroll: el.scrollLeft };
+  };
+
+  const handleScrollPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = scrollRef.current;
+    if (!el || !dragState.current.down) return;
+    const dx = e.clientX - dragState.current.startX;
+    if (Math.abs(dx) > 3) {
+      dragState.current.moved = true;
+      el.setPointerCapture(e.pointerId);
+    }
+    el.scrollLeft = dragState.current.startScroll - dx;
+  };
+
+  const handleScrollPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = scrollRef.current;
+    if (el?.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId);
+    dragState.current.down = false;
+  };
+
+  // Block click on category if it was a drag, not a tap
+  const handleScrollClickCapture = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (dragState.current.moved) {
+      e.stopPropagation();
+      e.preventDefault();
+      dragState.current.moved = false;
+    }
+  };
+
+  // Convert vertical wheel into horizontal scroll
+  const handleScrollWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+      el.scrollLeft += e.deltaY;
+    }
+  };
 
   const handleTokenSelect = (assetId: string) => {
     onSelect(assetId);
@@ -145,7 +198,15 @@ const TokenSelectModal: React.FC<IProps> = ({ onClose, balances, onSelect, visib
       <Input icon="search" value={searchValue} onChange={handleSearch} placeholder="Search by name or ticker…" />
       <SizedBox height={16} />
 
-      <Scroll>
+      <Scroll
+        ref={scrollRef}
+        onPointerDown={handleScrollPointerDown}
+        onPointerMove={handleScrollPointerMove}
+        onPointerUp={handleScrollPointerUp}
+        onPointerLeave={handleScrollPointerUp}
+        onClickCapture={handleScrollClickCapture}
+        onWheel={handleScrollWheel}
+      >
         <ButtonsGroup values={tokenCategories} active={activeFilter} onClick={(v) => setActiveFilter(v)} />
       </Scroll>
       <SizedBox height={32} />
