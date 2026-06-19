@@ -382,10 +382,16 @@ class IdeasStore {
   isAdmin = false;
   setIsAdmin = (v: boolean) => (this.isAdmin = v);
 
+  // Core developer = any whitelisted team member (owner/admin/developer).
+  // Eligible to perform the technical review (approve/veto) of proposals.
+  isCoreDev = false;
+  setIsCoreDev = (v: boolean) => (this.isCoreDev = v);
+
   checkAdminStatus = async () => {
     const { address } = this.rootStore.accountStore;
     if (!address) {
       this.setIsAdmin(false);
+      this.setIsCoreDev(false);
       return;
     }
 
@@ -395,11 +401,13 @@ class IdeasStore {
         const data = await response.json();
         runInAction(() => {
           this.setIsAdmin(data.isAdmin || data.isOwner);
+          this.setIsCoreDev(Boolean(data.isWhitelisted));
         });
       }
     } catch (error) {
       console.error("Error checking admin status:", error);
       this.setIsAdmin(false);
+      this.setIsCoreDev(false);
     }
   };
 
@@ -804,6 +812,125 @@ class IdeasStore {
     if (idea.likes?.some(a => a.toLowerCase() === addrLower)) return "like";
     if (idea.dislikes?.some(a => a.toLowerCase() === addrLower)) return "dislike";
     return null;
+  };
+
+  // Core-dev technical review: approve opens community voting, veto blocks it permanently.
+  reviewingIdeaId: string | null = null;
+  setReviewingIdeaId = (id: string | null) => (this.reviewingIdeaId = id);
+
+  reviewIdea = async (
+    ideaId: string,
+    decision: "approve" | "veto",
+    vetoReason?: string
+  ): Promise<boolean> => {
+    const { accountStore, notificationStore } = this.rootStore;
+    const { address } = accountStore;
+
+    if (!address || !this.isCoreDev) {
+      notificationStore.notify("Core developer access required", {
+        type: "warning",
+        title: "Access Denied"
+      });
+      return false;
+    }
+
+    if (decision === "veto" && (!vetoReason || !vetoReason.trim())) {
+      notificationStore.notify("Veto reason is required", {
+        type: "warning",
+        title: "Reason Required"
+      });
+      return false;
+    }
+
+    this.setReviewingIdeaId(ideaId);
+    try {
+      const timestamp = Date.now();
+      const message = JSON.stringify({
+        action: "review_idea",
+        address,
+        ideaId,
+        decision,
+        timestamp
+      });
+
+      let signature: string;
+      let publicKey: string;
+
+      const keeper = (window as any).KeeperWallet || (window as any).WavesKeeper;
+      if (keeper) {
+        try {
+          const encoder = new TextEncoder();
+          const messageBytes = encoder.encode(message);
+          const base64Message = btoa(String.fromCharCode.apply(null, Array.from(messageBytes)));
+
+          const signResult = await keeper.signCustomData({
+            version: 1,
+            binary: "base64:" + base64Message
+          });
+          signature = signResult.signature;
+          publicKey = signResult.publicKey;
+        } catch (keeperError: any) {
+          throw new Error("Failed to sign review. Please check your Keeper Wallet.");
+        }
+      } else if (accountStore.signer) {
+        try {
+          const signResult = await accountStore.signer.signMessage(message);
+          signature = (signResult as any)[0]?.signature || (signResult as any).signature || String(signResult);
+          publicKey = (signResult as any)[0]?.publicKey || (signResult as any).publicKey || "";
+        } catch (signerError: any) {
+          throw new Error("Failed to sign review. Please reconnect your wallet.");
+        }
+      } else {
+        accountStore.setWalletModalOpened(true);
+        throw new Error("Please connect your wallet first");
+      }
+
+      const response = await fetch(`${IDEAS_API_URL}/ideas/${ideaId}/review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          address,
+          decision,
+          vetoReason: decision === "veto" ? vetoReason?.trim() : undefined,
+          signature,
+          publicKey,
+          message
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to review");
+      }
+
+      const data = await response.json();
+
+      runInAction(() => {
+        const applyUpdate = (ideas: IIdea[]) => {
+          const index = ideas.findIndex(i => i.id === ideaId);
+          if (index !== -1 && data.idea) {
+            ideas[index] = data.idea;
+          }
+        };
+        applyUpdate(this.ideas);
+        applyUpdate(this.myIdeas);
+      });
+
+      notificationStore.notify(
+        decision === "approve" ? "Proposal approved for community voting" : "Proposal vetoed",
+        { type: "success", title: "Review submitted" }
+      );
+
+      return true;
+    } catch (error: any) {
+      notificationStore.notify(error.message || "Failed to review", {
+        type: "danger",
+        title: "Error"
+      });
+      return false;
+    } finally {
+      this.setReviewingIdeaId(null);
+    }
   };
 }
 

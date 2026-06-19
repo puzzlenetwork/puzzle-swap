@@ -55,6 +55,12 @@ export enum IDEA_STATUS {
   REJECTED = "rejected"
 }
 
+export enum REVIEW_STATUS {
+  REVIEW_PENDING = "review_pending",
+  APPROVED = "approved",
+  VETOED = "vetoed"
+}
+
 export interface IIdea {
   id: string;
   number?: number;
@@ -64,6 +70,10 @@ export interface IIdea {
   screenshots?: string[];
   attachments?: string[];
   status: IDEA_STATUS;
+  reviewStatus?: REVIEW_STATUS;
+  reviewedBy?: string;
+  reviewedAt?: string;
+  vetoReason?: string;
   signature: string;
   createdAt: string;
   updatedAt: string;

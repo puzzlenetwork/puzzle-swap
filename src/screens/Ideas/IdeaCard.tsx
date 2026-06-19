@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 import copy from "copy-to-clipboard";
 import * as identityImg from "identity-img";
-import { IIdea, IDEA_STATUS } from "@src/constants";
+import { IIdea, IDEA_STATUS, REVIEW_STATUS } from "@src/constants";
 import { useStores } from "@stores";
 import centerEllipsis from "@src/utils/centerEllipsis";
 
@@ -895,6 +895,126 @@ const RewardValue = styled.span`
   color: #7075E9;
 `;
 
+const REVIEW_META: Record<REVIEW_STATUS, { label: string; color: string }> = {
+  [REVIEW_STATUS.REVIEW_PENDING]: { label: "Under Review", color: "#E29F4D" },
+  [REVIEW_STATUS.APPROVED]: { label: "Approved", color: "#35A15A" },
+  [REVIEW_STATUS.VETOED]: { label: "Vetoed", color: "#D66662" }
+};
+
+const ReviewBadge = styled.span<{ color: string }>`
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  background: ${({ color }) => color}15;
+  color: ${({ color }) => color};
+  white-space: nowrap;
+
+  @media (max-width: 600px) {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+`;
+
+const ReviewNote = styled.div<{ color: string }>`
+  font-size: 13px;
+  line-height: 20px;
+  color: ${({ color }) => color};
+  background: ${({ color }) => color}10;
+  border: 1px solid ${({ color }) => color}30;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+`;
+
+const ReviewSection = styled.div`
+  width: auto;
+  padding: 16px 20px;
+  border-top: 1px solid ${({ theme }) => theme.colors.primary100};
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const ReviewSectionLabel = styled.span`
+  font-size: 14px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.primary800};
+`;
+
+const ReviewSectionHint = styled.span`
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.primary650};
+`;
+
+const ReviewButtonRow = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
+const ApproveButton = styled.button`
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #35A15A40;
+  background: #35A15A10;
+  color: #35A15A;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: #35A15A20;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+const VetoButton = styled.button`
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #D6666240;
+  background: #D6666210;
+  color: #D66662;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: #D6666220;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+const VetoReasonInput = styled.textarea`
+  width: 100%;
+  min-height: 64px;
+  padding: 12px 14px;
+  border: 1px solid ${({ theme }) => theme.colors.primary200};
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: ${({ theme }) => theme.colors.primary800};
+  background: ${({ theme }) => theme.colors.white};
+  box-sizing: border-box;
+  resize: vertical;
+
+  &:focus {
+    outline: none;
+    border-color: #D66662;
+  }
+`;
+
 const IdeaCard: React.FC<Props> = ({ idea }) => {
   const { ideasStore, accountStore, notificationStore } = useStores();
   const isMyIdea = accountStore.address?.toLowerCase() === idea.address.toLowerCase();
@@ -910,7 +1030,16 @@ const IdeaCard: React.FC<Props> = ({ idea }) => {
   const [paidAmount, setPaidAmount] = useState<string>("");
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [copiedTelegram, setCopiedTelegram] = useState(false);
+  const [showVetoInput, setShowVetoInput] = useState(false);
+  const [vetoReason, setVetoReason] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Dual-layer governance gate. Legacy ideas without reviewStatus are treated as approved.
+  const reviewStatus = idea.reviewStatus || REVIEW_STATUS.APPROVED;
+  const isApproved = reviewStatus === REVIEW_STATUS.APPROVED;
+  const isVetoed = reviewStatus === REVIEW_STATUS.VETOED;
+  const isReviewPending = reviewStatus === REVIEW_STATUS.REVIEW_PENDING;
+  const reviewing = ideasStore.reviewingIdeaId === idea.id;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -1007,11 +1136,25 @@ const IdeaCard: React.FC<Props> = ({ idea }) => {
 
   const handleVote = async (e: React.MouseEvent, voteType: "like" | "dislike") => {
     e.stopPropagation();
+    if (!isApproved) return; // voting opens only after core-dev approval
     await ideasStore.voteIdea(idea.id, voteType);
+  };
+
+  const handleApprove = async () => {
+    await ideasStore.reviewIdea(idea.id, "approve");
+  };
+
+  const handleVeto = async () => {
+    const ok = await ideasStore.reviewIdea(idea.id, "veto", vetoReason);
+    if (ok) {
+      setShowVetoInput(false);
+      setVetoReason("");
+    }
   };
 
   const currentStatusColor = ideasStore.getStatusColor(idea.status);
   const userVote = ideasStore.getUserVote(idea);
+  const reviewMeta = REVIEW_META[reviewStatus];
 
   return (
     <>
@@ -1032,26 +1175,30 @@ const IdeaCard: React.FC<Props> = ({ idea }) => {
               {idea.assignedTo ? ideasStore.getDeveloperName(idea.assignedTo) : "No assignee"}
             </AssigneeBadge>
           )}
-          <VoteInfo>
-            <CompactVoteButton
-              voteType="like"
-              active={userVote === "like"}
-              disabled={ideasStore.votingIdeaId === idea.id}
-              onClick={(e) => handleVote(e, "like")}
-            >
-              <ThumbUpIcon filled={userVote === "like"} size={12} />
-              {idea.likes?.length || 0}
-            </CompactVoteButton>
-            <CompactVoteButton
-              voteType="dislike"
-              active={userVote === "dislike"}
-              disabled={ideasStore.votingIdeaId === idea.id}
-              onClick={(e) => handleVote(e, "dislike")}
-            >
-              <ThumbDownIcon filled={userVote === "dislike"} size={12} />
-              {idea.dislikes?.length || 0}
-            </CompactVoteButton>
-          </VoteInfo>
+          {isApproved ? (
+            <VoteInfo>
+              <CompactVoteButton
+                voteType="like"
+                active={userVote === "like"}
+                disabled={ideasStore.votingIdeaId === idea.id}
+                onClick={(e) => handleVote(e, "like")}
+              >
+                <ThumbUpIcon filled={userVote === "like"} size={12} />
+                {idea.likes?.length || 0}
+              </CompactVoteButton>
+              <CompactVoteButton
+                voteType="dislike"
+                active={userVote === "dislike"}
+                disabled={ideasStore.votingIdeaId === idea.id}
+                onClick={(e) => handleVote(e, "dislike")}
+              >
+                <ThumbDownIcon filled={userVote === "dislike"} size={12} />
+                {idea.dislikes?.length || 0}
+              </CompactVoteButton>
+            </VoteInfo>
+          ) : (
+            <ReviewBadge color={reviewMeta.color}>{reviewMeta.label}</ReviewBadge>
+          )}
           <StatusBadge color={currentStatusColor}>
             {ideasStore.getStatusLabel(idea.status)}
           </StatusBadge>
@@ -1093,6 +1240,16 @@ const IdeaCard: React.FC<Props> = ({ idea }) => {
           </ModalHeader>
 
           <ModalContent>
+            {isReviewPending && (
+              <ReviewNote color={reviewMeta.color}>
+                This proposal is pending technical review by core developers. Community voting opens once it is approved.
+              </ReviewNote>
+            )}
+            {isVetoed && (
+              <ReviewNote color={reviewMeta.color}>
+                Vetoed by core developers{idea.vetoReason ? `: ${idea.vetoReason}` : "."} This proposal is not eligible for voting.
+              </ReviewNote>
+            )}
             <ModalDescription>{idea.description}</ModalDescription>
             {idea.screenshots && idea.screenshots.length > 0 && (
               <ScreenshotsRow>
@@ -1187,27 +1344,72 @@ const IdeaCard: React.FC<Props> = ({ idea }) => {
                 {ideasStore.getStatusLabel(idea.status)}
               </ModalStatusBadge>
             </ModalMeta>
-            <VoteButtons>
-              <VoteButton
-                voteType="like"
-                active={userVote === "like"}
-                disabled={ideasStore.votingIdeaId === idea.id}
-                onClick={(e) => handleVote(e, "like")}
-              >
-                <ThumbUpIcon filled={userVote === "like"} />
-                {idea.likes?.length || 0}
-              </VoteButton>
-              <VoteButton
-                voteType="dislike"
-                active={userVote === "dislike"}
-                disabled={ideasStore.votingIdeaId === idea.id}
-                onClick={(e) => handleVote(e, "dislike")}
-              >
-                <ThumbDownIcon filled={userVote === "dislike"} />
-                {idea.dislikes?.length || 0}
-              </VoteButton>
-            </VoteButtons>
+            {isApproved ? (
+              <VoteButtons>
+                <VoteButton
+                  voteType="like"
+                  active={userVote === "like"}
+                  disabled={ideasStore.votingIdeaId === idea.id}
+                  onClick={(e) => handleVote(e, "like")}
+                >
+                  <ThumbUpIcon filled={userVote === "like"} />
+                  {idea.likes?.length || 0}
+                </VoteButton>
+                <VoteButton
+                  voteType="dislike"
+                  active={userVote === "dislike"}
+                  disabled={ideasStore.votingIdeaId === idea.id}
+                  onClick={(e) => handleVote(e, "dislike")}
+                >
+                  <ThumbDownIcon filled={userVote === "dislike"} />
+                  {idea.dislikes?.length || 0}
+                </VoteButton>
+              </VoteButtons>
+            ) : (
+              <ReviewBadge color={reviewMeta.color}>{reviewMeta.label}</ReviewBadge>
+            )}
           </ModalFooter>
+
+          {ideasStore.isCoreDev && isReviewPending && (
+            <ReviewSection>
+              <ReviewSectionLabel>Technical Review</ReviewSectionLabel>
+              <ReviewSectionHint>
+                Approve to open community voting, or veto if the proposal is technically infeasible, insecure, or misaligned with the protocol architecture.
+              </ReviewSectionHint>
+              {showVetoInput ? (
+                <>
+                  <VetoReasonInput
+                    placeholder="Reason for veto (required)"
+                    value={vetoReason}
+                    onChange={(e) => setVetoReason(e.target.value)}
+                  />
+                  <ReviewButtonRow>
+                    <ApproveButton
+                      onClick={() => {
+                        setShowVetoInput(false);
+                        setVetoReason("");
+                      }}
+                      disabled={reviewing}
+                    >
+                      Cancel
+                    </ApproveButton>
+                    <VetoButton onClick={handleVeto} disabled={reviewing || !vetoReason.trim()}>
+                      {reviewing ? "..." : "Confirm Veto"}
+                    </VetoButton>
+                  </ReviewButtonRow>
+                </>
+              ) : (
+                <ReviewButtonRow>
+                  <ApproveButton onClick={handleApprove} disabled={reviewing}>
+                    {reviewing ? "..." : "Approve"}
+                  </ApproveButton>
+                  <VetoButton onClick={() => setShowVetoInput(true)} disabled={reviewing}>
+                    Veto
+                  </VetoButton>
+                </ReviewButtonRow>
+              )}
+            </ReviewSection>
+          )}
 
           {ideasStore.isAdmin && !showBonusInput && (
             <AdminSection>
