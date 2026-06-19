@@ -44,7 +44,7 @@ export const ROUTES = {
   DOCS_PAGE: "/docs/*",
 };
 
-export const NEWS_API_URL = process.env.REACT_APP_NEWS_API_URL || "http://localhost:3002";
+export const NEWS_API_URL = process.env.REACT_APP_NEWS_API_URL || "https://pz-dev-evm.online/api";
 
 export enum IDEA_STATUS {
   PENDING = "pending",
