@@ -51,14 +51,14 @@ export async function fetchNewsList(
   const params: Record<string, string | number> = { page, limit };
   if (tag) params.tag = tag;
 
-  const res = await client.get<NewsListResponse>("/news", { params });
+  const res = await client.get<NewsListResponse>("/api/news", { params });
   return res.data;
 }
 
 export async function fetchNewsBySlug(slug: string): Promise<NewsPost | null> {
   try {
     const res = await client.get<NewsDetailResponse>(
-      `/news/${encodeURIComponent(slug)}`,
+      `/api/news/${encodeURIComponent(slug)}`,
     );
     return res.data.data ?? null;
   } catch (error) {
