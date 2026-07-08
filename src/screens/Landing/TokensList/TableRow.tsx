@@ -5,6 +5,7 @@ import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import { Link } from "react-router-dom";
 import Button from "@components/Button";
+import RoundTokenIcon from "@components/RoundTokenIcon";
 
 interface IProps {
   v: IToken & { poolId: string; balance: string };
@@ -15,7 +16,7 @@ const TableRow: React.FC<IProps> = ({ v }) => {
     <tr key={v.assetId}>
       <td>
         <Row alignItems="center">
-          <img style={{ width: 24, height: 24, borderRadius: "50%" }} src={v.logo} alt={v.name} />
+          <RoundTokenIcon src={v.logo} alt={v.name} />
           <SizedBox width={8} />
           <Text className="tableText">{v.symbol}</Text>
         </Row>

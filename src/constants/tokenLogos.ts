@@ -1,3 +1,4 @@
+import { makePairLogo } from "@src/constants/pairLogo";
 import mathLogo from "@src/assets/tokens/math-logo.png";
 import turtleLogo from "@src/assets/tokens/turtle-logo.png";
 import eggseggsLogo from "@src/assets/tokens/eggseggs-logo.jpeg";
@@ -311,6 +312,14 @@ const tokenLogos: Record<string, string> = {
   PZ_BARSIK: pzBarsikLogo,
   pWAVES: pWavesLogo,
   WOC: wocLogo,
+
+  // Puzzle Range index (paired) tokens — split "cut in half and combine" icon.
+  "PR-ROME-pWAVES": makePairLogo(romeLogo, pWavesLogo),
+  "PR-SOL-USDTerc20": makePairLogo(
+    "https://waves-bridge-assets.web.app/logo/SOL/So11111111111111111111111111111111111111112.png",
+    usdtLogo
+  ),
+  "PR-Cloud-public": makePairLogo(wavesLogo, usdtLogo),
 };
 
 export default tokenLogos;
