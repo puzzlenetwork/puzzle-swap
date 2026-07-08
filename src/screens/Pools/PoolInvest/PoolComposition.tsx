@@ -11,6 +11,7 @@ import useWindowSize from "@src/hooks/useWindowSize";
 import { useTheme } from "@emotion/react";
 import Tooltip from "@src/components/Tooltip";
 import { ReactComponent as InfoIcon } from "@src/assets/icons/info.svg";
+import RoundTokenIcon from "@src/components/RoundTokenIcon";
 
 interface IProps {}
 
@@ -24,13 +25,6 @@ const Root = styled.div<{ valueSort?: boolean }>`
     height: 20px;
     transform: ${({ valueSort }) => (valueSort ? "scale(1)" : "scale(1, -1)")};
   }
-`;
-
-const Icon = styled.img`
-  width: 24px;
-  height: 24px;
-  border-radius: 12px;
-  border: 1px solid #f1f2fe;
 `;
 
 const PoolComposition: React.FC<IProps> = () => {
@@ -121,7 +115,7 @@ const PoolComposition: React.FC<IProps> = () => {
         onClick: null,
         asset: (
           <Row alignItems="center" mainAxisSize="fit-content">
-            <Icon src={a.logo} alt="logo" />
+            <RoundTokenIcon src={a.logo} alt="logo" />
             <SizedBox width={8} />
             <Text fitContent>{a.symbol}</Text>
           </Row>

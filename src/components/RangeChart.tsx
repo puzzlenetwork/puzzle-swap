@@ -1,6 +1,7 @@
-import Img from "@src/components/Img";
 import RadarWithImage from "@src/components/RadarWithImage";
+import RoundTokenIcon from "@src/components/RoundTokenIcon";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
+import { parsePairLogo } from "@src/constants/pairLogo";
 import { RadarChart, PolarGrid, Radar, PolarAngleAxis } from "recharts";
 import Tooltip from "@components/Tooltip";
 import { Column, Row } from "@components/Flex";
@@ -27,10 +28,9 @@ const AssetsList = styled.div`
   grid-template-columns: repeat(2, 1fr);
 `;
 
-const TokenIcon = styled(Img)`
+const TokenIconWrap = styled.div`
   width: 20px;
   height: 20px;
-  border-radius: 50%;
 `;
 
 const RangeChart: React.FC<IParams> = ({ assetsWithLeverage, size, uniqueId, chartStyle, filterDeviation = 12 }: IParams) => {
@@ -74,6 +74,38 @@ const RangeChart: React.FC<IParams> = ({ assetsWithLeverage, size, uniqueId, cha
                     {props.points.map((point: any, i: any) => {
                       const logo = TOKENS_BY_ASSET_ID[point.name]?.logo;
                       if (!logo) return null;
+                      const pair = parsePairLogo(logo);
+                      if (pair) {
+                        const halfW = backgroundIconSize / 2;
+                        return (
+                          <g key={i} style={{ opacity: 0.9 }}>
+                            <clipPath id={`bgLeft${uniqueId}_${i}`}>
+                              <rect x={point.x - halfBackgroundIcon} y={point.y - halfBackgroundIcon} width={halfW} height={backgroundIconSize} />
+                            </clipPath>
+                            <clipPath id={`bgRight${uniqueId}_${i}`}>
+                              <rect x={point.x - halfBackgroundIcon + halfW} y={point.y - halfBackgroundIcon} width={halfW} height={backgroundIconSize} />
+                            </clipPath>
+                            <image
+                              href={pair.left}
+                              width={backgroundIconSize}
+                              height={backgroundIconSize}
+                              x={point.x - halfBackgroundIcon}
+                              y={point.y - halfBackgroundIcon}
+                              clipPath={`url(#bgLeft${uniqueId}_${i})`}
+                              preserveAspectRatio="xMidYMid slice"
+                            />
+                            <image
+                              href={pair.right}
+                              width={backgroundIconSize}
+                              height={backgroundIconSize}
+                              x={point.x - halfBackgroundIcon}
+                              y={point.y - halfBackgroundIcon}
+                              clipPath={`url(#bgRight${uniqueId}_${i})`}
+                              preserveAspectRatio="xMidYMid slice"
+                            />
+                          </g>
+                        );
+                      }
                       return (
                         <image
                           href={logo}
@@ -82,10 +114,7 @@ const RangeChart: React.FC<IParams> = ({ assetsWithLeverage, size, uniqueId, cha
                           x={point.x - halfBackgroundIcon}
                           y={point.y - halfBackgroundIcon}
                           key={i}
-                          style={{
-                            opacity: 0.9,
-                            borderRadius: halfBackgroundIcon // Note: SVG image does not support borderRadius directly
-                          }}
+                          style={{ opacity: 0.9 }}
                         />
                       );
                     })}
@@ -107,8 +136,9 @@ const RangeChart: React.FC<IParams> = ({ assetsWithLeverage, size, uniqueId, cha
           if (!logo) return <g />;
           return (
             <foreignObject width={iconSize} height={iconSize} x={props.x - halfIcon} y={props.y - halfIcon}>
-              <Img
+              <RoundTokenIcon
                 src={logo}
+                alt=""
                 style={{
                   width: iconSize,
                   height: iconSize,
@@ -143,7 +173,9 @@ const RangeChartWrapper: React.FC<IParams> = ({ assetsWithLeverage, showTooltip 
               }))
               .map(({ logo, symbol, reversedLeverage, assetId }, index) => (
                 <Row crossAxisSize="max" key={index}>
-                  <TokenIcon src={logo} />
+                  <TokenIconWrap>
+                    <RoundTokenIcon src={logo} alt="" style={{ width: 20, height: 20 }} />
+                  </TokenIconWrap>
                   <SizedBox width={6} />
                   <Text size="medium">
                     {symbol ?? assetId} - {reversedLeverage.toFixed(2)}%

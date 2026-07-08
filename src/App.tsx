@@ -125,7 +125,7 @@ const App: React.FC = () => {
 
         {/* Terms of Service */}
         <Route path={ROUTES.TERMS_OF_SERVICE} element={<TermsOfService />} />
-
+пуш
         {/* Ideas */}
         <Route path={ROUTES.IDEAS} element={<Ideas />} />
 

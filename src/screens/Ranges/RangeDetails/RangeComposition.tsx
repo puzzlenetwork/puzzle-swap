@@ -16,6 +16,7 @@ import BN from "@src/utils/BN";
 import Checkbox from "@src/components/Checkbox";
 import Select from "@src/components/Select";
 import Tag from "@src/components/Tag";
+import RoundTokenIcon from "@src/components/RoundTokenIcon";
 
 interface IProps {
   isMobile?: boolean;
@@ -31,13 +32,6 @@ const Root = styled.div<{ balanceSort?: boolean }>`
     height: 20px;
     transform: ${({ balanceSort }) => (balanceSort ? "scale(1)" : "scale(1, -1)")};
   }
-`;
-
-const Icon = styled.img`
-  width: 24px;
-  height: 24px;
-  border-radius: 12px;
-  border: 1px solid #f1f2fe;
 `;
 
 const RangeComposition: React.FC<IProps> = (props) => {
@@ -161,7 +155,7 @@ const RangeComposition: React.FC<IProps> = (props) => {
       onClick: null,
       asset: (
         <Row alignItems="center" mainAxisSize="fit-content">
-          <Icon src={a.logo} alt="logo" />
+          <RoundTokenIcon src={a.logo} alt="logo" />
           <SizedBox width={8} />
           <Text fitContent>{a.symbol}</Text>
           {a.shutdownBuy && (

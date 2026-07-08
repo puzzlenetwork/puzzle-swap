@@ -6,6 +6,7 @@ import Text from "@components/Text";
 import styled from "@emotion/styled";
 import { RangeAsset } from "@src/entities/Range";
 import Img from "@components/Img";
+import RoundTokenIcon from "@src/components/RoundTokenIcon";
 import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import Tooltip from "@components/Tooltip";
 import { useTheme } from "@emotion/react";
@@ -139,12 +140,10 @@ const TokenInRangePreviewWrapper = ({
       content={
         <Column>
           <Row alignItems="center">
-            <Img
+            <RoundTokenIcon
               src={TOKENS_BY_ASSET_ID[asset.assetId]?.logo}
               alt={asset.name}
-              width="20px"
-              height="20px"
-              style={{ borderRadius: "10px" }}
+              style={{ width: 20, height: 20, borderRadius: 10 }}
             />
             <SizedBox width={6} />
             <Text>{asset.name}</Text>

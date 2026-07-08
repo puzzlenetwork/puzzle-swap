@@ -10,7 +10,7 @@ import SizedBox from "@src/components/SizedBox";
 import Text from "@src/components/Text";
 import Select from "@src/components/Select";
 import Switch from "@src/components/Switch";
-import Img from "@src/components/Img";
+import RoundTokenIcon from "@src/components/RoundTokenIcon";
 
 const UsdPriceTag = styled.div`
   display: flex;
@@ -123,7 +123,7 @@ const EarnedByLP = () => {
                 <Text size="medium">
                   ${item.usdValue.toFormat(2)}
                 </Text>
-                <Img src={token.logo} alt="token" radius="50%" width="24px" height="24px" />
+                <RoundTokenIcon src={token.logo} alt="token" />
               </UsdPriceTag>
             );
           }

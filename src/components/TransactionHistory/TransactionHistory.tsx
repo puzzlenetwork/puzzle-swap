@@ -8,6 +8,7 @@ import Card from "@components/Card";
 import GridTable from "@components/GridTable";
 import { ParsedTransaction, TokenAmount } from "@src/services/transactionHistoryService";
 import { EXPLORER_URL, TOKENS_BY_ASSET_ID } from "@src/constants";
+import RoundTokenIcon from "@src/components/RoundTokenIcon";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Skeleton from "react-loading-skeleton";
@@ -112,12 +113,9 @@ const TokenPairIcons = styled.div`
   flex-shrink: 0;
 `;
 
-const TokenIcon = styled.img<{ overlap?: boolean }>`
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid ${({ theme }) => theme.colors.white};
+const TokenIconWrap = styled.div<{ overlap?: boolean }>`
   margin-left: ${({ overlap }) => (overlap ? "-8px" : "0")};
+  flex-shrink: 0;
 `;
 
 const SmallText = styled(Text)`
@@ -162,8 +160,8 @@ const TransactionDetails: React.FC<{ tx: ParsedTransaction }> = ({ tx }) => {
     return (
       <DetailsRow>
         <TokenPairIcons>
-          {fromLogo && <TokenIcon src={fromLogo} alt={tx.fromSymbol} />}
-          {toLogo && <TokenIcon src={toLogo} alt={tx.toSymbol} overlap />}
+          {fromLogo && <TokenIconWrap><RoundTokenIcon src={fromLogo} alt={tx.fromSymbol} style={{ width: 20, height: 20 }} /></TokenIconWrap>}
+          {toLogo && <TokenIconWrap overlap><RoundTokenIcon src={toLogo} alt={tx.toSymbol} style={{ width: 20, height: 20 }} /></TokenIconWrap>}
         </TokenPairIcons>
         <SmallText fitContent>
           {tx.fromAmount?.toFormat(2)} {tx.fromSymbol} → {tx.toAmount?.toFormat(2)} {tx.toSymbol}
@@ -180,7 +178,7 @@ const TransactionDetails: React.FC<{ tx: ParsedTransaction }> = ({ tx }) => {
         <TokenPairIcons>
           {tokens.map((token, index) => {
             const logo = getTokenLogo(token.assetId);
-            return logo ? <TokenIcon key={token.assetId} src={logo} alt={token.symbol} overlap={index > 0} /> : null;
+            return logo ? <TokenIconWrap key={token.assetId} overlap={index > 0}><RoundTokenIcon src={logo} alt={token.symbol} style={{ width: 20, height: 20 }} /></TokenIconWrap> : null;
           })}
         </TokenPairIcons>
         <SmallText fitContent>
