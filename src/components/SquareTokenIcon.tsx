@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { parsePairLogo } from "@src/constants/pairLogo";
+import { parseLogoGroup } from "@src/constants/pairLogo";
+import TokenLogoSlices from "@components/TokenLogoSlices";
 
 type TokenIconSize = "default" | "small";
 
@@ -18,7 +19,7 @@ const StyledImg = styled.img<{ size?: TokenIconSize }>`
 `;
 
 const SplitWrap = styled.div<{ size?: TokenIconSize }>`
-  display: flex;
+  position: relative;
   overflow: hidden;
   box-sizing: border-box;
   flex-shrink: 0;
@@ -27,37 +28,16 @@ const SplitWrap = styled.div<{ size?: TokenIconSize }>`
   ${({ size }) => sizeStyles(size)}
 `;
 
-const Half = styled.div`
-  position: relative;
-  width: 50%;
-  height: 100%;
-  overflow: hidden;
-`;
-
-const HalfImg = styled.img<{ align: "left" | "right" }>`
-  position: absolute;
-  top: 0;
-  height: 100%;
-  width: 200%;
-  object-fit: cover;
-  ${({ align }) => (align === "left" ? "left: 0;" : "right: 0;")}
-`;
-
 interface SquareTokenIconProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   size?: TokenIconSize;
 }
 
 const SquareTokenIcon: React.FC<SquareTokenIconProps> = ({ src, size, alt, ...rest }) => {
-  const pair = parsePairLogo(src);
-  if (pair) {
+  const group = parseLogoGroup(src);
+  if (group) {
     return (
       <SplitWrap size={size} {...(rest as React.HTMLAttributes<HTMLDivElement>)}>
-        <Half>
-          <HalfImg align="left" src={pair.left} alt={alt} />
-        </Half>
-        <Half>
-          <HalfImg align="right" src={pair.right} alt={alt} />
-        </Half>
+        <TokenLogoSlices logos={group} alt={alt} />
       </SplitWrap>
     );
   }

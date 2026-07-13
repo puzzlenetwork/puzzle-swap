@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { parsePairLogo } from "@src/constants/pairLogo";
+import { parseLogoGroup } from "@src/constants/pairLogo";
+import TokenLogoSlices from "@components/TokenLogoSlices";
 
 const StyledImg = styled.img`
   width: 24px;
@@ -11,7 +12,7 @@ const StyledImg = styled.img`
 `;
 
 const SplitWrap = styled.div`
-  display: flex;
+  position: relative;
   overflow: hidden;
   box-sizing: border-box;
   flex-shrink: 0;
@@ -21,33 +22,12 @@ const SplitWrap = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.primary100};
 `;
 
-const Half = styled.div`
-  position: relative;
-  width: 50%;
-  height: 100%;
-  overflow: hidden;
-`;
-
-const HalfImg = styled.img<{ align: "left" | "right" }>`
-  position: absolute;
-  top: 0;
-  height: 100%;
-  width: 200%;
-  object-fit: cover;
-  ${({ align }) => (align === "left" ? "left: 0;" : "right: 0;")}
-`;
-
 const RoundTokenIcon: React.FC<React.ImgHTMLAttributes<HTMLImageElement>> = ({ src, alt, ...rest }) => {
-  const pair = parsePairLogo(src);
-  if (pair) {
+  const group = parseLogoGroup(src);
+  if (group) {
     return (
       <SplitWrap {...(rest as React.HTMLAttributes<HTMLDivElement>)}>
-        <Half>
-          <HalfImg align="left" src={pair.left} alt={alt} />
-        </Half>
-        <Half>
-          <HalfImg align="right" src={pair.right} alt={alt} />
-        </Half>
+        <TokenLogoSlices logos={group} alt={alt} />
       </SplitWrap>
     );
   }

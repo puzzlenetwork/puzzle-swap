@@ -1,4 +1,4 @@
-import { makePairLogo } from "@src/constants/pairLogo";
+import { makePairLogo, makeMultiLogo } from "@src/constants/pairLogo";
 import mathLogo from "@src/assets/tokens/math-logo.png";
 import turtleLogo from "@src/assets/tokens/turtle-logo.png";
 import eggseggsLogo from "@src/assets/tokens/eggseggs-logo.jpeg";
@@ -321,8 +321,8 @@ const tokenLogos: Record<string, string> = {
   ),
   "PR-Cloud-public": makePairLogo(wavesLogo, usdtLogo),
 
-  // Single-asset Puzzle Range token — regular round icon.
-  "PR-BRIA": wbriacashLogo,
+  // 3-token Puzzle Range pool — icon split into three equal pie slices.
+  "PR-BRIA-PUZZLE-ROME": makeMultiLogo([wbriacashLogo, puzzleLogo, romeLogo]),
 };
 
 export default tokenLogos;

@@ -4,7 +4,8 @@ import Img from "@components/Img";
 import Text from "@components/Text";
 import { IToken } from "@src/constants";
 import BN from "@src/utils/BN";
-import { parsePairLogo } from "@src/constants/pairLogo";
+import { parseLogoGroup } from "@src/constants/pairLogo";
+import TokenLogoSlices from "@components/TokenLogoSlices";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   token: IToken;
@@ -23,7 +24,7 @@ const Root = styled.div`
 `;
 
 const SplitWrap = styled.div<{ dimension: number }>`
-  display: flex;
+  position: relative;
   overflow: hidden;
   flex-shrink: 0;
   border-radius: 50%;
@@ -31,33 +32,12 @@ const SplitWrap = styled.div<{ dimension: number }>`
   height: ${({ dimension }) => dimension}px;
 `;
 
-const Half = styled.div`
-  position: relative;
-  width: 50%;
-  height: 100%;
-  overflow: hidden;
-`;
-
-const HalfImg = styled.img<{ align: "left" | "right" }>`
-  position: absolute;
-  top: 0;
-  height: 100%;
-  width: 200%;
-  object-fit: cover;
-  ${({ align }) => (align === "left" ? "left: 0;" : "right: 0;")}
-`;
-
 const TokenIcon: React.FC<{ src?: string; dimension: number }> = ({ src, dimension }) => {
-  const pair = parsePairLogo(src);
-  if (pair) {
+  const group = parseLogoGroup(src);
+  if (group) {
     return (
       <SplitWrap dimension={dimension}>
-        <Half>
-          <HalfImg align="left" src={pair.left} alt="token" />
-        </Half>
-        <Half>
-          <HalfImg align="right" src={pair.right} alt="token" />
-        </Half>
+        <TokenLogoSlices logos={group} alt="token" />
       </SplitWrap>
     );
   }
