@@ -320,6 +320,9 @@ const tokenLogos: Record<string, string> = {
     usdtLogo
   ),
   "PR-Cloud-public": makePairLogo(wavesLogo, usdtLogo),
+
+  // Single-asset Puzzle Range token — regular round icon.
+  "PR-BRIA": wbriacashLogo,
 };
 
 export default tokenLogos;
