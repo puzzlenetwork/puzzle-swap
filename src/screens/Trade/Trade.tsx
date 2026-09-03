@@ -8,6 +8,7 @@ import { SwapVMProvider, useSwapVM } from "@screens/Trade/SwapVM";
 import { LimitOrdersVMProvider } from "@screens/Trade/LimitOrdersVM";
 import Swap from "@screens/Trade/Trade/Swap";
 import LimitOrders from "@screens/Trade/Trade/LimitOrders";
+import Dca from "@screens/Trade/Trade/Dca";
 import SwapHistoryDesktop from "@screens/Trade/Trade/Swap/SwapHistoryDesktop";
 import SwapHistoryMobile from "@screens/Trade/Trade/Swap/SwapHistoryMobile";
 
@@ -50,6 +51,7 @@ const TradeImpl: React.FC = observer(() => {
             <Container>
               {vm.activeAction === 0 && <Swap />}
               {vm.activeAction === 1 && <LimitOrders />}
+              {vm.activeAction === 2 && <Dca />}
             </Container>
             {width && width > 880 && vm.activeAction === 0 && (
               <SwapHistoryDesktop visible={vm.openedHistory} />

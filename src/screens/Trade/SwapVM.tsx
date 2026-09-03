@@ -12,6 +12,14 @@ interface IProps {
   children: React.ReactNode;
 }
 
+// Trade tab index <-> route mapping (0: Swap, 1: Limit, 2: DCA)
+export const ACTION_ROUTES = [ROUTES.TRADE, ROUTES.LIMIT_ORDER, ROUTES.DCA];
+
+export const pathnameToActiveAction = (pathname: string): number => {
+  const index = ACTION_ROUTES.indexOf(pathname);
+  return index === -1 ? 0 : index;
+};
+
 const ctx = React.createContext<SwapVM | null>(null);
 
 export const SwapVMProvider: React.FC<IProps> = ({ children }) => {
@@ -25,7 +33,7 @@ export const useSwapVM = () => useVM(ctx);
 export class SwapVM {
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
-    this.setActiveAction(window.location.pathname === ROUTES.TRADE ? 0 : 1);
+    this.setActiveAction(pathnameToActiveAction(window.location.pathname));
     const params = new URLSearchParams(window.location.search);
     const asset0 = params.get("asset0")?.toString();
     const asset1 = params.get("asset1")?.toString();

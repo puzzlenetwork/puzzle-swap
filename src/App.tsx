@@ -91,6 +91,7 @@ const App: React.FC = () => {
         {/* Trade */}
         <Route path={ROUTES.TRADE} element={<Trade />} />
         <Route path={ROUTES.LIMIT_ORDER} element={<Trade />} />
+        <Route path={ROUTES.DCA} element={<Trade />} />
 
         {/* Pools table routes */}
         <Route path={ROUTES.POOLS} element={<PoolsList />} />

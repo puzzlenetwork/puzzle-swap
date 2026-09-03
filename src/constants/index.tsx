@@ -12,6 +12,7 @@ export const ROUTES = {
   PWAVES: "/pwaves",
   TRADE: "/trade",
   LIMIT_ORDER: "/limitOrder",
+  DCA: "/dca",
   OLD_EXPLORE: "/classic-explore",
   EXPLORE: "/explore",
   EXPLORE_TOKEN: "/explore/token/:assetId",
@@ -45,6 +46,9 @@ export const ROUTES = {
 };
 
 export const NEWS_API_URL = process.env.REACT_APP_NEWS_API_URL || "https://pz-dev-evm.online";
+
+// 3rd-party community DCA bot (external project, not maintained by Puzzle)
+export const DCA_BOT_URL = "https://cryptochrist.github.io/dcabot-ui/";
 
 export enum IDEA_STATUS {
   PENDING = "pending",

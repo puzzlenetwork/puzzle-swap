@@ -9,9 +9,8 @@ import settings from "@src/assets/icons/settings.svg";
 import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
 import Tabs from "@components/Tabs";
-import { useSwapVM } from "@screens/Trade/SwapVM";
+import { ACTION_ROUTES, useSwapVM } from "@screens/Trade/SwapVM";
 import { useNavigate } from "react-router-dom";
-import { ROUTES } from "@src/constants";
 
 interface IProps {
   withSetting?: boolean;
@@ -43,14 +42,14 @@ const SettingsHeader: React.FC<IProps> = ({ withSetting }) => {
   return (
     <Root>
       <Tabs
-        tabs={[{ name: "Swap" }, { name: "Limit" }]}
+        tabs={[{ name: "Swap" }, { name: "Limit" }, { name: "DCA" }]}
         activeTab={vm.activeAction}
         setActive={(n) => {
           const urlSearchParams = new URLSearchParams(window.location.search);
           urlSearchParams.set("asset0", vm.assetId0);
           urlSearchParams.set("asset01", vm.assetId1);
           navigate({
-            pathname: n === 0 ? ROUTES.TRADE : ROUTES.LIMIT_ORDER,
+            pathname: ACTION_ROUTES[n] ?? ACTION_ROUTES[0],
             search: `?${urlSearchParams.toString()}`
           });
           vm.setActiveAction(n);
