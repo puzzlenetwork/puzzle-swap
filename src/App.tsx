@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite";
 import AddLiquidity from "@screens/Pools/AddLiquidity";
 import PoolInvest from "@screens/Pools/PoolInvest";
 import Header from "@components/Header";
+import FeatureGate from "@components/FeatureGate";
 import { Column } from "@components/Flex";
 import NotFound from "@screens/NotFound";
 import { useStores } from "@stores";
@@ -91,6 +92,14 @@ const App: React.FC = () => {
         {/* Trade */}
         <Route path={ROUTES.TRADE} element={<Trade />} />
         <Route path={ROUTES.LIMIT_ORDER} element={<Trade />} />
+        <Route
+          path={ROUTES.DCA}
+          element={
+            <FeatureGate feature="dca" redirectTo={ROUTES.TRADE}>
+              <Trade />
+            </FeatureGate>
+          }
+        />
 
         {/* Pools table routes */}
         <Route path={ROUTES.POOLS} element={<PoolsList />} />
@@ -125,7 +134,7 @@ const App: React.FC = () => {
 
         {/* Terms of Service */}
         <Route path={ROUTES.TERMS_OF_SERVICE} element={<TermsOfService />} />
-пуш
+
         {/* Ideas */}
         <Route path={ROUTES.IDEAS} element={<Ideas />} />
 

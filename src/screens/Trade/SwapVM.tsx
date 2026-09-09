@@ -7,10 +7,32 @@ import aggregatorService, { TCalcRoute } from "@src/services/aggregatorService";
 import { CONTRACT_ADDRESSES, EXPLORER_URL, IToken, ROUTES, TOKENS_BY_ASSET_ID, TOKENS_BY_SYMBOL } from "@src/constants";
 import nodeService from "@src/services/nodeService";
 import { isDryRunEnabled, getCustomPublicKey } from "@src/utils/userSettings";
+import { TGatedFeature } from "@src/constants/featureAccess";
 
 interface IProps {
   children: React.ReactNode;
 }
+
+export interface ITradeAction {
+  name: string;
+  route: string;
+  /** Set when the tab is only shown to whitelisted accounts. */
+  feature?: TGatedFeature;
+}
+
+// The index of an action in this list is what `activeAction` holds.
+export const TRADE_ACTIONS: ITradeAction[] = [
+  { name: "Swap", route: ROUTES.TRADE },
+  { name: "Limit", route: ROUTES.LIMIT_ORDER },
+  { name: "DCA", route: ROUTES.DCA, feature: "dca" }
+];
+
+export const ACTION_ROUTES = TRADE_ACTIONS.map(({ route }) => route);
+
+export const pathnameToActiveAction = (pathname: string): number => {
+  const index = ACTION_ROUTES.indexOf(pathname);
+  return index === -1 ? 0 : index;
+};
 
 const ctx = React.createContext<SwapVM | null>(null);
 
@@ -25,7 +47,7 @@ export const useSwapVM = () => useVM(ctx);
 export class SwapVM {
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
-    this.setActiveAction(window.location.pathname === ROUTES.TRADE ? 0 : 1);
+    this.setActiveAction(pathnameToActiveAction(window.location.pathname));
     const params = new URLSearchParams(window.location.search);
     const asset0 = params.get("asset0")?.toString();
     const asset1 = params.get("asset1")?.toString();

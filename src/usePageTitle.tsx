@@ -13,6 +13,9 @@ export const usePageTitle = () => {
       case ROUTES.TRADE:
         document.title = "Puzzle Swap | TRADE";
         break;
+      case ROUTES.DCA:
+        document.title = "Puzzle Swap | DCA";
+        break;
       case ROUTES.POOLS:
         document.title = "Puzzle Swap | POOLS";
         break;

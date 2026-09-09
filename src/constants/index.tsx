@@ -12,6 +12,7 @@ export const ROUTES = {
   PWAVES: "/pwaves",
   TRADE: "/trade",
   LIMIT_ORDER: "/limitOrder",
+  DCA: "/dca",
   OLD_EXPLORE: "/classic-explore",
   EXPLORE: "/explore",
   EXPLORE_TOKEN: "/explore/token/:assetId",
@@ -623,6 +624,33 @@ export const CONTRACT_ADDRESSES = {
   stPuzzle: "3PJUHFBuuztWicMTxBQh8LqJtQW6mxbJcwJ",
   pWaves: "3PNfWAt2wdUxjJJKi7gXZTt7CgeP3QWjxAe",
   dryRun: "3PLtvRD5p5EDfrzNv1uwWu4qzF5cC4chDEt",
+  dcaBot: "3PNLxE4VjyV82GZjUJ6gca8y6qtB81rsY2k",
+};
+
+// Community DCA bot — an independent third-party contract that routes every swap
+// through the Puzzle aggregator (`swapWithReferral`). Values below are read from
+// the deployed contract, keep them in sync if the contract is ever redeployed.
+export const DCA = {
+  // service account allowed to call executeSwap
+  serviceAddress: "3P71LxgRg3ZnVS2yncxzAtkgQFLMAbFyN73",
+  // cold wallet receiving the service fee
+  adminAddress: "3P3DPGSVE9oqwourUNBBkW5wSsARiWnAu7r",
+  // serviceFeePercent / feeBase = 100 / 10000
+  serviceFeePercent: 1,
+  // executionFeePerSwap, in WAVES atomic units
+  executionFeePerSwap: 500000,
+  // extra WAVES the contract requires on top of the per-swap gas
+  executionFeeReserve: 500000,
+  // MIN_AMOUNT_PER_SWAP enforced after the service fee is deducted
+  minAmountPerSwap: 1000,
+  // limits used by the form, mirrored from the contract validations
+  minBlocksPerTrade: 1,
+  maxBlocksPerTrade: 43200,
+  minSwaps: 1,
+  maxSwaps: 1000,
+  // average Waves block time, used only for human readable estimates
+  blockTimeSeconds: 60,
+  sourceUrl: "https://github.com/Cryptochrist/dcabot-ui",
 };
 
 export const ASSET_IDS = {

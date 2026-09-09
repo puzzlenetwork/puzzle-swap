@@ -6,8 +6,11 @@ import useWindowSize from "@src/hooks/useWindowSize";
 import { TokensChartDesktop, TokensChartMobile } from "@components/TokensChart";
 import { SwapVMProvider, useSwapVM } from "@screens/Trade/SwapVM";
 import { LimitOrdersVMProvider } from "@screens/Trade/LimitOrdersVM";
+import { DcaVMProvider } from "@screens/Trade/DcaVM";
+import { useFeatureAccess } from "@src/hooks/useFeatureAccess";
 import Swap from "@screens/Trade/Trade/Swap";
 import LimitOrders from "@screens/Trade/Trade/LimitOrders";
+import Dca from "@screens/Trade/Trade/Dca";
 import SwapHistoryDesktop from "@screens/Trade/Trade/Swap/SwapHistoryDesktop";
 import SwapHistoryMobile from "@screens/Trade/Trade/Swap/SwapHistoryMobile";
 
@@ -31,6 +34,7 @@ const Container = styled.div`
 const TradeImpl: React.FC = observer(() => {
   const vm = useSwapVM();
   const { width } = useWindowSize();
+  const dcaAllowed = useFeatureAccess("dca");
   return (
     <Layout>
       <Observer>
@@ -50,6 +54,7 @@ const TradeImpl: React.FC = observer(() => {
             <Container>
               {vm.activeAction === 0 && <Swap />}
               {vm.activeAction === 1 && <LimitOrders />}
+              {vm.activeAction === 2 && dcaAllowed && <Dca />}
             </Container>
             {width && width > 880 && vm.activeAction === 0 && (
               <SwapHistoryDesktop visible={vm.openedHistory} />
@@ -67,11 +72,21 @@ const TradeImpl: React.FC = observer(() => {
   );
 });
 
-const Trade: React.FC = () => (
-  <SwapVMProvider>
-    <LimitOrdersVMProvider>
-      <TradeImpl />
-    </LimitOrdersVMProvider>
-  </SwapVMProvider>
-);
+const Trade: React.FC = observer(() => {
+  // keep the DCA store unmounted for everyone else, so no DCA contract requests leak out
+  const dcaAllowed = useFeatureAccess("dca");
+  return (
+    <SwapVMProvider>
+      <LimitOrdersVMProvider>
+        {dcaAllowed ? (
+          <DcaVMProvider>
+            <TradeImpl />
+          </DcaVMProvider>
+        ) : (
+          <TradeImpl />
+        )}
+      </LimitOrdersVMProvider>
+    </SwapVMProvider>
+  );
+});
 export default Trade;

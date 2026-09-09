@@ -9,9 +9,10 @@ import settings from "@src/assets/icons/settings.svg";
 import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
 import Tabs from "@components/Tabs";
-import { useSwapVM } from "@screens/Trade/SwapVM";
+import { TRADE_ACTIONS, useSwapVM } from "@screens/Trade/SwapVM";
+import { TGatedFeature } from "@src/constants/featureAccess";
+import { useFeatureAccess } from "@src/hooks/useFeatureAccess";
 import { useNavigate } from "react-router-dom";
-import { ROUTES } from "@src/constants";
 
 interface IProps {
   withSetting?: boolean;
@@ -40,20 +41,32 @@ const IconsBlock = styled(Row)`
 const SettingsHeader: React.FC<IProps> = ({ withSetting }) => {
   const vm = useSwapVM();
   const navigate = useNavigate();
+  // one entry per gated feature that can appear as a trade tab
+  const featureAccess: Record<TGatedFeature, boolean> = { dca: useFeatureAccess("dca") };
+
+  const visibleActions = TRADE_ACTIONS.map((action, index) => ({ ...action, index })).filter(
+    ({ feature }) => feature == null || featureAccess[feature]
+  );
+  const activeTab = Math.max(
+    0,
+    visibleActions.findIndex(({ index }) => index === vm.activeAction)
+  );
+
   return (
     <Root>
       <Tabs
-        tabs={[{ name: "Swap" }, { name: "Limit" }]}
-        activeTab={vm.activeAction}
+        tabs={visibleActions.map(({ name }) => ({ name }))}
+        activeTab={activeTab}
         setActive={(n) => {
+          const action = visibleActions[n] ?? visibleActions[0];
           const urlSearchParams = new URLSearchParams(window.location.search);
           urlSearchParams.set("asset0", vm.assetId0);
           urlSearchParams.set("asset01", vm.assetId1);
           navigate({
-            pathname: n === 0 ? ROUTES.TRADE : ROUTES.LIMIT_ORDER,
+            pathname: action.route,
             search: `?${urlSearchParams.toString()}`
           });
-          vm.setActiveAction(n);
+          vm.setActiveAction(action.index);
         }}
       />
       <IconsBlock mainAxisSize="fit-content">
