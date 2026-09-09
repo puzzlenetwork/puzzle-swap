@@ -26,6 +26,7 @@ export const FEATURE_ACCESS: Record<TGatedFeature, IFeatureAccess> = {
     whitelistEnabled: true,
     addresses: [
       // add addresses here, or set REACT_APP_DCA_WHITELIST=addr1,addr2 at build time
+      "3P9xX849YJXg7C87v82cDyDy5VhKiPJpHo8",
       ...parseAddressList(process.env.REACT_APP_DCA_WHITELIST),
     ],
   },
